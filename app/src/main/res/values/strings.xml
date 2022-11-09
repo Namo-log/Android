@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Namo</string>
+
+    <!-- 기본적으로 쓰이는 String -->
+    <string name="okay">확인</string>
+
+    <!-- 약관 동의 관련 String -->
+    <string name="for_service">서비스 이용을 위한</string>
+    <string name="terms">약관 동의</string>
+    <string name="term_location">(선택) 위치 서비스 동의</string>
+    <string name="term_information">(필수) 개인정보 수집 및 이용</string>
+    <string name="term_usage">(필수) 이용 약관</string>
+    <string name="term_all_agree">전체 동의</string>
+    <string name="term_notice">(선택) 앱 푸시 알림 수신 동의</string>
+
 </resources>
