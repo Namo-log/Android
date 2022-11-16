@@ -25,7 +25,7 @@
         <!-- white status bar -->
         <!--        <item name="android:windowLightStatusBar">true</item> -->
         <!-- background -->
-        <item name="android:windowBackground">@drawable/background_splash</item>
+        <item name="android:windowBackground">@drawable/logo_namo</item>
     </style>
     <!--Black transparent background-->
     <style name="Theme.Transparent" parent="Theme.AppCompat.Light.NoActionBar">

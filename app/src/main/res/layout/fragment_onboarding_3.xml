@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/onboarding_3_description_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="@dimen/onboarding_default_text_size"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:text="@string/onboarding_3_description"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/onboarding_3_lottie_lv"
+            android:layout_width="0dp"
+            android:layout_height="500dp"
+            android:layout_marginBottom="20dp"
+            app:lottie_fileName="onboarding3.json"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:layout_constraintTop_toBottomOf="@id/onboarding_3_description_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <LinearLayout
+            android:id="@+id/onboarding_3_skip_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/onboarding_skip_layout_padding"
+            android:orientation="horizontal"
+            android:layout_marginBottom="5dp"
+            app:layout_constraintEnd_toEndOf="@id/onboarding_3_next_btn"
+            app:layout_constraintBottom_toTopOf="@id/onboarding_3_next_btn">
+
+            <TextView
+                android:id="@+id/onboarding_3_skip_text_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/onboarding_skip"
+                android:textSize="@dimen/onboarding_skip_text_size"
+                android:textColor="@color/MainOrange"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/onboarding_3_skip_img_iv"
+                android:layout_width="15dp"
+                android:layout_height="20dp"
+                android:padding="3dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginStart="5dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_arrow_right_orange"/>
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/onboarding_3_next_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/onboarding_margin_horizontal"
+            android:layout_marginBottom="@dimen/onboarding_margin_bottom"
+            android:stateListAnimator="@null"
+            android:padding="@dimen/onboarding_btn_padding"
+            android:background="@drawable/login_btn_background"
+            android:backgroundTint="@color/groupCodeGray"
+            android:textColor="@color/MainOrange"
+            android:text="@string/onboarding_next"
+            android:textSize="@dimen/onboarding_default_text_size"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

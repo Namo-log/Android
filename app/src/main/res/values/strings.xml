@@ -12,5 +12,16 @@
     <string name="term_usage">(필수) 이용 약관</string>
     <string name="term_all_agree">전체 동의</string>
     <string name="term_notice">(선택) 앱 푸시 알림 수신 동의</string>
+    <string name="onboarding_1_description">소중한 나의 일정과 기록,\n어떻게 관리하시나요?</string>
+    <string name="onboarding_2_description">중요한 일정을 잊지 않도록\n캘린더에 표시</string>
+    <string name="onboarding_3_description">일정을 사진과 글로 기록하고\n한 눈에 모아보세요</string>
+    <string name="onboarding_4_description">그룹 캘린더에서 친구들 일정 확인 후\n손쉽게 모임 일정을 잡고</string>
+    <string name="onboarding_5_description">사진 공유와 금액 정산까지 효율적으로</string>
+    <string name="onboarding_5_namo_description">나의 모임 기록</string>
+    <string name="onboarding_5_namo">나모</string>
+    <string name="onboarding_5_start_description">지금 바로 시작하세요</string>
+    <string name="onboarding_5_start">시작하기</string>
+    <string name="onboarding_next">다음</string>
+    <string name="onboarding_skip">skip</string>
 
 </resources>
