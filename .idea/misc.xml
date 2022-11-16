@@ -3,9 +3,18 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/drawable/checkbox_custom.xml" value="0.136" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/drawable/custom_checkbox.xml" value="0.136" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/drawable/login_btn_background.xml" value="0.136" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/drawable/login_text_background.xml" value="0.136" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/drawable/terms_checkbox.xml" value="0.136" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/layout/activity_login.xml" value="0.2484375" />
         <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/layout/activity_login_term.xml" value="0.2" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/layout/activity_main.xml" value="0.11458333333333333" />
         <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/layout/activity_term.xml" value="0.2047008547008547" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/layout/activity_terms.xml" value="0.2" />
         <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/layout/activityasdf.xml" value="0.2484375" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/layout/fragment_terms.xml" value="0.2484375" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1109375" />
       </map>
     </option>
