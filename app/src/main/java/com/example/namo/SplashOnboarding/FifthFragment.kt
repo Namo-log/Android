@@ -30,7 +30,7 @@ class FifthFragment : Fragment() {
 
 
         binding.onboarding5StartBtn.setOnClickListener {
-            //로그인 화면으로 이동
+            findNavController().navigate(R.id.action_onBoardingFragment_to_termsFragment)
             onBoardingFinished()
         }
 

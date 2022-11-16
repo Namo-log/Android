@@ -23,8 +23,8 @@
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/onboarding_5_lottie_lv"
             android:layout_width="0dp"
-            android:layout_height="500dp"
-            android:layout_marginBottom="20dp"
+            android:layout_height="300dp"
+            android:layout_marginBottom="45dp"
             app:lottie_fileName="onboarding5.json"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"

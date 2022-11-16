@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.namo.R
 import com.example.namo.databinding.FragmentTermsBinding
 
@@ -23,9 +24,16 @@ class TermsFragment: Fragment() {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_terms, container, false)
 
+        clickHandler()
         checkboxListener()
 
         return binding.root
+    }
+
+    private fun clickHandler(){
+        binding.termsNextBtn.setOnClickListener {
+            findNavController().navigate(R.id.action_termsFragment_to_loginFragment)
+        }
     }
 
     private fun checkboxListener() {

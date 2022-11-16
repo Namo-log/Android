@@ -32,8 +32,10 @@ class SplashFragment : Fragment() {
 
         Handler(Looper.getMainLooper()).postDelayed({
             //앱 처음인지, 로그인 되어있는지 유무 판단해야 됨
-            if (isOnBoardingFinished()){
+            if(isSetLoginFinished()){
                 findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
+            } else if (isOnBoardingFinished()) {
+                findNavController().navigate(R.id.action_splashFragment_to_loginFragment)
             } else {
                 findNavController().navigate(R.id.action_splashFragment_to_onBoardingFragment)
             }
@@ -44,6 +46,12 @@ class SplashFragment : Fragment() {
         val prefs = requireActivity().getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
         return prefs.getBoolean("finished", false)
     }
+
+    private fun isSetLoginFinished() : Boolean {
+        val prefs = requireActivity().getSharedPreferences("setLogin", Context.MODE_PRIVATE)
+        return prefs.getBoolean("finished", false)
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
