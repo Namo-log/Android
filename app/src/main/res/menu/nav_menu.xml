@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/homeFragment"
-        android:icon="@drawable/ic_launcher_background"
-        android:title="홈"/>
+        android:icon="@drawable/btn_home_selector"
+        android:title="@string/bottom_home"
+        android:enabled="true"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/diaryFragment"
-        android:icon="@drawable/ic_launcher_background"
-        android:title="기록"/>
+        android:icon="@drawable/btn_diary_selector"
+        android:title="@string/bottom_record"
+        android:enabled="true"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/groupListFragment"
-        android:icon="@drawable/ic_launcher_background"
-        android:title="그룹리스트"/>
+        android:icon="@drawable/btn_group_selector"
+        android:title="@string/bottom_grouplist"
+        android:enabled="true"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/customFragment"
-        android:icon="@drawable/ic_launcher_background"
-        android:title="커스텀"/>
-
+        android:icon="@drawable/btn_custom_selector"
+        android:title="@string/bottom_custom"
+        android:enabled="true"
+        app:showAsAction="ifRoom"/>
 </menu>
