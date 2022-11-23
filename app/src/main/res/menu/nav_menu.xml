@@ -29,5 +29,4 @@
         android:title="@string/bottom_custom"
         android:enabled="true"
         app:showAsAction="ifRoom"/>
-
 </menu>

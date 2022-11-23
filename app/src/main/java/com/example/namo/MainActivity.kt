@@ -17,7 +17,6 @@ class MainActivity : AppCompatActivity() {
         initNavigation()
     }
 
-
     private fun initNavigation() {
         NavigationUI.setupWithNavController(binding.navBar, findNavController(R.id.nav_host))
     }
