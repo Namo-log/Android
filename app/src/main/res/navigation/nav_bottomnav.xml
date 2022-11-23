@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_bottomnav"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.namo.Bottom.Home.HomeFragment"
+        android:label="HomeFragment" />
+    <fragment
+        android:id="@+id/diaryFragment"
+        android:name="com.example.namo.Bottom.Diary.DiaryFragment"
+        android:label="DiaryFragment" />
+    <fragment
+        android:id="@+id/customFragment"
+        android:name="com.example.namo.Bottom.Custom.CustomFragment"
+        android:label="CustomFragment" />
+    <fragment
+        android:id="@+id/groupListFragment"
+        android:name="com.example.namo.Bottom.GroupList.GroupListFragment"
+        android:label="GroupListFragment" />
+</navigation>
