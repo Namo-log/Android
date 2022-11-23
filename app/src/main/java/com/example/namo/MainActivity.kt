@@ -19,5 +19,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun initNavigation() {
         NavigationUI.setupWithNavController(binding.navBar, findNavController(R.id.nav_host))
+        //바텀내비 백스택 수정 필요
     }
 }
