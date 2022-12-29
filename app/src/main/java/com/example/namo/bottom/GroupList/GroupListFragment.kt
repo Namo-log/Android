@@ -1,16 +1,16 @@
-package com.example.namo.Bottom.Diary
+package com.example.namo.bottom.GroupList
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.namo.databinding.FragmentDiaryBinding
+import com.example.namo.databinding.FragmentGroupListBinding
 
 
-class DiaryFragment: Fragment() {
+class GroupListFragment: Fragment() {
 
-    lateinit var binding: FragmentDiaryBinding
+    lateinit var binding: FragmentGroupListBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -18,7 +18,7 @@ class DiaryFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        binding = FragmentDiaryBinding.inflate(inflater, container, false)
+        binding = FragmentGroupListBinding.inflate(inflater, container, false)
 
         return binding.root
     }
