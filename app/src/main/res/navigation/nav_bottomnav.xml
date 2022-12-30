@@ -17,17 +17,17 @@
         tools:layout="@layout/fragment_diary"/>
     <fragment
         android:id="@+id/customFragment"
-        android:name="com.example.namo.bottom.Custom.CustomFragment"
+        android:name="com.example.namo.bottom.custom.CustomFragment"
         android:label="CustomFragment"
         tools:layout="@layout/fragment_custom"/>
     <fragment
         android:id="@+id/groupListFragment"
-        android:name="com.example.namo.bottom.GroupList.GroupListFragment"
+        android:name="com.example.namo.bottom.grouplist.GroupListFragment"
         android:label="GroupListFragment"
         tools:layout="@layout/fragment_group_list"/>
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.example.namo.SplashOnboarding.SplashFragment"
+        android:name="com.example.namo.splash.SplashFragment"
         android:label="SplashFragment"
         tools:layout="@layout/fragment_splash">
         <action
@@ -46,7 +46,7 @@
     </fragment>
     <fragment
         android:id="@+id/onBoardingFragment"
-        android:name="com.example.namo.SplashOnboarding.OnBoardingFragment"
+        android:name="com.example.namo.splash.OnBoardingFragment"
         android:label="OnBoardingFragment"
         tools:layout="@layout/fragment_onboarding">
         <action

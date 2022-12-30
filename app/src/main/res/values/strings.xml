@@ -30,6 +30,15 @@
     <string name="bottom_grouplist">GroupList</string>
     <string name="bottom_custom">Custom</string>
 
+    <!-- Group 화면 관련 String -->
+    <string name="group_calendar">Group Calendar</string>
+    <string name="add_group_msg">그룹 리스트가 없습니다. 리스트를 추가해 보세요</string>
+
+    <!-- Custom 화면 관련 String -->
+    <string name="custom_palette">palette fragment</string>
+    <string name="custom_font">font fragment</string>
+    <string name="custom_my">my fragment</string>
+
     <!--diary fragment 관련 String-->
     <string name="diary_modify">수정</string>
     <string name="diary_contents">나모의 새로운 시작</string>
@@ -40,6 +49,5 @@
     <!--연월 dialog 관련 String-->
     <string name="dialog_confirm">확인</string>
     <string name="dialog_cancel">취소</string>
-
-
+    
 </resources>

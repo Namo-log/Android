@@ -1,11 +1,11 @@
-package com.example.namo.SplashOnboarding
+package com.example.namo.splash
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.namo.SplashOnboarding.adapter.OnboardingVPAdapter
+import com.example.namo.splash.adapter.OnboardingVPAdapter
 import com.example.namo.databinding.FragmentOnboardingBinding
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 

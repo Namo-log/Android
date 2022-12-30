@@ -40,4 +40,3 @@ class DiaryListRVAdapter(val context: Context, var list: MutableList<DiaryDummy>
         }
     }
 }
-

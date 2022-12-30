@@ -22,9 +22,7 @@ class DiaryGalleryRVAdapter(private val imgList:MutableList<GalleryDummy>):
     inner class ViewHolder(val binding: ItemDiaryGalleryBinding): RecyclerView.ViewHolder(binding.root){
 
         fun bind(item: GalleryDummy) {
-
-           binding.galleryImgIv.setImageResource(item.img)
-
+          binding.galleryImgIv.setImageResource(item.img)
         }
 
     }

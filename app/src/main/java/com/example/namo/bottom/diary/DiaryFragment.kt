@@ -138,15 +138,14 @@ class DiaryFragment: Fragment() {
 
 }
 
-    data class DiaryDummy(
-        var category: String,
-        var date: String,
-        var title: String,
-        var contents: String,
-        var rv: MutableList<GalleryDummy>
-    )
+data class DiaryDummy(
+    var category: String,
+    var date: String,
+    var title: String,
+    var contents: String,
+    var rv: MutableList<GalleryDummy>
+)
 
-    data class GalleryDummy(
-        var img: Int
-    )
-
+data class GalleryDummy(
+    var img: Int
+)
