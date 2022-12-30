@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_home"/>
     <fragment
         android:id="@+id/diaryFragment"
-        android:name="com.example.namo.bottom.Diary.DiaryFragment"
+        android:name="com.example.namo.bottom.diary.DiaryFragment"
         android:label="DiaryFragment"
         tools:layout="@layout/fragment_diary"/>
     <fragment
