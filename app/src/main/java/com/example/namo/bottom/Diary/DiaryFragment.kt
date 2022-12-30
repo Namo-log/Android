@@ -1,4 +1,4 @@
-package com.example.namo.Bottom.Diary
+package com.example.namo.bottom.Diary
 
 import android.os.Bundle
 import android.view.LayoutInflater

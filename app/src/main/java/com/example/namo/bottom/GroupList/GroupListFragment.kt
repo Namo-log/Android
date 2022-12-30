@@ -1,4 +1,4 @@
-package com.example.namo.Bottom.GroupList
+package com.example.namo.bottom.GroupList
 
 import android.os.Bundle
 import android.util.Log

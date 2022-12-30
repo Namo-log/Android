@@ -1,4 +1,4 @@
-package com.example.namo.Bottom.GroupList
+package com.example.namo.bottom.GroupList
 
 
 import android.view.LayoutInflater

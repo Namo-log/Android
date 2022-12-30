@@ -1,11 +1,11 @@
-package com.example.namo.Bottom.Custom.Adapter
+package com.example.namo.bottom.Custom.Adapter
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.namo.Bottom.Custom.Palette
+import com.example.namo.bottom.Custom.Palette
 import com.example.namo.databinding.ItemCustomPaletteBinding
 
 class PaletteRVAdapter :  RecyclerView.Adapter<PaletteRVAdapter.ViewHolder>(){

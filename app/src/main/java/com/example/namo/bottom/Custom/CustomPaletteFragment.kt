@@ -1,4 +1,4 @@
-package com.example.namo.Bottom.Custom
+package com.example.namo.bottom.Custom
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,8 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.namo.Bottom.Custom.Adapter.PaletteRVAdapter
-import com.example.namo.R
+import com.example.namo.bottom.Custom.Adapter.PaletteRVAdapter
 import com.example.namo.databinding.FragmentCustomPaletteBinding
 
 class CustomPaletteFragment : Fragment() {

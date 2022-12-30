@@ -1,4 +1,4 @@
-package com.example.namo.Bottom.Custom.Adapter
+package com.example.namo.bottom.Custom.Adapter
 
 import android.graphics.Color
 import android.view.LayoutInflater

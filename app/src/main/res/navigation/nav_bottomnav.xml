@@ -7,22 +7,22 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.namo.Bottom.Home.HomeFragment"
+        android:name="com.example.namo.bottom.home.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/fragment_home"/>
     <fragment
         android:id="@+id/diaryFragment"
-        android:name="com.example.namo.Bottom.Diary.DiaryFragment"
+        android:name="com.example.namo.bottom.Diary.DiaryFragment"
         android:label="DiaryFragment"
         tools:layout="@layout/fragment_diary"/>
     <fragment
         android:id="@+id/customFragment"
-        android:name="com.example.namo.Bottom.Custom.CustomFragment"
+        android:name="com.example.namo.bottom.Custom.CustomFragment"
         android:label="CustomFragment"
         tools:layout="@layout/fragment_custom"/>
     <fragment
         android:id="@+id/groupListFragment"
-        android:name="com.example.namo.Bottom.GroupList.GroupListFragment"
+        android:name="com.example.namo.bottom.GroupList.GroupListFragment"
         android:label="GroupListFragment"
         tools:layout="@layout/fragment_group_list"/>
     <fragment
