@@ -67,4 +67,20 @@
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
     </style>
 
+    <!--    home_calendar-->
+    <style name="Calendar"/>
+
+    <style name="Calendar.HeaderDateText">
+        <item name="android:textSize">20dp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="Calendar.CalendarViewStyle">
+        <item name="dayHeight">100dp</item>
+    </style>
+
+    <style name="Calendar.ItemViewStyle">
+        <item name="dayTextSize">14dp</item>
+    </style>
+
 </resources>
