@@ -1,4 +1,4 @@
-package com.example.namo.Bottom.Home
+package com.example.namo.bottom.Home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.namo.R
-import com.example.namo.SplashOnboarding.SplashFragment
 import com.example.namo.databinding.FragmentHomeBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 

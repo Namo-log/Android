@@ -30,4 +30,16 @@
     <string name="bottom_grouplist">GroupList</string>
     <string name="bottom_custom">Custom</string>
 
+    <!--diary fragment 관련 String-->
+    <string name="diary_modify">수정</string>
+    <string name="diary_contents">나모의 새로운 시작</string>
+    <string name="diary_date">2022.12.28</string>
+    <string name="diary_month">2022.12</string>
+    <string name="diary_title">나몽몽</string>
+
+    <!--연월 dialog 관련 String-->
+    <string name="dialog_confirm">확인</string>
+    <string name="dialog_cancel">취소</string>
+
+
 </resources>

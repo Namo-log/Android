@@ -1,4 +1,4 @@
-package com.example.namo.Bottom.Custom
+package com.example.namo.bottom.Custom
 
 import android.os.Bundle
 import android.view.LayoutInflater
