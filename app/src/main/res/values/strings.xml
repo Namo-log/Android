@@ -30,4 +30,9 @@
     <string name="bottom_grouplist">GroupList</string>
     <string name="bottom_custom">Custom</string>
 
+    <!-- Custom 화면 관련 String -->
+    <string name="custom_palette">palette fragment</string>
+    <string name="custom_font">font fragment</string>
+    <string name="custom_my">my fragment</string>
+
 </resources>
