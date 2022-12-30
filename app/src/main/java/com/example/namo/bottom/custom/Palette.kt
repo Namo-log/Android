@@ -1,4 +1,4 @@
-package com.example.namo.bottom.Custom
+package com.example.namo.bottom.custom
 
 data class Palette(
     var name: String,

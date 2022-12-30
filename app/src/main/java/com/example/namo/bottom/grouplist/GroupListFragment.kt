@@ -1,4 +1,4 @@
-package com.example.namo.bottom.GroupList
+package com.example.namo.bottom.grouplist
 
 import android.os.Bundle
 import android.util.Log
@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
-import com.example.namo.bottom.GroupList.Group
-import com.example.namo.bottom.GroupList.GroupListRVAdapter
 import com.example.namo.databinding.FragmentGroupListBinding
 
 

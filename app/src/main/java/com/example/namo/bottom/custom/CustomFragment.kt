@@ -1,14 +1,11 @@
-package com.example.namo.bottom.Custom
+package com.example.namo.bottom.custom
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.namo.bottom.Custom.Adapter.CustomVPAdapter
-import com.example.namo.MainActivity
-import com.example.namo.R
+import com.example.namo.bottom.custom.adapter.CustomVPAdapter
 import com.example.namo.databinding.FragmentCustomBinding
 import com.google.android.material.tabs.TabLayoutMediator
 

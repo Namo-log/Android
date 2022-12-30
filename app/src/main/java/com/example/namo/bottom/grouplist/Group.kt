@@ -1,4 +1,4 @@
-package com.example.namo.bottom.GroupList
+package com.example.namo.bottom.grouplist
 
 data class Group(
 

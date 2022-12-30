@@ -1,4 +1,4 @@
-package com.example.namo.SplashOnboarding.adapter
+package com.example.namo.splash.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

@@ -1,4 +1,4 @@
-package com.example.namo.bottom.Custom
+package com.example.namo.bottom.custom
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

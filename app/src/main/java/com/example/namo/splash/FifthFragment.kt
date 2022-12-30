@@ -1,4 +1,4 @@
-package com.example.namo.SplashOnboarding
+package com.example.namo.splash
 
 import android.content.Context
 import android.os.Bundle
