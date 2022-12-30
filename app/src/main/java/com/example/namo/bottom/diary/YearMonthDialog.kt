@@ -33,11 +33,11 @@ class YearMonthDialog(v: View): DialogFragment() {
 
 
         binding.acceptBtn.setOnClickListener {
-            // onClickedListener.onClicked(binding.monthPicker.value,binding.yearPicker.value)
+          // onClickedListener.onClicked(binding.monthPicker.value,binding.yearPicker.value)
             dismiss()
         }
-        binding.cancelBtn.setOnClickListener{
-            dismiss()
+       binding.cancelBtn.setOnClickListener{
+           dismiss()
         }
 
         binding.monthPicker.minValue = 1
