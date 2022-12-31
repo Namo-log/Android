@@ -80,7 +80,7 @@
     </style>
 
     <style name="Calendar.ItemViewStyle">
-        <item name="dayTextSize">14dp</item>
+        <item name="dayTextSize">14sp</item>
     </style>
 
 </resources>

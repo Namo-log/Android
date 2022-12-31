@@ -3,6 +3,7 @@ package com.example.namo.bottom.home.calendar
 import android.content.Context
 import android.content.res.AssetManager
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
@@ -30,8 +31,8 @@ class DayItemView @JvmOverloads constructor(
 
     private val bounds = Rect()
     private var paint : Paint = Paint()
-    private var noticePaint : Paint = Paint()
-    private var radius : Int = 9
+
+    private var today = DateTime().withTimeAtStartOfDay().millis
 
     init {
         context.withStyledAttributes(attrs, R.styleable.CalendarView, defStyleAttr, defStyleRes) {
@@ -41,7 +42,7 @@ class DayItemView @JvmOverloads constructor(
                 isAntiAlias = true
                 textSize = dayTextSize
                 typeface = Typeface.DEFAULT_BOLD
-                color = getDateColor(date.dayOfWeek)
+                color = Color.BLACK
                 if (!isSameMonth(date, firstDayOfMonth)) {
                     alpha = 50
                 }
@@ -54,6 +55,11 @@ class DayItemView @JvmOverloads constructor(
         if (canvas == null) return
 
         val day = date.dayOfMonth.toString()
+
+        if (date.withTimeAtStartOfDay().isEqual(today)) {
+            paint.setColor(resources.getColor(R.color.MainOrange))
+        }
+
         paint.getTextBounds(day, 0, day.length, bounds)
         canvas.drawText(
             day,

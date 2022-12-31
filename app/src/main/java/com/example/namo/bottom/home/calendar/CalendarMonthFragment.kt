@@ -32,24 +32,10 @@ class CalendarMonthFragment : Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate<FragmentCalendarMonthBinding>(inflater, R.layout.fragment_calendar_month, container, false)
 
-        binding.millis.text = DateTime(millis).toString("yyyy.MM")
         binding.calendarMonthView.initCalendar(DateTime(millis), getMonthList(DateTime(millis)))
 
-        clickListener()
 
         return binding.root
-    }
-
-    private fun clickListener() {
-        binding.millis.setOnClickListener {
-            SetMonthDialog(requireContext(), millis) {
-                val date = it
-                var result = 0
-                result = (date.year - DateTime(millis).year) * 12 + (date.monthOfYear - DateTime(millis).monthOfYear)
-
-                Log.d("TEST", result.toString())
-            }.show()
-        }
     }
 
     companion object {
