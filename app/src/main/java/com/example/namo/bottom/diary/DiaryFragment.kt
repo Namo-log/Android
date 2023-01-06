@@ -1,6 +1,8 @@
 package com.example.namo.bottom.diary
 
 import YearMonthDialog
+import YearMonthDialog.Companion.month
+import YearMonthDialog.Companion.year
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +13,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.databinding.FragmentDiaryBinding
+import java.text.DecimalFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -28,38 +33,37 @@ class DiaryFragment: Fragment() {
     ): View {
 
         binding = FragmentDiaryBinding.inflate(inflater, container, false)
-
-        val currentTime = Calendar.getInstance()
-        val year = currentTime.get(Calendar.YEAR)
-        val month = currentTime.get(Calendar.MONTH)+1
-
-        binding.diaryMonth.text = "${year}.${month}"
-
         dummy()
 
         binding.diaryMonth.setOnClickListener {
-            view?.let { it1 -> dialogCreate(it1) }
+            dialogCreate()
         }
-
-//        binding.diaryMonth.setOnClickedListener (object : YearMonthDialog.ButtonClickListener {
-//                override fun onClicked(year:Int,month:Int) {
-//                binding.diaryMonth.text = "${year}.${month}"
-//            }
-//        })
 
         return binding.root
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStart() {
         super.onStart()
+
+        val now=LocalDate.now()
+        val year=now.format(DateTimeFormatter.ofPattern("YYYY"))
+        val month=now.format(DateTimeFormatter.ofPattern("MM"))
+
+        binding.diaryMonth.text="$year.$month"
+
         initRecyclerview()
     }
 
-    private fun dialogCreate(view: View) {
-        val pd: YearMonthDialog= YearMonthDialog(view)
-        pd.show(parentFragmentManager, "YearMonthPickerTest")
+    private fun dialogCreate() {
 
+        val months=DecimalFormat("00")
+        val dialog =
+           YearMonthDialog.getInstance(acceptClick = {
+                  binding.diaryMonth.text= "$year.${months.format(month)}"
+            }, month = month, year =year)
+        dialog.show(parentFragmentManager,"YearMonthPickerTest")
     }
 
 
@@ -138,6 +142,7 @@ class DiaryFragment: Fragment() {
 
 }
 
+/** 나중에 따로 뺄게여 **/
 data class DiaryDummy(
     var category: String,
     var date: String,

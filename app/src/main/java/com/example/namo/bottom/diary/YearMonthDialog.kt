@@ -1,67 +1,82 @@
-import android.app.AlertDialog
-import android.app.Dialog
-import android.os.Build
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
-import androidx.annotation.RequiresApi
+import android.view.ViewGroup
+import android.view.Window
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.example.namo.R
 import com.example.namo.databinding.DialogSetMonthBinding
-
 import java.util.*
 
+class YearMonthDialog : DialogFragment(), View.OnClickListener{
 
-class YearMonthDialog(v: View): DialogFragment() {
-
-    private val MAX_YEAR = 2099
-    private val MIN_YEAR = 2000
+    private val maxYear = 2099
+    private val minYear = 2000
     lateinit var binding: DialogSetMonthBinding
+    private val cal: Calendar = Calendar.getInstance()
 
-    @RequiresApi(Build.VERSION_CODES.N)
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder =
-            AlertDialog.Builder(activity)
-        val inflater = requireActivity().layoutInflater
-
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding= DataBindingUtil.inflate(inflater, R.layout.dialog_set_month,null,false)
 
-        var cal = Calendar.getInstance()
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))  //배경 투명하게
+        dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)  //dialog 모서리 둥글게
 
-        binding.monthPicker.value=cal.get(Calendar.MONTH)
-        binding.yearPicker.value=cal.get(Calendar.YEAR)
+        binding.apply {
 
+            monthPicker.setOnValueChangedListener { picker, oldVal, newVal ->
+                month =  newVal
+            }
+           yearPicker.setOnValueChangedListener { picker, oldVal, newVal ->
+               year =newVal
+           }
 
-        binding.acceptBtn.setOnClickListener {
-          // onClickedListener.onClicked(binding.monthPicker.value,binding.yearPicker.value)
-            dismiss()
+            acceptBtn.setOnClickListener {
+                acceptClick(true)
+                dismiss()
+            }
+
+            cancelBtn.setOnClickListener {
+                dismiss()
+            }
+
+            monthPicker.minValue = 1
+            monthPicker.maxValue = 12
+
+            yearPicker.minValue = minYear
+            yearPicker.maxValue = maxYear
+            monthPicker.value = cal.get(Calendar.MONTH)
+            yearPicker.value = cal.get(Calendar.YEAR)
         }
-       binding.cancelBtn.setOnClickListener{
-           dismiss()
-        }
 
-        binding.monthPicker.minValue = 1
-        binding.monthPicker.maxValue = 12
-        binding. monthPicker.value = cal[Calendar.MONTH] + 1
-        val year = cal[Calendar.YEAR]
-        binding.yearPicker.minValue = MIN_YEAR
-        binding.yearPicker.maxValue = MAX_YEAR
-        binding.yearPicker.value = year
-
-        builder.setView(binding.root)
-
-        return builder.create()
+            return binding.root
     }
 
 
-    interface ButtonClickListener {
-        fun onClicked(year:Int,month:Int)
+    companion object {
+        lateinit var acceptClick: (Boolean) -> Unit
+        var month:Int=0
+        var year:Int=0
+
+        fun getInstance(acceptClick: (Boolean) -> Unit, month: Int, year: Int): YearMonthDialog {
+            this.acceptClick = acceptClick
+            this.month = month
+            this.year=year
+
+            return YearMonthDialog()
+        }
     }
 
-    private lateinit var onClickedListener: ButtonClickListener
-
-    fun setOnClickedListener(listener: ButtonClickListener) {
-        onClickedListener = listener
+    /** 다이얼로그 화면 외 클릭시 사라짐 **/
+    override fun onClick(p0: View?) {
+        dismiss()
     }
 
 }
