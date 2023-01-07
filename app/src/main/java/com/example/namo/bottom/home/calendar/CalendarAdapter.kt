@@ -2,13 +2,11 @@ package com.example.namo.bottom.home.calendar
 
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.adapter.FragmentViewHolder
-import androidx.viewpager2.widget.ViewPager2
 import org.joda.time.DateTime
 
 class CalendarAdapter(fm : FragmentActivity) : FragmentStateAdapter(fm) {
 
-    private var start : Long = DateTime().withTimeAtStartOfDay().millis
+    private var start : Long = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
 
     override fun getItemCount(): Int = Int.MAX_VALUE
 

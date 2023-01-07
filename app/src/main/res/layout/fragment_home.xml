@@ -8,6 +8,138 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="20dp">
+
+            <TextView
+                android:id="@+id/home_calendar_year_month_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:gravity="center_vertical|start"
+                android:text="yyyy년 MM월"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/home_calendar_today_tv"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:text="31"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:background="@drawable/border_round_all_stroke_black"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintBottom_toBottomOf="@id/home_calendar_year_month_tv"
+                app:layout_constraintTop_toTopOf="@id/home_calendar_year_month_tv"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginHorizontal="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="일"
+                android:textStyle="bold"
+                android:textColor="@color/notyetGray"
+                android:textSize="15sp"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="월"
+                android:textStyle="bold"
+                android:textColor="@color/notyetGray"
+                android:textSize="15sp"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="화"
+                android:textStyle="bold"
+                android:textColor="@color/notyetGray"
+                android:textSize="15sp"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="수"
+                android:textStyle="bold"
+                android:textColor="@color/notyetGray"
+                android:textSize="15sp"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="목"
+                android:textStyle="bold"
+                android:textColor="@color/notyetGray"
+                android:textSize="15sp"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="금"
+                android:textStyle="bold"
+                android:textColor="@color/notyetGray"
+                android:textSize="15sp"
+                android:gravity="center"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="토"
+                android:textStyle="bold"
+                android:textColor="@color/notyetGray"
+                android:textSize="15sp"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:layout_marginBottom="10dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/whiteGray"
+                android:elevation="5dp"
+                android:layout_marginBottom="10dp"/>
+
+        </LinearLayout>
+
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/home_calendar_vp"
             android:layout_width="match_parent"
