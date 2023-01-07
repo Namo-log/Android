@@ -35,7 +35,7 @@ class HomeFragment : Fragment() {
         binding = DataBindingUtil.inflate<FragmentHomeBinding>(inflater, R.layout.fragment_home, container,false)
         calendarAdapter = CalendarAdapter(context as MainActivity)
 
-        hideBottomNavigation(false)
+        //hideBottomNavigation(false)
 
         binding.homeCalendarTodayTv.text = DateTime().dayOfMonth.toString()
 
@@ -79,12 +79,12 @@ class HomeFragment : Fragment() {
         binding.homeCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
     }
 
-    private fun hideBottomNavigation( bool : Boolean){
-        val bottomNavigationView : BottomNavigationView = requireActivity().findViewById(R.id.nav_bar)
-        if(bool == true) {
-            bottomNavigationView.visibility = View.GONE
-        } else {
-            bottomNavigationView.visibility = View.VISIBLE
-        }
-    }
+//    private fun hideBottomNavigation( bool : Boolean){
+//        val bottomNavigationView : BottomNavigationView = requireActivity().findViewById(R.id.nav_bar)
+//        if(bool == true) {
+//            bottomNavigationView.visibility = View.GONE
+//        } else {
+//            bottomNavigationView.visibility = View.VISIBLE
+//        }
+//    }
 }

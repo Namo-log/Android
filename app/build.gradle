@@ -71,4 +71,7 @@ dependencies {
 
     //joda
     implementation 'joda-time:joda-time:2.10.10'
+
+    //splashscreen api
+    implementation 'androidx.core:core-splashscreen:1.0.0-rc01'
 }

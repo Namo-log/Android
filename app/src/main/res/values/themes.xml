@@ -18,16 +18,12 @@
         <item name="windowNoTitle">true</item>
     </style>
     <!-- Splash theme. -->
-    <style name="SplashTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <!-- white status bar -->
-        <!--        <item name="android:windowLightStatusBar">true</item> -->
-        <!-- background -->
-        <item name="android:windowBackground">@drawable/logo_namo</item>
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/MainOrange</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo_namo</item>
+        <item name="postSplashScreenTheme">@style/Theme.NaMo</item>
     </style>
-    <!--Black transparent background-->
+
     <style name="Theme.Transparent" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
