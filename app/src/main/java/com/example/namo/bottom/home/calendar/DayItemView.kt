@@ -1,9 +1,10 @@
 package com.example.namo.bottom.home.calendar
 
 import android.content.Context
-import android.content.res.AssetManager
 import android.graphics.*
-import android.graphics.drawable.shapes.RoundRectShape
+import android.os.Build
+import android.text.Layout
+import android.text.StaticLayout
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.util.Log
@@ -17,6 +18,7 @@ import com.example.namo.bottom.home.calendar.events.Event
 import com.example.namo.utils.CalendarUtils.Companion.getDateColor
 import com.example.namo.utils.CalendarUtils.Companion.isSameMonth
 import org.joda.time.DateTime
+
 
 class DayItemView @JvmOverloads constructor(
     context: Context,
@@ -49,6 +51,9 @@ class DayItemView @JvmOverloads constructor(
     private var _eventHorizontalPadding: Float = 0f
     private var _eventCornerRadius : Float = 0f
 
+    private lateinit var textBuilder : StaticLayout.Builder
+
+    private var eventText : String = ""
     private var moreText : String = ""
     //여기부터 수정
 
@@ -143,11 +148,13 @@ class DayItemView @JvmOverloads constructor(
             setBgPaintColor(eventList[i])
             canvas.drawPath(path, bgPaint)
 
+            //한 칸에 최대 6글자?
             if (showTitle) {
-                eventPaint.getTextBounds(eventList[i].title, 0, eventList[i].title.length, eventBounds)
+                getEventText(eventList[i].title)
+                eventPaint.getTextBounds(eventText, 0, eventText.length, eventBounds)
                 canvas.drawText(
-                    eventList[i].title,
-                    (width / 2 - eventBounds.width() / 2).toFloat(),
+                    eventText,
+                    _eventBetweenPadding,
                     getTextBottom(eventList[i].idx),
                     eventPaint
                 )
@@ -182,6 +189,15 @@ class DayItemView @JvmOverloads constructor(
                 "DAYITEMVIEW_CLICK",
                 "${date.year}년 ${date.monthOfYear}월 ${date.dayOfMonth}일 ${date.dayOfWeek}요일"
             )
+        }
+    }
+
+    private fun getEventText(title : String) {
+        if (title.length > 6) {
+            eventText = title.substring(0 until 5) + "..."
+        }
+        else {
+            eventText = title
         }
     }
 

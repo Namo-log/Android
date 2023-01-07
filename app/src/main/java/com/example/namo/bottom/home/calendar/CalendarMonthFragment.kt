@@ -87,7 +87,7 @@ class CalendarMonthFragment : Fragment() {
             )
             add(
                 Event(
-                    "오늘오늘",
+                    "가나다라마바사",
                     startLong = System.currentTimeMillis(),
                     endLong = System.currentTimeMillis(),
                     getInterval(System.currentTimeMillis(), System.currentTimeMillis()),
@@ -96,43 +96,7 @@ class CalendarMonthFragment : Fragment() {
             )
             add(
                 Event(
-                    "오늘오늘",
-                    startLong = System.currentTimeMillis(),
-                    endLong = System.currentTimeMillis(),
-                    getInterval(System.currentTimeMillis(), System.currentTimeMillis()),
-                    R.color.palette6
-                )
-            )
-            add(
-                Event(
-                    "오늘오늘",
-                    startLong = System.currentTimeMillis(),
-                    endLong = System.currentTimeMillis(),
-                    getInterval(System.currentTimeMillis(), System.currentTimeMillis()),
-                    R.color.palette6
-                )
-            )
-            add(
-                Event(
-                    "오늘오늘",
-                    startLong = System.currentTimeMillis(),
-                    endLong = System.currentTimeMillis(),
-                    getInterval(System.currentTimeMillis(), System.currentTimeMillis()),
-                    R.color.palette6
-                )
-            )
-            add(
-                Event(
-                    "오늘오늘오늘오늘오늘",
-                    startLong = System.currentTimeMillis(),
-                    endLong = System.currentTimeMillis(),
-                    getInterval(System.currentTimeMillis(), System.currentTimeMillis()),
-                    R.color.palette6
-                )
-            )
-            add(
-                Event(
-                    "그제 어제",
+                    "그제 어제 그제 어제 그제",
                     DateTime(System.currentTimeMillis()).minusDays(2).millis,
                     DateTime(System.currentTimeMillis()).minusDays(1).millis,
                     getInterval(DateTime(System.currentTimeMillis()).minusDays(2).millis, DateTime(System.currentTimeMillis()).minusDays(1).millis),
