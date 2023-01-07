@@ -50,7 +50,7 @@
             android:layout_height="20dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
-            android:layout_marginStart="20dp"
+            android:layout_marginHorizontal="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -61,7 +61,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/notyetGray"
                 android:textSize="15sp"
-                android:gravity="start"/>
+                android:gravity="center"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -71,7 +71,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/notyetGray"
                 android:textSize="15sp"
-                android:gravity="start"/>
+                android:gravity="center"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -81,7 +81,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/notyetGray"
                 android:textSize="15sp"
-                android:gravity="start"/>
+                android:gravity="center"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -91,7 +91,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/notyetGray"
                 android:textSize="15sp"
-                android:gravity="start"/>
+                android:gravity="center"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -101,7 +101,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/notyetGray"
                 android:textSize="15sp"
-                android:gravity="start"/>
+                android:gravity="center"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -111,7 +111,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/notyetGray"
                 android:textSize="15sp"
-                android:gravity="start"/>
+                android:gravity="center"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -121,7 +121,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/notyetGray"
                 android:textSize="15sp"
-                android:gravity="start"/>
+                android:gravity="center"/>
 
         </LinearLayout>
 

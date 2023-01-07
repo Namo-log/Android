@@ -22,8 +22,8 @@ class HomeFragment : Fragment() {
     private lateinit var calendarAdapter : CalendarAdapter
     private lateinit var binding: FragmentHomeBinding
 
-    private var millis = DateTime().millis
-    private var todayPos = Int.MAX_VALUE / 2
+    private var millis = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
+    private val todayPos = Int.MAX_VALUE / 2
     private var pos = Int.MAX_VALUE / 2
 
     override fun onCreateView(

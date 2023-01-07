@@ -6,5 +6,12 @@
 
         <attr name="dayHeight" format="dimension"/>
         <attr name="dayTextSize" format="dimension"/>
+        <attr name="eventTextSize" format="dimension"/>
+        <attr name="eventHeight" format="dimension"/>
+        <attr name="eventTopPadding" format="dimension"/>
+        <attr name="eventBetweenPadding" format="dimension"/>
+        <attr name="eventHorizontalPadding" format="dimension"/>
+        <attr name="eventCornerRadius" format="dimension"/>
+        <attr name="eventMorePadding" format="dimension"/>
     </declare-styleable>
 </resources>

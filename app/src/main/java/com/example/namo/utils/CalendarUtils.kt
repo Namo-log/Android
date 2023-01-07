@@ -1,8 +1,10 @@
 package com.example.namo.utils
 
+import android.content.Context
 import android.graphics.Color
 import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
+import com.example.namo.R
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
 import java.time.DayOfWeek
@@ -20,7 +22,7 @@ class CalendarUtils {
             val date = dateTime.withDayOfMonth(1)
             val prev = getPrevOffset(date)
 
-            val startValue = date.minusDays(prev)
+            val startValue = date.minusDays(prev).withTimeAtStartOfDay()
 
             val totalDay = DateTimeConstants.DAYS_PER_WEEK * WEEKS_PER_MONTH
 
@@ -55,12 +57,17 @@ class CalendarUtils {
          * 나머지 -> 검정색
          */
         @ColorInt
-        fun getDateColor(@IntRange(from = 1, to = 7) dayOfWeek: Int) : Int {
-            return when(dayOfWeek) {
-                DateTimeConstants.SATURDAY -> Color.BLACK
-                DateTimeConstants.SUNDAY -> Color.BLACK
-                else -> Color.BLACK
-            }
+        fun getDateColor(today : Boolean, context : Context) : Int {
+            return if(today) context.resources.getColor(R.color.MainOrange)
+                    else Color.BLACK
         }
+//        @ColorInt
+//        fun getDateColor(@IntRange(from = 1, to = 7) dayOfWeek: Int) : Int {
+//            return when(dayOfWeek) {
+//                DateTimeConstants.SATURDAY -> Color.BLACK
+//                DateTimeConstants.SUNDAY -> Color.BLACK
+//                else -> Color.BLACK
+//            }
+//        }
     }
 }
