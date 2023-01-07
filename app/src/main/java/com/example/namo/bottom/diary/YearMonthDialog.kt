@@ -6,6 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+import android.widget.NumberPicker
+import android.widget.Toast
+import androidx.core.view.isEmpty
+import androidx.core.view.isNotEmpty
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.example.namo.R
@@ -29,13 +34,16 @@ class YearMonthDialog : DialogFragment(), View.OnClickListener{
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))  //배경 투명하게
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)  //dialog 모서리 둥글게
 
+        month=cal.get(Calendar.MONTH+1)
+        year=cal.get(Calendar.YEAR)
+
         binding.apply {
 
             monthPicker.setOnValueChangedListener { picker, oldVal, newVal ->
-                month =  newVal
+                month = newVal
             }
            yearPicker.setOnValueChangedListener { picker, oldVal, newVal ->
-               year =newVal
+               year = newVal
            }
 
             acceptBtn.setOnClickListener {
@@ -49,13 +57,12 @@ class YearMonthDialog : DialogFragment(), View.OnClickListener{
 
             monthPicker.minValue = 1
             monthPicker.maxValue = 12
-
             yearPicker.minValue = minYear
             yearPicker.maxValue = maxYear
-            monthPicker.value = cal.get(Calendar.MONTH)
+            monthPicker.value = cal.get(Calendar.MONTH+1)
             yearPicker.value = cal.get(Calendar.YEAR)
-        }
 
+        }
             return binding.root
     }
 

@@ -37,10 +37,10 @@
                 android:id="@+id/diary_day_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{diary.date}"
+                android:text=""
                 android:textColor="@color/realGray"
                 android:gravity="center"
-                android:textSize="16sp"
+                android:textSize="17sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toTopOf="@id/view1"
                 app:layout_constraintBottom_toBottomOf="@id/view1"/>
