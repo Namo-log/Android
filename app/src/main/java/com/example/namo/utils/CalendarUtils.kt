@@ -5,6 +5,7 @@ import android.graphics.Color
 import androidx.annotation.ColorInt
 import androidx.annotation.IntRange
 import com.example.namo.R
+import com.example.namo.bottom.home.calendar.events.Event
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
 import java.time.DayOfWeek
@@ -36,7 +37,7 @@ class CalendarUtils {
         /**
          * 해당 calendar 의 이전 달의 일 갯수를 반환한다.
          */
-        private fun getPrevOffset(dateTime: DateTime) : Int {
+        fun getPrevOffset(dateTime: DateTime) : Int {
             var prevMonthTailOffset = dateTime.dayOfWeek
 
             if (prevMonthTailOffset >= 7) prevMonthTailOffset %= 7
@@ -69,5 +70,50 @@ class CalendarUtils {
 //                else -> Color.BLACK
 //            }
 //        }
+
+        fun getInterval(start : Long, end : Long) : Int {
+            return ((end - start) / (24*60*60*1000)).toInt()
+        }
+
+        fun getIndex(event : Event, eventList : ArrayList<Event>) : Int {
+            var maxIdx = 0
+            var idx = 0
+            for (i in 0 until event.interval + 1) {
+                var temp = getTodayEvent(eventList, DateTime(event.startLong).withTimeAtStartOfDay().plusDays(i))
+                idx = temp.indexOf(event)
+                if (maxIdx < idx) {
+                    maxIdx = idx
+                }
+            }
+
+            return maxIdx
+        }
+
+        fun getTodayEvent(eventList : ArrayList<Event>, today : DateTime) : ArrayList<Event> {
+            var contains = ArrayList<Event>()
+
+            eventList.forEach {
+                if (isEventHaveToday(it, today)) {
+                    contains.add(it)
+                }
+            }
+
+//        contains.forEach {
+//            it.idx = getIndex(it, eventList)
+//        }
+
+            return contains
+        }
+
+        fun isEventHaveToday(event : Event, today : DateTime) : Boolean {
+            val start = DateTime(event.startLong).withTimeAtStartOfDay()
+            val end = DateTime(event.endLong).withTimeAtStartOfDay()
+            val now = today.withTimeAtStartOfDay()
+
+            if ((now.isAfter(start) && now.isBefore(end)) || now.isEqual(start) || now.isEqual(end)) {
+                return true
+            }
+            return false
+        }
     }
 }

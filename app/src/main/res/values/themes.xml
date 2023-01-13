@@ -78,12 +78,14 @@
     <style name="Calendar.ItemViewStyle">
         <item name="dayTextSize">14sp</item>
         <item name="eventTextSize">10sp</item>
+        <item name="dayTextHeight">14dp</item>
         <item name="eventHeight">11dp</item>
         <item name="eventTopPadding">7dp</item>
         <item name="eventBetweenPadding">3dp</item>
         <item name="eventHorizontalPadding">1dp</item>
         <item name="eventCornerRadius">3dp</item>
         <item name="eventMorePadding">10dp</item>
+        <item name="eventLineHeight">4dp</item>
     </style>
 
 </resources>

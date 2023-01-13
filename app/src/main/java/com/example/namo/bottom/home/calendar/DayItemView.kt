@@ -44,20 +44,23 @@ class DayItemView @JvmOverloads constructor(
     private lateinit var corners: FloatArray
     private var eventPos : Int = 0
     private var eventTop : Float = 0f
+    private var _dayTextHeight : Float = 0f
     private var _eventHeight: Float = 0f
     private var _eventTopPadding: Float = 0f
     private var _eventMorePadding: Float = 0f
     private var _eventBetweenPadding: Float = 0f
     private var _eventHorizontalPadding: Float = 0f
     private var _eventCornerRadius : Float = 0f
+    private var _eventLineHeight : Float = 0f
 
     private lateinit var textBuilder : StaticLayout.Builder
 
     private var eventText : String = ""
     private var moreText : String = ""
-    //여기부터 수정
 
     private var today = DateTime().withTimeAtStartOfDay().millis
+
+    private lateinit var mDayItemClickListener: DayItemClickListener
 
     init {
         context.withStyledAttributes(attrs, R.styleable.CalendarView, defStyleAttr, defStyleRes) {
@@ -65,12 +68,14 @@ class DayItemView @JvmOverloads constructor(
                 getDimensionPixelSize(R.styleable.CalendarView_dayTextSize, 0).toFloat()
             val eventTextSize =
                 getDimensionPixelSize(R.styleable.CalendarView_eventTextSize, 0).toFloat()
+            _dayTextHeight = getDimension(R.styleable.CalendarView_dayTextHeight, 0f)
             _eventHeight = getDimension(R.styleable.CalendarView_eventHeight, 0f)
             _eventTopPadding = getDimension(R.styleable.CalendarView_eventTopPadding, 0f)
             _eventMorePadding = getDimension(R.styleable.CalendarView_eventMorePadding, 0f)
             _eventBetweenPadding = getDimension(R.styleable.CalendarView_eventBetweenPadding, 0f)
             _eventHorizontalPadding = getDimension(R.styleable.CalendarView_eventHorizontalPadding, 0f)
             _eventCornerRadius = getDimension(R.styleable.CalendarView_eventCornerRadius, 0f)
+            _eventLineHeight = getDimension(R.styleable.CalendarView_eventLineHeight, 0f)
 
             paint = TextPaint().apply {
                 isAntiAlias = true
@@ -111,6 +116,17 @@ class DayItemView @JvmOverloads constructor(
         }
     }
 
+    fun setDayItemClickListener(dayItemClickListener: DayItemClickListener) {
+        mDayItemClickListener = dayItemClickListener
+    }
+
+//    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+//        super.onSizeChanged(w, h, oldw, oldh)
+////        requestLayout()
+////        invalidate()
+//
+//    }
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         if (canvas == null) return
@@ -121,75 +137,73 @@ class DayItemView @JvmOverloads constructor(
         canvas.drawText(
             day,
             (width / 2 - bounds.width() / 2).toFloat(),
-            (bounds.height()).toFloat(),
+            _dayTextHeight,
             paint
         )
 
-        eventTop = bounds.height() + _eventTopPadding
+        eventTop = _dayTextHeight + _eventTopPadding
 
-        for (i in 0 until eventList.size) {
+        if (height > 250) {
+//            Log.d("DAY_ITEM", "화면 긺 ${height}")
+            for (i in 0 until eventList.size) {
 
-            if (height - getEventBottom(i) < _eventHeight) {
-                setMore(i)
-                canvas.drawText(
-                    moreText,
-                    (width / 2 - moreBounds.width() / 2).toFloat(),
-                    height - _eventMorePadding,
-                    morePaint
-                )
-                break
+                if (height - getEventBottom(i) < _eventHeight) {
+                    setMore(i)
+                    canvas.drawText(
+                        moreText,
+                        (width / 2 - moreBounds.width() / 2).toFloat(),
+                        height - _eventMorePadding,
+                        morePaint
+                    )
+                    break
+                }
+
+                corners = getRound(eventList[i])
+                rect = setRect(eventList[i])
+
+                val path = Path()
+                path.addRoundRect(rect, corners, Path.Direction.CW)
+                setBgPaintColor(eventList[i])
+                canvas.drawPath(path, bgPaint)
+
+                //한 칸에 최대 6글자?
+                if (showTitle) {
+                    getEventText(eventList[i].title)
+                    eventPaint.getTextBounds(eventText, 0, eventText.length, eventBounds)
+                    canvas.drawText(
+                        eventText,
+                        _eventBetweenPadding,
+                        getTextBottom(eventList[i].idx),
+                        eventPaint
+                    )
+                }
+
             }
+        }
+        else {
+            for (i in 0 until eventList.size) {
 
-            corners = getRound(eventList[i])
-            rect = setRect(eventList[i])
+                if (getEventLineBottom(i) >= height) {
+                    break
+                }
 
-            val path = Path()
-            path.addRoundRect(rect, corners, Path.Direction.CW)
-            setBgPaintColor(eventList[i])
-            canvas.drawPath(path, bgPaint)
+                corners = getRound(eventList[i])
+                rect = setLineRect(eventList[i])
 
-            //한 칸에 최대 6글자?
-            if (showTitle) {
-                getEventText(eventList[i].title)
-                eventPaint.getTextBounds(eventText, 0, eventText.length, eventBounds)
-                canvas.drawText(
-                    eventText,
-                    _eventBetweenPadding,
-                    getTextBottom(eventList[i].idx),
-                    eventPaint
-                )
+                val path = Path()
+                path.addRoundRect(rect, corners, Path.Direction.CW)
+                setBgPaintColor(eventList[i])
+                canvas.drawPath(path, bgPaint)
             }
-
         }
 
-//        eventList.forEach {
-//            corners = getRound(it)
-//            rect = setRect(it)
-//
-//            val path = Path()
-//            path.addRoundRect(rect, corners, Path.Direction.CW)
-//            setBgPaintColor(it)
-//            canvas.drawPath(path, bgPaint)
-//
-//            if (showTitle) {
-//                eventPaint.getTextBounds(it.title, 0, it.title.length, eventBounds)
-////                Log.d("PAINT_PAINT", paint.textSize.toString())
-////                Log.d("PAINT_EVENT", eventPaint.textSize.toString())
-//                canvas.drawText(
-//                    it.title,
-//                    (width / 2 - eventBounds.width() / 2).toFloat(),
-//                    getTextBottom(it.idx),
-//                    eventPaint
-//                )
-//            }
+//        setOnClickListener {
+//            mDayItemClickListener.onSendDate(date)
+//            Log.d(
+//                "DAYITEMVIEW_CLICK",
+//                "${date.year}년 ${date.monthOfYear}월 ${date.dayOfMonth}일 ${date.dayOfWeek}요일"
+//            )
 //        }
-
-        setOnClickListener {
-            Log.d(
-                "DAYITEMVIEW_CLICK",
-                "${date.year}년 ${date.monthOfYear}월 ${date.dayOfMonth}일 ${date.dayOfWeek}요일"
-            )
-        }
     }
 
     private fun getEventText(title : String) {
@@ -210,6 +224,10 @@ class DayItemView @JvmOverloads constructor(
 
     private fun getEventBottom(idx : Int) : Float {
         return (eventTop + (_eventBetweenPadding * idx) + (_eventHeight * (idx + 1)))
+    }
+
+    private fun getEventLineBottom(idx : Int) : Float {
+        return (eventTop + (_eventBetweenPadding * idx) + (_eventLineHeight * (idx + 1)))
     }
 
     private fun setBgPaintColor(event: Event) {
@@ -266,6 +284,52 @@ class DayItemView @JvmOverloads constructor(
                     (eventTop + ((_eventBetweenPadding + _eventHeight) * it.idx)),
                     width.toFloat() - _eventHorizontalPadding,
                     (eventTop + (_eventBetweenPadding * it.idx) + (_eventHeight * (it.idx + 1)))
+                )
+            }
+            else -> {
+                rect = RectF(
+                    0f,
+                    (eventTop + ((_eventBetweenPadding + _eventHeight) * it.idx)),
+                    width.toFloat(),
+                    (eventTop + (_eventBetweenPadding * it.idx) + (_eventHeight * (it.idx + 1)))
+                )
+            }
+        }
+        return rect
+    }
+
+    private fun setLineRect(it : Event) : RectF {
+        when(eventPos) {
+            0 -> { //one day
+                rect = RectF(
+                    _eventHorizontalPadding,
+                    (eventTop + ((_eventBetweenPadding + _eventLineHeight) * it.idx)),
+                    width.toFloat() - _eventHorizontalPadding,
+                    (eventTop + (_eventBetweenPadding * it.idx) + (_eventLineHeight * (it.idx + 1)))
+                )
+            }
+            1 -> { //start
+                rect = RectF(
+                    _eventHorizontalPadding,
+                    (eventTop + ((_eventBetweenPadding + _eventLineHeight) * it.idx)),
+                    width.toFloat(),
+                    (eventTop + (_eventBetweenPadding * it.idx) + (_eventLineHeight * (it.idx + 1)))
+                )
+            }
+            2 -> { //middle
+                rect = RectF(
+                    0f,
+                    (eventTop + ((_eventBetweenPadding + _eventLineHeight) * it.idx)),
+                    width.toFloat(),
+                    (eventTop + (_eventBetweenPadding * it.idx) + (_eventLineHeight * (it.idx + 1)))
+                )
+            }
+            3 -> { //end
+                rect = RectF(
+                    0f,
+                    (eventTop + ((_eventBetweenPadding + _eventLineHeight) * it.idx)),
+                    width.toFloat() - _eventHorizontalPadding,
+                    (eventTop + (_eventBetweenPadding * it.idx) + (_eventLineHeight * (it.idx + 1)))
                 )
             }
             else -> {

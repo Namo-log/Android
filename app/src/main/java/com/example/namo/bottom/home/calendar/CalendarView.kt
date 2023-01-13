@@ -1,20 +1,25 @@
 package com.example.namo.bottom.home.calendar
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.ContextThemeWrapper
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
-import androidx.core.content.withStyledAttributes
 import androidx.core.view.children
-import androidx.core.view.forEach
 import com.example.namo.R
 import com.example.namo.bottom.home.calendar.events.Event
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
+import com.example.namo.utils.CalendarUtils.Companion.getIndex
+import com.example.namo.utils.CalendarUtils.Companion.getTodayEvent
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants.DAYS_PER_WEEK
-import kotlin.math.max
+
 
 class CalendarView @JvmOverloads constructor(
     context: Context,
@@ -31,10 +36,19 @@ class CalendarView @JvmOverloads constructor(
 //        }
 //    }
 
+    var detector: GestureDetector? = null
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         setMeasuredDimension(getDefaultSize(suggestedMinimumWidth, widthMeasureSpec), getDefaultSize(suggestedMinimumHeight, heightMeasureSpec))
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+//        Log.d("SIZE", "Oldh : ${oldh}, h : $h")
+        invalidate()
+    }
+
+    @SuppressLint("ClickableViewAccessibility", "DrawAllocation")
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         val iWidth = (width / DAYS_PER_WEEK).toFloat()
         val iHeight = (height / WEEKS_PER_MONTH).toFloat()
@@ -46,9 +60,79 @@ class CalendarView @JvmOverloads constructor(
 
             view.layout(left.toInt(), top.toInt(), (left+iWidth).toInt(), (top+iHeight).toInt())
 
+
             index++
         }
+
+//        //터치를 했을때 작동하는 메서드
+//        //터치를 했을때 작동하는 메서드
+//        setOnTouchListener(OnTouchListener { v, event ->
+//            val action = event.action
+//            val curX = event.x //눌린 곳의 X좌표
+//            val curY = event.y //눌린 곳의 Y좌표
+//            if (action == MotionEvent.ACTION_DOWN) {   //처음 눌렸을 때
+//                Log.d("TOUCH_COOR", "손가락 눌림 : $curX, $curY")
+//            } else if (action == MotionEvent.ACTION_MOVE) {    //누르고 움직였을 때
+//                Log.d("TOUCH_COOR", "손가락 움직임 : $curX, $curY")
+//            } else if (action == MotionEvent.ACTION_UP) {    //누른걸 뗐을 때
+//                Log.d("TOUCH_COOR", "손가락 뗌 : $curX, $curY")
+//            }
+//            true
+//        })
+//
+//        detector = GestureDetector(context, object : GestureDetector.OnGestureListener {
+//            //화면이 눌렸을 때
+//            override fun onDown(e: MotionEvent): Boolean {
+//                Log.d("TOUCH_COOR", "onDown() 호출됨")
+//                return true
+//            }
+//
+//            //화면이 눌렸다 떼어지는 경우
+//            override fun onShowPress(e: MotionEvent) {
+//                Log.d("TOUCH_COOR", "onShowPress() 호출됨")
+//            }
+//
+//            //화면이 한 손가락으로 눌렸다 떼어지는 경우
+//            override fun onSingleTapUp(e: MotionEvent): Boolean {
+//                Log.d("TOUCH_COOR", "onSingleTapUp() 호출됨")
+//                return true
+//            }
+//
+//            //화면이 눌린채 일정한 속도와 방향으로 움직였다 떼어지는 경우
+//            override fun onScroll(
+//                e1: MotionEvent,
+//                e2: MotionEvent,
+//                distanceX: Float,
+//                distanceY: Float
+//            ): Boolean {
+//                Log.d("TOUCH_COOR", "onScroll() 호출됨 => $distanceX, $distanceY")
+//                return false
+//            }
+//
+//            //화면을 손가락으로 오랫동안 눌렀을 경우
+//            override fun onLongPress(e: MotionEvent) {
+//                Log.d("TOUCH_COOR", "onLongPress() 호출됨")
+//            }
+//
+//            //화면이 눌린채 손가락이 가속해서 움직였다 떼어지는 경우
+//            override fun onFling(
+//                e1: MotionEvent,
+//                e2: MotionEvent,
+//                velocityX: Float,
+//                velocityY: Float
+//            ): Boolean {
+//                Log.d("TOUCH_COOR", "")
+//                return true
+//            }
+//        })
+//
+//        setOnTouchListener(OnTouchListener { v, event ->
+//            detector!!.onTouchEvent(event)
+//            true
+//        })
+
     }
+
 
     /**
      * 달력 그리기 시작한다.
@@ -64,53 +148,21 @@ class CalendarView @JvmOverloads constructor(
                 it.idx = getIndex(it, eventList)
             }
 
-            addView(DayItemView(
+            val date = it
+            val view = DayItemView(
                 context = context,
                 date = it,
                 firstDayOfMonth = firstDayOfMonth,
                 eventList = events
-            ))
+            )
+//            view.setOnClickListener {
+//                Log.d(
+//                    "DAYITEMVIEW_CLICK",
+//                    "${date.year}년 ${date.monthOfYear}월 ${date.dayOfMonth}일 ${date.dayOfWeek}요일"
+//                )
+//            }
+
+            addView(view)
         }
-    }
-
-    private fun getTodayEvent(eventList : ArrayList<Event>, today : DateTime) : ArrayList<Event> {
-        var contains = ArrayList<Event>()
-
-        eventList.forEach {
-            if (isEventHaveToday(it, today)) {
-                contains.add(it)
-            }
-        }
-
-//        contains.forEach {
-//            it.idx = getIndex(it, eventList)
-//        }
-
-        return contains
-    }
-
-    private fun getIndex(event : Event, eventList : ArrayList<Event>) : Int {
-        var maxIdx = 0
-        var idx = 0
-        for (i in 0 until event.interval + 1) {
-            var temp = getTodayEvent(eventList, DateTime(event.startLong).withTimeAtStartOfDay().plusDays(i))
-            idx = temp.indexOf(event)
-            if (maxIdx < idx) {
-                maxIdx = idx
-            }
-        }
-
-        return maxIdx
-    }
-
-    private fun isEventHaveToday(event : Event, today : DateTime) : Boolean {
-        val start = DateTime(event.startLong).withTimeAtStartOfDay()
-        val end = DateTime(event.endLong).withTimeAtStartOfDay()
-        val now = today.withTimeAtStartOfDay()
-
-        if ((now.isAfter(start) && now.isBefore(end)) || now.isEqual(start) || now.isEqual(end)) {
-            return true
-        }
-        return false
     }
 }
