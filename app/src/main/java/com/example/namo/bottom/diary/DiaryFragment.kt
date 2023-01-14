@@ -1,31 +1,27 @@
 package com.example.namo.bottom.diary
 
 import YearMonthDialog
-import YearMonthDialog.Companion.month
-import YearMonthDialog.Companion.year
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.core.widget.addTextChangedListener
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.databinding.FragmentDiaryBinding
-import java.text.DecimalFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import org.joda.time.DateTime
 import java.util.*
 
 
 class DiaryFragment: Fragment() {
 
     lateinit var binding: FragmentDiaryBinding
-    private var diaryDatas = ArrayList<DiaryDummy>()
 
+    private var diaryData = ArrayList<Diary>()
+    private var millis = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -49,73 +45,102 @@ class DiaryFragment: Fragment() {
     override fun onStart() {
         super.onStart()
 
-        val now=LocalDate.now()
-        val years=now.format(DateTimeFormatter.ofPattern("YYYY"))
-        val months=now.format(DateTimeFormatter.ofPattern("MM"))
-
-        binding.diaryMonth.text="$years.$months"
-
+        binding.diaryMonth.text=DateTime(millis).toString("yyyy.MM")
         initRecyclerview()
-
     }
 
     private fun dialogCreate() {
 
-        val months=DecimalFormat("00")
-        val dialog =
-           YearMonthDialog.getInstance(acceptClick = {
-                  binding.diaryMonth.text= "$year.${months.format(month)}"
-            }, month = month, year =year)
-        dialog.show(parentFragmentManager,"YearMonthPickerTest")
+        YearMonthDialog(millis){
+            binding.diaryMonth.text=DateTime(it).toString("yyyy.MM")
+        }.show(parentFragmentManager,"test")
     }
 
 
     private fun initRecyclerview() {
+
         binding.diaryListRv.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
-        val listAdapter = DiaryListRVAdapter(requireContext(), diaryDatas)
+        val listAdapter = DiaryListRVAdapter(requireContext(), diaryData){
+            position->onItemClick(position)
+        }
         binding.diaryListRv.adapter = listAdapter
+
+    }
+
+    private fun onItemClick(position:Int){
+        val act=DiaryFragmentDirections.actionDiaryFragmentToDiaryDetailFragment(position)
+        findNavController().navigate(act)
     }
 
 
     fun dummy() {
 
-        diaryDatas.apply {
+        diaryData.apply {
             add(
-                DiaryDummy(
+                Diary(
                     "#DE8989",
-                    2022,11,9,
+                    1673254515000,
                     "더미 1",
                     "nnnnnnnnnnnnnnnnnn",
-                    mutableListOf(GalleryDummy(R.drawable.ic_division))
+                    mutableListOf(Gallery(R.drawable.bg_gradient_splash))
                 )
             )
             add(
-                DiaryDummy(
+                Diary(
                     "#E1B000",
-                    2023,1,7,
+                    1672563315000,
                     "더미 2",
                     "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
                     mutableListOf(
-                        GalleryDummy(R.drawable.ic_gallery)
+                        Gallery(R.drawable.ic_bottom_custom_no_select)
                     )
                 )
             )
             add(
-                DiaryDummy(
+                Diary(
                     "#5C8596",
-                    2023,2,3,
+                    1673686515000,
                     "더미 3",
                     "nnnnnnnnnnnnnnnnnnnnn",
                     mutableListOf(
-                        GalleryDummy(R.drawable.ic_login_kakao),
-                        GalleryDummy(R.drawable.ic_gallery),
-                        GalleryDummy(R.drawable.ic_gallery)
+                        Gallery(R.drawable.ic_bottom_diary_no_select),
+                        Gallery(R.drawable.ic_bottom_diary_no_select),
+                        Gallery(R.drawable.ic_bottom_custom_select)
                     )
                 )
-            ) } } }
+            )
+            add(
+                Diary(
+                    "#AD7FFF",
+                    1673686000000,
+                    "더미 4",
+                    "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+                    mutableListOf(
+                        Gallery(R.drawable.ic_bottom_home_select),
+                        Gallery(R.drawable.ic_bottom_share_no_select)
+                    )
+                )
+            )
+            add(
+                Diary(
+                    "#DA6022",
+                    1673513715000,
+                    "더미 5",
+                    "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+                    mutableListOf(
+                        Gallery(R.drawable.ic_bottom_share_no_select),
+                        Gallery(R.drawable.ic_bottom_home_select)
+                    )
+                )
+            )
+        }
 
+    }
+
+
+}
 
 
 

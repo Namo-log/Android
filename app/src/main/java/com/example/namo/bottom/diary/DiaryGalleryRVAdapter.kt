@@ -1,10 +1,11 @@
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.namo.bottom.diary.GalleryDummy
+import com.example.namo.bottom.diary.Gallery
 import com.example.namo.databinding.ItemDiaryGalleryBinding
 
-class DiaryGalleryRVAdapter(private val imgList:MutableList<GalleryDummy>):
+class DiaryGalleryRVAdapter(
+    private val imgList:MutableList<Gallery>):
     RecyclerView.Adapter<DiaryGalleryRVAdapter.ViewHolder>(){
 
 
@@ -21,7 +22,7 @@ class DiaryGalleryRVAdapter(private val imgList:MutableList<GalleryDummy>):
 
     inner class ViewHolder(val binding: ItemDiaryGalleryBinding): RecyclerView.ViewHolder(binding.root){
 
-        fun bind(item: GalleryDummy) {
+        fun bind(item: Gallery) {
           binding.galleryImgIv.setImageResource(item.img)
         }
 

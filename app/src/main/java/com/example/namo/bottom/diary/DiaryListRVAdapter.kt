@@ -1,8 +1,6 @@
 package com.example.namo.bottom.diary
 
 import DiaryGalleryRVAdapter
-import YearMonthDialog.Companion.month
-import YearMonthDialog.Companion.year
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -13,13 +11,14 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.databinding.ItemDiaryListBinding
-import java.text.DecimalFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 class DiaryListRVAdapter(
     val context: Context,
-    var list: MutableList<DiaryDummy>
+    var list: MutableList<Diary>,
+    private val onItemClicked:(position:Int)->Unit
 ):
     RecyclerView.Adapter<DiaryListRVAdapter.ViewHolder>() {
 
@@ -35,6 +34,12 @@ class DiaryListRVAdapter(
 
         holder.bind(list[position])
 
+        holder.apply {
+            binding.diaryEditTv.setOnClickListener {
+                onItemClicked(position)
+            }
+        }
+
     }
 
     override fun getItemCount(): Int = list.size
@@ -43,17 +48,16 @@ class DiaryListRVAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         @RequiresApi(Build.VERSION_CODES.O)
-        fun bind(item: DiaryDummy) {
+        fun bind(item: Diary) {
 
-            val num= DecimalFormat("00")
-            var months=num.format(item.month)
-            var dates=num.format(item.date)
+            val dayFormat=SimpleDateFormat("yyyy-MM-dd", Locale.KOREA)
+            val day=dayFormat.format(item.date)
 
             binding.diary = item
             binding.itemDiaryCategoryColorIv.backgroundTintList = ColorStateList.valueOf(Color.parseColor(item.category))
             binding.diaryGalleryRv.adapter = DiaryGalleryRVAdapter(item.rv)
             binding.diaryGalleryRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            binding.diaryDayTv.text= "${item.year}-${months}-${dates}"
+            binding.diaryDayTv.text= day
 
         }
     }
