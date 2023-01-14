@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.databinding.FragmentDiaryBinding
@@ -61,9 +62,18 @@ class DiaryFragment: Fragment() {
         binding.diaryListRv.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
-        val listAdapter = DiaryListRVAdapter(requireContext(), diaryData)
+        val listAdapter = DiaryListRVAdapter(requireContext(), diaryData){
+            position->onItemClick(position)
+        }
         binding.diaryListRv.adapter = listAdapter
-          }
+
+    }
+
+    private fun onItemClick(position:Int){
+        val act=DiaryFragmentDirections.actionDiaryFragmentToDiaryDetailFragment(position)
+        findNavController().navigate(act)
+    }
+
 
     fun dummy() {
 

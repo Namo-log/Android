@@ -14,7 +14,16 @@
         android:id="@+id/diaryFragment"
         android:name="com.example.namo.bottom.diary.DiaryFragment"
         android:label="DiaryFragment"
-        tools:layout="@layout/fragment_diary"/>
+        tools:layout="@layout/fragment_diary">
+        <action
+            android:id="@+id/action_diaryFragment_to_diaryDetailFragment"
+            app:destination="@id/diaryDetailFragment" >
+            <argument
+                android:name="position"
+                app:argType="integer" />
+        </action>
+    </fragment>
+
     <fragment
         android:id="@+id/customFragment"
         android:name="com.example.namo.bottom.custom.CustomFragment"
@@ -74,5 +83,16 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/termsFragment"
             app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/diaryDetailFragment"
+        android:name="com.example.namo.bottom.diary.DiaryDetailFragment"
+        android:label="DiaryDetailFragment" >
+        <argument
+            android:name="position"
+            app:argType="integer" />
+        <action
+            android:id="@+id/diaryDetailToDiary"
+            app:popUpTo="@id/diaryFragment" />
     </fragment>
 </navigation>

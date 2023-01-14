@@ -4,7 +4,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.bottom.diary.Gallery
 import com.example.namo.databinding.ItemDiaryGalleryBinding
 
-class DiaryGalleryRVAdapter(private val imgList:MutableList<Gallery>):
+class DiaryGalleryRVAdapter(
+    private val imgList:MutableList<Gallery>):
     RecyclerView.Adapter<DiaryGalleryRVAdapter.ViewHolder>(){
 
 

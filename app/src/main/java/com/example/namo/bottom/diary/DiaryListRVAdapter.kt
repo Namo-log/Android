@@ -17,7 +17,8 @@ import java.util.*
 
 class DiaryListRVAdapter(
     val context: Context,
-    var list: MutableList<Diary>
+    var list: MutableList<Diary>,
+    private val onItemClicked:(position:Int)->Unit
 ):
     RecyclerView.Adapter<DiaryListRVAdapter.ViewHolder>() {
 
@@ -33,6 +34,12 @@ class DiaryListRVAdapter(
 
         holder.bind(list[position])
 
+        holder.apply {
+            binding.diaryEditTv.setOnClickListener {
+                onItemClicked(position)
+            }
+        }
+
     }
 
     override fun getItemCount(): Int = list.size
@@ -45,8 +52,6 @@ class DiaryListRVAdapter(
 
             val dayFormat=SimpleDateFormat("yyyy-MM-dd", Locale.KOREA)
             val day=dayFormat.format(item.date)
-
-
 
             binding.diary = item
             binding.itemDiaryCategoryColorIv.backgroundTintList = ColorStateList.valueOf(Color.parseColor(item.category))
