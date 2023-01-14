@@ -168,7 +168,7 @@
             android:paddingVertical="20dp"
             android:paddingHorizontal="25dp"
             android:elevation="5dp"
-            android:visibility="visible"
+            android:visibility="gone"
             android:background="@drawable/border_round_top_border_gray"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
