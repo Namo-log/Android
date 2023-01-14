@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/diary_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="55dp"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/diary_back_iv"
+            android:layout_width="35dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_back"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/diary_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="UMC 스터디"
+            android:textSize="27sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/diary_back_iv"/>
+
+        <ImageView
+            android:id="@+id/diary_delete_tv"
+            android:layout_width="40dp"
+            android:layout_height="47dp"
+            android:src="@drawable/ic_delete_schedule"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/diary_back_iv"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/diary_date_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="날짜"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_marginTop="35dp"
+        android:layout_marginStart="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/diary_top"/>
+
+    <TextView
+        android:id="@+id/diary_input_date_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2022.07.14"
+        android:textSize="17sp"
+        android:layout_marginStart="30dp"
+        app:layout_constraintStart_toEndOf="@id/diary_date_tv"
+        app:layout_constraintTop_toTopOf="@id/diary_date_tv"/>
+
+    <TextView
+        android:id="@+id/diary_place_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="장소"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textSize="17sp"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/diary_date_tv"/>
+
+    <TextView
+        android:id="@+id/diary_input_place_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="탐앤탐스 건대점"
+        android:textSize="17sp"
+        android:layout_marginStart="30dp"
+        app:layout_constraintStart_toEndOf="@id/diary_place_tv"
+        app:layout_constraintTop_toTopOf="@id/diary_place_tv"/>
+
+
+
+    <TextView
+        android:id="@+id/diary_contents_et"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:text="기록이 없습니다. "
+        android:gravity="start"
+        android:textColor="@color/realGray"
+        android:background="@drawable/border_round_all_fill_lightgray"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintTop_toBottomOf="@id/diary_place_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        app:layout_constraintBottom_toTopOf="@id/diary_edit_tv"
+        android:background="@color/notyetGray" />
+
+    <TextView
+        android:id="@+id/diary_edit_tv"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/white"
+        android:padding="15dp"
+        android:text="기록 편집"
+        android:textAlignment="center"
+        android:textColor="@color/MainOrange"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/diary_gallery_saved_ry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_diary_gallery"
+        app:layout_constraintTop_toBottomOf="@id/diary_contents_et"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
