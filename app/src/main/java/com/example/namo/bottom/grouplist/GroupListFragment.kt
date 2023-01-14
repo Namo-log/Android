@@ -78,7 +78,7 @@ class GroupListFragment : Fragment() {
                     showCreateGroupDialog()
                 } else if (menuItem.itemId === R.id.menu_item_input_group_code) {
                     Toast.makeText(activity, "그룹 코드 입력", Toast.LENGTH_SHORT).show()
-                    //startActivity(Intent(activity, InputGroupCodeActivity::class.java))
+                    showGroupCodeDialog()
                 }
                 false
             }
@@ -89,6 +89,13 @@ class GroupListFragment : Fragment() {
     // 그룹 생성
     private fun showCreateGroupDialog() {
         CreateGroupDialog(requireContext()) {
+            //viewModel.setName(it)
+        }.show()
+    }
+
+    // 그룹 코드
+    private fun showGroupCodeDialog() {
+        GroupCodeDialog(requireContext()) {
             //viewModel.setName(it)
         }.show()
     }

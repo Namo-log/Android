@@ -47,4 +47,9 @@
         <item name="android:textColor">@color/textGray</item>
     </style>
 
+    <style name="dialog_underline">
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/notyetGray</item>
+    </style>
+
 </resources>

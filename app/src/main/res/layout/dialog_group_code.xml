@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_round_all_10dp">
+
+        <TextView
+            android:id="@+id/group_code_back_tv"
+            style="@style/dialog_default_btn"
+            android:layout_marginStart="10dp"
+            android:text="@string/dialog_close"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/group_code_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="40dp"
+            android:padding="10dp"
+            android:text="@string/group_code"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/group_code_back_tv"
+            app:layout_constraintEnd_toStartOf="@id/group_code_save_tv"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/group_code_save_tv"
+            style="@style/dialog_default_btn"
+            android:layout_marginEnd="10dp"
+            android:text="@string/dialog_done"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/group_code_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="20dp"
+            android:text="@string/group_code"
+            android:textColor="@color/textGray"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/group_code_back_tv"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <EditText
+            android:id="@+id/group_code_et"
+            android:layout_width="145dp"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:hint="@string/group_name_input"
+            android:singleLine="true"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="@id/group_code_underline"
+            app:layout_constraintTop_toTopOf="@id/group_code_name_tv"
+            app:layout_constraintBottom_toBottomOf="@id/group_code_name_tv"/>
+
+        <View
+            android:id="@+id/group_code_underline"
+            android:layout_width="145dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintStart_toStartOf="@id/group_code_et"
+            app:layout_constraintEnd_toEndOf="@id/group_code_et"
+            app:layout_constraintTop_toBottomOf="@id/group_code_et"
+            style="@style/dialog_underline"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
