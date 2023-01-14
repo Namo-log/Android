@@ -12,6 +12,7 @@ import com.example.namo.R
 import com.example.namo.utils.CalendarUtils.Companion.getMonthList
 import com.example.namo.bottom.home.calendar.events.Event
 import com.example.namo.databinding.FragmentCalendarMonthBinding
+import com.example.namo.utils.CalendarUtils.Companion.getInterval
 import org.joda.time.DateTime
 
 class CalendarMonthFragment : Fragment() {
@@ -41,10 +42,6 @@ class CalendarMonthFragment : Fragment() {
 
 
         return binding.root
-    }
-
-    private fun getInterval(start : Long, end : Long) : Int {
-        return ((end - start) / (24*60*60*1000)).toInt()
     }
 
     private fun getEventList() {

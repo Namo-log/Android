@@ -60,4 +60,16 @@
     <string name="dialog_confirm">확인</string>
     <string name="dialog_cancel">취소</string>
 
+    <!--  home fragment 관련 string  -->
+    <string name="month_calendar_header_year_month">yyyy년 MM월</string>
+    <string name="month_calendar_header_today">31</string>
+    <string name="sunday">일</string>
+    <string name="monday">월</string>
+    <string name="tuesday">화</string>
+    <string name="wednesday">수</string>
+    <string name="thursday">목</string>
+    <string name="friday">금</string>
+    <string name="saturday">토</string>
+    <string name="home_daily_date">MM.dd (E)</string>
+
 </resources>

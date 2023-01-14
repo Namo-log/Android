@@ -7,4 +7,7 @@
     <dimen name="onboarding_default_text_size">18sp</dimen>
     <dimen name="onboarding_skip_layout_padding">15dp</dimen>
     <dimen name="onboarding_skip_text_size">15sp</dimen>
+    <dimen name="test_100">100dp</dimen>
+    <dimen name="test_10">10dp</dimen>
+
 </resources>
