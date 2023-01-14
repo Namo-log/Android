@@ -1,15 +1,13 @@
 package com.example.namo.bottom.diary
 
-data class DiaryDummy(
+data class Diary(
     var category: String,
-    var year:Int,
-    var month:Int,
-    var date:Int,
+    var date:Long=0,
     var title: String,
     var contents: String,
-    var rv: MutableList<GalleryDummy>
+    var rv: MutableList<Gallery>
 )
 
-data class GalleryDummy(
+data class Gallery(
     var img: Int
 )
