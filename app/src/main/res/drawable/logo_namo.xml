@@ -2,10 +2,10 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/transparent"/>
     <item
-        android:top="49dp"
-        android:bottom="49dp"
-        android:left="51dp"
-        android:right="51dp">
+        android:top="70dp"
+        android:bottom="70dp"
+        android:left="70dp"
+        android:right="70dp">
         <bitmap
             android:src="@drawable/ic_logo_transparent_4x"
             android:gravity="fill"/>
