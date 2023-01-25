@@ -9,11 +9,13 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.namo.bottom.home.calendar.CalendarAdapter
 import com.example.namo.MainActivity
@@ -30,6 +32,7 @@ import org.joda.time.DateTime
 import com.example.namo.utils.CalendarUtils.Companion.getMonthList
 import com.example.namo.utils.CalendarUtils.Companion.getPrevOffset
 import org.joda.time.DateTimeConstants.DAYS_PER_WEEK
+import org.w3c.dom.Text
 import kotlin.math.abs
 
 
@@ -61,6 +64,19 @@ class HomeFragment : Fragment() {
 
     private val personalEventRVAdapter = DailyPersonalRVAdapter()
     private val groupEventRVAdapter = DailyGroupRVAdapter()
+
+//    private val headerText : TextView by lazy {
+//        requireActivity().findViewById(R.id.home_daily_header_tv)
+//    }
+//    private val scrollView : ScrollView by lazy {
+//        requireActivity().findViewById(R.id.daily_scroll_sv)
+//    }
+//    private val rv : RecyclerView by lazy {
+//        requireActivity().findViewById(R.id.home_daily_event_rv)
+//    }
+//    private val groupRv : RecyclerView by lazy {
+//        requireActivity().findViewById(R.id.home_daily_group_event_rv)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -101,60 +117,60 @@ class HomeFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     private fun clickListener() {
 
-//        var detector = GestureDetector(context, object : GestureDetector.OnGestureListener {
-//            override fun onDown(e: MotionEvent?): Boolean {
-//                Log.d("VP_TOUCH", "onDown")
-//                return false
-//            }
-//
-//            override fun onShowPress(e: MotionEvent?) {
-//                Log.d("VP_TOUCH", "ShowPress")
-//            }
-//
-//            override fun onSingleTapUp(e: MotionEvent?): Boolean {
-//                Log.d("VP_TOUCH", "onSingleTapUp")
-//                return false
-//            }
-//
-//            override fun onScroll(
-//                e1: MotionEvent?,
-//                e2: MotionEvent?,
-//                distanceX: Float,
-//                distanceY: Float
-//            ): Boolean {
-//                Log.d("VP_TOUCH", "onScroll() 호출됨 => $distanceX, $distanceY")
-//                return false
-//            }
-//
-//            override fun onLongPress(e: MotionEvent?) {
-//                Log.d("VP_TOUCH", "onLongPress")
-//            }
-//
-//            override fun onFling(
-//                e1: MotionEvent?,
-//                e2: MotionEvent?,
-//                velocityX: Float,
-//                velocityY: Float
-//            ): Boolean {
-//                Log.d("VP_TOUCH", "onFling")
-//                return false
-//            }
-//
-//        })
+        var detector = GestureDetector(context, object : GestureDetector.OnGestureListener {
+            override fun onDown(e: MotionEvent?): Boolean {
+                Log.d("VP_TOUCH", "onDown")
+                return false
+            }
 
-//        binding.constraintLayout4.setOnClickListener {
-//            Log.d("TOUCH","constraint layout")
-//        }
+            override fun onShowPress(e: MotionEvent?) {
+                Log.d("VP_TOUCH", "ShowPress")
+            }
 
-//        binding.constraintLayout4.setOnTouchListener { v, event ->
-//            detector.onTouchEvent(event)
-//            false
-//        }
+            override fun onSingleTapUp(e: MotionEvent?): Boolean {
+                Log.d("VP_TOUCH", "onSingleTapUp")
+                return false
+            }
 
-//        binding.homeCalendarVp.getChildAt(0).setOnTouchListener { v, event ->
-//            detector.onTouchEvent(event)
-//            false
-//        }
+            override fun onScroll(
+                e1: MotionEvent?,
+                e2: MotionEvent?,
+                distanceX: Float,
+                distanceY: Float
+            ): Boolean {
+                Log.d("VP_TOUCH", "onScroll() 호출됨 => $distanceX, $distanceY")
+                return false
+            }
+
+            override fun onLongPress(e: MotionEvent?) {
+                Log.d("VP_TOUCH", "onLongPress")
+            }
+
+            override fun onFling(
+                e1: MotionEvent?,
+                e2: MotionEvent?,
+                velocityX: Float,
+                velocityY: Float
+            ): Boolean {
+                Log.d("VP_TOUCH", "onFling")
+                return false
+            }
+
+        })
+
+        binding.constraintLayout4.setOnClickListener {
+            Log.d("TOUCH","constraint layout")
+        }
+
+        binding.constraintLayout4.setOnTouchListener { v, event ->
+            detector.onTouchEvent(event)
+            false
+        }
+
+        binding.homeCalendarVp.getChildAt(0).setOnTouchListener { v, event ->
+            detector.onTouchEvent(event)
+            false
+        }
 
         binding.homeCalendarVp.getChildAt(0).setOnTouchListener { v, event ->
 
@@ -186,17 +202,17 @@ class HomeFragment : Fragment() {
 //                Log.d("TOUCH_DATE", monthList[nowIdx].toString("yyyy년 MM월 dd일"))
                 setDaily(nowIdx)
 
-                Log.d("TOUCH_SHOW_PREV", "isShow : ${isShow}")
-                if (isShow && prevIdx == nowIdx) {
-                    binding.dailyLayout.visibility = View.GONE
-                    isShow = !isShow
-                }
-                else if (!isShow) {
-                    binding.dailyLayout.visibility = View.VISIBLE
-                    isShow = !isShow
-                }
-
-                Log.d("TOUCH_SHOW_AFTER", "isShow : ${isShow}")
+//                Log.d("TOUCH_SHOW_PREV", "isShow : ${isShow}")
+//                if (isShow && prevIdx == nowIdx) {
+//                    binding.dailyLayout.visibility = View.GONE
+//                    isShow = !isShow
+//                }
+//                else if (!isShow) {
+//                    binding.dailyLayout.visibility = View.VISIBLE
+//                    isShow = !isShow
+//                }
+//
+//                Log.d("TOUCH_SHOW_AFTER", "isShow : ${isShow}")
                 prevIdx = nowIdx
             }
 
@@ -220,11 +236,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun setAdapter() {
-        binding.homeDailyEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.homeDailyEventRv.adapter = personalEventRVAdapter
+        binding.bottomLayout.homeDailyEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.bottomLayout.homeDailyEventRv.adapter = personalEventRVAdapter
 
-        binding.homeDailyGroupEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.homeDailyGroupEventRv.adapter = groupEventRVAdapter
+        binding.bottomLayout.homeDailyGroupEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.bottomLayout.homeDailyGroupEventRv.adapter = groupEventRVAdapter
         setToday()
     }
 
@@ -236,8 +252,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun setDaily(idx : Int) {
-        binding.homeDailyHeaderTv.text = monthList[idx].toString("MM.dd (E)")
-        binding.dailyScrollSv.scrollTo(0,0)
+        binding.bottomLayout.homeDailyHeaderTv.text = monthList[idx].toString("MM.dd (E)")
+        binding.bottomLayout.dailyScrollSv.scrollTo(0,0)
         setData(idx)
     }
 
@@ -257,11 +273,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun setEmptyMsg() {
-        if (event_personal.size == 0 ) binding.homeDailyEventNoneTv.visibility = View.VISIBLE
-        else binding.homeDailyEventNoneTv.visibility = View.GONE
+        if (event_personal.size == 0 ) binding.bottomLayout.homeDailyEventNoneTv.visibility = View.VISIBLE
+        else binding.bottomLayout.homeDailyEventNoneTv.visibility = View.GONE
 
-        if (event_group.size == 0) binding.homeDailyGroupEventNoneTv.visibility = View.VISIBLE
-        else binding.homeDailyGroupEventNoneTv.visibility = View.GONE
+        if (event_group.size == 0) binding.bottomLayout.homeDailyGroupEventNoneTv.visibility = View.VISIBLE
+        else binding.bottomLayout.homeDailyGroupEventNoneTv.visibility = View.GONE
     }
 
     private fun getDummy(idx : Int) {
