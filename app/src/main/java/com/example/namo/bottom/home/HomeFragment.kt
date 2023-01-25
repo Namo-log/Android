@@ -188,11 +188,15 @@ class HomeFragment : Fragment() {
 
                 Log.d("TOUCH_SHOW_PREV", "isShow : ${isShow}")
                 if (isShow && prevIdx == nowIdx) {
-                    binding.dailyLayout.visibility = View.GONE
+//                    binding.dailyLayout.visibility = View.GONE
+//                    hideBottomNavigation(false)
+                    binding.constraintLayout4.transitionToStart()
                     isShow = !isShow
                 }
                 else if (!isShow) {
-                    binding.dailyLayout.visibility = View.VISIBLE
+//                    binding.dailyLayout.visibility = View.VISIBLE
+//                    hideBottomNavigation(true)
+                    binding.constraintLayout4.transitionToEnd()
                     isShow = !isShow
                 }
 
@@ -346,12 +350,12 @@ class HomeFragment : Fragment() {
 //        Log.d("MONTH_LIST", monthList.toString())
     }
 
-//    private fun hideBottomNavigation( bool : Boolean){
-//        val bottomNavigationView : BottomNavigationView = requireActivity().findViewById(R.id.nav_bar)
-//        if(bool == true) {
-//            bottomNavigationView.visibility = View.GONE
-//        } else {
-//            bottomNavigationView.visibility = View.VISIBLE
-//        }
-//    }
+    private fun hideBottomNavigation( bool : Boolean){
+        val bottomNavigationView : BottomNavigationView = requireActivity().findViewById(R.id.nav_bar)
+        if(bool) {
+            bottomNavigationView.visibility = View.GONE
+        } else {
+            bottomNavigationView.visibility = View.VISIBLE
+        }
+    }
 }

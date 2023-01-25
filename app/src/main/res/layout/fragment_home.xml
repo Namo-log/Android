@@ -3,11 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.motion.widget.MotionLayout
         android:id="@+id/constraintLayout4"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layoutDescription="@xml/fragment_home_xml_constraintlayout4_scene">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/home_calendar_header_layout"
@@ -163,40 +164,40 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/daily_layout"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:orientation="vertical"
-            android:paddingVertical="20dp"
-            android:paddingHorizontal="25dp"
-            android:elevation="5dp"
-            android:visibility="gone"
+            android:layout_height="1dp"
             android:background="@drawable/border_round_top_border_gray"
+            android:elevation="5dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="25dp"
+            android:paddingTop="15dp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <TextView
                 android:id="@+id/home_daily_header_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/home_daily_date"
-                android:textStyle="bold"
-                android:textSize="25sp"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                app:layout_constraintTop_toTopOf="parent"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/daily_scroll_sv"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="35dp"
-                app:layout_constraintTop_toBottomOf="@id/home_daily_header_tv"
-                app:layout_constraintStart_toStartOf="@id/home_daily_header_tv"
+                android:layout_marginTop="15dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/home_daily_header_tv"
-                app:layout_constraintBottom_toTopOf="@id/home_fab_btn">
-                
+                app:layout_constraintStart_toStartOf="@id/home_daily_header_tv"
+                app:layout_constraintTop_toBottomOf="@id/home_daily_header_tv">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -206,72 +207,73 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
                         android:text="개인 일정"
-                        android:textSize="15sp"
                         android:textColor="@color/textGray"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="15dp"/>
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/home_daily_event_rv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        tools:listitem="@layout/item_calendar_event"
-                        android:nestedScrollingEnabled="false"/>
+                        android:nestedScrollingEnabled="false"
+                        tools:listitem="@layout/item_calendar_event" />
 
                     <TextView
                         android:id="@+id/home_daily_event_none_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
                         android:text="등록된 개인 일정이 없습니다."
-                        android:textSize="16sp"
                         android:textAlignment="center"
                         android:textColor="@color/textGray"
-                        android:layout_marginBottom="16dp"
-                        android:visibility="gone"/>
-                    
-                     <TextView
+                        android:textSize="16sp"
+                        android:visibility="gone" />
+
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
                         android:text="모임 일정"
-                        android:textSize="15sp"
                         android:textColor="@color/textGray"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="15dp"/>
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/home_daily_group_event_rv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        tools:listitem="@layout/item_calendar_event_group"
-                        android:nestedScrollingEnabled="false"/>
+                        android:nestedScrollingEnabled="false"
+                        tools:listitem="@layout/item_calendar_event_group" />
 
                     <TextView
                         android:id="@+id/home_daily_group_event_none_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
                         android:text="등록된 모임 일정이 없습니다."
-                        android:textSize="16sp"
                         android:textAlignment="center"
                         android:textColor="@color/textGray"
-                        android:layout_marginBottom="16dp"
-                        android:visibility="gone"/>
+                        android:textSize="16sp"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 
             </androidx.core.widget.NestedScrollView>
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/home_fab_btn"
+                android:id="@+id/home_fab_btn_inside"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="20dp"
                 android:src="@color/MainOrange"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginTop="25dp"/>
+                app:layout_constraintEnd_toEndOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.motion.widget.MotionLayout>
 
 </layout>
