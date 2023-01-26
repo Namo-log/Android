@@ -1,3 +1,5 @@
+package com.example.namo.bottom.diary
+
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -8,12 +10,12 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 import com.example.namo.databinding.DialogSetMonthBinding
-import org.joda.time.DateTime
+import org.joda.time.LocalDateTime
 
 
 class YearMonthDialog(
-    private var millis:Long,
-    private val okCallback : (DateTime) -> Unit
+    private var dateTime: LocalDateTime,
+    private val okCallback : (LocalDateTime) -> Unit
 ) : DialogFragment(), View.OnClickListener{
 
     private val maxYear = 2099
@@ -47,9 +49,9 @@ class YearMonthDialog(
             yearPicker.minValue = minYear
             yearPicker.maxValue = maxYear
 
-            val date = DateTime(millis)
-            yearPicker.value = date.year
-            monthPicker.value = date.monthOfYear
+            val date=LocalDateTime(dateTime)
+            yearPicker.value=date.year
+            monthPicker.value=date.monthOfYear
 
             onClickListener()
         }
@@ -61,13 +63,14 @@ class YearMonthDialog(
         binding.apply {
 
             acceptBtn.setOnClickListener {
-                val date = DateTime(binding.yearPicker.value, binding.monthPicker.value, 1, 0, 0)
+                val date=LocalDateTime(binding.yearPicker.value,binding.monthPicker.value,1,0,0)
+
                 okCallback(date)
                 dismiss()
             }
 
             cancelBtn.setOnClickListener {
-                okCallback(DateTime(millis))
+                okCallback(LocalDateTime(dateTime))
                 dismiss()
             }
         }
