@@ -1,6 +1,5 @@
 package com.example.namo.bottom.diary
 
-import YearMonthDialog
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,16 +11,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.databinding.FragmentDiaryBinding
-import org.joda.time.DateTime
+import org.joda.time.LocalDateTime
 import java.util.*
 
 
 class DiaryFragment: Fragment() {
 
-    lateinit var binding: FragmentDiaryBinding
+    private var _binding: FragmentDiaryBinding? = null
+    private val binding get() = _binding!!
 
+    private var datetime= LocalDateTime()
     private var diaryData = ArrayList<Diary>()
-    private var millis = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -30,7 +30,7 @@ class DiaryFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        binding = FragmentDiaryBinding.inflate(inflater, container, false)
+        _binding = FragmentDiaryBinding.inflate(inflater, container, false)
         dummy()
 
         binding.diaryMonth.setOnClickListener {
@@ -45,14 +45,14 @@ class DiaryFragment: Fragment() {
     override fun onStart() {
         super.onStart()
 
-        binding.diaryMonth.text=DateTime(millis).toString("yyyy.MM")
+        binding.diaryMonth.text=LocalDateTime.now().toString("yyyy.MM")
         initRecyclerview()
     }
 
     private fun dialogCreate() {
 
-        YearMonthDialog(millis){
-            binding.diaryMonth.text=DateTime(it).toString("yyyy.MM")
+        YearMonthDialog(datetime){
+            binding.diaryMonth.text=LocalDateTime(it).toString("yyyy.MM")
         }.show(parentFragmentManager,"test")
     }
 
@@ -66,7 +66,6 @@ class DiaryFragment: Fragment() {
             position->onItemClick(position)
         }
         binding.diaryListRv.adapter = listAdapter
-
     }
 
     private fun onItemClick(position:Int){
@@ -75,13 +74,13 @@ class DiaryFragment: Fragment() {
     }
 
 
-    fun dummy() {
+    private fun dummy() {
 
         diaryData.apply {
             add(
                 Diary(
                     "#DE8989",
-                    1673254515000,
+                    LocalDateTime(2023,1,4,1,22,22),
                     "더미 1",
                     "nnnnnnnnnnnnnnnnnn",
                     mutableListOf(Gallery(R.drawable.bg_gradient_splash))
@@ -90,7 +89,7 @@ class DiaryFragment: Fragment() {
             add(
                 Diary(
                     "#E1B000",
-                    1672563315000,
+                    LocalDateTime(2023,1,25,1,12,22),
                     "더미 2",
                     "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
                     mutableListOf(
@@ -101,7 +100,7 @@ class DiaryFragment: Fragment() {
             add(
                 Diary(
                     "#5C8596",
-                    1673686515000,
+                    LocalDateTime(2023,1,8,1,0,22),
                     "더미 3",
                     "nnnnnnnnnnnnnnnnnnnnn",
                     mutableListOf(
@@ -114,7 +113,7 @@ class DiaryFragment: Fragment() {
             add(
                 Diary(
                     "#AD7FFF",
-                    1673686000000,
+                    LocalDateTime(2023,1,22,1,12,22),
                     "더미 4",
                     "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
                     mutableListOf(
@@ -126,7 +125,7 @@ class DiaryFragment: Fragment() {
             add(
                 Diary(
                     "#DA6022",
-                    1673513715000,
+                    LocalDateTime(2023,1,24,1,32,22),
                     "더미 5",
                     "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
                     mutableListOf(
@@ -138,7 +137,10 @@ class DiaryFragment: Fragment() {
         }
 
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
 }
 

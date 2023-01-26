@@ -1,6 +1,5 @@
 package com.example.namo.bottom.diary
 
-import DiaryGalleryRVAdapter
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -11,9 +10,6 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.databinding.ItemDiaryListBinding
-import java.text.SimpleDateFormat
-import java.util.*
-
 
 class DiaryListRVAdapter(
     val context: Context,
@@ -39,7 +35,6 @@ class DiaryListRVAdapter(
                 onItemClicked(position)
             }
         }
-
     }
 
     override fun getItemCount(): Int = list.size
@@ -50,15 +45,14 @@ class DiaryListRVAdapter(
         @RequiresApi(Build.VERSION_CODES.O)
         fun bind(item: Diary) {
 
-            val dayFormat=SimpleDateFormat("yyyy-MM-dd", Locale.KOREA)
-            val day=dayFormat.format(item.date)
+            val dateTime=item.date.toString("yyyy-MM-dd")
 
             binding.diary = item
             binding.itemDiaryCategoryColorIv.backgroundTintList = ColorStateList.valueOf(Color.parseColor(item.category))
-            binding.diaryGalleryRv.adapter = DiaryGalleryRVAdapter(item.rv)
+            binding.diaryGalleryRv.adapter = DiaryGalleryRVAdapter(item.rv,context)
             binding.diaryGalleryRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            binding.diaryDayTv.text= day
-
+            binding.diaryDayTv.text=dateTime
         }
     }
 }
+

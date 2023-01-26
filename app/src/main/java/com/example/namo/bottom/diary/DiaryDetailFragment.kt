@@ -18,7 +18,8 @@ import java.util.ArrayList
 
 class DiaryDetailFragment : Fragment() {
 
-    lateinit var binding: FragmentDiaryDetailBinding
+    private var _binding: FragmentDiaryDetailBinding? = null
+    private val binding get() = _binding!!
     private var diaryData = ArrayList<Diary>()
     private var galleryData=ArrayList<Gallery>()
 
@@ -29,7 +30,7 @@ class DiaryDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        binding = FragmentDiaryDetailBinding.inflate(inflater, container, false)
+        _binding = FragmentDiaryDetailBinding.inflate(inflater, container, false)
 
         hideBottomNavigation(true)
 
@@ -42,7 +43,7 @@ class DiaryDetailFragment : Fragment() {
 //        binding.diaryGallerySavedRy.layoutManager=
 //            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 //
-//        val listAdapter = DiaryGalleryRVAdapter(galleryData)
+//        val listAdapter = com.example.namo.bottom.diary.DiaryGalleryRVAdapter(galleryData)
 //        binding.diaryGallerySavedRy.adapter = listAdapter
 
 
@@ -66,6 +67,7 @@ class DiaryDetailFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
 
+        _binding = null
         hideBottomNavigation(false)
     }
 }
