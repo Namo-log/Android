@@ -6,7 +6,7 @@
     <Transition
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@id/start"
-        motion:duration="60">
+        motion:duration="170">
         <KeyFrameSet>
             <KeyAttribute
                 motion:motionTarget="@+id/daily_layout"
