@@ -143,7 +143,7 @@ class DayItemView @JvmOverloads constructor(
 
         eventTop = _dayTextHeight + _eventTopPadding
 
-        if (height > 250) {
+        if (height - eventTop > _eventHeight * 3) {
 //            Log.d("DAY_ITEM", "화면 긺 ${height}")
             for (i in 0 until eventList.size) {
 
