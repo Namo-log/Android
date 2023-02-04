@@ -29,7 +29,7 @@
                 android:gravity="center_vertical|start"
                 android:text="@string/month_calendar_header_year_month"
                 android:textColor="@color/black"
-                android:textSize="25sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -43,7 +43,7 @@
                 android:gravity="center"
                 android:text="@string/month_calendar_header_today"
                 android:textColor="@color/black"
-                android:textSize="15sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/home_calendar_year_month_tv"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -69,7 +69,7 @@
                 android:gravity="center"
                 android:text="@string/sunday"
                 android:textColor="@color/notyetGray"
-                android:textSize="15sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -79,7 +79,7 @@
                 android:gravity="center"
                 android:text="@string/monday"
                 android:textColor="@color/notyetGray"
-                android:textSize="15sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -89,7 +89,7 @@
                 android:gravity="center"
                 android:text="@string/tuesday"
                 android:textColor="@color/notyetGray"
-                android:textSize="15sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -99,7 +99,7 @@
                 android:gravity="center"
                 android:text="@string/wednesday"
                 android:textColor="@color/notyetGray"
-                android:textSize="15sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -109,7 +109,7 @@
                 android:gravity="center"
                 android:text="@string/thursday"
                 android:textColor="@color/notyetGray"
-                android:textSize="15sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -119,7 +119,7 @@
                 android:gravity="center"
                 android:text="@string/friday"
                 android:textColor="@color/notyetGray"
-                android:textSize="15sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -129,7 +129,7 @@
                 android:gravity="center"
                 android:text="@string/saturday"
                 android:textColor="@color/notyetGray"
-                android:textSize="15sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -160,6 +160,331 @@
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@id/daily_layout"
             app:layout_constraintTop_toBottomOf="@id/home_calendar_divider_layout" />
+
+<!--        <LinearLayout-->
+<!--            android:id="@+id/home_calendar_dates_stroke_layout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:orientation="vertical"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="@id/home_calendar_vp"-->
+<!--            app:layout_constraintBottom_toBottomOf="@id/home_calendar_vp"-->
+<!--            android:weightSum="6"-->
+<!--            android:paddingHorizontal="10dp">-->
+
+<!--            <LinearLayout-->
+<!--                android:id="@+id/home_calendar_week_1"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:weightSum="7"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_1_day_1"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_1_day_2"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_1_day_3"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_1_day_4"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_1_day_5"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_1_day_6"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_1_day_7"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--            </LinearLayout>-->
+
+<!--            <LinearLayout-->
+<!--                android:id="@+id/home_calendar_week_2"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:weightSum="7"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_2_day_1"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_2_day_2"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_2_day_3"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_2_day_4"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_2_day_5"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_2_day_6"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_2_day_7"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--            </LinearLayout>-->
+
+<!--            <LinearLayout-->
+<!--                android:id="@+id/home_calendar_week_3"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:weightSum="7"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_3_day_1"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_3_day_2"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_3_day_3"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_3_day_4"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_3_day_5"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_3_day_6"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_3_day_7"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--            </LinearLayout>-->
+
+<!--            <LinearLayout-->
+<!--                android:id="@+id/home_calendar_week_4"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:weightSum="7"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_4_day_1"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_4_day_2"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_4_day_3"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_4_day_4"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_4_day_5"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_4_day_6"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_4_day_7"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--            </LinearLayout>-->
+
+<!--            <LinearLayout-->
+<!--                android:id="@+id/home_calendar_week_5"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:weightSum="7"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_5_day_1"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_5_day_2"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_5_day_3"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_5_day_4"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_5_day_5"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_5_day_6"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_5_day_7"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--            </LinearLayout>-->
+
+<!--            <LinearLayout-->
+<!--                android:id="@+id/home_calendar_week_6"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:weightSum="7"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_6_day_1"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_6_day_2"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_6_day_3"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_6_day_4"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_6_day_5"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_6_day_6"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--                <View-->
+<!--                    android:id="@+id/home_calendar_week_6_day_7"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_weight="1"/>-->
+
+<!--            </LinearLayout>-->
+
+<!--        </LinearLayout>-->
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/daily_layout"
@@ -262,15 +587,31 @@
 
             </androidx.core.widget.NestedScrollView>
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/home_fab_btn_inside"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/home_fab"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginBottom="20dp"
-                android:src="@color/MainOrange"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="20dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@color/MainOrange"/>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_plus_floating"
+                    android:tint="@color/white"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

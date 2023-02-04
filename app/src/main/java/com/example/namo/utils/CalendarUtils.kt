@@ -59,7 +59,7 @@ class CalendarUtils {
          */
         @ColorInt
         fun getDateColor(today : Boolean, context : Context) : Int {
-            return if(today) context.resources.getColor(R.color.MainOrange)
+            return if(today) Color.WHITE
                     else Color.BLACK
         }
 //        @ColorInt

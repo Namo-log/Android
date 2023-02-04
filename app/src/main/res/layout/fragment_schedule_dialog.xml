@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/border_round_top_border_gray"
+        android:elevation="5dp"
+        android:paddingTop="15dp"
+        android:paddingHorizontal="20dp"
+
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_hideable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="8">
+
+            <TextView
+                android:id="@+id/dialog_schedule_close_btn"
+                android:layout_width="0dp"
+                android:layout_height="18dp"
+                android:layout_weight="1"
+                android:text="닫기"
+                android:textColor="@color/black"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:id="@+id/dialog_schedule_header_tv"
+                android:layout_width="0dp"
+                android:layout_height="18dp"
+                android:layout_weight="6"
+                android:text="새 일정"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textAlignment="center"/>
+
+            <TextView
+                android:id="@+id/dialog_schedule_save_btn"
+                android:layout_width="0dp"
+                android:layout_height="18dp"
+                android:layout_weight="1"
+                android:text="저장"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textAlignment="viewEnd"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/dialog_schedule_container_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="10dp"
+            android:layout_marginTop="25dp"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/dialog_schedule_basic_container"
+                layout="@layout/fragment_schedule_dialog_basic"
+                android:visibility="visible"/>
+
+            <include
+                android:id="@+id/dialog_schedule_category_container"
+                layout="@layout/fragment_schedule_dialog_category"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>

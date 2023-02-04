@@ -9,7 +9,9 @@
         android:id="@+id/homeFragment"
         android:name="com.example.namo.bottom.home.HomeFragment"
         android:label="HomeFragment"
-        tools:layout="@layout/fragment_home"/>
+        tools:layout="@layout/fragment_home">
+    </fragment>
+
     <fragment
         android:id="@+id/diaryFragment"
         android:name="com.example.namo.bottom.diary.DiaryFragment"
@@ -87,7 +89,8 @@
     <fragment
         android:id="@+id/diaryDetailFragment"
         android:name="com.example.namo.bottom.diary.DiaryDetailFragment"
-        android:label="DiaryDetailFragment" >
+        android:label="DiaryDetailFragment"
+        tools:layout="@layout/fragment_diary_detail">
         <argument
             android:name="position"
             app:argType="integer" />
