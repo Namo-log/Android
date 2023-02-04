@@ -3,12 +3,9 @@ package com.example.namo.utils
 import android.content.Context
 import android.graphics.Color
 import androidx.annotation.ColorInt
-import androidx.annotation.IntRange
-import com.example.namo.R
-import com.example.namo.bottom.home.calendar.events.Event
+import com.example.namo.ui.bottom.home.calendar.events.Event
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
-import java.time.DayOfWeek
 
 class CalendarUtils {
     companion object {

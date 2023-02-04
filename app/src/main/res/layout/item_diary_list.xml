@@ -6,7 +6,7 @@
     <data>
         <variable
             name="diary"
-            type="com.example.namo.bottom.diary.Diary"/>
+            type="com.example.namo.ui.bottom.diary.Diary"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

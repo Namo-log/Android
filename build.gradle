@@ -8,6 +8,7 @@ plugins {
 
 ext {
     navigationVersion = "2.5.3"
+    roomVersion = "2.4.3"
 }
 
 task clean(type: Delete) {

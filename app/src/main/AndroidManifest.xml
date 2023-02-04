@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".bottom.home.schedule.map.MapActivity"
+            android:name="com.example.namo.ui.bottom.home.schedule.map.MapActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
