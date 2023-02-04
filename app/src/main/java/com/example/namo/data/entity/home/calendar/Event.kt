@@ -1,5 +1,8 @@
-package com.example.namo.ui.bottom.home.calendar.events
+package com.example.namo.data.entity.home.calendar
 
+import androidx.room.Entity
+
+@Entity(tableName = "homeCalendarEvent")
 data class Event(
     var title : String = "",
     var startLong : Long = 0,

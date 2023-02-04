@@ -9,7 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.example.namo.R
 import com.example.namo.utils.CalendarUtils.Companion.getMonthList
-import com.example.namo.ui.bottom.home.calendar.events.Event
+import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.databinding.FragmentCalendarMonthBinding
 import com.example.namo.utils.CalendarUtils.Companion.getInterval
 import org.joda.time.DateTime

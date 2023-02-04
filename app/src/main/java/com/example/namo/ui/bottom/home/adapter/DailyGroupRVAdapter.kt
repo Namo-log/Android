@@ -5,7 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.namo.ui.bottom.home.calendar.events.Event
+import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.databinding.ItemCalendarEventGroupBinding
 import org.joda.time.DateTime
 

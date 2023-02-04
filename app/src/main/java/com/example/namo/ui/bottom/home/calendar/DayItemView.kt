@@ -11,7 +11,7 @@ import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
 import androidx.core.content.withStyledAttributes
 import com.example.namo.R
-import com.example.namo.ui.bottom.home.calendar.events.Event
+import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.utils.CalendarUtils.Companion.getDateColor
 import com.example.namo.utils.CalendarUtils.Companion.isSameMonth
 import org.joda.time.DateTime

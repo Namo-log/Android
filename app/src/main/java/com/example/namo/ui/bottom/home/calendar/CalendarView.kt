@@ -10,7 +10,7 @@ import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
 import androidx.core.view.children
 import com.example.namo.R
-import com.example.namo.ui.bottom.home.calendar.events.Event
+import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
 import com.example.namo.utils.CalendarUtils.Companion.getIndex
 import com.example.namo.utils.CalendarUtils.Companion.getTodayEvent

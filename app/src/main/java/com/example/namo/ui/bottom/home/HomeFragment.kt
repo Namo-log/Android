@@ -19,7 +19,7 @@ import com.example.namo.R
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
 import com.example.namo.ui.bottom.home.calendar.SetMonthDialog
-import com.example.namo.ui.bottom.home.calendar.events.Event
+import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogFragment
 import com.example.namo.databinding.FragmentHomeBinding
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
