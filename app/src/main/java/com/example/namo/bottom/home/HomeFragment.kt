@@ -1,18 +1,19 @@
 package com.example.namo.bottom.home
 
 import android.annotation.SuppressLint
-import android.app.ActionBar.LayoutParams
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
-import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.databinding.BindingAdapter
+import android.view.WindowManager
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.namo.bottom.home.calendar.CalendarAdapter
@@ -22,6 +23,7 @@ import com.example.namo.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.bottom.home.adapter.DailyPersonalRVAdapter
 import com.example.namo.bottom.home.calendar.SetMonthDialog
 import com.example.namo.bottom.home.calendar.events.Event
+import com.example.namo.bottom.home.schedule.ScheduleDialogFragment
 import com.example.namo.databinding.FragmentHomeBinding
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
 import com.example.namo.utils.CalendarUtils.Companion.getInterval
@@ -62,6 +64,11 @@ class HomeFragment : Fragment() {
     private val personalEventRVAdapter = DailyPersonalRVAdapter()
     private val groupEventRVAdapter = DailyGroupRVAdapter()
 
+    private var canvas : Canvas = Canvas()
+    private var paint : Paint = Paint()
+
+    private var scheduleDialogFragment : ScheduleDialogFragment = ScheduleDialogFragment()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -100,6 +107,11 @@ class HomeFragment : Fragment() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun clickListener() {
+
+        binding.homeFab.setOnClickListener {
+            scheduleDialogFragment.setDate(monthList[nowIdx])
+            scheduleDialogFragment.show(requireActivity().supportFragmentManager, ScheduleDialogFragment.TAG)
+        }
 
 //        var detector = GestureDetector(context, object : GestureDetector.OnGestureListener {
 //            override fun onDown(e: MotionEvent?): Boolean {
@@ -185,6 +197,7 @@ class HomeFragment : Fragment() {
 //                Log.d("TOUCH_IDX", "prev : $prevIdx   now : $nowIdx")
 //                Log.d("TOUCH_DATE", monthList[nowIdx].toString("yyyy년 MM월 dd일"))
                 setDaily(nowIdx)
+//                setStroke(nowIdx)
 
                 Log.d("TOUCH_SHOW_PREV", "isShow : ${isShow}")
                 if (isShow && prevIdx == nowIdx) {
@@ -222,6 +235,33 @@ class HomeFragment : Fragment() {
         }
 
     }
+
+//    private fun setStroke(idx : Int) {
+//        var row = 0
+//        var col = 0
+//        var id = ""
+//        var resId = 0
+//        for (i in 1..6) {
+//            row = i
+//            for (j in 1..7) {
+//                col = j
+//                id = "home_calendar_week_" + row + "_day_" + col
+//                resId = requireActivity().resources.getIdentifier(id, "id", requireActivity().packageName)
+//                var view = requireActivity().findViewById<View>(resId)
+//                view.setBackgroundResource(0)
+//            }
+//        }
+//
+//        row = idx / 7 + 1
+//        col = idx % 7 + 1
+//        id = "home_calendar_week_" + row + "_day_" + col
+//        resId = requireActivity().resources.getIdentifier(id, "id", requireActivity().packageName)
+//        var select = requireActivity().findViewById<View>(R.id.home_calendar_week_2_day_2)
+//
+//        Log.d("RES_ID", "id : $id |  int id : $resId   | selectId : $select")
+//        var view = requireActivity().findViewById<View>(resId)
+//        view.background = requireActivity().resources.getDrawable(R.drawable.border_round_all_stroke_main_orange)
+//    }
 
     private fun setAdapter() {
         binding.homeDailyEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)

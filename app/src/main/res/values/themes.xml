@@ -16,6 +16,7 @@
         <!-- 이부분 추가해주기!! -->
         <!-- Titlebar 제거 부분 -->
         <item name="windowNoTitle">true</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
     <!-- Splash theme. -->
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
@@ -63,6 +64,13 @@
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
     </style>
 
+    <style name="AppBottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/border_round_top_border_gray</item>
+    </style>
+
     <!--    home_calendar-->
     <style name="Calendar"/>
 
@@ -76,9 +84,9 @@
     </style>
 
     <style name="Calendar.ItemViewStyle">
-        <item name="dayTextSize">14sp</item>
-        <item name="eventTextSize">10sp</item>
-        <item name="dayTextHeight">14dp</item>
+        <item name="dayTextSize">12sp</item>
+        <item name="eventTextSize">8sp</item>
+        <item name="dayTextHeight">15dp</item>
         <item name="eventHeight">11dp</item>
         <item name="eventTopPadding">7dp</item>
         <item name="eventBetweenPadding">3dp</item>
@@ -86,6 +94,11 @@
         <item name="eventCornerRadius">3dp</item>
         <item name="eventMorePadding">10dp</item>
         <item name="eventLineHeight">4dp</item>
+    </style>
+
+    <style name="MyDatePicker">
+        <item name="android:textColorPrimary">@color/textGray</item>
+        <item name="colorControlNormal">@color/MainOrange</item>
     </style>
 
 </resources>

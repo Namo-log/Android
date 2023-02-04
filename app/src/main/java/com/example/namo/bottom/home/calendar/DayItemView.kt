@@ -39,6 +39,9 @@ class DayItemView @JvmOverloads constructor(
     private var eventPaint: Paint = Paint()
     private var morePaint : Paint = Paint()
 
+    private var todayNoticePaint : Paint = Paint()
+    private var radius : Float = 34f
+
     private var path = Path()
     private var rect = RectF()
     private lateinit var corners: FloatArray
@@ -90,11 +93,11 @@ class DayItemView @JvmOverloads constructor(
             eventPaint = TextPaint().apply {
                 isAntiAlias = true
                 textSize = eventTextSize
-                color = Color.BLACK
-                typeface = Typeface.DEFAULT
-                if (!isSameMonth(date, firstDayOfMonth)) {
-                    alpha = 50
-                }
+                color = Color.WHITE
+                typeface = Typeface.DEFAULT_BOLD
+//                if (!isSameMonth(date, firstDayOfMonth)) {
+//                    alpha = 50
+//                }
             }
 
             morePaint = TextPaint().apply {
@@ -113,6 +116,8 @@ class DayItemView @JvmOverloads constructor(
                     alpha = 50
                 }
             }
+
+            todayNoticePaint.color = resources.getColor(R.color.MainOrange)
         }
     }
 
@@ -132,8 +137,12 @@ class DayItemView @JvmOverloads constructor(
         if (canvas == null) return
 
         val day = date.dayOfMonth.toString()
-
         paint.getTextBounds(day, 0, day.length, bounds)
+
+        if (isToday()) {
+            canvas.drawCircle((width/2).toFloat(), (_dayTextHeight - bounds.height()/2), bounds.height().toFloat(), todayNoticePaint)
+        }
+
         canvas.drawText(
             day,
             (width / 2 - bounds.width() / 2).toFloat(),
@@ -198,7 +207,8 @@ class DayItemView @JvmOverloads constructor(
         }
 
 //        setOnClickListener {
-//            mDayItemClickListener.onSendDate(date)
+//            paint.color=resources.getColor(R.color.MainOrange)
+//            invalidate()
 //            Log.d(
 //                "DAYITEMVIEW_CLICK",
 //                "${date.year}년 ${date.monthOfYear}월 ${date.dayOfMonth}일 ${date.dayOfWeek}요일"
