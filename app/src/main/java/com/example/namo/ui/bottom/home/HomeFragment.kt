@@ -285,7 +285,7 @@ class HomeFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     private fun setData(idx : Int) {
 
-        getDummy(idx)
+        //getDummy(idx)
 
         personalEventRVAdapter.addPersonal(event_personal)
         groupEventRVAdapter.addGroup(event_group)
@@ -305,77 +305,78 @@ class HomeFragment : Fragment() {
         else binding.homeDailyGroupEventNoneTv.visibility = View.GONE
     }
 
-    private fun getDummy(idx : Int) {
-        event_personal.clear()
-        event_group.clear()
-        val date = monthList[idx]
-
-        event_personal.apply {
-            add(
-                Event(
-                    "개인1",
-                    date.withTimeAtStartOfDay().millis,
-                    date.withTime(1,date.dayOfMonth,0,0).millis,
-                    getInterval(date.withTimeAtStartOfDay().millis, date.withTime(5,date.dayOfMonth,0,0).millis),
-                    R.color.palette1,
-                    1
-                )
-            )
-            add(
-                Event(
-                    "개인2",
-                    date.withTimeAtStartOfDay().millis,
-                    date.withTime(2,date.dayOfMonth,0,0).millis,
-                    getInterval(date.withTimeAtStartOfDay().millis, date.withTime(5,idx,0,0).millis),
-                    R.color.palette2,
-                    2
-                )
-            )
-            add(
-                Event(
-                    "개인3",
-                    date.withTimeAtStartOfDay().millis,
-                    date.withTime(3,date.dayOfMonth,0,0).millis,
-                    getInterval(date.withTimeAtStartOfDay().millis, date.withTime(5,idx,0,0).millis),
-                    R.color.palette3,
-                    3
-                )
-            )
-        }
-
-        event_group.apply {
-            add(
-                Event(
-                    "그룹4",
-                    date.withTimeAtStartOfDay().millis,
-                    date.withTime(1,date.dayOfMonth,0,0).millis,
-                    getInterval(date.withTimeAtStartOfDay().millis, date.withTime(5,date.dayOfMonth,0,0).millis),
-                    R.color.palette4,
-                    1
-                )
-            )
-            add(
-                Event(
-                    "그룹5",
-                    date.withTimeAtStartOfDay().millis,
-                    date.withTime(2,date.dayOfMonth,0,0).millis,
-                    getInterval(date.withTimeAtStartOfDay().millis, date.withTime(5,date.dayOfMonth,0,0).millis),
-                    R.color.palette5,
-                    2
-                )
-            )
-            add(
-                Event(
-                    "그룹6",
-                    date.withTimeAtStartOfDay().millis,
-                    date.withTime(3,date.dayOfMonth,0,0).millis,
-                    getInterval(date.withTimeAtStartOfDay().millis, date.withTime(5,date.dayOfMonth,0,0).millis),
-                    R.color.palette6,
-                    3
-                )
-            )
-        }
-    }
+//    private fun getDummy(idx : Int) {
+//        event_personal.clear()
+//        event_group.clear()
+//        val date = monthList[idx]
+//
+//        event_personal.apply {
+//            add(
+//                Event(
+//                    eventId = 1,
+//                    "개인1",
+//                    date.withTimeAtStartOfDay().millis,
+//                    date.withTime(1,date.dayOfMonth,0,0).millis,
+//                    getInterval(date.withTimeAtStartOfDay().millis, date.withTime(5,date.dayOfMonth,0,0).millis),
+//                    R.color.palette1,
+//                    1
+//                )
+//            )
+//            add(
+//                Event(
+//                    "개인2",
+//                    date.withTimeAtStartOfDay().millis,
+//                    date.withTime(2,date.dayOfMonth,0,0).millis,
+//                    getInterval(date.withTimeAtStartOfDay().millis, date.withTime(5,idx,0,0).millis),
+//                    R.color.palette2,
+//                    2
+//                )
+//            )
+//            add(
+//                Event(
+//                    "개인3",
+//                    date.withTimeAtStartOfDay().millis,
+//                    date.withTime(3,date.dayOfMonth,0,0).millis,
+//                    getInterval(date.withTimeAtStartOfDay().millis, date.withTime(5,idx,0,0).millis),
+//                    R.color.palette3,
+//                    3
+//                )
+//            )
+//        }
+//
+//        event_group.apply {
+//            add(
+//                Event(
+//                    "그룹4",
+//                    date.withTimeAtStartOfDay().millis,
+//                    date.withTime(1,date.dayOfMonth,0,0).millis,
+//                    getInterval(date.withTimeAtStartOfDay().millis, date.withTime(5,date.dayOfMonth,0,0).millis),
+//                    R.color.palette4,
+//                    1
+//                )
+//            )
+//            add(
+//                Event(
+//                    "그룹5",
+//                    date.withTimeAtStartOfDay().millis,
+//                    date.withTime(2,date.dayOfMonth,0,0).millis,
+//                    getInterval(date.withTimeAtStartOfDay().millis, date.withTime(5,date.dayOfMonth,0,0).millis),
+//                    R.color.palette5,
+//                    2
+//                )
+//            )
+//            add(
+//                Event(
+//                    "그룹6",
+//                    date.withTimeAtStartOfDay().millis,
+//                    date.withTime(3,date.dayOfMonth,0,0).millis,
+//                    getInterval(date.withTimeAtStartOfDay().millis, date.withTime(5,date.dayOfMonth,0,0).millis),
+//                    R.color.palette6,
+//                    3
+//                )
+//            )
+//        }
+//    }
 
     private fun setMillisText() {
         binding.homeCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
