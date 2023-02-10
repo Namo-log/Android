@@ -13,9 +13,9 @@
         android:id="@+id/diary_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="55dp"
-        android:layout_marginEnd="30dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="25dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -40,15 +40,49 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/diary_back_iv"/>
 
-        <ImageView
-            android:id="@+id/diary_delete_tv"
-            android:layout_width="40dp"
-            android:layout_height="47dp"
-            android:src="@drawable/ic_delete_schedule"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/diary_back_iv"/>
+<!--        <ImageView-->
+<!--            android:id="@+id/diary_delete_tv"-->
+<!--            android:layout_width="40dp"-->
+<!--            android:layout_height="47dp"-->
+<!--            android:src="@drawable/ic_delete_schedule"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="@id/diary_back_iv"/>-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/date_ly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/circle_people"
+            android:backgroundTint="@color/whiteGray"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="13dp"
+            android:paddingBottom="10dp"
+            app:layout_constraintStart_toStartOf="@id/linear_corner"
+            app:layout_constraintTop_toTopOf="@id/diary_date_tv"
+            app:layout_constraintBottom_toBottomOf="@id/diary_place_tv">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Feb"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="11"
+                android:textSize="35sp"
+                android:textStyle="bold"/>
+
+
+        </LinearLayout>
+
 
     <TextView
         android:id="@+id/diary_date_tv"
@@ -57,10 +91,10 @@
         android:text="날짜"
         android:textSize="17sp"
         android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="#555555"
         android:layout_marginTop="35dp"
-        android:layout_marginStart="30dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="25dp"
+        app:layout_constraintStart_toEndOf="@id/date_ly"
         app:layout_constraintTop_toBottomOf="@id/diary_top"/>
 
     <TextView
@@ -69,7 +103,7 @@
         android:layout_height="wrap_content"
         android:text="2022.07.14"
         android:textSize="17sp"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="15dp"
         app:layout_constraintStart_toEndOf="@id/diary_date_tv"
         app:layout_constraintTop_toTopOf="@id/diary_date_tv"/>
 
@@ -78,12 +112,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="장소"
-        android:textColor="@color/black"
+        android:textColor="#555555"
         android:textStyle="bold"
         android:textSize="17sp"
         android:layout_marginTop="15dp"
-        android:layout_marginStart="30dp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/diary_date_tv"
         app:layout_constraintTop_toBottomOf="@id/diary_date_tv"/>
 
     <TextView
@@ -92,26 +125,56 @@
         android:layout_height="wrap_content"
         android:text="탐앤탐스 건대점"
         android:textSize="17sp"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="15dp"
         app:layout_constraintStart_toEndOf="@id/diary_place_tv"
         app:layout_constraintTop_toTopOf="@id/diary_place_tv"/>
 
 
+        <LinearLayout
+            android:id="@+id/linear_corner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
+            android:background="@drawable/left_round_corner"
+            app:layout_constraintTop_toBottomOf="@+id/diary_input_place_tv"
+            app:layout_constraintStart_toStartOf="parent">
 
-    <TextView
-        android:id="@+id/diary_contents_et"
-        android:layout_width="match_parent"
-        android:layout_height="160dp"
-        android:text="기록이 없습니다. "
-        android:gravity="start"
-        android:textColor="@color/realGray"
-        android:background="@drawable/border_round_all_fill_lightgray"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        app:layout_constraintTop_toBottomOf="@id/diary_place_tv"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <View
+                    android:id="@+id/item_diary_category_color_iv"
+                    android:layout_width="15dp"
+                    android:layout_height="0dp"
+                    android:background="@drawable/ic_category_color_corner"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <EditText
+                android:id="@+id/diary_contents_et"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:hint="기록 입력"
+                android:gravity="start"
+                android:padding="10dp"
+                android:background="@drawable/ic_category_base_corner" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_num_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0/200"
+            android:textColor="@color/notyetGray"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/linear_corner"
+            app:layout_constraintEnd_toEndOf="@id/linear_corner"/>
 
     <View
         android:layout_width="match_parent"
@@ -123,11 +186,11 @@
         android:id="@+id/diary_edit_tv"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/white"
+        android:background="@color/MainOrange"
         android:padding="15dp"
-        android:text="기록 편집"
+        android:text="기록 추가"
         android:textAlignment="center"
-        android:textColor="@color/MainOrange"
+        android:textColor="@color/white"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -136,13 +199,14 @@
         android:id="@+id/diary_gallery_saved_ry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal"
+        tools:itemCount="3"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_diary_gallery"
-        app:layout_constraintTop_toBottomOf="@id/diary_contents_et"
+        app:layout_constraintTop_toBottomOf="@id/text_num_tv"
         app:layout_constraintStart_toStartOf="parent"/>
 
 

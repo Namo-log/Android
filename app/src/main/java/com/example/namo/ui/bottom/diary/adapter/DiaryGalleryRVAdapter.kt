@@ -1,11 +1,12 @@
-package com.example.namo.ui.bottom.diary
+package com.example.namo.ui.bottom.diary.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.namo.databinding.ItemDiaryGalleryBinding
+import com.example.namo.databinding.ItemDiaryListGalleryBinding
+import com.example.namo.ui.bottom.diary.Gallery
 
 
 class DiaryGalleryRVAdapter(
@@ -15,7 +16,7 @@ class DiaryGalleryRVAdapter(
     RecyclerView.Adapter<DiaryGalleryRVAdapter.ViewHolder>(){
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val binding: ItemDiaryGalleryBinding = ItemDiaryGalleryBinding.inflate(LayoutInflater.from(viewGroup.context),viewGroup,false)
+        val binding: ItemDiaryListGalleryBinding = ItemDiaryListGalleryBinding.inflate(LayoutInflater.from(viewGroup.context),viewGroup,false)
         return ViewHolder(binding)
     }
 
@@ -43,7 +44,7 @@ class DiaryGalleryRVAdapter(
 
     override fun getItemCount(): Int = imgList.size
 
-    inner class ViewHolder(val binding: ItemDiaryGalleryBinding): RecyclerView.ViewHolder(binding.root){
+    inner class ViewHolder(val binding: ItemDiaryListGalleryBinding): RecyclerView.ViewHolder(binding.root){
 
         val image=binding.galleryImgIv
     }

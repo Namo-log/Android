@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.databinding.FragmentDiaryBinding
+import com.example.namo.ui.bottom.diary.adapter.DiaryListRVAdapter
 import org.joda.time.LocalDateTime
 import java.util.*
 
