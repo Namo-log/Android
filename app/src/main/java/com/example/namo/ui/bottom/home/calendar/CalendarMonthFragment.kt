@@ -106,7 +106,7 @@ class CalendarMonthFragment : Fragment() {
 //    }
 
     private fun sortEventList() {
-        eventList.sortByDescending(Event::interval)
+        eventList.sortByDescending(Event::dayInterval)
         Log.d("SORT_EVENT", eventList.toString())
     }
 

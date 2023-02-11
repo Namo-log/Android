@@ -179,7 +179,7 @@ class DayItemView @JvmOverloads constructor(
                     canvas.drawText(
                         eventText,
                         _eventBetweenPadding,
-                        getTextBottom(eventList[i].idx),
+                        getTextBottom(eventList[i].order),
                         eventPaint
                     )
                 }
@@ -238,7 +238,7 @@ class DayItemView @JvmOverloads constructor(
     }
 
     private fun setBgPaintColor(event: Event) {
-        bgPaint.color = resources.getColor(event.color)
+        bgPaint.color = resources.getColor(event.categoryColor)
         if (!isSameMonth(date, firstDayOfMonth)) {
             bgPaint.alpha = 50
         }
@@ -264,41 +264,41 @@ class DayItemView @JvmOverloads constructor(
             0 -> { //one day
                 rect = RectF(
                     _eventHorizontalPadding,
-                    (eventTop + ((_eventBetweenPadding + _eventHeight) * it.idx)),
+                    (eventTop + ((_eventBetweenPadding + _eventHeight) * it.order)),
                     width.toFloat() - _eventHorizontalPadding,
-                    (eventTop + (_eventBetweenPadding * it.idx) + (_eventHeight * (it.idx + 1)))
+                    (eventTop + (_eventBetweenPadding * it.order) + (_eventHeight * (it.order + 1)))
                 )
             }
             1 -> { //start
                 rect = RectF(
                     _eventHorizontalPadding,
-                    (eventTop + ((_eventBetweenPadding + _eventHeight) * it.idx)),
+                    (eventTop + ((_eventBetweenPadding + _eventHeight) * it.order)),
                     width.toFloat(),
-                    (eventTop + (_eventBetweenPadding * it.idx) + (_eventHeight * (it.idx + 1)))
+                    (eventTop + (_eventBetweenPadding * it.order) + (_eventHeight * (it.order + 1)))
                 )
             }
             2 -> { //middle
                 rect = RectF(
                     0f,
-                    (eventTop + ((_eventBetweenPadding + _eventHeight) * it.idx)),
+                    (eventTop + ((_eventBetweenPadding + _eventHeight) * it.order)),
                     width.toFloat(),
-                    (eventTop + (_eventBetweenPadding * it.idx) + (_eventHeight * (it.idx + 1)))
+                    (eventTop + (_eventBetweenPadding * it.order) + (_eventHeight * (it.order + 1)))
                 )
             }
             3 -> { //end
                 rect = RectF(
                     0f,
-                    (eventTop + ((_eventBetweenPadding + _eventHeight) * it.idx)),
+                    (eventTop + ((_eventBetweenPadding + _eventHeight) * it.order)),
                     width.toFloat() - _eventHorizontalPadding,
-                    (eventTop + (_eventBetweenPadding * it.idx) + (_eventHeight * (it.idx + 1)))
+                    (eventTop + (_eventBetweenPadding * it.order) + (_eventHeight * (it.order + 1)))
                 )
             }
             else -> {
                 rect = RectF(
                     0f,
-                    (eventTop + ((_eventBetweenPadding + _eventHeight) * it.idx)),
+                    (eventTop + ((_eventBetweenPadding + _eventHeight) * it.order)),
                     width.toFloat(),
-                    (eventTop + (_eventBetweenPadding * it.idx) + (_eventHeight * (it.idx + 1)))
+                    (eventTop + (_eventBetweenPadding * it.order) + (_eventHeight * (it.order + 1)))
                 )
             }
         }
@@ -310,41 +310,41 @@ class DayItemView @JvmOverloads constructor(
             0 -> { //one day
                 rect = RectF(
                     _eventHorizontalPadding,
-                    (eventTop + ((_eventBetweenPadding + _eventLineHeight) * it.idx)),
+                    (eventTop + ((_eventBetweenPadding + _eventLineHeight) * it.order)),
                     width.toFloat() - _eventHorizontalPadding,
-                    (eventTop + (_eventBetweenPadding * it.idx) + (_eventLineHeight * (it.idx + 1)))
+                    (eventTop + (_eventBetweenPadding * it.order) + (_eventLineHeight * (it.order + 1)))
                 )
             }
             1 -> { //start
                 rect = RectF(
                     _eventHorizontalPadding,
-                    (eventTop + ((_eventBetweenPadding + _eventLineHeight) * it.idx)),
+                    (eventTop + ((_eventBetweenPadding + _eventLineHeight) * it.order)),
                     width.toFloat(),
-                    (eventTop + (_eventBetweenPadding * it.idx) + (_eventLineHeight * (it.idx + 1)))
+                    (eventTop + (_eventBetweenPadding * it.order) + (_eventLineHeight * (it.order + 1)))
                 )
             }
             2 -> { //middle
                 rect = RectF(
                     0f,
-                    (eventTop + ((_eventBetweenPadding + _eventLineHeight) * it.idx)),
+                    (eventTop + ((_eventBetweenPadding + _eventLineHeight) * it.order)),
                     width.toFloat(),
-                    (eventTop + (_eventBetweenPadding * it.idx) + (_eventLineHeight * (it.idx + 1)))
+                    (eventTop + (_eventBetweenPadding * it.order) + (_eventLineHeight * (it.order + 1)))
                 )
             }
             3 -> { //end
                 rect = RectF(
                     0f,
-                    (eventTop + ((_eventBetweenPadding + _eventLineHeight) * it.idx)),
+                    (eventTop + ((_eventBetweenPadding + _eventLineHeight) * it.order)),
                     width.toFloat() - _eventHorizontalPadding,
-                    (eventTop + (_eventBetweenPadding * it.idx) + (_eventLineHeight * (it.idx + 1)))
+                    (eventTop + (_eventBetweenPadding * it.order) + (_eventLineHeight * (it.order + 1)))
                 )
             }
             else -> {
                 rect = RectF(
                     0f,
-                    (eventTop + ((_eventBetweenPadding + _eventHeight) * it.idx)),
+                    (eventTop + ((_eventBetweenPadding + _eventHeight) * it.order)),
                     width.toFloat(),
-                    (eventTop + (_eventBetweenPadding * it.idx) + (_eventHeight * (it.idx + 1)))
+                    (eventTop + (_eventBetweenPadding * it.order) + (_eventHeight * (it.order + 1)))
                 )
             }
         }

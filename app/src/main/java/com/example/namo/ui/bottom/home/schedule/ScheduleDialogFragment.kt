@@ -12,16 +12,22 @@ import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
+import com.example.namo.data.NamoDatabase
+import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.ui.bottom.home.schedule.adapter.DialogCategoryRVAdapter
 import com.example.namo.ui.bottom.home.schedule.data.Category
 import com.example.namo.ui.bottom.home.schedule.map.MapActivity
 import com.example.namo.databinding.FragmentScheduleDialogBinding
+import com.example.namo.utils.CalendarUtils.Companion.getInterval
+import com.example.namo.utils.CalendarUtils.Companion.getOrder
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.joda.time.DateTime
 
-class ScheduleDialogFragment : BottomSheetDialogFragment() {
+class ScheduleDialogFragment (
+    private val okCallback : (Boolean) -> Unit
+) : BottomSheetDialogFragment() {
 
     private lateinit var binding : FragmentScheduleDialogBinding
     //0 -> basic
@@ -44,13 +50,18 @@ class ScheduleDialogFragment : BottomSheetDialogFragment() {
 
     private lateinit var date: DateTime
 
+    private var event : Event = Event()
+    lateinit var db : NamoDatabase
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_schedule_dialog, container, false)
+
+        db = NamoDatabase.getInstance(requireContext())
+
         setAdapter()
         setScreen()
         initPickerText()
@@ -265,12 +276,28 @@ class ScheduleDialogFragment : BottomSheetDialogFragment() {
 
                 binding.dialogScheduleCloseBtn.setOnClickListener {
                     //그냥 닫기
-                    dialog?.dismiss()
+                    okCallback(false)
+                    dismiss()
+//                    dialog?.dismiss()
                 }
 
                binding.dialogScheduleSaveBtn.setOnClickListener {
                    //저장하고 닫기
-                    dialog?.dismiss()
+                   event.title = binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.text.toString()
+                   event.startLong = startDateTime.millis
+                   event.endLong = endDateTime.millis
+                   event.dayInterval = getInterval(event.startLong, event.endLong)
+                   event.categoryColor = categoryList[selectedCategory].color
+                   event.categoryName = categoryList[selectedCategory].name
+                   event.categoryIdx = selectedCategory
+
+                   Thread {
+                       db.eventDao.insertEvent(event)
+                   }.start()
+
+                   okCallback(true)
+                   dismiss()
+//                    dialog?.dismiss()
                 }
             }
 

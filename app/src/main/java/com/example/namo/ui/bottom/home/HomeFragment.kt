@@ -16,6 +16,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.namo.ui.bottom.home.calendar.CalendarAdapter
 import com.example.namo.MainActivity
 import com.example.namo.R
+import com.example.namo.data.NamoDatabase
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
 import com.example.namo.ui.bottom.home.calendar.SetMonthDialog
@@ -64,7 +65,9 @@ class HomeFragment : Fragment() {
     private var canvas : Canvas = Canvas()
     private var paint : Paint = Paint()
 
-    private var scheduleDialogFragment : ScheduleDialogFragment = ScheduleDialogFragment()
+    private lateinit var scheduleDialogFragment : ScheduleDialogFragment
+
+    lateinit var db : NamoDatabase
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,6 +76,7 @@ class HomeFragment : Fragment() {
     ): View? {
 
         binding = DataBindingUtil.inflate<FragmentHomeBinding>(inflater, R.layout.fragment_home, container,false)
+        db = NamoDatabase.getInstance(requireContext())
         calendarAdapter = CalendarAdapter(context as MainActivity)
 
         //hideBottomNavigation(false)
@@ -96,16 +100,41 @@ class HomeFragment : Fragment() {
             }
         })
 
-        setAdapter()
+//        setAdapter()
         clickListener()
+        Log.e("HOME_LIFECYCLE", "OnCreateView")
 
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.e("HOME_LIFECYCLE", "OnResume")
+        setAdapter()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.e("HOME_LIFECYCLE", "OnStop")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.e("HOME_LIFECYCLE", "OnPause")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("HOME_LIFECYCLE", "OnDestory")
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun clickListener() {
 
         binding.homeFab.setOnClickListener {
+            scheduleDialogFragment = ScheduleDialogFragment {
+
+            }
             scheduleDialogFragment.setDate(monthList[nowIdx])
             scheduleDialogFragment.show(requireActivity().supportFragmentManager, ScheduleDialogFragment.TAG)
         }
@@ -287,14 +316,11 @@ class HomeFragment : Fragment() {
 
         //getDummy(idx)
 
+        getEvent(idx)
+
         personalEventRVAdapter.addPersonal(event_personal)
         groupEventRVAdapter.addGroup(event_group)
         setEmptyMsg()
-
-        requireActivity().runOnUiThread {
-            personalEventRVAdapter.notifyDataSetChanged()
-            groupEventRVAdapter.notifyDataSetChanged()
-        }
     }
 
     private fun setEmptyMsg() {
@@ -303,6 +329,30 @@ class HomeFragment : Fragment() {
 
         if (event_group.size == 0) binding.homeDailyGroupEventNoneTv.visibility = View.VISIBLE
         else binding.homeDailyGroupEventNoneTv.visibility = View.GONE
+    }
+
+    private fun getEvent(idx : Int) {
+        event_personal.clear()
+        event_group.clear()
+        var todayStart = monthList[idx].withTimeAtStartOfDay().millis
+        var todayEnd = monthList[idx].plusDays(1).withTimeAtStartOfDay().millis - 1
+
+        var forPersonalEvent : Thread = Thread {
+            event_personal = db.eventDao.getEventDaily(todayStart, todayEnd) as ArrayList<Event>
+            personalEventRVAdapter.addPersonal(event_personal)
+            requireActivity().runOnUiThread {
+                personalEventRVAdapter.notifyDataSetChanged()
+            }
+        }
+        forPersonalEvent.start()
+
+        try {
+            forPersonalEvent.join()
+        } catch (e : InterruptedException) {
+            e.printStackTrace()
+        }
+
+
     }
 
 //    private fun getDummy(idx : Int) {
