@@ -4,6 +4,7 @@ package com.example.namo.ui.bottom.grouplist
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.namo.data.entity.group.Group
 import com.example.namo.databinding.ItemGroupListBinding
 
 class GroupListRVAdapter(private val groupList: ArrayList<Group>):  RecyclerView.Adapter<GroupListRVAdapter.ViewHolder>() {
@@ -36,8 +37,8 @@ class GroupListRVAdapter(private val groupList: ArrayList<Group>):  RecyclerView
     inner class ViewHolder(val binding: ItemGroupListBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(group: Group) {
             binding.itemGroupTitleTv.text = group.title
-            binding.itemGroupCoverImgCiv.setImageResource(group.coverImg!!)
-            binding.itemGroupTotalPeopleNumTv.text = group.num.toString()
+            binding.itemGroupCoverImgCiv.setImageResource(group.coverImage!!)
+            binding.itemGroupTotalPeopleNumTv.text = group.memberNum.toString()
             binding.itemGroupTotalPeopleNameTv.text = group.member
         }
     }
