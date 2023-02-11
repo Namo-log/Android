@@ -36,11 +36,11 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
     inner class ViewHolder(val binding : ItemCalendarEventBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(personal : Event) {
             val time = DateTime(personal.startLong).toString("HH:mm") + " - " + DateTime(personal.endLong).toString("HH:mm")
-            val color = personal.color
+            val color = personal.categoryColor
 
             binding.itemCalendarEventTitle.text = personal.title
             binding.itemCalendarEventTime.text = time
-            binding.itemCalendarEventColorView.background.setTint(context.resources.getColor(personal.color))
+            binding.itemCalendarEventColorView.background.setTint(context.resources.getColor(personal.categoryColor))
         }
     }
 }

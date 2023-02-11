@@ -12,7 +12,7 @@ import androidx.core.view.children
 import com.example.namo.R
 import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
-import com.example.namo.utils.CalendarUtils.Companion.getIndex
+import com.example.namo.utils.CalendarUtils.Companion.getOrder
 import com.example.namo.utils.CalendarUtils.Companion.getTodayEvent
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants.DAYS_PER_WEEK
@@ -142,7 +142,7 @@ class CalendarView @JvmOverloads constructor(
 
             var events = getTodayEvent(eventList, it)
             events.forEach {
-                it.idx = getIndex(it, eventList)
+                it.order = getOrder(it, eventList)
             }
 
             val date = it
