@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
+import com.example.namo.data.entity.group.Group
 import com.example.namo.databinding.FragmentGroupListBinding
 
 
@@ -60,9 +61,9 @@ class GroupListFragment : Fragment() {
 
         // 데이터 리스트 생성 더미 데이터
         groupDatas.apply {
-            add(Group("나모 앱 런칭 캘린더", R.drawable.app_logo_namo, 7, "코코아, 유즈, 지니, 앨리, 라나, 매실, 얼리시"))
-            add(Group("나모 안드 캘린더", R.color.notyetGray, 3, "보리, 앨리, 지니, 코코아"))
-            add(Group("가족 캘린더", R.color.notyetGray, 4, "엄마, 아빠, 오빠, 나"))
+            add(Group(0, "나모 앱 런칭 캘린더", R.drawable.app_logo_namo, 7, "코코아, 유즈, 지니, 앨리, 라나, 매실, 얼리시"))
+            add(Group(1,"나모 안드 캘린더", R.color.notyetGray, 3, "보리, 앨리, 지니, 코코아"))
+            add(Group(2,"가족 캘린더", R.color.notyetGray, 4, "엄마, 아빠, 오빠, 나"))
         }
     }
 
