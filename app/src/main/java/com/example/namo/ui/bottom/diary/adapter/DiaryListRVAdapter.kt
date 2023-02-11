@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.diary
+package com.example.namo.ui.bottom.diary.adapter
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -10,6 +10,7 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.databinding.ItemDiaryListBinding
+import com.example.namo.ui.bottom.diary.Diary
 
 class DiaryListRVAdapter(
     val context: Context,
