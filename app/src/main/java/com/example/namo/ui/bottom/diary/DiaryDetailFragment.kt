@@ -1,10 +1,12 @@
 package com.example.namo.ui.bottom.diary
 
 
+
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,19 +14,27 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.navArgs
 import com.example.namo.R
+import com.example.namo.data.NamoDatabase
+import com.example.namo.data.entity.diary.Diary
 import com.example.namo.databinding.FragmentDiaryDetailBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.util.ArrayList
+import java.text.SimpleDateFormat
+
 
 
 class DiaryDetailFragment : Fragment() {
 
     private var _binding: FragmentDiaryDetailBinding? = null
     private val binding get() = _binding!!
-    private var diaryData = ArrayList<Diary>()
-    private var galleryData=ArrayList<Gallery>()
+
+    private lateinit var db:NamoDatabase
+
+    private var longDate:Long = 0
+    private var title:String=""
+    private var place:String=""
+    private var category:Int=0
+    private var contents:String=""
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -35,30 +45,57 @@ class DiaryDetailFragment : Fragment() {
 
         _binding = FragmentDiaryDetailBinding.inflate(inflater, container, false)
 
-       // hideBottomNavigation(true)
+        hideBottomNavigation(true)
 
-        val args by navArgs<DiaryDetailFragmentArgs>()
-        val position=args.position
+        db=NamoDatabase.getInstance(requireContext())
 
-//        binding.diaryTitleTv.text=diaryData[position].title
-//        binding.diaryContentsEt.text=diaryData[position].contents
-//        binding.diaryInputDateTv.text= diaryData[position].date.toString()
-//        binding.diaryGallerySavedRy.layoutManager=
-//            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-//
-//        val listAdapter = com.example.namo.ui.bottom.diary.adapter.DiaryGalleryRVAdapter(galleryData)
-//        binding.diaryGallerySavedRy.adapter = listAdapter
-
-
-        binding.diaryBackIv.setOnClickListener { view ->
-            view.findNavController().navigate(R.id.diaryFragment)
-            hideBottomNavigation(false)
-        }
-
+        bind()
         charCnt()
 
         return binding.root
     }
+
+    private fun bind(){
+        longDate= arguments?.getLong("date")!!
+        title = arguments?.getString("title").toString()
+        place=arguments?.getString("place").toString()
+        category= arguments?.getInt("category")!!
+        contents=binding.diaryContentsEt.text.toString()
+
+        val formatDate=SimpleDateFormat("yyyy.MM.dd (EE)").format(longDate)
+
+        binding.diaryTitleTv.text=title
+        binding.diaryInputPlaceTv.text=place
+        context?.resources?.let { binding.itemDiaryCategoryColorIv.background.setTint(it.getColor(category)) }
+        binding.diaryInputDateTv.text= formatDate
+        binding.diaryBackIv.setOnClickListener { view ->
+            view.findNavController().navigate(R.id.homeFragment)
+            hideBottomNavigation(false)
+        }
+        binding.diaryEditTv.setOnClickListener {
+            insertData()
+            Toast.makeText(requireContext(),"추가되었습니다!!",Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun insertData(){
+
+        val yearMonth=SimpleDateFormat("yyyy-MM").format(longDate)
+
+        Thread{
+            db.diaryDao.insertDiary(Diary(
+                0,
+                title,
+                longDate,
+                category,
+                contents,
+                listOf(0),
+                yearMonth,
+                place
+            ))
+        }.start()
+            }
+
 
     private fun charCnt(){
         with(binding) {

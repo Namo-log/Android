@@ -2,6 +2,7 @@ package com.example.namo.ui.bottom.diary
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +11,13 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
+import com.example.namo.data.NamoDatabase
+import com.example.namo.data.entity.diary.Diary
+import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.databinding.FragmentDiaryBinding
 import com.example.namo.ui.bottom.diary.adapter.DiaryListRVAdapter
+import org.joda.time.DateTime
+import org.joda.time.LocalDate
 import org.joda.time.LocalDateTime
 import java.util.*
 
@@ -21,8 +27,11 @@ class DiaryFragment: Fragment() {
     private var _binding: FragmentDiaryBinding? = null
     private val binding get() = _binding!!
 
-    private var datetime= LocalDateTime()
-    private var diaryData = ArrayList<Diary>()
+    private var dateTime = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
+    private var diaryList=listOf<Diary>()
+    lateinit var diaryAdapter:DiaryListRVAdapter
+
+    private lateinit var db: NamoDatabase
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -32,12 +41,33 @@ class DiaryFragment: Fragment() {
     ): View {
 
         _binding = FragmentDiaryBinding.inflate(inflater, container, false)
-        dummy()
 
         binding.diaryMonth.setOnClickListener {
             dialogCreate()
         }
 
+        db=NamoDatabase.getInstance(requireContext())
+        diaryAdapter= DiaryListRVAdapter(requireContext(),diaryList)
+
+        val r = Runnable {
+            try {
+                diaryList = db.diaryDao.getDiaryList(DateTime(dateTime).toString("yyyy-MM"))
+                diaryAdapter= DiaryListRVAdapter(requireContext(),diaryList)
+                requireActivity().runOnUiThread {
+                    binding.diaryListRv.adapter =  diaryAdapter
+                    binding.diaryListRv.layoutManager = LinearLayoutManager(requireContext())
+                    binding.diaryListRv.setHasFixedSize(true)
+                }
+
+            } catch (e: Exception) {
+                Log.d("tag", "Error - $e")
+            }
+        }
+
+        val thread = Thread(r)
+        thread.start()
+
+        Log.d("date","$diaryList")
         return binding.root
     }
 
@@ -45,28 +75,43 @@ class DiaryFragment: Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStart() {
         super.onStart()
+        binding.diaryMonth.text=DateTime(dateTime).toString("yyyy.MM")
 
-        binding.diaryMonth.text=LocalDateTime.now().toString("yyyy.MM")
-        initRecyclerview()
+        Log.d("date","${DateTime(dateTime).toString("yyyy-MM")}")
+
     }
 
     private fun dialogCreate() {
 
-        YearMonthDialog(datetime){
-            binding.diaryMonth.text=LocalDateTime(it).toString("yyyy.MM")
+        YearMonthDialog(dateTime){
+            binding.diaryMonth.text= DateTime(it).toString("yyyy.MM")
+
+            val r = Runnable {
+                try {
+                    diaryList = db.diaryDao.getDiaryList(DateTime(it).toString("yyyy-MM"))
+                    diaryAdapter= DiaryListRVAdapter(requireContext(),diaryList)
+                    requireActivity().runOnUiThread {
+                        binding.diaryListRv.adapter =  diaryAdapter
+                        binding.diaryListRv.layoutManager = LinearLayoutManager(requireContext())
+                        binding.diaryListRv.setHasFixedSize(true)
+                    }
+
+                } catch (e: Exception) {
+                    Log.d("tag", "Error - $e")
+                }
+            }
+
+            val thread = Thread(r)
+            thread.start()
+
+
         }.show(parentFragmentManager,"test")
     }
 
 
     private fun initRecyclerview() {
 
-        binding.diaryListRv.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
-        val listAdapter = DiaryListRVAdapter(requireContext(), diaryData){
-            position->onItemClick(position)
-        }
-        binding.diaryListRv.adapter = listAdapter
     }
 
     private fun onItemClick(position:Int){
@@ -75,69 +120,6 @@ class DiaryFragment: Fragment() {
     }
 
 
-    private fun dummy() {
-
-        diaryData.apply {
-            add(
-                Diary(
-                    "#DE8989",
-                    LocalDateTime(2023,1,4,1,22,22),
-                    "더미 1",
-                    "nnnnnnnnnnnnnnnnnn",
-                    mutableListOf(Gallery(R.drawable.bg_gradient_splash))
-                )
-            )
-            add(
-                Diary(
-                    "#E1B000",
-                    LocalDateTime(2023,1,25,1,12,22),
-                    "더미 2",
-                    "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
-                    mutableListOf(
-                        Gallery(R.drawable.ic_bottom_custom_no_select)
-                    )
-                )
-            )
-            add(
-                Diary(
-                    "#5C8596",
-                    LocalDateTime(2023,1,8,1,0,22),
-                    "더미 3",
-                    "nnnnnnnnnnnnnnnnnnnnn",
-                    mutableListOf(
-                        Gallery(R.drawable.ic_bottom_diary_no_select),
-                        Gallery(R.drawable.ic_bottom_diary_no_select),
-                        Gallery(R.drawable.ic_bottom_custom_select)
-                    )
-                )
-            )
-            add(
-                Diary(
-                    "#AD7FFF",
-                    LocalDateTime(2023,1,22,1,12,22),
-                    "더미 4",
-                    "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
-                    mutableListOf(
-                        Gallery(R.drawable.ic_bottom_home_select),
-                        Gallery(R.drawable.ic_bottom_share_no_select)
-                    )
-                )
-            )
-            add(
-                Diary(
-                    "#DA6022",
-                    LocalDateTime(2023,1,24,1,32,22),
-                    "더미 5",
-                    "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
-                    mutableListOf(
-                        Gallery(R.drawable.ic_bottom_share_no_select),
-                        Gallery(R.drawable.ic_bottom_home_select)
-                    )
-                )
-            )
-        }
-
-    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

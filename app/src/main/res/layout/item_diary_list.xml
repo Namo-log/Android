@@ -6,7 +6,7 @@
     <data>
         <variable
             name="diary"
-            type="com.example.namo.ui.bottom.diary.Diary"/>
+            type="com.example.namo.data.entity.diary.Diary"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -110,6 +110,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="12dp"
                     app:layout_constraintBottom_toBottomOf="@id/layout"
+                    app:layout_constraintTop_toBottomOf="@id/item_diary_title_tv"
                     app:layout_constraintStart_toStartOf="@id/item_diary_title_tv"
                     android:contentDescription="@string/diary_modify" />
 
@@ -131,7 +132,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:textColor="@color/textGray"
-                    android:text="@{diary.contents}"
+                    android:text="@{diary.content}"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     app:layout_constraintEnd_toEndOf="parent"

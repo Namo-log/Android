@@ -10,6 +10,9 @@
         android:name="com.example.namo.ui.bottom.home.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_diaryDetailFragment2"
+            app:destination="@id/diaryDetailFragment" />
     </fragment>
 
     <fragment
@@ -91,11 +94,5 @@
         android:name="com.example.namo.ui.bottom.diary.DiaryDetailFragment"
         android:label="DiaryDetailFragment"
         tools:layout="@layout/fragment_diary_detail">
-        <argument
-            android:name="position"
-            app:argType="integer" />
-        <action
-            android:id="@+id/diaryDetailToDiary"
-            app:popUpTo="@id/diaryFragment" />
     </fragment>
 </navigation>

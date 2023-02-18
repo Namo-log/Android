@@ -11,6 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.namo.ui.bottom.home.calendar.CalendarAdapter
@@ -23,6 +26,7 @@ import com.example.namo.ui.bottom.home.calendar.SetMonthDialog
 import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogFragment
 import com.example.namo.databinding.FragmentHomeBinding
+import com.example.namo.ui.bottom.diary.DiaryDetailFragment
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
 import com.example.namo.utils.CalendarUtils.Companion.getInterval
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -296,7 +300,26 @@ class HomeFragment : Fragment() {
         binding.homeDailyGroupEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.homeDailyGroupEventRv.adapter = groupEventRVAdapter
         setToday()
+
+        /** 기록 아이템 클릭 리스너 **/
+        personalEventRVAdapter.setRecordClickListener(object :DailyPersonalRVAdapter.DiaryInterface{
+            override fun onRecordClicked(event: Event) {
+                val bundle=Bundle()
+                bundle.putString("title",event.title)
+                bundle.putInt("category",event.categoryColor)
+                bundle.putString("place",event.place)
+                bundle.putLong("date",event.startLong)
+
+                val diaryFrag=DiaryDetailFragment()
+                diaryFrag.arguments=bundle
+
+                view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
+
+            }
+        })
+        /** ----- **/
     }
+
 
     private fun setToday() {
         monthList = getMonthList(DateTime(System.currentTimeMillis()))

@@ -9,13 +9,14 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.namo.data.entity.diary.Diary
 import com.example.namo.databinding.ItemDiaryListBinding
-import com.example.namo.ui.bottom.diary.Diary
+
 
 class DiaryListRVAdapter(
     val context: Context,
-    var list: MutableList<Diary>,
-    private val onItemClicked:(position:Int)->Unit
+    var list: List<Diary>,
+   // private val onItemClicked:(position:Int)->Unit
 ):
     RecyclerView.Adapter<DiaryListRVAdapter.ViewHolder>() {
 
@@ -31,11 +32,11 @@ class DiaryListRVAdapter(
 
         holder.bind(list[position])
 
-        holder.apply {
-            binding.diaryEditTv.setOnClickListener {
-                onItemClicked(position)
-            }
-        }
+//        holder.apply {
+//            binding.diaryEditTv.setOnClickListener {
+//                onItemClicked(position)
+//            }
+//        }
     }
 
     override fun getItemCount(): Int = list.size
@@ -46,13 +47,8 @@ class DiaryListRVAdapter(
         @RequiresApi(Build.VERSION_CODES.O)
         fun bind(item: Diary) {
 
-            val dateTime=item.date.toString("yyyy-MM-dd")
-
             binding.diary = item
-            binding.itemDiaryCategoryColorIv.backgroundTintList = ColorStateList.valueOf(Color.parseColor(item.category))
-            binding.diaryGalleryRv.adapter = DiaryGalleryRVAdapter(item.rv,context)
-            binding.diaryGalleryRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            binding.diaryDayTv.text=dateTime
+            binding.diaryDayTv.text=item.date.toString()
         }
     }
 }

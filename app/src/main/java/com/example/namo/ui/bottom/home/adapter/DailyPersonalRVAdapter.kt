@@ -14,6 +14,17 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
     private val personal = ArrayList<Event>()
     private lateinit var context : Context
 
+    /** 기록 아이템 클릭 리스너 **/
+    interface DiaryInterface {
+        fun onRecordClicked(event:Event)
+    }
+    private lateinit var diaryRecordClickListener: DiaryInterface
+    fun setRecordClickListener(itemClickListener: DiaryInterface){
+        diaryRecordClickListener=itemClickListener
+    }
+    /** ----- **/
+
+
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
         val binding : ItemCalendarEventBinding = ItemCalendarEventBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
         context = viewGroup.context
@@ -23,6 +34,12 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
 
     override fun onBindViewHolder(holder : ViewHolder, position : Int) {
         holder.bind(personal[position])
+
+        /** 기록 아이템 클릭 리스너 **/
+        holder.binding.itemCalendarEventRecord.setOnClickListener {
+            diaryRecordClickListener.onRecordClicked(personal[position])
+        }
+
     }
 
     override fun getItemCount(): Int = personal.size
