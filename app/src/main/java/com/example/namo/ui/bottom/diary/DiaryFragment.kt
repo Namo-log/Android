@@ -8,18 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.diary.Diary
-import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.databinding.FragmentDiaryBinding
 import com.example.namo.ui.bottom.diary.adapter.DiaryListRVAdapter
 import org.joda.time.DateTime
-import org.joda.time.LocalDate
-import org.joda.time.LocalDateTime
-import java.util.*
 
 
 class DiaryFragment: Fragment() {
@@ -30,6 +26,7 @@ class DiaryFragment: Fragment() {
     private var dateTime = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
     private var diaryList=listOf<Diary>()
     lateinit var diaryAdapter:DiaryListRVAdapter
+    private lateinit var yearMonth:String
 
     private lateinit var db: NamoDatabase
 
@@ -42,21 +39,43 @@ class DiaryFragment: Fragment() {
 
         _binding = FragmentDiaryBinding.inflate(inflater, container, false)
 
+        db=NamoDatabase.getInstance(requireContext())
+        diaryAdapter= DiaryListRVAdapter(requireContext(),diaryList)
+
+        binding.diaryMonth.text=DateTime(dateTime).toString("yyyy.MM")
+        yearMonth=binding.diaryMonth.text.toString()
+
+        getList()
+
         binding.diaryMonth.setOnClickListener {
             dialogCreate()
         }
 
-        db=NamoDatabase.getInstance(requireContext())
-        diaryAdapter= DiaryListRVAdapter(requireContext(),diaryList)
+        return binding.root
+    }
 
+    private fun getList(){
         val r = Runnable {
             try {
-                diaryList = db.diaryDao.getDiaryList(DateTime(dateTime).toString("yyyy-MM"))
+                diaryList = db.diaryDao.getDiaryList(yearMonth)
                 diaryAdapter= DiaryListRVAdapter(requireContext(),diaryList)
                 requireActivity().runOnUiThread {
                     binding.diaryListRv.adapter =  diaryAdapter
+                    diaryAdapter.notifyDataSetChanged()
                     binding.diaryListRv.layoutManager = LinearLayoutManager(requireContext())
                     binding.diaryListRv.setHasFixedSize(true)
+
+                    diaryAdapter.setRecordClickListener(object : DiaryListRVAdapter.DiaryEditInterface{
+                        override fun onEditClicked(diary: Diary) {
+                            val bundle=Bundle()
+                            bundle.putInt("diaryIdx",diary.diaryIdx)
+
+                            val diaryFrag=DiaryModifyFragment()
+                            diaryFrag.arguments=bundle
+
+                            view?.findNavController()?.navigate(R.id.action_diaryFragment_to_diaryModifyFragment, bundle)
+                        }
+                    })
                 }
 
             } catch (e: Exception) {
@@ -67,56 +86,17 @@ class DiaryFragment: Fragment() {
         val thread = Thread(r)
         thread.start()
 
-        Log.d("date","$diaryList")
-        return binding.root
-    }
-
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onStart() {
-        super.onStart()
-        binding.diaryMonth.text=DateTime(dateTime).toString("yyyy.MM")
-
-        Log.d("date","${DateTime(dateTime).toString("yyyy-MM")}")
-
     }
 
     private fun dialogCreate() {
 
         YearMonthDialog(dateTime){
-            binding.diaryMonth.text= DateTime(it).toString("yyyy.MM")
-
-            val r = Runnable {
-                try {
-                    diaryList = db.diaryDao.getDiaryList(DateTime(it).toString("yyyy-MM"))
-                    diaryAdapter= DiaryListRVAdapter(requireContext(),diaryList)
-                    requireActivity().runOnUiThread {
-                        binding.diaryListRv.adapter =  diaryAdapter
-                        binding.diaryListRv.layoutManager = LinearLayoutManager(requireContext())
-                        binding.diaryListRv.setHasFixedSize(true)
-                    }
-
-                } catch (e: Exception) {
-                    Log.d("tag", "Error - $e")
-                }
-            }
-
-            val thread = Thread(r)
-            thread.start()
-
-
+            yearMonth= DateTime(it).toString("yyyy.MM")
+            binding.diaryMonth.text=yearMonth
+            getList()
+            Log.d("date","$yearMonth")
         }.show(parentFragmentManager,"test")
-    }
 
-
-    private fun initRecyclerview() {
-
-
-    }
-
-    private fun onItemClick(position:Int){
-        val act=DiaryFragmentDirections.actionDiaryFragmentToDiaryDetailFragment(position)
-        findNavController().navigate(act)
     }
 
 

@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_diaryDetailFragment2"
             app:destination="@id/diaryDetailFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_diaryModifyFragment"
+            app:destination="@id/diaryModifyFragment" />
     </fragment>
 
     <fragment
@@ -21,12 +24,8 @@
         android:label="DiaryFragment"
         tools:layout="@layout/fragment_diary">
         <action
-            android:id="@+id/action_diaryFragment_to_diaryDetailFragment"
-            app:destination="@id/diaryDetailFragment" >
-            <argument
-                android:name="position"
-                app:argType="integer" />
-        </action>
+            android:id="@+id/action_diaryFragment_to_diaryModifyFragment"
+            app:destination="@id/diaryModifyFragment" />
     </fragment>
 
     <fragment
@@ -95,4 +94,8 @@
         android:label="DiaryDetailFragment"
         tools:layout="@layout/fragment_diary_detail">
     </fragment>
+    <fragment
+        android:id="@+id/diaryModifyFragment"
+        android:name="com.example.namo.ui.bottom.diary.DiaryModifyFragment"
+        android:label="DiaryModifyFragment" />
 </navigation>

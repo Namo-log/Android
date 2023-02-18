@@ -14,6 +14,6 @@ data class Diary(
     var categoryColor:Int=0,
     var content:String="",
     var imgList:List<Int>,
-    var yearMonth:String="", // "2023-02"
+    var yearMonth:String="", // "2023.02"
     var place:String=""
 )

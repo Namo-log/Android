@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.example.namo.data.entity.diary.Diary
-import kotlinx.coroutines.flow.Flow
+
 
 @Dao
 interface DiaryDao {
@@ -23,6 +23,7 @@ interface DiaryDao {
     @Query("SELECT * FROM diaryTable WHERE yearMonth =:yearMonth")
     fun getDiaryList(yearMonth: String) : List<Diary>
 
-    @Query("SELECT * FROM diaryTable")
-    fun getAll():List<Diary>
+    @Query("SELECT * FROM diaryTable WHERE diaryIdx=:idx")
+    fun getDiaryDaily(idx:Int): Diary
+
 }

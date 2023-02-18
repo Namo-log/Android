@@ -41,13 +41,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/diary_back_iv"/>
 
-<!--        <ImageView-->
-<!--            android:id="@+id/diary_delete_tv"-->
-<!--            android:layout_width="40dp"-->
-<!--            android:layout_height="47dp"-->
-<!--            android:src="@drawable/ic_delete_schedule"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="@id/diary_back_iv"/>-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -68,6 +61,7 @@
             app:layout_constraintBottom_toBottomOf="@id/diary_place_tv">
 
             <TextView
+                android:id="@+id/diary_today_day_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Feb"
@@ -75,6 +69,7 @@
                 android:textStyle="bold"/>
 
             <TextView
+                android:id="@+id/diary_today_num_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="11"
@@ -135,7 +130,7 @@
             android:id="@+id/linear_corner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="35dp"
             android:layout_marginStart="25dp"
             android:layout_marginEnd="25dp"
             android:background="@drawable/left_round_corner"

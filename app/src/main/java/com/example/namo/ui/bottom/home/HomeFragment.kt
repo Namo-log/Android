@@ -303,7 +303,7 @@ class HomeFragment : Fragment() {
 
         /** 기록 아이템 클릭 리스너 **/
         personalEventRVAdapter.setRecordClickListener(object :DailyPersonalRVAdapter.DiaryInterface{
-            override fun onRecordClicked(event: Event) {
+            override fun onAddClicked(event: Event) {
                 val bundle=Bundle()
                 bundle.putString("title",event.title)
                 bundle.putInt("category",event.categoryColor)
@@ -314,7 +314,9 @@ class HomeFragment : Fragment() {
                 diaryFrag.arguments=bundle
 
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
-
+            }
+            override fun onEditClicked(event: Event) {
+                view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryModifyFragment)
             }
         })
         /** ----- **/
