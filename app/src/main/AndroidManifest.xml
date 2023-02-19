@@ -8,6 +8,11 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
+<!-- 갤러리 이미지 가져오기-->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
 
 <!--    usesCleartextTraffic : android 가 HTTP연결을 막아놨는데 카카오맵은 HTTP통신해서 HTTP도 가능하도록 설정-->
     <application

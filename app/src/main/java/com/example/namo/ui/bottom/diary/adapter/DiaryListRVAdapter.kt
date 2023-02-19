@@ -1,23 +1,32 @@
 package com.example.namo.ui.bottom.diary.adapter
 
 import android.content.Context
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.namo.data.entity.diary.Diary
 import com.example.namo.databinding.ItemDiaryListBinding
-import com.example.namo.ui.bottom.diary.Diary
+import java.text.SimpleDateFormat
+
 
 class DiaryListRVAdapter(
     val context: Context,
-    var list: MutableList<Diary>,
-    private val onItemClicked:(position:Int)->Unit
+    var list: List<Diary>,
 ):
     RecyclerView.Adapter<DiaryListRVAdapter.ViewHolder>() {
+
+    /** 기록 아이템 클릭 리스너 **/
+    interface DiaryEditInterface {
+        fun onEditClicked(diary: Diary)
+    }
+    private lateinit var diaryRecordClickListener: DiaryEditInterface
+    fun setRecordClickListener(itemClickListener: DiaryEditInterface){
+        diaryRecordClickListener=itemClickListener
+    }
+    /** ----- **/
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemDiaryListBinding =
@@ -33,7 +42,7 @@ class DiaryListRVAdapter(
 
         holder.apply {
             binding.diaryEditTv.setOnClickListener {
-                onItemClicked(position)
+                diaryRecordClickListener.onEditClicked(list[position])
             }
         }
     }
@@ -46,13 +55,15 @@ class DiaryListRVAdapter(
         @RequiresApi(Build.VERSION_CODES.O)
         fun bind(item: Diary) {
 
-            val dateTime=item.date.toString("yyyy-MM-dd")
+            val formattedDate= SimpleDateFormat("yyyy.MM.dd").format(item.date)
 
             binding.diary = item
-            binding.itemDiaryCategoryColorIv.backgroundTintList = ColorStateList.valueOf(Color.parseColor(item.category))
-            binding.diaryGalleryRv.adapter = DiaryGalleryRVAdapter(item.rv,context)
-            binding.diaryGalleryRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            binding.diaryDayTv.text=dateTime
+            binding.diaryDayTv.text=formattedDate
+            binding.itemDiaryCategoryColorIv.background.setTint(context.resources.getColor(item.categoryColor))
+            binding.diaryGalleryRv.adapter=DiaryGalleryRVAdapter(context,item.imgList)
+            binding.diaryGalleryRv.layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
         }
     }
 }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.namo.R
 import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.databinding.ItemCalendarEventBinding
 import org.joda.time.DateTime
@@ -13,6 +14,18 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
 
     private val personal = ArrayList<Event>()
     private lateinit var context : Context
+
+    /** 기록 아이템 클릭 리스너 **/
+    interface DiaryInterface {
+        fun onAddClicked(event:Event)
+        fun onEditClicked(event: Event)
+    }
+    private lateinit var diaryRecordClickListener: DiaryInterface
+    fun setRecordClickListener(itemClickListener: DiaryInterface){
+        diaryRecordClickListener=itemClickListener
+    }
+    /** ----- **/
+
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
         val binding : ItemCalendarEventBinding = ItemCalendarEventBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
@@ -23,6 +36,17 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
 
     override fun onBindViewHolder(holder : ViewHolder, position : Int) {
         holder.bind(personal[position])
+
+        /** 기록 아이템 클릭 리스너 **/
+        holder.binding.itemCalendarEventRecord.setOnClickListener {
+//            if(personal[position].diaryId==1){  // 기록 추가
+//                diaryRecordClickListener.onAddClicked(personal[position])
+//            } else{  // 기록 편집
+//                diaryRecordClickListener.onEditClicked(personal[position])
+//            }
+            diaryRecordClickListener.onAddClicked(personal[position])
+        }
+
     }
 
     override fun getItemCount(): Int = personal.size
@@ -41,6 +65,11 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
             binding.itemCalendarEventTitle.text = personal.title
             binding.itemCalendarEventTime.text = time
             binding.itemCalendarEventColorView.background.setTint(context.resources.getColor(personal.categoryColor))
+
+            /** 기록 아이콘 색깔 **/
+//            if(personal.diaryId==1){
+//                binding.itemCalendarEventRecord.background.setTint(context.resources.getColor(R.color.MainOrange))
+//            }
         }
     }
 }

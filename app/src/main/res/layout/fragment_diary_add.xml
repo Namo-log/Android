@@ -6,6 +6,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/diary_date_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -40,13 +41,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/diary_back_iv"/>
 
-<!--        <ImageView-->
-<!--            android:id="@+id/diary_delete_tv"-->
-<!--            android:layout_width="40dp"-->
-<!--            android:layout_height="47dp"-->
-<!--            android:src="@drawable/ic_delete_schedule"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="@id/diary_back_iv"/>-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -67,6 +61,7 @@
             app:layout_constraintBottom_toBottomOf="@id/diary_place_tv">
 
             <TextView
+                android:id="@+id/diary_today_day_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Feb"
@@ -74,6 +69,7 @@
                 android:textStyle="bold"/>
 
             <TextView
+                android:id="@+id/diary_today_num_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="11"
@@ -134,7 +130,7 @@
             android:id="@+id/linear_corner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="35dp"
             android:layout_marginStart="25dp"
             android:layout_marginEnd="25dp"
             android:background="@drawable/left_round_corner"
@@ -195,6 +191,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+     <androidx.appcompat.widget.AppCompatImageView
+         android:id="@+id/diary_gallery_click_iv"
+         android:layout_width="100dp"
+         android:layout_height="100dp"
+         android:src="@drawable/ic_gallery"
+         android:visibility="visible"
+         android:background="@drawable/gallery_background"
+         android:scaleType="centerInside"
+         app:layout_constraintTop_toBottomOf="@id/text_num_tv"
+         app:layout_constraintStart_toStartOf="@id/linear_corner" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/diary_gallery_saved_ry"
         android:layout_width="match_parent"
@@ -204,6 +211,7 @@
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
         tools:itemCount="3"
+        android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_diary_gallery"
         app:layout_constraintTop_toBottomOf="@id/text_num_tv"
