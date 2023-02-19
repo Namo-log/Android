@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.namo.MainActivity
@@ -27,6 +28,7 @@ import com.example.namo.ui.bottom.home.calendar.CalendarMonthFragment
 import com.example.namo.ui.bottom.home.calendar.SetMonthDialog
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogFragment
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
+import com.example.namo.ui.bottom.diary.DiaryAddFragment
 import com.example.namo.utils.CalendarUtils.Companion.getMonthList
 import com.example.namo.utils.CalendarUtils.Companion.getPrevOffset
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -313,7 +315,28 @@ class HomeFragment : Fragment() {
         binding.homeDailyGroupEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.homeDailyGroupEventRv.adapter = groupEventRVAdapter
         setToday()
+
+        /** 기록 아이템 클릭 리스너 **/
+        personalEventRVAdapter.setRecordClickListener(object :DailyPersonalRVAdapter.DiaryInterface{
+            override fun onAddClicked(event: Event) {
+                val bundle=Bundle()
+                bundle.putString("title",event.title)
+                bundle.putInt("category",event.categoryColor)
+                bundle.putString("place",event.place)
+                bundle.putLong("date",event.startLong)
+
+                val diaryFrag=DiaryAddFragment()
+                diaryFrag.arguments=bundle
+
+                view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
+            }
+            override fun onEditClicked(event: Event) {
+                view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryModifyFragment)
+            }
+        })
+        /** ----- **/
     }
+
 
     private fun setToday() {
         monthList = getMonthList(DateTime(System.currentTimeMillis()))
