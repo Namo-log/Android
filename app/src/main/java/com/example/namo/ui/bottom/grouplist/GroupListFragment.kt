@@ -1,6 +1,7 @@
 package com.example.namo.ui.bottom.grouplist
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -88,9 +89,7 @@ class GroupListFragment : Fragment() {
 
     // 그룹 생성
     private fun showCreateGroupDialog() {
-        CreateGroupDialog(requireContext()) {
-            //viewModel.setName(it)
-        }.show()
+        startActivity(Intent(activity, CreateGroupActivity::class.java))
     }
 
     // 그룹 코드

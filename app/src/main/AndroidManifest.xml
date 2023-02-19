@@ -40,6 +40,10 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <activity
+            android:name=".ui.bottom.grouplist.CreateGroupActivity"
+            android:theme="@style/Theme.Transparent">
+        </activity>
         <meta-data android:name="com.kakao.sdk.AppKey" android:value="c67dfbcc5d7f1af4dccefc8cb7a4380d"/>
     </application>
 
