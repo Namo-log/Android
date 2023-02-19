@@ -18,6 +18,7 @@
     <color name="typeBeforeGray">#D8D8D8</color>
     <color name="whiteGray">@color/groupCodeGray</color>
     <color name="groupCodeGray">#F7F7F7</color>
+    <color name="cardViewGray">#FAFAFA</color>
 
     <!-- Schedule Category -->
     <color name="schedule">#DE8989</color> //일정

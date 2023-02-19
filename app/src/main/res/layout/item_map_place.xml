@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    app:cardBackgroundColor="@color/cardViewGray"
+    app:cardElevation="5dp"
+    app:cardCornerRadius="10dp"
+    app:contentPaddingTop="12dp"
+    app:contentPaddingLeft="12dp"
+    app:contentPaddingRight="12dp"
+    app:contentPaddingBottom="9dp"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/item_map_place_title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="장소이름"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/textGray"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/item_map_place_road_address_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="도로명주소"
+            android:textSize="12sp"
+            android:textColor="@color/textGray"
+            android:layout_marginBottom="2dp"
+            app:layout_constraintBottom_toTopOf="@id/item_map_place_old_address_tv"/>
+
+        <TextView
+            android:id="@+id/item_map_place_old_address_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="지번주소"
+            android:textSize="12sp"
+            android:textColor="@color/textGray"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.cardview.widget.CardView>

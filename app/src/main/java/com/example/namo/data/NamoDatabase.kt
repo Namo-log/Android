@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.namo.data.dao.EventDao
-import com.example.namo.data.entity.home.calendar.Event
+import com.example.namo.data.entity.home.Event
 
 @Database(entities = [Event::class], version = 1, exportSchema = false)
 abstract class NamoDatabase : RoomDatabase() {
