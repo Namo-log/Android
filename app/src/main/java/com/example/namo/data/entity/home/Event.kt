@@ -1,4 +1,4 @@
-package com.example.namo.data.entity.home.calendar
+package com.example.namo.data.entity.home
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
