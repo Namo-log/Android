@@ -198,6 +198,25 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/diary_gallery_click_iv"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:elevation="0dp"
+            app:cardCornerRadius="15dp"
+            android:backgroundTint="@color/MainOrange"
+            app:layout_constraintTop_toBottomOf="@id/diary_gallery_saved_ry"
+            app:layout_constraintEnd_toEndOf="@id/linear_corner" >
+
+           <androidx.appcompat.widget.AppCompatImageView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:padding="5dp"
+               android:scaleType="centerInside"
+               android:src="@drawable/floating_add"/>
+
+        </androidx.cardview.widget.CardView>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/diary_gallery_saved_ry"
             android:layout_width="match_parent"

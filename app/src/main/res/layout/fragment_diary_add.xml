@@ -191,6 +191,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+     <androidx.appcompat.widget.AppCompatImageView
+         android:id="@+id/diary_gallery_click_iv"
+         android:layout_width="100dp"
+         android:layout_height="100dp"
+         android:src="@drawable/ic_gallery"
+         android:visibility="visible"
+         android:background="@drawable/gallery_background"
+         android:scaleType="centerInside"
+         app:layout_constraintTop_toBottomOf="@id/text_num_tv"
+         app:layout_constraintStart_toStartOf="@id/linear_corner" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/diary_gallery_saved_ry"
         android:layout_width="match_parent"
@@ -200,6 +211,7 @@
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
         tools:itemCount="3"
+        android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_diary_gallery"
         app:layout_constraintTop_toBottomOf="@id/text_num_tv"

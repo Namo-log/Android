@@ -5,6 +5,7 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.diary.Diary
 import com.example.namo.databinding.ItemDiaryListBinding
@@ -59,6 +60,9 @@ class DiaryListRVAdapter(
             binding.diary = item
             binding.diaryDayTv.text=formattedDate
             binding.itemDiaryCategoryColorIv.background.setTint(context.resources.getColor(item.categoryColor))
+            binding.diaryGalleryRv.adapter=DiaryGalleryRVAdapter(context,item.imgList)
+            binding.diaryGalleryRv.layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         }
     }

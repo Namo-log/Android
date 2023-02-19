@@ -11,8 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
@@ -26,9 +24,8 @@ import com.example.namo.ui.bottom.home.calendar.SetMonthDialog
 import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogFragment
 import com.example.namo.databinding.FragmentHomeBinding
-import com.example.namo.ui.bottom.diary.DiaryDetailFragment
+import com.example.namo.ui.bottom.diary.DiaryAddFragment
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
-import com.example.namo.utils.CalendarUtils.Companion.getInterval
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.joda.time.DateTime
 import com.example.namo.utils.CalendarUtils.Companion.getMonthList
@@ -310,7 +307,7 @@ class HomeFragment : Fragment() {
                 bundle.putString("place",event.place)
                 bundle.putLong("date",event.startLong)
 
-                val diaryFrag=DiaryDetailFragment()
+                val diaryFrag=DiaryAddFragment()
                 diaryFrag.arguments=bundle
 
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
