@@ -25,6 +25,7 @@ import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogFragment
 import com.example.namo.databinding.FragmentHomeBinding
 import com.example.namo.ui.bottom.diary.DiaryAddFragment
+import com.example.namo.ui.bottom.diary.DiaryModifyFragment
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.joda.time.DateTime
@@ -302,6 +303,7 @@ class HomeFragment : Fragment() {
         personalEventRVAdapter.setRecordClickListener(object :DailyPersonalRVAdapter.DiaryInterface{
             override fun onAddClicked(event: Event) {
                 val bundle=Bundle()
+                bundle.putInt("scheduleIdx",event.eventId)
                 bundle.putString("title",event.title)
                 bundle.putInt("category",event.categoryColor)
                 bundle.putString("place",event.place)
@@ -313,7 +315,12 @@ class HomeFragment : Fragment() {
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
             }
             override fun onEditClicked(event: Event) {
-                view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryModifyFragment)
+                val bundle=Bundle()
+                bundle.putInt("scheduleIdx",event.eventId)
+
+                val editFrag=DiaryModifyFragment()
+                editFrag.arguments=bundle
+                view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryModifyFragment,bundle)
             }
         })
         /** ----- **/

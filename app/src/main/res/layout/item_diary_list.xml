@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-        <variable
-            name="diary"
-            type="com.example.namo.data.entity.diary.Diary"/>
-    </data>
+<!--    <data>-->
+<!--        <variable-->
+<!--            name="diary"-->
+<!--            type="com.example.namo.data.entity.diary.Diary"/>-->
+<!--    </data>-->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -98,7 +98,6 @@
                     android:textColor="#555555"
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
-                    android:text="@{diary.title}"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
@@ -132,7 +131,6 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:textColor="@color/textGray"
-                    android:text="@{diary.content}"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     app:layout_constraintEnd_toEndOf="parent"

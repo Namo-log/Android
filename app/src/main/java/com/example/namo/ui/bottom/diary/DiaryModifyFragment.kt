@@ -4,6 +4,7 @@ package com.example.namo.ui.bottom.diary
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -19,13 +20,16 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.diary.Diary
+import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.databinding.FragmentDiaryModifyBinding
 import com.example.namo.ui.bottom.diary.adapter.DiaryGalleryRVAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.lang.Boolean.FALSE
 import java.text.SimpleDateFormat
 
 class DiaryModifyFragment : Fragment() {
@@ -34,10 +38,11 @@ class DiaryModifyFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var db:NamoDatabase
-    private var imgList= arrayListOf<String>()
+    private var imgList= arrayListOf<Bitmap>()
     private lateinit var galleryAdapter: DiaryGalleryRVAdapter
-    private lateinit var diary:Diary
-    private var diaryIdx:Int=0
+    private lateinit var event: Event
+    private lateinit var diary: Diary
+    private var scheduleIdx:Int=0
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -52,11 +57,12 @@ class DiaryModifyFragment : Fragment() {
 
         db=NamoDatabase.getInstance(requireContext())
 
-        diaryIdx= arguments?.getInt("diaryIdx")!!
+        scheduleIdx= arguments?.getInt("scheduleIdx")!!
 
         Thread {
-            diary = db.diaryDao.getDiaryDaily(diaryIdx)
-            galleryAdapter=DiaryGalleryRVAdapter(requireContext(),diary.imgList)
+            event = db.diaryDao.getScheduleContent(scheduleIdx)
+            diary =db.diaryDao.getDiaryContent(scheduleIdx)
+            galleryAdapter=DiaryGalleryRVAdapter(requireContext(),diary.imgs)
             requireActivity().runOnUiThread {
                 bind()
             }
@@ -67,18 +73,19 @@ class DiaryModifyFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun bind(){
 
         binding.apply {
-            val formatDate=SimpleDateFormat("yyyy.MM.dd (EE)").format(diary.date)
+            val formatDate=SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong)
             diaryInputDateTv.text=formatDate
-            diaryInputPlaceTv.text=diary.place
-            diaryTitleTv.text=diary.title
+            diaryInputPlaceTv.text=event.place
+            diaryTitleTv.text=event.title
             diaryContentsEt.setText(diary.content)
-            context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(it.getColor(diary.categoryColor)) }
+            context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(it.getColor(event.categoryColor)) }
 
-            diaryTodayDayTv.text=SimpleDateFormat("EE").format(diary.date)
-            diaryTodayNumTv.text=SimpleDateFormat("dd").format(diary.date)
+            diaryTodayDayTv.text=SimpleDateFormat("EE").format(event.startLong)
+            diaryTodayNumTv.text=SimpleDateFormat("dd").format(event.startLong)
 
             onRecyclerView()
 
@@ -90,6 +97,11 @@ class DiaryModifyFragment : Fragment() {
                     view?.findNavController()?.navigate(R.id.diaryFragment)
                     hideBottomNavigation(false)
                 }
+            }
+
+            diaryBackIv.setOnClickListener {
+                findNavController().popBackStack()
+                hideBottomNavigation(false)
             }
 
             binding.diaryDeleteIv.setOnClickListener {
@@ -114,6 +126,7 @@ class DiaryModifyFragment : Fragment() {
     private fun deleteDiary(){
         Thread{
             db.diaryDao.deleteDiary(diary)
+            db.diaryDao.deleteHasDiary(FALSE,scheduleIdx)
         }.start()
     }
 
@@ -138,6 +151,7 @@ class DiaryModifyFragment : Fragment() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -152,7 +166,7 @@ class DiaryModifyFragment : Fragment() {
                 for (i in 0 until count) {
                     val imageUri = data.clipData!!.getItemAt(i).uri
 
-                    imgList.add(imageUri.toString())
+
                 }
 
             }
@@ -161,7 +175,7 @@ class DiaryModifyFragment : Fragment() {
                 val imageUri : Uri? = data.data
                 if (imageUri != null) {
 
-                    imgList.add(imageUri.toString())
+
                 } } }
         onRecyclerView()
     }
@@ -188,6 +202,7 @@ class DiaryModifyFragment : Fragment() {
                     maxText=s.toString()
                 }
 
+                @SuppressLint("SetTextI18n")
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     if(diaryContentsEt.length() > 200){
                         Toast.makeText(requireContext(),"최대 200자까지 입력 가능합니다",

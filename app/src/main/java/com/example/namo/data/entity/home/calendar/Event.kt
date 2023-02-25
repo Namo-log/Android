@@ -1,8 +1,13 @@
 package com.example.namo.data.entity.home.calendar
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.lang.Boolean.FALSE
+import java.time.Instant
+import java.time.ZoneId
 
 @Entity(tableName = "calendar_event_table")
 data class Event(
@@ -34,7 +39,8 @@ data class Event(
     var place : String = "장소 없음",
 
     @ColumnInfo(name = "event_order")
-    var order : Int = 0
-) {
+    var order : Int = 0,
 
-}
+    @ColumnInfo(name= "event_has_diary")
+    var hasDiary: Boolean = FALSE
+)

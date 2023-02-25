@@ -3,6 +3,7 @@ package com.example.namo.ui.bottom.diary
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -26,6 +27,7 @@ import com.example.namo.data.entity.diary.Diary
 import com.example.namo.databinding.FragmentDiaryAddBinding
 import com.example.namo.ui.bottom.diary.adapter.DiaryGalleryRVAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.lang.Boolean.TRUE
 import java.text.SimpleDateFormat
 
 class DiaryAddFragment : Fragment() {
@@ -37,11 +39,12 @@ class DiaryAddFragment : Fragment() {
     private lateinit var diary:Diary
     private lateinit var galleryAdapter: DiaryGalleryRVAdapter
 
-    private var imgList= arrayListOf<String>()
+    private var imgList= arrayListOf<Bitmap>()
     private var longDate:Long = 0
     private var title:String=""
     private var place:String=""
     private var category:Int=0
+    private var scheduleIdx:Int=0
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -56,6 +59,7 @@ class DiaryAddFragment : Fragment() {
 
         db=NamoDatabase.getInstance(requireContext())
         galleryAdapter=DiaryGalleryRVAdapter(requireContext(),imgList)
+        scheduleIdx= arguments?.getInt("scheduleIdx")!!
         bind()
         charCnt()
 
@@ -101,9 +105,9 @@ class DiaryAddFragment : Fragment() {
 
     private fun insertData(){
         Thread{
-            val yearMonth=SimpleDateFormat("yyyy.MM").format(longDate)
-            diary=Diary(0, title, longDate, category, binding.diaryContentsEt.text.toString(),imgList, yearMonth, place)
+            diary=Diary(scheduleIdx, binding.diaryContentsEt.text.toString(),imgList)
             db.diaryDao.insertDiary(diary)
+            db.diaryDao.updateHasDiary(TRUE,scheduleIdx)
         }.start()  }
 
     @SuppressLint("IntentReset")
@@ -140,7 +144,7 @@ class DiaryAddFragment : Fragment() {
                 }
                 for (i in 0 until count) {
                     val imageUri = data.clipData!!.getItemAt(i).uri
-                    imgList.add(imageUri.toString())
+
                 }
 
             }
@@ -149,7 +153,7 @@ class DiaryAddFragment : Fragment() {
                 val imageUri : Uri? = data.data
                 if (imageUri != null) {
 
-                  imgList.add(imageUri.toString())
+
                 } } }
 
 

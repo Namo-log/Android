@@ -7,20 +7,19 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.namo.data.entity.diary.Diary
+import com.example.namo.data.entity.diary.DiaryList
 import com.example.namo.databinding.ItemDiaryListBinding
 import java.text.SimpleDateFormat
 
-
 class DiaryListRVAdapter(
     val context: Context,
-    var list: List<Diary>,
+    var list: List<DiaryList>,
 ):
     RecyclerView.Adapter<DiaryListRVAdapter.ViewHolder>() {
 
     /** 기록 아이템 클릭 리스너 **/
     interface DiaryEditInterface {
-        fun onEditClicked(diary: Diary)
+        fun onEditClicked(allData: DiaryList)
     }
     private lateinit var diaryRecordClickListener: DiaryEditInterface
     fun setRecordClickListener(itemClickListener: DiaryEditInterface){
@@ -53,14 +52,16 @@ class DiaryListRVAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         @RequiresApi(Build.VERSION_CODES.O)
-        fun bind(item: Diary) {
+        fun bind(item: DiaryList) {
 
-            val formattedDate= SimpleDateFormat("yyyy.MM.dd").format(item.date)
+            val formattedDate= SimpleDateFormat("yyyy.MM.dd").format(item.event_start)
 
-            binding.diary = item
+            binding.itemDiaryContentTv.text
             binding.diaryDayTv.text=formattedDate
-            binding.itemDiaryCategoryColorIv.background.setTint(context.resources.getColor(item.categoryColor))
-            binding.diaryGalleryRv.adapter=DiaryGalleryRVAdapter(context,item.imgList)
+            binding.itemDiaryContentTv.text=item.diary_content
+            binding.itemDiaryTitleTv.text=item.event_title
+            binding.itemDiaryCategoryColorIv.background.setTint(context.resources.getColor(item.event_category_color))
+            binding.diaryGalleryRv.adapter=DiaryGalleryRVAdapter(context,item.diary_img)
             binding.diaryGalleryRv.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 

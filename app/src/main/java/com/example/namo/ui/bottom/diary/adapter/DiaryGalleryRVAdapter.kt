@@ -1,6 +1,7 @@
 package com.example.namo.ui.bottom.diary.adapter
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.net.toUri
@@ -11,7 +12,7 @@ import com.example.namo.databinding.ItemDiaryListGalleryBinding
 
 class DiaryGalleryRVAdapter(
     private val context: Context,
-    private val imgList:List<String>,
+    private val imgList:List<Bitmap>,
 ):
     RecyclerView.Adapter<DiaryGalleryRVAdapter.ViewHolder>(){
 
@@ -23,7 +24,7 @@ class DiaryGalleryRVAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         Glide.with(context)
-            .load(imgList[position].toUri())
+            .load(imgList[position])
             .into(holder.image)
     }
 

@@ -1,5 +1,6 @@
 package com.example.namo.ui.bottom.diary
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -12,10 +13,12 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
-import com.example.namo.data.entity.diary.Diary
+import com.example.namo.data.entity.diary.DiaryList
 import com.example.namo.databinding.FragmentDiaryBinding
 import com.example.namo.ui.bottom.diary.adapter.DiaryListRVAdapter
 import org.joda.time.DateTime
+import java.text.ParseException
+import java.text.SimpleDateFormat
 
 
 class DiaryFragment: Fragment() {
@@ -24,10 +27,10 @@ class DiaryFragment: Fragment() {
     private val binding get() = _binding!!
 
     private var dateTime = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
-    private var diaryList=listOf<Diary>()
+    private var diaryList=listOf<DiaryList>()
     lateinit var diaryAdapter:DiaryListRVAdapter
     private lateinit var yearMonth:String
-
+    private lateinit var day:String
     private lateinit var db: NamoDatabase
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -54,10 +57,32 @@ class DiaryFragment: Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SimpleDateFormat")
+    fun dateTimeToMillSec(dateTime: String): Long{
+        var timeInMilliseconds: Long = 0
+        val sdf = SimpleDateFormat("yyyy.MM.dd")
+        try {
+            val mDate = sdf.parse(dateTime)
+            timeInMilliseconds = mDate.time
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        return timeInMilliseconds
+    }
+
+
     private fun getList(){
         val r = Runnable {
             try {
-                diaryList = db.diaryDao.getDiaryList(yearMonth)
+                day="$yearMonth.31"
+                getDayInMonth()
+
+                val nextMonth=dateTimeToMillSec(day)
+                val startMonth=dateTimeToMillSec( "$yearMonth.01")
+
+                Log.d("text",day)
+
+                diaryList = db.diaryDao.getDiaryList(startMonth,nextMonth)
                 diaryAdapter= DiaryListRVAdapter(requireContext(),diaryList)
                 requireActivity().runOnUiThread {
                     binding.diaryListRv.adapter =  diaryAdapter
@@ -66,9 +91,9 @@ class DiaryFragment: Fragment() {
                     binding.diaryListRv.setHasFixedSize(true)
 
                     diaryAdapter.setRecordClickListener(object : DiaryListRVAdapter.DiaryEditInterface{
-                        override fun onEditClicked(diary: Diary) {
+                        override fun onEditClicked(allData: DiaryList) {
                             val bundle=Bundle()
-                            bundle.putInt("diaryIdx",diary.diaryIdx)
+                            bundle.putInt("scheduleIdx",allData.eventId)
 
                             val diaryFrag=DiaryModifyFragment()
                             diaryFrag.arguments=bundle
@@ -86,6 +111,20 @@ class DiaryFragment: Fragment() {
         val thread = Thread(r)
         thread.start()
 
+    }
+
+    private fun getDayInMonth(){
+
+        val year:String = SimpleDateFormat("yyyy").format(dateTime)
+
+        if(yearMonth=="$year.04" ||yearMonth=="$year.06" ||yearMonth=="$year.09" ||yearMonth=="$year.11")
+        { day="$yearMonth.30"}
+        if(yearMonth=="$year.02") {
+            day = "$yearMonth.28"
+            if (year.toInt() % 4 == 0 && year.toInt() % 100 != 0 || year.toInt() % 400 == 0) {
+                day = "$yearMonth.29"
+            }
+        }
     }
 
     private fun dialogCreate() {
