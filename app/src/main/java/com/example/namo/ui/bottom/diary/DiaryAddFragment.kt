@@ -1,9 +1,11 @@
 package com.example.namo.ui.bottom.diary
 
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -25,8 +28,9 @@ import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.diary.Diary
 import com.example.namo.databinding.FragmentDiaryAddBinding
-import com.example.namo.ui.bottom.diary.adapter.DiaryGalleryRVAdapter
+import com.example.namo.ui.bottom.diary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.io.File
 import java.lang.Boolean.TRUE
 import java.text.SimpleDateFormat
 
@@ -37,9 +41,9 @@ class DiaryAddFragment : Fragment() {
 
     private lateinit var db:NamoDatabase
     private lateinit var diary:Diary
-    private lateinit var galleryAdapter: DiaryGalleryRVAdapter
+    private lateinit var galleryAdapter: GalleryListAdapter
 
-    private var imgList= arrayListOf<Bitmap>()
+    private var imgList= arrayListOf<File>()
     private var longDate:Long = 0
     private var title:String=""
     private var place:String=""
@@ -58,7 +62,7 @@ class DiaryAddFragment : Fragment() {
         hideBottomNavigation(true)
 
         db=NamoDatabase.getInstance(requireContext())
-        galleryAdapter=DiaryGalleryRVAdapter(requireContext(),imgList)
+        galleryAdapter= GalleryListAdapter(requireContext(),imgList)
         scheduleIdx= arguments?.getInt("scheduleIdx")!!
         bind()
         charCnt()
@@ -66,6 +70,7 @@ class DiaryAddFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun bind(){
         longDate= arguments?.getLong("date")!!
         title = arguments?.getString("title").toString()
@@ -80,7 +85,7 @@ class DiaryAddFragment : Fragment() {
 
             diaryTitleTv.text=title
             diaryInputPlaceTv.text=place
-            context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(it.getColor(category)) }
+            context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(requireContext(),category)) }
             diaryInputDateTv.text= formatDate
             diaryBackIv.setOnClickListener {
                 findNavController().popBackStack()
@@ -110,6 +115,7 @@ class DiaryAddFragment : Fragment() {
             db.diaryDao.updateHasDiary(TRUE,scheduleIdx)
         }.start()  }
 
+
     @SuppressLint("IntentReset")
     private fun getPermission(){
 
@@ -122,45 +128,60 @@ class DiaryAddFragment : Fragment() {
         } else {
             // 권한 있음
             val intent = Intent()
-            intent.type = "image/*"
             intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            intent.type = "image/*"
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
             intent.action = Intent.ACTION_GET_CONTENT
 
-            startActivityForResult(intent, 200)
+            getImage.launch(intent)
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+        private val getImage=registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()){  result->
 
-        if ( requestCode == 200) {
+            if ( result.resultCode == RESULT_OK) {
 
-            if (data?.clipData != null) { // 사진 여러개 선택한 경우
-                val count = data.clipData!!.itemCount
+            if (result.data?.clipData != null) { // 사진 여러개 선택한 경우
+                val count = result.data?.clipData!!.itemCount
                 if (count > 3) {
                     Toast.makeText(requireContext(), "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT).show()
-                    return
                 }
-                for (i in 0 until count) {
-                    val imageUri = data.clipData!!.getItemAt(i).uri
+                else {
+                    for (i in 0 until count) {
+                        val imageUri = result.data?.clipData!!.getItemAt(i).uri
+                        val file = File(absolutelyPath(imageUri, requireContext()))
 
+                        imgList.add(file)
+                    }
                 }
-
             }
         } else { // 단일 선택
-            data?.data?.let {
-                val imageUri : Uri? = data.data
+            result.data?.data?.let {
+                val imageUri : Uri? = result.data!!.data
                 if (imageUri != null) {
+                    val  file = File(absolutelyPath(imageUri, requireContext()))
 
-
-                } } }
-
-
+                    imgList.add(file)
+                }
+            }
+        }
         binding.diaryGalleryClickIv.visibility=View.GONE
         binding.diaryGallerySavedRy.visibility=View.VISIBLE
         onRecyclerView()
 }
+
+    // 이미지 절대 경로 변환
+    @SuppressLint("Recycle")
+    private fun absolutelyPath(path: Uri, context: Context): String {
+        val proj: Array<String> = arrayOf(MediaStore.Images.Media.DATA)
+        val c: Cursor? = context.contentResolver.query(path, proj, null, null, null)
+        val index = c?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        c?.moveToFirst()
+        val result = c?.getString(index!!)
+
+        return result!!
+    }
 
     private fun onRecyclerView() {
 
@@ -183,6 +204,7 @@ class DiaryAddFragment : Fragment() {
                     maxText=s.toString()
                 }
 
+                @SuppressLint("SetTextI18n")
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     if(diaryContentsEt.length() > 200){
                         Toast.makeText(requireContext(),"최대 200자까지 입력 가능합니다",
@@ -190,8 +212,10 @@ class DiaryAddFragment : Fragment() {
 
                     diaryContentsEt.setText(maxText)
                     diaryContentsEt.setSelection(diaryContentsEt.length())
-                    textNumTv.text="${diaryEditTv.length()} / 200"
-                } else { textNumTv.text="${diaryEditTv.length()} / 200"}
+                        if (s != null) {
+                            textNumTv.text="${s.length} / 200"
+                        }
+                    } else { textNumTv.text="${s.toString().length} / 200"}
                 }
                 override fun afterTextChanged(s: Editable?) {
                 }

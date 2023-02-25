@@ -1,10 +1,13 @@
 package com.example.namo.ui.bottom.diary.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.diary.DiaryList
@@ -51,6 +54,7 @@ class DiaryListRVAdapter(
     inner class ViewHolder(val binding: ItemDiaryListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("SimpleDateFormat")
         @RequiresApi(Build.VERSION_CODES.O)
         fun bind(item: DiaryList) {
 
@@ -60,10 +64,13 @@ class DiaryListRVAdapter(
             binding.diaryDayTv.text=formattedDate
             binding.itemDiaryContentTv.text=item.diary_content
             binding.itemDiaryTitleTv.text=item.event_title
-            binding.itemDiaryCategoryColorIv.background.setTint(context.resources.getColor(item.event_category_color))
+            binding.itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(context,item.event_category_color))
             binding.diaryGalleryRv.adapter=DiaryGalleryRVAdapter(context,item.diary_img)
             binding.diaryGalleryRv.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
+            if(item.diary_content.isEmpty()) binding.itemDiaryContentTv.visibility= View.GONE
+            if(item.diary_img.isNullOrEmpty()) binding.diaryGalleryRv.visibility=View.GONE
 
         }
     }

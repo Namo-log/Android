@@ -1,10 +1,9 @@
 package com.example.namo.data.entity.diary
 
-
-import android.graphics.Bitmap
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.File
 
 @Entity(tableName="diaryTable")
 data class Diary(
@@ -15,6 +14,6 @@ data class Diary(
     var content:String="",
 
     @ColumnInfo(name = "diary_img")
-    var imgs:List<Bitmap>
+    var imgs:List<File>?=null
 )
 
