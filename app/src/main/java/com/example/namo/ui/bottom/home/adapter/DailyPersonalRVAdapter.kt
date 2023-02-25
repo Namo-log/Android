@@ -26,6 +26,13 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
     }
     /** ----- **/
 
+    interface ContentClickListener {
+        fun onContentClick(event : Event)
+    }
+    private lateinit var contentClickListener : ContentClickListener
+    fun setContentClickListener(contentClickListener : ContentClickListener) {
+        this.contentClickListener = contentClickListener
+    }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
         val binding : ItemCalendarEventBinding = ItemCalendarEventBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
@@ -45,6 +52,10 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
 //                diaryRecordClickListener.onEditClicked(personal[position])
 //            }
             diaryRecordClickListener.onAddClicked(personal[position])
+        }
+
+        holder.binding.itemCalendarEventContentLayout.setOnClickListener {
+            contentClickListener.onContentClick(personal[position])
         }
 
     }

@@ -23,4 +23,7 @@ interface EventDao {
 
     @Query("SELECT * FROM calendar_event_table WHERE event_start <= :calendarEnd AND event_end >= :calendarStart ORDER BY event_day_interval DESC")
     fun getEventCalendar(calendarStart : Long, calendarEnd : Long) : List<Event>
+
+    @Query("UPDATE calendar_event_table SET event_title = :title, event_start = :startLong, event_end = :endLong, event_day_interval = :dayInterval, event_category_color = :categoryColor, event_category_name = :categoryName, event_category_idx = :categoryIdx, event_place = :place WHERE eventId = :eventId")
+    fun updateWithEventID(eventId : Int, title : String, startLong: Long, endLong: Long, dayInterval : Int, categoryColor : Int, categoryName: String, categoryIdx : Int, place : String)
 }

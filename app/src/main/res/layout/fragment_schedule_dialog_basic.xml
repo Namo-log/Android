@@ -17,6 +17,15 @@
         android:textSize="22sp"
         android:textColor="@color/textGray"/>
 
+    <TextView
+        android:id="@+id/dialog_schedule_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="22sp"
+        android:visibility="gone"
+        android:textColor="@color/black"/>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dialog_schedule_category_layout"
         android:layout_width="match_parent"
