@@ -1,4 +1,4 @@
-package com.example.namo.data.entity.home.calendar
+package com.example.namo.data.entity.home
 
 import android.os.Build
 import androidx.annotation.RequiresApi

@@ -3,6 +3,7 @@ package com.example.namo.ui.bottom.home.calendar
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.GestureDetector
 import android.view.ViewGroup
@@ -10,10 +11,10 @@ import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
 import androidx.core.view.children
 import com.example.namo.R
-import com.example.namo.data.entity.home.calendar.Event
+import com.example.namo.data.NamoDatabase
+import com.example.namo.data.entity.home.Event
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
 import com.example.namo.utils.CalendarUtils.Companion.getOrder
-import com.example.namo.utils.CalendarUtils.Companion.getTodayEvent
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants.DAYS_PER_WEEK
 
@@ -35,6 +36,11 @@ class CalendarView @JvmOverloads constructor(
 
     var detector: GestureDetector? = null
 
+    lateinit var db : NamoDatabase
+
+    private lateinit var firstDayOfMonth : DateTime
+    private var list : List<DateTime> = listOf()
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         setMeasuredDimension(getDefaultSize(suggestedMinimumWidth, widthMeasureSpec), getDefaultSize(suggestedMinimumHeight, heightMeasureSpec))
     }
@@ -47,6 +53,7 @@ class CalendarView @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility", "DrawAllocation")
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
+
         val iWidth = (width / DAYS_PER_WEEK).toFloat()
         val iHeight = (height / WEEKS_PER_MONTH).toFloat()
 
@@ -56,7 +63,6 @@ class CalendarView @JvmOverloads constructor(
             val top = (index / DAYS_PER_WEEK) * iHeight
 
             view.layout(left.toInt(), top.toInt(), (left+iWidth).toInt(), (top+iHeight).toInt())
-
 
             index++
         }
@@ -133,31 +139,55 @@ class CalendarView @JvmOverloads constructor(
 
     /**
      * 달력 그리기 시작한다.
-     * @param firstDayOfMonth   한 달의 시작 요일
+     * @param firstDayOfMonth   한 달의 시작일
      * @param list              달력이 가지고 있는 요일과 이벤트 목록 (총 42개)
      */
-    fun initCalendar(firstDayOfMonth : DateTime, list : List<DateTime>, eventList : ArrayList<Event>) {
+    fun initCalendar(firstDayOfMonth : DateTime, list : List<DateTime>) {
+        removeAllViewsInLayout()
+        this.firstDayOfMonth = firstDayOfMonth
+        this.list = list
+        Log.d("CALENDAR_VIEW","init_calendar")
+        //eventList : 이 달력의 일정
+        db = NamoDatabase.getInstance(context)
+        var eventList : ArrayList<Event> = arrayListOf()
+        var forCalendarEvent : Thread = Thread {
+            eventList = db.eventDao.getEventCalendar(
+                list[0].withTimeAtStartOfDay().millis,
+                list[41].plusDays(1).withTimeAtStartOfDay().millis - 1
+            ) as ArrayList<Event>
+        }
+        forCalendarEvent.start()
+        try {
+            forCalendarEvent.join()
+        } catch (e : InterruptedException) {
+            e.printStackTrace()
+        }
 
         list.forEach {
+            var events = ArrayList<Event>() //오늘의 일정
+            var forTodayEvent : Thread = Thread {
+                events = db.eventDao.getEventDaily(
+                    it.withTimeAtStartOfDay().millis,
+                    it.plusDays(1).withTimeAtStartOfDay().millis - 1
+                ) as ArrayList<Event>
+            }
+            forTodayEvent.start()
+            try {
+                forTodayEvent.join()
+            } catch (e : InterruptedException) {
+                e.printStackTrace()
+            }
 
-            var events = getTodayEvent(eventList, it)
             events.forEach {
                 it.order = getOrder(it, eventList)
             }
 
-            val date = it
             val view = DayItemView(
                 context = context,
                 date = it,
                 firstDayOfMonth = firstDayOfMonth,
                 eventList = events
             )
-//            view.setOnClickListener {
-//                Log.d(
-//                    "DAYITEMVIEW_CLICK",
-//                    "${date.year}년 ${date.monthOfYear}월 ${date.dayOfMonth}일 ${date.dayOfWeek}요일"
-//                )
-//            }
 
             addView(view)
         }

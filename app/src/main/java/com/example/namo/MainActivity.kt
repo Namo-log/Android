@@ -25,6 +25,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
     private lateinit var splashScreen: SplashScreen
 
+    companion object {
+        const val PLACE_NAME_INTENT_KEY : String = "place_name"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         splashScreen = installSplashScreen()

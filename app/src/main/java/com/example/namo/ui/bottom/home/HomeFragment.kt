@@ -11,26 +11,31 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
-import com.example.namo.ui.bottom.home.calendar.CalendarAdapter
 import com.example.namo.MainActivity
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
+import com.example.namo.data.entity.home.Event
+import com.example.namo.databinding.FragmentHomeBinding
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
+import com.example.namo.ui.bottom.home.calendar.CalendarAdapter
+import com.example.namo.ui.bottom.home.calendar.CalendarMonthFragment
 import com.example.namo.ui.bottom.home.calendar.SetMonthDialog
-import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogFragment
 import com.example.namo.databinding.FragmentHomeBinding
 import com.example.namo.ui.bottom.diary.DiaryAddFragment
 import com.example.namo.ui.bottom.diary.DiaryModifyFragment
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import org.joda.time.DateTime
+import com.example.namo.ui.bottom.diary.DiaryAddFragment
 import com.example.namo.utils.CalendarUtils.Companion.getMonthList
 import com.example.namo.utils.CalendarUtils.Companion.getPrevOffset
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants.DAYS_PER_WEEK
 import kotlin.math.abs
 
@@ -130,12 +135,27 @@ class HomeFragment : Fragment() {
         Log.e("HOME_LIFECYCLE", "OnDestory")
     }
 
-    @SuppressLint("ClickableViewAccessibility")
+    private fun refreshFragment(fragment: Fragment, fragmentManager: FragmentManager) {
+        Log.d("REFRESH", "refresh fragment")
+        var ft : FragmentTransaction = fragmentManager.beginTransaction()
+        ft.detach(fragment).attach(fragment).commit()
+    }
+
+    @SuppressLint("ClickableViewAccessibility", "NotifyDataSetChanged")
     private fun clickListener() {
 
         binding.homeFab.setOnClickListener {
             scheduleDialogFragment = ScheduleDialogFragment {
+                Log.d("DIALOG_CALLBACK", it.toString())
+                if (it) {
+                    setData(nowIdx)
+                    Log.d("GET_EVENT", nowIdx.toString())
+                }
 
+                var page : Fragment =
+                    requireActivity().supportFragmentManager.findFragmentByTag("f" + calendarAdapter.getItemId(binding.homeCalendarVp.currentItem))!!
+                var mFragment = page as CalendarMonthFragment
+                mFragment.onResume()
             }
             scheduleDialogFragment.setDate(monthList[nowIdx])
             scheduleDialogFragment.show(requireActivity().supportFragmentManager, ScheduleDialogFragment.TAG)
@@ -303,7 +323,6 @@ class HomeFragment : Fragment() {
         personalEventRVAdapter.setRecordClickListener(object :DailyPersonalRVAdapter.DiaryInterface{
             override fun onAddClicked(event: Event) {
                 val bundle=Bundle()
-                bundle.putInt("scheduleIdx",event.eventId)
                 bundle.putString("title",event.title)
                 bundle.putInt("category",event.categoryColor)
                 bundle.putString("place",event.place)
@@ -340,7 +359,6 @@ class HomeFragment : Fragment() {
         setData(idx)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun setData(idx : Int) {
 
         //getDummy(idx)
@@ -360,6 +378,7 @@ class HomeFragment : Fragment() {
         else binding.homeDailyGroupEventNoneTv.visibility = View.GONE
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun getEvent(idx : Int) {
         event_personal.clear()
         event_group.clear()
@@ -370,6 +389,7 @@ class HomeFragment : Fragment() {
             event_personal = db.eventDao.getEventDaily(todayStart, todayEnd) as ArrayList<Event>
             personalEventRVAdapter.addPersonal(event_personal)
             requireActivity().runOnUiThread {
+                Log.d("NOTIFY", event_personal.toString())
                 personalEventRVAdapter.notifyDataSetChanged()
             }
         }

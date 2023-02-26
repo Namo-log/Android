@@ -7,9 +7,9 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.namo.data.dao.DiaryDao
 import com.example.namo.data.dao.EventDao
+import com.example.namo.data.entity.home.Event
 import com.example.namo.data.entity.diary.DiaryList
 import com.example.namo.data.entity.diary.Diary
-import com.example.namo.data.entity.home.calendar.Event
 import com.example.namo.ui.bottom.diary.adapter.Converters
 
 @Database(entities = [Event::class,Diary::class,DiaryList::class], version = 1, exportSchema = false)
