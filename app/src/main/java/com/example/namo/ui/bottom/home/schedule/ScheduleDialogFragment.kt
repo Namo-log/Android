@@ -44,7 +44,11 @@ class ScheduleDialogFragment (
     private lateinit var binding : FragmentScheduleDialogBinding
     //0 -> basic
     //1 -> category
+    //2 -> look
+    private var prevView : Int = 0
     private var recentView : Int = 0
+
+    var isEdit : Boolean = false
 
     private val categoryRVAdapter : DialogCategoryRVAdapter = DialogCategoryRVAdapter()
     private val categoryList : ArrayList<Category> = arrayListOf()
@@ -52,8 +56,8 @@ class ScheduleDialogFragment (
     private var selectedCategory : Int = 0
 
     private var picker : Int = 0
-    private lateinit var startDateTime : DateTime
-    private lateinit var endDateTime : DateTime
+    private var startDateTime = DateTime(System.currentTimeMillis())
+    private var endDateTime = DateTime(System.currentTimeMillis())
     private var selectedDate = DateTime(System.currentTimeMillis())
     private var selectedHourStr : String = "00"
     private var selectedMinStr : String = "00"
@@ -62,7 +66,7 @@ class ScheduleDialogFragment (
 
     private var place_name : String = ""
 
-    private lateinit var date: DateTime
+    private var date = DateTime(System.currentTimeMillis())
 
     private var event : Event = Event()
     lateinit var db : NamoDatabase
@@ -81,10 +85,12 @@ class ScheduleDialogFragment (
 
         db = NamoDatabase.getInstance(requireContext())
 
+        if (isEdit) {
+            recentView = 2
+        }
+
         setAdapter()
         setScreen()
-        initPickerText()
-        clickListener()
         Log.d("LIFECYCLE", "OnCreateView")
 
         return binding.root
@@ -130,30 +136,41 @@ class ScheduleDialogFragment (
         return displayMetrix.heightPixels
     }
 
-    private fun clickListener() {
-        binding.dialogScheduleBasicContainer.dialogScheduleCategoryLayout.setOnClickListener {
-            recentView = 1
-            binding.dialogScheduleBasicContainer.root.visibility = View.GONE
-            binding.dialogScheduleCategoryContainer.root.visibility = View.VISIBLE
-            setScreen()
-        }
+    private fun clickListener( setListener : Boolean) {
+        if (setListener) {
+            binding.dialogScheduleBasicContainer.dialogScheduleCategoryLayout.setOnClickListener {
+                prevView = recentView
+                recentView = 1
+                binding.dialogScheduleBasicContainer.root.visibility = View.GONE
+                binding.dialogScheduleCategoryContainer.root.visibility = View.VISIBLE
+                setScreen()
+            }
 
-        binding.dialogScheduleBasicContainer.dialogScheduleStartDateTv.setOnClickListener {
-            setPicker(1)
-        }
-        binding.dialogScheduleBasicContainer.dialogScheduleEndDateTv.setOnClickListener {
-            setPicker(2)
-        }
+            binding.dialogScheduleBasicContainer.dialogScheduleStartDateTv.setOnClickListener {
+                setPicker(1)
+            }
+            binding.dialogScheduleBasicContainer.dialogScheduleEndDateTv.setOnClickListener {
+                setPicker(2)
+            }
 
-        binding.dialogScheduleBasicContainer.dialogScheduleStartTimeTv.setOnClickListener {
-            setPicker(3)
-        }
-        binding.dialogScheduleBasicContainer.dialogScheduleEndTimeTv.setOnClickListener {
-            setPicker(4)
-        }
+            binding.dialogScheduleBasicContainer.dialogScheduleStartTimeTv.setOnClickListener {
+                setPicker(3)
+            }
+            binding.dialogScheduleBasicContainer.dialogScheduleEndTimeTv.setOnClickListener {
+                setPicker(4)
+            }
 
-        binding.dialogScheduleBasicContainer.dialogSchedulePlaceLayout.setOnClickListener {
-            getLocationPermission()
+            binding.dialogScheduleBasicContainer.dialogSchedulePlaceLayout.setOnClickListener {
+                getLocationPermission()
+            }
+        }
+        else {
+            binding.dialogScheduleBasicContainer.dialogScheduleCategoryLayout.setOnClickListener(null)
+            binding.dialogScheduleBasicContainer.dialogScheduleStartDateTv.setOnClickListener(null)
+            binding.dialogScheduleBasicContainer.dialogScheduleEndDateTv.setOnClickListener(null)
+            binding.dialogScheduleBasicContainer.dialogScheduleStartTimeTv.setOnClickListener(null)
+            binding.dialogScheduleBasicContainer.dialogScheduleEndTimeTv.setOnClickListener(null)
+            binding.dialogScheduleBasicContainer.dialogSchedulePlaceLayout.setOnClickListener(null)
         }
     }
 
@@ -328,8 +345,19 @@ class ScheduleDialogFragment (
         when(recentView) {
             //basic
             0-> {
+                binding.deleteBtn.visibility = View.GONE
+
+                binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.visibility = View.VISIBLE
+                binding.dialogScheduleBasicContainer.dialogScheduleTitleTv.visibility = View.GONE
+
+                binding.dialogScheduleCloseBtn.visibility = View.VISIBLE
+                binding.dialogScheduleSaveBtn.visibility = View.VISIBLE
+
                 binding.dialogScheduleHeaderTv.text = "새 일정"
+
+                initPickerText()
                 setCategory()
+                clickListener(true)
 
                 binding.dialogScheduleCloseBtn.setOnClickListener {
                     //그냥 닫기
@@ -367,17 +395,126 @@ class ScheduleDialogFragment (
 
             //category
             1 -> {
+                storeTemp()
+
                 binding.dialogScheduleHeaderTv.text = "카테고리"
 
+                binding.dialogScheduleCloseBtn.visibility = View.GONE
+                binding.dialogScheduleSaveBtn.visibility = View.GONE
+            }
+
+            //see
+            2 -> {
+                binding.deleteBtn.visibility = View.VISIBLE
+                binding.deleteBtn.setOnClickListener {
+                    //일정 삭제하고 닫기
+
+                    var deleteDB : Thread = Thread {
+                        db.eventDao.deleteEvent(event)
+                    }
+                    deleteDB.start()
+                    try {
+                        deleteDB.join()
+                    } catch ( e: InterruptedException) {
+                        e.printStackTrace()
+                    }
+
+                    Toast.makeText(requireContext(), "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+
+                    okCallback(true)
+                    dismiss()
+                }
+
+                clickListener(false)
+                binding.dialogScheduleHeaderTv.text = "내 일정"
+
+                binding.dialogScheduleCloseBtn.visibility = View.VISIBLE
+                binding.dialogScheduleSaveBtn.visibility = View.VISIBLE
+                binding.dialogScheduleSaveBtn.text = "편집"
+
                 binding.dialogScheduleCloseBtn.setOnClickListener {
-                    recentView = 0
-                    binding.dialogScheduleBasicContainer.root.visibility = View.VISIBLE
-                    binding.dialogScheduleCategoryContainer.root.visibility = View.GONE
-                    selectedCategory = initCategory
-                    categoryRVAdapter.setSelectedPos(initCategory)
-                    categoryRVAdapter.notifyDataSetChanged()
+                    okCallback(false)
+                    dismiss()
+                }
+
+                binding.dialogScheduleSaveBtn.setOnClickListener {
+                    recentView = 3
                     setScreen()
                 }
+
+                binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.visibility = View.GONE
+                binding.dialogScheduleBasicContainer.dialogScheduleTitleTv.visibility = View.VISIBLE
+                binding.dialogScheduleBasicContainer.dialogScheduleTitleTv.text = event.title
+
+                binding.dialogScheduleBasicContainer.dialogScheduleCategoryNameTv.text = event.categoryName
+                binding.dialogScheduleBasicContainer.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(event.categoryColor))
+                selectedCategory = event.categoryIdx
+
+
+                startDateTime = DateTime(event.startLong)
+                endDateTime = DateTime(event.endLong)
+
+                binding.dialogScheduleBasicContainer.dialogScheduleStartDateTv.text = DateTime(event.startLong).toString(getString(R.string.dateFormat))
+                binding.dialogScheduleBasicContainer.dialogScheduleEndDateTv.text = DateTime(event.endLong).toString(getString(R.string.dateFormat))
+                binding.dialogScheduleBasicContainer.dialogScheduleStartTimeTv.text = DateTime(event.startLong).toString(getString(R.string.timeFormat))
+                binding.dialogScheduleBasicContainer.dialogScheduleEndTimeTv.text = DateTime(event.endLong).toString(getString(R.string.timeFormat))
+
+                binding.dialogScheduleBasicContainer.dialogSchedulePlaceNameTv.text = event.place
+            }
+
+            //edit
+            3 -> {
+                binding.deleteBtn.visibility = View.GONE
+
+                clickListener(true)
+                setCategory()
+
+                binding.dialogScheduleCloseBtn.visibility = View.VISIBLE
+                binding.dialogScheduleSaveBtn.visibility = View.VISIBLE
+
+                binding.dialogScheduleHeaderTv.text = "일정 편집"
+                binding.dialogScheduleSaveBtn.text = "저장"
+
+                binding.dialogScheduleCloseBtn.setOnClickListener {
+                    okCallback(false)
+                    dismiss()
+                }
+
+                binding.dialogScheduleSaveBtn.setOnClickListener {
+                    //일정 업데이트하고 닫기
+                    //저장하고 닫기
+                    event.title = binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.text.toString()
+                    event.startLong = startDateTime.millis
+                    event.endLong = endDateTime.millis
+                    event.dayInterval = getInterval(event.startLong, event.endLong)
+                    event.categoryColor = categoryList[selectedCategory].color
+                    event.categoryName = categoryList[selectedCategory].name
+                    event.categoryIdx = selectedCategory
+                    event.place = place_name
+
+                    var updateDB : Thread = Thread {
+                        db.eventDao.updateEvent(event)
+                    }
+                    updateDB.start()
+                    try {
+                        updateDB.join()
+                    } catch ( e: InterruptedException) {
+                        e.printStackTrace()
+                    }
+
+                    Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
+
+                    okCallback(true)
+                    dismiss()
+                }
+
+                binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.visibility = View.VISIBLE
+                binding.dialogScheduleBasicContainer.dialogScheduleTitleTv.visibility = View.GONE
+                binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.setText(event.title)
+
+                categoryRVAdapter.setSelectedPos(selectedCategory)
+                categoryRVAdapter.notifyDataSetChanged()
+
             }
             else -> {
 
@@ -385,9 +522,17 @@ class ScheduleDialogFragment (
         }
     }
 
+    private fun storeTemp() {
+        event.title = binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.text.toString()
+        event.startLong = startDateTime.millis
+        event.endLong = endDateTime.millis
+        event.place = place_name
+    }
+
     private fun setCategory() {
         binding.dialogScheduleBasicContainer.dialogScheduleCategoryNameTv.text = categoryList[selectedCategory].name
         binding.dialogScheduleBasicContainer.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(categoryList[selectedCategory].color))
+
         Log.d("CATEGORY_COLOR", selectedCategory.toString())
     }
 
@@ -407,7 +552,7 @@ class ScheduleDialogFragment (
             override fun onSendPos(selected: Int) {
                 selectedCategory = selected
 
-                recentView = 0
+                recentView = prevView
                 binding.dialogScheduleBasicContainer.root.visibility = View.VISIBLE
                 binding.dialogScheduleCategoryContainer.root.visibility = View.GONE
                 setScreen()
@@ -476,6 +621,7 @@ class ScheduleDialogFragment (
     override fun onDestroy() {
         super.onDestroy()
         selectedCategory = initCategory
+        isEdit = false
 
         Log.d("LIFECYCLE", "Ondestory")
 
@@ -483,6 +629,10 @@ class ScheduleDialogFragment (
 
     fun setDate(date : DateTime) {
         this.date = date
+    }
+
+    fun setEvent(event : Event) {
+        this.event = event
     }
 
     companion object {

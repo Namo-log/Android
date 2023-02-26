@@ -30,26 +30,37 @@
             android:paddingVertical="9dp"
             android:paddingHorizontal="15dp">
 
-            <TextView
-                android:id="@+id/item_calendar_event_time"
-                android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/item_calendar_event_content_layout"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="11:00 - 13:00"
-                android:textColor="@color/black"
-                android:textSize="12sp"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/item_calendar_event_record">
 
-            <TextView
-                android:id="@+id/item_calendar_event_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="코딩스터디"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                app:layout_constraintTop_toBottomOf="@id/item_calendar_event_time"
-                app:layout_constraintStart_toStartOf="@id/item_calendar_event_time"/>
+                <TextView
+                    android:id="@+id/item_calendar_event_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="11:00 - 13:00"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+                <TextView
+                    android:id="@+id/item_calendar_event_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="코딩스터디"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    app:layout_constraintTop_toBottomOf="@id/item_calendar_event_time"
+                    app:layout_constraintStart_toStartOf="@id/item_calendar_event_time"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/item_calendar_event_record"
