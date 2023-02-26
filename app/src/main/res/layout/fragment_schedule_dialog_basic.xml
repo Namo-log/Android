@@ -303,6 +303,7 @@
             app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
+            android:id="@+id/dialog_schedule_place_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="추가"

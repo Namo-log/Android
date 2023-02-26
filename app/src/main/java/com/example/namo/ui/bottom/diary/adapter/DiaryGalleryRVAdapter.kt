@@ -3,15 +3,15 @@ package com.example.namo.ui.bottom.diary.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.namo.databinding.ItemDiaryListGalleryBinding
-import com.example.namo.ui.bottom.diary.Gallery
 
 
 class DiaryGalleryRVAdapter(
-    private val imgList:MutableList<Gallery>,
-    private val context: Context
+    private val context: Context,
+    private val imgList:List<String>,
 ):
     RecyclerView.Adapter<DiaryGalleryRVAdapter.ViewHolder>(){
 
@@ -23,35 +23,14 @@ class DiaryGalleryRVAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         Glide.with(context)
-            .load(imgList[position].img)
+            .load(imgList[position].toUri())
             .into(holder.image)
-
-        //Preload
-        if (position <= imgList.size) {
-            val endPosition = if (position + 1 > imgList.size) {
-                imgList.size
-            } else {
-                position + 1
-            }
-            imgList.subList(position, endPosition )
-                .map {
-                    it }
-                .forEach {
-                    preload(context, it.img)
-            }
-        }
     }
 
-    override fun getItemCount(): Int = imgList.size
+    override fun getItemCount(): Int = 0
 
     inner class ViewHolder(val binding: ItemDiaryListGalleryBinding): RecyclerView.ViewHolder(binding.root){
-
         val image=binding.galleryImgIv
-    }
-
-    private fun preload(context: Context, img:Int) {
-        Glide.with(context).load(img)
-            .preload(150, 150)
     }
 }
 

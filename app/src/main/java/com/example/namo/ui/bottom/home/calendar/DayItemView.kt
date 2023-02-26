@@ -11,7 +11,7 @@ import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
 import androidx.core.content.withStyledAttributes
 import com.example.namo.R
-import com.example.namo.data.entity.home.calendar.Event
+import com.example.namo.data.entity.home.Event
 import com.example.namo.utils.CalendarUtils.Companion.getDateColor
 import com.example.namo.utils.CalendarUtils.Companion.isSameMonth
 import org.joda.time.DateTime
@@ -137,7 +137,7 @@ class DayItemView @JvmOverloads constructor(
         paint.getTextBounds(day, 0, day.length, bounds)
 
         if (isToday()) {
-            canvas.drawCircle((width/2).toFloat(), (_dayTextHeight - bounds.height()/2), bounds.height().toFloat(), todayNoticePaint)
+            canvas.drawCircle((width/2 + bounds.width()/8).toFloat(), (_dayTextHeight - bounds.height()/2), bounds.height().toFloat(), todayNoticePaint)
         }
 
         canvas.drawText(

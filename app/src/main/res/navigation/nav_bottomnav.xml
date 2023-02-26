@@ -10,6 +10,12 @@
         android:name="com.example.namo.ui.bottom.home.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_diaryDetailFragment2"
+            app:destination="@id/diaryAddFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_diaryModifyFragment"
+            app:destination="@id/diaryModifyFragment" />
     </fragment>
 
     <fragment
@@ -18,12 +24,8 @@
         android:label="DiaryFragment"
         tools:layout="@layout/fragment_diary">
         <action
-            android:id="@+id/action_diaryFragment_to_diaryDetailFragment"
-            app:destination="@id/diaryDetailFragment" >
-            <argument
-                android:name="position"
-                app:argType="integer" />
-        </action>
+            android:id="@+id/action_diaryFragment_to_diaryModifyFragment"
+            app:destination="@id/diaryModifyFragment" />
     </fragment>
 
     <fragment
@@ -97,15 +99,13 @@
             app:popUpToInclusive="true" />
     </fragment>
     <fragment
-        android:id="@+id/diaryDetailFragment"
-        android:name="com.example.namo.ui.bottom.diary.DiaryDetailFragment"
-        android:label="DiaryDetailFragment"
-        tools:layout="@layout/fragment_diary_detail">
-        <argument
-            android:name="position"
-            app:argType="integer" />
-        <action
-            android:id="@+id/diaryDetailToDiary"
-            app:popUpTo="@id/diaryFragment" />
+        android:id="@+id/diaryAddFragment"
+        android:name="com.example.namo.ui.bottom.diary.DiaryAddFragment"
+        android:label="DiaryAddFragment"
+        tools:layout="@layout/fragment_diary_add">
     </fragment>
+    <fragment
+        android:id="@+id/diaryModifyFragment"
+        android:name="com.example.namo.ui.bottom.diary.DiaryModifyFragment"
+        android:label="DiaryModifyFragment" />
 </navigation>

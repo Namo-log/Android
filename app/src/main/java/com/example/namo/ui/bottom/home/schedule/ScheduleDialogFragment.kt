@@ -1,7 +1,14 @@
 package com.example.namo.ui.bottom.home.schedule
 
+import android.Manifest
+import android.app.Activity.RESULT_OK
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
@@ -9,17 +16,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.namo.MainActivity.Companion.PLACE_NAME_INTENT_KEY
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
-import com.example.namo.data.entity.home.calendar.Event
+import com.example.namo.data.entity.home.Event
 import com.example.namo.ui.bottom.home.schedule.adapter.DialogCategoryRVAdapter
 import com.example.namo.ui.bottom.home.schedule.data.Category
 import com.example.namo.ui.bottom.home.schedule.map.MapActivity
 import com.example.namo.databinding.FragmentScheduleDialogBinding
 import com.example.namo.utils.CalendarUtils.Companion.getInterval
-import com.example.namo.utils.CalendarUtils.Companion.getOrder
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -48,10 +60,17 @@ class ScheduleDialogFragment (
     private var isAmOrPm : String = "AM"
     private var closeOtherTime : Boolean = false
 
+    private var place_name : String = ""
+
     private lateinit var date: DateTime
 
     private var event : Event = Event()
     lateinit var db : NamoDatabase
+
+    private val PERMISSIONS_REQUEST_CODE = 100
+    private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+
+    private lateinit var getResult : ActivityResultLauncher<Intent>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,6 +88,17 @@ class ScheduleDialogFragment (
         Log.d("LIFECYCLE", "OnCreateView")
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+            if (it.resultCode == RESULT_OK) {
+                place_name = it.data?.getStringExtra(PLACE_NAME_INTENT_KEY)!!
+                binding.dialogScheduleBasicContainer.dialogSchedulePlaceNameTv.text = place_name
+                Log.d("PLACE_INTENT", place_name)
+            }
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -123,8 +153,35 @@ class ScheduleDialogFragment (
         }
 
         binding.dialogScheduleBasicContainer.dialogSchedulePlaceLayout.setOnClickListener {
-            val intent = Intent(requireActivity(), MapActivity::class.java)
-            startActivity(intent)
+            getLocationPermission()
+        }
+    }
+
+    private fun getLocationPermission() {
+        val permissionCheck = ContextCompat.checkSelfPermission(requireActivity(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            val lm = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            try {
+                val userNowLocation : Location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
+
+                val intent = Intent(requireActivity(), MapActivity::class.java)
+                getResult.launch(intent)
+//                startActivity(intent)
+
+            } catch (e : NullPointerException) {
+                Log.e("LOCATION_ERROR", e.toString())
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    ActivityCompat.finishAffinity(requireActivity())
+                } else {
+                    ActivityCompat.finishAffinity(requireActivity())
+                }
+            }
+
+        } else {
+            Toast.makeText(context, "위치 권한 허용 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+            ActivityCompat.requestPermissions(requireActivity(), REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE)
         }
     }
 
@@ -290,10 +347,17 @@ class ScheduleDialogFragment (
                    event.categoryColor = categoryList[selectedCategory].color
                    event.categoryName = categoryList[selectedCategory].name
                    event.categoryIdx = selectedCategory
+                   event.place = place_name
 
-                   Thread {
+                   var storeDB : Thread = Thread {
                        db.eventDao.insertEvent(event)
-                   }.start()
+                   }
+                   storeDB.start()
+                   try {
+                       storeDB.join()
+                   } catch ( e: InterruptedException) {
+                       e.printStackTrace()
+                   }
 
                    okCallback(true)
                    dismiss()
@@ -312,13 +376,6 @@ class ScheduleDialogFragment (
                     selectedCategory = initCategory
                     categoryRVAdapter.setSelectedPos(initCategory)
                     categoryRVAdapter.notifyDataSetChanged()
-                    setScreen()
-                }
-
-                binding.dialogScheduleSaveBtn.setOnClickListener {
-                    recentView = 0
-                    binding.dialogScheduleBasicContainer.root.visibility = View.VISIBLE
-                    binding.dialogScheduleCategoryContainer.root.visibility = View.GONE
                     setScreen()
                 }
             }
@@ -349,6 +406,11 @@ class ScheduleDialogFragment (
         categoryRVAdapter.setMyItemClickListener( object  : DialogCategoryRVAdapter.MyItemClickListener {
             override fun onSendPos(selected: Int) {
                 selectedCategory = selected
+
+                recentView = 0
+                binding.dialogScheduleBasicContainer.root.visibility = View.VISIBLE
+                binding.dialogScheduleCategoryContainer.root.visibility = View.GONE
+                setScreen()
             }
         })
     }
@@ -394,6 +456,7 @@ class ScheduleDialogFragment (
         }
     }
 
+
     override fun onResume() {
         super.onResume()
         Log.d("LIFECYCLE","OnResume")
@@ -413,6 +476,7 @@ class ScheduleDialogFragment (
     override fun onDestroy() {
         super.onDestroy()
         selectedCategory = initCategory
+
         Log.d("LIFECYCLE", "Ondestory")
 
     }

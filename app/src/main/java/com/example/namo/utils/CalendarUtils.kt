@@ -3,7 +3,7 @@ package com.example.namo.utils
 import android.content.Context
 import android.graphics.Color
 import androidx.annotation.ColorInt
-import com.example.namo.data.entity.home.calendar.Event
+import com.example.namo.data.entity.home.Event
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
 

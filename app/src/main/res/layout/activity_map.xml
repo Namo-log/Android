@@ -15,7 +15,49 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-        <include layout="@layout/dialog_map_bottom"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/map_btn_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:visibility="gone"
+            android:layout_marginBottom="120dp">
+
+            <TextView
+                android:id="@+id/cancel_btn"
+                android:layout_width="140dp"
+                android:layout_height="30dp"
+                android:text="취소"
+                android:textSize="15sp"
+                android:textColor="@color/MainOrange"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:background="@drawable/border_round_all_stroke_main_orange"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/select_btn"/>
+
+            <TextView
+                android:id="@+id/select_btn"
+                android:layout_width="140dp"
+                android:layout_height="30dp"
+                android:text="확인"
+                android:textSize="15sp"
+                android:textColor="@color/MainOrange"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:background="@drawable/border_round_all_stroke_main_orange"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cancel_btn"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            android:id="@+id/search_view"
+            layout="@layout/dialog_map_bottom"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
