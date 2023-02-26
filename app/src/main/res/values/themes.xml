@@ -68,7 +68,7 @@
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
     <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@drawable/border_round_top_border_gray</item>
+        <item name="android:background">@color/transparent</item>
     </style>
 
     <!--    home_calendar-->
