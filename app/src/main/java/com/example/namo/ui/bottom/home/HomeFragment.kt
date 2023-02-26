@@ -11,8 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
@@ -27,11 +25,9 @@ import com.example.namo.ui.bottom.home.calendar.CalendarAdapter
 import com.example.namo.ui.bottom.home.calendar.CalendarMonthFragment
 import com.example.namo.ui.bottom.home.calendar.SetMonthDialog
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogFragment
-import com.example.namo.databinding.FragmentHomeBinding
 import com.example.namo.ui.bottom.diary.DiaryAddFragment
 import com.example.namo.ui.bottom.diary.DiaryModifyFragment
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
-import com.example.namo.ui.bottom.diary.DiaryAddFragment
 import com.example.namo.utils.CalendarUtils.Companion.getMonthList
 import com.example.namo.utils.CalendarUtils.Companion.getPrevOffset
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -290,6 +286,7 @@ class HomeFragment : Fragment() {
         personalEventRVAdapter.setRecordClickListener(object :DailyPersonalRVAdapter.DiaryInterface{
             override fun onAddClicked(event: Event) {
                 val bundle=Bundle()
+                bundle.putInt("scheduleIdx",event.eventId)
                 bundle.putString("title",event.title)
                 bundle.putInt("category",event.categoryColor)
                 bundle.putString("place",event.place)

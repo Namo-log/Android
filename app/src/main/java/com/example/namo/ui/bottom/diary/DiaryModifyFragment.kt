@@ -28,7 +28,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.diary.Diary
-import com.example.namo.data.entity.home.calendar.Event
+import com.example.namo.data.entity.home.Event
+
 import com.example.namo.databinding.FragmentDiaryModifyBinding
 import com.example.namo.ui.bottom.diary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
