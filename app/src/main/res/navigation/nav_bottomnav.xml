@@ -35,7 +35,17 @@
         android:id="@+id/groupListFragment"
         android:name="com.example.namo.ui.bottom.grouplist.GroupListFragment"
         android:label="GroupListFragment"
-        tools:layout="@layout/fragment_group_list"/>
+        tools:layout="@layout/fragment_group_list">
+        <action
+            android:id="@+id/action_grouplistFragment_to_groupAddFragment"
+            app:destination="@id/groupAddFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/groupAddFragment"
+        android:name="com.example.namo.ui.bottom.grouplist.CreateGroupFragment"
+        android:label="GroupAddFragment"
+        tools:layout="@layout/fragment_group_create">
+    </fragment>
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.example.namo.ui.splash.SplashFragment"

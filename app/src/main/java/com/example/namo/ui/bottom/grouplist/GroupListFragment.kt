@@ -8,10 +8,13 @@ import android.view.*
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.entity.group.Group
 import com.example.namo.databinding.FragmentGroupListBinding
+import com.example.namo.ui.bottom.grouplist.CreateGroupFragment as CreateGroupFragment1
 
 
 class GroupListFragment : Fragment() {
@@ -89,7 +92,8 @@ class GroupListFragment : Fragment() {
 
     // 그룹 생성
     private fun showCreateGroupDialog() {
-        startActivity(Intent(activity, CreateGroupActivity::class.java))
+        view?.findNavController()?.navigate(R.id.action_grouplistFragment_to_groupAddFragment)
+        //startActivity(Intent(activity, CreateGroupFragment::class.java))
     }
 
     // 그룹 코드
