@@ -27,6 +27,9 @@ import com.example.namo.ui.bottom.home.calendar.CalendarAdapter
 import com.example.namo.ui.bottom.home.calendar.CalendarMonthFragment
 import com.example.namo.ui.bottom.home.calendar.SetMonthDialog
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogFragment
+import com.example.namo.databinding.FragmentHomeBinding
+import com.example.namo.ui.bottom.diary.DiaryAddFragment
+import com.example.namo.ui.bottom.diary.DiaryModifyFragment
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
 import com.example.namo.ui.bottom.diary.DiaryAddFragment
 import com.example.namo.utils.CalendarUtils.Companion.getMonthList
@@ -298,7 +301,12 @@ class HomeFragment : Fragment() {
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
             }
             override fun onEditClicked(event: Event) {
-                view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryModifyFragment)
+                val bundle=Bundle()
+                bundle.putInt("scheduleIdx",event.eventId)
+
+                val editFrag=DiaryModifyFragment()
+                editFrag.arguments=bundle
+                view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryModifyFragment,bundle)
             }
         })
         /** ----- **/
@@ -359,6 +367,7 @@ class HomeFragment : Fragment() {
         } catch (e : InterruptedException) {
             e.printStackTrace()
         }
+
 
     }
 
