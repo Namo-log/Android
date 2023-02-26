@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.entity.group.Group
@@ -74,10 +74,10 @@ class GroupListFragment : Fragment() {
             popupMenu.menuInflater.inflate(R.menu.group_option_menu, popupMenu.menu)
             popupMenu.setOnMenuItemClickListener { menuItem ->
                 if (menuItem.itemId === R.id.menu_item_create_group) {
-                    Toast.makeText(activity, "그룹 생성", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(activity, "그룹 생성", Toast.LENGTH_SHORT).show()
                     showCreateGroupDialog()
                 } else if (menuItem.itemId === R.id.menu_item_input_group_code) {
-                    Toast.makeText(activity, "그룹 코드 입력", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(activity, "그룹 코드 입력", Toast.LENGTH_SHORT).show()
                     showGroupCodeDialog()
                 }
                 false
@@ -88,9 +88,8 @@ class GroupListFragment : Fragment() {
 
     // 그룹 생성
     private fun showCreateGroupDialog() {
-        CreateGroupDialog(requireContext()) {
-            //viewModel.setName(it)
-        }.show()
+        view?.findNavController()?.navigate(R.id.action_grouplistFragment_to_groupAddFragment)
+        //startActivity(Intent(activity, CreateGroupFragment::class.java))
     }
 
     // 그룹 코드
