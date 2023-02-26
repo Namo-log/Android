@@ -5,6 +5,10 @@ plugins {
     id 'kotlin-kapt'
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def kakaoApiKey = properties.getProperty('kakao_native_key')
+
 android {
     compileSdk 32
 
@@ -15,6 +19,9 @@ android {
         versionCode 1
         versionName "1.0"
 
+        buildConfigField "String", "KAKAO_API_KEY", properties['kakao_api_key']
+        // mainfest에서 쓸 수 있도록 지정
+        manifestPlaceholders = [KAKAO_API_KEY : kakaoApiKey]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
