@@ -7,7 +7,8 @@ import androidx.room.Query
 import androidx.room.Update
 import com.example.namo.data.entity.diary.DiaryList
 import com.example.namo.data.entity.diary.Diary
-import com.example.namo.data.entity.home.calendar.Event
+import com.example.namo.data.entity.home.Event
+
 
 @Dao
 interface DiaryDao {
