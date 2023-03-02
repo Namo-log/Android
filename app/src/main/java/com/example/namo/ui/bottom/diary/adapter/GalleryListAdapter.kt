@@ -11,7 +11,7 @@ import java.io.File
 
 class GalleryListAdapter (
     private val context: Context,
-    private val imgList:List<File>?,
+    private val imgList:List<String>?,
 ):
     RecyclerView.Adapter<GalleryListAdapter.ViewHolder>(){
 

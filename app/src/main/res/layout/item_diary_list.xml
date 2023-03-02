@@ -128,6 +128,8 @@
                     android:textColor="@color/textGray"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
+                    android:maxLines="3"
+                    android:ellipsize="end"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/item_diary_title_tv"
                     app:layout_constraintTop_toTopOf="@id/item_diary_title_tv" />

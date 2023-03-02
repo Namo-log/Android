@@ -43,7 +43,7 @@ class DiaryAddFragment : Fragment() {
     private lateinit var diary:Diary
     private lateinit var galleryAdapter: GalleryListAdapter
 
-    private var imgList= arrayListOf<File>()
+    private var imgList= arrayListOf<String>()
     private var longDate:Long = 0
     private var title:String=""
     private var place:String=""
@@ -128,6 +128,8 @@ class DiaryAddFragment : Fragment() {
         } else {
             // 권한 있음
             val intent = Intent()
+            //Intent(Intent.ACTION_PICK)
+            //Intent(Intent.ACTION_GET_CONTENT) 실제 기기로 해보기
             intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             intent.type = "image/*"
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
@@ -146,13 +148,14 @@ class DiaryAddFragment : Fragment() {
                 val count = result.data?.clipData!!.itemCount
                 if (count > 3) {
                     Toast.makeText(requireContext(), "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT).show()
+                    return@registerForActivityResult
                 }
                 else {
                     for (i in 0 until count) {
                         val imageUri = result.data?.clipData!!.getItemAt(i).uri
-                        val file = File(absolutelyPath(imageUri, requireContext()))
+                        val file = File(absolutelyPath(imageUri, requireContext()))  // retrofit2 에 사용
 
-                        imgList.add(file)
+                        imgList.add(imageUri.toString())
                     }
                 }
             }
@@ -162,7 +165,7 @@ class DiaryAddFragment : Fragment() {
                 if (imageUri != null) {
                     val  file = File(absolutelyPath(imageUri, requireContext()))
 
-                    imgList.add(file)
+                    imgList.add(imageUri.toString())
                 }
             }
         }

@@ -29,7 +29,6 @@ import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.diary.Diary
 import com.example.namo.data.entity.home.Event
-
 import com.example.namo.databinding.FragmentDiaryModifyBinding
 import com.example.namo.ui.bottom.diary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -43,7 +42,7 @@ class DiaryModifyFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var db:NamoDatabase
-    private var imgList= arrayListOf<File>()
+    private var imgList= arrayListOf<String>()
     private lateinit var galleryAdapter: GalleryListAdapter
     private lateinit var event: Event
     private lateinit var diary: Diary
@@ -175,7 +174,7 @@ class DiaryModifyFragment : Fragment() {
                         val imageUri = result.data?.clipData!!.getItemAt(i).uri
                         val file = File(absolutelyPath(imageUri, requireContext()))
 
-                        imgList.add(file)
+                        imgList.add(imageUri.toString())
                     }
                 }
             }
@@ -185,7 +184,7 @@ class DiaryModifyFragment : Fragment() {
                 if (imageUri != null) {
                     val  file = File(absolutelyPath(imageUri, requireContext()))
 
-                    imgList.add(file)
+                    imgList.add(imageUri.toString())
                 }
             }
         }

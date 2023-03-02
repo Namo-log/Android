@@ -14,6 +14,6 @@ data class Diary(
     var content:String="",
 
     @ColumnInfo(name = "diary_img")
-    var imgs:List<File>?=null
+    var imgs:List<String>?=null
 )
 
