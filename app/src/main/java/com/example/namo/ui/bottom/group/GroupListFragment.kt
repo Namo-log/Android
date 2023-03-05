@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.grouplist
+package com.example.namo.ui.bottom.group
 
 import android.content.Context
 import android.os.Bundle

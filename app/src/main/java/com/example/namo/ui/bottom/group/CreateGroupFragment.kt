@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.grouplist
+package com.example.namo.ui.bottom.group
 
 import android.annotation.SuppressLint
 import android.content.Intent

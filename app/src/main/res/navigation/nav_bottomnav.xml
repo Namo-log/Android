@@ -35,7 +35,7 @@
         tools:layout="@layout/fragment_custom"/>
     <fragment
         android:id="@+id/groupListFragment"
-        android:name="com.example.namo.ui.bottom.grouplist.GroupListFragment"
+        android:name="com.example.namo.ui.bottom.group.GroupListFragment"
         android:label="GroupListFragment"
         tools:layout="@layout/fragment_group_list">
         <action
@@ -44,7 +44,7 @@
     </fragment>
     <fragment
         android:id="@+id/groupAddFragment"
-        android:name="com.example.namo.ui.bottom.grouplist.CreateGroupFragment"
+        android:name="com.example.namo.ui.bottom.group.CreateGroupFragment"
         android:label="GroupAddFragment"
         tools:layout="@layout/fragment_group_create">
     </fragment>
