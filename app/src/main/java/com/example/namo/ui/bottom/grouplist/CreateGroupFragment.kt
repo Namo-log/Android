@@ -21,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
+import com.example.namo.data.entity.group.Group
 import com.example.namo.databinding.FragmentGroupCreateBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -30,6 +31,12 @@ class CreateGroupFragment : DialogFragment() {
     private val binding get() = _binding!!
 
     private lateinit var db: NamoDatabase
+    private lateinit var group: Group
+
+    private var title: String = ""
+    private var coverImage: Uri? = null
+    private var member: List<String>? = null
+    private var imageUri: Uri? = null
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -57,16 +64,38 @@ class CreateGroupFragment : DialogFragment() {
     }
 
     private fun onClickListener() {
-
+        // 닫기
         binding.createGroupBackTv.setOnClickListener {
             findNavController().popBackStack() //뒤로가기
             hideBottomNavigation(false)
+        }
+        // 확인
+        binding.createGroupSaveTv.setOnClickListener {
+            if (!binding.createGroupTitleEt.toString().isEmpty()) {
+                insertData()
+                findNavController().popBackStack() //뒤로가기
+                hideBottomNavigation(false)
+            }
         }
 
         //앨범 권한 확인 후 연결
         binding.createGroupCoverImgIv.setOnClickListener {
             getPermission()
         }
+    }
+
+    private fun insertData() {
+        Thread {
+            with(binding) {
+                title = createGroupTitleEt.text.toString()
+                coverImage = imageUri
+            }
+            //TODO: 그룹 생성에서 멤버 비워두기. 일단 오류 나서 임시 멤버
+            member = listOf("지니", "앨리", "코코아")
+            //TODO: 그룹 프로필 추가
+            group = Group(0, title, member)
+            db.groupDao.insertGroup(group)
+        }.start()
     }
 
     private fun hideBottomNavigation( bool : Boolean){
@@ -105,7 +134,7 @@ class CreateGroupFragment : DialogFragment() {
         if ( requestCode == 200) {
 
             data?.data?.let {
-                val imageUri : Uri? = data.data
+                imageUri = data.data
                 if (imageUri != null) {
 
                     // 선택한 그룹 커버 이미지 불러오기
