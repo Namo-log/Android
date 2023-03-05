@@ -12,7 +12,7 @@ import java.io.File
 
 class DiaryGalleryRVAdapter(
     private val context: Context,
-    private val imgList:List<File>?,
+    private val imgList:List<String>?,
 ):
     RecyclerView.Adapter<DiaryGalleryRVAdapter.ViewHolder>(){
 
