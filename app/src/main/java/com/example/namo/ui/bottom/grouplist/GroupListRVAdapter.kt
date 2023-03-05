@@ -38,8 +38,8 @@ class GroupListRVAdapter(private val groupList: List<Group>):  RecyclerView.Adap
         fun bind(group: Group) {
             binding.itemGroupTitleTv.text = group.title
 //            binding.itemGroupCoverImgCiv.setImageResource(group.coverImage!!.port)
-            binding.itemGroupTotalPeopleNumTv.text = group.member?.size.toString()
-            binding.itemGroupTotalPeopleNameTv.text = group.member.toString()
+            binding.itemGroupTotalPeopleNumTv.text = 1.toString() //group.member?.size.toString()
+            binding.itemGroupTotalPeopleNameTv.text = "나" //group.member.toString()
         }
     }
 }

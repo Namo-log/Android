@@ -93,7 +93,7 @@ class CreateGroupFragment : DialogFragment() {
             //TODO: 그룹 생성에서 멤버 비워두기. 일단 오류 나서 임시 멤버
             member = listOf("지니", "앨리", "코코아")
             //TODO: 그룹 프로필 추가
-            group = Group(0, title, member)
+            group = Group(0, title)
             db.groupDao.insertGroup(group)
         }.start()
     }
