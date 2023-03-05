@@ -11,8 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
@@ -27,8 +25,9 @@ import com.example.namo.ui.bottom.home.calendar.CalendarAdapter
 import com.example.namo.ui.bottom.home.calendar.CalendarMonthFragment
 import com.example.namo.ui.bottom.home.calendar.SetMonthDialog
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogFragment
-import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
 import com.example.namo.ui.bottom.diary.DiaryAddFragment
+import com.example.namo.ui.bottom.diary.DiaryModifyFragment
+import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
 import com.example.namo.utils.CalendarUtils.Companion.getMonthList
 import com.example.namo.utils.CalendarUtils.Companion.getPrevOffset
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -117,31 +116,26 @@ class HomeFragment : Fragment() {
         setAdapter()
     }
 
-    override fun onStop() {
-        super.onStop()
-        Log.e("HOME_LIFECYCLE", "OnStop")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.e("HOME_LIFECYCLE", "OnPause")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.e("HOME_LIFECYCLE", "OnDestory")
-    }
-
-    private fun refreshFragment(fragment: Fragment, fragmentManager: FragmentManager) {
-        Log.d("REFRESH", "refresh fragment")
-        var ft : FragmentTransaction = fragmentManager.beginTransaction()
-        ft.detach(fragment).attach(fragment).commit()
-    }
+//    override fun onStop() {
+//        super.onStop()
+//        Log.e("HOME_LIFECYCLE", "OnStop")
+//    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//        Log.e("HOME_LIFECYCLE", "OnPause")
+//    }
+//
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        Log.e("HOME_LIFECYCLE", "OnDestory")
+//    }
 
     @SuppressLint("ClickableViewAccessibility", "NotifyDataSetChanged")
     private fun clickListener() {
 
         binding.homeFab.setOnClickListener {
+            Log.d("DIALOG_OPEN", nowIdx.toString())
             scheduleDialogFragment = ScheduleDialogFragment {
                 Log.d("DIALOG_CALLBACK", it.toString())
                 if (it) {
@@ -153,65 +147,14 @@ class HomeFragment : Fragment() {
                     requireActivity().supportFragmentManager.findFragmentByTag("f" + calendarAdapter.getItemId(binding.homeCalendarVp.currentItem))!!
                 var mFragment = page as CalendarMonthFragment
                 mFragment.onResume()
+
+                Log.d("DIALOG_CLOSE", nowIdx.toString())
+                setDaily(nowIdx)
             }
             scheduleDialogFragment.setDate(monthList[nowIdx])
             scheduleDialogFragment.show(requireActivity().supportFragmentManager, ScheduleDialogFragment.TAG)
         }
 
-//        var detector = GestureDetector(context, object : GestureDetector.OnGestureListener {
-//            override fun onDown(e: MotionEvent?): Boolean {
-//                Log.d("VP_TOUCH", "onDown")
-//                return false
-//            }
-//
-//            override fun onShowPress(e: MotionEvent?) {
-//                Log.d("VP_TOUCH", "ShowPress")
-//            }
-//
-//            override fun onSingleTapUp(e: MotionEvent?): Boolean {
-//                Log.d("VP_TOUCH", "onSingleTapUp")
-//                return false
-//            }
-//
-//            override fun onScroll(
-//                e1: MotionEvent?,
-//                e2: MotionEvent?,
-//                distanceX: Float,
-//                distanceY: Float
-//            ): Boolean {
-//                Log.d("VP_TOUCH", "onScroll() 호출됨 => $distanceX, $distanceY")
-//                return false
-//            }
-//
-//            override fun onLongPress(e: MotionEvent?) {
-//                Log.d("VP_TOUCH", "onLongPress")
-//            }
-//
-//            override fun onFling(
-//                e1: MotionEvent?,
-//                e2: MotionEvent?,
-//                velocityX: Float,
-//                velocityY: Float
-//            ): Boolean {
-//                Log.d("VP_TOUCH", "onFling")
-//                return false
-//            }
-//
-//        })
-
-//        binding.constraintLayout4.setOnClickListener {
-//            Log.d("TOUCH","constraint layout")
-//        }
-
-//        binding.constraintLayout4.setOnTouchListener { v, event ->
-//            detector.onTouchEvent(event)
-//            false
-//        }
-
-//        binding.homeCalendarVp.getChildAt(0).setOnTouchListener { v, event ->
-//            detector.onTouchEvent(event)
-//            false
-//        }
 
         binding.homeCalendarVp.getChildAt(0).setOnTouchListener { v, event ->
 
@@ -314,12 +257,36 @@ class HomeFragment : Fragment() {
 
         binding.homeDailyGroupEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.homeDailyGroupEventRv.adapter = groupEventRVAdapter
-        setToday()
+        if (nowIdx==0) setToday()
+
+        personalEventRVAdapter.setContentClickListener(object : DailyPersonalRVAdapter.ContentClickListener {
+            override fun onContentClick(event: Event) {
+                scheduleDialogFragment = ScheduleDialogFragment {
+                    Log.d("DIALOG_CALLBACK", it.toString())
+                    if (it) {
+                        setData(nowIdx)
+                        Log.d("GET_EVENT", nowIdx.toString())
+                    }
+
+                    var page : Fragment =
+                        requireActivity().supportFragmentManager.findFragmentByTag("f" + calendarAdapter.getItemId(binding.homeCalendarVp.currentItem))!!
+                    var mFragment = page as CalendarMonthFragment
+                    mFragment.onResume()
+
+                    setDaily(nowIdx)
+                }
+                scheduleDialogFragment.isEdit = true
+                scheduleDialogFragment.setEvent(event)
+                scheduleDialogFragment.show(requireActivity().supportFragmentManager, ScheduleDialogFragment.TAG)
+            }
+
+        })
 
         /** 기록 아이템 클릭 리스너 **/
         personalEventRVAdapter.setRecordClickListener(object :DailyPersonalRVAdapter.DiaryInterface{
             override fun onAddClicked(event: Event) {
                 val bundle=Bundle()
+                bundle.putInt("scheduleIdx",event.eventId)
                 bundle.putString("title",event.title)
                 bundle.putInt("category",event.categoryColor)
                 bundle.putString("place",event.place)
@@ -331,7 +298,12 @@ class HomeFragment : Fragment() {
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
             }
             override fun onEditClicked(event: Event) {
-                view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryModifyFragment)
+                val bundle=Bundle()
+                bundle.putInt("scheduleIdx",event.eventId)
+
+                val editFrag=DiaryModifyFragment()
+                editFrag.arguments=bundle
+                view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryModifyFragment,bundle)
             }
         })
         /** ----- **/
@@ -392,6 +364,7 @@ class HomeFragment : Fragment() {
         } catch (e : InterruptedException) {
             e.printStackTrace()
         }
+
 
     }
 
