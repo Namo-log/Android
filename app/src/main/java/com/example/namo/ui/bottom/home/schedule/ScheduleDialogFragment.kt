@@ -565,6 +565,7 @@ class ScheduleDialogFragment (
         categoryList.apply {
             add(
                 Category(
+                    0,
                     "카테고리1",
                     R.color.palette1,
                     false
@@ -572,6 +573,7 @@ class ScheduleDialogFragment (
             )
             add(
                 Category(
+                    0,
                     "카테고리2",
                     R.color.palette2,
                     false
@@ -579,6 +581,7 @@ class ScheduleDialogFragment (
             )
             add(
                 Category(
+                    0,
                     "카테고리3",
                     R.color.palette3,
                     false
@@ -586,6 +589,7 @@ class ScheduleDialogFragment (
             )
             add(
                 Category(
+                    0,
                     "카테고리4",
                     R.color.palette4,
                     false
@@ -593,6 +597,7 @@ class ScheduleDialogFragment (
             )
             add(
                 Category(
+                    0,
                     "카테고리5",
                     R.color.palette5,
                     false
