@@ -71,16 +71,19 @@ class DiaryFragment: Fragment() {
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun getList(){
         val r = Runnable {
             try {
-                day="$yearMonth.31"
+                day="$yearMonth.32"
+
                 getDayInMonth()
 
                 val nextMonth=dateTimeToMillSec(day)
                 val startMonth=dateTimeToMillSec( "$yearMonth.01")
 
                 Log.d("text",day)
+                Log.d("text",nextMonth.toString())
 
                 diaryList = db.diaryDao.getDiaryList(startMonth,nextMonth)
                 diaryAdapter= DiaryListRVAdapter(requireContext(),diaryList)
@@ -113,16 +116,17 @@ class DiaryFragment: Fragment() {
 
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun getDayInMonth(){
 
         val year:String = SimpleDateFormat("yyyy").format(dateTime)
 
         if(yearMonth=="$year.04" ||yearMonth=="$year.06" ||yearMonth=="$year.09" ||yearMonth=="$year.11")
-        { day="$yearMonth.30"}
+        { day="$yearMonth.31"}
         if(yearMonth=="$year.02") {
-            day = "$yearMonth.28"
+            day = "$yearMonth.29"
             if (year.toInt() % 4 == 0 && year.toInt() % 100 != 0 || year.toInt() % 400 == 0) {
-                day = "$yearMonth.29"
+                day = "$yearMonth.30"
             }
         }
     }
@@ -133,7 +137,6 @@ class DiaryFragment: Fragment() {
             yearMonth= DateTime(it).toString("yyyy.MM")
             binding.diaryMonth.text=yearMonth
             getList()
-            Log.d("date","$yearMonth")
         }.show(parentFragmentManager,"test")
 
     }

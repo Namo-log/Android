@@ -13,6 +13,6 @@ data class DiaryList(
     val event_category_color:Int,
     val event_start:Long,
     val diary_content:String,
-    val diary_img:List<File>?=null,
+    val diary_img:List<String>?=null,
     val event_place:String
 )
