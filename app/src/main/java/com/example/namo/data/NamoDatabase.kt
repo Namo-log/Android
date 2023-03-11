@@ -5,18 +5,21 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.namo.data.dao.CategoryDao
 import com.example.namo.data.dao.DiaryDao
 import com.example.namo.data.dao.EventDao
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.entity.diary.DiaryList
 import com.example.namo.data.entity.diary.Diary
 import com.example.namo.ui.bottom.diary.adapter.Converters
+import com.example.namo.ui.bottom.home.schedule.data.Category
 
-@Database(entities = [Event::class,Diary::class,DiaryList::class], version = 1, exportSchema = false)
+@Database(entities = [Event::class,Category::class,Diary::class,DiaryList::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class NamoDatabase : RoomDatabase() {
     abstract val eventDao : EventDao
     abstract val diaryDao : DiaryDao
+    abstract val categoryDao : CategoryDao
 
     companion object {
         @Volatile
