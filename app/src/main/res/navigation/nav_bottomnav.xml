@@ -26,6 +26,9 @@
         <action
             android:id="@+id/action_diaryFragment_to_diaryModifyFragment"
             app:destination="@id/diaryModifyFragment" />
+        <action
+            android:id="@+id/action_diaryFragment_to_groupDiaryFragment"
+            app:destination="@id/groupDiaryFragment" />
     </fragment>
 
     <fragment
@@ -108,4 +111,8 @@
         android:id="@+id/diaryModifyFragment"
         android:name="com.example.namo.ui.bottom.diary.DiaryModifyFragment"
         android:label="DiaryModifyFragment" />
+    <fragment
+        android:id="@+id/groupDiaryFragment"
+        android:name="com.example.namo.ui.bottom.diary.GroupDiaryFragment"
+        android:label="GroupDiaryFragment" />
 </navigation>

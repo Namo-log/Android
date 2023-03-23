@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.diary.DiaryList
 import com.example.namo.databinding.ItemDiaryListBinding
+import java.lang.Boolean.TRUE
 import java.text.SimpleDateFormat
 
 class DiaryListRVAdapter(
@@ -40,28 +41,30 @@ class DiaryListRVAdapter(
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        holder.bind(list[position])
-
+        val formattedDate= SimpleDateFormat("yyyy.MM.dd").format(list[position].event_start)
         holder.apply {
             binding.diaryEditTv.setOnClickListener {
                 diaryRecordClickListener.onEditClicked(list[position])
             }
+
+            bind(list[position])
+            binding.diaryDayTv.text=formattedDate
+            binding.diaryDateLayout.visibility=View.VISIBLE
+
+
         }
+
+
     }
 
     override fun getItemCount(): Int = list.size
 
     inner class ViewHolder(val binding: ItemDiaryListBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
         @SuppressLint("SimpleDateFormat")
         @RequiresApi(Build.VERSION_CODES.O)
         fun bind(item: DiaryList) {
 
-            val formattedDate= SimpleDateFormat("yyyy.MM.dd").format(item.event_start)
-
-            binding.itemDiaryContentTv.text
-            binding.diaryDayTv.text=formattedDate
             binding.itemDiaryContentTv.text=item.diary_content
             binding.itemDiaryTitleTv.text=item.event_title
             binding.itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(context,item.event_category_color))
@@ -73,6 +76,7 @@ class DiaryListRVAdapter(
             if(item.diary_img.isNullOrEmpty()) binding.diaryGalleryRv.visibility=View.GONE
 
         }
+        val a=binding.diaryDayTv.text
     }
 }
 

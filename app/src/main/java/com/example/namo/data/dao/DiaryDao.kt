@@ -38,7 +38,7 @@ interface DiaryDao {
 
     /** scheduleidx 로 테이블 합쳐서 startDate가 month인 리스트 출력 **/
     @Query("SELECT * FROM calendar_event_table JOIN diaryTable ON scheduleIdx = eventId " +
-            "WHERE event_start >= :startMonth AND event_start < :nextMonth ORDER BY event_start DESC")
+            "WHERE event_start >= :startMonth AND event_start < :nextMonth ORDER BY event_start ")
     fun getDiaryList(startMonth:Long,nextMonth:Long):List<DiaryList>
 
 }

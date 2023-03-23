@@ -33,6 +33,7 @@ class DiaryFragment: Fragment() {
     private lateinit var day:String
     private lateinit var db: NamoDatabase
 
+    @SuppressLint("CommitTransaction")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,6 +54,7 @@ class DiaryFragment: Fragment() {
         binding.diaryMonth.setOnClickListener {
             dialogCreate()
         }
+
 
         return binding.root
     }
@@ -81,9 +83,6 @@ class DiaryFragment: Fragment() {
 
                 val nextMonth=dateTimeToMillSec(day)
                 val startMonth=dateTimeToMillSec( "$yearMonth.01")
-
-                Log.d("text",day)
-                Log.d("text",nextMonth.toString())
 
                 diaryList = db.diaryDao.getDiaryList(startMonth,nextMonth)
                 diaryAdapter= DiaryListRVAdapter(requireContext(),diaryList)
