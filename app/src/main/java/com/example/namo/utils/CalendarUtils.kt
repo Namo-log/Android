@@ -2,6 +2,7 @@ package com.example.namo.utils
 
 import android.content.Context
 import android.graphics.Color
+import android.util.TypedValue
 import androidx.annotation.ColorInt
 import com.example.namo.data.entity.home.Event
 import org.joda.time.DateTime
@@ -10,6 +11,7 @@ import org.joda.time.DateTimeConstants
 class CalendarUtils {
     companion object {
         const val WEEKS_PER_MONTH = 6
+        const val DAYS_PER_WEEK = 7
 
         /**
          * 선택된 날짜에 해당하는 월간 달력을 반환한다.
@@ -111,6 +113,14 @@ class CalendarUtils {
                 return true
             }
             return false
+        }
+
+        fun dpToPx(context: Context, dp: Float): Float {
+            return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.resources.displayMetrics)
+        }
+
+        fun spToPx(context: Context, sp: Float): Float {
+            return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.resources.displayMetrics)
         }
     }
 }
