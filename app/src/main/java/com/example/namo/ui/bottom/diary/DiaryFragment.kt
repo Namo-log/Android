@@ -85,8 +85,7 @@ class DiaryFragment: Fragment() {
                 val nextMonth=dateTimeToMillSec(day)
                 val startMonth=dateTimeToMillSec( "$yearMonth.01")
 
-                Log.d("text",day)
-                Log.d("text",nextMonth.toString())
+                Log.d("text","$startMonth,$nextMonth")
 
                 monthList = db.diaryDao.getMonthList(startMonth,nextMonth,TRUE)
 
