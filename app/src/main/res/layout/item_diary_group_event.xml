@@ -106,7 +106,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_diary_gallery"
+        tools:listitem="@layout/item_gallery_list"
         android:orientation="horizontal"
         tools:itemCount="3"
         android:visibility="gone"

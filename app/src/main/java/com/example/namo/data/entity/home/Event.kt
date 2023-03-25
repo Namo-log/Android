@@ -1,11 +1,13 @@
 package com.example.namo.data.entity.home
 
 import android.os.Build
+import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.lang.Boolean.FALSE
+import java.sql.Types.NULL
 import java.time.Instant
 import java.time.ZoneId
 
@@ -42,5 +44,12 @@ data class Event(
     var order : Int = 0,
 
     @ColumnInfo(name= "event_has_diary")
-    var hasDiary: Boolean = FALSE
+    var hasDiary: Boolean = FALSE,
+
+    @ColumnInfo(name = "diary_content")
+    var content:String="",
+
+    @ColumnInfo(name = "diary_img")
+    var imgs : List<String>? = listOf()
+
 )

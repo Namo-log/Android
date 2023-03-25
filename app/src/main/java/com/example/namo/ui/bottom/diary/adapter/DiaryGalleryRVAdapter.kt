@@ -7,12 +7,11 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.namo.databinding.ItemDiaryListGalleryBinding
-import java.io.File
 
 
 class DiaryGalleryRVAdapter(
     private val context: Context,
-    private val imgList:List<String>?,
+    private val imgList: List<String>?,
 ):
     RecyclerView.Adapter<DiaryGalleryRVAdapter.ViewHolder>(){
 

@@ -10,20 +10,19 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.namo.data.entity.diary.DiaryList
+import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.ItemDiaryListBinding
-import java.lang.Boolean.TRUE
 import java.text.SimpleDateFormat
 
 class DiaryListRVAdapter(
     val context: Context,
-    var list: List<DiaryList>,
+    var list: List<Event>,
 ):
     RecyclerView.Adapter<DiaryListRVAdapter.ViewHolder>() {
 
     /** 기록 아이템 클릭 리스너 **/
     interface DiaryEditInterface {
-        fun onEditClicked(allData: DiaryList)
+        fun onEditClicked(allData: Event)
     }
     private lateinit var diaryRecordClickListener: DiaryEditInterface
     fun setRecordClickListener(itemClickListener: DiaryEditInterface){
@@ -41,42 +40,39 @@ class DiaryListRVAdapter(
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val formattedDate= SimpleDateFormat("yyyy.MM.dd").format(list[position].event_start)
+        holder.bind(list[position])
+
         holder.apply {
             binding.diaryEditTv.setOnClickListener {
                 diaryRecordClickListener.onEditClicked(list[position])
             }
-
-            bind(list[position])
-            binding.diaryDayTv.text=formattedDate
-            binding.diaryDateLayout.visibility=View.VISIBLE
-
-
         }
-
-
     }
 
     override fun getItemCount(): Int = list.size
 
     inner class ViewHolder(val binding: ItemDiaryListBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         @SuppressLint("SimpleDateFormat")
         @RequiresApi(Build.VERSION_CODES.O)
-        fun bind(item: DiaryList) {
+        fun bind(item: Event) {
 
-            binding.itemDiaryContentTv.text=item.diary_content
-            binding.itemDiaryTitleTv.text=item.event_title
-            binding.itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(context,item.event_category_color))
-            binding.diaryGalleryRv.adapter=DiaryGalleryRVAdapter(context,item.diary_img)
+            val formattedDate= SimpleDateFormat("yyyy.MM.dd").format(item.startLong)
+
+            binding.itemDiaryContentTv.text
+            binding.diaryDayTv.text=formattedDate
+            binding.itemDiaryContentTv.text=item.content
+            binding.itemDiaryTitleTv.text=item.title
+            binding.itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(context,item.categoryColor))
+            binding.diaryGalleryRv.adapter= DiaryGalleryRVAdapter(context, item.imgs)
             binding.diaryGalleryRv.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-            if(item.diary_content.isEmpty()) binding.itemDiaryContentTv.visibility= View.GONE
-            if(item.diary_img.isNullOrEmpty()) binding.diaryGalleryRv.visibility=View.GONE
+            if(item.content.isEmpty()) binding.itemDiaryContentTv.visibility= View.GONE
+            if(item.imgs?.isEmpty() == true) binding.diaryGalleryRv.visibility=View.GONE
 
         }
-        val a=binding.diaryDayTv.text
     }
 }
 

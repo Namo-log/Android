@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +27,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
-import com.example.namo.data.entity.diary.Diary
+import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.FragmentDiaryAddBinding
 import com.example.namo.ui.bottom.diary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -40,14 +41,11 @@ class DiaryAddFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var db:NamoDatabase
-    private lateinit var diary:Diary
+
     private lateinit var galleryAdapter: GalleryListAdapter
+    private lateinit var event: Event
 
     private var imgList= arrayListOf<String>()
-    private var longDate:Long = 0
-    private var title:String=""
-    private var place:String=""
-    private var category:Int=0
     private var scheduleIdx:Int=0
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -62,37 +60,50 @@ class DiaryAddFragment : Fragment() {
         hideBottomNavigation(true)
 
         db=NamoDatabase.getInstance(requireContext())
+
         galleryAdapter= GalleryListAdapter(requireContext(),imgList)
         scheduleIdx= arguments?.getInt("scheduleIdx")!!
-        bind()
-        charCnt()
 
+        charCnt()
+        bind()
         return binding.root
     }
 
     @SuppressLint("SimpleDateFormat")
     private fun bind(){
-        longDate= arguments?.getLong("date")!!
-        title = arguments?.getString("title").toString()
-        place=arguments?.getString("place").toString()
-        category= arguments?.getInt("category")!!
+        val r = Runnable {
+            try {
+                event=db.diaryDao.getSchedule(scheduleIdx)
+                requireActivity().runOnUiThread {
+                    binding.apply {
+
+                        val formatDate=SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong)
+                        diaryTodayDayTv.text=SimpleDateFormat("EE").format(event.startLong)
+                        diaryTodayNumTv.text=SimpleDateFormat("dd").format(event.startLong)
+
+                        diaryTitleTv.text=event.title
+                        diaryInputPlaceTv.text=event.place
+                        context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(requireContext(),event.categoryColor)) }
+                        diaryInputDateTv.text= formatDate
+                    }
+                }
+
+            } catch (e: Exception) {
+                Log.d("tag", "Error - $e")
+            }
+        }
+
+        val thread = Thread(r)
+        thread.start()
 
         binding.apply {
 
-            val formatDate=SimpleDateFormat("yyyy.MM.dd (EE)").format(longDate)
-            diaryTodayDayTv.text=SimpleDateFormat("EE").format(longDate)
-            diaryTodayNumTv.text=SimpleDateFormat("dd").format(longDate)
-
-            diaryTitleTv.text=title
-            diaryInputPlaceTv.text=place
-            context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(requireContext(),category)) }
-            diaryInputDateTv.text= formatDate
             diaryBackIv.setOnClickListener {
                 findNavController().popBackStack()
                 hideBottomNavigation(false)
             }
-            diaryEditTv.setOnClickListener {
 
+            diaryEditTv.setOnClickListener {
                 if (diaryEditTv.text.toString().isEmpty()) {
                     Toast.makeText(requireContext(), "메모를 입력해주세용", Toast.LENGTH_SHORT).show()
                 } else {
@@ -110,9 +121,7 @@ class DiaryAddFragment : Fragment() {
 
     private fun insertData(){
         Thread{
-            diary=Diary(scheduleIdx, binding.diaryContentsEt.text.toString(),imgList)
-            db.diaryDao.insertDiary(diary)
-            db.diaryDao.updateHasDiary(TRUE,scheduleIdx)
+            db.diaryDao.addDiary(scheduleIdx,TRUE,binding.diaryContentsEt.text.toString(),imgList)
         }.start()  }
 
 

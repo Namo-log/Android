@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +28,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
-import com.example.namo.data.entity.diary.Diary
 import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.FragmentDiaryModifyBinding
 import com.example.namo.ui.bottom.diary.adapter.GalleryListAdapter
@@ -44,8 +44,8 @@ class DiaryModifyFragment : Fragment() {
     private lateinit var db:NamoDatabase
     private var imgList= arrayListOf<String>()
     private lateinit var galleryAdapter: GalleryListAdapter
+
     private lateinit var event: Event
-    private lateinit var diary: Diary
     private var scheduleIdx:Int=0
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -64,11 +64,12 @@ class DiaryModifyFragment : Fragment() {
         scheduleIdx= arguments?.getInt("scheduleIdx")!!
 
         Thread {
-            event = db.diaryDao.getScheduleContent(scheduleIdx)
-            diary =db.diaryDao.getDiaryContent(scheduleIdx)
-            galleryAdapter= GalleryListAdapter(requireContext(),diary.imgs)
+            event = db.diaryDao.getSchedule(scheduleIdx)
+            galleryAdapter= GalleryListAdapter(requireContext(), event.imgs)
+            Log.d("img","${event.imgs}")
             requireActivity().runOnUiThread {
                 bind()
+                Log.d("img2","${event.imgs}")
             }
         }.start()
 
@@ -85,7 +86,7 @@ class DiaryModifyFragment : Fragment() {
             diaryInputDateTv.text=formatDate
             diaryInputPlaceTv.text=event.place
             diaryTitleTv.text=event.title
-            diaryContentsEt.setText(diary.content)
+            diaryContentsEt.setText(event.content)
             context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(requireContext(),event.categoryColor)) }
 
             diaryTodayDayTv.text=SimpleDateFormat("EE").format(event.startLong)
@@ -122,19 +123,22 @@ class DiaryModifyFragment : Fragment() {
 
     private fun updateDiary(){
         Thread{
-            diary.content= binding.diaryContentsEt.text.toString()
+            event.content= binding.diaryContentsEt.text.toString()
 
-            if(imgList.isEmpty()) diary.imgs=diary.imgs
-            else diary.imgs=imgList
+            if(imgList.isEmpty()) event.imgs=event.imgs
+            else event.imgs=imgList
 
-            db.diaryDao.updateDiary(diary)
+            event.imgs?.let {
+                db.diaryDao.updateDiary(scheduleIdx,binding.diaryContentsEt.text.toString(),
+                    it
+                )
+            }
         }.start()
     }
 
     private fun deleteDiary(){
         Thread{
-            db.diaryDao.deleteDiary(diary)
-            db.diaryDao.deleteHasDiary(FALSE,scheduleIdx)
+            db.diaryDao.deleteDiary(scheduleIdx,FALSE,"", listOf())
         }.start()
     }
 
