@@ -13,10 +13,11 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
-import com.example.namo.data.entity.diary.DiaryList
+import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.FragmentDiaryBinding
 import com.example.namo.ui.bottom.diary.adapter.DiaryListRVAdapter
 import org.joda.time.DateTime
+import java.lang.Boolean.TRUE
 import java.text.ParseException
 import java.text.SimpleDateFormat
 
@@ -27,7 +28,8 @@ class DiaryFragment: Fragment() {
     private val binding get() = _binding!!
 
     private var dateTime = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
-    private var diaryList=listOf<DiaryList>()
+
+    private var monthList=listOf<Event>()
     lateinit var diaryAdapter:DiaryListRVAdapter
     private lateinit var yearMonth:String
     private lateinit var day:String
@@ -43,7 +45,6 @@ class DiaryFragment: Fragment() {
         _binding = FragmentDiaryBinding.inflate(inflater, container, false)
 
         db=NamoDatabase.getInstance(requireContext())
-        diaryAdapter= DiaryListRVAdapter(requireContext(),diaryList)
 
         binding.diaryMonth.text=DateTime(dateTime).toString("yyyy.MM")
         yearMonth=binding.diaryMonth.text.toString()
@@ -63,7 +64,9 @@ class DiaryFragment: Fragment() {
         val sdf = SimpleDateFormat("yyyy.MM.dd")
         try {
             val mDate = sdf.parse(dateTime)
-            timeInMilliseconds = mDate.time
+            if (mDate != null) {
+                timeInMilliseconds = mDate.time
+            }
         } catch (e: ParseException) {
             e.printStackTrace()
         }
@@ -82,11 +85,12 @@ class DiaryFragment: Fragment() {
                 val nextMonth=dateTimeToMillSec(day)
                 val startMonth=dateTimeToMillSec( "$yearMonth.01")
 
-                Log.d("text",day)
-                Log.d("text",nextMonth.toString())
+                Log.d("text","$startMonth,$nextMonth")
 
-                diaryList = db.diaryDao.getDiaryList(startMonth,nextMonth)
-                diaryAdapter= DiaryListRVAdapter(requireContext(),diaryList)
+                monthList = db.diaryDao.getMonthList(startMonth,nextMonth,TRUE)
+
+                Log.d("monthlist","$monthList")
+                diaryAdapter= DiaryListRVAdapter(requireContext(),monthList)
                 requireActivity().runOnUiThread {
                     binding.diaryListRv.adapter =  diaryAdapter
                     diaryAdapter.notifyDataSetChanged()
@@ -94,14 +98,14 @@ class DiaryFragment: Fragment() {
                     binding.diaryListRv.setHasFixedSize(true)
 
                     diaryAdapter.setRecordClickListener(object : DiaryListRVAdapter.DiaryEditInterface{
-                        override fun onEditClicked(allData: DiaryList) {
+                        override fun onEditClicked(allData: Event) {
                             val bundle=Bundle()
                             bundle.putInt("scheduleIdx",allData.eventId)
 
                             val diaryFrag=DiaryModifyFragment()
                             diaryFrag.arguments=bundle
 
-                            view?.findNavController()?.navigate(R.id.action_diaryFragment_to_diaryModifyFragment, bundle)
+                            view?.findNavController()?.navigate(R.id.action_diaryFragment_to_diaryModifyFragment,bundle)
                         }
                     })
                 }
@@ -148,7 +152,3 @@ class DiaryFragment: Fragment() {
     }
 
 }
-
-
-
-
