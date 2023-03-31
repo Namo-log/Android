@@ -89,9 +89,18 @@ class DiaryFragment: Fragment() {
 
                 monthList = db.diaryDao.getMonthList(startMonth,nextMonth,TRUE)
 
+
                 Log.d("monthlist","$monthList")
                 diaryAdapter= DiaryListRVAdapter(requireContext(),monthList)
                 requireActivity().runOnUiThread {
+
+                    if (monthList.isEmpty()){
+                        binding.diaryListEmptyTv.visibility=View.VISIBLE
+
+                    }
+
+
+
                     binding.diaryListRv.adapter =  diaryAdapter
                     diaryAdapter.notifyDataSetChanged()
                     binding.diaryListRv.layoutManager = LinearLayoutManager(requireContext())
