@@ -3,6 +3,7 @@ package com.example.namo.ui.bottom.diary.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,10 +59,7 @@ class DiaryListRVAdapter(
         @RequiresApi(Build.VERSION_CODES.O)
         fun bind(item: Event) {
 
-            val formattedDate= SimpleDateFormat("yyyy.MM.dd").format(item.startLong)
-
             binding.itemDiaryContentTv.text
-            binding.diaryDayTv.text=formattedDate
             binding.itemDiaryContentTv.text=item.content
             binding.itemDiaryTitleTv.text=item.title
             binding.itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(context,item.categoryColor))
