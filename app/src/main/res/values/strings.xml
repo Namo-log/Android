@@ -74,4 +74,7 @@
     <string name="dateFormat">yyyy.MM.dd (E)</string>
     <string name="timeFormat">hh:mm a</string>
 
+    <!-- 카테고리 관련 String -->
+    <string name="category_edit">카테고리 편집</string>
+
 </resources>

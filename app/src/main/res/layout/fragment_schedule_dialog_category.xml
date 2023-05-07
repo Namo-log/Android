@@ -13,8 +13,10 @@
         tools:listitem="@layout/item_schedule_dialog_category"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/schedule_dialog_category_edit_cv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingVertical="5dp">
         
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/schedule_dialog_category_edit_iv"
@@ -27,14 +29,14 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="카테고리 편집"
+            android:layout_marginStart="20dp"
+            android:text="@string/category_edit"
             android:textSize="15sp"
             android:textColor="@color/textGray"
             app:layout_constraintStart_toEndOf="@id/schedule_dialog_category_edit_iv"
             app:layout_constraintTop_toTopOf="@id/schedule_dialog_category_edit_iv"
             app:layout_constraintBottom_toBottomOf="@id/schedule_dialog_category_edit_iv"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="20dp"/>
+            app:layout_constraintEnd_toEndOf="parent" />
         
     </androidx.constraintlayout.widget.ConstraintLayout>
     
