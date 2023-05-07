@@ -59,16 +59,16 @@ class CalendarMonth2Fragment : Fragment() {
         binding.calendarMonthView.setDayList(millis)
         monthList = binding.calendarMonthView.getDayList()
 
-        var forDB : Thread = Thread {
-            tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis, monthList[41].plusDays(1).withTimeAtStartOfDay().millis)
-        }
-        forDB.start()
-        try {
-            forDB.join()
-        } catch (e : InterruptedException) {
-            e.printStackTrace()
-        }
-        binding.calendarMonthView.setEventList(tempEvent)
+//        var forDB : Thread = Thread {
+//            tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis, monthList[41].plusDays(1).withTimeAtStartOfDay().millis)
+//        }
+//        forDB.start()
+//        try {
+//            forDB.join()
+//        } catch (e : InterruptedException) {
+//            e.printStackTrace()
+//        }
+//        binding.calendarMonthView.setEventList(tempEvent)
 
         binding.homeFab.setOnClickListener {
             Log.d("DIALOG_OPEN", nowIdx.toString())
@@ -79,7 +79,7 @@ class CalendarMonth2Fragment : Fragment() {
                     Log.d("GET_EVENT", nowIdx.toString())
                 }
 
-                var page : Fragment = this@CalendarMonth2Fragment
+                var page : CalendarMonth2Fragment = this@CalendarMonth2Fragment
                 page.onResume()
 
                 Log.d("DIALOG_CLOSE", nowIdx.toString())
@@ -150,7 +150,7 @@ class CalendarMonth2Fragment : Fragment() {
         personalEventRVAdapter.setRecordClickListener(object : DailyPersonalRVAdapter.DiaryInterface{
             override fun onAddClicked(event: Event) {
                 val bundle=Bundle()
-                bundle.putInt("scheduleIdx",event.eventId)
+                bundle.putInt("scheduleIdx",event.eventId.toInt())
                 bundle.putString("title",event.title)
                 bundle.putInt("category",event.categoryColor)
                 bundle.putString("place",event.place)
@@ -163,7 +163,7 @@ class CalendarMonth2Fragment : Fragment() {
             }
             override fun onEditClicked(event: Event) {
                 val bundle=Bundle()
-                bundle.putInt("scheduleIdx",event.eventId)
+                bundle.putInt("scheduleIdx",event.eventId.toInt())
 
                 val editFrag= DiaryModifyFragment()
                 editFrag.arguments=bundle
@@ -228,6 +228,16 @@ class CalendarMonth2Fragment : Fragment() {
     override fun onResume() {
         super.onResume()
         setAdapter()
+        var forDB : Thread = Thread {
+            tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis, monthList[41].plusDays(1).withTimeAtStartOfDay().millis)
+        }
+        forDB.start()
+        try {
+            forDB.join()
+        } catch (e : InterruptedException) {
+            e.printStackTrace()
+        }
+        binding.calendarMonthView.setEventList(tempEvent)
         Log.d("CalendarMonth2", "OnResume")
         Log.d("CALENDAR_CHECK", binding.calendarMonthView.getDayList().toString())
         Log.d("CALENDAR_CHECK", binding.calendarMonthView.getEventList().toString())
