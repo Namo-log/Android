@@ -15,14 +15,12 @@ import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.FragmentDiaryBinding
-import com.example.namo.ui.bottom.diary.adapter.DiaryDateListAdapter
-import com.example.namo.ui.bottom.diary.adapter.DiaryListRVAdapter
+import com.example.namo.ui.bottom.diary.adapter.DiaryMultiAdapter
+import com.example.namo.ui.bottom.diary.adapter.TaskListItem
 import org.joda.time.DateTime
 import java.lang.Boolean.TRUE
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import kotlin.properties.Delegates
-
 
 class DiaryFragment: Fragment() {
 
@@ -30,16 +28,12 @@ class DiaryFragment: Fragment() {
     private val binding get() = _binding!!
 
     private var dateTime = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
+    private var datelist=listOf<Long>()
+    private var diarylist= listOf<Event>()
 
-    var dateList=listOf<Event>()
-    private var monthList= listOf<Long>()
-
-    lateinit var diarymonthAdapter: DiaryDateListAdapter
-   // lateinit var diarydateAdapter: DiaryListRVAdapter
-
+    lateinit var diarydateAdapter: DiaryMultiAdapter
     private lateinit var yearMonth:String
     private lateinit var day:String
-   // private var getdate by Delegates.notNull<Long>()
     private lateinit var db: NamoDatabase
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -79,6 +73,24 @@ class DiaryFragment: Fragment() {
         return timeInMilliseconds
     }
 
+    private fun List<Event>.toListItems(): List<TaskListItem> {
+        val result = arrayListOf<TaskListItem>() // 결과를 리턴할 리스트
+
+        var groupHeaderDate : Long=0 // 그룹날짜
+        this.forEach { task ->
+            // 날짜가 달라지면 그룹 헤더를 추가
+            if (groupHeaderDate != task.startLong) {
+                result.add(TaskListItem.Header(task))
+            }
+            //  task 추가
+            result.add(TaskListItem.Item(task))
+
+            // 그룹 날짜를 바로 이전 날짜로 설정
+            groupHeaderDate = task.startLong
+        }
+
+        return result
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun getList(){
@@ -90,42 +102,45 @@ class DiaryFragment: Fragment() {
                 val nextMonth=dateTimeToMillSec(day)
                 val startMonth=dateTimeToMillSec( "$yearMonth.01")
 
-                monthList = db.diaryDao.getMonthList(startMonth,nextMonth,TRUE)
-               // diarydateAdapter=DiaryListRVAdapter(requireContext(),dateList)
-                diarymonthAdapter= DiaryDateListAdapter(requireContext(),monthList)
+                datelist = db.diaryDao.getDateList(startMonth,nextMonth,TRUE)
+                diarylist=db.diaryDao.getDiaryList(startMonth,nextMonth,TRUE)
 
-                Log.d("monthlist","$monthList")
+                val month=diarylist.toListItems()
 
-//                diarymonthAdapter.setDate(object : DiaryDateListAdapter.DiaryDateInterface{
-//                    override fun onDate(date: Long) {
-//                        dateList=db.diaryDao.getDateList(date)
-//                        diarydateAdapter=DiaryListRVAdapter(requireContext(),dateList)
-//                        Log.d("datelist","$dateList")
-//                    }
-//                })
+                diarydateAdapter= DiaryMultiAdapter(requireContext(), month as ArrayList<TaskListItem>)
 
+                diarydateAdapter.setRecordClickListener(object :DiaryMultiAdapter.DiaryEditInterface{
+                    override fun onEditClicked(allData: TaskListItem) {
+                        val bundle=Bundle()
+                        bundle.putInt("scheduleIdx",allData.task.eventId)
+
+                        val editFrag=DiaryModifyFragment()
+                        editFrag.arguments=bundle
+                        view?.findNavController()?.navigate(R.id.action_diaryFragment_to_diaryModifyFragment,bundle)
+                    }
+                })
 
                 requireActivity().runOnUiThread {
 
-                    if (monthList.isEmpty()){
-                        binding.diaryListEmptyTv.visibility=View.VISIBLE }
+                    if (datelist.isNotEmpty()){
+                        binding.diaryListRv.visibility=View.VISIBLE }
 
-
-                    binding.diaryListRv.adapter =  diarymonthAdapter
-                    diarymonthAdapter.notifyDataSetChanged()
-                    binding.diaryListRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-
+                    binding.diaryListRv.apply {
+                        adapter=diarydateAdapter
+                        layoutManager=LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                        setHasFixedSize(TRUE)
+                        (adapter as DiaryMultiAdapter).notifyDataSetChanged()
+                    }
                 }
-
             } catch (e: Exception) {
                 Log.d("tag", "Error - $e")
             }
         }
-
         val thread = Thread(r)
         thread.start()
 
     }
+
 
     @SuppressLint("SimpleDateFormat")
     private fun getDayInMonth(){
