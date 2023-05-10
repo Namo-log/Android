@@ -4,33 +4,28 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.AdapterView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.namo.databinding.FragmentDiaryBinding
+import com.example.namo.R
 import com.example.namo.databinding.ItemDiaryDateListBinding
 import com.example.namo.databinding.ItemDiaryListBinding
 import java.text.SimpleDateFormat
 
 class DiaryMultiAdapter(
     val context: Context,
-    private val items: ArrayList<TaskListItem> = arrayListOf<TaskListItem>()
-) : RecyclerView.Adapter<DiaryMultiAdapter.TaskViewHolder>() {
-
+    private val items: ArrayList<TaskListItem> = arrayListOf()
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     /** 기록 아이템 클릭 리스너 **/
     interface DiaryEditInterface {
         fun onEditClicked(allData: TaskListItem)
     }
-
     private lateinit var diaryRecordClickListener: DiaryEditInterface
     fun setRecordClickListener(itemClickListener: DiaryEditInterface) {
         diaryRecordClickListener = itemClickListener
     }
-
     /** ----- **/
 
     private fun getItem(position: Int): TaskListItem = this.items[position]
@@ -39,79 +34,81 @@ class DiaryMultiAdapter(
 
     override fun getItemViewType(position: Int): Int = getItem(position).layoutId
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):
-            TaskViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
-        return when (viewType) {
-            TaskListItem.Header.VIEW_TYPE -> TaskHeaderViewHolder(itemView)
-            TaskListItem.Item.VIEW_TYPE -> TaskItemViewHolder(itemView)
-            else -> throw IllegalArgumentException("Cannot create ViewHolder for view type: $viewType")
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):RecyclerView.ViewHolder {
+
+        val adapterLayout: View?
+        return when(viewType){
+            TaskListItem.Header.VIEW_TYPE -> {
+                adapterLayout = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_diary_list, parent, false)
+                TaskHeaderViewHolder(adapterLayout)
+            }
+            TaskListItem.Item.VIEW_TYPE -> {
+                adapterLayout = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_diary_date_list, parent, false)
+                TaskItemViewHolder(adapterLayout)
+            }
+            else -> throw RuntimeException("알 수 없는 뷰 타입")
         }
     }
 
-    override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        holder.bind(getItem(position))
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val item=getItem(position)
 
-//        holder.itemView..setOnClickListener {
-//            diaryRecordClickListener?.let {
-//                it(getItem(position))
-//            }
-//        holder.apply {
-//                    bind.diaryEditTv.setOnClickListener {
-//                        diaryRecordClickListener.onEditClicked(items[position])
-//                    }
-//                }
-//            }
+        when(item.layoutId){
+            TaskListItem.Item.VIEW_TYPE->{
+                (holder as TaskItemViewHolder).bind(item)
+                holder.onclick.setOnClickListener {
+                    diaryRecordClickListener.onEditClicked(item)
+                }
+            }
+            TaskListItem.Header.VIEW_TYPE->{
+                (holder as TaskHeaderViewHolder).bind(item)
+            }
         }
-
-    abstract class TaskViewHolder(
-        itemView: View
-    ) : RecyclerView.ViewHolder(itemView) {
-        abstract fun bind(item: TaskListItem)
     }
 
     class TaskHeaderViewHolder(
         itemView: View
-    ) : TaskViewHolder(itemView) {
+    ) : RecyclerView.ViewHolder(itemView) {
 
         private val binding by lazy { ItemDiaryListBinding.bind(itemView) }
-
         @SuppressLint("SimpleDateFormat")
-        override fun bind(item: TaskListItem) {
+        fun bind(item: TaskListItem) {
             val task = (item as TaskListItem.Header).task
             binding.apply {
                 val formattedDate = SimpleDateFormat("yyyy.MM.dd").format(task.startLong)
-                binding.diaryDayTv.text = formattedDate
+                diaryDayTv.text = formattedDate
             }
         }
     }
 
     class TaskItemViewHolder(
         itemView: View
-    ) : TaskViewHolder(itemView) {
+    ) :  RecyclerView.ViewHolder(itemView) {
 
         private val binding by lazy { ItemDiaryDateListBinding.bind(itemView) }
 
-        override fun bind(item: TaskListItem) {
+        val onclick=binding.diaryEditTv
+         fun bind(item: TaskListItem) {
             val task = (item as TaskListItem.Item).task
 
             binding.apply {
-                binding.itemDiaryContentTv.text
-                binding.itemDiaryContentTv.text = task.content
-                binding.itemDiaryTitleTv.text = task.title
-                binding.itemDiaryCategoryColorIv.background.setTint(
+                itemDiaryContentTv.text
+                itemDiaryContentTv.text = task.content
+                itemDiaryTitleTv.text = task.title
+                itemDiaryCategoryColorIv.background.setTint(
                     ContextCompat.getColor(
                         itemView.context,
                         task.categoryColor
                     )
                 )
-                binding.diaryGalleryRv.adapter = DiaryGalleryRVAdapter(itemView.context, task.imgs)
-                binding.diaryGalleryRv.layoutManager =
+                diaryGalleryRv.adapter = DiaryGalleryRVAdapter(itemView.context, task.imgs)
+                diaryGalleryRv.layoutManager =
                     LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
 
-                if (task.content.isEmpty()) binding.itemDiaryContentTv.visibility = View.GONE
-                if (task.imgs?.isEmpty() == true) binding.diaryGalleryRv.visibility = View.GONE
-
+                if (task.content.isEmpty()) itemDiaryContentTv.visibility = View.GONE
+                if (task.imgs?.isEmpty() == true) diaryGalleryRv.visibility = View.GONE
             }
         }
     }
