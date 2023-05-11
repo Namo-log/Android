@@ -26,7 +26,6 @@ class DiaryMultiAdapter(
     fun setRecordClickListener(itemClickListener: DiaryEditInterface) {
         diaryRecordClickListener = itemClickListener
     }
-    /** ----- **/
 
     private fun getItem(position: Int): TaskListItem = this.items[position]
 

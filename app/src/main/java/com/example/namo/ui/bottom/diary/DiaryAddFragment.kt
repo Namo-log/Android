@@ -119,6 +119,7 @@ class DiaryAddFragment : Fragment() {
         }
     }
 
+    /** 다이어리 추가 **/
     private fun insertData(){
         Thread{
             db.diaryDao.addDiary(scheduleIdx,TRUE,binding.diaryContentsEt.text.toString(),imgList)
@@ -183,7 +184,7 @@ class DiaryAddFragment : Fragment() {
         onRecyclerView()
 }
 
-    // 이미지 절대 경로 변환
+    /** 이미지 절대 경로 변환 **/
     @SuppressLint("Recycle")
     private fun absolutelyPath(path: Uri, context: Context): String {
         val proj: Array<String> = arrayOf(MediaStore.Images.Media.DATA)
@@ -203,6 +204,7 @@ class DiaryAddFragment : Fragment() {
         LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
+    /** 글자 수 반환 **/
     private fun charCnt(){
         with(binding) {
             diaryContentsEt.addTextChangedListener(object : TextWatcher {

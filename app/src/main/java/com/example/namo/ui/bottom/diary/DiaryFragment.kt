@@ -58,6 +58,7 @@ class DiaryFragment: Fragment() {
         return binding.root
     }
 
+    /** string 형식 날짜를 long 타입으로 변환 **/
     @SuppressLint("SimpleDateFormat")
     fun dateTimeToMillSec(dateTime: String): Long{
         var timeInMilliseconds: Long = 0
@@ -73,6 +74,7 @@ class DiaryFragment: Fragment() {
         return timeInMilliseconds
     }
 
+    /** 같은 날짜끼리 묶어서 그룹 헤더로 추가 **/
     private fun List<Event>.toListItems(): List<TaskListItem> {
         val result = arrayListOf<TaskListItem>() // 결과를 리턴할 리스트
 
@@ -103,12 +105,13 @@ class DiaryFragment: Fragment() {
                 val startMonth=dateTimeToMillSec( "$yearMonth.01")
 
                 datelist = db.diaryDao.getDateList(startMonth,nextMonth,TRUE)
-                diarylist=db.diaryDao.getDiaryList(startMonth,nextMonth,TRUE)
+                diarylist = db.diaryDao.getDiaryList(startMonth,nextMonth,TRUE)
 
-                val month=diarylist.toListItems()
+                val month = diarylist.toListItems()
 
                 diarydateAdapter= DiaryMultiAdapter(requireContext(), month as ArrayList<TaskListItem>)
 
+                // 수정 버튼 클릭리스너
                 diarydateAdapter.setRecordClickListener(object :DiaryMultiAdapter.DiaryEditInterface{
                     override fun onEditClicked(allData: TaskListItem) {
                         val bundle=Bundle()
@@ -122,8 +125,11 @@ class DiaryFragment: Fragment() {
 
                 requireActivity().runOnUiThread {
 
+                    // 달 별 메모 없으면 없다고 띄우기
                     if (datelist.isNotEmpty()){
                         binding.diaryListRv.visibility=View.VISIBLE }
+                    else{ binding.diaryListRv.visibility=View.GONE
+                            binding.diaryListEmptyTv.visibility=View.VISIBLE}
 
                     binding.diaryListRv.apply {
                         adapter=diarydateAdapter
@@ -141,7 +147,7 @@ class DiaryFragment: Fragment() {
 
     }
 
-
+    /** 월별 일수 계산 **/
     @SuppressLint("SimpleDateFormat")
     private fun getDayInMonth(){
 
@@ -157,6 +163,7 @@ class DiaryFragment: Fragment() {
         }
     }
 
+    /** 다이얼로그 띄우기 **/
     private fun dialogCreate() {
 
         YearMonthDialog(dateTime){
@@ -166,7 +173,6 @@ class DiaryFragment: Fragment() {
         }.show(parentFragmentManager,"test")
 
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -119,6 +119,7 @@ class DiaryModifyFragment : Fragment() {
         }
     }
 
+    /** 다이어리 수정 **/
     private fun updateDiary(){
         Thread{
             event.content= binding.diaryContentsEt.text.toString()
@@ -135,6 +136,7 @@ class DiaryModifyFragment : Fragment() {
         Toast.makeText(requireContext(), "수정되었습니다", Toast.LENGTH_SHORT).show()
     }
 
+    /** 다이어리 삭제 **/
     private fun deleteDiary(){
         Thread{
             db.diaryDao.deleteDiary(scheduleIdx,FALSE,"", listOf())
