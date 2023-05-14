@@ -27,7 +27,7 @@ class CategorySettingFragment: Fragment() {
 
     private lateinit var db: NamoDatabase
 
-    private var categoryList = arrayListOf<Category>() // : List<Category> = arrayListOf()
+    private var categoryList : List<Category> = arrayListOf() // arrayListOf<Category>()
 
     private var gson: Gson = Gson()
 
@@ -41,11 +41,24 @@ class CategorySettingFragment: Fragment() {
         binding = FragmentCategorySettingBinding.inflate(inflater, container, false)
 
         db = NamoDatabase.getInstance(requireContext())
-        categoryRVAdapter= SetCategoryRVAdapter(requireContext(), categoryList)
 
-        //db initial insert
-        initialCategory()
+        categoryRVAdapter = SetCategoryRVAdapter(requireContext(), categoryList)
 
+        // 카테고리가 아무것도 없으면 기본 카테고리 2개 생성 (일정, 모임)
+        setInitialCategory()
+
+        onClickEvent()
+
+        return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        getCategoryList()
+    }
+
+    private fun onClickEvent() {
         // 닫힘 버튼 누르면 종료
         binding.categoryCloseTv.setOnClickListener {
             activity?.finish()
@@ -61,14 +74,6 @@ class CategorySettingFragment: Fragment() {
 
         }
 
-        setAdapter()
-
-        return binding.root
-    }
-
-    override fun onStart() {
-        super.onStart()
-
         onClickCategoryAddBtn()
     }
 
@@ -80,53 +85,40 @@ class CategorySettingFragment: Fragment() {
         }
     }
 
-    private fun setAdapter() {
-        binding.categoryCalendarRv.layoutManager = GridLayoutManager(context, 2)
-        binding.categoryCalendarRv.adapter = categoryRVAdapter
-        Log.d("CATEGORY_BEFORE", categoryList.toString())
-//        getCategoryList(categoryRVAdapter)
-        Log.d("CATEGORY_AFTER", categoryList.toString())
-//        categoryRVAdapter.addCategory(categoryList)
-        categoryRVAdapter.notifyDataSetChanged()
-    }
-
-
-//    private fun getCategoryList(categoryRVAdapter: SetCategoryRVAdapter) {
-//        //db initial insert
-//        initialCategory()
-//
-//        val r = Runnable {
-//            try {
-//                categoryList = db.categoryDao.getCategoryList()
-//                requireActivity().runOnUiThread {
-//                    binding.categoryCalendarRv.adapter = categoryRVAdapter
-//                }
-//            } catch (e: Exception) {
-//                Log.d("category", "Error - $e")
-//            }
-//        }
-//
-//        val thread = Thread(r)
-//        thread.start()
-//    }
-
-    private fun initialCategory() {
-        categoryList.apply {
-            add(Category(0, "카테고리1", R.color.palette1, false))
-            add(Category(1, "카테고리2", R.color.palette2, false))
-            add(Category(2, "카테고리3", R.color.palette3, false))
-            add(Category(3, "카테고리4", R.color.palette4, false))
-            add(Category(4, "카테고리5", R.color.palette5, false))
+    private fun getCategoryList() {
+        val rv = binding.categoryCalendarRv
+        val r = Runnable {
+            try {
+                categoryList = db.categoryDao.getCategoryList()
+                categoryRVAdapter.notifyDataSetChanged()
+                categoryRVAdapter = SetCategoryRVAdapter(requireContext(), categoryList)
+                requireActivity().runOnUiThread {
+                    rv.adapter = categoryRVAdapter
+                    rv.layoutManager = GridLayoutManager(context, 2)
+                }
+                Log.d("CategorySettingFrag", "categoryDao: ${db.categoryDao.getCategoryList()}")
+                Log.d("CategorySettingFrag", "categoryList: $categoryList")
+            } catch (e: Exception) {
+                Log.d("category", "Error - $e")
+            }
         }
+
+        val thread = Thread(r)
+        thread.start()
     }
 
-    private fun initialCategory2() {
+    private fun setInitialCategory() {
+        // 리스트에 아무런 카테고리가 없으면 기본 카테고리 설정. 근데 딜레이가 좀 있음
         Thread {
-            db.categoryDao.insertCategory(Category(0, "카테고리1", R.color.palette1, false))
-            db.categoryDao.insertCategory(Category(0, "카테고리2", R.color.palette2, false))
-            db.categoryDao.insertCategory(Category(0, "카테고리3", R.color.palette3, false))
-            db.categoryDao.insertCategory(Category(0, "카테고리4", R.color.palette4, false))
-            db.categoryDao.insertCategory(Category(0, "카테고리5", R.color.palette5, false))
+            if (db.categoryDao.getCategoryList().isEmpty()) {
+                db.categoryDao.insertCategory(Category(0, "일정", R.color.schedule, true))
+                db.categoryDao.insertCategory(Category(0, "그룹", R.color.schedule_group, true))
+            }
+//            db.categoryDao.insertCategory(Category(0, "카테고리1", R.color.palette1, false))
+//            db.categoryDao.insertCategory(Category(0, "카테고리2", R.color.palette2, false))
+//            db.categoryDao.insertCategory(Category(0, "카테고리3", R.color.palette3, false))
+//            db.categoryDao.insertCategory(Category(0, "카테고리4", R.color.palette4, false))
+//            db.categoryDao.insertCategory(Category(0, "카테고리5", R.color.palette5, false))
         }.start()
     }
 }
