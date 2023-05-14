@@ -48,6 +48,8 @@
         </activity>
         <activity android:name=".ui.bottom.home.schedule.category.CategoryActivity"
             android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".ui.bottom.home.schedule.category.CategoryEditActivity"
+            android:theme="@style/Theme.Transparent"/>
         <meta-data android:name="com.kakao.sdk.AppKey" android:value="${KAKAO_API_KEY}"/>
     </application>
 

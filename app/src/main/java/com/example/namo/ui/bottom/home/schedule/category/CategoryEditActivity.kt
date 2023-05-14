@@ -3,27 +3,26 @@ package com.example.namo.ui.bottom.home.schedule.category
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.namo.R
-import com.example.namo.databinding.ActivityCategoryBinding
+import com.example.namo.databinding.ActivityCategoryEditBinding
 
+class CategoryEditActivity : AppCompatActivity() {
 
-class CategoryActivity() : AppCompatActivity() {
-
-    lateinit var binding: ActivityCategoryBinding
+    lateinit var binding: ActivityCategoryEditBinding
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityCategoryBinding.inflate(layoutInflater)
+        binding = ActivityCategoryEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         supportFragmentManager.beginTransaction()
-            .replace(R.id.category_frm, CategorySettingFragment())
+            .replace(R.id.category_edit_frm, CategoryDetailFragment(true))
             .commitAllowingStateLoss()
 
         binding.floatingCategoryDarkView.setOnClickListener {
             finish()
         }
+
     }
 
 }

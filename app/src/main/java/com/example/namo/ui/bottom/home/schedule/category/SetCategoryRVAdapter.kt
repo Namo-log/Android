@@ -11,14 +11,14 @@ import com.example.namo.ui.bottom.home.schedule.data.Category
 
 class SetCategoryRVAdapter(
     val context: Context,
-    val categoryList: List<Category>
+    private val categoryList: List<Category>
 ):  RecyclerView.Adapter<SetCategoryRVAdapter.ViewHolder>(){
 
 //    private val categoryList = ArrayList<Category>()
 
     private lateinit var mItemClickListener: MyItemClickListener
 
-    fun setMyItemClickListener(itemClickListener: MyItemClickListener) {
+    fun setCategoryClickListener(itemClickListener: MyItemClickListener) {
         mItemClickListener = itemClickListener
     }
 
@@ -35,14 +35,11 @@ class SetCategoryRVAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(categoryList[position])
-//        if (result[position].color == "" || result[position].color == null) {
-//        } else {
-//            holder.color.setCardBackgroundColor(Color.parseColor(result[position].color))
-//        }
-
-
-//        holder.itemView.setOnClickListener{ mItemClickListener.onItemClick(result[position], position) }
-
+        holder.apply {
+            itemView.setOnClickListener {
+                mItemClickListener.onItemClick(categoryList[position], position)
+            }
+        }
     }
 
     override fun getItemCount(): Int = categoryList.size
@@ -54,8 +51,8 @@ class SetCategoryRVAdapter(
             binding.itemCategoryNameTv.text = category.name
         }
 
-        val name : TextView = binding.itemCategoryNameTv
-        val color = binding.itemCategoryColorIv
+//        val name : TextView = binding.itemCategoryNameTv
+//        val color = binding.itemCategoryColorIv
     }
 
 }
