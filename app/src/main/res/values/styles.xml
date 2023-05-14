@@ -52,4 +52,29 @@
         <item name="android:background">@color/notyetGray</item>
     </style>
 
+    <style name="img_category_check">
+        <item name="android:layout_width">13dp</item>
+        <item name="android:layout_height">12dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:src">@drawable/ic_category_selected</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="category_cv">
+        <item name="android:layout_width">25dp</item>
+        <item name="android:layout_height">25dp</item>
+        <item name="cardCornerRadius">25dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">@color/schedule</item>
+    </style>
+
+    <style name="category_setting_tv">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/textGray</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

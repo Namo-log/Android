@@ -52,7 +52,7 @@ class CategorySettingFragment: Fragment() {
         }
 
         // 저장 버튼
-        binding.categoryDetailSaveTv.setOnClickListener {
+        binding.categorySaveTv.setOnClickListener {
             activity?.finish()
         }
 
@@ -64,6 +64,20 @@ class CategorySettingFragment: Fragment() {
         setAdapter()
 
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        onClickCategoryAddBtn()
+    }
+
+    private fun onClickCategoryAddBtn() {
+        binding.categoryAddBtn.setOnClickListener { // 새 카테고리
+            (context as CategoryActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.category_frm, CategoryDetailFragment(false))
+                .commitAllowingStateLoss()
+        }
     }
 
     private fun setAdapter() {
@@ -102,7 +116,7 @@ class CategorySettingFragment: Fragment() {
             add(Category(1, "카테고리2", R.color.palette2, false))
             add(Category(2, "카테고리3", R.color.palette3, false))
             add(Category(3, "카테고리4", R.color.palette4, false))
-            add(Category(4, "가테고리5", R.color.palette5, false))
+            add(Category(4, "카테고리5", R.color.palette5, false))
         }
     }
 

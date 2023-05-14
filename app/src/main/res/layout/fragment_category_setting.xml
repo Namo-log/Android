@@ -27,13 +27,13 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginStart="15dp"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/category_detail_new_tv"
+                app:layout_constraintEnd_toStartOf="@id/category_setting_tv"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"/>
 
 
             <TextView
-                android:id="@+id/category_detail_new_tv"
+                android:id="@+id/category_setting_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/category_setting"
@@ -43,10 +43,10 @@
                 android:layout_marginTop="15dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toEndOf="@id/category_close_tv"
-                app:layout_constraintEnd_toStartOf="@id/category_detail_save_tv"/>
+                app:layout_constraintEnd_toStartOf="@id/category_save_tv"/>
 
             <TextView
-                android:id="@+id/category_detail_save_tv"
+                android:id="@+id/category_save_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -55,7 +55,7 @@
                 android:textSize="15sp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="15dp"
-                app:layout_constraintStart_toEndOf="@id/category_detail_new_tv"
+                app:layout_constraintStart_toEndOf="@id/category_setting_tv"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -80,7 +80,7 @@
                     android:textStyle="bold"/>
 
                 <LinearLayout
-                    android:id="@+id/category_calendar_palette_ll"
+                    android:id="@+id/category_palette_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -139,7 +139,7 @@
                     tools:layout_editor_absoluteX="0dp"/>
 
                 <LinearLayout
-                    android:id="@+id/category_catender_add_btn"
+                    android:id="@+id/category_add_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
