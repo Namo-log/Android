@@ -59,6 +59,7 @@
     <!--연월 dialog 관련 String-->
     <string name="dialog_confirm">확인</string>
     <string name="dialog_cancel">취소</string>
+    <string name="dialog_save">저장</string>
 
     <!--  home fragment 관련 string  -->
     <string name="month_calendar_header_year_month">yyyy년 MM월</string>
@@ -76,5 +77,10 @@
 
     <!-- 카테고리 관련 String -->
     <string name="category_edit">카테고리 편집</string>
+    <string name="category_setting">카테고리 설정</string>
+    <string name="category_calendar">캘린더</string>
+    <string name="category_palette">팔레트</string>
+    <string name="palette_normal">기본 팔레트</string>
+    <string name="category_new">새 카테고리</string>
 
 </resources>

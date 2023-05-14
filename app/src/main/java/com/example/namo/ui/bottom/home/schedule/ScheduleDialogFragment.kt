@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Insets.add
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
@@ -31,6 +32,7 @@ import com.example.namo.ui.bottom.home.schedule.adapter.DialogCategoryRVAdapter
 import com.example.namo.ui.bottom.home.schedule.data.Category
 import com.example.namo.ui.bottom.home.schedule.map.MapActivity
 import com.example.namo.databinding.FragmentScheduleDialogBinding
+import com.example.namo.ui.bottom.home.schedule.category.CategoryActivity
 import com.example.namo.utils.CalendarUtils.Companion.getInterval
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -51,7 +53,7 @@ class ScheduleDialogFragment (
     var isEdit : Boolean = false
 
     private val categoryRVAdapter : DialogCategoryRVAdapter = DialogCategoryRVAdapter()
-    private val categoryList : ArrayList<Category> = arrayListOf()
+    private var categoryList : ArrayList<Category> = arrayListOf()
     private var initCategory : Int = 0
     private var selectedCategory : Int = 0
 
@@ -401,6 +403,11 @@ class ScheduleDialogFragment (
 
                 binding.dialogScheduleCloseBtn.visibility = View.GONE
                 binding.dialogScheduleSaveBtn.visibility = View.GONE
+
+                // 카테고리 편집 화면 클릭
+                binding.dialogScheduleCategoryContainer.scheduleDialogCategoryEditCv.setOnClickListener {
+                    startActivity(Intent(activity, CategoryActivity::class.java))
+                }
             }
 
             //see
@@ -604,6 +611,33 @@ class ScheduleDialogFragment (
                 )
             )
         }
+    }
+
+    private fun getCategoryList(categoryRVAdapter: DialogCategoryRVAdapter) {
+        categoryList.clear()
+        initialCategory()
+        val r = Runnable {
+            try {
+                categoryList = db.categoryDao.getCategoryList() as ArrayList<Category>
+                requireActivity().runOnUiThread {
+                    //binding.scheduleDialogCategoryRv.adapter = categoryRVAdapter
+                }
+            } catch (e: Exception) {
+                Log.d("category", "Error - $e")
+            }
+        }
+        val thread = Thread(r)
+        thread.start()
+    }
+
+    private fun initialCategory() {
+        Thread {
+            db.categoryDao.insertCategory(Category(0, "카테고리1", R.color.palette1, false))
+            db.categoryDao.insertCategory(Category(0, "카테고리2", R.color.palette2, false))
+            db.categoryDao.insertCategory(Category(0, "카테고리3", R.color.palette3, false))
+            db.categoryDao.insertCategory(Category(0, "카테고리4", R.color.palette4, false))
+            db.categoryDao.insertCategory(Category(0, "카테고리5", R.color.palette5, false))
+        }.start()
     }
 
 
