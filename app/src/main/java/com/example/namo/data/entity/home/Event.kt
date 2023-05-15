@@ -14,7 +14,7 @@ import java.time.ZoneId
 @Entity(tableName = "calendar_event_table")
 data class Event(
     @PrimaryKey(autoGenerate = true)
-    var eventId : Int = 0,
+    var eventId : Long = 0,
 
     @ColumnInfo(name = "event_title")
     var title : String = "",

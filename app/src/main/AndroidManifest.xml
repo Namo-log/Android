@@ -12,9 +12,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    
-<!--    알림 권한 추가-->
+
+<!--    푸시알림-->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 
 <!--    usesCleartextTraffic : android 가 HTTP연결을 막아놨는데 카카오맵은 HTTP통신해서 HTTP도 가능하도록 설정-->
     <application
@@ -49,6 +52,10 @@
                 android:value="" />
         </activity>
         <meta-data android:name="com.kakao.sdk.AppKey" android:value="${KAKAO_API_KEY}"/>
+        <receiver
+            android:name=".ui.bottom.home.notify.PushNotificationReceiver"
+            android:exported="true">
+        </receiver>
     </application>
 
 </manifest>

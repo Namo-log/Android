@@ -15,7 +15,6 @@ import com.example.namo.ui.bottom.diary.adapter.Converters
 import com.example.namo.ui.bottom.home.schedule.data.Category
 
 @Database(entities = [Event::class,Group::class,Category::class], version = 1, exportSchema = false)
-
 @TypeConverters(Converters::class)
 abstract class NamoDatabase : RoomDatabase() {
     abstract val eventDao : EventDao

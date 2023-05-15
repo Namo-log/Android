@@ -138,26 +138,26 @@ class HomeFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility", "NotifyDataSetChanged")
     private fun clickListener() {
 
-        binding.homeFab.setOnClickListener {
-            Log.d("DIALOG_OPEN", nowIdx.toString())
-            scheduleDialogFragment = ScheduleDialogFragment {
-                Log.d("DIALOG_CALLBACK", it.toString())
-                if (it) {
-                    setData(nowIdx)
-                    Log.d("GET_EVENT", nowIdx.toString())
-                }
-
-                var page : Fragment =
-                    requireActivity().supportFragmentManager.findFragmentByTag("f" + calendarAdapter.getItemId(binding.homeCalendarVp.currentItem))!!
-                var mFragment = page as CalendarMonth2Fragment
-                mFragment.onResume()
-
-                Log.d("DIALOG_CLOSE", nowIdx.toString())
-                setDaily(nowIdx)
-            }
-            scheduleDialogFragment.setDate(monthList[nowIdx])
-            scheduleDialogFragment.show(requireActivity().supportFragmentManager, ScheduleDialogFragment.TAG)
-        }
+//        binding.homeFab.setOnClickListener {
+//            Log.d("DIALOG_OPEN", nowIdx.toString())
+//            scheduleDialogFragment = ScheduleDialogFragment {
+//                Log.d("DIALOG_CALLBACK", it.toString())
+//                if (it) {
+//                    setData(nowIdx)
+//                    Log.d("GET_EVENT", nowIdx.toString())
+//                }
+//
+//                var page : Fragment =
+//                    requireActivity().supportFragmentManager.findFragmentByTag("f" + calendarAdapter.getItemId(binding.homeCalendarVp.currentItem))!!
+//                var mFragment = page as CalendarMonth2Fragment
+//                mFragment.onResume()
+//
+//                Log.d("DIALOG_CLOSE", nowIdx.toString())
+//                setDaily(nowIdx)
+//            }
+//            scheduleDialogFragment.setDate(monthList[nowIdx])
+//            scheduleDialogFragment.show(requireActivity().supportFragmentManager, ScheduleDialogFragment.TAG)
+//        }
 
 
 //        binding.homeCalendarVp.getChildAt(0).setOnTouchListener { v, event ->
@@ -290,7 +290,7 @@ class HomeFragment : Fragment() {
         personalEventRVAdapter.setRecordClickListener(object :DailyPersonalRVAdapter.DiaryInterface{
             override fun onAddClicked(event: Event) {
                 val bundle=Bundle()
-                bundle.putInt("scheduleIdx",event.eventId)
+                bundle.putInt("scheduleIdx",event.eventId.toInt())
                 bundle.putString("title",event.title)
                 bundle.putInt("category",event.categoryColor)
                 bundle.putString("place",event.place)
@@ -303,7 +303,7 @@ class HomeFragment : Fragment() {
             }
             override fun onEditClicked(event: Event) {
                 val bundle=Bundle()
-                bundle.putInt("scheduleIdx",event.eventId)
+                bundle.putInt("scheduleIdx",event.eventId.toInt())
 
                 val editFrag=DiaryModifyFragment()
                 editFrag.arguments=bundle

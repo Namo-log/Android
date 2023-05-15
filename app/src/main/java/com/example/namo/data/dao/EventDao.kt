@@ -10,7 +10,7 @@ import com.example.namo.data.entity.home.Event
 @Dao
 interface EventDao {
     @Insert
-    fun insertEvent(event : Event)
+    fun insertEvent(event : Event) : Long
 
     @Delete
     fun deleteEvent(event : Event)

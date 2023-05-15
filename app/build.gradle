@@ -44,6 +44,7 @@ android {
         dataBinding true
         viewBinding true
     }
+    buildToolsVersion '32.0.0'
 }
 
 dependencies {

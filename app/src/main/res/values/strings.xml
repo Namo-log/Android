@@ -73,5 +73,6 @@
     <string name="home_daily_date">MM.dd (E)</string>
     <string name="dateFormat">yyyy.MM.dd (E)</string>
     <string name="timeFormat">hh:mm a</string>
+    <string name="noticeFormat">yyyy.MM.dd (E) hh:mm a</string>
 
 </resources>
