@@ -66,10 +66,8 @@ class DiaryModifyFragment : Fragment() {
         Thread {
             event = db.diaryDao.getSchedule(scheduleIdx)
             galleryAdapter= GalleryListAdapter(requireContext(), event.imgs)
-            Log.d("img","${event.imgs}")
             requireActivity().runOnUiThread {
                 bind()
-                Log.d("img2","${event.imgs}")
             }
         }.start()
 
@@ -121,6 +119,7 @@ class DiaryModifyFragment : Fragment() {
         }
     }
 
+    /** 다이어리 수정 **/
     private fun updateDiary(){
         Thread{
             event.content= binding.diaryContentsEt.text.toString()
@@ -134,12 +133,15 @@ class DiaryModifyFragment : Fragment() {
                 )
             }
         }.start()
+        Toast.makeText(requireContext(), "수정되었습니다", Toast.LENGTH_SHORT).show()
     }
 
+    /** 다이어리 삭제 **/
     private fun deleteDiary(){
         Thread{
             db.diaryDao.deleteDiary(scheduleIdx,FALSE,"", listOf())
         }.start()
+        Toast.makeText(requireContext(), "삭제되었습니다", Toast.LENGTH_SHORT).show()
     }
 
     @SuppressLint("IntentReset")

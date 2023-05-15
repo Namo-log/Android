@@ -15,12 +15,12 @@ import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.FragmentDiaryBinding
-import com.example.namo.ui.bottom.diary.adapter.DiaryListRVAdapter
+import com.example.namo.ui.bottom.diary.adapter.DiaryMultiAdapter
+import com.example.namo.ui.bottom.diary.adapter.TaskListItem
 import org.joda.time.DateTime
 import java.lang.Boolean.TRUE
 import java.text.ParseException
 import java.text.SimpleDateFormat
-
 
 class DiaryFragment: Fragment() {
 
@@ -28,9 +28,10 @@ class DiaryFragment: Fragment() {
     private val binding get() = _binding!!
 
     private var dateTime = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
+    private var datelist=listOf<Long>()
+    private var diarylist= listOf<Event>()
 
-    private var monthList=listOf<Event>()
-    lateinit var diaryAdapter:DiaryListRVAdapter
+    lateinit var diarydateAdapter: DiaryMultiAdapter
     private lateinit var yearMonth:String
     private lateinit var day:String
     private lateinit var db: NamoDatabase
@@ -50,7 +51,6 @@ class DiaryFragment: Fragment() {
         yearMonth=binding.diaryMonth.text.toString()
 
         getList()
-
         binding.diaryMonth.setOnClickListener {
             dialogCreate()
         }
@@ -58,6 +58,7 @@ class DiaryFragment: Fragment() {
         return binding.root
     }
 
+    /** string 형식 날짜를 long 타입으로 변환 **/
     @SuppressLint("SimpleDateFormat")
     fun dateTimeToMillSec(dateTime: String): Long{
         var timeInMilliseconds: Long = 0
@@ -73,24 +74,55 @@ class DiaryFragment: Fragment() {
         return timeInMilliseconds
     }
 
+    /** 같은 날짜끼리 묶어서 그룹 헤더로 추가 **/
+    private fun List<Event>.toListItems(): List<TaskListItem> {
+        val result = arrayListOf<TaskListItem>() // 결과를 리턴할 리스트
+
+        var groupHeaderDate : Long=0 // 그룹날짜
+        this.forEach { task ->
+            // 날짜가 달라지면 그룹 헤더를 추가
+            if (groupHeaderDate != task.startLong) {
+                result.add(TaskListItem.Header(task))
+            }
+            //  task 추가
+            result.add(TaskListItem.Item(task))
+
+            // 그룹 날짜를 바로 이전 날짜로 설정
+            groupHeaderDate = task.startLong
+        }
+
+        return result
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun getList(){
         val r = Runnable {
             try {
-                day="$yearMonth.32"
-
                 getDayInMonth()
+                day="$yearMonth.32"
 
                 val nextMonth=dateTimeToMillSec(day)
                 val startMonth=dateTimeToMillSec( "$yearMonth.01")
 
-                Log.d("text","$startMonth,$nextMonth")
+                datelist = db.diaryDao.getDateList(startMonth,nextMonth,TRUE)
+                diarylist = db.diaryDao.getDiaryList(startMonth,nextMonth,TRUE)
 
-                monthList = db.diaryDao.getMonthList(startMonth,nextMonth,TRUE)
+                val month = diarylist.toListItems()
 
-                Log.d("monthlist","$monthList")
-                diaryAdapter= DiaryListRVAdapter(requireContext(),monthList)
+                diarydateAdapter= DiaryMultiAdapter(requireContext(), month as ArrayList<TaskListItem>)
+
+                // 수정 버튼 클릭리스너
+                diarydateAdapter.setRecordClickListener(object :DiaryMultiAdapter.DiaryEditInterface{
+                    override fun onEditClicked(allData: TaskListItem) {
+                        val bundle=Bundle()
+                        bundle.putInt("scheduleIdx",allData.task.eventId)
+
+                        val editFrag=DiaryModifyFragment()
+                        editFrag.arguments=bundle
+                        view?.findNavController()?.navigate(R.id.action_diaryFragment_to_diaryModifyFragment,bundle)
+                    }
+                })
+
                 requireActivity().runOnUiThread {
                     binding.diaryListRv.adapter =  diaryAdapter
                     diaryAdapter.notifyDataSetChanged()
@@ -110,16 +142,29 @@ class DiaryFragment: Fragment() {
                     })
                 }
 
+                    // 달 별 메모 없으면 없다고 띄우기
+                    if (datelist.isNotEmpty()){
+                        binding.diaryListRv.visibility=View.VISIBLE }
+                    else{ binding.diaryListRv.visibility=View.GONE
+                            binding.diaryListEmptyTv.visibility=View.VISIBLE}
+
+                    binding.diaryListRv.apply {
+                        adapter=diarydateAdapter
+                        layoutManager=LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                        setHasFixedSize(TRUE)
+                        (adapter as DiaryMultiAdapter).notifyDataSetChanged()
+                    }
+                }
             } catch (e: Exception) {
                 Log.d("tag", "Error - $e")
             }
         }
-
         val thread = Thread(r)
         thread.start()
 
     }
 
+    /** 월별 일수 계산 **/
     @SuppressLint("SimpleDateFormat")
     private fun getDayInMonth(){
 
@@ -135,6 +180,7 @@ class DiaryFragment: Fragment() {
         }
     }
 
+    /** 다이얼로그 띄우기 **/
     private fun dialogCreate() {
 
         YearMonthDialog(dateTime){
@@ -144,7 +190,6 @@ class DiaryFragment: Fragment() {
         }.show(parentFragmentManager,"test")
 
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
