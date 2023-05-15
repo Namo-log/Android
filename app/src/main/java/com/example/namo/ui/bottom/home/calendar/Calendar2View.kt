@@ -176,7 +176,7 @@ class Calendar2View(context: Context, attrs : AttributeSet) : View(context, attr
 
             if (dayList[day].isEqual(today)) {
                 todayPaint.getTextBounds(dayList[day].dayOfMonth.toString(), 0, dayList[day].dayOfMonth.toString().length, bounds)
-                canvas!!.drawCircle((x + cellWidth / 2 + bounds.width() / 2).toFloat(), (y + _dayTextHeight - bounds.height() / 2), bounds.height().toFloat(), todayNoticePaint)
+                canvas!!.drawCircle((x + cellWidth / 2).toFloat(), (y + _dayTextHeight - bounds.height() / 2), bounds.height().toFloat(), todayNoticePaint)
                 canvas!!.drawText(dayList[day].dayOfMonth.toString(), (x + cellWidth / 2 - bounds.width() / 2).toFloat(), y + _dayTextHeight, todayPaint)
 //                Log.d("DATE_CHECK", "날짜 ${dayList[day].dayOfMonth}, paint : todayPaint")
             } else {
