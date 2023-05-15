@@ -115,7 +115,7 @@ class DiaryFragment: Fragment() {
                 diarydateAdapter.setRecordClickListener(object :DiaryMultiAdapter.DiaryEditInterface{
                     override fun onEditClicked(allData: TaskListItem) {
                         val bundle=Bundle()
-                        bundle.putInt("scheduleIdx",allData.task.eventId)
+                        bundle.putInt("scheduleIdx", allData.task.eventId.toInt())
 
                         val editFrag=DiaryModifyFragment()
                         editFrag.arguments=bundle
@@ -124,23 +124,6 @@ class DiaryFragment: Fragment() {
                 })
 
                 requireActivity().runOnUiThread {
-                    binding.diaryListRv.adapter =  diaryAdapter
-                    diaryAdapter.notifyDataSetChanged()
-                    binding.diaryListRv.layoutManager = LinearLayoutManager(requireContext())
-                    binding.diaryListRv.setHasFixedSize(true)
-
-                    diaryAdapter.setRecordClickListener(object : DiaryListRVAdapter.DiaryEditInterface{
-                        override fun onEditClicked(allData: Event) {
-                            val bundle=Bundle()
-                            bundle.putInt("scheduleIdx",allData.eventId.toInt())
-
-                            val diaryFrag=DiaryModifyFragment()
-                            diaryFrag.arguments=bundle
-
-                            view?.findNavController()?.navigate(R.id.action_diaryFragment_to_diaryModifyFragment,bundle)
-                        }
-                    })
-                }
 
                     // 달 별 메모 없으면 없다고 띄우기
                     if (datelist.isNotEmpty()){
