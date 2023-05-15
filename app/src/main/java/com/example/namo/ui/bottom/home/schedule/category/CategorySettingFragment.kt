@@ -42,8 +42,6 @@ class CategorySettingFragment: Fragment() {
 
         db = NamoDatabase.getInstance(requireContext())
 
-        categoryRVAdapter = SetCategoryRVAdapter(requireContext(), categoryList)
-
         // 카테고리가 아무것도 없으면 기본 카테고리 2개 생성 (일정, 모임)
         setInitialCategory()
 
@@ -52,9 +50,10 @@ class CategorySettingFragment: Fragment() {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
 
+        categoryRVAdapter = SetCategoryRVAdapter(requireContext(), categoryList)
         getCategoryList()
     }
 

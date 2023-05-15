@@ -8,7 +8,7 @@
     <!-- 카테고리 편집시 -->
 
     <ImageView
-        android:id="@+id/floating_category_delete_iv"
+        android:id="@+id/category_delete_iv"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:src="@drawable/ic_category_delete"
@@ -16,10 +16,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toBottomOf="@id/floating_category_dark_view"/>
+        app:layout_constraintBottom_toBottomOf="@id/category_dark_view"/>
 
     <View
-        android:id="@+id/floating_category_dark_view"
+        android:id="@+id/category_dark_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@color/transparent"
