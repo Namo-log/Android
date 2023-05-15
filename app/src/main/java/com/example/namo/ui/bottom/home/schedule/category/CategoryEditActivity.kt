@@ -3,15 +3,12 @@ package com.example.namo.ui.bottom.home.schedule.category
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.databinding.ActivityCategoryEditBinding
-import com.example.namo.ui.bottom.diary.adapter.GalleryListAdapter
 import com.example.namo.ui.bottom.home.schedule.data.Category
-import com.google.gson.Gson
-import com.google.gson.JsonParseException
-import com.google.gson.reflect.TypeToken
 
 class CategoryEditActivity : AppCompatActivity() {
 
@@ -50,7 +47,6 @@ class CategoryEditActivity : AppCompatActivity() {
         binding.categoryDeleteIv.setOnClickListener {
             Log.d("CategoryEditActivity", "카테고리삭제 클릭")
             deleteCategory()
-            finish()
         }
     }
 
@@ -58,11 +54,16 @@ class CategoryEditActivity : AppCompatActivity() {
         val spf = getSharedPreferences(CategorySettingFragment.CATEGORY_KEY_PREFS, Context.MODE_PRIVATE)
         categoryIdx = spf.getInt(CategorySettingFragment.CATEGORY_KEY_IDX, -1)
 
-        Thread{
-            category = db.categoryDao.getCategoryContent(categoryIdx)
-            db.categoryDao.deleteCategory(category)
-            Log.d("CategoryEditActivity", "deleteCategory: $category")
-        }.start()
+        if (categoryIdx == 1 || categoryIdx == 2) {
+            Toast.makeText(this, "기본 카테고리는 삭제할 수 없습니다", Toast.LENGTH_SHORT).show()
+        } else {
+            Thread{
+                category = db.categoryDao.getCategoryContent(categoryIdx)
+                db.categoryDao.deleteCategory(category)
+                Log.d("CategoryEditActivity", "deleteCategory: $category")
+            }.start()
+            finish()
+        }
     }
 
 }
