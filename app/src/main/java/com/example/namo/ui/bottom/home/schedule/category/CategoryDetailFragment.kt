@@ -18,7 +18,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
 
-class CategoryDetailFragment(val isEditMode: Boolean) : Fragment() {
+class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
     private var _binding: FragmentCategoryDetailBinding? = null
     private val binding get() = _binding!!
 
@@ -76,7 +76,11 @@ class CategoryDetailFragment(val isEditMode: Boolean) : Fragment() {
 
                     /* 수정 모드 -> 카테고리 update */
                     if (isEditMode) {
-                        //
+                        // 카테고리 수정
+                        updateData()
+                        // 화면 이동
+                        startActivity(Intent(requireActivity(), CategoryActivity::class.java))
+                        activity?.finish()
                     }
 
                     /* 생성 모드 -> 카테고리 insert */
@@ -112,7 +116,20 @@ class CategoryDetailFragment(val isEditMode: Boolean) : Fragment() {
             name = binding.categoryDetailTitleEt.text.toString()
             category = Category(0, name, color, share)
             db.categoryDao.insertCategory(category)
-            Log.d("CategoryDetailFragment", "categoryDao: ${db.categoryDao.getCategoryList()}")
+        }.start()
+    }
+
+    private fun updateData() {
+        Thread{
+            name = binding.categoryDetailTitleEt.text.toString()
+            category = Category(categoryIdx, name, color, share)
+
+            if (categoryIdx == 1 || categoryIdx == 2) {
+                Toast.makeText(context, "기본 카테고리는 삭제할 수 없습니다", Toast.LENGTH_SHORT).show()
+            } else {
+                db.categoryDao.updateCategory(category)
+                Log.d("CategoryDetailFragment", "updateCategory: ${db.categoryDao.getCategoryContent(categoryIdx)}")
+            }
         }.start()
     }
 
