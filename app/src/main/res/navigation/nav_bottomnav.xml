@@ -116,7 +116,7 @@
         android:label="DiaryModifyFragment" />
     <fragment
         android:id="@+id/groupDiaryFragment"
-        android:name="com.example.namo.ui.bottom.diary.GroupDiaryFragment"
+        android:name="com.example.namo.ui.bottom.diary.groupDiary.GroupDiaryFragment"
         android:label="GroupDiaryFragment" />
     <fragment
         android:id="@+id/groupCalendarFragment"

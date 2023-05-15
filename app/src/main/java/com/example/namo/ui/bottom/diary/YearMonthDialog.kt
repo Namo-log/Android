@@ -12,10 +12,8 @@ import androidx.fragment.app.DialogFragment
 import com.example.namo.data.NamoDatabase
 import com.example.namo.databinding.DialogSetMonthBinding
 import org.joda.time.DateTime
-import org.joda.time.LocalDateTime
 
-
-class YearMonthDialog(
+class YearMonthDialog( // 다이어리 리스트 달 별 출력을 위한 다이얼로그
     private var dateTime: Long,
     private val okCallback : (DateTime) -> Unit
 ) : DialogFragment(), View.OnClickListener{

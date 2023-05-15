@@ -1,7 +1,6 @@
-package com.example.namo.ui.bottom.diary
+package com.example.namo.ui.bottom.diary.groupDiary
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,14 +18,26 @@ import com.example.namo.ui.bottom.diary.adapter.GroupMemberRVAdapter
 import com.example.namo.ui.bottom.diary.adapter.GroupPlaceEventAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class GroupDiaryFragment : Fragment() {
+class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
 
     private var _binding: FragmentDiaryGroupAddBinding? = null
     private val binding get() = _binding!!
-    private var memberNames=ArrayList<GroupDiaryMember>()
-    private var placeEvent= mutableListOf<DiaryGroupEvent>()
-    private lateinit var adapter:GroupPlaceEventAdapter
 
+    private var memberNames=ArrayList<GroupDiaryMember>()  // 그룹 다이어리 구성원
+    private var placeEvent: MutableList<DiaryGroupEvent> =mutableListOf() // 장소, 정산 금액, 이미지
+
+    private lateinit var memberadapter:GroupMemberRVAdapter
+    private lateinit var placeadapter:GroupPlaceEventAdapter
+    var i=2
+    init{
+        instance = this
+    }
+    companion object{
+        private var instance:GroupDiaryFragment? = null
+        fun getInstance(): GroupDiaryFragment? {
+            return instance
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -40,7 +51,8 @@ class GroupDiaryFragment : Fragment() {
 
         hideBottomNavigation(true)
 
-        binding.groupAddBackIv.setOnClickListener { findNavController().popBackStack() }
+        initialize() // placeEvent 초기화
+
         onRecyclerView()
         onClickListener()
         dummy()
@@ -48,22 +60,29 @@ class GroupDiaryFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun onRecyclerView(){
 
         binding.apply {
 
             // 멤버 이름 리사이클러뷰
-            val groupMemberAT=GroupMemberRVAdapter(memberNames)
-            groupAddPeopleRv.adapter=groupMemberAT
+            memberadapter= GroupMemberRVAdapter(memberNames)
+            groupAddPeopleRv.adapter=memberadapter
             groupAddPeopleRv.layoutManager=LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
 
 
             // 장소 추가 리사이클러뷰
-            adapter=GroupPlaceEventAdapter(placeEvent)
-            diaryGroupAddPlaceRv.adapter=adapter
-            diaryGroupAddPlaceRv.layoutManager=LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
-        }
+            placeadapter= GroupPlaceEventAdapter(requireContext(),placeEvent)
+            diaryGroupAddPlaceRv.adapter=placeadapter
+            diaryGroupAddPlaceRv.layoutManager=LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false)
 
+            // 정산 다이얼로그
+            placeadapter.groupPayClickListener(object :GroupPlaceEventAdapter.PayInterface{
+                override fun onPayClicked() {
+                    GroupPayDialog(memberNames).show(parentFragmentManager,"show")
+                }
+            })
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -78,18 +97,20 @@ class GroupDiaryFragment : Fragment() {
         binding.groupAddBackIv.setOnClickListener{
             findNavController().popBackStack()
         }
+
+        // 장소 추가 버튼 클릭리스너
         binding.groudPlaceAddTv.setOnClickListener {
-            addPlace()
-
-            adapter.notifyDataSetChanged()
-
+            val string="장소 $i"
+            i++
+            placeEvent.add(DiaryGroupEvent(string))
+            placeadapter.notifyDataSetChanged()
         }
-
     }
 
-    private fun addPlace(){
-
-
+    private fun initialize(){
+        with(placeEvent){
+            add(DiaryGroupEvent("장소 1"))
+        }
     }
 
     private fun setMember(isVisible: Boolean) {
@@ -97,7 +118,6 @@ class GroupDiaryFragment : Fragment() {
             binding.groupAddPeopleRv.visibility= View.GONE
             binding.bottomArrow.visibility= View.VISIBLE
             binding.upArrow.visibility= View.GONE
-
 
         } else {
             binding.groupAddPeopleRv.visibility= View.VISIBLE
@@ -120,11 +140,6 @@ class GroupDiaryFragment : Fragment() {
             add(GroupDiaryMember("코코아"))
             add(GroupDiaryMember("지니"))
             add(GroupDiaryMember("앨리")) }
-
-
-        placeEvent.apply {
-            add(DiaryGroupEvent(0,"",0, listOf(), listOf(),false))
-        }
         }
 
     override fun onDestroy() {

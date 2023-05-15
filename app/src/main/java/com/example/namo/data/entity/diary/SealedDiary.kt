@@ -3,7 +3,7 @@ package com.example.namo.ui.bottom.diary.adapter
 import com.example.namo.R
 import com.example.namo.data.entity.home.Event
 
-sealed class TaskListItem {
+sealed class TaskListItem { // 멀티뷰 타입 구분을 위해
     abstract val task: Event
     abstract val layoutId: Int
 
@@ -16,7 +16,6 @@ sealed class TaskListItem {
             const val VIEW_TYPE = R.layout.item_diary_list
         }
     }
-
     data class Item(
         override val task: Event,
         override val layoutId: Int = VIEW_TYPE

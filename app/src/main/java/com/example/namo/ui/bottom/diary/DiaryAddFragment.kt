@@ -35,7 +35,7 @@ import java.io.File
 import java.lang.Boolean.TRUE
 import java.text.SimpleDateFormat
 
-class DiaryAddFragment : Fragment() {
+class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
     private var _binding: FragmentDiaryAddBinding? = null
     private val binding get() = _binding!!

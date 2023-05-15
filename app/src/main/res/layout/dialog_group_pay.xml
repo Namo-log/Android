@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 그룹 다이어리 정산 다이얼로그 -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -173,7 +174,7 @@
                 android:layout_height="wrap_content"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="2"
-                tools:listitem="@layout/item_diary_group_pay"
+                tools:listitem="@layout/item_diary_group_pay_member"
                 android:layout_marginTop="20dp"/>
 
         </LinearLayout>

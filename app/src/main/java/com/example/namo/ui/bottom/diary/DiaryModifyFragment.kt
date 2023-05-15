@@ -1,6 +1,5 @@
 package com.example.namo.ui.bottom.diary
 
-
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -13,7 +12,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,7 +34,7 @@ import java.io.File
 import java.lang.Boolean.FALSE
 import java.text.SimpleDateFormat
 
-class DiaryModifyFragment : Fragment() {
+class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
 
     private var _binding: FragmentDiaryModifyBinding? = null
     private val binding get() = _binding!!

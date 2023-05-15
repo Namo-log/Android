@@ -5,16 +5,16 @@ import androidx.room.PrimaryKey
 /** dummy **/
 data class DiaryGroupEvent (
     @PrimaryKey(autoGenerate = true)
-    val eventId:Int,
     val place:String="",
-    val pay:Int=0,
-    val members:List<Int>?,
-    val imgs:List<String>?,
-    val isChecked: Boolean=false
-
+    // val pay:Int=0,
+    // val members:List<Int>?,
+    // val imgs:List<String>?
 )
 data class GroupDiaryMember(
     val memberName:String=""
 )
 
-
+data class CheckPeople(
+    var memberName : String = "",
+    var isChecked : Boolean = false
+)

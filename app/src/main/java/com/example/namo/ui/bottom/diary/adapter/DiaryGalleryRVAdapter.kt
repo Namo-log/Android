@@ -8,8 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.namo.databinding.ItemDiaryListGalleryBinding
 
-
-class DiaryGalleryRVAdapter(
+class DiaryGalleryRVAdapter(  // 다이어리 리스트의 이미지(둥근 모서리, 점선 테두리 X)
     private val context: Context,
     private val imgList: List<String>?,
 ):

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.namo.databinding.ItemGalleryListBinding
 
-class GalleryListAdapter(
+class GalleryListAdapter(  // 다이어리 추가, 수정 화면의 이미지(점선 테두리 O)
     private val context: Context,
     private val imgList: List<String>?,
 ):

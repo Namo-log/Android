@@ -22,7 +22,7 @@ import java.lang.Boolean.TRUE
 import java.text.ParseException
 import java.text.SimpleDateFormat
 
-class DiaryFragment: Fragment() {
+class DiaryFragment: Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     private var _binding: FragmentDiaryBinding? = null
     private val binding get() = _binding!!
@@ -53,6 +53,11 @@ class DiaryFragment: Fragment() {
         getList()
         binding.diaryMonth.setOnClickListener {
             dialogCreate()
+        }
+
+        // 그룹 다이어리 테스트, 확인하고 지우기....
+        binding.groupdiarytest.setOnClickListener {
+            view?.findNavController()?.navigate(R.id.action_diaryFragment_to_groupDiaryFragment)
         }
 
         return binding.root

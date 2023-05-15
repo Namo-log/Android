@@ -1,32 +1,70 @@
 package com.example.namo.ui.bottom.diary.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.diary.DiaryGroupEvent
 import com.example.namo.databinding.ItemDiaryGroupEventBinding
+import com.example.namo.ui.bottom.diary.groupDiary.GroupDiaryFragment
 
-class GroupPlaceEventAdapter (
-    private val members:List<DiaryGroupEvent>
-):
-    RecyclerView.Adapter<GroupPlaceEventAdapter.ViewHolder>(){
+class GroupPlaceEventAdapter(  // 그룹 다이어리 장소 추가, 정산, 이미지
+    val context: Context,
+    val listData: MutableList<DiaryGroupEvent> =mutableListOf<DiaryGroupEvent>())
+    : RecyclerView.Adapter<Holder>(){
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val binding: ItemDiaryGroupEventBinding = ItemDiaryGroupEventBinding.inflate(
-            LayoutInflater.from(viewGroup.context),viewGroup,false)
-        return ViewHolder(binding)
+    interface PayInterface {
+        fun onPayClicked()
     }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
-//        holder.bind(members[position] )
+    private lateinit var groupPayClickListener: GroupPlaceEventAdapter.PayInterface
+    fun groupPayClickListener(itemClickListener: GroupPlaceEventAdapter.PayInterface) {
+        groupPayClickListener= itemClickListener
     }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
+        val binding = ItemDiaryGroupEventBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return Holder(binding)
+    }
+    override fun onBindViewHolder(holder: Holder, position: Int) {
+        val member = listData[position]
+        holder.setData(member, position)
 
-    override fun getItemCount(): Int = members.size
+        // 정산 다이얼로그
+        holder.binding.itemPlaceMoneyIv.setOnClickListener {
+            groupPayClickListener.onPayClicked()
+        }
+    }
+    override fun getItemCount(): Int {
+        return listData.size
+    }
+}
 
-    inner class ViewHolder(val binding: ItemDiaryGroupEventBinding): RecyclerView.ViewHolder(binding.root){
-//        fun bind(member: GroupDiaryMember){
-//            binding.peopleNameTv.text=member.memberName
+class Holder(val binding: ItemDiaryGroupEventBinding) : RecyclerView.ViewHolder(binding.root){
+
+    private val gdf = GroupDiaryFragment.getInstance()
+    var mMember: DiaryGroupEvent? = null
+    var mPosition: Int? = null
+
+    init {
+
+//        binding.btnDelete.setOnClickListener {
+//            mainActivity?.deleteMember(mMember!!)
 //        }
+//
+//        binding.btnEdit.setOnClickListener {
+//            mainActivity?.editMember(mPosition!!, mMember!!)
+//        }
+        binding.itemPlaceMoneyIv
+    }
+
+    fun setData(item: DiaryGroupEvent, position: Int){
+
+//        var pay:Int=0
+//        pay= Activity.arguments?.getInt("scheduleIdx")!!
+
+        binding.itemPlaceNameTv.setText(item.place)
+//        binding.itemPlaceMoneyIv.
+        
+        this.mMember = item
+        this.mPosition = position
     }
 }

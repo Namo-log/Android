@@ -13,7 +13,7 @@ import com.example.namo.databinding.ItemDiaryDateListBinding
 import com.example.namo.databinding.ItemDiaryListBinding
 import java.text.SimpleDateFormat
 
-class DiaryMultiAdapter(
+class DiaryMultiAdapter( // 다이어리 리스트에 그룹 별로 날짜 헤더 추가
     val context: Context,
     private val items: ArrayList<TaskListItem> = arrayListOf()
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
