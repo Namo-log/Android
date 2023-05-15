@@ -63,19 +63,18 @@ class GroupListFragment : Fragment() {
                         LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                     binding.groupListRv.setHasFixedSize(true)
                 }
+                groupAdapter.setMyItemClickListener(object : GroupListRVAdapter.ItemClickListener {
+                    override fun onItemClick(group: Group) { // 그룹 캘린더로 이동
+                        Log.d("CLICK", "click item")
+                        view?.findNavController()?.navigate(R.id.action_groupListFragment_to_groupCalendarFragment)
+                    }
+                })
             } catch (e: Exception) {
                 Log.d("Group", "Error - $e")
             }
         }
         val thread = Thread(r)
         thread.start()
-
-        groupAdapter.setMyItemClickListener(object : GroupListRVAdapter.ItemClickListener {
-            override fun onItemClick(group: Group) { // 그룹 캘린더로 이동
-                Log.d("CLICK", "click item")
-                //view?.findNavController()?.navigate(R.id.action_groupListFragment_to_groupCalendarFragment)
-            }
-        })
     }
 
     //메뉴 클릭시

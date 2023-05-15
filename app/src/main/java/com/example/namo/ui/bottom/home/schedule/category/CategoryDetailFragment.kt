@@ -123,13 +123,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
         Thread{
             name = binding.categoryDetailTitleEt.text.toString()
             category = Category(categoryIdx, name, color, share)
-
-            if (categoryIdx == 1 || categoryIdx == 2) {
-                Toast.makeText(context, "기본 카테고리는 삭제할 수 없습니다", Toast.LENGTH_SHORT).show()
-            } else {
-                db.categoryDao.updateCategory(category)
-                Log.d("CategoryDetailFragment", "updateCategory: ${db.categoryDao.getCategoryContent(categoryIdx)}")
-            }
+            db.categoryDao.updateCategory(category)
+            Log.d("CategoryDetailFragment", "updateCategory: ${db.categoryDao.getCategoryContent(categoryIdx)}")
         }.start()
     }
 
