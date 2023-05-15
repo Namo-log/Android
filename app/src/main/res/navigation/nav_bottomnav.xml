@@ -44,6 +44,9 @@
         <action
             android:id="@+id/action_grouplistFragment_to_groupAddFragment"
             app:destination="@id/groupAddFragment" />
+        <action
+            android:id="@+id/action_groupListFragment_to_groupCalendarFragment"
+            app:destination="@id/groupCalendarFragment" />
     </fragment>
     <fragment
         android:id="@+id/groupAddFragment"
@@ -115,4 +118,9 @@
         android:id="@+id/groupDiaryFragment"
         android:name="com.example.namo.ui.bottom.diary.GroupDiaryFragment"
         android:label="GroupDiaryFragment" />
+    <fragment
+        android:id="@+id/groupCalendarFragment"
+        android:name="com.example.namo.ui.bottom.group.calendar.GroupCalendarFragment"
+        android:label="GroupCalendarFragment"
+        tools:layout="@layout/fragment_group_calendar"/>
 </navigation>

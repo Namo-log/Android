@@ -11,6 +11,7 @@ import android.view.View
 import androidx.core.content.withStyledAttributes
 import com.example.namo.R
 import com.example.namo.data.entity.home.Event
+import com.example.namo.ui.bottom.home.calendar.data.StartEnd
 import com.example.namo.utils.CalendarUtils
 import com.example.namo.utils.CalendarUtils.Companion.DAYS_PER_WEEK
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
@@ -27,6 +28,7 @@ class Calendar2View(context: Context, attrs : AttributeSet) : View(context, attr
     }
     var onDateClickListener : OnDateClickListener? = null
     var selectedDate : DateTime? = null
+    var millis : Long = 0
     private var startX = 0f
     private var startY = 0f
     private var endX = 0f
@@ -41,12 +43,15 @@ class Calendar2View(context: Context, attrs : AttributeSet) : View(context, attr
     private val dayList = mutableListOf<DateTime>()
     private val eventList = mutableListOf<Event>()
     private val orderList = mutableListOf<Int>()
+    private val moreList = mutableListOf<Int>()
+    private val otherRect : ArrayList<RectF> = arrayListOf()
 
     private val bounds2 = Rect()
     private val eventBounds = Rect()
     private val moreBounds = Rect()
     private var showTitle: Boolean = false
     private var cellPaint: Paint = Paint()
+    private var alphaPaint: Paint = Paint()
     private var datePaint: Paint = Paint()
     private var todayPaint: Paint = Paint()
     private var selectedPaint : Paint = Paint()
@@ -92,6 +97,13 @@ class Calendar2View(context: Context, attrs : AttributeSet) : View(context, attr
                 isAntiAlias = true
             }
 
+            alphaPaint = Paint().apply {
+                style = Paint.Style.FILL
+                color = Color.WHITE
+                alpha = 180
+                isAntiAlias = true
+            }
+
             datePaint = TextPaint().apply {
                 isAntiAlias = true
                 textSize = dayTextSize
@@ -132,6 +144,13 @@ class Calendar2View(context: Context, attrs : AttributeSet) : View(context, attr
 //                }
             }
 
+            morePaint = TextPaint().apply {
+                isAntiAlias = true
+                textSize = eventTextSize
+                color = Color.BLACK
+                typeface = Typeface.DEFAULT_BOLD
+            }
+
             corners = floatArrayOf(
                 _eventCornerRadius, _eventCornerRadius, //Top left
                 _eventCornerRadius, _eventCornerRadius, //Top right
@@ -161,6 +180,7 @@ class Calendar2View(context: Context, attrs : AttributeSet) : View(context, attr
                 canvas!!.drawText(dayList[day].dayOfMonth.toString(), (x + cellWidth / 2 - bounds.width() / 2).toFloat(), y + _dayTextHeight, todayPaint)
 //                Log.d("DATE_CHECK", "날짜 ${dayList[day].dayOfMonth}, paint : todayPaint")
             } else {
+//                isSameMonth(dayList[day])
                 datePaint.getTextBounds(dayList[day].dayOfMonth.toString(), 0, dayList[day].dayOfMonth.toString().length, bounds)
                 canvas!!.drawText(dayList[day].dayOfMonth.toString(), (x + cellWidth / 2 - bounds.width() / 2).toFloat(), y + _dayTextHeight, datePaint)
 //                Log.d("DATE_CHECK", "날짜 ${dayList[day].dayOfMonth}, paint : datePaint")
@@ -186,25 +206,30 @@ class Calendar2View(context: Context, attrs : AttributeSet) : View(context, attr
 
         orderList.clear()
         for (i in 0 until 42) orderList.add(0)
+        moreList.clear()
+        for (i in 0 until 42) moreList.add(0)
 
         if (cellHeight - eventTop > _eventHeight * 3) {
             for (i in 0 until eventList.size) {
 //                x계산하고, y계산하기
-
                 val startIdx = dayList.indexOf(DateTime(eventList[i].startLong).withTimeAtStartOfDay())
                 val endIdx = dayList.indexOf(DateTime(eventList[i].endLong).withTimeAtStartOfDay())
                 Log.d("CHECK_EVENT", "start idx : $startIdx | end idx : $endIdx")
 
-                if (findWeek(startIdx) != findWeek(endIdx)) {
-//                    시작일이랑 끝일이 여러 주에 걸쳐있음
-                }
-                else {
-//                    시작일이랑 끝일이 같은 주에 있음
-                    Log.d("CHECK_WEEK", "Start drawing same week")
-                    val order = findMaxOrderInWeek(findWeek(startIdx))!!
+                for (splitEvent in splitWeek(startIdx, endIdx)) {
+                    Log.d("CHECK_WEEK_SINGLE", "Start drawing different week, start idx : ${splitEvent.startIdx} | end idx : ${splitEvent.endIdx}")
+                    val order = findMaxOrderInEvent(splitEvent.startIdx, splitEvent.endIdx)
                     Log.d("CHECK_ORDER", order.toString())
-                    setOrder(order, startIdx, endIdx)
-                    rect = setRect(order, startIdx, endIdx)
+                    setOrder(order, splitEvent.startIdx, splitEvent.endIdx)
+
+                    if (cellHeight - getEventBottom(order) < _eventHeight) {
+                        for (idx in splitEvent.startIdx .. splitEvent.endIdx) {
+                            moreList[idx] = moreList[idx] + 1
+                        }
+                        continue
+                    }
+
+                    rect = setRect(order, splitEvent.startIdx, splitEvent.endIdx)
                     Log.d("CHECK_RECT", rect.toString())
                     val path = Path()
                     path.addRoundRect(rect, corners, Path.Direction.CW)
@@ -214,14 +239,65 @@ class Calendar2View(context: Context, attrs : AttributeSet) : View(context, attr
                     eventPaint.getTextBounds(eventList[i].title, 0, eventList[i].title.length, eventBounds)
                     canvas!!.drawText(
                         eventList[i].title,
-                        getEventTextStart(eventList[i].title, startIdx, endIdx),
-                        getEventTextBottom(eventList[i].title, startIdx, endIdx, order),
+                        getEventTextStart(eventList[i].title, splitEvent.startIdx, splitEvent.endIdx),
+                        getEventTextBottom(eventList[i].title, splitEvent.startIdx, splitEvent.endIdx, order),
                         eventPaint
                     )
+                    Log.d("CHECK_WEEK_SINGLE", "Finish drawing different week, start idx : ${splitEvent.startIdx} | end idx : ${splitEvent.endIdx}")
                 }
+            }
 
+            Log.d("CHECK_MORE", moreList.toString())
+            for (more in 0 until 42) {
+                if (moreList[more] != 0) {
+                    var moreText : String = "+${moreList[more]}"
+                    morePaint.getTextBounds(moreText, 0, moreText.length, moreBounds)
+                    canvas!!.drawText(
+                        moreText,
+                        getEventTextStart(moreText, more, more),
+                        (more / DAYS_PER_WEEK + 1) * cellHeight - _eventMorePadding,
+                        morePaint
+                    )
+                }
             }
         }
+        else {
+            for (i in 0 until eventList.size) {
+//                x계산하고, y계산하기
+                val startIdx = dayList.indexOf(DateTime(eventList[i].startLong).withTimeAtStartOfDay())
+                val endIdx = dayList.indexOf(DateTime(eventList[i].endLong).withTimeAtStartOfDay())
+                Log.d("CHECK_EVENT", "start idx : $startIdx | end idx : $endIdx")
+
+                for (splitEvent in splitWeek(startIdx, endIdx)) {
+                    Log.d("CHECK_WEEK_SINGLE", "Start drawing different week, start idx : ${splitEvent.startIdx} | end idx : ${splitEvent.endIdx}")
+                    val order = findMaxOrderInEvent(splitEvent.startIdx, splitEvent.endIdx)
+                    Log.d("CHECK_ORDER", order.toString())
+                    setOrder(order, splitEvent.startIdx, splitEvent.endIdx)
+
+                    if (getEventLineBottom(order) >= cellHeight) {
+                        continue
+                    }
+
+                    rect = setLineRect(order, splitEvent.startIdx, splitEvent.endIdx)
+                    Log.d("CHECK_RECT", rect.toString())
+                    val path = Path()
+                    path.addRoundRect(rect, corners, Path.Direction.CW)
+                    setBgPaintColor(eventList[i])
+                    canvas!!.drawPath(path, bgPaint)
+
+                    Log.d("CHECK_WEEK_SINGLE", "Finish drawing different week, start idx : ${splitEvent.startIdx} | end idx : ${splitEvent.endIdx}")
+                }
+            }
+        }
+
+//        이전달, 다음달은 불투명하게
+        var prev = 0
+        var next = 0
+        while (!isSameMonth(dayList[prev])) prev++
+        while (!isSameMonth(dayList[41-next])) next++
+        Log.d("CHECK_OTHERS", "prev : $prev | next : $next")
+        drawPrevMonthRect(prev, canvas)
+        drawNextMonthRect(next, canvas)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -266,6 +342,34 @@ class Calendar2View(context: Context, attrs : AttributeSet) : View(context, attr
         }
     }
 
+    private fun splitWeek(startIdx: Int, endIdx: Int) : ArrayList<StartEnd> {
+        val result  = ArrayList<StartEnd>()
+        result.clear()
+        var start = if (startIdx == -1) 0 else startIdx
+        var end = if (endIdx == -1) 41 else endIdx
+        var mid = 0
+
+        while (start <= end) {
+            mid = (start / 7) * 7 + 6
+            if (mid > end) mid = end
+            result.add(StartEnd(start, mid))
+            start = mid + 1
+        }
+
+        Log.d("CHECK_SPLIT_WEEK", result.toString())
+
+        return result
+    }
+
+    private fun findMaxOrderInEvent(startIdx: Int, endIdx: Int) : Int {
+        var maxOrder : Int = 0
+        for (i in startIdx ..endIdx) {
+            if (orderList[i] > maxOrder) maxOrder = orderList[i]
+        }
+
+        return maxOrder
+    }
+
     private fun findMaxOrderInWeek(week : Int) : Int? {
         val arr = arrayOf(
             orderList[week*7],
@@ -286,12 +390,97 @@ class Calendar2View(context: Context, attrs : AttributeSet) : View(context, attr
         }
     }
 
+    private fun getEventBottom(idx : Int) : Float {
+        return (eventTop + (_eventBetweenPadding * idx) + (_eventHeight * (idx + 1)))
+    }
+
+    private fun getEventLineBottom(idx : Int) : Float {
+        return (eventTop + (_eventBetweenPadding * idx) + (_eventLineHeight * (idx + 1)))
+    }
+
+    private fun drawPrevMonthRect(prev : Int, canvas : Canvas?) {
+        if (prev <= 7) {
+            canvas!!.drawRect(
+                RectF(
+                    0f,
+                    0f,
+                    (prev % DAYS_PER_WEEK).toFloat() * cellWidth,
+                    cellHeight.toFloat()
+                ),
+                alphaPaint
+            )
+        }
+        else {
+            canvas!!.drawRect(
+                RectF(
+                    0f,
+                    0f,
+                    (7 * cellWidth).toFloat(),
+                    cellHeight.toFloat()
+                ),
+                alphaPaint
+            )
+            canvas!!.drawRect(
+                RectF(
+                    0f,
+                    cellHeight.toFloat(),
+                    (prev % DAYS_PER_WEEK).toFloat() * cellWidth,
+                    (2 * cellHeight).toFloat()
+                ),
+                alphaPaint
+            )
+        }
+    }
+
+    private fun drawNextMonthRect(next : Int, canvas : Canvas?) {
+        if (next <= 7) {
+            canvas!!.drawRect(
+                RectF(
+                    ((42 - next) % DAYS_PER_WEEK).toFloat() * cellWidth,
+                    ((42 - next) / DAYS_PER_WEEK).toFloat() * cellHeight,
+                    (7 * cellWidth).toFloat(),
+                    (6 * cellHeight).toFloat(),
+                ),
+                alphaPaint
+            )
+        }
+        else {
+            canvas!!.drawRect(
+                RectF(
+                    ((42 - next) % DAYS_PER_WEEK).toFloat() * cellWidth,
+                    ((42 - next) / DAYS_PER_WEEK ).toFloat() * cellHeight,
+                    (7 * cellWidth).toFloat(),
+                    (5 * cellHeight).toFloat(),
+                ),
+                alphaPaint
+            )
+            canvas!!.drawRect(
+                RectF(
+                    0f,
+                    (5 * cellHeight).toFloat(),
+                    (7 * cellWidth).toFloat(),
+                    (6 * cellHeight).toFloat(),
+                ),
+                alphaPaint
+            )
+        }
+    }
+
     private fun setRect(order : Int, startIdx : Int, endIdx : Int) : RectF {
         return RectF(
             (startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding,
             (startIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding + _eventHeight) * order,
             (endIdx % DAYS_PER_WEEK) * cellWidth + cellWidth - _eventHorizontalPadding,
             (endIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding * order) + (_eventHeight * (order + 1))
+        )
+    }
+
+    private fun setLineRect(order : Int, startIdx : Int, endIdx : Int) : RectF {
+        return RectF(
+            (startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding,
+            (startIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding + _eventLineHeight) * order,
+            (endIdx % DAYS_PER_WEEK) * cellWidth + cellWidth - _eventHorizontalPadding,
+            (endIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding * order) + (_eventLineHeight * (order + 1))
         )
     }
 
@@ -310,15 +499,17 @@ class Calendar2View(context: Context, attrs : AttributeSet) : View(context, attr
         return (((startIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding + _eventHeight) * order) + ((endIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding * order) + (_eventHeight * (order + 1)))) / 2 + eventBounds.height() / 2
     }
 
+    private fun isSameMonth(date : DateTime) : Boolean {
+        if (date.monthOfYear != DateTime(millis).monthOfYear) {
+            return false
+        }
+        return true
+    }
+
     fun setDayList(millis : Long) {
+        this.millis = millis
         dayList.clear()
         dayList.addAll(getMonthList(DateTime(millis)))
-        orderList.clear()
-        for (i in 0 until 42) orderList.add(0)
-//        Log.d("ORDER_CHECK", orderList.toString())
-//        Log.d("ORDER_CHECK", orderList.size.toString())
-//        Log.d("ORDER_CHECK", orderList[0].toString())
-//        invalidate()
     }
 
     fun setEventList(events : List<Event>) {

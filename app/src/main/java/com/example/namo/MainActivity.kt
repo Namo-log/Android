@@ -17,7 +17,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.example.namo.databinding.ActivityMainBinding
-import com.example.namo.ui.bottom.home.schedule.PermissionSupport
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -26,7 +25,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
     private lateinit var splashScreen: SplashScreen
 
-    private lateinit var permission : PermissionSupport
 
     companion object {
         const val PLACE_NAME_INTENT_KEY : String = "place_name"
@@ -38,27 +36,8 @@ class MainActivity : AppCompatActivity() {
         startSplash()
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         initNavigation()
-//        permissionCheck()
 
         getHashKey()
-    }
-
-    private fun permissionCheck() {
-        permission = PermissionSupport(this, this)
-        if (!permission.checkPermission()) {
-            permission.requestPermission()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        if (!permission.permissionResult(requestCode, permissions, grantResults)) {
-            permission.requestPermission()
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     private fun startSplash() {

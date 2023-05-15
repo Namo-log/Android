@@ -100,7 +100,7 @@ class DiaryFragment: Fragment() {
                     diaryAdapter.setRecordClickListener(object : DiaryListRVAdapter.DiaryEditInterface{
                         override fun onEditClicked(allData: Event) {
                             val bundle=Bundle()
-                            bundle.putInt("scheduleIdx",allData.eventId)
+                            bundle.putInt("scheduleIdx",allData.eventId.toInt())
 
                             val diaryFrag=DiaryModifyFragment()
                             diaryFrag.arguments=bundle
