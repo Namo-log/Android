@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
     private lateinit var splashScreen: SplashScreen
 
+
     companion object {
         const val PLACE_NAME_INTENT_KEY : String = "place_name"
     }
@@ -34,7 +35,6 @@ class MainActivity : AppCompatActivity() {
         splashScreen = installSplashScreen()
         startSplash()
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
         initNavigation()
 
         getHashKey()

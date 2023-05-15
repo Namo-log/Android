@@ -8,6 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
+
 class ApplicationClass: Application() {
     // 테스트 서버 주소
     val API_URL = " "

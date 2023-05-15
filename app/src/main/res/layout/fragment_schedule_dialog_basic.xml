@@ -254,11 +254,11 @@
             android:layout_height="wrap_content"
             android:text="알람"
             android:textColor="@color/textGray"
-            android:textStyle="bold"
             android:textSize="15sp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/dialog_schedule_alarm_btn"
@@ -266,21 +266,115 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_arrow_right_gray_floating"
             android:tint="@color/textGray"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
             android:text="없음"
             android:textColor="@color/textGray"
             android:textSize="15sp"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/dialog_schedule_alarm_btn"
-            android:layout_marginEnd="15dp"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dialog_schedule_alarm_content_layout"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/alarm_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginVertical="5dp">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/alarm_none"
+                android:text="없음"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:textSize="15sp"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                app:chipMinHeight="38dp"
+                app:chipStartPadding="20dp"
+                app:chipEndPadding="20dp"
+                android:layout_marginEnd="10dp"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/alarm_min_60"
+                android:text="60분 전"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:textSize="15sp"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                app:chipMinHeight="38dp"
+                app:chipStartPadding="20dp"
+                app:chipEndPadding="20dp"
+                android:paddingVertical="10dp"
+                android:layout_marginEnd="10dp"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/alarm_min_30"
+                android:text="30분 전"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:textSize="15sp"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                app:chipMinHeight="38dp"
+                app:chipStartPadding="20dp"
+                app:chipEndPadding="20dp"
+                android:paddingVertical="10dp"
+                android:layout_marginEnd="10dp"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/alarm_min_10"
+                android:text="10분 전"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:textSize="15sp"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                app:chipMinHeight="38dp"
+                app:chipStartPadding="20dp"
+                app:chipEndPadding="20dp"
+                android:layout_marginEnd="10dp"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/alarm_min_5"
+                android:text="5분 전"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:textSize="15sp"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                app:chipMinHeight="38dp"
+                app:chipStartPadding="20dp"
+                app:chipEndPadding="20dp"
+                android:paddingVertical="10dp"
+                android:layout_marginEnd="10dp"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/alarm_min_0"
+                android:text="정시"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:textSize="15sp"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                app:chipMinHeight="38dp"
+                app:chipStartPadding="20dp"
+                app:chipEndPadding="20dp"
+                android:paddingVertical="10dp"
+                android:layout_marginEnd="10dp"/>
+
+        </com.google.android.material.chip.ChipGroup>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

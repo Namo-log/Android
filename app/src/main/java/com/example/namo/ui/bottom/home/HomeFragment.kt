@@ -21,12 +21,14 @@ import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.FragmentHomeBinding
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
-import com.example.namo.ui.bottom.home.calendar.CalendarAdapter
-import com.example.namo.ui.bottom.home.calendar.CalendarMonthFragment
+//import com.example.namo.ui.bottom.home.calendar.CalendarAdapter
+//import com.example.namo.ui.bottom.home.calendar.CalendarMonthFragment
 import com.example.namo.ui.bottom.home.calendar.SetMonthDialog
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogFragment
 import com.example.namo.ui.bottom.diary.DiaryAddFragment
 import com.example.namo.ui.bottom.diary.DiaryModifyFragment
+import com.example.namo.ui.bottom.home.calendar.Calendar2Adapter
+import com.example.namo.ui.bottom.home.calendar.CalendarMonth2Fragment
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
 import com.example.namo.utils.CalendarUtils.Companion.getMonthList
 import com.example.namo.utils.CalendarUtils.Companion.getPrevOffset
@@ -38,7 +40,8 @@ import kotlin.math.abs
 
 class HomeFragment : Fragment() {
 
-    private lateinit var calendarAdapter : CalendarAdapter
+//    private lateinit var calendarAdapter : CalendarAdapter
+    private lateinit var calendarAdapter : Calendar2Adapter
     private lateinit var binding: FragmentHomeBinding
     private lateinit var monthList : List<DateTime>
 
@@ -80,7 +83,8 @@ class HomeFragment : Fragment() {
 
         binding = DataBindingUtil.inflate<FragmentHomeBinding>(inflater, R.layout.fragment_home, container,false)
         db = NamoDatabase.getInstance(requireContext())
-        calendarAdapter = CalendarAdapter(context as MainActivity)
+//        calendarAdapter = CalendarAdapter(context as MainActivity)
+        calendarAdapter = Calendar2Adapter(context as MainActivity)
 
         //hideBottomNavigation(false)
 
@@ -88,7 +92,7 @@ class HomeFragment : Fragment() {
 
         binding.homeCalendarVp.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         binding.homeCalendarVp.adapter = calendarAdapter
-        binding.homeCalendarVp.setCurrentItem(CalendarAdapter.START_POSITION, false)
+        binding.homeCalendarVp.setCurrentItem(Calendar2Adapter.START_POSITION, false)
         setMillisText()
 
         binding.homeCalendarVp.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -134,79 +138,79 @@ class HomeFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility", "NotifyDataSetChanged")
     private fun clickListener() {
 
-        binding.homeFab.setOnClickListener {
-            Log.d("DIALOG_OPEN", nowIdx.toString())
-            scheduleDialogFragment = ScheduleDialogFragment {
-                Log.d("DIALOG_CALLBACK", it.toString())
-                if (it) {
-                    setData(nowIdx)
-                    Log.d("GET_EVENT", nowIdx.toString())
-                }
+//        binding.homeFab.setOnClickListener {
+//            Log.d("DIALOG_OPEN", nowIdx.toString())
+//            scheduleDialogFragment = ScheduleDialogFragment {
+//                Log.d("DIALOG_CALLBACK", it.toString())
+//                if (it) {
+//                    setData(nowIdx)
+//                    Log.d("GET_EVENT", nowIdx.toString())
+//                }
+//
+//                var page : Fragment =
+//                    requireActivity().supportFragmentManager.findFragmentByTag("f" + calendarAdapter.getItemId(binding.homeCalendarVp.currentItem))!!
+//                var mFragment = page as CalendarMonth2Fragment
+//                mFragment.onResume()
+//
+//                Log.d("DIALOG_CLOSE", nowIdx.toString())
+//                setDaily(nowIdx)
+//            }
+//            scheduleDialogFragment.setDate(monthList[nowIdx])
+//            scheduleDialogFragment.show(requireActivity().supportFragmentManager, ScheduleDialogFragment.TAG)
+//        }
 
-                var page : Fragment =
-                    requireActivity().supportFragmentManager.findFragmentByTag("f" + calendarAdapter.getItemId(binding.homeCalendarVp.currentItem))!!
-                var mFragment = page as CalendarMonthFragment
-                mFragment.onResume()
 
-                Log.d("DIALOG_CLOSE", nowIdx.toString())
-                setDaily(nowIdx)
-            }
-            scheduleDialogFragment.setDate(monthList[nowIdx])
-            scheduleDialogFragment.show(requireActivity().supportFragmentManager, ScheduleDialogFragment.TAG)
-        }
-
-
-        binding.homeCalendarVp.getChildAt(0).setOnTouchListener { v, event ->
-
-            totalWidth = binding.homeCalendarVp.width
-            totalHeight = binding.homeCalendarVp.height
-            dayWidth = (totalWidth / DAYS_PER_WEEK).toFloat()
-            dayHeight = (totalHeight / WEEKS_PER_MONTH).toFloat()
-
-            val action = event.action
-            val curX = event.x //눌린 곳의 X좌표
-            val curY = event.y //눌린 곳의 Y좌표
-            if (action == MotionEvent.ACTION_DOWN) {   //처음 눌렸을 때
-//                Log.d("TOUCH_COOR", "손가락 눌림 : $curX, $curY")
-                startX = curX
-                startY = curY
-            } else if (action == MotionEvent.ACTION_MOVE) {    //누르고 움직였을 때
-//                Log.d("TOUCH_COOR", "손가락 움직임 : $curX, $curY")
-            } else if (action == MotionEvent.ACTION_UP) {    //누른걸 뗐을 때
-//                Log.d("TOUCH_COOR", "손가락 뗌 : $curX, $curY")
-                endX = curX
-                endY = curY
-            }
-
-            isScroll = !(abs(endX - startX) < 10 && abs(endY - startY) < 10)
-
-            if (!isScroll) {
-                nowIdx = (curY / dayHeight).toInt() * DAYS_PER_WEEK + (curX / dayWidth).toInt()
-//                Log.d("TOUCH_IDX", "prev : $prevIdx   now : $nowIdx")
-//                Log.d("TOUCH_DATE", monthList[nowIdx].toString("yyyy년 MM월 dd일"))
-                setDaily(nowIdx)
-//                setStroke(nowIdx)
-
-                Log.d("TOUCH_SHOW_PREV", "isShow : ${isShow}")
-                if (isShow && prevIdx == nowIdx) {
-//                    binding.dailyLayout.visibility = View.GONE
-//                    hideBottomNavigation(false)
-                    binding.constraintLayout4.transitionToStart()
-                    isShow = !isShow
-                }
-                else if (!isShow) {
-//                    binding.dailyLayout.visibility = View.VISIBLE
-//                    hideBottomNavigation(true)
-                    binding.constraintLayout4.transitionToEnd()
-                    isShow = !isShow
-                }
-
-                Log.d("TOUCH_SHOW_AFTER", "isShow : ${isShow}")
-                prevIdx = nowIdx
-            }
-
-            false
-        }
+//        binding.homeCalendarVp.getChildAt(0).setOnTouchListener { v, event ->
+//
+//            totalWidth = binding.homeCalendarVp.width
+//            totalHeight = binding.homeCalendarVp.height
+//            dayWidth = (totalWidth / DAYS_PER_WEEK).toFloat()
+//            dayHeight = (totalHeight / WEEKS_PER_MONTH).toFloat()
+//
+//            val action = event.action
+//            val curX = event.x //눌린 곳의 X좌표
+//            val curY = event.y //눌린 곳의 Y좌표
+//            if (action == MotionEvent.ACTION_DOWN) {   //처음 눌렸을 때
+////                Log.d("TOUCH_COOR", "손가락 눌림 : $curX, $curY")
+//                startX = curX
+//                startY = curY
+//            } else if (action == MotionEvent.ACTION_MOVE) {    //누르고 움직였을 때
+////                Log.d("TOUCH_COOR", "손가락 움직임 : $curX, $curY")
+//            } else if (action == MotionEvent.ACTION_UP) {    //누른걸 뗐을 때
+////                Log.d("TOUCH_COOR", "손가락 뗌 : $curX, $curY")
+//                endX = curX
+//                endY = curY
+//            }
+//
+//            isScroll = !(abs(endX - startX) < 10 && abs(endY - startY) < 10)
+//
+//            if (!isScroll) {
+//                nowIdx = (curY / dayHeight).toInt() * DAYS_PER_WEEK + (curX / dayWidth).toInt()
+////                Log.d("TOUCH_IDX", "prev : $prevIdx   now : $nowIdx")
+////                Log.d("TOUCH_DATE", monthList[nowIdx].toString("yyyy년 MM월 dd일"))
+//                setDaily(nowIdx)
+////                setStroke(nowIdx)
+//
+//                Log.d("TOUCH_SHOW_PREV", "isShow : ${isShow}")
+//                if (isShow && prevIdx == nowIdx) {
+////                    binding.dailyLayout.visibility = View.GONE
+////                    hideBottomNavigation(false)
+//                    binding.constraintLayout4.transitionToStart()
+//                    isShow = !isShow
+//                }
+//                else if (!isShow) {
+////                    binding.dailyLayout.visibility = View.VISIBLE
+////                    hideBottomNavigation(true)
+//                    binding.constraintLayout4.transitionToEnd()
+//                    isShow = !isShow
+//                }
+//
+//                Log.d("TOUCH_SHOW_AFTER", "isShow : ${isShow}")
+//                prevIdx = nowIdx
+//            }
+//
+//            false
+//        }
 
         binding.homeCalendarYearMonthTv.setOnClickListener {
             SetMonthDialog(requireContext(), millis) {
@@ -270,7 +274,7 @@ class HomeFragment : Fragment() {
 
                     var page : Fragment =
                         requireActivity().supportFragmentManager.findFragmentByTag("f" + calendarAdapter.getItemId(binding.homeCalendarVp.currentItem))!!
-                    var mFragment = page as CalendarMonthFragment
+                    var mFragment = page as CalendarMonth2Fragment
                     mFragment.onResume()
 
                     setDaily(nowIdx)
@@ -286,7 +290,7 @@ class HomeFragment : Fragment() {
         personalEventRVAdapter.setRecordClickListener(object :DailyPersonalRVAdapter.DiaryInterface{
             override fun onAddClicked(event: Event) {
                 val bundle=Bundle()
-                bundle.putInt("scheduleIdx",event.eventId)
+                bundle.putInt("scheduleIdx",event.eventId.toInt())
                 bundle.putString("title",event.title)
                 bundle.putInt("category",event.categoryColor)
                 bundle.putString("place",event.place)
@@ -299,7 +303,7 @@ class HomeFragment : Fragment() {
             }
             override fun onEditClicked(event: Event) {
                 val bundle=Bundle()
-                bundle.putInt("scheduleIdx",event.eventId)
+                bundle.putInt("scheduleIdx",event.eventId.toInt())
 
                 val editFrag=DiaryModifyFragment()
                 editFrag.arguments=bundle
@@ -364,8 +368,6 @@ class HomeFragment : Fragment() {
         } catch (e : InterruptedException) {
             e.printStackTrace()
         }
-
-
     }
 
 //    private fun getDummy(idx : Int) {

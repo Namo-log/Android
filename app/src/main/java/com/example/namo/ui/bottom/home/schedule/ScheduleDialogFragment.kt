@@ -1,16 +1,18 @@
 package com.example.namo.ui.bottom.home.schedule
 
 import android.Manifest
+import android.app.*
 import android.app.Activity.RESULT_OK
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Insets.add
 import android.location.Location
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,6 +23,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,16 +36,17 @@ import com.example.namo.ui.bottom.home.schedule.data.Category
 import com.example.namo.ui.bottom.home.schedule.map.MapActivity
 import com.example.namo.databinding.FragmentScheduleDialogBinding
 import com.example.namo.ui.bottom.home.schedule.category.CategoryActivity
+import com.example.namo.ui.bottom.home.notify.PushNotificationReceiver
 import com.example.namo.utils.CalendarUtils.Companion.getInterval
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.chip.ChipGroup
 import org.joda.time.DateTime
 
 class ScheduleDialogFragment (
     private val okCallback : (Boolean) -> Unit
 ) : BottomSheetDialogFragment() {
-
     private lateinit var binding : FragmentScheduleDialogBinding
     //0 -> basic
     //1 -> category
@@ -51,6 +55,7 @@ class ScheduleDialogFragment (
     private var recentView : Int = 0
 
     var isEdit : Boolean = false
+    var isAlarm : Boolean = false
 
     private val categoryRVAdapter : DialogCategoryRVAdapter = DialogCategoryRVAdapter()
     private var categoryList : ArrayList<Category> = arrayListOf()
@@ -75,8 +80,13 @@ class ScheduleDialogFragment (
 
     private val PERMISSIONS_REQUEST_CODE = 100
     private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+    private val REQUIRED_PERMISSIONS_PUSH = arrayOf(Manifest.permission.RECEIVE_BOOT_COMPLETED)
+    private val NOTIFICATION_PERMISSION_REQUEST_CODE = 777
 
     private lateinit var getResult : ActivityResultLauncher<Intent>
+
+    private var selectedAlarm : ArrayList<Int> = arrayListOf()
+    private var scheduelIdx : Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -84,11 +94,11 @@ class ScheduleDialogFragment (
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_schedule_dialog, container, false)
-
         db = NamoDatabase.getInstance(requireContext())
 
+
         if (isEdit) {
-            recentView = 2
+            recentView = 3
         }
 
         setAdapter()
@@ -162,9 +172,17 @@ class ScheduleDialogFragment (
                 setPicker(4)
             }
 
+            binding.dialogScheduleBasicContainer.dialogScheduleAlarmLayout.setOnClickListener {
+                if (!isAlarm) binding.dialogScheduleBasicContainer.dialogScheduleAlarmContentLayout.visibility = View.VISIBLE
+                else binding.dialogScheduleBasicContainer.dialogScheduleAlarmContentLayout.visibility = View.GONE
+                isAlarm = !isAlarm
+            }
+
             binding.dialogScheduleBasicContainer.dialogSchedulePlaceLayout.setOnClickListener {
                 getLocationPermission()
             }
+
+
         }
         else {
             binding.dialogScheduleBasicContainer.dialogScheduleCategoryLayout.setOnClickListener(null)
@@ -172,7 +190,91 @@ class ScheduleDialogFragment (
             binding.dialogScheduleBasicContainer.dialogScheduleEndDateTv.setOnClickListener(null)
             binding.dialogScheduleBasicContainer.dialogScheduleStartTimeTv.setOnClickListener(null)
             binding.dialogScheduleBasicContainer.dialogScheduleEndTimeTv.setOnClickListener(null)
+            binding.dialogScheduleBasicContainer.dialogScheduleAlarmLayout.setOnClickListener(null)
             binding.dialogScheduleBasicContainer.dialogSchedulePlaceLayout.setOnClickListener(null)
+        }
+    }
+
+    private fun setAlarm(desiredTime : Long) {
+        if (binding.dialogScheduleBasicContainer.alarmNone.isChecked) {
+            Log.d("ALARM", "None selected")
+            return
+        }
+
+        if (binding.dialogScheduleBasicContainer.alarmMin60.isChecked) {
+            checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusHours(1).millis)
+            Log.d("ALARM", "60 min selected")
+        }
+
+        if (binding.dialogScheduleBasicContainer.alarmMin30.isChecked) {
+            checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusMinutes(30).millis)
+            Log.d("ALARM", "30 min selected")
+        }
+
+        if (binding.dialogScheduleBasicContainer.alarmMin10.isChecked) {
+            checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusMinutes(10).millis)
+            Log.d("ALARM", "10 min selected")
+        }
+
+        if (binding.dialogScheduleBasicContainer.alarmMin5.isChecked) {
+            checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusMinutes(5).millis)
+            Log.d("ALARM", "5 min selected")
+        }
+
+        if (binding.dialogScheduleBasicContainer.alarmMin0.isChecked) {
+            checkNotificationPermission(requireActivity(), event.startLong)
+            Log.d("ALARM", "0 min selected")
+        }
+    }
+
+    private fun schedulePushNotification(desiredTimestamp : Long) {
+        val context = requireContext()
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val intent = Intent(context, PushNotificationReceiver::class.java)
+        intent.putExtra("notification_id", scheduelIdx+desiredTimestamp.toInt())
+        intent.putExtra("notification_title", event.title)
+        intent.putExtra("notification_content", startDateTime.toString("MM-dd") + " ~ " + endDateTime.toString("MM-dd"))
+
+        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getBroadcast(context, (scheduelIdx+desiredTimestamp.toInt()), intent, PendingIntent.FLAG_IMMUTABLE)
+        } else {
+            PendingIntent.getBroadcast(context, (scheduelIdx+desiredTimestamp.toInt()), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Log.d("ALARM","setExactAndAllowWhileIdle")
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                desiredTimestamp,
+                pendingIntent
+            )
+        } else {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, desiredTimestamp, pendingIntent)
+            Log.d("ALARM","setExact")
+        }
+    }
+
+    private fun checkNotificationPermission(activity: Activity, desiredTime: Long) {
+        if (!NotificationManagerCompat.from(activity).areNotificationsEnabled()) {
+            Toast.makeText(requireContext(), "설정에서 알림 권한을 허용 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            val uri = Uri.fromParts("package", activity.packageName, null)
+            intent.data = uri
+            activity.startActivity(intent)
+        } else {
+            schedulePushNotification(desiredTime)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+            if (NotificationManagerCompat.from(requireContext()).areNotificationsEnabled()) {
+                Toast.makeText(requireContext(), "알림 권한이 허용되었습니다. 알림 등록을 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "설정에서 알림 권한을 허용 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -379,8 +481,11 @@ class ScheduleDialogFragment (
                    event.categoryIdx = selectedCategory
                    event.place = place_name
 
+
+//                   checkAlarm()
+
                    var storeDB : Thread = Thread {
-                       db.eventDao.insertEvent(event)
+                       scheduelIdx = db.eventDao.insertEvent(event).toInt()
                    }
                    storeDB.start()
                    try {
@@ -388,6 +493,8 @@ class ScheduleDialogFragment (
                    } catch ( e: InterruptedException) {
                        e.printStackTrace()
                    }
+
+                   setAlarm(event.startLong)
 
                    okCallback(true)
                    dismiss()
@@ -410,8 +517,67 @@ class ScheduleDialogFragment (
                 }
             }
 
-            //see
-            2 -> {
+//            //see
+//            2 -> {
+//                binding.deleteBtn.visibility = View.VISIBLE
+//                binding.deleteBtn.setOnClickListener {
+//                    //일정 삭제하고 닫기
+//
+//                    var deleteDB : Thread = Thread {
+//                        db.eventDao.deleteEvent(event)
+//                    }
+//                    deleteDB.start()
+//                    try {
+//                        deleteDB.join()
+//                    } catch ( e: InterruptedException) {
+//                        e.printStackTrace()
+//                    }
+//
+//                    Toast.makeText(requireContext(), "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+//
+//                    okCallback(true)
+//                    dismiss()
+//                }
+//
+//                clickListener(false)
+//                binding.dialogScheduleHeaderTv.text = "내 일정"
+//
+//                binding.dialogScheduleCloseBtn.visibility = View.VISIBLE
+//                binding.dialogScheduleSaveBtn.visibility = View.VISIBLE
+//                binding.dialogScheduleSaveBtn.text = "편집"
+//
+//                binding.dialogScheduleCloseBtn.setOnClickListener {
+//                    okCallback(false)
+//                    dismiss()
+//                }
+//
+//                binding.dialogScheduleSaveBtn.setOnClickListener {
+//                    recentView = 3
+//                    setScreen()
+//                }
+//
+//                binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.visibility = View.GONE
+//                binding.dialogScheduleBasicContainer.dialogScheduleTitleTv.visibility = View.VISIBLE
+//                binding.dialogScheduleBasicContainer.dialogScheduleTitleTv.text = event.title
+//
+//                binding.dialogScheduleBasicContainer.dialogScheduleCategoryNameTv.text = event.categoryName
+//                binding.dialogScheduleBasicContainer.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(event.categoryColor))
+//                selectedCategory = event.categoryIdx
+//
+//
+//                startDateTime = DateTime(event.startLong)
+//                endDateTime = DateTime(event.endLong)
+//
+//                binding.dialogScheduleBasicContainer.dialogScheduleStartDateTv.text = DateTime(event.startLong).toString(getString(R.string.dateFormat))
+//                binding.dialogScheduleBasicContainer.dialogScheduleEndDateTv.text = DateTime(event.endLong).toString(getString(R.string.dateFormat))
+//                binding.dialogScheduleBasicContainer.dialogScheduleStartTimeTv.text = DateTime(event.startLong).toString(getString(R.string.timeFormat))
+//                binding.dialogScheduleBasicContainer.dialogScheduleEndTimeTv.text = DateTime(event.endLong).toString(getString(R.string.timeFormat))
+//
+//                binding.dialogScheduleBasicContainer.dialogSchedulePlaceNameTv.text = event.place
+//            }
+
+            //edit
+            3 -> {
                 binding.deleteBtn.visibility = View.VISIBLE
                 binding.deleteBtn.setOnClickListener {
                     //일정 삭제하고 닫기
@@ -432,48 +598,8 @@ class ScheduleDialogFragment (
                     dismiss()
                 }
 
-                clickListener(false)
-                binding.dialogScheduleHeaderTv.text = "내 일정"
-
-                binding.dialogScheduleCloseBtn.visibility = View.VISIBLE
-                binding.dialogScheduleSaveBtn.visibility = View.VISIBLE
-                binding.dialogScheduleSaveBtn.text = "편집"
-
-                binding.dialogScheduleCloseBtn.setOnClickListener {
-                    okCallback(false)
-                    dismiss()
-                }
-
-                binding.dialogScheduleSaveBtn.setOnClickListener {
-                    recentView = 3
-                    setScreen()
-                }
-
-                binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.visibility = View.GONE
-                binding.dialogScheduleBasicContainer.dialogScheduleTitleTv.visibility = View.VISIBLE
-                binding.dialogScheduleBasicContainer.dialogScheduleTitleTv.text = event.title
-
-                binding.dialogScheduleBasicContainer.dialogScheduleCategoryNameTv.text = event.categoryName
-                binding.dialogScheduleBasicContainer.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(event.categoryColor))
-                selectedCategory = event.categoryIdx
-
-
-                startDateTime = DateTime(event.startLong)
-                endDateTime = DateTime(event.endLong)
-
-                binding.dialogScheduleBasicContainer.dialogScheduleStartDateTv.text = DateTime(event.startLong).toString(getString(R.string.dateFormat))
-                binding.dialogScheduleBasicContainer.dialogScheduleEndDateTv.text = DateTime(event.endLong).toString(getString(R.string.dateFormat))
-                binding.dialogScheduleBasicContainer.dialogScheduleStartTimeTv.text = DateTime(event.startLong).toString(getString(R.string.timeFormat))
-                binding.dialogScheduleBasicContainer.dialogScheduleEndTimeTv.text = DateTime(event.endLong).toString(getString(R.string.timeFormat))
-
-                binding.dialogScheduleBasicContainer.dialogSchedulePlaceNameTv.text = event.place
-            }
-
-            //edit
-            3 -> {
-                binding.deleteBtn.visibility = View.GONE
-
                 clickListener(true)
+                binding.dialogScheduleHeaderTv.text = "내 일정"
                 setCategory()
 
                 binding.dialogScheduleCloseBtn.visibility = View.VISIBLE
@@ -521,6 +647,21 @@ class ScheduleDialogFragment (
 
                 categoryRVAdapter.setSelectedPos(selectedCategory)
                 categoryRVAdapter.notifyDataSetChanged()
+
+                binding.dialogScheduleBasicContainer.dialogScheduleCategoryNameTv.text = event.categoryName
+                binding.dialogScheduleBasicContainer.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(event.categoryColor))
+                selectedCategory = event.categoryIdx
+//
+//
+                startDateTime = DateTime(event.startLong)
+                endDateTime = DateTime(event.endLong)
+
+                binding.dialogScheduleBasicContainer.dialogScheduleStartDateTv.text = DateTime(event.startLong).toString(getString(R.string.dateFormat))
+                binding.dialogScheduleBasicContainer.dialogScheduleEndDateTv.text = DateTime(event.endLong).toString(getString(R.string.dateFormat))
+                binding.dialogScheduleBasicContainer.dialogScheduleStartTimeTv.text = DateTime(event.startLong).toString(getString(R.string.timeFormat))
+                binding.dialogScheduleBasicContainer.dialogScheduleEndTimeTv.text = DateTime(event.endLong).toString(getString(R.string.timeFormat))
+
+                binding.dialogScheduleBasicContainer.dialogSchedulePlaceNameTv.text = event.place
 
             }
             else -> {

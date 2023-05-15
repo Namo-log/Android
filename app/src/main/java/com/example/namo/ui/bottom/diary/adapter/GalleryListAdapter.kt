@@ -7,11 +7,10 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.namo.databinding.ItemGalleryListBinding
-import java.io.File
 
-class GalleryListAdapter (
+class GalleryListAdapter(
     private val context: Context,
-    private val imgList:List<String>?,
+    private val imgList: List<String>?,
 ):
     RecyclerView.Adapter<GalleryListAdapter.ViewHolder>(){
 

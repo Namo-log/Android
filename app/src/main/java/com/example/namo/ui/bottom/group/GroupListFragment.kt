@@ -73,9 +73,7 @@ class GroupListFragment : Fragment() {
         groupAdapter.setMyItemClickListener(object : GroupListRVAdapter.ItemClickListener {
             override fun onItemClick(group: Group) { // 그룹 캘린더로 이동
                 Log.d("CLICK", "click item")
-//                (context as MainActivity).supportFragmentManager.beginTransaction()
-//                    .replace(R.id.main_frm, GroupCalendarWrapperFragment(group))
-//                    .commitAllowingStateLoss()
+                //view?.findNavController()?.navigate(R.id.action_groupListFragment_to_groupCalendarFragment)
             }
         })
     }
