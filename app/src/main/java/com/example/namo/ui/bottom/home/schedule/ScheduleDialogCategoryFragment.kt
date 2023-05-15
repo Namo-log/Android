@@ -1,5 +1,6 @@
 package com.example.namo.ui.bottom.home.schedule
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,10 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
-import com.example.namo.data.dao.CategoryDao
 import com.example.namo.ui.bottom.home.schedule.adapter.DialogCategoryRVAdapter
 import com.example.namo.ui.bottom.home.schedule.data.Category
 import com.example.namo.databinding.FragmentScheduleDialogCategoryBinding
+import com.example.namo.ui.bottom.home.schedule.category.CategoryActivity
 
 class ScheduleDialogCategoryFragment : Fragment() {
 
@@ -34,6 +35,7 @@ class ScheduleDialogCategoryFragment : Fragment() {
         db = NamoDatabase.getInstance(requireContext())
 
         setAdapter()
+        onClickCategoryEdit()
 
         return binding.root
     }
@@ -66,11 +68,18 @@ class ScheduleDialogCategoryFragment : Fragment() {
 
     private fun initialCategory() {
         Thread(Runnable {
-            db.categoryDao.insertCategory(Category(0, "카테고리1", R.color.palette1))
-            db.categoryDao.insertCategory(Category(0, "카테고리2", R.color.palette2))
-            db.categoryDao.insertCategory(Category(0, "카테고리3", R.color.palette3))
-            db.categoryDao.insertCategory(Category(0, "카테고리4", R.color.palette4))
-            db.categoryDao.insertCategory(Category(0, "가테고리5", R.color.palette5))
+            db.categoryDao.insertCategory(Category(0, "카테고리1", R.color.palette1, false))
+            db.categoryDao.insertCategory(Category(0, "카테고리2", R.color.palette2, false))
+            db.categoryDao.insertCategory(Category(0, "카테고리3", R.color.palette3, false))
+            db.categoryDao.insertCategory(Category(0, "카테고리4", R.color.palette4, false))
+            db.categoryDao.insertCategory(Category(0, "가테고리5", R.color.palette5, false))
         }).start()
+    }
+
+    private fun onClickCategoryEdit()  {
+        binding.scheduleDialogCategoryEditCv.setOnClickListener {
+            Log.d("DialogCategoryFrag", "categoryEditCV 클릭")
+            startActivity(Intent(activity, CategoryActivity::class.java))
+        }
     }
 }

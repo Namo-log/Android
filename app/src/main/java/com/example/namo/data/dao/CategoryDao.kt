@@ -18,4 +18,7 @@ interface CategoryDao {
     @Query("SELECT * FROM category_table")
     fun getCategoryList(): List<Category>
 
+    @Query("SELECT * FROM category_table WHERE categoryIdx=:categoryIdx")
+    fun getCategoryContent(categoryIdx: Int): Category
+
 }
