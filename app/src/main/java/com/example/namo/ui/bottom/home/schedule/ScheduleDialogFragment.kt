@@ -26,6 +26,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.MainActivity.Companion.PLACE_NAME_INTENT_KEY
 import com.example.namo.R
@@ -41,7 +42,6 @@ import com.example.namo.utils.CalendarUtils.Companion.getInterval
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.chip.ChipGroup
 import org.joda.time.DateTime
 
 class ScheduleDialogFragment (
@@ -57,8 +57,8 @@ class ScheduleDialogFragment (
     var isEdit : Boolean = false
     var isAlarm : Boolean = false
 
-    private val categoryRVAdapter : DialogCategoryRVAdapter = DialogCategoryRVAdapter()
-    private var categoryList : ArrayList<Category> = arrayListOf()
+    private lateinit var categoryRVAdapter : DialogCategoryRVAdapter
+    private var categoryList : List<Category> = arrayListOf()
     private var initCategory : Int = 0
     private var selectedCategory : Int = 0
 
@@ -101,7 +101,8 @@ class ScheduleDialogFragment (
             recentView = 3
         }
 
-        setAdapter()
+        categoryRVAdapter = DialogCategoryRVAdapter(requireContext(), categoryList)
+
         setScreen()
         Log.d("LIFECYCLE", "OnCreateView")
 
@@ -460,7 +461,7 @@ class ScheduleDialogFragment (
                 binding.dialogScheduleHeaderTv.text = "새 일정"
 
                 initPickerText()
-                setCategory()
+//                setCategory()
                 clickListener(true)
 
                 binding.dialogScheduleCloseBtn.setOnClickListener {
@@ -600,7 +601,7 @@ class ScheduleDialogFragment (
 
                 clickListener(true)
                 binding.dialogScheduleHeaderTv.text = "내 일정"
-                setCategory()
+//                setCategory()
 
                 binding.dialogScheduleCloseBtn.visibility = View.VISIBLE
                 binding.dialogScheduleSaveBtn.visibility = View.VISIBLE
@@ -677,113 +678,72 @@ class ScheduleDialogFragment (
         event.place = place_name
     }
 
-    private fun setCategory() {
-        binding.dialogScheduleBasicContainer.dialogScheduleCategoryNameTv.text = categoryList[selectedCategory].name
-        binding.dialogScheduleBasicContainer.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(categoryList[selectedCategory].color))
+    private fun setCategory() { // 왜 필요한 거지
+        binding.dialogScheduleBasicContainer.dialogScheduleCategoryNameTv.text = event.categoryName
+        binding.dialogScheduleBasicContainer.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(event.categoryColor))
 
         Log.d("CATEGORY_COLOR", selectedCategory.toString())
     }
 
-    private fun setAdapter() {
-        binding.dialogScheduleCategoryContainer.scheduleDialogCategoryRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.dialogScheduleCategoryContainer.scheduleDialogCategoryRv.adapter = categoryRVAdapter
-        Log.d("CATEGORY_BEFORE", categoryList.toString())
-        getCategoryList()
-        Log.d("CATEGORY_AFTER", categoryList.toString())
-        categoryRVAdapter.addCategory(categoryList)
-        initCategory = 0
-        categoryRVAdapter.setSelectedPos(initCategory)
-        categoryRVAdapter.notifyDataSetChanged()
-
-
-        categoryRVAdapter.setMyItemClickListener( object  : DialogCategoryRVAdapter.MyItemClickListener {
-            override fun onSendPos(selected: Int) {
-                selectedCategory = selected
-
-                recentView = prevView
-                binding.dialogScheduleBasicContainer.root.visibility = View.VISIBLE
-                binding.dialogScheduleCategoryContainer.root.visibility = View.GONE
-                setScreen()
-            }
-        })
-    }
-
     private fun getCategoryList() {
-        categoryList.clear()
-        categoryList.apply {
-            add(
-                Category(
-                    0,
-                    "카테고리1",
-                    R.color.palette1,
-                    false
-                )
-            )
-            add(
-                Category(
-                    0,
-                    "카테고리2",
-                    R.color.palette2,
-                    false
-                )
-            )
-            add(
-                Category(
-                    0,
-                    "카테고리3",
-                    R.color.palette3,
-                    false
-                )
-            )
-            add(
-                Category(
-                    0,
-                    "카테고리4",
-                    R.color.palette4,
-                    false
-                )
-            )
-            add(
-                Category(
-                    0,
-                    "카테고리5",
-                    R.color.palette5,
-                    false
-                )
-            )
-        }
-    }
+        // 카테고리가 아무것도 없으면 기본 카테고리 2개 생성 (일정, 모임)
+        setInitialCategory()
 
-    private fun getCategoryList(categoryRVAdapter: DialogCategoryRVAdapter) {
-        categoryList.clear()
-        initialCategory()
+        val rv = binding.dialogScheduleCategoryContainer.scheduleDialogCategoryRv
+
         val r = Runnable {
             try {
-                categoryList = db.categoryDao.getCategoryList() as ArrayList<Category>
+                initCategory = 0
+                categoryRVAdapter.setSelectedPos(initCategory)
+
+                categoryList = db.categoryDao.getCategoryList()
+                categoryRVAdapter.notifyDataSetChanged()
+                categoryRVAdapter = DialogCategoryRVAdapter(requireContext(), categoryList)
+                categoryRVAdapter.setMyItemClickListener(object: DialogCategoryRVAdapter.MyItemClickListener {
+                    // 아이템 클릭
+                    override fun onSendPos(selected: Int, category: Category) {
+                        selectedCategory = selected
+
+                        recentView = prevView
+                        binding.dialogScheduleBasicContainer.root.visibility = View.VISIBLE
+                        binding.dialogScheduleCategoryContainer.root.visibility = View.GONE
+                        setScreen()
+
+                        // 카테고리 세팅
+                        event.categoryColor = category.color
+                        event.categoryName = category.name
+                        setCategory()
+                    }
+                })
                 requireActivity().runOnUiThread {
-                    //binding.scheduleDialogCategoryRv.adapter = categoryRVAdapter
+                    rv.adapter = categoryRVAdapter
+                    rv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                 }
+                Log.d("ScheduleDialogFrag", "categoryDao: ${db.categoryDao.getCategoryList()}")
             } catch (e: Exception) {
                 Log.d("category", "Error - $e")
             }
         }
+
         val thread = Thread(r)
         thread.start()
     }
 
-    private fun initialCategory() {
+    private fun setInitialCategory() {
+        // 리스트에 아무런 카테고리가 없으면 기본 카테고리 설정
         Thread {
-            db.categoryDao.insertCategory(Category(0, "카테고리1", R.color.palette1, false))
-            db.categoryDao.insertCategory(Category(0, "카테고리2", R.color.palette2, false))
-            db.categoryDao.insertCategory(Category(0, "카테고리3", R.color.palette3, false))
-            db.categoryDao.insertCategory(Category(0, "카테고리4", R.color.palette4, false))
-            db.categoryDao.insertCategory(Category(0, "카테고리5", R.color.palette5, false))
+            if (db.categoryDao.getCategoryList().isEmpty()) {
+                db.categoryDao.insertCategory(Category(0, "일정", R.color.schedule, true))
+                db.categoryDao.insertCategory(Category(0, "그룹", R.color.schedule_group, true))
+            }
         }.start()
     }
 
 
     override fun onResume() {
         super.onResume()
+        getCategoryList()
+
         Log.d("LIFECYCLE","OnResume")
     }
 

@@ -2,7 +2,6 @@ package com.example.namo.ui.bottom.home.schedule.category
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Insets.add
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -143,11 +142,6 @@ class CategorySettingFragment: Fragment() {
                 db.categoryDao.insertCategory(Category(0, "일정", R.color.schedule, true))
                 db.categoryDao.insertCategory(Category(0, "그룹", R.color.schedule_group, true))
             }
-//            db.categoryDao.insertCategory(Category(0, "카테고리1", R.color.palette1, false))
-//            db.categoryDao.insertCategory(Category(0, "카테고리2", R.color.palette2, false))
-//            db.categoryDao.insertCategory(Category(0, "카테고리3", R.color.palette3, false))
-//            db.categoryDao.insertCategory(Category(0, "카테고리4", R.color.palette4, false))
-//            db.categoryDao.insertCategory(Category(0, "카테고리5", R.color.palette5, false))
         }.start()
     }
 
