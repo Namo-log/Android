@@ -1,10 +1,10 @@
-package com.example.namo.ui.bottom.home.schedule.category
+package com.example.namo.ui.bottom.home.schedule.category.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.namo.databinding.ItemCustomPaletteColorBinding
+import com.example.namo.databinding.ItemPaletteColorBinding
 
 class CategoryPaletteRVAdapter(
     val context: Context,
@@ -22,7 +22,7 @@ class CategoryPaletteRVAdapter(
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val binding: ItemCustomPaletteColorBinding = ItemCustomPaletteColorBinding.inflate(
+        val binding: ItemPaletteColorBinding = ItemPaletteColorBinding.inflate(
             LayoutInflater.from(viewGroup.context), viewGroup, false)
 
         return ViewHolder(binding)
@@ -39,7 +39,7 @@ class CategoryPaletteRVAdapter(
 
     override fun getItemCount(): Int = colorList.size
 
-    inner class ViewHolder(val binding: ItemCustomPaletteColorBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemPaletteColorBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(color : Int) {
             binding.itemPaletteColorCv.background.setTint(context.resources.getColor(color))

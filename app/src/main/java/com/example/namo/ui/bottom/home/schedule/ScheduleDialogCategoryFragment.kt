@@ -14,7 +14,6 @@ import com.example.namo.ui.bottom.home.schedule.adapter.DialogCategoryRVAdapter
 import com.example.namo.ui.bottom.home.schedule.data.Category
 import com.example.namo.databinding.FragmentScheduleDialogCategoryBinding
 import com.example.namo.ui.bottom.home.schedule.category.CategoryActivity
-import com.example.namo.ui.bottom.home.schedule.category.SetCategoryRVAdapter
 
 class ScheduleDialogCategoryFragment : Fragment() {
 

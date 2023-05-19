@@ -162,7 +162,7 @@
                     android:layout_marginTop="-15dp"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                     app:spanCount="5"
-                    tools:listitem="@layout/item_custom_palette_color"
+                    tools:listitem="@layout/item_palette_color"
                     app:layout_constraintTop_toTopOf="@id/category_palette_title_tv"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
