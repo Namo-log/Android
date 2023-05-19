@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.databinding.FragmentCategoryDetailBinding
@@ -25,10 +26,15 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
     private lateinit var db: NamoDatabase
     private lateinit var category: Category
 
+    // 카테고리에 들어갈 데이터
     var categoryIdx = -1
     var name: String = ""
     var color: Int = 0
     var share: Boolean = true
+
+    private val colorList = listOf(
+        R.color.schedule, R.color.schedule_plan, R.color.schedule_parttime, R.color.schedule_group
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,6 +49,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
         checkEditingMode(isEditMode)
         onClickListener()
         clickCategoryItem()
+        initPaletteColorRv()
 
         return binding.root
     }
@@ -108,6 +115,20 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
         }.start()
     }
 
+    private fun initPaletteColorRv() {
+        //더미데이터 냅다 집어 넣기
+        val paletteDatas = arrayListOf(
+            R.color.palette1, R.color.palette2, R.color.palette3, R.color.palette4, R.color.palette5,
+            R.color.palette6, R.color.palette7, R.color.palette8, R.color.palette9, R.color.palette10
+        )
+
+        //어댑터 연결
+        binding.categoryPaletteRv.apply {
+            adapter = CategoryPaletteRVAdapter(requireContext(), paletteDatas)
+            layoutManager = GridLayoutManager(context, 5)
+        }
+    }
+
     private fun clickCategoryItem() {
         with(binding) {
             val categoryList = listOf(
@@ -115,9 +136,6 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
             )
             val checkList = listOf(
                 scheduleColorSelectIv, schedulePlanColorSelectIv, scheduleParttimeColorSelectIv, scheduleGroupColorSelectIv
-            )
-            val colorList = listOf(
-                R.color.schedule, R.color.schedule_plan, R.color.schedule_parttime, R.color.schedule_group
             )
 
             for (i: Int in categoryList.indices) {
@@ -170,9 +188,6 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
 
                     val checkList = listOf(
                         scheduleColorSelectIv, schedulePlanColorSelectIv, scheduleParttimeColorSelectIv, scheduleGroupColorSelectIv
-                    )
-                    val colorList = listOf(
-                        R.color.schedule, R.color.schedule_plan, R.color.schedule_parttime, R.color.schedule_group
                     )
 
                     //카테고리 ID로 넘겨받은 카테고리 세팅
