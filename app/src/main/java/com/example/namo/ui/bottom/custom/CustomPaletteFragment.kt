@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.namo.R
 import com.example.namo.ui.bottom.custom.adapter.PaletteRVAdapter
 import com.example.namo.databinding.FragmentCustomPaletteBinding
 
@@ -23,25 +24,16 @@ class CustomPaletteFragment : Fragment() {
         binding = FragmentCustomPaletteBinding.inflate(inflater, container, false)
 
         //더미데이터 냅다 집어 넣기
-        var paletteDatas = arrayListOf<Palette>(
+        val paletteDatas = arrayListOf(
             Palette("기본 팔레트",
-                arrayListOf("#EB5353", "#EC9B3B", "#FBCB0A", "#96BB7C", "#5A8F7B",
-                    "#82C4C3", "#187498", "#8571BF", "#E36488", "#858585")),
-//            Palette(
-//                "테스트 1",
-//                arrayListOf("#CCCCCC", "#CCCCCC", "#CCCCCC", "#CCCCCC", "#CCCCCC",
-//                    "#CCCCCC", "#CCCCCC", "#CCCCCC", "#CCCCCC", "#CCCCCC")
-//            ),
-//            Palette(
-//                "테스트 2",
-//                arrayListOf("#CCCCCC", "#CCCCCC", "#CCCCCC", "#CCCCCC", "#CCCCCC",
-//                    "#CCCCCC", "#CCCCCC", "#CCCCCC", "#CCCCCC", "#CCCCCC")
-//            )
+                arrayListOf(
+                    R.color.palette1, R.color.palette2, R.color.palette3, R.color.palette4, R.color.palette5,
+                    R.color.palette6, R.color.palette7, R.color.palette8, R.color.palette9, R.color.palette10)),
         )
 
         //어댑터 연결
         binding.customPaletteRv.apply {
-            adapter = PaletteRVAdapter().build(paletteDatas)
+            adapter = PaletteRVAdapter(requireContext()).build(paletteDatas)
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
 

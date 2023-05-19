@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.ui.bottom.custom.Palette
 import com.example.namo.databinding.ItemCustomPaletteBinding
 
-class PaletteRVAdapter :  RecyclerView.Adapter<PaletteRVAdapter.ViewHolder>(){
+class PaletteRVAdapter(val context: Context) :  RecyclerView.Adapter<PaletteRVAdapter.ViewHolder>(){
     lateinit var items: ArrayList<Palette>
 
     fun build(i: ArrayList<Palette>): PaletteRVAdapter {
@@ -23,7 +23,7 @@ class PaletteRVAdapter :  RecyclerView.Adapter<PaletteRVAdapter.ViewHolder>(){
             {
                 itemPaletteNameTv.text = item.name
                 itemPaletteColorRv.apply {
-                    adapter = PaletteColorRVAdapter().build(item.colors) //컬러 어댑터 연결
+                    adapter = PaletteColorRVAdapter(context, item.colors) //컬러 어댑터 연결
                     layoutManager = GridLayoutManager(context, 5, GridLayoutManager.VERTICAL, false)
                 }
             }
