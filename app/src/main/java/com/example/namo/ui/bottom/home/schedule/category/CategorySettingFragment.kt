@@ -108,7 +108,7 @@ class CategorySettingFragment: Fragment() {
                     rv.adapter = categoryRVAdapter
                     rv.layoutManager = GridLayoutManager(context, 2)
                 }
-                Log.d("CategorySettingFrag", "categoryDao: ${db.categoryDao.getCategoryList()}")
+//                Log.d("CategorySettingFrag", "categoryDao: ${db.categoryDao.getCategoryList()}")
             } catch (e: Exception) {
                 Log.d("category", "Error - $e")
             }

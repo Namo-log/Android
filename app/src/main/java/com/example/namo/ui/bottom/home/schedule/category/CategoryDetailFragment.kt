@@ -57,15 +57,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
         with(binding) {
             // 뒤로가기
             categoryDetailBackIv.setOnClickListener {
-                if (isEditMode) {
-                    // 편집 모드라면 CategoryEditActivity 위에 Fragment 씌어짐
-                    startActivity(Intent(requireActivity(), CategoryActivity::class.java))
-                    activity?.finish()
-                } else {
-                    (context as CategoryActivity).supportFragmentManager.beginTransaction()
-                        .replace(R.id.category_frm, CategorySettingFragment())
-                        .commitAllowingStateLoss()
-                }
+                // 편집 모드라면 CategoryEditActivity 위에 Fragment 씌어짐
+                moveToSettingFrag(isEditMode)
             }
 
             // 저장하기
@@ -73,25 +66,12 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
                 if (categoryDetailTitleEt.text.toString().isEmpty() || color == 0) {
                     Toast.makeText(requireContext(), "카테고리를 입력해주세요", Toast.LENGTH_SHORT).show()
                 } else {
-
-                    /* 수정 모드 -> 카테고리 update */
-                    if (isEditMode) {
-                        // 카테고리 수정
-                        updateData()
-                        // 화면 이동
-                        startActivity(Intent(requireActivity(), CategoryActivity::class.java))
-                        activity?.finish()
-                    }
-
-                    /* 생성 모드 -> 카테고리 insert */
-                    else {
-                        // 카테고리 추가
-                        insertData()
-                        // 화면 이동
-                        (context as CategoryActivity).supportFragmentManager.beginTransaction()
-                            .replace(R.id.category_frm, CategorySettingFragment())
-                            .commitAllowingStateLoss()
-                    }
+                    // 수정 모드 -> 카테고리 update
+                    if (isEditMode) updateData()
+                    // 생성 모드 -> 카테고리 insert
+                    else insertData()
+                    // 화면 이동
+                    moveToSettingFrag(isEditMode)
                 }
             }
 
@@ -218,6 +198,21 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
                 e.printStackTrace()
             }
             Log.d("debug", "Category Data loaded")
+        }
+    }
+
+    private fun moveToSettingFrag(isEditMode: Boolean) {
+        if (isEditMode) { // 편집 모드에서의 화면 이동
+            Intent(requireActivity(), CategoryActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            }.also {
+                startActivity(it)
+            }
+            activity?.finish()
+        } else { // 생성에서의 화면 모드
+            (context as CategoryActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.category_frm, CategorySettingFragment())
+                .commitAllowingStateLoss()
         }
     }
 }
