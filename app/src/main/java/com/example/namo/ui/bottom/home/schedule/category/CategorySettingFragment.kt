@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.databinding.FragmentCategorySettingBinding
+import com.example.namo.ui.bottom.home.schedule.category.adapter.SetCategoryRVAdapter
 import com.example.namo.ui.bottom.home.schedule.data.Category
 import com.google.gson.Gson
 
@@ -98,9 +99,6 @@ class CategorySettingFragment: Fragment() {
                         saveClickedData(category)
 
                         // 편집 화면으로 이동
-//                        (context as CategoryActivity).supportFragmentManager.beginTransaction()
-//                            .replace(R.id.category_frm, CategoryDetailFragment(true))
-//                            .commitAllowingStateLoss()
                         startActivity(Intent(requireActivity(), CategoryEditActivity()::class.java))
                     }
                 })

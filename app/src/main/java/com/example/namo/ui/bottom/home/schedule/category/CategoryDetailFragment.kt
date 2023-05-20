@@ -7,7 +7,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.namo.R
@@ -24,6 +26,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
     private var _binding: FragmentCategoryDetailBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var paletteAdapter: CategoryPaletteRVAdapter
+
     private lateinit var db: NamoDatabase
     private lateinit var category: Category
 
@@ -33,9 +37,14 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
     var color: Int = 0
     var share: Boolean = true
 
-    private val colorList = listOf(
+    var selectedPalettePosition: Int? = null // 팔레트 -> 기본 색상 선택 시 사용될 변수
+
+    private val colorList = listOf( // 기본 색상 리스트
         R.color.schedule, R.color.schedule_plan, R.color.schedule_parttime, R.color.schedule_group
     )
+
+    private lateinit var categoryList : List<CardView>
+    private lateinit var checkList : List<ImageView>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,10 +56,12 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
 
         db = NamoDatabase.getInstance(requireContext())
 
+        initBasicColor()
+
         checkEditingMode(isEditMode)
         onClickListener()
         clickCategoryItem()
-        initPaletteColorRv()
+        initPaletteColorRv(color)
 
         return binding.root
     }
@@ -116,38 +127,74 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
         }.start()
     }
 
-    private fun initPaletteColorRv() {
-        //더미데이터 냅다 집어 넣기
+    private fun initBasicColor() {
+        // 기본 색상 관련 리스트 설정
+        with (binding) {
+            categoryList = listOf(
+                scheduleColorCv, schedulePlanColorCv, scheduleParttimeColorCv, scheduleGroupColorCv
+            )
+            checkList = listOf(
+                scheduleColorSelectIv, schedulePlanColorSelectIv, scheduleParttimeColorSelectIv, scheduleGroupColorSelectIv
+            )
+        }
+    }
+
+    private fun initPaletteColorRv(initColor: Int) {
+
+        // 더미데이터 냅다 집어 넣기
         val paletteDatas = arrayListOf(
             R.color.palette1, R.color.palette2, R.color.palette3, R.color.palette4, R.color.palette5,
             R.color.palette6, R.color.palette7, R.color.palette8, R.color.palette9, R.color.palette10
         )
 
-        //어댑터 연결
+        for (i: Int in paletteDatas.indices) {
+            if (paletteDatas[i] == color) {
+                selectedPalettePosition = i
+            }
+        }
+
+        if (selectedPalettePosition == null) selectedPalettePosition = 0
+
+//        Log.d("CategoryDetailFrag", "selectedPalettePosition: $selectedPalettePosition")
+
+        // 어댑터 연결
+        paletteAdapter = CategoryPaletteRVAdapter(requireContext(), paletteDatas, initColor, selectedPalettePosition!!)
         binding.categoryPaletteRv.apply {
-            adapter = CategoryPaletteRVAdapter(requireContext(), paletteDatas)
+            adapter = paletteAdapter
             layoutManager = GridLayoutManager(context, 5)
         }
+        // 아이템 클릭
+        paletteAdapter.setColorClickListener(object: CategoryPaletteRVAdapter.MyItemClickListener {
+            override fun onItemClick(position: Int, selectedColor: Int) {
+                // 팔레트의 색상을 선택했다면 기본 색상의 체크 상태는 초기화
+                for (j: Int in categoryList.indices) {
+                    checkList[j].visibility = View.GONE
+                }
+                // 색상값 세팅
+                this@CategoryDetailFragment.color = selectedColor
+                // notifyItemChanged()에서 인자로 넘겨주기 위함. 기본 색상을 클릭했다면 이전에 선택된 팔레트 색상의 체크 표시는 해제
+                selectedPalettePosition = position
+            }
+        })
     }
 
     private fun clickCategoryItem() {
-        with(binding) {
-            val categoryList = listOf(
-                scheduleColorCv, schedulePlanColorCv, scheduleParttimeColorCv, scheduleGroupColorCv
-            )
-            val checkList = listOf(
-                scheduleColorSelectIv, schedulePlanColorSelectIv, scheduleParttimeColorSelectIv, scheduleGroupColorSelectIv
-            )
-
-            for (i: Int in categoryList.indices) {
-                categoryList[i].setOnClickListener {
-                    for (j: Int in categoryList.indices) { // 다른 것들 체크 상태 초기화
-                        checkList[j].visibility = View.GONE
-                    }
-                    // 선택한 카테고리 표시
-                    checkList[i].visibility = View.VISIBLE
-                    color = colorList[i]
+        for (i: Int in categoryList.indices) {
+            categoryList[i].setOnClickListener {
+                // 다른 모든 기본 색상 선택 해제
+                for (j: Int in categoryList.indices) {
+                    checkList[j].visibility = View.GONE
                 }
+                // 팔레트 내의 색상도 모두 선택 해제
+                initPaletteColorRv(-1)
+                if (selectedPalettePosition != null) {
+                    paletteAdapter.notifyItemChanged(selectedPalettePosition!!)
+                }
+                // 선택한 카테고리 표시
+                checkList[i].visibility = View.VISIBLE
+                color = colorList[i]
+                // 이제 팔레트가 아니라 기본 색상에서 설정한 색임
+                selectedPalettePosition = null
             }
         }
     }
@@ -187,10 +234,6 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
                 // 데이터 값 넣어주기
                 with(binding) {
 
-                    val checkList = listOf(
-                        scheduleColorSelectIv, schedulePlanColorSelectIv, scheduleParttimeColorSelectIv, scheduleGroupColorSelectIv
-                    )
-
                     //카테고리 ID로 넘겨받은 카테고리 세팅
                     categoryIdx = data.categoryIdx
 
@@ -198,10 +241,11 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
                     categoryDetailTitleEt.setText(data.name)
 
                     // 카테고리 색
+                    color = data.color
                     for (i: Int in colorList.indices) {
                         if (data.color == colorList[i]) {
+                            // 기본 카테고리 체크 표시
                             checkList[i].visibility = View.VISIBLE
-                            color = data.color
                         }
                     }
 
@@ -225,7 +269,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
                 startActivity(it)
             }
             activity?.finish()
-        } else { // 생성에서의 화면 모드
+        } else { // 생성 모드에서의 화면 이동
             (context as CategoryActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.category_frm, CategorySettingFragment())
                 .commitAllowingStateLoss()
