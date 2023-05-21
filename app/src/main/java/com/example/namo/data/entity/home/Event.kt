@@ -50,6 +50,9 @@ data class Event(
     var content:String="",
 
     @ColumnInfo(name = "diary_img")
-    var imgs : List<String>? = listOf()
+    var imgs : List<String>? = listOf(),
+
+    @ColumnInfo(name = "alarm_list")
+    var alarmList : List<Int>? = listOf()
 
 )
