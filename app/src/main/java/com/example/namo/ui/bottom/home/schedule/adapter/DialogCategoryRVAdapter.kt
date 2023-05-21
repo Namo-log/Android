@@ -2,6 +2,7 @@ package com.example.namo.ui.bottom.home.schedule.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,15 +10,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.ui.bottom.home.schedule.data.Category
 import com.example.namo.databinding.ItemScheduleDialogCategoryBinding
 
-class DialogCategoryRVAdapter : RecyclerView.Adapter<DialogCategoryRVAdapter.ViewHolder>() {
+class DialogCategoryRVAdapter(
+    var context: Context,
+    private val categoryList: List<Category>
+) : RecyclerView.Adapter<DialogCategoryRVAdapter.ViewHolder>() {
 
-    private val categoryList = ArrayList<Category>()
-    private lateinit var context : Context
+//    private val categoryList = ArrayList<Category>()
+//    private lateinit var context : Context
 
     private var selectedPos : Int = 0
 
     interface MyItemClickListener {
-        fun onSendPos(selected : Int)
+        fun onSendPos(selected : Int, category: Category)
     }
 
     private lateinit var mItemClickListener : MyItemClickListener
@@ -43,6 +47,7 @@ class DialogCategoryRVAdapter : RecyclerView.Adapter<DialogCategoryRVAdapter.Vie
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(categoryList[position])
+//        Log.d("DialogCatRVAdapter", "itemColor: $itemColor")
 
         if (position == selectedPos) {
             holder.binding.categorySelectedIv.visibility = View.VISIBLE
@@ -52,7 +57,7 @@ class DialogCategoryRVAdapter : RecyclerView.Adapter<DialogCategoryRVAdapter.Vie
 
         holder.itemView.setOnClickListener {
             selectedPos = holder.adapterPosition
-            mItemClickListener.onSendPos(selectedPos)
+            mItemClickListener.onSendPos(selectedPos, categoryList[position])
             notifyDataSetChanged()
         }
 
@@ -61,10 +66,10 @@ class DialogCategoryRVAdapter : RecyclerView.Adapter<DialogCategoryRVAdapter.Vie
     override fun getItemCount(): Int = categoryList.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addCategory(categoryList : ArrayList<Category>) {
-        this.categoryList.clear()
-        this.categoryList.addAll(categoryList)
-    }
+//    fun addCategory(categoryList : ArrayList<Category>) {
+//        this.categoryList.clear()
+//        this.categoryList.addAll(categoryList)
+//    }
 
     fun setSelectedPos(pos : Int) {
         this.selectedPos = pos

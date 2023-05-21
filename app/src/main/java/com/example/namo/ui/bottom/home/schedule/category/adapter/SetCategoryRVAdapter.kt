@@ -1,10 +1,8 @@
-package com.example.namo.ui.bottom.home.schedule.category
+package com.example.namo.ui.bottom.home.schedule.category.adapter
 
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.databinding.ItemCategoryBinding
 import com.example.namo.ui.bottom.home.schedule.data.Category
@@ -13,8 +11,6 @@ class SetCategoryRVAdapter(
     val context: Context,
     private val categoryList: List<Category>
 ):  RecyclerView.Adapter<SetCategoryRVAdapter.ViewHolder>(){
-
-//    private val categoryList = ArrayList<Category>()
 
     private lateinit var mItemClickListener: MyItemClickListener
 

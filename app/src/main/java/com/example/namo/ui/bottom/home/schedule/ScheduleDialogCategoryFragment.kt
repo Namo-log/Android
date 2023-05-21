@@ -18,7 +18,7 @@ import com.example.namo.ui.bottom.home.schedule.category.CategoryActivity
 class ScheduleDialogCategoryFragment : Fragment() {
 
     private lateinit var binding : FragmentScheduleDialogCategoryBinding
-    private val categoryRVAdapter : DialogCategoryRVAdapter = DialogCategoryRVAdapter()
+    private lateinit var categoryRVAdapter : DialogCategoryRVAdapter
     private lateinit var db: NamoDatabase
 
     private var categoryList : List<Category> = arrayListOf()
@@ -41,6 +41,8 @@ class ScheduleDialogCategoryFragment : Fragment() {
     }
 
     private fun setAdapter() {
+        categoryRVAdapter = DialogCategoryRVAdapter(requireContext(), categoryList)
+
         binding.scheduleDialogCategoryRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 //        binding.scheduleDialogCategoryRv.adapter = categoryRVAdapter
         Log.d("CATEGORY_BEFORE", categoryList.toString())
