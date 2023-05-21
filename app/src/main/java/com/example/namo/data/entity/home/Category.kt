@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.home.schedule.data
+package com.example.namo.data.entity.home
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

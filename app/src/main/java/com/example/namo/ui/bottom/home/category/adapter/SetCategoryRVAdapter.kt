@@ -1,11 +1,11 @@
-package com.example.namo.ui.bottom.home.schedule.category.adapter
+package com.example.namo.ui.bottom.home.category.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.databinding.ItemCategoryBinding
-import com.example.namo.ui.bottom.home.schedule.data.Category
+import com.example.namo.data.entity.home.Category
 
 class SetCategoryRVAdapter(
     val context: Context,

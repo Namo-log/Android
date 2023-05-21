@@ -51,9 +51,9 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity android:name=".ui.bottom.home.schedule.category.CategoryActivity"
+        <activity android:name="com.example.namo.ui.bottom.home.category.CategoryActivity"
             android:theme="@style/Theme.Transparent"/>
-        <activity android:name=".ui.bottom.home.schedule.category.CategoryEditActivity"
+        <activity android:name="com.example.namo.ui.bottom.home.category.CategoryEditActivity"
             android:theme="@style/Theme.Transparent"/>
         <meta-data android:name="com.kakao.sdk.AppKey" android:value="${KAKAO_API_KEY}"/>
         <receiver

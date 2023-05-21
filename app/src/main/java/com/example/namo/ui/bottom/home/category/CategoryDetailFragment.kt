@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.home.schedule.category
+package com.example.namo.ui.bottom.home.category
 
 import android.content.Context
 import android.content.Intent
@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.databinding.FragmentCategoryDetailBinding
-import com.example.namo.ui.bottom.home.schedule.category.CategorySettingFragment.Companion.CATEGORY_KEY_DATA
-import com.example.namo.ui.bottom.home.schedule.category.adapter.CategoryPaletteRVAdapter
-import com.example.namo.ui.bottom.home.schedule.data.Category
+import com.example.namo.ui.bottom.home.category.CategorySettingFragment.Companion.CATEGORY_KEY_DATA
+import com.example.namo.ui.bottom.home.category.adapter.CategoryPaletteRVAdapter
+import com.example.namo.data.entity.home.Category
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken

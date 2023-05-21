@@ -6,7 +6,6 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Insets.add
 import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
@@ -26,24 +25,22 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.MainActivity.Companion.PLACE_NAME_INTENT_KEY
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Event
 import com.example.namo.ui.bottom.home.schedule.adapter.DialogCategoryRVAdapter
-import com.example.namo.ui.bottom.home.schedule.data.Category
+import com.example.namo.data.entity.home.Category
 import com.example.namo.ui.bottom.home.schedule.map.MapActivity
 import com.example.namo.databinding.FragmentScheduleDialogBinding
-import com.example.namo.ui.bottom.home.schedule.category.CategoryActivity
+import com.example.namo.ui.bottom.home.category.CategoryActivity
 import com.example.namo.ui.bottom.home.notify.PushNotificationReceiver
 import com.example.namo.utils.CalendarUtils.Companion.getInterval
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import org.joda.time.DateTime
 
 class ScheduleDialogFragment (
@@ -696,16 +693,6 @@ class ScheduleDialogFragment (
                     // 카테고리는 카테고리 선택할 때 바로 event에 집어넣음
                     event.place = place_name
                     Log.d("CategoryEvent", "event = $event")
-
-                    val prevAlarmList = event.alarmList
-                    setAlarmList()
-                    if (prevAlarmList != alarmList) {
-                        event.alarmList = alarmList
-                        for (i in prevAlarmList!!) {
-                            deleteNotification(event.eventId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt())
-                        }
-                        setAlarm(event.startLong)
-                    }
 
                     val prevAlarmList = event.alarmList
                     setAlarmList()

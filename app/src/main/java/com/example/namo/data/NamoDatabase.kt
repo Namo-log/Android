@@ -13,9 +13,9 @@ import com.example.namo.data.entity.home.Event
 import com.example.namo.data.entity.group.Group
 import com.example.namo.ui.bottom.diary.adapter.IntListConverters
 import com.example.namo.ui.bottom.diary.adapter.StringListConverters
-import com.example.namo.ui.bottom.home.schedule.data.Category
+import com.example.namo.data.entity.home.Category
 
-@Database(entities = [Event::class,Group::class,Category::class], version = 1, exportSchema = false)
+@Database(entities = [Event::class,Group::class, Category::class], version = 1, exportSchema = false)
 @TypeConverters(
     value = [
         StringListConverters::class,

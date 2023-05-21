@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.home.schedule.category
+package com.example.namo.ui.bottom.home.category
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

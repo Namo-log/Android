@@ -1,7 +1,7 @@
 package com.example.namo.data.dao
 
 import androidx.room.*
-import com.example.namo.ui.bottom.home.schedule.data.Category
+import com.example.namo.data.entity.home.Category
 
 @Dao
 interface CategoryDao {

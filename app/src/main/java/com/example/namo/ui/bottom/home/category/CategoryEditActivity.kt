@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.home.schedule.category
+package com.example.namo.ui.bottom.home.category
 
 import android.content.Context
 import android.os.Bundle
@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.databinding.ActivityCategoryEditBinding
-import com.example.namo.ui.bottom.home.schedule.data.Category
+import com.example.namo.data.entity.home.Category
 
 class CategoryEditActivity : AppCompatActivity() {
 

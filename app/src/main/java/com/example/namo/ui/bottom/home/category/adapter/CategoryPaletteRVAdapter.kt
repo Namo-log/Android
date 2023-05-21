@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.home.schedule.category.adapter
+package com.example.namo.ui.bottom.home.category.adapter
 
 import android.content.Context
 import android.util.Log

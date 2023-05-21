@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.ui.bottom.home.schedule.adapter.DialogCategoryRVAdapter
-import com.example.namo.ui.bottom.home.schedule.data.Category
+import com.example.namo.data.entity.home.Category
 import com.example.namo.databinding.FragmentScheduleDialogCategoryBinding
-import com.example.namo.ui.bottom.home.schedule.category.CategoryActivity
+import com.example.namo.ui.bottom.home.category.CategoryActivity
 
 class ScheduleDialogCategoryFragment : Fragment() {
 
