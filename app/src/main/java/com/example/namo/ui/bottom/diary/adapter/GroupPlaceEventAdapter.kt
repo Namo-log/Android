@@ -32,6 +32,9 @@ class GroupPlaceEventAdapter(  // 그룹 다이어리 장소 추가, 정산, 이
         holder.binding.itemPlaceMoneyIv.setOnClickListener {
             groupPayClickListener.onPayClicked()
         }
+
+        holder.binding.itemPlaceNameTv.setText(member.place)
+
     }
     override fun getItemCount(): Int {
         return listData.size
@@ -62,7 +65,7 @@ class Holder(val binding: ItemDiaryGroupEventBinding) : RecyclerView.ViewHolder(
 //        pay= Activity.arguments?.getInt("scheduleIdx")!!
 
         binding.itemPlaceNameTv.setText(item.place)
-//        binding.itemPlaceMoneyIv.
+
         
         this.mMember = item
         this.mPosition = position

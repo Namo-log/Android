@@ -1,14 +1,17 @@
 package com.example.namo.ui.bottom.diary.groupDiary
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context.MODE_PRIVATE
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.namo.data.entity.diary.GroupDiaryMember
@@ -17,12 +20,13 @@ import com.example.namo.ui.bottom.diary.adapter.GroupPayMemberRVAdapter
 import java.lang.Boolean.TRUE
 
 
-class GroupPayDialog (var placeMember:List<GroupDiaryMember>): DialogFragment(), View.OnClickListener{  // 그룹 다이어리 장소별 정산 다이얼로그
+class GroupPayDialog(
+    private var placeMember:List<GroupDiaryMember>
+): DialogFragment(), View.OnClickListener{  // 그룹 다이어리 장소별 정산 다이얼로그
 
     lateinit var binding: DialogGroupPayBinding
     lateinit var payMemberRVAdapter: GroupPayMemberRVAdapter
 
-    private var peopleCount : Int = 0
     private var totalPay : Int = 0
     private var eachPay : Int = 0
     private var memberIsChecked : ArrayList<Boolean> = arrayListOf()
@@ -50,12 +54,13 @@ class GroupPayDialog (var placeMember:List<GroupDiaryMember>): DialogFragment(),
         return binding.root
     }
 
-    private fun account(){
+    private fun account() {
 
-        payMemberRVAdapter= GroupPayMemberRVAdapter(placeMember,memberIsChecked)
+        payMemberRVAdapter = GroupPayMemberRVAdapter(placeMember, memberIsChecked)
         binding.groupPayPersonRv.apply {
-            adapter=payMemberRVAdapter
-            layoutManager= GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
+            adapter = payMemberRVAdapter
+            layoutManager =
+                GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
             setHasFixedSize(TRUE)
         }
 
@@ -65,20 +70,25 @@ class GroupPayDialog (var placeMember:List<GroupDiaryMember>): DialogFragment(),
                 peopleList: ArrayList<GroupDiaryMember>,
                 memberIsChecked: ArrayList<Boolean>
             ) {
-                for (i in (0 until peopleList.size)){
-                    if (memberIsChecked[i]) {
-                        peopleCount++
-                    }
-                }
-                binding.groupPayCountTv.text = "$peopleCount 명"
+                val checkedPeopleCount = memberIsChecked.count { it.and(TRUE) }
+                binding.groupPayCountTv.text = "$checkedPeopleCount  명"
+                // 체크된 멤버 수 계산
+                Log.d("memberClick", "$checkedPeopleCount")
 
-                if (binding.groupPayTotalEt.text.toString() != "금액 입력"){
+
+                if (binding.groupPayTotalEt.text.isNotEmpty() ){   // 총 금액을 입력했을 때 계산
                     totalPay = binding.groupPayTotalEt.text.toString().toInt()
-                    eachPay = totalPay / peopleCount
-                    binding.groupPayResultTv.text = "$eachPay"
+                    if (checkedPeopleCount!=0){
+                        eachPay = totalPay / checkedPeopleCount
+                    }else{
+                        Toast.makeText(requireContext(), "멤버를 선택해주세요", Toast.LENGTH_SHORT).show()
+                    }
+                    binding.groupPayResultTv.text = "$eachPay  원"
+
+                }else{ // 총 금액 입력 안하면 메세지
+                    Toast.makeText(requireContext(), "금액을 입력해주세요", Toast.LENGTH_SHORT).show()
                 }
             }
-
         })
     }
 
@@ -91,11 +101,6 @@ class GroupPayDialog (var placeMember:List<GroupDiaryMember>): DialogFragment(),
                 dismiss()
             }
             groupPaySaveTv.setOnClickListener {
-
-                val sharedPreference = requireActivity().getSharedPreferences("getPay", MODE_PRIVATE)
-                val editor = sharedPreference.edit()
-                editor.putInt("eachPay",eachPay) //정산 금액
-                editor.apply()
                 dismiss()
             }
         }

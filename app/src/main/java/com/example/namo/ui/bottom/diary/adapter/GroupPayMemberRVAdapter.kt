@@ -1,6 +1,5 @@
 package com.example.namo.ui.bottom.diary.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -32,18 +31,9 @@ class GroupPayMemberRVAdapter (  // 그룹 장소별 정산 다이얼로그 멤�
         holder.bind(members[position], memberIsChecked[position])
 
         holder.binding.itemGroupPayMemberCheckBox.setOnClickListener {
-            memberIsChecked.set(
-                position,
-                holder.binding.itemGroupPayMemberCheckBox.isChecked
-            )
-            Log.d(
-                "PAY_CHECK",
-                members[position].memberName
-            )
-            Log.d("PAY_CHECK", memberIsChecked.toString())
-            if (memberIsChecked.size != 0) {
-                mItemClickListener.onItemClick(members as ArrayList<GroupDiaryMember>, memberIsChecked)
-            }
+
+            memberIsChecked[position] = holder.binding.itemGroupPayMemberCheckBox.isChecked
+            mItemClickListener.onItemClick(members as ArrayList<GroupDiaryMember>, memberIsChecked)
         }
     }
 

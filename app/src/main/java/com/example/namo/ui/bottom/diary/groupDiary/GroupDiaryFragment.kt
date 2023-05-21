@@ -88,13 +88,19 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
     @SuppressLint("NotifyDataSetChanged")
     private fun onClickListener(){
 
+        binding.upArrow.setOnClickListener{// 화살표가 위쪽 방향일 때 리사이클러뷰 숨쪽기
+            setMember(true)
+        }
+
         binding.bottomArrow.setOnClickListener{
             setMember(false)
         }
-        binding.upArrow.setOnClickListener{
-            setMember(true)
+
+        binding.groupAddBackIv.setOnClickListener{ // 뒤로가기
+            findNavController().popBackStack()
         }
-        binding.groupAddBackIv.setOnClickListener{
+
+        binding.groupPlaceSaveTv.setOnClickListener {// 저장하기
             findNavController().popBackStack()
         }
 
