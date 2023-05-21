@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.diary.adapter
+package com.example.namo.ui.bottom.diary.mainDiary.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.R
 import com.example.namo.databinding.ItemDiaryDateListBinding
 import com.example.namo.databinding.ItemDiaryListBinding
+import com.example.namo.ui.bottom.diary.adapter.TaskListItem
 import java.text.SimpleDateFormat
 
 class DiaryMultiAdapter( // 다이어리 리스트에 그룹 별로 날짜 헤더 추가
@@ -55,13 +56,13 @@ class DiaryMultiAdapter( // 다이어리 리스트에 그룹 별로 날짜 헤�
         val item=getItem(position)
 
         when(item.layoutId){
-            TaskListItem.Item.VIEW_TYPE->{
+            TaskListItem.Item.VIEW_TYPE ->{
                 (holder as TaskItemViewHolder).bind(item)
                 holder.onclick.setOnClickListener {
                     diaryRecordClickListener.onEditClicked(item)
                 }
             }
-            TaskListItem.Header.VIEW_TYPE->{
+            TaskListItem.Header.VIEW_TYPE ->{
                 (holder as TaskHeaderViewHolder).bind(item)
             }
         }

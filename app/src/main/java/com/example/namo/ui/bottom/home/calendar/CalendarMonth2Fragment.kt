@@ -13,12 +13,11 @@ import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.FragmentCalendarMonth2Binding
-import com.example.namo.ui.bottom.diary.DiaryAddFragment
-import com.example.namo.ui.bottom.diary.DiaryModifyFragment
+import com.example.namo.ui.bottom.diary.mainDiary.DiaryAddFragment
+import com.example.namo.ui.bottom.diary.mainDiary.DiaryModifyFragment
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogFragment
-import com.example.namo.utils.CalendarUtils
 import org.joda.time.DateTime
 
 class CalendarMonth2Fragment : Fragment() {

@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.diary.adapter
+package com.example.namo.ui.bottom.diary.mainDiary.adapter
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson

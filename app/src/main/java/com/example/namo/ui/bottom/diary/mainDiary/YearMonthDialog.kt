@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.diary
+package com.example.namo.ui.bottom.diary.mainDiary
 
 import android.annotation.SuppressLint
 import android.graphics.Color

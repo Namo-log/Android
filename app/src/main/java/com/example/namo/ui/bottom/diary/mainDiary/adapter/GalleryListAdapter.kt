@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.diary.adapter
+package com.example.namo.ui.bottom.diary.mainDiary.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,16 +6,17 @@ import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.namo.databinding.ItemDiaryListGalleryBinding
+import com.example.namo.databinding.ItemGalleryListBinding
 
-class DiaryGalleryRVAdapter(  // 다이어리 리스트의 이미지(둥근 모서리, 점선 테두리 X)
+class GalleryListAdapter(  // 다이어리 추가, 수정 화면의 이미지(점선 테두리 O)
     private val context: Context,
     private val imgList: List<String>?,
 ):
-    RecyclerView.Adapter<DiaryGalleryRVAdapter.ViewHolder>(){
+    RecyclerView.Adapter<GalleryListAdapter.ViewHolder>(){
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val binding: ItemDiaryListGalleryBinding = ItemDiaryListGalleryBinding.inflate(LayoutInflater.from(viewGroup.context),viewGroup,false)
+        val binding: ItemGalleryListBinding = ItemGalleryListBinding.inflate(
+            LayoutInflater.from(viewGroup.context),viewGroup,false)
         return ViewHolder(binding)
     }
 
@@ -29,8 +30,7 @@ class DiaryGalleryRVAdapter(  // 다이어리 리스트의 이미지(둥근 모�
 
     override fun getItemCount(): Int = imgList!!.size
 
-    inner class ViewHolder(val binding: ItemDiaryListGalleryBinding): RecyclerView.ViewHolder(binding.root){
-       val imageUrl=binding.galleryImgIv
+    inner class ViewHolder(val binding: ItemGalleryListBinding): RecyclerView.ViewHolder(binding.root){
+        val imageUrl=binding.galleryImgIv
     }
 }
-

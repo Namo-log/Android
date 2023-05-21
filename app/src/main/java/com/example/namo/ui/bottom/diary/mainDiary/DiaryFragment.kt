@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.diary
+package com.example.namo.ui.bottom.diary.mainDiary
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -15,7 +15,7 @@ import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.FragmentDiaryBinding
-import com.example.namo.ui.bottom.diary.adapter.DiaryMultiAdapter
+import com.example.namo.ui.bottom.diary.mainDiary.adapter.DiaryMultiAdapter
 import com.example.namo.ui.bottom.diary.adapter.TaskListItem
 import org.joda.time.DateTime
 import java.lang.Boolean.TRUE
@@ -117,12 +117,12 @@ class DiaryFragment: Fragment() {  // 다이어리 리스트 화면(bottomNavi)
                 diarydateAdapter= DiaryMultiAdapter(requireContext(), month as ArrayList<TaskListItem>)
 
                 // 수정 버튼 클릭리스너
-                diarydateAdapter.setRecordClickListener(object :DiaryMultiAdapter.DiaryEditInterface{
+                diarydateAdapter.setRecordClickListener(object : DiaryMultiAdapter.DiaryEditInterface{
                     override fun onEditClicked(allData: TaskListItem) {
                         val bundle=Bundle()
                         bundle.putInt("scheduleIdx", allData.task.eventId.toInt())
 
-                        val editFrag=DiaryModifyFragment()
+                        val editFrag= DiaryModifyFragment()
                         editFrag.arguments=bundle
                         view?.findNavController()?.navigate(R.id.action_diaryFragment_to_diaryModifyFragment,bundle)
                     }

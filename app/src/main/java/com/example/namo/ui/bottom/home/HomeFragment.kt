@@ -6,7 +6,6 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -25,17 +24,14 @@ import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
 //import com.example.namo.ui.bottom.home.calendar.CalendarMonthFragment
 import com.example.namo.ui.bottom.home.calendar.SetMonthDialog
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogFragment
-import com.example.namo.ui.bottom.diary.DiaryAddFragment
-import com.example.namo.ui.bottom.diary.DiaryModifyFragment
+import com.example.namo.ui.bottom.diary.mainDiary.DiaryAddFragment
+import com.example.namo.ui.bottom.diary.mainDiary.DiaryModifyFragment
 import com.example.namo.ui.bottom.home.calendar.Calendar2Adapter
 import com.example.namo.ui.bottom.home.calendar.CalendarMonth2Fragment
-import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
 import com.example.namo.utils.CalendarUtils.Companion.getMonthList
 import com.example.namo.utils.CalendarUtils.Companion.getPrevOffset
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.joda.time.DateTime
-import org.joda.time.DateTimeConstants.DAYS_PER_WEEK
-import kotlin.math.abs
 
 
 class HomeFragment : Fragment() {
@@ -296,7 +292,7 @@ class HomeFragment : Fragment() {
                 bundle.putString("place",event.place)
                 bundle.putLong("date",event.startLong)
 
-                val diaryFrag=DiaryAddFragment()
+                val diaryFrag= DiaryAddFragment()
                 diaryFrag.arguments=bundle
 
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
@@ -305,7 +301,7 @@ class HomeFragment : Fragment() {
                 val bundle=Bundle()
                 bundle.putInt("scheduleIdx",event.eventId.toInt())
 
-                val editFrag=DiaryModifyFragment()
+                val editFrag= DiaryModifyFragment()
                 editFrag.arguments=bundle
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryModifyFragment,bundle)
             }

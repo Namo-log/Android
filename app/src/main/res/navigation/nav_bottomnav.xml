@@ -20,7 +20,7 @@
 
     <fragment
         android:id="@+id/diaryFragment"
-        android:name="com.example.namo.ui.bottom.diary.DiaryFragment"
+        android:name="com.example.namo.ui.bottom.diary.mainDiary.DiaryFragment"
         android:label="DiaryFragment"
         tools:layout="@layout/fragment_diary">
         <action
@@ -106,13 +106,13 @@
     </fragment>
     <fragment
         android:id="@+id/diaryAddFragment"
-        android:name="com.example.namo.ui.bottom.diary.DiaryAddFragment"
+        android:name="com.example.namo.ui.bottom.diary.mainDiary.DiaryAddFragment"
         android:label="DiaryAddFragment"
         tools:layout="@layout/fragment_diary_add">
     </fragment>
     <fragment
         android:id="@+id/diaryModifyFragment"
-        android:name="com.example.namo.ui.bottom.diary.DiaryModifyFragment"
+        android:name="com.example.namo.ui.bottom.diary.mainDiary.DiaryModifyFragment"
         android:label="DiaryModifyFragment" />
     <fragment
         android:id="@+id/groupDiaryFragment"

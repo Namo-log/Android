@@ -11,7 +11,7 @@ import com.example.namo.data.dao.EventDao
 import com.example.namo.data.dao.GroupDao
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.entity.group.Group
-import com.example.namo.ui.bottom.diary.adapter.Converters
+import com.example.namo.ui.bottom.diary.mainDiary.adapter.Converters
 import com.example.namo.ui.bottom.home.schedule.data.Category
 
 @Database(entities = [Event::class,Group::class,Category::class], version = 1, exportSchema = false)
