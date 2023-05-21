@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.diary.adapter
+package com.example.namo.ui.bottom.diary.groupDiary.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

@@ -8,7 +8,7 @@ data class DiaryGroupEvent (
     val place:String="",
     // val pay:Int=0,
     // val members:List<Int>?,
-    // val imgs:List<String>?
+     val imgs:List<String>?
 )
 data class GroupDiaryMember(
     val memberName:String=""

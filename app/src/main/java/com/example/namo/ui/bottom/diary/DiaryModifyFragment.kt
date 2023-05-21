@@ -176,8 +176,6 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
                 else {
                     for (i in 0 until count) {
                         val imageUri = result.data?.clipData!!.getItemAt(i).uri
-                        val file = File(absolutelyPath(imageUri, requireContext()))
-
                         imgList.add(imageUri.toString())
                     }
                 }
@@ -186,8 +184,6 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
             result.data?.data?.let {
                 val imageUri : Uri? = result.data!!.data
                 if (imageUri != null) {
-                    val  file = File(absolutelyPath(imageUri, requireContext()))
-
                     imgList.add(imageUri.toString())
                 }
             }
@@ -195,16 +191,6 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
         onRecyclerView()
     }
 
-    @SuppressLint("Recycle")
-    private fun absolutelyPath(path: Uri, context: Context): String {
-        val proj: Array<String> = arrayOf(MediaStore.Images.Media.DATA)
-        val c: Cursor? = context.contentResolver.query(path, proj, null, null, null)
-        val index = c?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        c?.moveToFirst()
-        val result = c?.getString(index!!)
-
-        return result!!
-    }
     private fun onRecyclerView() {
 
         val galleryViewRVAdapter = galleryAdapter

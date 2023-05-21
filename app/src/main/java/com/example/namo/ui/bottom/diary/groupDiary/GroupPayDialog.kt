@@ -16,7 +16,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.namo.data.entity.diary.GroupDiaryMember
 import com.example.namo.databinding.DialogGroupPayBinding
-import com.example.namo.ui.bottom.diary.adapter.GroupPayMemberRVAdapter
+import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupPayMemberRVAdapter
 import java.lang.Boolean.TRUE
 
 
@@ -64,7 +64,7 @@ class GroupPayDialog(
             setHasFixedSize(TRUE)
         }
 
-        payMemberRVAdapter.setPeopleItemClickListener(object :GroupPayMemberRVAdapter.PeopleItemClickListener{
+        payMemberRVAdapter.setPeopleItemClickListener(object : GroupPayMemberRVAdapter.PeopleItemClickListener{
             @SuppressLint("SetTextI18n")
             override fun onItemClick(
                 peopleList: ArrayList<GroupDiaryMember>,

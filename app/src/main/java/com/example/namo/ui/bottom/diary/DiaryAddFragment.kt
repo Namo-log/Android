@@ -2,10 +2,8 @@ package com.example.namo.ui.bottom.diary
 
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -31,7 +29,6 @@ import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.FragmentDiaryAddBinding
 import com.example.namo.ui.bottom.diary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.io.File
 import java.lang.Boolean.TRUE
 import java.text.SimpleDateFormat
 
@@ -163,7 +160,6 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
                 else {
                     for (i in 0 until count) {
                         val imageUri = result.data?.clipData!!.getItemAt(i).uri
-                        val file = File(absolutelyPath(imageUri, requireContext()))  // retrofit2 에 사용
 
                         imgList.add(imageUri.toString())
                     }
@@ -173,7 +169,6 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
             result.data?.data?.let {
                 val imageUri : Uri? = result.data!!.data
                 if (imageUri != null) {
-                    val  file = File(absolutelyPath(imageUri, requireContext()))
 
                     imgList.add(imageUri.toString())
                 }
@@ -183,18 +178,6 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
         binding.diaryGallerySavedRy.visibility=View.VISIBLE
         onRecyclerView()
 }
-
-    /** 이미지 절대 경로 변환 **/
-    @SuppressLint("Recycle")
-    private fun absolutelyPath(path: Uri, context: Context): String {
-        val proj: Array<String> = arrayOf(MediaStore.Images.Media.DATA)
-        val c: Cursor? = context.contentResolver.query(path, proj, null, null, null)
-        val index = c?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        c?.moveToFirst()
-        val result = c?.getString(index!!)
-
-        return result!!
-    }
 
     private fun onRecyclerView() {
 
