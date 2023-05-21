@@ -479,7 +479,7 @@ class ScheduleDialogFragment (
                    event.dayInterval = getInterval(event.startLong, event.endLong)
                    event.categoryColor = categoryList[selectedCategory].color
                    event.categoryName = categoryList[selectedCategory].name
-                   event.categoryIdx = selectedCategory
+                   event.categoryIdx = categoryList[selectedCategory].categoryIdx // selectedCategory
                    event.place = place_name
 
 
@@ -621,10 +621,9 @@ class ScheduleDialogFragment (
                     event.startLong = startDateTime.millis
                     event.endLong = endDateTime.millis
                     event.dayInterval = getInterval(event.startLong, event.endLong)
-                    event.categoryColor = categoryList[selectedCategory].color
-                    event.categoryName = categoryList[selectedCategory].name
-                    event.categoryIdx = selectedCategory
+                    // 카테고리는 카테고리 선택할 때 바로 event에 집어넣음
                     event.place = place_name
+                    Log.d("CategoryEvent", "event = $event")
 
                     var updateDB : Thread = Thread {
                         db.eventDao.updateEvent(event)
@@ -682,7 +681,7 @@ class ScheduleDialogFragment (
         binding.dialogScheduleBasicContainer.dialogScheduleCategoryNameTv.text = event.categoryName
         binding.dialogScheduleBasicContainer.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(event.categoryColor))
 
-        Log.d("CATEGORY_COLOR", selectedCategory.toString())
+        Log.d("CATEGORY_COLOR", "position: ${selectedCategory}, name: ${categoryList[selectedCategory].name}")
     }
 
     private fun getCategoryList() {
@@ -693,10 +692,17 @@ class ScheduleDialogFragment (
 
         val r = Runnable {
             try {
-                initCategory = 0
-                categoryRVAdapter.setSelectedPos(initCategory)
+//                initCategory = 0
+                Log.d("ScheduleDialogFrag", "initCategory = $initCategory")
+//                setCategory()
+//                categoryRVAdapter.setSelectedPos(initCategory)
 
                 categoryList = db.categoryDao.getCategoryList()
+                for (i: Int in categoryList.indices) {
+                    if (categoryList[i].color == event.categoryColor) {
+                        categoryRVAdapter.setSelectedPos(i)
+                    }
+                }
                 categoryRVAdapter.notifyDataSetChanged()
                 categoryRVAdapter = DialogCategoryRVAdapter(requireContext(), categoryList)
                 categoryRVAdapter.setMyItemClickListener(object: DialogCategoryRVAdapter.MyItemClickListener {
@@ -704,15 +710,16 @@ class ScheduleDialogFragment (
                     override fun onSendPos(selected: Int, category: Category) {
                         selectedCategory = selected
 
+                        // 카테고리 세팅
+                        event.categoryColor = category.color
+                        event.categoryName = category.name
+                        event.categoryIdx = category.categoryIdx
+                        setCategory()
+
                         recentView = prevView
                         binding.dialogScheduleBasicContainer.root.visibility = View.VISIBLE
                         binding.dialogScheduleCategoryContainer.root.visibility = View.GONE
                         setScreen()
-
-                        // 카테고리 세팅
-                        event.categoryColor = category.color
-                        event.categoryName = category.name
-                        setCategory()
                     }
                 })
                 requireActivity().runOnUiThread {
@@ -721,7 +728,7 @@ class ScheduleDialogFragment (
                 }
                 Log.d("ScheduleDialogFrag", "categoryDao: ${db.categoryDao.getCategoryList()}")
             } catch (e: Exception) {
-                Log.d("category", "Error - $e")
+                Log.d("schedule category", "Error - $e")
             }
         }
 

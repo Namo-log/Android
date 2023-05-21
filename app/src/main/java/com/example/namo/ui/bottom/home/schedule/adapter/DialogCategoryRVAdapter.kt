@@ -2,6 +2,7 @@ package com.example.namo.ui.bottom.home.schedule.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,6 +47,7 @@ class DialogCategoryRVAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(categoryList[position])
+//        Log.d("DialogCatRVAdapter", "itemColor: $itemColor")
 
         if (position == selectedPos) {
             holder.binding.categorySelectedIv.visibility = View.VISIBLE
