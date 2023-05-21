@@ -24,7 +24,7 @@
             android:textStyle="bold"
             android:textColor="@color/textGray"
             android:textSize="15sp"
-            android:text="기본 팔레트"/>
+            tools:text="@string/palette_normal" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="2dp"
-                tools:listitem="@layout/item_custom_palette_color"
+                tools:listitem="@layout/item_palette_color"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="5"
                 app:layout_constraintTop_toTopOf="parent"
