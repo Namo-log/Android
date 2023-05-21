@@ -28,7 +28,7 @@ class PushNotificationReceiver : BroadcastReceiver() {
         val notificationContent = intent.getStringExtra("notification_content")
 
         val builder = NotificationCompat.Builder(context!!, channelId)
-            .setSmallIcon(R.drawable.logo_namo)
+            .setSmallIcon(R.drawable.ic_app_logo_square)
             .setContentTitle(notificationTitle)
             .setContentText(notificationContent)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

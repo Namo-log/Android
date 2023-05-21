@@ -8,6 +8,8 @@
         android:id="@+id/constraintLayout2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="10dp"
         app:layoutDescription="@xml/fragment_group_calendar_xml_constraintlayout2_scene">
 
         <com.example.namo.ui.bottom.home.calendar.Calendar2View
