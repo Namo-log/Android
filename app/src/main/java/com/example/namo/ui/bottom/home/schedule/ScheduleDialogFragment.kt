@@ -41,6 +41,7 @@ import com.example.namo.utils.CalendarUtils.Companion.getInterval
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import org.joda.time.DateTime
 
@@ -87,6 +88,10 @@ class ScheduleDialogFragment (
 
     private var selectedAlarm : ArrayList<Int> = arrayListOf()
     private var scheduelIdx : Int = 0
+
+    private var prevChecked : MutableList<Int> = mutableListOf()
+    private var alarmList : MutableList<Int> = mutableListOf()
+    private var alarmText : String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -182,6 +187,47 @@ class ScheduleDialogFragment (
                 getLocationPermission()
             }
 
+            binding.dialogScheduleBasicContainer.alarmGroup.setOnCheckedStateChangeListener { group, checkedIds ->
+                Log.d("CHIP_GROUP", "Now : $checkedIds")
+                Log.d("CHIP_GROUP", "Prev : $prevChecked")
+                if (checkedIds.size > 1 && prevChecked.size == 1 && prevChecked[0] == binding.dialogScheduleBasicContainer.alarmNone.id) {
+                    val child : Chip = group.getChildAt(0) as Chip
+                    child.isChecked = false
+                    Log.d("CHIP_GROUP", "none out")
+                    prevChecked.remove(child.id)
+
+                    alarmText = getChipText(checkedIds[1])
+                } else if (checkedIds.size > 0 && checkedIds[0] == binding.dialogScheduleBasicContainer.alarmNone.id) {
+                    prevChecked = checkedIds
+                    for (i in 1 until group.childCount) {
+                        val child : Chip = group.getChildAt(i) as Chip
+                        child.isChecked = false
+                        prevChecked.remove(child.id)
+                    }
+                    alarmText = "없음, "
+                    Log.d("CHIP_GROUP", "others out")
+                } else {
+                    prevChecked = checkedIds
+                    alarmText = ""
+                    for (i in checkedIds) {
+                        alarmText += getChipText(i)
+                    }
+                }
+                alarmText = alarmText.substring(0, alarmText.length - 2)
+                binding.dialogScheduleBasicContainer.dialogScheduleAlarmTv.text = alarmText
+            }
+//
+//            binding.dialogScheduleBasicContainer.alarmGroup.setOnCheckedChangeListener { group, checkedId ->
+//                Log.d("CHIP_GROUP", checkedId.toString())
+//                if (checkedId == binding.dialogScheduleBasicContainer.alarmNone.id) {
+//                    for (i in 0 until group.childCount) {
+//                        val child : View = group.getChildAt(i)
+//                        if (child is Chip && child.id != checkedId) {
+//                            child.isChecked = false
+//                        }
+//                    }
+//                }
+//            }
 
         }
         else {
@@ -195,51 +241,102 @@ class ScheduleDialogFragment (
         }
     }
 
-    private fun setAlarm(desiredTime : Long) {
-        if (binding.dialogScheduleBasicContainer.alarmNone.isChecked) {
-            Log.d("ALARM", "None selected")
-            return
-        }
-
-        if (binding.dialogScheduleBasicContainer.alarmMin60.isChecked) {
-            checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusHours(1).millis)
-            Log.d("ALARM", "60 min selected")
-        }
-
-        if (binding.dialogScheduleBasicContainer.alarmMin30.isChecked) {
-            checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusMinutes(30).millis)
-            Log.d("ALARM", "30 min selected")
-        }
-
-        if (binding.dialogScheduleBasicContainer.alarmMin10.isChecked) {
-            checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusMinutes(10).millis)
-            Log.d("ALARM", "10 min selected")
-        }
-
-        if (binding.dialogScheduleBasicContainer.alarmMin5.isChecked) {
-            checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusMinutes(5).millis)
-            Log.d("ALARM", "5 min selected")
-        }
-
-        if (binding.dialogScheduleBasicContainer.alarmMin0.isChecked) {
-            checkNotificationPermission(requireActivity(), event.startLong)
-            Log.d("ALARM", "0 min selected")
+    private fun getChipText(id : Int) : String {
+        return when (id) {
+            binding.dialogScheduleBasicContainer.alarmMin60.id -> "1시간 전, "
+            binding.dialogScheduleBasicContainer.alarmMin30.id -> "30분 전, "
+            binding.dialogScheduleBasicContainer.alarmMin10.id -> "10분 전, "
+            binding.dialogScheduleBasicContainer.alarmMin5.id -> "5분 전, "
+            binding.dialogScheduleBasicContainer.alarmMin0.id -> "정시, "
+            else -> "없음"
         }
     }
 
-    private fun schedulePushNotification(desiredTimestamp : Long) {
+    private fun setAlarmList() {
+        val checkedAlarm = binding.dialogScheduleBasicContainer.alarmGroup.checkedChipIds
+        alarmList.clear()
+        for (i in checkedAlarm) {
+            when (i) {
+                binding.dialogScheduleBasicContainer.alarmNone.id -> {
+                    Log.d("ALARM", "None selected")
+                }
+                binding.dialogScheduleBasicContainer.alarmMin60.id -> {
+                    alarmList.add(60)
+                    Log.d("ALARM", "60 min selected")
+                }
+                binding.dialogScheduleBasicContainer.alarmMin30.id -> {
+                    alarmList.add(30)
+                    Log.d("ALARM", "30 min selected")
+                }
+                binding.dialogScheduleBasicContainer.alarmMin10.id -> {
+                    alarmList.add(10)
+                    Log.d("ALARM", "10 min selected")
+                }
+                binding.dialogScheduleBasicContainer.alarmMin5.id -> {
+                    alarmList.add(5)
+                    Log.d("ALARM", "5 min selected")
+                }
+                binding.dialogScheduleBasicContainer.alarmMin0.id -> {
+                    alarmList.add(0)
+                    Log.d("ALARM", "0 min selected")
+                }
+            }
+        }
+    }
+
+    private fun setAlarm(desiredTime: Long) {
+        for (i in alarmList) {
+            val time = DateTime(desiredTime).minusMinutes(i).millis
+            val id = scheduelIdx + time.toInt()
+            checkNotificationPermission(requireActivity(), time, id)
+        }
+    }
+
+//    private fun setAlarm(desiredTime : Long) {
+//        val checkedAlarm = binding.dialogScheduleBasicContainer.alarmGroup.checkedChipIds
+//        Log.d("ALARM", "Checked Alarm : $checkedAlarm")
+//        for (i in checkedAlarm) {
+//            when (i) {
+//                binding.dialogScheduleBasicContainer.alarmNone.id -> {
+//                    Log.d("ALARM", "None selected")
+//                }
+//                binding.dialogScheduleBasicContainer.alarmMin60.id -> {
+//                    checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusHours(1).millis)
+//                    Log.d("ALARM", "60 min selected")
+//                }
+//                binding.dialogScheduleBasicContainer.alarmMin30.id -> {
+//                    checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusMinutes(30).millis)
+//                    Log.d("ALARM", "30 min selected")
+//                }
+//                binding.dialogScheduleBasicContainer.alarmMin10.id -> {
+//                    checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusMinutes(10).millis)
+//                    Log.d("ALARM", "10 min selected")
+//                }
+//                binding.dialogScheduleBasicContainer.alarmMin5.id -> {
+//                    checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusMinutes(5).millis)
+//                    Log.d("ALARM", "5 min selected")
+//                }
+//                binding.dialogScheduleBasicContainer.alarmMin0.id -> {
+//                    checkNotificationPermission(requireActivity(), event.startLong)
+//                    Log.d("ALARM", "0 min selected")
+//                }
+//            }
+//        }
+//    }
+
+    private fun schedulePushNotification(desiredTimestamp : Long, id : Int) {
         val context = requireContext()
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, PushNotificationReceiver::class.java)
-        intent.putExtra("notification_id", scheduelIdx+desiredTimestamp.toInt())
+        intent.putExtra("notification_id", id)
         intent.putExtra("notification_title", event.title)
         intent.putExtra("notification_content", startDateTime.toString("MM-dd") + " ~ " + endDateTime.toString("MM-dd"))
 
         val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getBroadcast(context, (scheduelIdx+desiredTimestamp.toInt()), intent, PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_IMMUTABLE)
         } else {
-            PendingIntent.getBroadcast(context, (scheduelIdx+desiredTimestamp.toInt()), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -253,9 +350,28 @@ class ScheduleDialogFragment (
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, desiredTimestamp, pendingIntent)
             Log.d("ALARM","setExact")
         }
+        Log.d("ALARM", "Set puth notification : $id, $desiredTimestamp")
     }
 
-    private fun checkNotificationPermission(activity: Activity, desiredTime: Long) {
+    private fun deleteNotification(id : Int) {
+        val context = requireContext()
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val intent = Intent(context, PushNotificationReceiver::class.java)
+        intent.putExtra("notification_id", id)
+        intent.putExtra("notification_title", event.title)
+        intent.putExtra("notification_content", startDateTime.toString("MM-dd") + " ~ " + endDateTime.toString("MM-dd"))
+
+        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_IMMUTABLE)
+        } else {
+            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+
+        alarmManager.cancel(pendingIntent)
+    }
+
+    private fun checkNotificationPermission(activity: Activity, desiredTime: Long, id : Int) {
         if (!NotificationManagerCompat.from(activity).areNotificationsEnabled()) {
             Toast.makeText(requireContext(), "설정에서 알림 권한을 허용 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
@@ -263,7 +379,7 @@ class ScheduleDialogFragment (
             intent.data = uri
             activity.startActivity(intent)
         } else {
-            schedulePushNotification(desiredTime)
+            schedulePushNotification(desiredTime, id)
         }
     }
 
@@ -481,8 +597,8 @@ class ScheduleDialogFragment (
                    event.categoryIdx = selectedCategory
                    event.place = place_name
 
-
-//                   checkAlarm()
+                   setAlarmList()
+                   event.alarmList = alarmList
 
                    var storeDB : Thread = Thread {
                        scheduelIdx = db.eventDao.insertEvent(event).toInt()
@@ -495,6 +611,7 @@ class ScheduleDialogFragment (
                    }
 
                    setAlarm(event.startLong)
+
 
                    okCallback(true)
                    dismiss()
@@ -516,71 +633,15 @@ class ScheduleDialogFragment (
                     startActivity(Intent(activity, CategoryActivity::class.java))
                 }
             }
-
-//            //see
-//            2 -> {
-//                binding.deleteBtn.visibility = View.VISIBLE
-//                binding.deleteBtn.setOnClickListener {
-//                    //일정 삭제하고 닫기
-//
-//                    var deleteDB : Thread = Thread {
-//                        db.eventDao.deleteEvent(event)
-//                    }
-//                    deleteDB.start()
-//                    try {
-//                        deleteDB.join()
-//                    } catch ( e: InterruptedException) {
-//                        e.printStackTrace()
-//                    }
-//
-//                    Toast.makeText(requireContext(), "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-//
-//                    okCallback(true)
-//                    dismiss()
-//                }
-//
-//                clickListener(false)
-//                binding.dialogScheduleHeaderTv.text = "내 일정"
-//
-//                binding.dialogScheduleCloseBtn.visibility = View.VISIBLE
-//                binding.dialogScheduleSaveBtn.visibility = View.VISIBLE
-//                binding.dialogScheduleSaveBtn.text = "편집"
-//
-//                binding.dialogScheduleCloseBtn.setOnClickListener {
-//                    okCallback(false)
-//                    dismiss()
-//                }
-//
-//                binding.dialogScheduleSaveBtn.setOnClickListener {
-//                    recentView = 3
-//                    setScreen()
-//                }
-//
-//                binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.visibility = View.GONE
-//                binding.dialogScheduleBasicContainer.dialogScheduleTitleTv.visibility = View.VISIBLE
-//                binding.dialogScheduleBasicContainer.dialogScheduleTitleTv.text = event.title
-//
-//                binding.dialogScheduleBasicContainer.dialogScheduleCategoryNameTv.text = event.categoryName
-//                binding.dialogScheduleBasicContainer.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(event.categoryColor))
-//                selectedCategory = event.categoryIdx
-//
-//
-//                startDateTime = DateTime(event.startLong)
-//                endDateTime = DateTime(event.endLong)
-//
-//                binding.dialogScheduleBasicContainer.dialogScheduleStartDateTv.text = DateTime(event.startLong).toString(getString(R.string.dateFormat))
-//                binding.dialogScheduleBasicContainer.dialogScheduleEndDateTv.text = DateTime(event.endLong).toString(getString(R.string.dateFormat))
-//                binding.dialogScheduleBasicContainer.dialogScheduleStartTimeTv.text = DateTime(event.startLong).toString(getString(R.string.timeFormat))
-//                binding.dialogScheduleBasicContainer.dialogScheduleEndTimeTv.text = DateTime(event.endLong).toString(getString(R.string.timeFormat))
-//
-//                binding.dialogScheduleBasicContainer.dialogSchedulePlaceNameTv.text = event.place
-//            }
-
             //edit
             3 -> {
                 binding.deleteBtn.visibility = View.VISIBLE
                 binding.deleteBtn.setOnClickListener {
                     //일정 삭제하고 닫기
+                    alarmList = event.alarmList!!.toMutableList()
+                    for (i in alarmList) {
+                        deleteNotification(event.eventId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt())
+                    }
 
                     var deleteDB : Thread = Thread {
                         db.eventDao.deleteEvent(event)
@@ -597,6 +658,14 @@ class ScheduleDialogFragment (
                     okCallback(true)
                     dismiss()
                 }
+
+                setAlarmClicked(event.alarmList!!)
+                val checkedIds = binding.dialogScheduleBasicContainer.alarmGroup.checkedChipIds
+                for (i in checkedIds) {
+                    alarmText += getChipText(i)
+                }
+                alarmText = alarmText.substring(0, alarmText.length - 2)
+                binding.dialogScheduleBasicContainer.dialogScheduleAlarmTv.text = alarmText
 
                 clickListener(true)
                 binding.dialogScheduleHeaderTv.text = "내 일정"
@@ -616,6 +685,8 @@ class ScheduleDialogFragment (
                 binding.dialogScheduleSaveBtn.setOnClickListener {
                     //일정 업데이트하고 닫기
                     //저장하고 닫기
+                    scheduelIdx = event.eventId.toInt()
+
                     event.title = binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.text.toString()
                     event.startLong = startDateTime.millis
                     event.endLong = endDateTime.millis
@@ -624,6 +695,16 @@ class ScheduleDialogFragment (
                     event.categoryName = categoryList[selectedCategory].name
                     event.categoryIdx = selectedCategory
                     event.place = place_name
+
+                    val prevAlarmList = event.alarmList
+                    setAlarmList()
+                    if (prevAlarmList != alarmList) {
+                        event.alarmList = alarmList
+                        for (i in prevAlarmList!!) {
+                            deleteNotification(event.eventId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt())
+                        }
+                        setAlarm(event.startLong)
+                    }
 
                     var updateDB : Thread = Thread {
                         db.eventDao.updateEvent(event)
@@ -666,6 +747,32 @@ class ScheduleDialogFragment (
             }
             else -> {
 
+            }
+        }
+    }
+
+    private fun setAlarmClicked(alarmaList : List<Int>) {
+        if (alarmaList.isEmpty()) {
+            binding.dialogScheduleBasicContainer.alarmNone.isChecked = true
+        } else {
+            for (i in alarmaList) {
+                when (i) {
+                    60 -> {
+                        binding.dialogScheduleBasicContainer.alarmMin60.isChecked = true
+                    }
+                    30 -> {
+                        binding.dialogScheduleBasicContainer.alarmMin30.isChecked = true
+                    }
+                    10 -> {
+                        binding.dialogScheduleBasicContainer.alarmMin10.isChecked = true
+                    }
+                    5 -> {
+                        binding.dialogScheduleBasicContainer.alarmMin5.isChecked = true
+                    }
+                    0 -> {
+                        binding.dialogScheduleBasicContainer.alarmMin0.isChecked = true
+                    }
+                }
             }
         }
     }
