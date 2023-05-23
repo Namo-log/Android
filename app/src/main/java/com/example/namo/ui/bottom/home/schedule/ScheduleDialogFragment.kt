@@ -725,7 +725,7 @@ class ScheduleDialogFragment (
                 binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.setText(event.title)
 
                 categoryRVAdapter.setSelectedPos(selectedCategory)
-                categoryRVAdapter.notifyDataSetChanged()
+//                categoryRVAdapter.notifyDataSetChanged()
 
                 binding.dialogScheduleBasicContainer.dialogScheduleCategoryNameTv.text = event.categoryName
                 binding.dialogScheduleBasicContainer.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(event.categoryColor))
@@ -798,17 +798,11 @@ class ScheduleDialogFragment (
         val r = Runnable {
             try {
 //                initCategory = 0
-                Log.d("ScheduleDialogFrag", "initCategory = $initCategory")
-//                setCategory()
-//                categoryRVAdapter.setSelectedPos(initCategory)
+//                Log.d("ScheduleDialogFrag", "initCategory = $initCategory")
+                categoryRVAdapter.setSelectedPos(selectedCategory)
 
                 categoryList = db.categoryDao.getCategoryList()
-                for (i: Int in categoryList.indices) {
-                    if (categoryList[i].color == event.categoryColor) {
-                        categoryRVAdapter.setSelectedPos(i)
-                    }
-                }
-                categoryRVAdapter.notifyDataSetChanged()
+//                categoryRVAdapter.notifyItemChanged(initCategory)
                 categoryRVAdapter = DialogCategoryRVAdapter(requireContext(), categoryList)
                 categoryRVAdapter.setMyItemClickListener(object: DialogCategoryRVAdapter.MyItemClickListener {
                     // 아이템 클릭
