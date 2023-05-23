@@ -801,8 +801,8 @@ class ScheduleDialogFragment (
 //                Log.d("ScheduleDialogFrag", "initCategory = $initCategory")
                 categoryRVAdapter.setSelectedPos(selectedCategory)
 
-                categoryList = db.categoryDao.getCategoryList()
-//                categoryRVAdapter.notifyItemChanged(initCategory)
+                // 활성화 상태의 카테고리만 보여줌
+                categoryList = db.categoryDao.getActiveCategoryList(true)
                 categoryRVAdapter = DialogCategoryRVAdapter(requireContext(), categoryList)
                 categoryRVAdapter.setMyItemClickListener(object: DialogCategoryRVAdapter.MyItemClickListener {
                     // 아이템 클릭
@@ -825,7 +825,7 @@ class ScheduleDialogFragment (
                     rv.adapter = categoryRVAdapter
                     rv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                 }
-                Log.d("ScheduleDialogFrag", "categoryDao: ${db.categoryDao.getCategoryList()}")
+//                Log.d("ScheduleDialogFrag", "categoryDao: ${db.categoryDao.getActiveCategoryList(true)}")
             } catch (e: Exception) {
                 Log.d("schedule category", "Error - $e")
             }

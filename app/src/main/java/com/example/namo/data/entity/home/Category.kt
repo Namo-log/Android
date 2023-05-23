@@ -8,5 +8,6 @@ data class Category(
     @PrimaryKey(autoGenerate = true) val categoryIdx: Int,
     var name : String = "",
     var color : Int = 0,
-    var share : Boolean = false
+    var share : Boolean = false,
+    var active : Boolean = true
 )

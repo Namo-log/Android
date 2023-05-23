@@ -54,11 +54,12 @@ class ScheduleDialogCategoryFragment : Fragment() {
 
     private fun getCategoryList(categoryRVAdapter: DialogCategoryRVAdapter) {
         //db initial insert
-        initialCategory()
+//        initialCategory()
 
         val r = Runnable {
             try {
-                categoryList = db.categoryDao.getCategoryList()
+                // 활성화 상태인 리스트만 보줌
+                categoryList = db.categoryDao.getActiveCategoryList(true)
                 requireActivity().runOnUiThread {
                     binding.scheduleDialogCategoryRv.adapter = categoryRVAdapter
                 }

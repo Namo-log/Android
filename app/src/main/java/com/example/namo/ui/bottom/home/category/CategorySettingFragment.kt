@@ -86,7 +86,9 @@ class CategorySettingFragment: Fragment() {
 
         val r = Runnable {
             try {
-                categoryList = db.categoryDao.getCategoryList()
+                // 활성화 상태인 리스트만 보여줌
+                categoryList = db.categoryDao.getActiveCategoryList(true)
+//                categoryList = db.categoryDao.getCategoryList()
                 categoryRVAdapter.notifyDataSetChanged()
                 categoryRVAdapter = SetCategoryRVAdapter(requireContext(), categoryList)
                 categoryRVAdapter.setCategoryClickListener(object: SetCategoryRVAdapter.MyItemClickListener {
