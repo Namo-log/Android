@@ -1,5 +1,6 @@
 package com.example.namo.ui.bottom.diary.mainDiary
 
+import DiaryAdapter
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
@@ -13,10 +14,9 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
+import com.example.namo.data.entity.diary.DiaryItem
 import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.FragmentDiaryBinding
-import com.example.namo.ui.bottom.diary.mainDiary.adapter.DiaryMultiAdapter
-import com.example.namo.ui.bottom.diary.adapter.TaskListItem
 import org.joda.time.DateTime
 import java.lang.Boolean.TRUE
 import java.text.ParseException
@@ -31,7 +31,7 @@ class DiaryFragment: Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     private var datelist=listOf<Long>()
     private var diarylist= listOf<Event>()
 
-    lateinit var diarydateAdapter: DiaryMultiAdapter
+    lateinit var diarydateAdapter: DiaryAdapter
     private lateinit var yearMonth:String
     private lateinit var day:String
     private lateinit var db: NamoDatabase
@@ -80,17 +80,21 @@ class DiaryFragment: Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     }
 
     /** 같은 날짜끼리 묶어서 그룹 헤더로 추가 **/
-    private fun List<Event>.toListItems(): List<TaskListItem> {
-        val result = arrayListOf<TaskListItem>() // 결과를 리턴할 리스트
+    private fun List<Event>.toListItems(): List<DiaryItem> {
+        val result = arrayListOf<DiaryItem>() // 결과를 리턴할 리스트
 
         var groupHeaderDate : Long=0 // 그룹날짜
         this.forEach { task ->
             // 날짜가 달라지면 그룹 헤더를 추가
+
             if (groupHeaderDate != task.startLong) {
-                result.add(TaskListItem.Header(task))
+                result.add(DiaryItem.Header(task.startLong))
             }
             //  task 추가
-            result.add(TaskListItem.Item(task))
+
+            val category=db.categoryDao.getCategoryContent(task.categoryIdx)
+
+            result.add(DiaryItem.Content(task.eventId,task.title,task.startLong,task.place,task.categoryIdx,category.color,task.hasDiary,task.content,task.imgs))
 
             // 그룹 날짜를 바로 이전 날짜로 설정
             groupHeaderDate = task.startLong
@@ -112,15 +116,15 @@ class DiaryFragment: Fragment() {  // 다이어리 리스트 화면(bottomNavi)
                 datelist = db.diaryDao.getDateList(startMonth,nextMonth,TRUE)
                 diarylist = db.diaryDao.getDiaryList(startMonth,nextMonth,TRUE)
 
-                val month = diarylist.toListItems()
-
-                diarydateAdapter= DiaryMultiAdapter(requireContext(), month as ArrayList<TaskListItem>)
+                diarydateAdapter= DiaryAdapter( )
+                diarydateAdapter.submitList(diarylist.toListItems())
 
                 // 수정 버튼 클릭리스너
-                diarydateAdapter.setRecordClickListener(object : DiaryMultiAdapter.DiaryEditInterface{
-                    override fun onEditClicked(allData: TaskListItem) {
+                diarydateAdapter.setRecordClickListener(object : DiaryAdapter.DiaryEditInterface{
+                    override fun onEditClicked(allData: DiaryItem.Content) {
                         val bundle=Bundle()
-                        bundle.putInt("scheduleIdx", allData.task.eventId.toInt())
+                        bundle.putInt("scheduleIdx", allData.eventId.toInt())
+                        bundle.putInt("categoryIdx",allData.categoryIdx)
 
                         val editFrag= DiaryModifyFragment()
                         editFrag.arguments=bundle
@@ -134,13 +138,13 @@ class DiaryFragment: Fragment() {  // 다이어리 리스트 화면(bottomNavi)
                     if (datelist.isNotEmpty()){
                         binding.diaryListRv.visibility=View.VISIBLE }
                     else{ binding.diaryListRv.visibility=View.GONE
-                            binding.diaryListEmptyTv.visibility=View.VISIBLE}
+                        binding.diaryListEmptyTv.visibility=View.VISIBLE}
 
                     binding.diaryListRv.apply {
                         adapter=diarydateAdapter
                         layoutManager=LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                         setHasFixedSize(TRUE)
-                        (adapter as DiaryMultiAdapter).notifyDataSetChanged()
+                        (adapter as DiaryAdapter).notifyDataSetChanged()
                     }
                 }
             } catch (e: Exception) {

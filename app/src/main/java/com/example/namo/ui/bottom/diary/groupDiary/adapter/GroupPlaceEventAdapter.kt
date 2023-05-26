@@ -2,17 +2,14 @@ package com.example.namo.ui.bottom.diary.groupDiary.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.diary.DiaryGroupEvent
 import com.example.namo.databinding.ItemDiaryGroupEventBinding
-import com.example.namo.ui.bottom.diary.groupDiary.GroupDiaryFragment
+
 
 class GroupPlaceEventAdapter(  // 그룹 다이어리 장소 추가, 정산, 이미지
     val context: Context,

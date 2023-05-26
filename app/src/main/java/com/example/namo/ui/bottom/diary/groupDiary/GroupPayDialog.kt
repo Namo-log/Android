@@ -77,7 +77,7 @@ class GroupPayDialog(
 
 
                 if (binding.groupPayTotalEt.text.isNotEmpty() ){   // 총 금액을 입력했을 때 계산
-                    totalPay = binding.groupPayTotalEt.text.toString().toInt()
+                    totalPay = binding.groupPayTotalEt.text.toString().toLong().toInt()
                     if (checkedPeopleCount!=0){
                         eachPay = totalPay / checkedPeopleCount
                     }else{

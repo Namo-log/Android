@@ -287,10 +287,7 @@ class HomeFragment : Fragment() {
             override fun onAddClicked(event: Event) {
                 val bundle=Bundle()
                 bundle.putInt("scheduleIdx",event.eventId.toInt())
-                bundle.putString("title",event.title)
-                bundle.putInt("category",event.categoryColor)
-                bundle.putString("place",event.place)
-                bundle.putLong("date",event.startLong)
+                bundle.putInt("categoryIdx",event.categoryIdx)
 
                 val diaryFrag= DiaryAddFragment()
                 diaryFrag.arguments=bundle
@@ -300,6 +297,7 @@ class HomeFragment : Fragment() {
             override fun onEditClicked(event: Event) {
                 val bundle=Bundle()
                 bundle.putInt("scheduleIdx",event.eventId.toInt())
+                bundle.putInt("categoryIdx",event.categoryIdx)
 
                 val editFrag= DiaryModifyFragment()
                 editFrag.arguments=bundle

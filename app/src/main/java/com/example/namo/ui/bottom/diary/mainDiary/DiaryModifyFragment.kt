@@ -24,6 +24,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
+import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.FragmentDiaryModifyBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
@@ -42,6 +43,7 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
 
     private lateinit var event: Event
     private var scheduleIdx:Int=0
+    private lateinit var category:Category
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -58,8 +60,11 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
 
         scheduleIdx= arguments?.getInt("scheduleIdx")!!
 
+        val categoryIdx= requireArguments().getInt("categoryIdx")
+
         Thread {
             event = db.diaryDao.getSchedule(scheduleIdx)
+            category=db.categoryDao.getCategoryContent(categoryIdx)
             galleryAdapter= GalleryListAdapter(requireContext(), event.imgs)
             requireActivity().runOnUiThread {
                 bind()
@@ -74,13 +79,14 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
     @SuppressLint("SimpleDateFormat")
     private fun bind(){
 
+
         binding.apply {
             val formatDate=SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong)
             diaryInputDateTv.text=formatDate
             diaryInputPlaceTv.text=event.place
             diaryTitleTv.text=event.title
             diaryContentsEt.setText(event.content)
-            context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(requireContext(),event.categoryColor)) }
+            context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(requireContext(),category.color)) }
 
             diaryTodayDayTv.text=SimpleDateFormat("EE").format(event.startLong)
             diaryTodayNumTv.text=SimpleDateFormat("dd").format(event.startLong)

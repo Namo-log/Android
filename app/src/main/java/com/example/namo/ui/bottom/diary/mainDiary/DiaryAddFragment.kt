@@ -68,9 +68,13 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
     @SuppressLint("SimpleDateFormat")
     private fun bind(){
+        val categoryIdx= requireArguments().getInt("categoryIdx")
+
         val r = Runnable {
             try {
                 event=db.diaryDao.getSchedule(scheduleIdx)
+                val category=db.categoryDao.getCategoryContent(categoryIdx)
+
                 requireActivity().runOnUiThread {
                     binding.apply {
 
@@ -80,7 +84,7 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
                         diaryTitleTv.text=event.title
                         diaryInputPlaceTv.text=event.place
-                        context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(requireContext(),event.categoryColor)) }
+                        context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(requireContext(),category.color)) }
                         diaryInputDateTv.text= formatDate
                     }
                 }
@@ -94,7 +98,6 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
         thread.start()
 
         binding.apply {
-
             diaryBackIv.setOnClickListener {
                 findNavController().popBackStack()
                 hideBottomNavigation(false)
