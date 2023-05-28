@@ -39,6 +39,8 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
     private var memberNames=ArrayList<GroupDiaryMember>()  // 그룹 다이어리 구성원
     private var placeEvent: MutableList<DiaryGroupEvent> =mutableListOf() // 장소, 정산 금액, 이미지
     private var imgList= arrayListOf<String>() // 장소별 이미지
+   // private lateinit var imgList:ArrayList<String>
+    private var groupPay:Int=0
 
     private lateinit var memberadapter: GroupMemberRVAdapter
     private lateinit var placeadapter: GroupPlaceEventAdapter
@@ -92,12 +94,14 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
 
             // 정산 다이얼로그
             placeadapter.groupPayClickListener(object : GroupPlaceEventAdapter.PayInterface{
-                override fun onPayClicked() {
-                    GroupPayDialog(memberNames).show(parentFragmentManager,"show")
+                override fun onPayClicked(pay:Int) {
+                    GroupPayDialog(memberNames){
+                        groupPay=it
+                    }.show(parentFragmentManager,"show")
                 }
             })
 
-           // 이미지 불러오기
+            // 이미지 불러오기
             placeadapter.groupGalleryClickListener(object : GroupPlaceEventAdapter.GalleryInterface{
                 override fun onGalleryClicked() {
                     getPermission()
@@ -129,15 +133,16 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
         binding.groudPlaceAddTv.setOnClickListener {
             val string="장소 $i"
             i++
-            placeEvent.add(DiaryGroupEvent(string,imgList))
+            placeEvent.add(DiaryGroupEvent(string,groupPay,imgList))
             placeadapter.notifyDataSetChanged()
         }
     }
 
     private fun initialize(){
         with(placeEvent){
-            add(DiaryGroupEvent("장소 1",imgList))
+            add(DiaryGroupEvent("장소 1",groupPay, imgList))
         }
+        Log.d("imglst",imgList.toString())
     }
 
     private fun setMember(isVisible: Boolean) {
@@ -178,7 +183,7 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
         ActivityResultContracts.StartActivityForResult()){ result->
 
         if ( result.resultCode == Activity.RESULT_OK) {
-
+            imgList.clear()
             if (result.data?.clipData != null) { // 사진 여러개 선택한 경우
                 val count = result.data?.clipData!!.itemCount
                 if (count > 3)  {
@@ -188,8 +193,8 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
                     for (i in 0 until count) {
                         val imageUri = result.data?.clipData!!.getItemAt(i).uri
                         val file = File(absolutelyPath(imageUri, requireContext()))
+                        imgList.add(imageUri.toString())
 
-                        placeadapter.addItem(imageUri.toString())
                     }
                 }
             }
@@ -198,12 +203,12 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
                 val imageUri : Uri? = result.data!!.data
                 if (imageUri != null) {
                     val  file = File(absolutelyPath(imageUri, requireContext()))
-                    placeadapter.addItem(imageUri.toString())
+                    imgList.add(imageUri.toString())
                 }
             }
         }
+        placeadapter.addItem(imgList)
 
-        Log.d("image","$imgList")
     }
 
     /** 이미지 절대 경로 변환 **/
@@ -232,7 +237,7 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
             add(GroupDiaryMember("코코아"))
             add(GroupDiaryMember("지니"))
             add(GroupDiaryMember("앨리")) }
-        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()

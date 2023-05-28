@@ -81,7 +81,7 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
                         val formatDate=SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong)
                         diaryTodayDayTv.text=SimpleDateFormat("EE").format(event.startLong)
                         diaryTodayNumTv.text=SimpleDateFormat("dd").format(event.startLong)
-
+                        diaryTitleTv.isSelected=true  // marquee
                         diaryTitleTv.text=event.title
                         diaryInputPlaceTv.text=event.place
                         context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(requireContext(),category.color)) }

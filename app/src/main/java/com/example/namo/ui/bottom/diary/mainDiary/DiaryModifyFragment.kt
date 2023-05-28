@@ -60,6 +60,15 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
 
         scheduleIdx= arguments?.getInt("scheduleIdx")!!
 
+
+        charCnt()
+
+        return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+
         val categoryIdx= requireArguments().getInt("categoryIdx")
 
         Thread {
@@ -71,9 +80,6 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
             }
         }.start()
 
-        charCnt()
-
-        return binding.root
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -85,6 +91,7 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
             diaryInputDateTv.text=formatDate
             diaryInputPlaceTv.text=event.place
             diaryTitleTv.text=event.title
+            diaryTitleTv.isSelected=true  // marquee
             diaryContentsEt.setText(event.content)
             context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(requireContext(),category.color)) }
 

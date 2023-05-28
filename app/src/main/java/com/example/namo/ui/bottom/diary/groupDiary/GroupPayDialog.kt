@@ -17,11 +17,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.namo.data.entity.diary.GroupDiaryMember
 import com.example.namo.databinding.DialogGroupPayBinding
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupPayMemberRVAdapter
+import org.joda.time.DateTime
 import java.lang.Boolean.TRUE
 
 
 class GroupPayDialog(
-    private var placeMember:List<GroupDiaryMember>
+    private var placeMember:List<GroupDiaryMember>,
+    private val pay : (Int) -> Unit
 ): DialogFragment(), View.OnClickListener{  // 그룹 다이어리 장소별 정산 다이얼로그
 
     lateinit var binding: DialogGroupPayBinding
@@ -42,8 +44,9 @@ class GroupPayDialog(
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))  //배경 투명하게
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)  //dialog 모서리 둥글게
 
-        onClickListener()
+
         account()
+        onClickListener()
 
         memberIsChecked.apply {
             for (i in (placeMember.indices)) {
@@ -101,6 +104,7 @@ class GroupPayDialog(
                 dismiss()
             }
             groupPaySaveTv.setOnClickListener {
+               pay(eachPay)
                 dismiss()
             }
         }
