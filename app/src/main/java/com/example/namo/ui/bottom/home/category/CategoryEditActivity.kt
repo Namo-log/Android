@@ -59,7 +59,9 @@ class CategoryEditActivity : AppCompatActivity() {
         } else {
             Thread{
                 category = db.categoryDao.getCategoryContent(categoryIdx)
-                db.categoryDao.deleteCategory(category)
+                // 삭제 대신 비활성화 처리
+                db.categoryDao.updateCategory(category.copy(active = false))
+//                db.categoryDao.deleteCategory(category)
                 Log.d("CategoryEditActivity", "deleteCategory: $category")
             }.start()
             finish()

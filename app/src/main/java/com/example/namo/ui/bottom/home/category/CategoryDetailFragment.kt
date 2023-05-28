@@ -59,6 +59,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
         initBasicColor()
 
         checkEditingMode(isEditMode)
+        switchToggle(share)
         onClickListener()
         clickCategoryItem()
         initPaletteColorRv(color)
@@ -69,7 +70,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        setToggle(share)
+
     }
 
     private fun onClickListener() {
@@ -92,12 +93,6 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
                     // 화면 이동
                     moveToSettingFrag(isEditMode)
                 }
-            }
-
-            // 토글 버튼 활성화/비활성화
-            categoryToggleIv.setOnClickListener {
-                share = switchToggle(share)
-                Log.d("CategoryDetailFrag", "share: $share")
             }
         }
     }
@@ -199,24 +194,21 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
         }
     }
 
-    private fun setToggle(isShare: Boolean) {
+    private fun switchToggle(isShare: Boolean) {
         val toggle = binding.categoryToggleIv
-        if (isShare) {
-            toggle.setImageResource(R.drawable.ic_toggle_on)
+        val toggleImg = listOf(
+            R.drawable.ic_toggle_off, R.drawable.ic_toggle_on
+        )
+        // 첫 진입 시 토글 이미지 세팅
+        if (isShare) toggle.setImageResource(toggleImg[1])
+        else toggle.setImageResource(toggleImg[0])
+        // 토글 클릭 시 이미지 세팅
+        toggle.setOnClickListener {
+            if (isShare) toggle.setImageResource(toggleImg[0])
+            else toggle.setImageResource(toggleImg[1])
+
+            share = !isShare
         }
-        else {
-            toggle.setImageResource(R.drawable.ic_toggle_off)
-        }
-    }
-    private fun switchToggle(isShare: Boolean): Boolean {
-        val toggle = binding.categoryToggleIv
-        if (isShare) {
-            toggle.setImageResource(R.drawable.ic_toggle_off)
-        }
-        else {
-            toggle.setImageResource(R.drawable.ic_toggle_on)
-        }
-        return !isShare
     }
 
     private fun loadPref() {
@@ -251,8 +243,6 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
 
                     // 카테고리 공유 여부
                     share = data.share
-                    setToggle(share)
-
                 }
             } catch (e: JsonParseException) { // 파싱이 안 될 경우
                 e.printStackTrace()
