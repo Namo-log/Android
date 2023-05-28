@@ -106,7 +106,6 @@ class ScheduleDialogFragment (
 
         categoryRVAdapter = DialogCategoryRVAdapter(requireContext(), categoryList)
 
-        setScreen()
         Log.d("LIFECYCLE", "OnCreateView")
 
         return binding.root
@@ -189,12 +188,19 @@ class ScheduleDialogFragment (
             binding.dialogScheduleBasicContainer.alarmGroup.setOnCheckedStateChangeListener { group, checkedIds ->
                 Log.d("CHIP_GROUP", "Now : $checkedIds")
                 Log.d("CHIP_GROUP", "Prev : $prevChecked")
-                if (checkedIds.size > 1 && prevChecked.size == 1 && prevChecked[0] == binding.dialogScheduleBasicContainer.alarmNone.id) {
+                if (checkedIds.size == 0) {
                     val child : Chip = group.getChildAt(0) as Chip
+                    child.isChecked = true
+                    child.isCheckable = false
+                    alarmText = "없음, "
+                    prevChecked.clear()
+                    prevChecked.add(child.id)
+                } else if (checkedIds.size > 1 && prevChecked.size == 1 && prevChecked[0] == binding.dialogScheduleBasicContainer.alarmNone.id) {
+                    val child : Chip = group.getChildAt(0) as Chip
+                    child.isCheckable = true
                     child.isChecked = false
                     Log.d("CHIP_GROUP", "none out")
                     prevChecked.remove(child.id)
-
                     alarmText = getChipText(checkedIds[1])
                 } else if (checkedIds.size > 0 && checkedIds[0] == binding.dialogScheduleBasicContainer.alarmNone.id) {
                     prevChecked = checkedIds
@@ -203,7 +209,12 @@ class ScheduleDialogFragment (
                         child.isChecked = false
                         prevChecked.remove(child.id)
                     }
+                    val none : Chip = group.getChildAt(0) as Chip
+                    none.isChecked = true
+                    none.isCheckable = false
                     alarmText = "없음, "
+                    prevChecked.clear()
+                    prevChecked.add(none.id)
                     Log.d("CHIP_GROUP", "others out")
                 } else {
                     prevChecked = checkedIds
@@ -212,7 +223,10 @@ class ScheduleDialogFragment (
                         alarmText += getChipText(i)
                     }
                 }
-                alarmText = alarmText.substring(0, alarmText.length - 2)
+
+                if (alarmText.length > 2) {
+                    alarmText =  alarmText.substring(0, alarmText.length - 2)
+                }
                 binding.dialogScheduleBasicContainer.dialogScheduleAlarmTv.text = alarmText
             }
 //
@@ -247,7 +261,8 @@ class ScheduleDialogFragment (
             binding.dialogScheduleBasicContainer.alarmMin10.id -> "10분 전, "
             binding.dialogScheduleBasicContainer.alarmMin5.id -> "5분 전, "
             binding.dialogScheduleBasicContainer.alarmMin0.id -> "정시, "
-            else -> "없음"
+            binding.dialogScheduleBasicContainer.alarmNone.id -> "없음, "
+            else -> ""
         }
     }
 
@@ -290,39 +305,6 @@ class ScheduleDialogFragment (
             checkNotificationPermission(requireActivity(), time, id)
         }
     }
-
-//    private fun setAlarm(desiredTime : Long) {
-//        val checkedAlarm = binding.dialogScheduleBasicContainer.alarmGroup.checkedChipIds
-//        Log.d("ALARM", "Checked Alarm : $checkedAlarm")
-//        for (i in checkedAlarm) {
-//            when (i) {
-//                binding.dialogScheduleBasicContainer.alarmNone.id -> {
-//                    Log.d("ALARM", "None selected")
-//                }
-//                binding.dialogScheduleBasicContainer.alarmMin60.id -> {
-//                    checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusHours(1).millis)
-//                    Log.d("ALARM", "60 min selected")
-//                }
-//                binding.dialogScheduleBasicContainer.alarmMin30.id -> {
-//                    checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusMinutes(30).millis)
-//                    Log.d("ALARM", "30 min selected")
-//                }
-//                binding.dialogScheduleBasicContainer.alarmMin10.id -> {
-//                    checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusMinutes(10).millis)
-//                    Log.d("ALARM", "10 min selected")
-//                }
-//                binding.dialogScheduleBasicContainer.alarmMin5.id -> {
-//                    checkNotificationPermission(requireActivity(), DateTime(event.startLong).minusMinutes(5).millis)
-//                    Log.d("ALARM", "5 min selected")
-//                }
-//                binding.dialogScheduleBasicContainer.alarmMin0.id -> {
-//                    checkNotificationPermission(requireActivity(), event.startLong)
-//                    Log.d("ALARM", "0 min selected")
-//                }
-//            }
-//        }
-//    }
-
     private fun schedulePushNotification(desiredTimestamp : Long, id : Int) {
         val context = requireContext()
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -572,6 +554,11 @@ class ScheduleDialogFragment (
                 binding.dialogScheduleCloseBtn.visibility = View.VISIBLE
                 binding.dialogScheduleSaveBtn.visibility = View.VISIBLE
 
+                if (selectedCategory == 0) {
+                    selectedCategory = categoryList[0].categoryIdx
+                }
+                setCategory()
+
                 binding.dialogScheduleHeaderTv.text = "새 일정"
 
                 initPickerText()
@@ -585,35 +572,32 @@ class ScheduleDialogFragment (
 //                    dialog?.dismiss()
                 }
 
-               binding.dialogScheduleSaveBtn.setOnClickListener {
-                   //저장하고 닫기
-                   event.title = binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.text.toString()
-                   event.startLong = startDateTime.millis
-                   event.endLong = endDateTime.millis
-                   event.dayInterval = getInterval(event.startLong, event.endLong)
-                   event.categoryColor = categoryList[selectedCategory].color
-                   event.categoryName = categoryList[selectedCategory].name
-                   event.categoryIdx = categoryList[selectedCategory].categoryIdx // selectedCategory
-                   event.place = place_name
+                binding.dialogScheduleSaveBtn.setOnClickListener {
+                    //저장하고 닫기
+                    event.title = binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.text.toString()
+                    event.startLong = startDateTime.millis
+                    event.endLong = endDateTime.millis
+                    event.dayInterval = getInterval(event.startLong, event.endLong)
+                    event.place = place_name
 
-                   setAlarmList()
-                   event.alarmList = alarmList
+                    setAlarmList()
+                    event.alarmList = alarmList
 
-                   var storeDB : Thread = Thread {
-                       scheduelIdx = db.eventDao.insertEvent(event).toInt()
-                   }
-                   storeDB.start()
-                   try {
-                       storeDB.join()
-                   } catch ( e: InterruptedException) {
-                       e.printStackTrace()
-                   }
+                    var storeDB : Thread = Thread {
+                        scheduelIdx = db.eventDao.insertEvent(event).toInt()
+                    }
+                    storeDB.start()
+                    try {
+                        storeDB.join()
+                    } catch ( e: InterruptedException) {
+                        e.printStackTrace()
+                    }
 
-                   setAlarm(event.startLong)
+                    setAlarm(event.startLong)
 
 
-                   okCallback(true)
-                   dismiss()
+                    okCallback(true)
+                    dismiss()
 //                    dialog?.dismiss()
                 }
             }
@@ -660,6 +644,7 @@ class ScheduleDialogFragment (
 
                 setAlarmClicked(event.alarmList!!)
                 val checkedIds = binding.dialogScheduleBasicContainer.alarmGroup.checkedChipIds
+                prevChecked = checkedIds
                 for (i in checkedIds) {
                     alarmText += getChipText(i)
                 }
@@ -668,7 +653,8 @@ class ScheduleDialogFragment (
 
                 clickListener(true)
                 binding.dialogScheduleHeaderTv.text = "내 일정"
-//                setCategory()
+                selectedCategory = event.categoryIdx
+                setCategory()
 
                 binding.dialogScheduleCloseBtn.visibility = View.VISIBLE
                 binding.dialogScheduleSaveBtn.visibility = View.VISIBLE
@@ -725,13 +711,10 @@ class ScheduleDialogFragment (
                 binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.setText(event.title)
 
                 categoryRVAdapter.setSelectedPos(selectedCategory)
-                categoryRVAdapter.notifyDataSetChanged()
 
-                binding.dialogScheduleBasicContainer.dialogScheduleCategoryNameTv.text = event.categoryName
-                binding.dialogScheduleBasicContainer.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(event.categoryColor))
                 selectedCategory = event.categoryIdx
-//
-//
+                setCategory()
+
                 startDateTime = DateTime(event.startLong)
                 endDateTime = DateTime(event.endLong)
 
@@ -783,10 +766,26 @@ class ScheduleDialogFragment (
     }
 
     private fun setCategory() { // 왜 필요한 거지
-        binding.dialogScheduleBasicContainer.dialogScheduleCategoryNameTv.text = event.categoryName
-        binding.dialogScheduleBasicContainer.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(event.categoryColor))
+        val thread = Thread {
+            val category = db.categoryDao.getCategoryContent(selectedCategory)
+            Log.d("SET_CATEGORY", category.toString())
+            event.categoryIdx = selectedCategory
+            event.categoryName = category.name
+            event.categoryColor = category.color
 
-        Log.d("CATEGORY_COLOR", "position: ${selectedCategory}, name: ${categoryList[selectedCategory].name}")
+            requireActivity().runOnUiThread {
+                binding.dialogScheduleBasicContainer.dialogScheduleCategoryNameTv.text = category.name
+                binding.dialogScheduleBasicContainer.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(category.color))
+            }
+
+            Log.d("CATEGORY_COLOR", "idx : ${selectedCategory}, name : ${category.name}")
+        }
+        thread.start()
+        try {
+            thread.join()
+        }catch (e : InterruptedException) {
+            e.printStackTrace()
+        }
     }
 
     private fun getCategoryList() {
@@ -798,27 +797,18 @@ class ScheduleDialogFragment (
         val r = Runnable {
             try {
 //                initCategory = 0
-                Log.d("ScheduleDialogFrag", "initCategory = $initCategory")
-//                setCategory()
-//                categoryRVAdapter.setSelectedPos(initCategory)
+//                Log.d("ScheduleDialogFrag", "initCategory = $initCategory")
+                categoryRVAdapter.setSelectedPos(selectedCategory)
 
                 categoryList = db.categoryDao.getCategoryList()
-                for (i: Int in categoryList.indices) {
-                    if (categoryList[i].color == event.categoryColor) {
-                        categoryRVAdapter.setSelectedPos(i)
-                    }
-                }
-                categoryRVAdapter.notifyDataSetChanged()
+//                categoryRVAdapter.notifyItemChanged(initCategory)
                 categoryRVAdapter = DialogCategoryRVAdapter(requireContext(), categoryList)
                 categoryRVAdapter.setMyItemClickListener(object: DialogCategoryRVAdapter.MyItemClickListener {
                     // 아이템 클릭
                     override fun onSendPos(selected: Int, category: Category) {
-                        selectedCategory = selected
-
                         // 카테고리 세팅
-                        event.categoryColor = category.color
-                        event.categoryName = category.name
-                        event.categoryIdx = category.categoryIdx
+                        selectedCategory = category.categoryIdx
+                        Log.d("CATEGORY_CLICK", selectedCategory.toString())
                         setCategory()
 
                         recentView = prevView
@@ -839,22 +829,34 @@ class ScheduleDialogFragment (
 
         val thread = Thread(r)
         thread.start()
+        try {
+            thread.join()
+        } catch (e : InterruptedException) {
+            e.printStackTrace()
+        }
     }
 
     private fun setInitialCategory() {
         // 리스트에 아무런 카테고리가 없으면 기본 카테고리 설정
-        Thread {
+        val thread = Thread {
             if (db.categoryDao.getCategoryList().isEmpty()) {
                 db.categoryDao.insertCategory(Category(0, "일정", R.color.schedule, true))
                 db.categoryDao.insertCategory(Category(0, "그룹", R.color.schedule_group, true))
             }
-        }.start()
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch (e : InterruptedException) {
+            e.printStackTrace()
+        }
     }
 
 
     override fun onResume() {
         super.onResume()
         getCategoryList()
+        setScreen()
 
         Log.d("LIFECYCLE","OnResume")
     }
