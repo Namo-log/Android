@@ -711,6 +711,7 @@ class ScheduleDialogFragment (
                 binding.dialogScheduleBasicContainer.dialogScheduleTitleEt.setText(event.title)
 
                 categoryRVAdapter.setSelectedPos(selectedCategory)
+//                categoryRVAdapter.notifyDataSetChanged()
 
                 selectedCategory = event.categoryIdx
                 setCategory()
