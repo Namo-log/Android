@@ -1,6 +1,7 @@
 package com.example.namo.ui.bottom.diary.groupDiary.adapter
 
 import android.content.Context
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.net.toUri
@@ -10,7 +11,7 @@ import com.example.namo.databinding.ItemGalleryListBinding
 
 class GroupPlaceGalleryAdapter(  // 그룹 다이어리 장소별 이미지
     private val context: Context,
-    private val imgList: List<String>?,
+    private val imgList: List<String>,
 ):
     RecyclerView.Adapter<GroupPlaceGalleryAdapter.ViewHolder>(){
 
@@ -22,14 +23,13 @@ class GroupPlaceGalleryAdapter(  // 그룹 다이어리 장소별 이미지
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val uri= imgList?.get(position)
+        val uri= imgList[position]
         Glide.with(context)
-            .load(uri?.toUri())
-            .override(111,111)
-            .into(holder.imageUrl)
+                .load(uri.toUri())
+                .into(holder.imageUrl)
     }
 
-    override fun getItemCount(): Int = imgList!!.size
+    override fun getItemCount(): Int = imgList.size
 
     inner class ViewHolder(val binding: ItemGalleryListBinding): RecyclerView.ViewHolder(binding.root){
         val imageUrl=binding.galleryImgIv

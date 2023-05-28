@@ -17,11 +17,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.namo.data.entity.diary.GroupDiaryMember
 import com.example.namo.databinding.DialogGroupPayBinding
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupPayMemberRVAdapter
+import org.joda.time.DateTime
 import java.lang.Boolean.TRUE
 
 
 class GroupPayDialog(
-    private var placeMember:List<GroupDiaryMember>
+    private var placeMember:List<GroupDiaryMember>,
+    private val pay : (Int) -> Unit
 ): DialogFragment(), View.OnClickListener{  // 그룹 다이어리 장소별 정산 다이얼로그
 
     lateinit var binding: DialogGroupPayBinding
@@ -42,8 +44,9 @@ class GroupPayDialog(
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))  //배경 투명하게
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)  //dialog 모서리 둥글게
 
-        onClickListener()
+
         account()
+        onClickListener()
 
         memberIsChecked.apply {
             for (i in (placeMember.indices)) {
@@ -77,7 +80,7 @@ class GroupPayDialog(
 
 
                 if (binding.groupPayTotalEt.text.isNotEmpty() ){   // 총 금액을 입력했을 때 계산
-                    totalPay = binding.groupPayTotalEt.text.toString().toInt()
+                    totalPay = binding.groupPayTotalEt.text.toString().toLong().toInt()
                     if (checkedPeopleCount!=0){
                         eachPay = totalPay / checkedPeopleCount
                     }else{
@@ -101,6 +104,7 @@ class GroupPayDialog(
                 dismiss()
             }
             groupPaySaveTv.setOnClickListener {
+               pay(eachPay)
                 dismiss()
             }
         }
