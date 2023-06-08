@@ -59,6 +59,9 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
     implementation 'com.google.firebase:protolite-well-known-types:18.0.0'
 
+    //kakao Login
+    implementation 'com.kakao.sdk:v2-user:2.12.1'
+
     //카카오맵 API
     implementation fileTree(dir: 'src\\main\\jniLibs', include: ['*.aar', '*.jar'], exclude: [])
 

@@ -11,13 +11,12 @@ data class KakaoSDKResponse(
     val result: KakaoSDKResult
 ) : BaseResponse()
 data class KakaoSDKResult(
-    val userId: Int,
-    val isNewUser: Boolean,
-    val nickname: String,
+//    val userId: Int,
     val accessToken: String,
     val refreshToken: String
 )
-data class SdkTokenBody(
-    val kakaoAccessToken: String,
-    val kakaoRefreshToken: String
+
+data class TokenBody(
+    val accessToken: String,
+    val refreshToken: String
 )

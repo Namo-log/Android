@@ -9,7 +9,7 @@ import retrofit2.Response
 class LoginService(val view: LoginView) {
 
     val loginRetrofitInterface = ApplicationClass.bRetrofit.create(LoginRetrofitInterface::class.java)
-    fun tryPostKakaoSDK(body: SdkTokenBody) {
+    fun tryPostKakaoSDK(body: TokenBody) {
         loginRetrofitInterface.postKakaoSDK(body).enqueue(object : Callback<KakaoSDKResponse> {
 
             override fun onResponse(call: Call<KakaoSDKResponse>, response: Response<KakaoSDKResponse>) {

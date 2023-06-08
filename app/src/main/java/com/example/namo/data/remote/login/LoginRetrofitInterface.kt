@@ -6,8 +6,8 @@ import retrofit2.http.POST
 
 interface LoginRetrofitInterface {
     // SDK 카카오 로그인
-    @POST("v1/auth/kakao")
+    @POST("auth/kakao/signup")
     fun postKakaoSDK(
-        @Body body: SdkTokenBody
+        @Body body: TokenBody
     ) : Call<KakaoSDKResponse>
 }

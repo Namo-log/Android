@@ -2,6 +2,9 @@ package com.example.namo.config
 
 import android.app.Application
 import android.content.SharedPreferences
+import com.example.namo.BuildConfig
+import com.example.namo.ui.bottom.home.schedule.map.data.KakaoAPI
+import com.kakao.sdk.common.KakaoSdk
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -11,7 +14,7 @@ import java.util.concurrent.TimeUnit
 
 class ApplicationClass: Application() {
     // 테스트 서버 주소
-    val API_URL = " "
+    val API_URL = "https://www.namoserver.shop"
 
     // 실 서버 주소
 //    val API_URL = " "
@@ -33,8 +36,11 @@ class ApplicationClass: Application() {
     // 앱이 처음 생성되는 순간, SP를 새로 만들어주고, 레트로핏 인스턴스를 생성합니다.
     override fun onCreate() {
         super.onCreate()
-        sSharedPreferences =
-            applicationContext.getSharedPreferences("SOFTSQUARED_TEMPLATE_APP", MODE_PRIVATE)
+        sSharedPreferences = applicationContext.getSharedPreferences("SOFTSQUARED_TEMPLATE_APP", MODE_PRIVATE)
+
+        // 카카오 SDK 초기화
+        KakaoSdk.init(this, BuildConfig.KAKAO_API_KEY)
+
         // 레트로핏 인스턴스 생성
         initRetrofitInstance()
     }
