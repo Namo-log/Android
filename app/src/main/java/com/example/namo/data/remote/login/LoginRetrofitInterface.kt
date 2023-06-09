@@ -9,5 +9,11 @@ interface LoginRetrofitInterface {
     @POST("auth/kakao/signup")
     fun postKakaoSDK(
         @Body body: TokenBody
-    ) : Call<KakaoSDKResponse>
+    ) : Call<LoginResponse>
+
+    // 토큰 재발급
+    @POST("auth/reissuance")
+    fun refreshToken(
+        @Body body: TokenBody
+    ) : Call<LoginResponse>
 }

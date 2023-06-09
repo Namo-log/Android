@@ -4,14 +4,13 @@ import com.example.namo.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 
 // SDK 카카오 로그인
-data class KakaoSDKResponse(
+data class LoginResponse(
     // 베이스 리스폰스를 상속 받았으므로, 아래 내용은 포함이 되었음
 //    @SerializedName("code") val code: Int = 0,
 //    @SerializedName("message") val message: String = ""
-    val result: KakaoSDKResult
+    val result: LoginResult
 ) : BaseResponse()
-data class KakaoSDKResult(
-//    val userId: Int,
+data class LoginResult(
     val accessToken: String,
     val refreshToken: String
 )

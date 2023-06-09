@@ -10,6 +10,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.namo.R
+import com.example.namo.data.remote.login.LoginResponse
+import com.example.namo.data.remote.login.SplashView
 import com.example.namo.databinding.FragmentSplashBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 

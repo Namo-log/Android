@@ -19,10 +19,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.namo.MainActivity
 import com.example.namo.R
 import com.example.namo.config.ApplicationClass
-import com.example.namo.data.remote.login.KakaoSDKResponse
-import com.example.namo.data.remote.login.LoginService
-import com.example.namo.data.remote.login.LoginView
-import com.example.namo.data.remote.login.TokenBody
+import com.example.namo.data.remote.login.*
 import com.example.namo.databinding.FragmentLoginBinding
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.AuthErrorCause
@@ -134,16 +131,20 @@ class LoginFragment: Fragment(), LoginView {
         prefs.edit().putBoolean("finished",true).apply()
     }
 
-    override fun onPostKakaoSDKSuccess(response: KakaoSDKResponse) {
+    override fun onPostKakaoSDKSuccess(response: LoginResponse) {
         Log.d("LoginActivity", "onPostKakaoSDKSuccess")
         Log.d("Login", "$response")
 
         val result = response.result
+
         // 토큰 저장
         val editor = ApplicationClass.sSharedPreferences.edit()
-        editor.putString(ApplicationClass.X_ACCESS_TOKEN, result.accessToken).apply()
-        editor.putString(ApplicationClass.X_REFRESH_TOKEN, result.refreshToken).apply()
+        editor
+            .putString(ApplicationClass.X_ACCESS_TOKEN, result.accessToken)
+            .putString(ApplicationClass.X_REFRESH_TOKEN, result.refreshToken)
+            .apply()
 
+        // 화면 이동
         findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
         //setLoginFinished()
     }
