@@ -1,8 +1,6 @@
 package com.example.namo.ui.bottom.diary.groupDiary
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context.MODE_PRIVATE
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -17,21 +15,20 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.namo.data.entity.diary.GroupDiaryMember
 import com.example.namo.databinding.DialogGroupPayBinding
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupPayMemberRVAdapter
-import org.joda.time.DateTime
 import java.lang.Boolean.TRUE
 
 
 class GroupPayDialog(
-    private var placeMember:List<GroupDiaryMember>,
-    private val pay : (Int) -> Unit
-): DialogFragment(), View.OnClickListener{  // 그룹 다이어리 장소별 정산 다이얼로그
+    private var placeMember: List<GroupDiaryMember>,
+    private val pay: (Int) -> Unit
+) : DialogFragment(), View.OnClickListener {  // 그룹 다이어리 장소별 정산 다이얼로그
 
     lateinit var binding: DialogGroupPayBinding
     lateinit var payMemberRVAdapter: GroupPayMemberRVAdapter
 
-    private var totalPay : Int = 0
-    private var eachPay : Int = 0
-    private var memberIsChecked : ArrayList<Boolean> = arrayListOf()
+    private var totalPay: Int = 0
+    private var eachPay: Int = 0
+    private var memberIsChecked: ArrayList<Boolean> = arrayListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,7 +64,8 @@ class GroupPayDialog(
             setHasFixedSize(TRUE)
         }
 
-        payMemberRVAdapter.setPeopleItemClickListener(object : GroupPayMemberRVAdapter.PeopleItemClickListener{
+        payMemberRVAdapter.setPeopleItemClickListener(object :
+            GroupPayMemberRVAdapter.PeopleItemClickListener {
             @SuppressLint("SetTextI18n")
             override fun onItemClick(
                 peopleList: ArrayList<GroupDiaryMember>,
@@ -78,17 +76,17 @@ class GroupPayDialog(
                 // 체크된 멤버 수 계산
                 Log.d("memberClick", "$checkedPeopleCount")
 
-
-                if (binding.groupPayTotalEt.text.isNotEmpty() ){   // 총 금액을 입력했을 때 계산
+                val totalText = binding.groupPayTotalEt.text.toString()
+                if (totalText.isNotEmpty() and (totalText.toIntOrNull() != null)) {   // 총 금액을 입력했을 때 계산
                     totalPay = binding.groupPayTotalEt.text.toString().toLong().toInt()
-                    if (checkedPeopleCount!=0){
+                    if (checkedPeopleCount != 0) {
                         eachPay = totalPay / checkedPeopleCount
-                    }else{
+                    } else {
                         Toast.makeText(requireContext(), "멤버를 선택해주세요", Toast.LENGTH_SHORT).show()
                     }
                     binding.groupPayResultTv.text = "$eachPay  원"
 
-                }else{ // 총 금액 입력 안하면 메세지
+                } else { // 총 금액 입력 안하면 메세지
                     Toast.makeText(requireContext(), "금액을 입력해주세요", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -96,7 +94,7 @@ class GroupPayDialog(
     }
 
     @SuppressLint("SuspiciousIndentation")
-    private fun onClickListener(){
+    private fun onClickListener() {
 
         binding.apply {
 
@@ -104,7 +102,7 @@ class GroupPayDialog(
                 dismiss()
             }
             groupPaySaveTv.setOnClickListener {
-               pay(eachPay)
+                pay(eachPay)
                 dismiss()
             }
         }

@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 그룹 다이어리 추가 화면 -->
+<?xml version="1.0" encoding="utf-8"?><!-- 그룹 다이어리 추가 화면 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/group_add_top"
@@ -13,29 +12,29 @@
         android:layout_marginStart="30dp"
         android:layout_marginTop="40dp"
         android:layout_marginEnd="30dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/group_add_back_iv"
             android:layout_width="35dp"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_back"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/group_add_title_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:text="UMC 스터디"
+            android:textColor="@color/black"
             android:textSize="27sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginTop="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/group_add_back_iv"/>
+            app:layout_constraintTop_toTopOf="@id/group_add_back_iv" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -43,44 +42,44 @@
         android:id="@+id/group_add_date_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="25dp"
         android:text="날짜"
+        android:textColor="#555555"
         android:textSize="17sp"
         android:textStyle="bold"
-        android:textColor="#555555"
-        android:layout_marginTop="25dp"
-        android:layout_marginStart="30dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/group_add_top"/>
+        app:layout_constraintTop_toBottomOf="@id/group_add_top" />
 
     <TextView
         android:id="@+id/group_add_input_date_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
         android:text="2022.07.14"
         android:textSize="17sp"
-        android:layout_marginStart="30dp"
         app:layout_constraintStart_toEndOf="@id/group_add_date_tv"
-        app:layout_constraintTop_toTopOf="@id/group_add_date_tv"/>
+        app:layout_constraintTop_toTopOf="@id/group_add_date_tv" />
 
     <TextView
         android:id="@+id/group_add_people_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="15dp"
         android:text="참석자"
         android:textColor="#555555"
-        android:textStyle="bold"
         android:textSize="17sp"
-        android:layout_marginTop="15dp"
-        android:layout_marginStart="30dp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/group_add_date_tv"/>
+        app:layout_constraintTop_toBottomOf="@id/group_add_date_tv" />
 
     <ImageView
         android:id="@+id/bottom_arrow"
         android:layout_width="15dp"
         android:layout_height="20dp"
-        android:src="@drawable/ic_arrow_right_gray"
         android:rotation="90"
+        android:src="@drawable/ic_arrow_right_gray"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/group_add_top"
         app:layout_constraintTop_toTopOf="@+id/group_add_people_tv" />
@@ -89,8 +88,8 @@
         android:id="@+id/up_arrow"
         android:layout_width="15dp"
         android:layout_height="20dp"
-        android:src="@drawable/ic_arrow_right_gray"
         android:rotation="270"
+        android:src="@drawable/ic_arrow_right_gray"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="@id/group_add_top"
         app:layout_constraintTop_toTopOf="@+id/group_add_people_tv" />
@@ -101,19 +100,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_diary_group_members"
         android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="@id/group_add_people_tv"
         app:layout_constraintTop_toBottomOf="@id/group_add_people_tv"
-        app:layout_constraintStart_toStartOf="@id/group_add_people_tv"/>
+        tools:listitem="@layout/item_diary_group_members" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
         app:layout_constraintBottom_toTopOf="@id/group_place_save_tv"
-        app:layout_constraintTop_toBottomOf="@id/group_add_people_rv"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/group_add_people_rv">
 
         <LinearLayout
             android:id="@+id/add_place_linear_layout"
@@ -121,20 +120,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/diary_group_add_place_rv"
+            <LinearLayout
+                android:id="@+id/group_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_diary_group_event"
-                android:orientation="vertical"
-                tools:itemCount="1"
-                android:layout_marginStart="30dp"
-                android:layout_marginEnd="30dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/group_add_people_rv"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical" />
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -146,27 +136,27 @@
                     android:id="@+id/groud_place_add_iv"
                     android:layout_width="150dp"
                     android:layout_height="40dp"
+                    android:layout_gravity="center"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="20dp"
-                    android:layout_gravity="center"
                     android:src="@drawable/record_btn_background"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/groud_place_add_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="장소 추가"
                     android:layout_gravity="center"
-                    android:textStyle="bold"
+                    android:text="장소 추가"
                     android:textSize="16sp"
-                    app:layout_constraintTop_toTopOf="@id/groud_place_add_iv"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@id/groud_place_add_iv"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintTop_toTopOf="@id/groud_place_add_iv" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
