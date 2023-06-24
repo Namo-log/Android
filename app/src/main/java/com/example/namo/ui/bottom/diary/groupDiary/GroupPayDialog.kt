@@ -77,6 +77,13 @@ class GroupPayDialog(
                 Log.d("memberClick", "$checkedPeopleCount")
 
                 val totalText = binding.groupPayTotalEt.text.toString()
+                binding.groupPayTotalEt.isSingleLine = true
+
+                if (totalText.contains(Regex("[a-zA-Z]"))) {
+                    binding.groupPayTotalEt.text.clear()
+                    Toast.makeText(requireContext(), "숫자만 입력 가능합니다!", Toast.LENGTH_SHORT).show()
+                }
+
                 if (totalText.isNotEmpty() and (totalText.toIntOrNull() != null)) {   // 총 금액을 입력했을 때 계산
                     totalPay = binding.groupPayTotalEt.text.toString().toLong().toInt()
                     if (checkedPeopleCount != 0) {

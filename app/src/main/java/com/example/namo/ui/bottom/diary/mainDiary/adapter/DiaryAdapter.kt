@@ -3,18 +3,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.R
 import com.example.namo.data.entity.diary.DiaryItem
 import com.example.namo.databinding.ItemDiaryDateListBinding
 import com.example.namo.databinding.ItemDiaryListBinding
+import com.example.namo.ui.bottom.diary.mainDiary.ImageDialog
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.DiaryGalleryRVAdapter
 import java.text.SimpleDateFormat
 
 class DiaryAdapter(
-   initialItems: List<DiaryItem> = emptyList()
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val fragmentManagers: FragmentManager,
+    initialItems: List<DiaryItem> = emptyList(),
+
+    ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val items = ArrayList<DiaryItem>(initialItems)
 
@@ -29,6 +33,7 @@ class DiaryAdapter(
     interface DiaryEditInterface {
         fun onEditClicked(allData: DiaryItem.Content)
     }
+
     private lateinit var diaryRecordClickListener: DiaryEditInterface
     fun setRecordClickListener(itemClickListener: DiaryEditInterface) {
         diaryRecordClickListener = itemClickListener
@@ -64,6 +69,7 @@ class DiaryAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = items[position]
+
         when (holder) {
             is DiaryHeaderViewHolder -> holder.bind(item as DiaryItem.Header)
             is DiaryContentVewHolder -> {
@@ -72,11 +78,10 @@ class DiaryAdapter(
                     diaryRecordClickListener.onEditClicked(item)
                 }
             }
-
         }
     }
 
-   inner class DiaryHeaderViewHolder(
+    inner class DiaryHeaderViewHolder(
         private val binding: ItemDiaryListBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -90,13 +95,14 @@ class DiaryAdapter(
     }
 
     inner class DiaryContentVewHolder(
-        private val binding: ItemDiaryDateListBinding
+        val binding: ItemDiaryDateListBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        val onclick=binding.diaryEditTv
+        val onclick = binding.diaryEditTv
+
         fun bind(item: DiaryItem.Content) {
             binding.apply {
                 itemDiaryContentTv.text
-                itemDiaryContentTv.text =item.content
+                itemDiaryContentTv.text = item.content
                 itemDiaryTitleTv.text = item.title
                 itemDiaryCategoryColorIv.background.setTint(
                     ContextCompat.getColor(
@@ -104,9 +110,16 @@ class DiaryAdapter(
                         item.categoryColor
                     )
                 )
-                diaryGalleryRv.adapter = DiaryGalleryRVAdapter(itemView.context, item.imgs)
+                val adapter = DiaryGalleryRVAdapter(itemView.context, item.imgs)
+                diaryGalleryRv.adapter = adapter
                 diaryGalleryRv.layoutManager =
                     LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
+
+                adapter.setImageClickListener(object : DiaryGalleryRVAdapter.DiaryImageInterface {
+                    override fun onImageClicked(image: String) {
+                        ImageDialog(image).show(fragmentManagers, "test")
+                    }
+                })
 
                 if (item.content.isEmpty()) itemDiaryContentTv.visibility = View.GONE
                 if (item.imgs?.isEmpty() == true) diaryGalleryRv.visibility = View.GONE
