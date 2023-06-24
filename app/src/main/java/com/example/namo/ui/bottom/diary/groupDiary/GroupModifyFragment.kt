@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.R
@@ -236,6 +237,11 @@ class GroupModifyFragment : Fragment() {  // 그룹 다이어리 편집 화면
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         adapter.addItem(placeEvent)
 
+        val itemTouchHelperCallback = ItemTouchHelperCallback(adapter)
+        val helper = ItemTouchHelper(itemTouchHelperCallback)
+        // RecyclerView에 ItemTouchHelper 연결
+        helper.attachToRecyclerView(binding.groupGetEventRy)
+
 
         // 멤버 이름 리사이클러뷰
         memberadapter = GroupMemberRVAdapter(memberNames)
@@ -243,6 +249,7 @@ class GroupModifyFragment : Fragment() {  // 그룹 다이어리 편집 화면
         binding.groupAddPeopleRv.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
+
 
     @SuppressLint("NotifyDataSetChanged")
     private fun onClickListener() {

@@ -11,11 +11,11 @@ import com.example.namo.data.entity.diary.DiaryGroupEvent
 import com.example.namo.databinding.ItemDiaryGroupEventBinding
 
 class GroupModifyRVAdapter(  // 그룹 다이어리 수정
-    val context:Context,
+    val context: Context,
     initialItems: List<DiaryGroupEvent> = emptyList()
-
-):
-    RecyclerView.Adapter<GroupModifyRVAdapter.ViewHolder>(){
+) :
+    RecyclerView.Adapter<GroupModifyRVAdapter.ViewHolder>(),
+    ItemTouchHelperListener {
 
     private val items = ArrayList<DiaryGroupEvent>(initialItems)
 
@@ -28,33 +28,39 @@ class GroupModifyRVAdapter(  // 그룹 다이어리 수정
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemDiaryGroupEventBinding = ItemDiaryGroupEventBinding.inflate(
-            LayoutInflater.from(viewGroup.context),viewGroup,false)
+            LayoutInflater.from(viewGroup.context), viewGroup, false
+        )
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(items[position])
 
-        val adapter=GroupPlaceGalleryAdapter(context)
-        holder.binding.groupAddGalleryRv.adapter=adapter
-        holder.binding.groupAddGalleryRv.layoutManager=
+        val adapter = GroupPlaceGalleryAdapter(context)
+        holder.binding.groupAddGalleryRv.adapter = adapter
+        holder.binding.groupAddGalleryRv.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         items[position].imgs?.let { adapter.addItem(it) }
 
-
     }
+
 
     override fun getItemCount(): Int = items.size
 
-    inner class ViewHolder(val binding: ItemDiaryGroupEventBinding): RecyclerView.ViewHolder(binding.root){
+    inner class ViewHolder(val binding: ItemDiaryGroupEventBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item:DiaryGroupEvent){
+        fun bind(item: DiaryGroupEvent) {
             binding.itemPlaceNameTv.setText(item.place)
-            binding.itemPlaceMoneyTv.text=item.pay.toString()
+            binding.itemPlaceMoneyTv.text = item.pay.toString()
 
-            binding.groupGalleryLv.visibility= View.GONE
-            binding.groupAddGalleryRv.visibility=View.VISIBLE
+            binding.groupGalleryLv.visibility = View.GONE
+            binding.groupAddGalleryRv.visibility = View.VISIBLE
         }
+    }
 
+    override fun onItemSwipe(position: Int) {
+        items.removeAt(position)
+        notifyItemRemoved(position)
     }
 }

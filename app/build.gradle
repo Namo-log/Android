@@ -104,4 +104,8 @@ dependencies {
 
     //gson
     implementation 'com.google.code.gson:gson:2.9.0'
+
+    // swipe
+    implementation 'it.xabaras.android:recyclerview-swipedecorator:1.4'
+
 }
