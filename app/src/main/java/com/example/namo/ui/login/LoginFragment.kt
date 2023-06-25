@@ -1,10 +1,8 @@
 package com.example.namo.ui.login
 
-import android.Manifest
-import android.app.Activity
 import android.app.AlarmManager
 import android.app.NotificationManager
-import android.app.PendingIntent
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,19 +15,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.namo.BuildConfig
 import com.example.namo.MainActivity
 import com.example.namo.R
+import com.example.namo.config.ApplicationClass
+import com.example.namo.data.remote.login.*
 import com.example.namo.databinding.FragmentLoginBinding
-import org.joda.time.DateTime
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.OAuthLoginCallback
 import java.util.*
 
-class LoginFragment: Fragment() {
+class LoginFragment: Fragment(), LoginView {
     private lateinit var binding: FragmentLoginBinding
     private lateinit var alarmManager : AlarmManager
     private lateinit var notificationManager : NotificationManager
@@ -45,12 +50,19 @@ class LoginFragment: Fragment() {
         notificationManager = requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
+        kakaoLogin()
         clickHandler()
 
         return binding.root
     }
 
     private fun clickHandler(){
+        // 네이버 로그인
+        binding.loginNaverBt.setOnClickListener {
+            startNaverLogin()
+        }
+
+        // 임시 로그인
         binding.loginTempBt.setOnClickListener {
 //            setAlarm(System.currentTimeMillis())
 //            setContent("NAMO","나모 이용방법을 알려드려요.")
@@ -64,8 +76,113 @@ class LoginFragment: Fragment() {
         }
     }
 
+    private fun kakaoLogin() {
+        // 카카오계정 로그인 공통 callback 구성
+        val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+            if (error != null) {  //토큰 에러
+                Log.e(ContentValues.TAG, "카카오계정으로 로그인 실패", error)
+            } else if (token != null) {
+                Log.i(ContentValues.TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
+                Toast.makeText(requireContext(), "카카오 로그인 성공", Toast.LENGTH_SHORT).show()
+
+                // 서버 통신
+                LoginService(this).tryPostKakaoSDK(TokenBody(token.accessToken, token.refreshToken))
+
+//                Log.d("kakao_access_token", token.accessToken)
+//                Log.d("kakao_refresh_token", token.refreshToken)
+            }
+
+        }
+        // 카카오 로그인 버튼 클릭시 로그인
+        binding.loginKakaoBt.setOnClickListener {
+            // 카카오톡이 설치되어 있으면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
+            if (UserApiClient.instance.isKakaoTalkLoginAvailable(requireContext())) {
+                UserApiClient.instance.loginWithKakaoTalk(requireContext(), callback = callback)
+            } else {
+                UserApiClient.instance.loginWithKakaoAccount(requireContext(), callback = callback)
+            }
+        }
+    }
+
+    private fun startNaverLogin() {
+
+        // 네이버 로그인 모듈 초기화
+        NaverIdLoginSDK.initialize(
+            requireContext(), BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, "나모"
+        )
+
+        // OAuthLoginCallback을 authenticate() 메서드 호출 시 파라미터로 전달하거나 NidOAuthLoginButton 객체에 등록하면 인증이 종료되는 것을 확인할 수 있습니다.
+        val oauthLoginCallback = object : OAuthLoginCallback {
+            override fun onSuccess() {
+                val naverAccessToken = NaverIdLoginSDK.getAccessToken().toString()
+                val naverRefreshToken = NaverIdLoginSDK.getRefreshToken().toString()
+
+                // 서버 통신
+                LoginService(this@LoginFragment).tryPostNaverSDK(TokenBody(naverAccessToken, naverRefreshToken))
+
+                Log.d("naver_access_token", naverAccessToken)
+                Log.d("naver_refresh_token",naverRefreshToken)
+            }
+
+            override fun onFailure(httpStatus: Int, message: String) {
+                val errorCode = NaverIdLoginSDK.getLastErrorCode().code
+                val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
+                Toast.makeText(requireActivity(), "errorCode: $errorCode, errorDesc: $errorDescription", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onError(errorCode: Int, message: String) {
+                onFailure(errorCode, message)
+            }
+        }
+        NaverIdLoginSDK.authenticate(requireContext(), oauthLoginCallback)
+    }
+
     private fun setLoginFinished(){
         val prefs = requireActivity().getSharedPreferences("setLogin", Context.MODE_PRIVATE)
         prefs.edit().putBoolean("finished",true).apply()
+    }
+
+    override fun onPostKakaoSDKSuccess(response: LoginResponse) {
+        Log.d("LoginActivity", "onPostKakaoSDKSuccess")
+        Log.d("Login", "$response")
+
+        val result = response.result
+
+        // 토큰 저장
+        val editor = ApplicationClass.sSharedPreferences.edit()
+        editor
+            .putString(ApplicationClass.X_ACCESS_TOKEN, result.accessToken)
+            .putString(ApplicationClass.X_REFRESH_TOKEN, result.refreshToken)
+            .apply()
+
+        // 화면 이동
+        findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+        setLoginFinished()
+    }
+
+    override fun onPostKakaoSDKFailure(message: String) {
+        Log.d("LoginActivity", "onPostKakaoSDKFailure")
+    }
+
+    override fun onPostNaverSDKSuccess(response: LoginResponse) {
+        Log.d("LoginActivity", "onPostNaverSDKSuccess")
+        Log.d("Login", "$response")
+
+        val result = response.result
+
+        // 토큰 저장
+        val editor = ApplicationClass.sSharedPreferences.edit()
+        editor
+            .putString(ApplicationClass.X_ACCESS_TOKEN, result.accessToken)
+            .putString(ApplicationClass.X_REFRESH_TOKEN, result.refreshToken)
+            .apply()
+
+        // 화면 이동
+        findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+        setLoginFinished()
+    }
+
+    override fun onPostNaverSDKFailure(message: String) {
+        Log.d("LoginActivity", "onPostNaverSDKFailure")
     }
 }

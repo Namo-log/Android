@@ -1,20 +1,18 @@
 package com.example.namo.data.entity.diary
 
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.room.PrimaryKey
 
 /** dummy **/
-data class DiaryGroupEvent (
+data class DiaryGroupEvent(
     @PrimaryKey(autoGenerate = true)
-    val place:String="",
-    // val pay:Int=0,
-    // val members:List<Int>?,
-     val imgs:List<String>?
-)
-data class GroupDiaryMember(
-    val memberName:String=""
-)
+    val place: String? = "",
+    val pay: Int = 0,
+    val imgs: List<String>?
+) :java.io.Serializable
 
-data class CheckPeople(
-    var memberName : String = "",
-    var isChecked : Boolean = false
+
+data class GroupDiaryMember(
+    val memberName: String = ""
 )

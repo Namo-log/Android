@@ -62,15 +62,26 @@
     </fragment>
     <fragment
         android:id="@+id/diaryModifyFragment"
+        tools:layout="@layout/fragment_diary_modify"
         android:name="com.example.namo.ui.bottom.diary.mainDiary.DiaryModifyFragment"
         android:label="DiaryModifyFragment" />
     <fragment
         android:id="@+id/groupDiaryFragment"
+        tools:layout="@layout/fragment_diary_group_add"
         android:name="com.example.namo.ui.bottom.diary.groupDiary.GroupDiaryFragment"
-        android:label="GroupDiaryFragment" />
+        android:label="GroupDiaryFragment" >
+        <action
+            android:id="@+id/action_groupDiaryFragment_to_groupModifyFragment"
+            app:destination="@id/groupModifyFragment" />
+    </fragment>
     <fragment
         android:id="@+id/groupCalendarFragment"
         android:name="com.example.namo.ui.bottom.group.calendar.GroupCalendarFragment"
         android:label="GroupCalendarFragment"
         tools:layout="@layout/fragment_group_calendar"/>
+    <fragment
+        android:id="@+id/groupModifyFragment"
+        tools:layout="@layout/fragment_diary_group_modify"
+        android:name="com.example.namo.ui.bottom.diary.groupDiary.GroupModifyFragment"
+        android:label="GroupModifyFragment" />
 </navigation>

@@ -37,13 +37,13 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
     private var _binding: FragmentDiaryAddBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var db:NamoDatabase
+    private lateinit var db: NamoDatabase
 
     private lateinit var galleryAdapter: GalleryListAdapter
     private lateinit var event: Event
 
-    private var imgList= arrayListOf<String>()
-    private var scheduleIdx:Int=0
+    private var imgList = arrayListOf<String>()
+    private var scheduleIdx: Int = 0
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -56,32 +56,44 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
         hideBottomNavigation(true)
 
-        db=NamoDatabase.getInstance(requireContext())
+        db = NamoDatabase.getInstance(requireContext())
 
-        galleryAdapter= GalleryListAdapter(requireContext(),imgList)
-        scheduleIdx= arguments?.getInt("scheduleIdx")!!
+        galleryAdapter = GalleryListAdapter(requireContext())
+        scheduleIdx = arguments?.getInt("scheduleIdx")!!
 
         charCnt()
         bind()
         return binding.root
     }
 
+
     @SuppressLint("SimpleDateFormat")
-    private fun bind(){
+    private fun bind() {
+        val categoryIdx = requireArguments().getInt("categoryIdx")
+
         val r = Runnable {
             try {
-                event=db.diaryDao.getSchedule(scheduleIdx)
+                event = db.diaryDao.getSchedule(scheduleIdx)
+                val category = db.categoryDao.getCategoryContent(categoryIdx)
+
                 requireActivity().runOnUiThread {
                     binding.apply {
 
-                        val formatDate=SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong)
-                        diaryTodayDayTv.text=SimpleDateFormat("EE").format(event.startLong)
-                        diaryTodayNumTv.text=SimpleDateFormat("dd").format(event.startLong)
+                        val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong)
+                        diaryTodayDayTv.text = SimpleDateFormat("EE").format(event.startLong)
+                        diaryTodayNumTv.text = SimpleDateFormat("dd").format(event.startLong)
+                        diaryTitleTv.isSelected = true  // marquee
+                        diaryTitleTv.text = event.title
 
-                        diaryTitleTv.text=event.title
-                        diaryInputPlaceTv.text=event.placeName
-                        context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(requireContext(),event.categoryColor)) }
-                        diaryInputDateTv.text= formatDate
+                        if (event.place.isEmpty()) diaryInputPlaceTv.text = "장소 없음"
+                        else diaryInputPlaceTv.text = event.placeName
+
+                        context?.resources?.let {
+                            itemDiaryCategoryColorIv.background.setTint(
+                                ContextCompat.getColor(requireContext(), category.color)
+                            )
+                        }
+                        diaryInputDateTv.text = formatDate
                     }
                 }
 
@@ -111,109 +123,143 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
             }
 
             diaryGalleryClickIv.setOnClickListener {
-                getPermission()
+                getGallery()
             }
+            onRecyclerView()
         }
     }
 
     /** 다이어리 추가 **/
-    private fun insertData(){
-        Thread{
-            db.diaryDao.addDiary(scheduleIdx,TRUE,binding.diaryContentsEt.text.toString(),imgList)
-        }.start()  }
+    private fun insertData() {
+        Thread {
+            db.diaryDao.addDiary(
+                scheduleIdx,
+                TRUE,
+                binding.diaryContentsEt.text.toString(),
+                imgList
+            )
+        }.start()
+    }
 
+
+    private fun hasImagePermission(): Boolean { // 갤러리 권한 여부
+        val writePermission = ContextCompat.checkSelfPermission(
+            requireContext(),
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        val readPermission = ContextCompat.checkSelfPermission(
+            requireContext(),
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+
+        return writePermission == PackageManager.PERMISSION_GRANTED && readPermission == PackageManager.PERMISSION_GRANTED
+    }
 
     @SuppressLint("IntentReset")
-    private fun getPermission(){
+    private fun getGallery() {
 
-        val writePermission = ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        val readPermission = ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE)
+        if (hasImagePermission()) {  // 권한 있으면 갤러리 불러오기
 
-        if (writePermission == PackageManager.PERMISSION_DENIED || readPermission == PackageManager.PERMISSION_DENIED) {
-            // 권한 없어서 요청
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE),200)
-        } else {
-            // 권한 있음
-            val intent = Intent()
-            //Intent(Intent.ACTION_PICK)
-            //Intent(Intent.ACTION_GET_CONTENT) 실제 기기로 해보기
-            intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            val intent = Intent().apply {
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
             intent.type = "image/*"
+            intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
             intent.action = Intent.ACTION_GET_CONTENT
 
             getImage.launch(intent)
+
+            binding.diaryGalleryClickIv.visibility = View.GONE
+            binding.diaryGallerySavedRy.visibility = View.VISIBLE
+
+        } else {  // 없으면 권한 받기
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                ),
+                200
+            )
+
+            binding.diaryGalleryClickIv.visibility = View.VISIBLE
         }
     }
 
-        private val getImage=registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()){  result->
 
-            if ( result.resultCode == RESULT_OK) {
+    private val getImage = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+
+        if (result.resultCode == RESULT_OK) {
 
             if (result.data?.clipData != null) { // 사진 여러개 선택한 경우
                 val count = result.data?.clipData!!.itemCount
                 if (count > 3) {
-                    Toast.makeText(requireContext(), "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT)
+                        .show()
+                    binding.diaryGalleryClickIv.visibility = View.VISIBLE
                     return@registerForActivityResult
-                }
-                else {
+                } else {
                     for (i in 0 until count) {
                         val imageUri = result.data?.clipData!!.getItemAt(i).uri
-
+                        imgList.add(imageUri.toString())
+                    }
+                }
+            } else { // 단일 선택
+                result.data?.data?.let {
+                    val imageUri: Uri? = result.data!!.data
+                    if (imageUri != null) {
                         imgList.add(imageUri.toString())
                     }
                 }
             }
-        } else { // 단일 선택
-            result.data?.data?.let {
-                val imageUri : Uri? = result.data!!.data
-                if (imageUri != null) {
-
-                    imgList.add(imageUri.toString())
-                }
-            }
         }
-        binding.diaryGalleryClickIv.visibility=View.GONE
-        binding.diaryGallerySavedRy.visibility=View.VISIBLE
-        onRecyclerView()
-}
+        galleryAdapter.addImages(imgList)
+    }
 
     private fun onRecyclerView() {
 
-    val galleryViewRVAdapter = galleryAdapter
-    binding.diaryGallerySavedRy.adapter = galleryViewRVAdapter
-    binding.diaryGallerySavedRy.layoutManager =
-        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        val galleryViewRVAdapter = galleryAdapter
+        binding.diaryGallerySavedRy.adapter = galleryViewRVAdapter
+        binding.diaryGallerySavedRy.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
     /** 글자 수 반환 **/
-    private fun charCnt(){
+    private fun charCnt() {
         with(binding) {
             diaryContentsEt.addTextChangedListener(object : TextWatcher {
-                var maxText=""
+                var maxText = ""
                 override fun beforeTextChanged(
                     s: CharSequence?,
                     start: Int,
                     count: Int,
                     after: Int
                 ) {
-                    maxText=s.toString()
+                    maxText = s.toString()
                 }
 
                 @SuppressLint("SetTextI18n")
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    if(diaryContentsEt.length() > 200){
-                        Toast.makeText(requireContext(),"최대 200자까지 입력 가능합니다",
-                        Toast.LENGTH_SHORT).show()
+                    if (diaryContentsEt.length() > 200) {
+                        Toast.makeText(
+                            requireContext(), "최대 200자까지 입력 가능합니다",
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-                    diaryContentsEt.setText(maxText)
-                    diaryContentsEt.setSelection(diaryContentsEt.length())
+                        diaryContentsEt.setText(maxText)
+                        diaryContentsEt.setSelection(diaryContentsEt.length())
                         if (s != null) {
-                            textNumTv.text="${s.length} / 200"
+                            textNumTv.text = "${s.length} / 200"
                         }
-                    } else { textNumTv.text="${s.toString().length} / 200"}
+                    } else {
+                        textNumTv.text = "${s.toString().length} / 200"
+                    }
                 }
+
                 override fun afterTextChanged(s: Editable?) {
                 }
 
@@ -221,9 +267,10 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
         }
     }
 
-        private fun hideBottomNavigation( bool : Boolean){
-        val bottomNavigationView : BottomNavigationView = requireActivity().findViewById(R.id.nav_bar)
-        if(bool) {
+    private fun hideBottomNavigation(bool: Boolean) {
+        val bottomNavigationView: BottomNavigationView =
+            requireActivity().findViewById(R.id.nav_bar)
+        if (bool) {
             bottomNavigationView.visibility = View.GONE
         } else {
             bottomNavigationView.visibility = View.VISIBLE

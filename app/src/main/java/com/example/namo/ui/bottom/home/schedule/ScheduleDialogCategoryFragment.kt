@@ -60,6 +60,9 @@ class ScheduleDialogCategoryFragment : Fragment() {
         setInitialCategory()
 
         val rv = binding.dialogScheduleCategoryRv
+    private fun getCategoryList(categoryRVAdapter: DialogCategoryRVAdapter) {
+        //db initial insert
+//        initialCategory()
 
         val r = Runnable {
             try {
@@ -80,6 +83,8 @@ class ScheduleDialogCategoryFragment : Fragment() {
                         findNavController().navigate(action)
                     }
                 })
+                // 활성화 상태인 리스트만 보줌
+                categoryList = db.categoryDao.getActiveCategoryList(true)
                 requireActivity().runOnUiThread {
                     rv.adapter = categoryRVAdapter
                     rv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)

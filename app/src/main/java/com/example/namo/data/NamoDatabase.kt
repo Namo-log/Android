@@ -11,8 +11,6 @@ import com.example.namo.data.dao.EventDao
 import com.example.namo.data.dao.GroupDao
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.entity.group.Group
-import com.example.namo.ui.bottom.diary.adapter.IntListConverters
-import com.example.namo.ui.bottom.diary.adapter.StringListConverters
 import com.example.namo.data.entity.home.Category
 import com.example.namo.ui.bottom.diary.adapter.EventListConverters
 

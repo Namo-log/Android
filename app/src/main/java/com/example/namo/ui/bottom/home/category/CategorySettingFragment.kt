@@ -86,8 +86,12 @@ class CategorySettingFragment: Fragment() {
 
         val r = Runnable {
             try {
-                categoryList = db.categoryDao.getCategoryList()
-                categoryRVAdapter.notifyDataSetChanged()
+                // 활성화 상태인 리스트만 보여줌
+                categoryList = db.categoryDao.getActiveCategoryList(true)
+//                categoryList = db.categoryDao.getCategoryList()
+
+//                categoryRVAdapter.notifyDataSetChanged()
+                categoryRVAdapter.notifyItemChanged(categoryList.size)
                 categoryRVAdapter = SetCategoryRVAdapter(requireContext(), categoryList)
                 categoryRVAdapter.setCategoryClickListener(object: SetCategoryRVAdapter.MyItemClickListener {
                     // 아이템 클릭
@@ -97,6 +101,7 @@ class CategorySettingFragment: Fragment() {
 
                         // 데이터 저장
                         saveClickedData(category)
+                        categoryRVAdapter.notifyItemChanged(position)
 
                         // 편집 화면으로 이동
                         startActivity(Intent(requireActivity(), CategoryEditActivity()::class.java))
