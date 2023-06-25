@@ -1,15 +1,10 @@
 package com.example.namo.data.entity.home
 
-import android.os.Build
-import androidx.annotation.Nullable
-import androidx.annotation.RequiresApi
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 import java.lang.Boolean.FALSE
-import java.sql.Types.NULL
-import java.time.Instant
-import java.time.ZoneId
 
 @Entity(tableName = "calendar_event_table")
 data class Event(
@@ -37,8 +32,17 @@ data class Event(
     @ColumnInfo(name = "event_category_idx")
     var categoryIdx : Int = 0,
 
-    @ColumnInfo(name = "event_place")
-    var place : String = "장소 없음",
+    @ColumnInfo(name = "event_place_name")
+    var placeName : String = "없음",
+
+    @ColumnInfo(name = "event_place_x")
+    var placeX : Double = 0.0,
+
+    @ColumnInfo(name = "event_place_y")
+    var placeY : Double = 0.0,
+
+    @ColumnInfo(name = "event_place_id")
+    var placeId : String = "",
 
     @ColumnInfo(name = "event_order")
     var order : Int = 0,
@@ -55,4 +59,4 @@ data class Event(
     @ColumnInfo(name = "alarm_list")
     var alarmList : List<Int>? = listOf()
 
-)
+) : Serializable

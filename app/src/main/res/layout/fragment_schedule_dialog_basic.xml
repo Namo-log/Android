@@ -6,6 +6,45 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:id="@+id/dialog_schedule_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="8">
+
+        <TextView
+            android:id="@+id/dialog_schedule_close_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="닫기"
+            android:textColor="@color/black"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/dialog_schedule_header_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:text="새 일정"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textAlignment="center"/>
+
+        <TextView
+            android:id="@+id/dialog_schedule_save_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="저장"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textAlignment="viewEnd"/>
+
+    </LinearLayout>
+
     <EditText
         android:id="@+id/dialog_schedule_title_et"
         android:layout_width="match_parent"
@@ -15,16 +54,8 @@
         android:background="@color/transparent"
         android:textStyle="bold"
         android:textSize="22sp"
-        android:textColor="@color/textGray"/>
-
-    <TextView
-        android:id="@+id/dialog_schedule_title_tv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textSize="22sp"
-        android:visibility="gone"
-        android:textColor="@color/black"/>
+        android:textColor="@color/textGray"
+        android:layout_marginTop="25dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dialog_schedule_category_layout"
@@ -410,7 +441,7 @@
             android:id="@+id/dialog_schedule_place_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="추가"
+            android:text="없음"
             android:textColor="@color/textGray"
             android:textSize="15sp"
             app:layout_constraintTop_toTopOf="parent"
@@ -420,5 +451,20 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <RelativeLayout
+        android:id="@+id/dialog_schedule_place_container"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:visibility="gone"
+        android:layout_marginTop="10dp"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/dialog_schedule_place_kakao_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="카카오맵으로 길찾기"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"/>
 
 </LinearLayout>

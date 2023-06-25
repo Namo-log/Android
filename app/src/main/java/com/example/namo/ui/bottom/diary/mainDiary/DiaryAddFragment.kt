@@ -79,7 +79,7 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
                         diaryTodayNumTv.text=SimpleDateFormat("dd").format(event.startLong)
 
                         diaryTitleTv.text=event.title
-                        diaryInputPlaceTv.text=event.place
+                        diaryInputPlaceTv.text=event.placeName
                         context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(requireContext(),event.categoryColor)) }
                         diaryInputDateTv.text= formatDate
                     }

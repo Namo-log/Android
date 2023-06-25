@@ -77,7 +77,7 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
         binding.apply {
             val formatDate=SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong)
             diaryInputDateTv.text=formatDate
-            diaryInputPlaceTv.text=event.place
+            diaryInputPlaceTv.text=event.placeName
             diaryTitleTv.text=event.title
             diaryContentsEt.setText(event.content)
             context?.resources?.let { itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(requireContext(),event.categoryColor)) }

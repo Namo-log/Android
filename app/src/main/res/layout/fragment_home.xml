@@ -3,12 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.motion.widget.MotionLayout
-        android:id="@+id/constraintLayout4"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layoutDescription="@xml/fragment_home_xml_constraintlayout4_scene">
+        android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/home_calendar_header_layout"
@@ -158,138 +156,9 @@
             android:id="@+id/home_calendar_vp"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@id/daily_layout"
-            app:layout_constraintTop_toBottomOf="@id/home_calendar_divider_layout" />
+            app:layout_constraintTop_toBottomOf="@id/home_calendar_divider_layout"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/daily_layout"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@drawable/border_round_top_border_gray"
-            android:elevation="5dp"
-            android:orientation="vertical"
-            android:paddingHorizontal="25dp"
-            android:paddingTop="15dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <TextView
-                android:id="@+id/home_daily_header_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/home_daily_date"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/daily_scroll_sv"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="15dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/home_daily_header_tv"
-                app:layout_constraintStart_toStartOf="@id/home_daily_header_tv"
-                app:layout_constraintTop_toBottomOf="@id/home_daily_header_tv">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="20dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:text="개인 일정"
-                        android:textColor="@color/textGray"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/home_daily_event_rv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"
-                        tools:listitem="@layout/item_calendar_event" />
-
-                    <TextView
-                        android:id="@+id/home_daily_event_none_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:text="등록된 개인 일정이 없습니다."
-                        android:textAlignment="center"
-                        android:textColor="@color/textGray"
-                        android:textSize="16sp"
-                        android:visibility="gone" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:text="모임 일정"
-                        android:textColor="@color/textGray"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/home_daily_group_event_rv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"
-                        tools:listitem="@layout/item_calendar_event_group" />
-
-                    <TextView
-                        android:id="@+id/home_daily_group_event_none_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:text="등록된 모임 일정이 없습니다."
-                        android:textAlignment="center"
-                        android:textColor="@color/textGray"
-                        android:textSize="16sp"
-                        android:visibility="gone" />
-
-                </LinearLayout>
-
-            </androidx.core.widget.NestedScrollView>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/home_fab"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="25dp"
-                android:layout_marginBottom="20dp">
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@color/MainOrange"/>
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_plus_floating"
-                    android:tint="@color/white"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.constraintlayout.motion.widget.MotionLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

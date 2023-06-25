@@ -21,7 +21,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.example.namo.MainActivity
+import com.example.namo.MainActivity.Companion.PLACE_ID_INTENT_KEY
 import com.example.namo.MainActivity.Companion.PLACE_NAME_INTENT_KEY
+import com.example.namo.MainActivity.Companion.PLACE_X_INTENT_KEY
+import com.example.namo.MainActivity.Companion.PLACE_Y_INTENT_KEY
 import com.example.namo.R
 import com.example.namo.databinding.ActivityMapBinding
 import com.example.namo.ui.bottom.home.schedule.map.adapter.MapRVAdapter
@@ -181,9 +184,17 @@ class MapActivity : AppCompatActivity() {
         binding.selectBtn.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra(PLACE_NAME_INTENT_KEY, selectedPlace.place_name)
+            intent.putExtra(PLACE_X_INTENT_KEY, selectedPlace.x)
+            intent.putExtra(PLACE_Y_INTENT_KEY, selectedPlace.y)
+            intent.putExtra(PLACE_ID_INTENT_KEY, selectedPlace.id)
             setResult(RESULT_OK, intent)
             finish()
         }
+    }
+
+    override fun finish() {
+        binding.mapView.removeView(mapView)
+        super.finish()
     }
 
     private fun searchPlace(keyword : String) {
@@ -247,26 +258,26 @@ class MapActivity : AppCompatActivity() {
 
     private fun getLocationPermission() {
         val permissionCheck = ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION)
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-            val lm = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            try {
-                val userNowLocation : Location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
-                uLatitude = userNowLocation.latitude
-                uLongitude = userNowLocation.longitude
-            } catch (e : NullPointerException) {
-                Log.e("LOCATION_ERROR", e.toString())
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    ActivityCompat.finishAffinity(this)
-                } else {
-                    ActivityCompat.finishAffinity(this)
-                }
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "위치 권한이 없습니다.", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
 
-                finish()
+        val lm = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        try {
+            val userNowLocation : Location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
+            uLatitude = userNowLocation.latitude
+            uLongitude = userNowLocation.longitude
+        } catch (e : NullPointerException) {
+            Log.e("LOCATION_ERROR", e.toString())
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                ActivityCompat.finishAffinity(this)
+            } else {
+                ActivityCompat.finishAffinity(this)
             }
 
-        } else {
-            Toast.makeText(this, "위치 권한이 없습니다.", Toast.LENGTH_SHORT).show()
-            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE)
+            finish()
         }
     }
 }

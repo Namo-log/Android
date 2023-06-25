@@ -16,8 +16,6 @@ import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.FragmentGroupCalendarBinding
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
-import com.example.namo.ui.bottom.home.calendar.Calendar2Adapter
-import com.example.namo.ui.bottom.home.schedule.ScheduleDialogFragment
 import com.example.namo.utils.CalendarUtils
 import org.joda.time.DateTime
 
@@ -39,8 +37,6 @@ class GroupCalendarFragment : Fragment() {
 
     private val personalEventRVAdapter = DailyPersonalRVAdapter()
     private val groupEventRVAdapter = DailyGroupRVAdapter()
-
-    private lateinit var scheduleDialogFragment : ScheduleDialogFragment
 
     lateinit var db : NamoDatabase
 

@@ -13,7 +13,7 @@ import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.FragmentGroupCalendarMonthBinding
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
-import com.example.namo.ui.bottom.home.calendar.Calendar2View
+import com.example.namo.ui.bottom.home.calendar.CustomCalendarView
 import org.joda.time.DateTime
 
 class GroupCalendarMonthFragment : Fragment() {
@@ -54,7 +54,7 @@ class GroupCalendarMonthFragment : Fragment() {
             Toast.makeText(requireContext(), "Click group Fab!", Toast.LENGTH_SHORT).show()
         }
 
-        binding.groupCalendarMonthView.onDateClickListener = object : Calendar2View.OnDateClickListener {
+        binding.groupCalendarMonthView.onDateClickListener = object : CustomCalendarView.OnDateClickListener {
             override fun onDateClick(date: DateTime?, pos: Int?) {
                 if (date == null) Log.d("GROUP_CALENDAR", "The NULL clicked!")
 
@@ -159,7 +159,7 @@ class GroupCalendarMonthFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        val listener = object : Calendar2View.OnDateClickListener {
+        val listener = object : CustomCalendarView.OnDateClickListener {
             override fun onDateClick(date: DateTime?, pos : Int?) {
                 binding.groupCalendarMonthView.selectedDate = null
                 binding.constraintLayout2.transitionToStart()

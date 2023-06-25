@@ -76,5 +76,4 @@
         <item name="android:textColor">@color/textGray</item>
         <item name="android:textStyle">bold</item>
     </style>
-
 </resources>

@@ -119,12 +119,41 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
     }
 
     private fun updateData() {
-        Thread{
+        val thread = Thread{
             name = binding.categoryDetailTitleEt.text.toString()
             category = Category(categoryIdx, name, color, share)
             db.categoryDao.updateCategory(category)
             Log.d("CategoryDetailFragment", "updateCategory: ${db.categoryDao.getCategoryContent(categoryIdx)}")
-        }.start()
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch (e : InterruptedException) {
+            e.printStackTrace()
+        }
+
+        updateEventWithCategory()
+    }
+
+    private fun updateEventWithCategory() {
+        val thread = Thread {
+            val eventList = db.eventDao.getEventWithCategoryIdx(categoryIdx)
+            Log.d("UPDATE_BEFORE", eventList.toString())
+            for (i in eventList) {
+                i.categoryName = name
+                i.categoryColor = color
+
+                db.eventDao.updateEvent(i)
+            }
+
+            Log.d("UPDATE_AFTER", eventList.toString())
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch (e : InterruptedException) {
+            e.printStackTrace()
+        }
     }
 
     private fun initBasicColor() {

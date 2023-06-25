@@ -46,6 +46,9 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
@@ -100,5 +103,12 @@
         <item name="android:textColorPrimary">@color/textGray</item>
         <item name="colorControlNormal">@color/MainOrange</item>
     </style>
+    <style name="SlideAnimation" parent="Theme.MaterialTransparent">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_down</item>
+    </style>
+
 
 </resources>

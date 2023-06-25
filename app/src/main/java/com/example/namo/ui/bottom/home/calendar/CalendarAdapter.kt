@@ -11,12 +11,12 @@ class CalendarAdapter(fm : FragmentActivity) : FragmentStateAdapter(fm) {
     override fun getItemCount(): Int = Int.MAX_VALUE
 
     override fun createFragment(position: Int): CalendarMonthFragment {
-        val millis = getItemId(position)
+        var millis = getItemId(position)
         return CalendarMonthFragment.newInstance(millis)
     }
 
     override fun getItemId(position: Int): Long
-        = DateTime(start).plusMonths(position - START_POSITION).millis
+            = DateTime(start).plusMonths(position - START_POSITION).millis
 
     override fun containsItem(itemId: Long): Boolean {
         val date = DateTime(itemId)
@@ -27,6 +27,4 @@ class CalendarAdapter(fm : FragmentActivity) : FragmentStateAdapter(fm) {
     companion object {
         const val START_POSITION = Int.MAX_VALUE / 2
     }
-
-
 }

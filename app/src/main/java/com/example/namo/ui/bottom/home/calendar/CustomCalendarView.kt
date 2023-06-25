@@ -3,7 +3,6 @@ package com.example.namo.ui.bottom.home.calendar
 import android.content.Context
 import android.graphics.*
 import android.text.TextPaint
-import android.text.format.DateUtils.isToday
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -12,16 +11,14 @@ import androidx.core.content.withStyledAttributes
 import com.example.namo.R
 import com.example.namo.data.entity.home.Event
 import com.example.namo.ui.bottom.home.calendar.data.StartEnd
-import com.example.namo.utils.CalendarUtils
 import com.example.namo.utils.CalendarUtils.Companion.DAYS_PER_WEEK
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
 import com.example.namo.utils.CalendarUtils.Companion.dpToPx
 import com.example.namo.utils.CalendarUtils.Companion.getMonthList
-import com.example.namo.utils.CalendarUtils.Companion.spToPx
 import org.joda.time.DateTime
 import kotlin.math.abs
 
-class Calendar2View(context: Context, attrs : AttributeSet) : View(context, attrs) {
+class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context, attrs) {
 
     interface OnDateClickListener {
         fun onDateClick(date : DateTime?, pos : Int?)
@@ -330,18 +327,6 @@ class Calendar2View(context: Context, attrs : AttributeSet) : View(context, attr
         return super.onTouchEvent(event)
     }
 
-    private fun findWeek(idx : Int) : Int {
-        return when(idx) {
-            0, 1, 2, 3, 4, 5, 6 -> 0
-            7, 8, 9, 10, 11, 12, 13 -> 1
-            14, 15, 16, 17, 18, 19, 20 -> 2
-            21, 22, 23, 24, 25, 26, 27 -> 3
-            28, 29, 30, 31, 32, 33, 34 -> 4
-            35, 36, 37, 38, 39, 40, 41 -> 5
-            else -> 6
-        }
-    }
-
     private fun splitWeek(startIdx: Int, endIdx: Int) : ArrayList<StartEnd> {
         val result  = ArrayList<StartEnd>()
         result.clear()
@@ -368,20 +353,6 @@ class Calendar2View(context: Context, attrs : AttributeSet) : View(context, attr
         }
 
         return maxOrder
-    }
-
-    private fun findMaxOrderInWeek(week : Int) : Int? {
-        val arr = arrayOf(
-            orderList[week*7],
-            orderList[week*7+1],
-            orderList[week*7+2],
-            orderList[week*7+3],
-            orderList[week*7+4],
-            orderList[week*7+5],
-            orderList[week*7+6]
-        )
-
-        return arr.maxOrNull()
     }
 
     private fun setOrder(order : Int, startIdx : Int, endIdx : Int) {

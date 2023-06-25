@@ -7,20 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.home.Category
-import com.example.namo.databinding.ItemScheduleDialogCategoryBinding
+import com.example.namo.databinding.ItemDialogScheduleCategoryBinding
 
 class DialogCategoryRVAdapter(
     var context: Context,
     private val categoryList: List<Category>
 ) : RecyclerView.Adapter<DialogCategoryRVAdapter.ViewHolder>() {
 
-//    private val categoryList = ArrayList<Category>()
-//    private lateinit var context : Context
-
-    private var selectedPos : Int = 0
+    private var selectedIdx : Int = 0
 
     interface MyItemClickListener {
-        fun onSendPos(selected : Int, category: Category)
+        fun onSendIdx(category: Category)
     }
 
     private lateinit var mItemClickListener : MyItemClickListener
@@ -29,15 +26,21 @@ class DialogCategoryRVAdapter(
         mItemClickListener = itemClickListener
     }
 
-    inner class ViewHolder(val binding : ItemScheduleDialogCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding : ItemDialogScheduleCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(category : Category) {
             binding.categoryColorView.background.setTint(context.resources.getColor(category.color))
             binding.categoryNameTv.text = category.name
+
+            if (category.categoryIdx == selectedIdx) {
+                binding.categorySelectedIv.visibility = View.VISIBLE
+            } else {
+                binding.categorySelectedIv.visibility = View.GONE
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding : ItemScheduleDialogCategoryBinding = ItemScheduleDialogCategoryBinding.inflate(
+        val binding : ItemDialogScheduleCategoryBinding = ItemDialogScheduleCategoryBinding.inflate(
             LayoutInflater.from(parent.context), parent, false)
         context = parent.context
 
@@ -46,17 +49,11 @@ class DialogCategoryRVAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(categoryList[position])
-//        Log.d("DialogCatRVAdapter", "itemColor: $itemColor")
-
-        if (position == selectedPos) {
-            holder.binding.categorySelectedIv.visibility = View.VISIBLE
-        } else {
-            holder.binding.categorySelectedIv.visibility = View.GONE
-        }
 
         holder.itemView.setOnClickListener {
-            selectedPos = holder.adapterPosition
-            mItemClickListener.onSendPos(selectedPos, categoryList[position])
+            selectedIdx = categoryList[position].categoryIdx
+            mItemClickListener.onSendIdx(categoryList[position])
+
             notifyDataSetChanged()
         }
 
@@ -64,14 +61,9 @@ class DialogCategoryRVAdapter(
 
     override fun getItemCount(): Int = categoryList.size
 
-    @SuppressLint("NotifyDataSetChanged")
-//    fun addCategory(categoryList : ArrayList<Category>) {
-//        this.categoryList.clear()
-//        this.categoryList.addAll(categoryList)
-//    }
-
-    fun setSelectedPos(pos : Int) {
-        this.selectedPos = pos
+    fun setSelectedIdx(idx : Int) {
+        this.selectedIdx = idx
+        notifyDataSetChanged()
     }
 
 }
