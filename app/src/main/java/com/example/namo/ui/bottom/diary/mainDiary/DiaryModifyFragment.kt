@@ -63,11 +63,9 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
 
         charCnt()
 
-        val categoryIdx = requireArguments().getInt("categoryIdx")
-
         Thread {
             event = db.diaryDao.getSchedule(scheduleIdx)
-            category = db.categoryDao.getCategoryContent(categoryIdx)
+            category = db.categoryDao.getCategoryContent(event.categoryIdx)
             requireActivity().runOnUiThread {
                 galleryAdapter = GalleryListAdapter(requireContext())
                 event.imgs?.let { galleryAdapter.addImages(it) }

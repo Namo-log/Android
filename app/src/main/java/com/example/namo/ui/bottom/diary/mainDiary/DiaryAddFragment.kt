@@ -69,12 +69,11 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
     @SuppressLint("SimpleDateFormat")
     private fun bind() {
-        val categoryIdx = requireArguments().getInt("categoryIdx")
 
         val r = Runnable {
             try {
                 event = db.diaryDao.getSchedule(scheduleIdx)
-                val category = db.categoryDao.getCategoryContent(categoryIdx)
+                val category = db.categoryDao.getCategoryContent(event.categoryIdx)
 
                 requireActivity().runOnUiThread {
                     binding.apply {
