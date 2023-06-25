@@ -60,13 +60,10 @@ class ScheduleDialogCategoryFragment : Fragment() {
         setInitialCategory()
 
         val rv = binding.dialogScheduleCategoryRv
-    private fun getCategoryList(categoryRVAdapter: DialogCategoryRVAdapter) {
-        //db initial insert
-//        initialCategory()
 
         val r = Runnable {
             try {
-                categoryList = db.categoryDao.getCategoryList()
+                categoryList = db.categoryDao.getActiveCategoryList(true)
                 categoryRVAdapter = DialogCategoryRVAdapter(requireContext(), categoryList)
                 categoryRVAdapter.setSelectedIdx(selectedCategory)
                 categoryRVAdapter.setMyItemClickListener(object: DialogCategoryRVAdapter.MyItemClickListener {

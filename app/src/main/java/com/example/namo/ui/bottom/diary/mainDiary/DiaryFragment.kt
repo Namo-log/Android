@@ -99,7 +99,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
                     task.eventId,
                     task.title,
                     task.startLong,
-                    task.place,
+                    task.placeName,
                     task.categoryIdx,
                     category.color,
                     task.hasDiary,

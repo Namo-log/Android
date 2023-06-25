@@ -5,20 +5,12 @@ import android.app.NotificationManager
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -69,9 +61,6 @@ class LoginFragment: Fragment(), LoginView {
 //            setAlarm(System.currentTimeMillis() + 10000)
 //            setContent("나모","두 번째 알람입니다.")
 //            setAlarm(System.currentTimeMillis() + 20000)
-            val intent = Intent(requireContext(), MainActivity::class.java)
-            requireActivity().finish()
-            startActivity(intent)
             setLoginFinished()
         }
     }
@@ -140,6 +129,10 @@ class LoginFragment: Fragment(), LoginView {
     private fun setLoginFinished(){
         val prefs = requireActivity().getSharedPreferences("setLogin", Context.MODE_PRIVATE)
         prefs.edit().putBoolean("finished",true).apply()
+
+        val intent = Intent(requireContext(), MainActivity::class.java)
+        requireActivity().finish()
+        startActivity(intent)
     }
 
     override fun onPostKakaoSDKSuccess(response: LoginResponse) {
@@ -156,7 +149,6 @@ class LoginFragment: Fragment(), LoginView {
             .apply()
 
         // 화면 이동
-        findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
         setLoginFinished()
     }
 
@@ -178,7 +170,6 @@ class LoginFragment: Fragment(), LoginView {
             .apply()
 
         // 화면 이동
-        findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
         setLoginFinished()
     }
 

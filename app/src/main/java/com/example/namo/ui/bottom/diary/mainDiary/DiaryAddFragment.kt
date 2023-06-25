@@ -85,7 +85,7 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
                         diaryTitleTv.isSelected = true  // marquee
                         diaryTitleTv.text = event.title
 
-                        if (event.place.isEmpty()) diaryInputPlaceTv.text = "장소 없음"
+                        if (event.placeName.isEmpty()) diaryInputPlaceTv.text = "장소 없음"
                         else diaryInputPlaceTv.text = event.placeName
 
                         context?.resources?.let {
