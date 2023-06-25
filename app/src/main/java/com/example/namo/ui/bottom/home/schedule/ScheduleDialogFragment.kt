@@ -766,7 +766,7 @@ class ScheduleDialogFragment (
         event.place = place_name
     }
 
-    private fun setCategory() { // 왜 필요한 거지
+    private fun setCategory() {
         val thread = Thread {
             val category = db.categoryDao.getCategoryContent(selectedCategory)
             Log.d("SET_CATEGORY", category.toString())
@@ -780,6 +780,7 @@ class ScheduleDialogFragment (
             }
 
             Log.d("CATEGORY_COLOR", "idx : ${selectedCategory}, name : ${category.name}")
+            categoryRVAdapter.setSelectedPos(getSelectedCategoryPos())
         }
         thread.start()
         try {
@@ -797,9 +798,6 @@ class ScheduleDialogFragment (
 
         val r = Runnable {
             try {
-//                initCategory = 0
-//                Log.d("ScheduleDialogFrag", "initCategory = $initCategory")
-                categoryRVAdapter.setSelectedPos(selectedCategory)
 
                 // 활성화 상태의 카테고리만 보여줌
                 categoryList = db.categoryDao.getActiveCategoryList(true)
@@ -853,6 +851,18 @@ class ScheduleDialogFragment (
         }
     }
 
+    private fun getSelectedCategoryPos(): Int {
+        var selectedItemPos = 0
+
+        for (i: Int in 0 until categoryList.size) {
+            if (categoryList[i].categoryIdx == selectedCategory) {
+                selectedItemPos = i
+                //Log.e("selectedItemPos", selectedItemPos.toString())
+            }
+        }
+        return selectedItemPos
+    }
+
 
     override fun onResume() {
         super.onResume()
@@ -878,7 +888,7 @@ class ScheduleDialogFragment (
         selectedCategory = initCategory
         isEdit = false
 
-        Log.d("LIFECYCLE", "Ondestory")
+        Log.d("LIFECYCLE", "OnDestroy")
 
     }
 
