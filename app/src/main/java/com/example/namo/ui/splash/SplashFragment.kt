@@ -53,7 +53,7 @@ class SplashFragment : Fragment() {
             } else {
                 findNavController().navigate(R.id.action_splashFragment_to_onBoardingFragment)
             }
-        }, 0)
+        }, 1000L)
     }
 
     private fun isOnBoardingFinished() : Boolean {
