@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_schedule"
+    app:startDestination="@id/scheduleDialogBasicFragment">
+
+    <fragment
+        android:id="@+id/scheduleDialogBasicFragment"
+        android:name="com.example.namo.ui.bottom.home.schedule.ScheduleDialogBasicFragment"
+        android:label="ScheduleDialogBasicFragment"
+        tools:layout="@layout/fragment_schedule_dialog_basic">
+        <action
+            android:id="@+id/action_scheduleDialogBasicFragment_to_scheduleDialogCategoryFragment"
+            app:destination="@id/scheduleDialogCategoryFragment" />
+        <action
+            android:id="@+id/action_scheduleDialogBasicFragment_self"
+            app:destination="@id/scheduleDialogBasicFragment"
+            app:popUpTo="@id/scheduleDialogBasicFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="event"
+            app:argType="com.example.namo.data.entity.home.Event"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/scheduleDialogCategoryFragment"
+        android:name="com.example.namo.ui.bottom.home.schedule.ScheduleDialogCategoryFragment"
+        android:label="ScheduleDialogCategoryFragment"
+        tools:layout="@layout/fragment_schedule_dialog_category">
+        <action
+            android:id="@+id/action_scheduleDialogCategoryFragment_to_scheduleDialogBasicFragment"
+            app:destination="@id/scheduleDialogBasicFragment"
+            app:popUpTo="@id/scheduleDialogBasicFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="event"
+            app:argType="com.example.namo.data.entity.home.Event" />
+    </fragment>
+</navigation>
