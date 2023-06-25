@@ -36,7 +36,7 @@ class ApplicationClass: Application() {
     // 앱이 처음 생성되는 순간, SP를 새로 만들어주고, 레트로핏 인스턴스를 생성합니다.
     override fun onCreate() {
         super.onCreate()
-        sSharedPreferences = applicationContext.getSharedPreferences("SOFTSQUARED_TEMPLATE_APP", MODE_PRIVATE)
+        sSharedPreferences = applicationContext.getSharedPreferences("NAMO", MODE_PRIVATE)
 
         // 카카오 SDK 초기화
         KakaoSdk.init(this, BuildConfig.KAKAO_API_KEY)

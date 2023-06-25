@@ -20,7 +20,7 @@ class XAccessTokenInterceptor : Interceptor {
         val newRequest = request.newBuilder()
 
         if (accessToken != null) {
-            newRequest.addHeader("ACCESS-TOKEN", accessToken) // Authorizaiton
+            newRequest.addHeader("Authorization", accessToken)
         }
 
         val response = chain.proceed(newRequest.build())
@@ -55,9 +55,9 @@ class XAccessTokenInterceptor : Interceptor {
                     //val newJwtToken: String? = sSharedPreferences.getString(X_ACCESS_TOKEN, null)
                     val newJwtToken = responseBody.result.accessToken
 
-                    // 하던 작업 서버 재요청
+                    // 새로운 토큰으로 하던 작업 서버 재요청
                     val finalRequest = chain.request().newBuilder()
-                        .addHeader("ACCESS-TOKEN", newJwtToken)
+                        .addHeader("Authorization", newJwtToken)
                         .build()
 
                     response.close()
@@ -67,6 +67,7 @@ class XAccessTokenInterceptor : Interceptor {
                 if (newTokenResponse.body()?.code == 401) { // 리프레시 토큰 만료
                     Log.d("Token", "401 리프레시 토큰 만료")
                     // 로그인 다시하기
+
                 }
             }
             403 -> {

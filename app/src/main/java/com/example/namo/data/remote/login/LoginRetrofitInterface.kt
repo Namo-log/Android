@@ -11,6 +11,12 @@ interface LoginRetrofitInterface {
         @Body body: TokenBody
     ) : Call<LoginResponse>
 
+    // SDK 네이버 로그인
+    @POST("auth/naver/signup")
+    fun postNaverSDK(
+        @Body naverData: TokenBody
+    ) : Call<LoginResponse>
+
     // 토큰 재발급
     @POST("auth/reissuance")
     fun refreshToken(

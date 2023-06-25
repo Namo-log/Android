@@ -20,6 +20,9 @@ android {
         versionName "1.0"
 
         buildConfigField "String", "KAKAO_API_KEY", properties['kakao_api_key']
+        buildConfigField "String", "NAVER_CLIENT_ID", properties['naver_client_id']
+        buildConfigField "String", "NAVER_CLIENT_SECRET", properties['naver_client_secret']
+
         // mainfest에서 쓸 수 있도록 지정
         manifestPlaceholders = [KAKAO_API_KEY : kakaoApiKey]
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -58,6 +61,10 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
     implementation 'com.google.firebase:protolite-well-known-types:18.0.0'
+
+    //naver Login
+    implementation 'com.navercorp.nid:oauth-jdk8:5.1.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
     //kakao Login
     implementation 'com.kakao.sdk:v2-user:2.12.1'
