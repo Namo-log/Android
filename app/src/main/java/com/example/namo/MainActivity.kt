@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        initNavigation()
 
         checkPermissions()
     }
@@ -128,5 +129,10 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "일정 관리를 위해 설정에서 권한을 허용해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun initNavigation() {
+        NavigationUI.setupWithNavController(binding.navBar, findNavController(R.id.nav_host))
+        //바텀내비 백스택 수정 필요
     }
 }
