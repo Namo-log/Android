@@ -86,5 +86,7 @@
     <string name="category_detail_normal_color">기본 색상</string>
     <string name="category_detail_isShare">공유 설정</string>
     <string name="category_detail_setting">카테고리 설정</string>
+    <string name="group_place">장소</string>
+    <string name="group_money">금액 정산</string>
 
 </resources>

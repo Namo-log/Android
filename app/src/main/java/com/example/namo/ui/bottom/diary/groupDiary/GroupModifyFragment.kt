@@ -3,51 +3,43 @@ package com.example.namo.ui.bottom.diary.groupDiary
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.R
 import com.example.namo.data.entity.diary.DiaryGroupEvent
 import com.example.namo.data.entity.diary.GroupDiaryMember
-import com.example.namo.databinding.FragmentDiaryGroupAddBinding
+import com.example.namo.databinding.FragmentDiaryGroupModifyBinding
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupMemberRVAdapter
+import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupModifyRVAdapter
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupPlaceGalleryAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
+class GroupModifyFragment : Fragment() {  // 그룹 다이어리 편집 화면
 
-class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
-
-    private var _binding: FragmentDiaryGroupAddBinding? = null
+    private var _binding: FragmentDiaryGroupModifyBinding? = null
     private val binding get() = _binding!!
 
     private var memberNames = ArrayList<GroupDiaryMember>()  // 그룹 다이어리 구성원
+    private lateinit var memberadapter: GroupMemberRVAdapter
     private var placeEvent: ArrayList<DiaryGroupEvent> = arrayListOf()  // 장소, 정산 금액, 이미지
     private var imgList = mutableListOf<String>() // 장소별 이미지
-
-    private lateinit var memberadapter: GroupMemberRVAdapter
     private lateinit var imgAdapter: GroupPlaceGalleryAdapter
 
     private lateinit var groupLayout: LinearLayout
@@ -66,30 +58,23 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentDiaryGroupAddBinding.inflate(inflater, container, false)
+        _binding = FragmentDiaryGroupModifyBinding.inflate(inflater, container, false)
 
         hideBottomNavigation(true)
-
-        addEventView()
         onClickListener()
-        onRecyclerView()
         dummy()
 
-
-        // test
-        binding.groupModifyTestTv.setOnClickListener {
-
-            val bundle = Bundle()
-            bundle.putSerializable("event", placeEvent)
-
-            val editFrag = GroupModifyFragment()
-            editFrag.arguments = bundle
-            view?.findNavController()
-                ?.navigate(R.id.action_groupDiaryFragment_to_groupModifyFragment, bundle)
-
+        binding.groupAddBackIv.setOnClickListener { // 뒤로가기
+            findNavController().popBackStack()
         }
 
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        onRecyclerView()
+        addEventView()
     }
 
 
@@ -149,7 +134,6 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
             }.show(parentFragmentManager, "show")
         }
     }
-
 
     private fun hasImagePermission(): Boolean { // 갤러리 권한 여부
         val writePermission = ContextCompat.checkSelfPermission(
@@ -244,16 +228,26 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
     }
 
 
-    /** 이미지 절대 경로 변환 **/
-    @SuppressLint("Recycle")
-    private fun absolutelyPath(path: Uri, context: Context): String {
-        val proj: Array<String> = arrayOf(MediaStore.Images.Media.DATA)
-        val c: Cursor? = context.contentResolver.query(path, proj, null, null, null)
-        val index = c?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        c?.moveToFirst()
-        val result = c?.getString(index!!)
+    private fun onRecyclerView() {
+        val placeEvent = arguments?.getSerializable("event") as ArrayList<DiaryGroupEvent>
 
-        return result!!
+        val adapter = GroupModifyRVAdapter(requireContext())
+        binding.groupGetEventRy.adapter = adapter
+        binding.groupGetEventRy.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        adapter.addItem(placeEvent)
+
+        val itemTouchHelperCallback = ItemTouchHelperCallback(adapter)
+        val helper = ItemTouchHelper(itemTouchHelperCallback)
+        // RecyclerView에 ItemTouchHelper 연결
+        helper.attachToRecyclerView(binding.groupGetEventRy)
+
+
+        // 멤버 이름 리사이클러뷰
+        memberadapter = GroupMemberRVAdapter(memberNames)
+        binding.groupAddPeopleRv.adapter = memberadapter
+        binding.groupAddPeopleRv.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
 
@@ -272,24 +266,8 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
             findNavController().popBackStack()
         }
 
-        binding.groupPlaceSaveTv.setOnClickListener {// 저장하기
-            Log.d("placeEvent", placeEvent.toString())
-            findNavController().popBackStack()
-        }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun onRecyclerView() {
-
-        binding.apply {
-
-            // 멤버 이름 리사이클러뷰
-            memberadapter = GroupMemberRVAdapter(memberNames)
-            groupAddPeopleRv.adapter = memberadapter
-            groupAddPeopleRv.layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        }
-    }
 
     private fun setMember(isVisible: Boolean) {
         if (isVisible) {
@@ -325,6 +303,7 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
 
     override fun onResume() {
         super.onResume()
+
         hideBottomNavigation(true)
     }
 

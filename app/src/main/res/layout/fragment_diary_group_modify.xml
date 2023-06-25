@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!-- 그룹 다이어리 추가 화면 -->
+<?xml version="1.0" encoding="utf-8"?><!-- 그룹 다이어리 편집 화면 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -34,17 +34,6 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/group_add_back_iv" />
-
-        <TextView
-            android:id="@+id/group_modify_test_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="그룹 수정 test"
-            android:textColor="@color/black"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/group_add_back_iv" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -121,7 +110,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
-        app:layout_constraintBottom_toTopOf="@id/group_place_save_tv"
+        app:layout_constraintBottom_toTopOf="@id/group_modify_save_tv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/group_add_people_rv">
 
@@ -130,6 +119,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/group_get_event_ry"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                tools:listitem="@layout/item_diary_group_event" />
 
             <LinearLayout
                 android:id="@+id/group_layout"
@@ -147,7 +145,6 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/record_btn_background"
-                android:enabled="true"
                 android:text="장소 추가"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -155,20 +152,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
     <TextView
-        android:id="@+id/group_place_save_tv"
+        android:id="@+id/group_modify_save_tv"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/MainOrange"
+        android:background="@color/white"
         android:padding="15dp"
-        android:text="기록 저장"
+        android:text="기록 수정"
         android:textAlignment="center"
-        android:textColor="@color/white"
+        android:textColor="@color/MainOrange"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
