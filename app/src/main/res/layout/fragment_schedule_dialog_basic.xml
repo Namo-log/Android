@@ -50,6 +50,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="일정 이름"
+        android:maxLines="1"
+        android:singleLine="true"
         android:textColorHint="@color/transGray"
         android:background="@color/transparent"
         android:textStyle="bold"

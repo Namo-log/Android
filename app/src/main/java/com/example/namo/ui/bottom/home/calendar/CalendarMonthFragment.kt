@@ -57,7 +57,9 @@ class CalendarMonthFragment : Fragment() {
 
         binding.homeFab.setOnClickListener {
             Log.d("DIALOG_OPEN", nowIdx.toString())
+            Log.d("DIALOG_OPEN", monthList[nowIdx].toString())
             val intent = Intent(context, ScheduleActivity::class.java)
+            intent.putExtra("nowDay", monthList[nowIdx].millis)
             requireActivity().startActivity(intent)
         }
 

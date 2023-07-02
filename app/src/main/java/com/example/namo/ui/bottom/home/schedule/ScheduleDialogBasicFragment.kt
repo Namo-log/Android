@@ -120,6 +120,10 @@ class ScheduleDialogBasicFragment : Fragment() {
             setContent()
         } else {
             binding.dialogScheduleHeaderTv.text = "새 일정"
+            val nowDay = args.nowDay
+            if (nowDay != 0L) {
+                date = DateTime(args.nowDay)
+            }
             initPickerText()
             initCategory()
         }
@@ -360,10 +364,18 @@ class ScheduleDialogBasicFragment : Fragment() {
     }
 
     private fun setAlarm(desiredTime: Long) {
+        var early = false
         for (i in alarmList) {
             val time = DateTime(desiredTime).minusMinutes(i).millis
+            if (time <= System.currentTimeMillis()) {
+                early = true
+                continue
+            }
             val id = scheduelIdx + time.toInt()
             checkNotificationPermission(requireActivity(), time, id)
+        }
+        if (early) {
+            Toast.makeText(context, "현재 시간보다 이른 알림을 제외하고 알림을 등록하였습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 
