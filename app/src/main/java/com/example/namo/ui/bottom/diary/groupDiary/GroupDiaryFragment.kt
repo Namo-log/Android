@@ -126,11 +126,11 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
         val moneyImg = layout.findViewById<ImageView>(R.id.item_place_money_iv)
 
         gallery.setOnClickListener {
-            if (moneyText.text.toString() == "0") {
-                // 정산 금액이 비어있으면 갤러리로 이동 불가,
-                // 이미지를 가져왔을 때 데이터가 저장되기 때문에 이미지 추가가 마지막 순서여야 함....ㅜ
-                Toast.makeText(requireContext(), "정산 금액이 비어있어요!", Toast.LENGTH_SHORT).show()
-            } else {
+//            if (moneyText.text.toString() == "0") {
+//                // 정산 금액이 비어있으면 갤러리로 이동 불가,
+//                // 이미지를 가져왔을 때 데이터가 저장되기 때문에 이미지 추가가 마지막 순서여야 함....ㅜ
+//                Toast.makeText(requireContext(), "정산 금액이 비어있어요!", Toast.LENGTH_SHORT).show()
+//            } else {
                 getGallery()
 
                 imgAdapter = GroupPlaceGalleryAdapter(requireContext())
@@ -140,7 +140,7 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
                     LinearLayoutManager.HORIZONTAL,
                     false
                 )
-            }
+
         }
 
         moneyImg.setOnClickListener {

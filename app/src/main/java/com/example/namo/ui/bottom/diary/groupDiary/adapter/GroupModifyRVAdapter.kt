@@ -56,6 +56,8 @@ class GroupModifyRVAdapter(  // 그룹 다이어리 수정
 
             binding.groupGalleryLv.visibility = View.GONE
             binding.groupAddGalleryRv.visibility = View.VISIBLE
+
+            binding.itemPlaceMoneyIv.visibility=View.GONE
         }
     }
 
