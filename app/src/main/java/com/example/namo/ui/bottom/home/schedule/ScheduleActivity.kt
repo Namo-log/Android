@@ -43,11 +43,10 @@ class ScheduleActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val event = intent.getSerializableExtra("event") as? Event
+        val nowDay = intent.getLongExtra("nowDay", 0)
 
         if (event != null) {
             binding.scheduleDeleteBtn.visibility = View.VISIBLE
-            val action = ScheduleDialogBasicFragmentDirections.actionScheduleDialogBasicFragmentSelf(event = event)
-            navController.navigate(action)
 
             deleteClick(event)
         } else {
@@ -56,6 +55,8 @@ class ScheduleActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
         }
+        val action = ScheduleDialogBasicFragmentDirections.actionScheduleDialogBasicFragmentSelf(event = event, nowDay = nowDay)
+        navController.navigate(action)
 
         val slideAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up)
         binding.scheduleContainerLayout.startAnimation(slideAnimation)

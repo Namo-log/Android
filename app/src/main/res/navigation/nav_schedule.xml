@@ -23,6 +23,10 @@
             app:argType="com.example.namo.data.entity.home.Event"
             app:nullable="true"
             android:defaultValue="@null" />
+        <argument
+            android:name="nowDay"
+            app:argType="long"
+            android:defaultValue="0L" />
     </fragment>
     <fragment
         android:id="@+id/scheduleDialogCategoryFragment"
