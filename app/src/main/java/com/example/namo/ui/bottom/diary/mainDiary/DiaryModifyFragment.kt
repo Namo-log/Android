@@ -25,6 +25,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
+import com.example.namo.data.entity.diary.Diary
 import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.*
@@ -44,8 +45,9 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
     private lateinit var repo: DiaryRepository
 
     private lateinit var event: Event
-    private var scheduleIdx: Int = 0
+    private lateinit var diary: Diary
     private lateinit var category: Category
+
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -62,28 +64,27 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
         val categoryDao = NamoDatabase.getInstance(requireContext()).categoryDao
         val diaryService = DiaryService()
 
+
         repo = DiaryRepository(diaryDao, categoryDao, diaryService,requireContext())
 
-        scheduleIdx = arguments?.getInt("scheduleIdx")!!
+        event=(arguments?.getSerializable("event") as? Event)!!
 
-        // 임시 scheduleIdx
-        repo.getDayDiaryRetrofit(scheduleIdx)
-        diaryService.setDiaryView(this)
-        diaryService.getDayDiaryView(this)
+        Thread{
+            diary=repo.getDiaryDaily(event.eventId.toInt())
+            category = repo.getCategoryId(event.categoryIdx)
 
-        charCnt()
+            galleryAdapter = GalleryListAdapter(requireContext())
+            diary.images?.let { galleryAdapter.addImages(it) }
 
-        Thread {
-            event = repo.getDayDiaryLocal(scheduleIdx)
-            category = repo.getCategoryIdLocal(scheduleIdx)
             requireActivity().runOnUiThread {
-                galleryAdapter = GalleryListAdapter(requireContext())
-                event.imgs?.let { galleryAdapter.addImages(it) }
                 bind()
-
-                Log.d("s",event.toString())
             }
         }.start()
+
+
+        onClickListener()
+        charCnt()
+
 
         return binding.root
     }
@@ -128,11 +129,12 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
 
         binding.apply {
             val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong)
+
             diaryInputDateTv.text = formatDate
             diaryInputPlaceTv.text = event.placeName
             diaryTitleTv.text = event.title
             diaryTitleTv.isSelected = true  // marquee
-            diaryContentsEt.setText(event.content)
+            diaryContentsEt.setText(diary.content)
             context?.resources?.let {
                 itemDiaryCategoryColorIv.background.setTint(
                     ContextCompat.getColor(
@@ -147,51 +149,48 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
 
             onRecyclerView()
 
-            diaryEditTv.setOnClickListener {
-                if (diaryEditTv.text.toString().isEmpty()) {
-                    Toast.makeText(requireContext(), "메모를 입력해주세용", Toast.LENGTH_SHORT).show()
-                } else {
-                    updateDiary()
-                    view?.findNavController()?.navigate(R.id.diaryFragment)
-                    hideBottomNavigation(false)
-                }
-            }
+        }
+    }
 
-            diaryBackIv.setOnClickListener {
-                findNavController().popBackStack()
-                hideBottomNavigation(false)
-            }
+    private fun onClickListener(){
 
-            binding.diaryDeleteIv.setOnClickListener {
-                deleteDiary()
+        binding.diaryEditTv.setOnClickListener {
+            if (binding.diaryEditTv.text.toString().isEmpty()) {
+                Toast.makeText(requireContext(), "메모를 입력해주세용", Toast.LENGTH_SHORT).show()
+            } else {
+                updateDiary()
                 view?.findNavController()?.navigate(R.id.diaryFragment)
                 hideBottomNavigation(false)
             }
+        }
 
-            diaryGalleryClickIv.setOnClickListener {
-                getPermission()
-            }
+        binding.diaryBackIv.setOnClickListener {
+            findNavController().popBackStack()
+            hideBottomNavigation(false)
+        }
+
+        binding.diaryDeleteIv.setOnClickListener {
+            deleteDiary()
+            view?.findNavController()?.navigate(R.id.diaryFragment)
+            hideBottomNavigation(false)
+        }
+
+        binding.diaryGalleryClickIv.setOnClickListener {
+            getPermission()
         }
     }
+
 
     /** 다이어리 수정 **/
     private fun updateDiary() {
         Thread {
-            event.content = binding.diaryContentsEt.text.toString()
+            diary.content = binding.diaryContentsEt.text.toString()
 
-            if (imgList.isEmpty()) event.imgs = event.imgs
-            else event.imgs = imgList
+            if (imgList.isEmpty()) diary.images = diary.images
+            else diary.images = imgList
 
-            event.imgs?.let {
-                repo.editDiaryLocal(
-                    scheduleIdx, binding.diaryContentsEt.text.toString(),
-                    it
-                )
-            }
-
-            // 임시 scheduleIdx
-            event.imgs?.let {
-                repo.editDiaryRetrofit(scheduleIdx,binding.diaryContentsEt.text.toString(),
+            diary.images?.let {
+                repo.editDiary(event.eventId.toInt(),binding.diaryContentsEt.text.toString(),
                     it
                 )
             }
@@ -203,11 +202,10 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
         Thread {
-            repo.deleteDiaryLocal(scheduleIdx, FALSE, "", listOf())
-
-            // 임시 scheduleIdx
-            repo.deleteDiaryRetrofit(scheduleIdx)
+            diary.images?.let { repo.deleteDiary(diary.scheduleIdx,diary.content, it) }
+            repo.deleteHasDiary(FALSE,event.eventId.toInt())
         }.start()
+
         Toast.makeText(requireContext(), "삭제되었습니다", Toast.LENGTH_SHORT).show()
     }
 
@@ -285,6 +283,7 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
         binding.diaryGallerySavedRy.adapter = galleryViewRVAdapter
         binding.diaryGallerySavedRy.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
     }
 
     private fun charCnt() {

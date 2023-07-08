@@ -25,6 +25,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
+import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryAddBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
@@ -41,7 +42,7 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
 
     private lateinit var repo: DiaryRepository
     private var imgList = arrayListOf<String>()
-    private var scheduleIdx: Int = 0
+    private lateinit var event: Event
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -55,17 +56,18 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
         hideBottomNavigation(true)
 
         galleryAdapter = GalleryListAdapter(requireContext())
-        scheduleIdx = arguments?.getInt("scheduleIdx")!!
 
         val diaryDao = NamoDatabase.getInstance(requireContext()).diaryDao
         val categoryDao = NamoDatabase.getInstance(requireContext()).categoryDao
         val diaryService = DiaryService()
 
-        repo = DiaryRepository(diaryDao, categoryDao, diaryService,requireContext())
+        repo = DiaryRepository(diaryDao, categoryDao, diaryService, requireContext())
         diaryService.addDiaryView(this)
 
+        setEvent()
+        onClickListener()
         charCnt()
-        bind()
+
         return binding.root
     }
 
@@ -74,24 +76,24 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
         message: String,
         result: DiaryResponse.GetScheduleIdx
     ) {
-        when(code){
-            1000-> {
-                Log.d("inputMemo","success")
+        when (code) {
+            1000 -> {
+                Log.d("inputMemo", "success")
 
             }
         }
-        Log.d("addDiary","$code $message $result")
+        Log.d("addDiary", "$code $message $result")
     }
 
 
     @SuppressLint("SimpleDateFormat")
-    private fun bind() {
+    private fun setEvent() {
 
         val r = Runnable {
             try {
 
-                val event = repo.getDayDiaryLocal(scheduleIdx)
-                val category = repo.getCategoryIdLocal(scheduleIdx)
+                event = (arguments?.getSerializable("event") as? Event)!!
+                val category = repo.getCategoryId(event.categoryIdx)
 
                 requireActivity().runOnUiThread {
                     binding.apply {
@@ -121,6 +123,10 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
 
         val thread = Thread(r)
         thread.start()
+    }
+
+
+    private fun onClickListener() {
 
         binding.apply {
 
@@ -144,6 +150,8 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
             }
             onRecyclerView()
         }
+
+
     }
 
     /** 다이어리 추가 **/
@@ -151,20 +159,8 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
         Thread {
             val content = binding.diaryContentsEt.text.toString()
 
-            repo.addDiaryLocal(
-                scheduleIdx,
-                TRUE,
-                content,
-                imgList
-            )
-
-            // 임시 scheduleIdx
-            repo.addDiaryRetrofit(
-                scheduleIdx,
-                content,
-                imgList
-            )
-
+            repo.addDiary(event.eventId.toInt(),content,imgList)
+            repo.updateHasDiary(TRUE,event.eventId.toInt())
         }.start()
     }
 

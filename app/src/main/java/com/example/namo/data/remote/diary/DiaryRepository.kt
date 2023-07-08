@@ -9,12 +9,12 @@ import android.provider.MediaStore
 import androidx.core.net.toUri
 import com.example.namo.data.dao.CategoryDao
 import com.example.namo.data.dao.DiaryDao
+import com.example.namo.data.entity.diary.Diary
+import com.example.namo.data.entity.diary.DiaryEvent
 import com.example.namo.data.entity.diary.DiaryItem
 import com.example.namo.data.entity.home.Category
-import com.example.namo.data.entity.home.Event
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
@@ -25,30 +25,14 @@ class DiaryRepository(
     private val categoryDao: CategoryDao,
     private val diaryService: DiaryService,
     val context: Context
-    ) {
+) {
 
-    /** retrofit scheduleId는 스케줄 생성 후 response로 가져오기... **/
+    fun addDiary(scheduleId: Int, content: String, images: List<String>) {
 
-    fun addDiaryLocal(scheduleId: Int, hasDiary: Boolean, content: String, imgs: List<String>) {
+        val diary = Diary(scheduleId, content, images)
+        diaryDao.insertDiary(diary)
 
-        diaryDao.addDiary(scheduleId, hasDiary, content, imgs)
-    }
-
-    // 이미지 절대경로 변환
-    @SuppressLint("Recycle")
-    private fun absolutelyPath(path: Uri, context: Context): String {
-        val proj: Array<String> = arrayOf(MediaStore.Images.Media.DATA)
-        val c: Cursor? = context.contentResolver.query(path, proj, null, null, null)
-        val index = c?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        c?.moveToFirst()
-        val result = c?.getString(index!!)
-
-        return result!!
-    }
-
-    fun addDiaryRetrofit(scheduleId: Int, content: String, imgs: List<String>) {
-
-        val imageMultiPart = imgs.map { imgPath ->
+        val imageMultiPart = images.map { imgPath ->
             val file = File(absolutelyPath(imgPath.toUri(), context))
             val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
             MultipartBody.Part.createFormData("imgs", file.name, requestFile)
@@ -61,15 +45,25 @@ class DiaryRepository(
         diaryService.addDiary(imageMultiPart, contentRequestBody, scheduleIdRequestBody)
     }
 
+    // 이미지 절대 경로 변환
+    @SuppressLint("Recycle")
+    private fun absolutelyPath(path: Uri, context: Context): String {
+        val proj: Array<String> = arrayOf(MediaStore.Images.Media.DATA)
+        val c: Cursor? = context.contentResolver.query(path, proj, null, null, null)
+        val index = c?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        c?.moveToFirst()
+        val result = c?.getString(index!!)
 
-    fun editDiaryLocal(scheduleId: Int, content: String, imgs: List<String>) {
-
-        diaryDao.updateDiary(scheduleId, content, imgs)
+        return result!!
     }
 
-    fun editDiaryRetrofit(scheduleId: Int, content: String, imgs: List<String>) {
 
-        val imageMultiPart = imgs.map { imgPath ->
+    fun editDiary(scheduleId: Int, content: String, images: List<String>) {
+
+        val diary = Diary(scheduleId, content, images)
+        diaryDao.updateDiary(diary)
+
+        val imageMultiPart = images.map { imgPath ->
             val file = File(absolutelyPath(imgPath.toUri(), context))
             val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
             MultipartBody.Part.createFormData("imgs", file.name, requestFile)
@@ -83,29 +77,44 @@ class DiaryRepository(
     }
 
 
-    fun deleteDiaryLocal(scheduleId: Int, hasDiary: Boolean, content: String, imgs: List<String>) {
+    fun deleteDiary(scheduleId: Int, content: String, images: List<String>) {
 
-        diaryDao.deleteDiary(scheduleId, hasDiary, content, imgs)
-    }
-
-    fun deleteDiaryRetrofit(scheduleId: Int) {
-
+        val diary = Diary(scheduleId, content, images)
+        diaryDao.deleteDiary(diary)
         diaryService.deleteDiary(scheduleId)
     }
 
-    fun getDateList(startMonth: Long, nextMonth: Long, hasDiary: Boolean): List<Long> {
-        return diaryDao.getDateList(startMonth, nextMonth, hasDiary)
+
+    fun getCategoryId(categoryId: Int): Category {
+        return categoryDao.getCategoryContent(categoryId)
     }
 
-    fun getMonthDiaryLocal(startMonth: Long, nextMonth: Long, hasDiary: Boolean): List<DiaryItem> {
 
-        val eventList = diaryDao.getDiaryList(startMonth, nextMonth, hasDiary)
-        return eventList.toListItems()
+    fun getDiaryDaily(scheduleId: Int): Diary {
+        return diaryDao.getDiaryDaily(scheduleId)
+    }
+
+    fun getDiaryList(yearMonth: String): List<DiaryItem> {
+
+//        val yearMonthSplit = yearMonth.split(".")
+//        val year = yearMonthSplit[0]
+//        val month = yearMonthSplit[1].removePrefix("0")
+//        val formatYearMonth = "$year,$month"
+
+        val diaryEvent = diaryDao.getDiaryEventList(yearMonth)
+
+
+        return diaryEvent.toListItems()
 
     }
+
+    fun getDiaryRetrofit(yearMonth: String){
+        diaryService.getMonthDiary(yearMonth)
+    }
+
 
     /** 같은 날짜끼리 묶어서 그룹 헤더로 추가 **/
-    private fun List<Event>.toListItems(): List<DiaryItem> {
+    private fun List<DiaryEvent>.toListItems(): List<DiaryItem> {
         val result = arrayListOf<DiaryItem>() // 결과를 리턴할 리스트
 
         var groupHeaderDate: Long = 0 // 그룹날짜
@@ -121,15 +130,24 @@ class DiaryRepository(
 
             result.add(
                 DiaryItem.Content(
+
                     task.eventId,
                     task.title,
                     task.startLong,
-                    task.placeName,
-                    task.categoryIdx,
+                    task.endLong,
+                    task.dayInterval,
                     category.color,
+                    task.categoryName,
+                    task.categoryIdx,
+                    task.placeName,
+                    task.placeX,
+                    task.placeY,
+                    task.placeId,
+                    task.order,
+                    task.alarmList,
                     task.hasDiary,
                     task.content,
-                    task.imgs
+                    task.images
                 )
             )
 
@@ -141,31 +159,12 @@ class DiaryRepository(
     }
 
 
-    @SuppressLint("SimpleDateFormat")
-    fun getMonthDiaryRetrofit(yearMonth: String) {
-
-        val yearMonthSplit = yearMonth.split(".")
-        val year = yearMonthSplit[0]
-        val month = yearMonthSplit[1].removePrefix("0")
-        val formatYearMonth = "$year,$month"
-
-        diaryService.getMonthDiary(formatYearMonth)
+    fun updateHasDiary(hasDiary: Boolean, scheduleIdx: Int){
+        diaryDao.updateHasDiary(hasDiary, scheduleIdx)
     }
 
-
-    fun getDayDiaryLocal(scheduleId: Int): Event {
-
-        return diaryDao.getSchedule(scheduleId)
-    }
-
-    fun getCategoryIdLocal(scheduleId: Int): Category {
-        val event = getDayDiaryLocal(scheduleId)
-        return categoryDao.getCategoryContent(event.categoryIdx)
-    }
-
-    fun getDayDiaryRetrofit(scheduleId: Int) {
-
-        diaryService.getDayDiary(scheduleId)
+    fun deleteHasDiary(hasDiary: Boolean, scheduleIdx: Int){
+        diaryDao.deleteHasDiary(hasDiary,scheduleIdx)
     }
 
 }
