@@ -47,9 +47,11 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryAddResponse>,
                     response: Response<DiaryResponse.DiaryAddResponse>
                 ) {
-                    val resp: DiaryResponse.DiaryAddResponse = response.body()!!
-                    when (val code = resp.code) {
-                        200 -> diaryView.onAddDiarySuccess(code, resp.message, resp.result)
+                    val resp: DiaryResponse.DiaryAddResponse? = response.body()
+                    if (resp != null) {
+                        when (val code = resp.code) {
+                            200 -> diaryView.onAddDiarySuccess(code, resp.message, resp.result)
+                        }
                     }
                 }
 
@@ -73,9 +75,11 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryEditResponse>,
                     response: Response<DiaryResponse.DiaryEditResponse>
                 ) {
-                    val resp: DiaryResponse.DiaryEditResponse = response.body()!!
-                    when (val code = resp.code) {
-                        200 -> diaryDetailView.onEditDiarySuccess(code, resp.message, resp.result)
+                    val resp: DiaryResponse.DiaryEditResponse? = response.body()
+                    if (resp != null) {
+                        when (val code = resp.code) {
+                            200 -> diaryDetailView.onEditDiarySuccess(code, resp.message, resp.result)
+                        }
                     }
                 }
 
@@ -97,9 +101,11 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryDeleteResponse>,
                     response: Response<DiaryResponse.DiaryDeleteResponse>
                 ) {
-                    val resp: DiaryResponse.DiaryDeleteResponse = response.body()!!
-                    when (val code = resp.code) {
-                        200 -> diaryDetailView.onDeleteDiarySuccess(code, resp.message, resp.result)
+                    val resp: DiaryResponse.DiaryDeleteResponse? = response.body()
+                    if (resp != null) {
+                        when (val code = resp.code) {
+                            200 -> diaryDetailView.onDeleteDiarySuccess(code, resp.message, resp.result)
+                        }
                     }
                 }
 
@@ -124,13 +130,15 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryGetMonthResponse>,
                     response: Response<DiaryResponse.DiaryGetMonthResponse>
                 ) {
-                    val resp: DiaryResponse.DiaryGetMonthResponse = response.body()!!
-                    when (val code = resp.code) {
-                        200 -> getMonthDiaryView.onGetMonthDiarySuccess(
-                            code,
-                            resp.message,
-                            resp.result
-                        )
+                    val resp: DiaryResponse.DiaryGetMonthResponse? = response.body()
+                    if (resp != null) {
+                        when (val code = resp.code) {
+                            200 -> getMonthDiaryView.onGetMonthDiarySuccess(
+                                code,
+                                resp.message,
+                                resp.result
+                            )
+                        }
                     }
                 }
 
@@ -154,9 +162,11 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryGetDayResponse>,
                     response: Response<DiaryResponse.DiaryGetDayResponse>
                 ) {
-                    val resp: DiaryResponse.DiaryGetDayResponse = response.body()!!
-                    when (val code = resp.code) {
-                        200 -> getDayDiaryView.onGetDayDiarySuccess(code, resp.message, resp.result)
+                    val resp: DiaryResponse.DiaryGetDayResponse? = response.body()
+                    if (resp != null) {
+                        when (val code = resp.code) {
+                            200 -> getDayDiaryView.onGetDayDiarySuccess(code, resp.message, resp.result)
+                        }
                     }
                 }
 

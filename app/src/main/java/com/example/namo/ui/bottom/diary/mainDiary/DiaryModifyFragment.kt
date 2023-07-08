@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,20 +27,21 @@ import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
+import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryModifyBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import java.lang.Boolean.FALSE
 import java.text.SimpleDateFormat
 
-class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
+class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // 다이어리 편집 화면
 
     private var _binding: FragmentDiaryModifyBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var db: NamoDatabase
     private var imgList = arrayListOf<String>()
     private lateinit var galleryAdapter: GalleryListAdapter
+    private lateinit var repo: DiaryRepository
 
     private lateinit var event: Event
     private var scheduleIdx: Int = 0
@@ -56,26 +58,69 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
 
         hideBottomNavigation(true)
 
-        db = NamoDatabase.getInstance(requireContext())
+        val diaryDao = NamoDatabase.getInstance(requireContext()).diaryDao
+        val categoryDao = NamoDatabase.getInstance(requireContext()).categoryDao
+        val diaryService = DiaryService()
+
+        repo = DiaryRepository(diaryDao, categoryDao, diaryService,requireContext())
 
         scheduleIdx = arguments?.getInt("scheduleIdx")!!
 
+        // 임시 scheduleIdx
+        repo.getDayDiaryRetrofit(scheduleIdx)
+        diaryService.setDiaryView(this)
+        diaryService.getDayDiaryView(this)
 
         charCnt()
 
         Thread {
-            event = db.diaryDao.getSchedule(scheduleIdx)
-            category = db.categoryDao.getCategoryContent(event.categoryIdx)
+            event = repo.getDayDiaryLocal(scheduleIdx)
+            category = repo.getCategoryIdLocal(scheduleIdx)
             requireActivity().runOnUiThread {
                 galleryAdapter = GalleryListAdapter(requireContext())
                 event.imgs?.let { galleryAdapter.addImages(it) }
                 bind()
+
+                Log.d("s",event.toString())
             }
         }.start()
 
         return binding.root
     }
 
+    override fun onEditDiarySuccess(code: Int, message: String, result: String) {
+        when(code){
+            1000-> {
+                Log.d("onEditDiary","success")
+
+            }
+        }
+        Log.d("onEditDiary","$code $message $result")
+    }
+
+    override fun onDeleteDiarySuccess(code: Int, message: String, result: String) {
+        when(code){
+            1000-> {
+                Log.d("onDeleteDiary","success")
+
+            }
+        }
+        Log.d("onDeleteDiary","$code $message $result")
+    }
+
+    override fun onGetDayDiarySuccess(
+        code: Int,
+        message: String,
+        result: DiaryResponse.DayDiaryDto
+    ) {
+        when(code){
+            1000-> {
+                Log.d("onGetDayDiary","success")
+
+            }
+        }
+        Log.d("onGetDayDiary","$code $message $result")
+    }
 
     @SuppressLint("SimpleDateFormat")
     private fun bind() {
@@ -138,11 +183,19 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
             else event.imgs = imgList
 
             event.imgs?.let {
-                db.diaryDao.updateDiary(
+                repo.editDiaryLocal(
                     scheduleIdx, binding.diaryContentsEt.text.toString(),
                     it
                 )
             }
+
+            // 임시 scheduleIdx
+            event.imgs?.let {
+                repo.editDiaryRetrofit(scheduleIdx,binding.diaryContentsEt.text.toString(),
+                    it
+                )
+            }
+
         }.start()
         Toast.makeText(requireContext(), "수정되었습니다", Toast.LENGTH_SHORT).show()
     }
@@ -150,7 +203,10 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
         Thread {
-            db.diaryDao.deleteDiary(scheduleIdx, FALSE, "", listOf())
+            repo.deleteDiaryLocal(scheduleIdx, FALSE, "", listOf())
+
+            // 임시 scheduleIdx
+            repo.deleteDiaryRetrofit(scheduleIdx)
         }.start()
         Toast.makeText(requireContext(), "삭제되었습니다", Toast.LENGTH_SHORT).show()
     }
@@ -285,4 +341,6 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
         _binding = null
         hideBottomNavigation(false)
     }
+
+
 }

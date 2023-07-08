@@ -1,56 +1,56 @@
 package com.example.namo.data.remote.diary
 
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.database.Cursor
+import android.net.Uri
+import android.provider.MediaStore
+import androidx.core.net.toUri
 import com.example.namo.data.dao.CategoryDao
 import com.example.namo.data.dao.DiaryDao
 import com.example.namo.data.entity.diary.DiaryItem
+import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
 
 class DiaryRepository(
     private val diaryDao: DiaryDao,
     private val categoryDao: CategoryDao,
     private val diaryService: DiaryService,
+    val context: Context
+    ) {
 
-    private val diaryView: DiaryView,
-    private val diaryDetailView: DiaryDetailView,
-    private val getMonthDiaryView: GetMonthDiaryView,
-    private val getDayDiaryView: GetDayDiaryView
-) {
+    /** retrofit scheduleId는 스케줄 생성 후 response로 가져오기... **/
 
-
-    /** scheduleId는 스케줄 생성 후 response로 가져오기 **/
-
-    fun addDiary(scheduleId: Int, hasDiary: Boolean, content: String, imgs: List<String>) {
-
-        val imageMultiPart = imgs.map { imgPath ->
-            val file = File(imgPath)
-            val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
-            MultipartBody.Part.createFormData("imgs", file.name, requestFile)
-        }
-
-        val contentRequestBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
-        val scheduleIdRequestBody =
-            scheduleId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+    fun addDiaryLocal(scheduleId: Int, hasDiary: Boolean, content: String, imgs: List<String>) {
 
         diaryDao.addDiary(scheduleId, hasDiary, content, imgs)
-        diaryService.addDiary(imageMultiPart, contentRequestBody, scheduleIdRequestBody)
-
-        diaryService.addDiaryView(diaryView)
     }
 
+    // 이미지 절대경로 변환
+    @SuppressLint("Recycle")
+    private fun absolutelyPath(path: Uri, context: Context): String {
+        val proj: Array<String> = arrayOf(MediaStore.Images.Media.DATA)
+        val c: Cursor? = context.contentResolver.query(path, proj, null, null, null)
+        val index = c?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        c?.moveToFirst()
+        val result = c?.getString(index!!)
 
-    fun editDiary(scheduleId: Int, content: String, imgs: List<String>) {
+        return result!!
+    }
+
+    fun addDiaryRetrofit(scheduleId: Int, content: String, imgs: List<String>) {
 
         val imageMultiPart = imgs.map { imgPath ->
-            val file = File(imgPath)
-            val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
+            val file = File(absolutelyPath(imgPath.toUri(), context))
+            val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
             MultipartBody.Part.createFormData("imgs", file.name, requestFile)
         }
 
@@ -58,19 +58,39 @@ class DiaryRepository(
         val scheduleIdRequestBody =
             scheduleId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
 
-        diaryDao.updateDiary(scheduleId, content, imgs)
-        diaryService.editDiary(imageMultiPart, contentRequestBody, scheduleIdRequestBody)
-
-        diaryService.setDiaryView(diaryDetailView)
-
+        diaryService.addDiary(imageMultiPart, contentRequestBody, scheduleIdRequestBody)
     }
 
-    fun deleteDiary(scheduleId: Int, hasDiary: Boolean, content: String, imgs: List<String>) {
+
+    fun editDiaryLocal(scheduleId: Int, content: String, imgs: List<String>) {
+
+        diaryDao.updateDiary(scheduleId, content, imgs)
+    }
+
+    fun editDiaryRetrofit(scheduleId: Int, content: String, imgs: List<String>) {
+
+        val imageMultiPart = imgs.map { imgPath ->
+            val file = File(absolutelyPath(imgPath.toUri(), context))
+            val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+            MultipartBody.Part.createFormData("imgs", file.name, requestFile)
+        }
+
+        val contentRequestBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
+        val scheduleIdRequestBody =
+            scheduleId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+
+        diaryService.editDiary(imageMultiPart, contentRequestBody, scheduleIdRequestBody)
+    }
+
+
+    fun deleteDiaryLocal(scheduleId: Int, hasDiary: Boolean, content: String, imgs: List<String>) {
 
         diaryDao.deleteDiary(scheduleId, hasDiary, content, imgs)
-        diaryService.deleteDiary(scheduleId)
+    }
 
-        diaryService.setDiaryView(diaryDetailView)
+    fun deleteDiaryRetrofit(scheduleId: Int) {
+
+        diaryService.deleteDiary(scheduleId)
     }
 
     fun getDateList(startMonth: Long, nextMonth: Long, hasDiary: Boolean): List<Long> {
@@ -84,6 +104,7 @@ class DiaryRepository(
 
     }
 
+    /** 같은 날짜끼리 묶어서 그룹 헤더로 추가 **/
     private fun List<Event>.toListItems(): List<DiaryItem> {
         val result = arrayListOf<DiaryItem>() // 결과를 리턴할 리스트
 
@@ -120,23 +141,31 @@ class DiaryRepository(
     }
 
 
+    @SuppressLint("SimpleDateFormat")
     fun getMonthDiaryRetrofit(yearMonth: String) {
 
-        val monthType = SimpleDateFormat("yyyy,M")
-        val month = monthType.format(Date(yearMonth))
+        val yearMonthSplit = yearMonth.split(".")
+        val year = yearMonthSplit[0]
+        val month = yearMonthSplit[1].removePrefix("0")
+        val formatYearMonth = "$year,$month"
 
-        diaryService.getMonthDiary(month)
-        diaryService.getMonthDiaryView(getMonthDiaryView)
+        diaryService.getMonthDiary(formatYearMonth)
     }
 
 
     fun getDayDiaryLocal(scheduleId: Int): Event {
+
         return diaryDao.getSchedule(scheduleId)
     }
 
+    fun getCategoryIdLocal(scheduleId: Int): Category {
+        val event = getDayDiaryLocal(scheduleId)
+        return categoryDao.getCategoryContent(event.categoryIdx)
+    }
+
     fun getDayDiaryRetrofit(scheduleId: Int) {
+
         diaryService.getDayDiary(scheduleId)
-        diaryService.getDayDiaryView(getDayDiaryView)
     }
 
 }
