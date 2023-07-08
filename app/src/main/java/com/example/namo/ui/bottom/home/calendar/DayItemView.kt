@@ -4,7 +4,9 @@ import android.content.Context
 import android.graphics.*
 import android.text.StaticLayout
 import android.text.TextPaint
+import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.View
 import androidx.annotation.AttrRes
@@ -33,7 +35,7 @@ class DayItemView @JvmOverloads constructor(
     private var showTitle: Boolean = false
     private var paint: Paint = Paint()
     private var bgPaint: Paint = Paint()
-    private var eventPaint: Paint = Paint()
+    private var eventPaint: TextPaint = TextPaint()
     private var morePaint : Paint = Paint()
 
     private var todayNoticePaint : Paint = Paint()
@@ -176,12 +178,29 @@ class DayItemView @JvmOverloads constructor(
                 if (showTitle) {
                     getEventText(eventList[i].title)
                     eventPaint.getTextBounds(eventText, 0, eventText.length, eventBounds)
-                    canvas.drawText(
-                        eventText,
-                        _eventBetweenPadding,
-                        getTextBottom(eventList[i].order),
-                        eventPaint
-                    )
+
+                    val textWidth = eventPaint.measureText(eventText)
+                    val pathWidth = rect.width()
+                    Log.d("DRAW_TEXT", "path : $pathWidth")
+                    Log.d("DRAW_TEXT", "eventTitle : $textWidth")
+
+                    if (textWidth > pathWidth) {
+                        val ellipsizedText = TextUtils.ellipsize(eventText, eventPaint, pathWidth, TextUtils.TruncateAt.END)
+                        canvas.drawText(
+                            ellipsizedText.toString(),
+                            _eventBetweenPadding,
+                            getTextBottom(eventList[i].order),
+                            eventPaint
+                        )
+
+                    } else {
+                        canvas.drawText(
+                            eventText,
+                            _eventBetweenPadding,
+                            getTextBottom(eventList[i].order),
+                            eventPaint
+                        )
+                    }
                 }
 
             }

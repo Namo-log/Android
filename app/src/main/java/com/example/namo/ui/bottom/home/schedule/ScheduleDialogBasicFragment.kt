@@ -17,6 +17,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.DatePicker
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -27,6 +28,7 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -183,6 +185,7 @@ class ScheduleDialogBasicFragment : Fragment() {
     private fun clickListener() {
         //카테고리 클릭
         binding.dialogScheduleCategoryLayout.setOnClickListener {
+            hidekeyboard()
             storeContent()
 
             val action = ScheduleDialogBasicFragmentDirections.actionScheduleDialogBasicFragmentToScheduleDialogCategoryFragment(event)
@@ -205,23 +208,28 @@ class ScheduleDialogBasicFragment : Fragment() {
         }
 
         binding.dialogScheduleStartDateTv.setOnClickListener {
+            hidekeyboard()
             showPicker(binding.dialogScheduleStartDateTv, binding.dialogScheduleDateLayout)
         }
 
         binding.dialogScheduleEndDateTv.setOnClickListener {
+            hidekeyboard()
             showPicker(binding.dialogScheduleEndDateTv, binding.dialogScheduleDateLayout)
         }
 
         binding.dialogScheduleStartTimeTv.setOnClickListener {
+            hidekeyboard()
             showPicker(binding.dialogScheduleStartTimeTv, binding.dialogScheduleStartTimeLayout)
         }
 
         binding.dialogScheduleEndTimeTv.setOnClickListener {
+            hidekeyboard()
             showPicker(binding.dialogScheduleEndTimeTv, binding.dialogScheduleEndTimeLayout)
         }
 
         //알람 클릭
         binding.dialogScheduleAlarmLayout.setOnClickListener {
+            hidekeyboard()
             if (!isAlarm) binding.dialogScheduleAlarmContentLayout.visibility = View.VISIBLE
             else binding.dialogScheduleAlarmContentLayout.visibility = View.GONE
             isAlarm = !isAlarm
@@ -274,10 +282,13 @@ class ScheduleDialogBasicFragment : Fragment() {
 
         // 장소 클릭
         binding.dialogSchedulePlaceLayout.setOnClickListener {
+            hidekeyboard()
             getLocationPermission()
         }
 
         binding.dialogSchedulePlaceKakaoBtn.setOnClickListener {
+            hidekeyboard()
+
             val url = "kakaomap://route?sp=&ep=${place_y},${place_x}&by=PUBLICTRANSIT"
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
@@ -327,6 +338,11 @@ class ScheduleDialogBasicFragment : Fragment() {
 
             requireActivity().finish()
         }
+    }
+
+    private fun hidekeyboard() {
+        val inputManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(binding.dialogScheduleTitleEt.windowToken, 0)
     }
 
 

@@ -77,6 +77,7 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
             val color = personal.categoryColor
 
             binding.itemCalendarEventTitle.text = personal.title
+            binding.itemCalendarEventTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
             binding.itemCalendarEventColorView.background.setTint(context.resources.getColor(personal.categoryColor))
             binding.itemCalendarEventRecord.setColorFilter(context.resources.getColor(R.color.realGray))
