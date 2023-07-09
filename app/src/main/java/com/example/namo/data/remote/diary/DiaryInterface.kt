@@ -1,4 +1,4 @@
-package com.example.namo.data.entity.diary.retrofit
+package com.example.namo.data.remote.diary
 
 import retrofit2.Call
 import okhttp3.MultipartBody
@@ -14,7 +14,7 @@ interface DiaryInterface {
         @Part imgs: List<MultipartBody.Part?>?,
         @Part("content") content: RequestBody?,
         @Part("scheduleId") scheduleIdx: RequestBody
-    ) :Call<DiaryResponse.DiaryAddResponse>
+    ): Call<DiaryResponse.DiaryAddResponse>
 
 
     /** 기록 편집 **/
@@ -24,21 +24,28 @@ interface DiaryInterface {
         @Part imgs: List<MultipartBody.Part?>?,
         @Part("content") content: RequestBody?,
         @Part("scheduleId") scheduleIdx: RequestBody
-    ) :Call<DiaryResponse.DiaryEditResponse>
+    ): Call<DiaryResponse.DiaryEditResponse>
 
 
     /** 기록 삭제 **/
-    @DELETE("/schedules/diary/{schedule}")
+    @DELETE("/schedules/diary/{scheduleId}")
     fun deleteDiary(
-        @Path ("schedule") schedule:Int
+        @Path("scheduleId") scheduleId: Int
     ): Call<DiaryResponse.DiaryDeleteResponse>
 
 
     /** 기록 월 별 조회 **/
     @GET("/schedules/diary/{month}")
     fun getMonthDiary(
-        @Path ("month") month:String
+        @Path("month") month: String
     ): Call<DiaryResponse.DiaryGetMonthResponse>
+
+
+    /**  기록 일 별 조회 **/
+    @GET("/schedules/diary/day/{scheduleId}}")
+    fun getDayDiary(
+        @Path("scheduleId") scheduleId: Int
+    ): Call<DiaryResponse.DiaryGetDayResponse>
 
 }
 

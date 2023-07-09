@@ -39,11 +39,11 @@ class DiaryGalleryRVAdapter(
             .load(uri)
             .into(holder.imageUrl)
 
-        holder.imageUrl.setOnClickListener {
-            if (uri != null) {
-                diaryImageClickListener.onImageClicked(uri)
-            }
-        }
+//        holder.imageUrl.setOnClickListener {
+//            if (uri != null) {
+//                diaryImageClickListener.onImageClicked(uri)
+//            }
+//        }
     }
 
     override fun getItemCount(): Int = imgList!!.size

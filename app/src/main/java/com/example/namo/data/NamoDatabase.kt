@@ -9,11 +9,12 @@ import com.example.namo.data.dao.CategoryDao
 import com.example.namo.data.dao.DiaryDao
 import com.example.namo.data.dao.EventDao
 import com.example.namo.data.dao.GroupDao
+import com.example.namo.data.entity.diary.Diary
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.entity.group.Group
 import com.example.namo.data.entity.home.Category
 
-@Database(entities = [Event::class,Group::class, Category::class], version = 1, exportSchema = false)
+@Database(entities = [Event::class,Group::class, Category::class, Diary::class], version = 1, exportSchema = false)
 @TypeConverters(
     value = [
         StringListConverters::class,

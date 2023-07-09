@@ -26,24 +26,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Event
+import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryAddBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.lang.Boolean.TRUE
 import java.text.SimpleDateFormat
 
-class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
+class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
 
     private var _binding: FragmentDiaryAddBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var db: NamoDatabase
-
     private lateinit var galleryAdapter: GalleryListAdapter
-    private lateinit var event: Event
 
+    private lateinit var repo: DiaryRepository
     private var imgList = arrayListOf<String>()
-    private var scheduleIdx: Int = 0
+    private lateinit var event: Event
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -56,24 +54,48 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
         hideBottomNavigation(true)
 
-        db = NamoDatabase.getInstance(requireContext())
-
         galleryAdapter = GalleryListAdapter(requireContext())
-        scheduleIdx = arguments?.getInt("scheduleIdx")!!
 
+        val diaryDao = NamoDatabase.getInstance(requireContext()).diaryDao
+        val categoryDao = NamoDatabase.getInstance(requireContext()).categoryDao
+        val diaryService = DiaryService()
+
+        repo = DiaryRepository(diaryDao, categoryDao, diaryService, requireContext())
+        setEvent()
+        onClickListener()
         charCnt()
-        bind()
+
         return binding.root
+    }
+
+    override fun onAddDiarySuccess(
+        code: Int,
+        message: String,
+        result: DiaryResponse.GetScheduleIdx
+    ) {
+        when (code) {
+            1000 -> {
+
+                Log.d("inputMemo", "success")
+
+            }
+        }
+        Log.d("addDiary", "$code $message $result")
+    }
+
+    override fun onAddDiaryFailure(message: String) {
+        TODO("Not yet implemented")
     }
 
 
     @SuppressLint("SimpleDateFormat")
-    private fun bind() {
+    private fun setEvent() {
 
         val r = Runnable {
             try {
-                event = db.diaryDao.getSchedule(scheduleIdx)
-                val category = db.categoryDao.getCategoryContent(event.categoryIdx)
+
+                event = (arguments?.getSerializable("event") as? Event)!!
+                val category = repo.getCategoryId(event.categoryIdx)
 
                 requireActivity().runOnUiThread {
                     binding.apply {
@@ -103,6 +125,10 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
         val thread = Thread(r)
         thread.start()
+    }
+
+
+    private fun onClickListener() {
 
         binding.apply {
 
@@ -126,18 +152,23 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
             }
             onRecyclerView()
         }
+
+
     }
 
     /** 다이어리 추가 **/
     private fun insertData() {
         Thread {
-            db.diaryDao.addDiary(
-                scheduleIdx,
-                TRUE,
-                binding.diaryContentsEt.text.toString(),
-                imgList
-            )
+            val content = binding.diaryContentsEt.text.toString()
+            repo.addDiaryLocal(event.eventId.toInt(), content, imgList)
+
         }.start()
+    }
+
+
+    private fun insertDataServer(){
+        val content = binding.diaryContentsEt.text.toString()
+        repo.updateHasDiary(1, event.eventId.toInt())
     }
 
 
@@ -161,12 +192,14 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
             val intent = Intent().apply {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
             }
             intent.type = "image/*"
             intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
-            intent.action = Intent.ACTION_GET_CONTENT
+            intent.action = Intent.ACTION_PICK
 
             getImage.launch(intent)
 
@@ -178,7 +211,7 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
                 requireActivity(),
                 arrayOf(
                     android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
                 ),
                 200
             )
@@ -282,4 +315,6 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
         _binding = null
         hideBottomNavigation(false)
     }
+
+
 }

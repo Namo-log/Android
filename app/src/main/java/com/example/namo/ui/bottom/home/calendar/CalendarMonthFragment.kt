@@ -170,12 +170,9 @@ class CalendarMonthFragment : Fragment() {
         /** 기록 아이템 클릭 리스너 **/
         personalEventRVAdapter.setRecordClickListener(object : DailyPersonalRVAdapter.DiaryInterface{
             override fun onAddClicked(event: Event) {
+
                 val bundle=Bundle()
-                bundle.putInt("scheduleIdx",event.eventId.toInt())
-                bundle.putString("title",event.title)
-                bundle.putInt("category",event.categoryColor)
-                bundle.putString("place",event.placeName)
-                bundle.putLong("date",event.startLong)
+                bundle.putSerializable("event",event)
 
                 val diaryFrag= DiaryAddFragment()
                 diaryFrag.arguments=bundle
@@ -183,8 +180,9 @@ class CalendarMonthFragment : Fragment() {
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
             }
             override fun onEditClicked(event: Event) {
+
                 val bundle=Bundle()
-                bundle.putInt("scheduleIdx",event.eventId.toInt())
+                bundle.putSerializable("event",event)
 
                 val editFrag= DiaryModifyFragment()
                 editFrag.arguments=bundle

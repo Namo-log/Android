@@ -3,15 +3,12 @@ package com.example.namo.ui.bottom.diary.groupDiary
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +22,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -76,45 +72,38 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
         dummy()
 
 
-        // test
-        binding.groupModifyTestTv.setOnClickListener {
-
-            val bundle = Bundle()
-            bundle.putSerializable("event", placeEvent)
-
-            val editFrag = GroupModifyFragment()
-            editFrag.arguments = bundle
-            view?.findNavController()
-                ?.navigate(R.id.action_groupDiaryFragment_to_groupModifyFragment, bundle)
-
-        }
-
         return binding.root
     }
 
 
     private fun addEventView() {
         binding.groudPlaceAddBtn.setOnClickListener {
-            if (layoutCount == 0 || isEventLayoutFilled()) {
-                // 최초 클릭 시 또는 이전 레이아웃이 채워져 있는 경우에만 추가 가능
-                groupLayout = binding.groupLayout   // addView를 하기 위한 LinearLayout
-                eventLayout = LayoutInflater.from(requireContext())
-                    .inflate(R.layout.item_diary_group_event, null)
-                groupLayout.addView(eventLayout)
-                setupEventLayout(eventLayout)
-                layoutCount++  // 장소 추가 버튼 클릭 수
+
+            groupLayout = binding.groupLayout   // addView를 하기 위한 LinearLayout
+            eventLayout = LayoutInflater.from(requireContext())
+                .inflate(R.layout.item_diary_group_event, null)
+            groupLayout.addView(eventLayout)
+            setupEventLayout(eventLayout)
+            layoutCount++  // 장소 추가 버튼 클릭 수
+
+            if (layoutCount == 0) {
+                binding.groudPlaceAddBtn.visibility = View.VISIBLE
+                binding.groupPlaceSaveBtn.visibility = View.GONE
             } else {
-                Toast.makeText(requireContext(), "이전 장소의 값을 모두 채워주세요.", Toast.LENGTH_SHORT).show()
+                binding.groudPlaceAddBtn.visibility = View.GONE
+                binding.groupPlaceSaveBtn.visibility = View.VISIBLE
             }
         }
+
+        binding.groupPlaceSaveBtn.setOnClickListener {
+            saveEvent()
+            binding.groudPlaceAddBtn.visibility = View.VISIBLE
+            binding.groupPlaceSaveBtn.visibility = View.GONE
+        }
+
+
     }
 
-    private fun isEventLayoutFilled(): Boolean {
-        // 이전 레이아웃이 채워져 있는지 확인
-        return placeText.text.toString().isNotEmpty() &&
-                moneyText.text.toString().isNotEmpty() &&
-                imgList.isNotEmpty()
-    }
 
     private fun setupEventLayout(layout: View) {
         imgList.clear()
@@ -126,20 +115,15 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
         val moneyImg = layout.findViewById<ImageView>(R.id.item_place_money_iv)
 
         gallery.setOnClickListener {
-//            if (moneyText.text.toString() == "0") {
-//                // 정산 금액이 비어있으면 갤러리로 이동 불가,
-//                // 이미지를 가져왔을 때 데이터가 저장되기 때문에 이미지 추가가 마지막 순서여야 함....ㅜ
-//                Toast.makeText(requireContext(), "정산 금액이 비어있어요!", Toast.LENGTH_SHORT).show()
-//            } else {
-                getGallery()
+            getGallery()
 
-                imgAdapter = GroupPlaceGalleryAdapter(requireContext())
-                imgRv.adapter = imgAdapter
-                imgRv.layoutManager = LinearLayoutManager(
-                    requireContext(),
-                    LinearLayoutManager.HORIZONTAL,
-                    false
-                )
+            imgAdapter = GroupPlaceGalleryAdapter(requireContext())
+            imgRv.adapter = imgAdapter
+            imgRv.layoutManager = LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.HORIZONTAL,
+                false
+            )
 
         }
 
@@ -148,6 +132,8 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
                 moneyText.text = moneyValue.toString()
             }.show(parentFragmentManager, "show")
         }
+
+
     }
 
 
@@ -212,7 +198,6 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
                 } else {
                     for (i in 0 until count) {
                         val imageUri = result.data?.clipData!!.getItemAt(i).uri
-                        // val file = File(absolutelyPath(imageUri, requireContext()))
                         imgList.add(imageUri.toString())
 
                     }
@@ -222,7 +207,6 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
             result.data?.data?.let {
                 val imageUri: Uri? = result.data!!.data
                 if (imageUri != null) {
-                    //   val file = File(absolutelyPath(imageUri, requireContext()))
                     imgList.add(imageUri.toString())
 
                 }
@@ -232,8 +216,14 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
         if (imgList.isEmpty()) gallery.visibility = View.VISIBLE
         else gallery.visibility = View.GONE
 
-        val newImage = ArrayList(imgList)
         imgAdapter.addItem(imgList)
+
+    }
+
+    private fun saveEvent() {
+
+        val newImage = ArrayList(imgList)
+
         placeEvent.add(
             DiaryGroupEvent(
                 placeText.text.toString(),
@@ -241,19 +231,6 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
                 newImage
             )
         )
-    }
-
-
-    /** 이미지 절대 경로 변환 **/
-    @SuppressLint("Recycle")
-    private fun absolutelyPath(path: Uri, context: Context): String {
-        val proj: Array<String> = arrayOf(MediaStore.Images.Media.DATA)
-        val c: Cursor? = context.contentResolver.query(path, proj, null, null, null)
-        val index = c?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        c?.moveToFirst()
-        val result = c?.getString(index!!)
-
-        return result!!
     }
 
 
@@ -273,7 +250,6 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
         }
 
         binding.groupPlaceSaveTv.setOnClickListener {// 저장하기
-            Log.d("placeEvent", placeEvent.toString())
             findNavController().popBackStack()
         }
     }

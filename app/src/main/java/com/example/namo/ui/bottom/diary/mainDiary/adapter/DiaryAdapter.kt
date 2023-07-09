@@ -110,7 +110,7 @@ class DiaryAdapter(
                         item.categoryColor
                     )
                 )
-                val adapter = DiaryGalleryRVAdapter(itemView.context, item.imgs)
+                val adapter = DiaryGalleryRVAdapter(itemView.context, item.images)
                 diaryGalleryRv.adapter = adapter
                 diaryGalleryRv.layoutManager =
                     LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
@@ -122,7 +122,7 @@ class DiaryAdapter(
                 })
 
                 if (item.content.isEmpty()) itemDiaryContentTv.visibility = View.GONE
-                if (item.imgs?.isEmpty() == true) diaryGalleryRv.visibility = View.GONE
+                if (item.images?.isEmpty() == true) diaryGalleryRv.visibility = View.GONE
             }
         }
     }

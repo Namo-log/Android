@@ -48,7 +48,7 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
 
         /** 기록 아이템 클릭 리스너 **/
         holder.binding.itemCalendarEventRecord.setOnClickListener {
-            if(personal[position].hasDiary == FALSE){  // 기록 추가
+            if(personal[position].hasDiary == 0){  // 기록 추가
                 diaryRecordClickListener.onAddClicked(personal[position])
             } else{  // 기록 편집
                 diaryRecordClickListener.onEditClicked(personal[position])
@@ -82,7 +82,7 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
             binding.itemCalendarEventColorView.background.setTint(context.resources.getColor(personal.categoryColor))
             binding.itemCalendarEventRecord.setColorFilter(context.resources.getColor(R.color.realGray))
             /** 기록 아이콘 색깔 **/
-            if(personal.hasDiary == TRUE)
+            if(personal.hasDiary !=0)
                 binding.itemCalendarEventRecord.setColorFilter(context.resources.getColor(R.color.MainOrange))}
         }
 
