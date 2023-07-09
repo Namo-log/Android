@@ -21,7 +21,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.example.namo.MainActivity
-import com.example.namo.MainActivity.Companion.PLACE_ID_INTENT_KEY
 import com.example.namo.MainActivity.Companion.PLACE_NAME_INTENT_KEY
 import com.example.namo.MainActivity.Companion.PLACE_X_INTENT_KEY
 import com.example.namo.MainActivity.Companion.PLACE_Y_INTENT_KEY
@@ -186,7 +185,6 @@ class MapActivity : AppCompatActivity() {
             intent.putExtra(PLACE_NAME_INTENT_KEY, selectedPlace.place_name)
             intent.putExtra(PLACE_X_INTENT_KEY, selectedPlace.x)
             intent.putExtra(PLACE_Y_INTENT_KEY, selectedPlace.y)
-            intent.putExtra(PLACE_ID_INTENT_KEY, selectedPlace.id)
             setResult(RESULT_OK, intent)
             finish()
         }

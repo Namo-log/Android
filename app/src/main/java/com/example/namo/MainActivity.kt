@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         const val PLACE_NAME_INTENT_KEY : String = "place_name"
         const val PLACE_X_INTENT_KEY : String = "place_x"
         const val PLACE_Y_INTENT_KEY : String = "place_y"
-        const val PLACE_ID_INTENT_KEY : String = "place_id"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

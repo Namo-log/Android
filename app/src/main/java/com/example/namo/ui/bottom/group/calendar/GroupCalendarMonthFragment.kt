@@ -83,6 +83,36 @@ class GroupCalendarMonthFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        setAdapter()
+//        var forDB : Thread = Thread {
+//            tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis, monthList[41].plusDays(1).withTimeAtStartOfDay().millis)
+//        }
+//        forDB.start()
+//        try {
+//            forDB.join()
+//        } catch (e : InterruptedException) {
+//            e.printStackTrace()
+//        }
+        tempEvent = listOf()
+
+        binding.groupCalendarMonthView.setEventList(tempEvent)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val listener = object : CustomCalendarView.OnDateClickListener {
+            override fun onDateClick(date: DateTime?, pos : Int?) {
+                binding.groupCalendarMonthView.selectedDate = null
+                binding.constraintLayout2.transitionToStart()
+                isShow = false
+                binding.constraintLayout2.invalidate()
+            }
+        }
+        listener.onDateClick(null, null)
+    }
+
     private fun setAdapter() {
         binding.groupDailyEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.groupDailyEventRv.adapter = personalEventRVAdapter
@@ -104,7 +134,7 @@ class GroupCalendarMonthFragment : Fragment() {
     }
 
     private fun setData(idx : Int) {
-        getEvent(idx)
+//        getEvent(idx)
 
         personalEventRVAdapter.addPersonal(event_personal)
         groupEventRVAdapter.addGroup(event_group)
@@ -140,34 +170,6 @@ class GroupCalendarMonthFragment : Fragment() {
         } catch (e : InterruptedException) {
             e.printStackTrace()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        setAdapter()
-        var forDB : Thread = Thread {
-            tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis, monthList[41].plusDays(1).withTimeAtStartOfDay().millis)
-        }
-        forDB.start()
-        try {
-            forDB.join()
-        } catch (e : InterruptedException) {
-            e.printStackTrace()
-        }
-        binding.groupCalendarMonthView.setEventList(tempEvent)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        val listener = object : CustomCalendarView.OnDateClickListener {
-            override fun onDateClick(date: DateTime?, pos : Int?) {
-                binding.groupCalendarMonthView.selectedDate = null
-                binding.constraintLayout2.transitionToStart()
-                isShow = false
-                binding.constraintLayout2.invalidate()
-            }
-        }
-        listener.onDateClick(null, null)
     }
 
     companion object {

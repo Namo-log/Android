@@ -3,6 +3,7 @@ package com.example.namo.ui.bottom.home.calendar
 import android.content.Context
 import android.graphics.*
 import android.text.TextPaint
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -54,7 +55,7 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
     private var selectedPaint : Paint = Paint()
     private var clickPaint: Paint = Paint()
     private var bgPaint: Paint = Paint()
-    private var eventPaint: Paint = Paint()
+    private var eventPaint: TextPaint = TextPaint()
     private var morePaint : Paint = Paint()
 
     private var todayNoticePaint : Paint = Paint()
@@ -233,13 +234,42 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
                     setBgPaintColor(eventList[i])
                     canvas!!.drawPath(path, bgPaint)
 
-                    eventPaint.getTextBounds(eventList[i].title, 0, eventList[i].title.length, eventBounds)
-                    canvas!!.drawText(
-                        eventList[i].title,
-                        getEventTextStart(eventList[i].title, splitEvent.startIdx, splitEvent.endIdx),
-                        getEventTextBottom(eventList[i].title, splitEvent.startIdx, splitEvent.endIdx, order),
-                        eventPaint
-                    )
+                    val textWidth = eventPaint.measureText(eventList[i].title) + (2 * _eventHorizontalPadding)
+                    val pathWidth = rect.width()
+                    Log.d("DRAW_TEXT", "path : $pathWidth")
+                    Log.d("DRAW_TEXT", "eventTitle : $textWidth")
+
+                    if (textWidth > pathWidth) {
+                        val ellipsizedText = TextUtils.ellipsize(eventList[i].title, eventPaint, pathWidth - (2 * _eventHorizontalPadding), TextUtils.TruncateAt.END)
+
+                        eventPaint.getTextBounds(ellipsizedText.toString(), 0, ellipsizedText.toString().length, eventBounds)
+
+                        Log.d("DRAW_TEXT", "ellipsized : ${ellipsizedText.toString()}")
+                        canvas.drawText(
+                            ellipsizedText.toString(),
+                            getEventTextStart(ellipsizedText.toString(), splitEvent.startIdx, splitEvent.endIdx),
+                            getEventTextBottom(ellipsizedText.toString(), splitEvent.startIdx, splitEvent.endIdx, order),
+                            eventPaint
+                        )
+
+                    } else {
+                        eventPaint.getTextBounds(eventList[i].title, 0, eventList[i].title.length, eventBounds)
+
+                        canvas.drawText(
+                            eventList[i].title,
+                            getEventTextStart(eventList[i].title, splitEvent.startIdx, splitEvent.endIdx),
+                            getEventTextBottom(eventList[i].title, splitEvent.startIdx, splitEvent.endIdx, order),
+                            eventPaint
+                        )
+                    }
+
+//                    canvas!!.drawText(
+//                        eventList[i].title,
+//                        getEventTextStart(eventList[i].title, splitEvent.startIdx, splitEvent.endIdx),
+//                        getEventTextBottom(eventList[i].title, splitEvent.startIdx, splitEvent.endIdx, order),
+//                        eventPaint
+//                    )
+
                     Log.d("CHECK_WEEK_SINGLE", "Finish drawing different week, start idx : ${splitEvent.startIdx} | end idx : ${splitEvent.endIdx}")
                 }
             }

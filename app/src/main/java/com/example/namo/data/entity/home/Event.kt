@@ -3,6 +3,7 @@ package com.example.namo.data.entity.home
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.namo.R
 import java.io.Serializable
 import java.lang.Boolean.FALSE
 
@@ -46,12 +47,36 @@ data class Event(
 
     @ColumnInfo(name = "event_order")
     var order: Int = 0,
-
+  
     @ColumnInfo(name = "alarm_list")
-    var alarmList: List<Int>? = listOf(),
+    var alarmList : List<Int>? = listOf(),
+
+    @ColumnInfo(name = "event_upload")
+    var isUpload : Int = 0,
+
+    @ColumnInfo(name = "event_state")
+    var state : String = R.string.event_current_default.toString(),
+
+    @ColumnInfo(name = "event_server_idx")
+    var serverIdx : Int = 0,
 
     @ColumnInfo(name = "has_diary")
     var hasDiary: Int = 0
 
-
 ) : Serializable
+
+
+data class EventForUpload(
+    var eventId : Long = 0,
+    var name : String = "",
+    var startDate : Long = 0,
+    var endDate : Long = 0,
+    var dayInterval : Int = 0,
+    var categoryColor : Int = 0,
+    var categoryName : String = "",
+    var categoryId : Int = 0,
+    var placeName : String = "없음",
+    var placeX : Double = 0.0,
+    var placeY : Double = 0.0,
+    var alarmList : List<Int>? = listOf()
+)
