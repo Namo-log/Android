@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import com.example.namo.R
 import com.example.namo.data.entity.home.Event
 
 @Dao
@@ -18,15 +19,24 @@ interface EventDao {
     @Update
     fun updateEvent(event : Event)
 
-    @Query("SELECT * FROM calendar_event_table WHERE event_start <= :todayEnd AND event_end >= :todayStart ORDER BY event_day_interval DESC")
+    @Query("SELECT * FROM calendar_event_table WHERE event_start <= :todayEnd AND event_end >= :todayStart AND event_state != ${R.string.event_current_deleted} ORDER BY event_day_interval DESC")
     fun getEventDaily(todayStart : Long, todayEnd : Long) : List<Event>
 
-    @Query("SELECT * FROM calendar_event_table WHERE event_start <= :monthEnd AND event_end >= :monthStart ORDER BY event_day_interval DESC")
+    @Query("SELECT * FROM calendar_event_table WHERE event_start <= :monthEnd AND event_end >= :monthStart AND event_state != ${R.string.event_current_deleted} ORDER BY event_day_interval DESC")
     fun getEventMonth(monthStart : Long, monthEnd : Long) : List<Event>
 
-    @Query("SELECT * FROM calendar_event_table WHERE event_start <= :calendarEnd AND event_end >= :calendarStart ORDER BY event_day_interval DESC")
+    @Query("SELECT * FROM calendar_event_table WHERE event_start <= :calendarEnd AND event_end >= :calendarStart AND event_state != ${R.string.event_current_deleted} ORDER BY event_day_interval DESC")
     fun getEventCalendar(calendarStart : Long, calendarEnd : Long) : List<Event>
 
     @Query("SELECT * FROM calendar_event_table WHERE event_category_idx == :categoryIdx")
     fun getEventWithCategoryIdx(categoryIdx : Int) : List<Event>
+
+    @Query("SELECT * FROM calendar_event_table WHERE event_upload = 0")
+    fun getNotUploadedEvent() : List<Event>
+
+    @Query("UPDATE calendar_event_table SET event_upload=:isUpload, event_server_idx=:serverIdx, event_state=:state WHERE eventId=:eventId")
+    fun updateEventAfterUpload(eventId : Long, isUpload : Int, serverIdx : Int, state : String)
+
+    @Query("DELETE FROM calendar_event_table WHERE eventId=:eventId")
+    fun deleteEventById(eventId : Long)
 }
