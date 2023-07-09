@@ -10,5 +10,6 @@ data class Category(
     var name : String = "",
     var color : Int = 0,
     var share : Boolean = false,
-    var active : Boolean = true
+    var active : Boolean = true,
+    // var isUpload : Boolean = false
 ) : Serializable
