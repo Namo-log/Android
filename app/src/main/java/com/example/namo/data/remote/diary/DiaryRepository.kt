@@ -33,7 +33,7 @@ class DiaryRepository(
         diaryDao.insertDiary(diary)
     }
 
-    fun addDiaryRetrofit(
+    fun addDiaryToServer(
         scheduleId: Int,
         content: String,
         images: List<String>
@@ -52,10 +52,14 @@ class DiaryRepository(
         diaryService.addDiary(imageMultiPart, contentRequestBody, scheduleIdRequestBody)
     }
 
-    fun editDiary(scheduleId: Int, content: String, images: List<String>) {
+    fun editDiaryLocal(scheduleId: Int, content: String, images: List<String>) {
 
         val diary = Diary(scheduleId, content, images)
         diaryDao.updateDiary(diary)
+    }
+
+
+    fun editDiaryToServer(scheduleId: Int, content: String, images: List<String>) {
 
         val imageMultiPart = images.map { imgPath ->
             val file = File(absolutelyPath(imgPath.toUri(), context))
@@ -71,6 +75,7 @@ class DiaryRepository(
     }
 
 
+
     // 이미지 절대 경로 변환
     @SuppressLint("Recycle")
     private fun absolutelyPath(path: Uri, context: Context): String {
@@ -83,13 +88,17 @@ class DiaryRepository(
         return result!!
     }
 
-    fun deleteDiary(scheduleId: Int, content: String, images: List<String>) {
+    fun deleteDiaryLocal(scheduleId: Int, content: String, images: List<String>) {
 
         val diary = Diary(scheduleId, content, images)
         diaryDao.deleteDiary(diary)
-        diaryService.deleteDiary(scheduleId)
     }
 
+    fun deleteDiaryToServer(scheduleId: Int, content: String, images: List<String>) {
+
+        val diary = Diary(scheduleId, content, images)
+        diaryService.deleteDiary(scheduleId)
+    }
 
     fun getCategoryId(categoryId: Int): Category {
         return categoryDao.getCategoryContent(categoryId)
@@ -100,7 +109,7 @@ class DiaryRepository(
         return diaryDao.getDiaryDaily(scheduleId)
     }
 
-    fun getDayDiaryRetrofit(scheduleId: Int) {
+    fun getDayDiaryFromServer(scheduleId: Int) {
         diaryService.getDayDiary(scheduleId)
     }
 
@@ -111,7 +120,7 @@ class DiaryRepository(
         return diaryEvent.toListItems()
     }
 
-    fun getDiaryListRetrofit(yearMonth: String) {
+    fun getDiaryListFromServer(yearMonth: String) {
 
         //        val yearMonthSplit = yearMonth.split(".")
         //        val year = yearMonthSplit[0]

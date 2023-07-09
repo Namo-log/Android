@@ -63,8 +63,6 @@ class DiaryFragment : Fragment(), GetMonthDiaryView {  // 다이어리 리스트
         }
 
 
-        diaryService.getMonthDiaryView(this)
-
         return binding.root
     }
 
@@ -75,6 +73,10 @@ class DiaryFragment : Fragment(), GetMonthDiaryView {  // 다이어리 리스트
     ) {
         Log.d("getMonthDiary", result.toString())
 
+    }
+
+    override fun onGetMonthDiaryFailure(message: String) {
+        TODO("Not yet implemented")
     }
 
     @SuppressLint("NotifyDataSetChanged")

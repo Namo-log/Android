@@ -81,8 +81,6 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // Î
             }
         }.start()
 
-        // repo.getDayDiaryRetrofit(scheduleId)
-        diaryService.getDayDiaryView(this)
 
         onClickListener(diaryService)
         charCnt()
@@ -111,6 +109,14 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // Î
         Log.d("onDeleteDiary", "$code $message $result")
     }
 
+    override fun onEditDiaryFailure(message: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDeleteDiaryFailure(message: String) {
+        TODO("Not yet implemented")
+    }
+
     override fun onGetDayDiarySuccess(
         code: Int,
         message: String,
@@ -123,6 +129,10 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // Î
             }
         }
         Log.d("onGetDayDiary", "$code $message $result")
+    }
+
+    override fun onGetDayhDiaryFailure(message: String) {
+        TODO("Not yet implemented")
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -163,7 +173,6 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // Î
                 updateDiary()
                 view?.findNavController()?.navigate(R.id.diaryFragment)
                 hideBottomNavigation(false)
-                diaryService.setDiaryView(this)
 
             }
         }
@@ -177,7 +186,6 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // Î
             deleteDiary()
             view?.findNavController()?.navigate(R.id.diaryFragment)
             hideBottomNavigation(false)
-            diaryService.setDiaryView(this)
         }
 
         binding.diaryGalleryClickIv.setOnClickListener {
@@ -195,7 +203,7 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // Î
             else diary.images = imgList
 
             diary.images?.let {
-                repo.editDiary(
+                repo.editDiaryLocal(
                     event.eventId.toInt(), binding.diaryContentsEt.text.toString(),
                     it
                 )
@@ -208,7 +216,7 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // Î
     /** Îã§Ïù¥Ïñ¥Î¶¨ ÏÇ≠Ï†ú **/
     private fun deleteDiary() {
         Thread {
-            diary.images?.let { repo.deleteDiary(diary.scheduleIdx, diary.content, it) }
+            diary.images?.let { repo.deleteDiaryLocal(diary.scheduleIdx, diary.content, it) }
             repo.deleteHasDiary(0, event.eventId.toInt())
         }.start()
 

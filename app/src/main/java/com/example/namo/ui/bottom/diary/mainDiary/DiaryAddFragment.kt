@@ -61,8 +61,6 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
         val diaryService = DiaryService()
 
         repo = DiaryRepository(diaryDao, categoryDao, diaryService, requireContext())
-        diaryService.addDiaryView(this)
-
         setEvent()
         onClickListener()
         charCnt()
@@ -77,11 +75,16 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
     ) {
         when (code) {
             1000 -> {
+
                 Log.d("inputMemo", "success")
 
             }
         }
         Log.d("addDiary", "$code $message $result")
+    }
+
+    override fun onAddDiaryFailure(message: String) {
+        TODO("Not yet implemented")
     }
 
 
@@ -157,10 +160,15 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
     private fun insertData() {
         Thread {
             val content = binding.diaryContentsEt.text.toString()
-
             repo.addDiaryLocal(event.eventId.toInt(), content, imgList)
-            repo.updateHasDiary(1, event.eventId.toInt())
+
         }.start()
+    }
+
+
+    private fun insertDataServer(){
+        val content = binding.diaryContentsEt.text.toString()
+        repo.updateHasDiary(1, event.eventId.toInt())
     }
 
 

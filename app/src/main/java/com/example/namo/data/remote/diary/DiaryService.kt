@@ -1,6 +1,5 @@
 package com.example.namo.data.remote.diary
 
-import android.util.Log
 import com.example.namo.config.ApplicationClass
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -51,12 +50,13 @@ class DiaryService {
                     if (resp != null) {
                         when (val code = resp.code) {
                             200 -> diaryView.onAddDiarySuccess(code, resp.message, resp.result)
+                            else -> diaryView.onAddDiaryFailure(resp.message)
                         }
                     }
                 }
 
                 override fun onFailure(call: Call<DiaryResponse.DiaryAddResponse>, t: Throwable) {
-                    Log.d("addDiary/failure", t.message.toString())
+                    diaryView.onAddDiaryFailure(t.message.toString())
                 }
             })
     }
@@ -78,13 +78,18 @@ class DiaryService {
                     val resp: DiaryResponse.DiaryEditResponse? = response.body()
                     if (resp != null) {
                         when (val code = resp.code) {
-                            200 -> diaryDetailView.onEditDiarySuccess(code, resp.message, resp.result)
+                            200 -> diaryDetailView.onEditDiarySuccess(
+                                code,
+                                resp.message,
+                                resp.result
+                            )
+                            else -> diaryDetailView.onEditDiaryFailure(resp.message)
                         }
                     }
                 }
 
                 override fun onFailure(call: Call<DiaryResponse.DiaryEditResponse>, t: Throwable) {
-                    Log.d("editDiary/failure", t.message.toString())
+                    diaryDetailView.onEditDiaryFailure(t.message.toString())
                 }
             })
     }
@@ -104,7 +109,12 @@ class DiaryService {
                     val resp: DiaryResponse.DiaryDeleteResponse? = response.body()
                     if (resp != null) {
                         when (val code = resp.code) {
-                            200 -> diaryDetailView.onDeleteDiarySuccess(code, resp.message, resp.result)
+                            200 -> diaryDetailView.onDeleteDiarySuccess(
+                                code,
+                                resp.message,
+                                resp.result
+                            )
+                            else -> diaryDetailView.onDeleteDiaryFailure(resp.message)
                         }
                     }
                 }
@@ -113,7 +123,7 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryDeleteResponse>,
                     t: Throwable
                 ) {
-                    Log.d("deleteDiary/failure", t.message.toString())
+                    diaryDetailView.onDeleteDiaryFailure(t.message.toString())
                 }
             })
     }
@@ -138,7 +148,9 @@ class DiaryService {
                                 resp.message,
                                 resp.result
                             )
+                            else -> getMonthDiaryView.onGetMonthDiaryFailure(resp.message)
                         }
+
                     }
                 }
 
@@ -146,7 +158,7 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryGetMonthResponse>,
                     t: Throwable
                 ) {
-                    Log.d("getMonthDiary/failure", t.message.toString())
+                    getDayDiaryView.onGetDayhDiaryFailure(t.message.toString())
                 }
             })
     }
@@ -165,7 +177,12 @@ class DiaryService {
                     val resp: DiaryResponse.DiaryGetDayResponse? = response.body()
                     if (resp != null) {
                         when (val code = resp.code) {
-                            200 -> getDayDiaryView.onGetDayDiarySuccess(code, resp.message, resp.result)
+                            200 -> getDayDiaryView.onGetDayDiarySuccess(
+                                code,
+                                resp.message,
+                                resp.result
+                            )
+                            else -> getDayDiaryView.onGetDayhDiaryFailure(resp.message)
                         }
                     }
                 }
@@ -174,7 +191,7 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryGetDayResponse>,
                     t: Throwable
                 ) {
-                    Log.d("getDayDiary/failure", t.message.toString())
+                    getDayDiaryView.onGetDayhDiaryFailure(t.message.toString())
                 }
             })
     }
