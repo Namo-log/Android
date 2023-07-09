@@ -30,7 +30,6 @@ import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryAddBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.lang.Boolean.TRUE
 import java.text.SimpleDateFormat
 
 class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
@@ -159,8 +158,8 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
         Thread {
             val content = binding.diaryContentsEt.text.toString()
 
-            repo.addDiary(event.eventId.toInt(),content,imgList)
-            repo.updateHasDiary(TRUE,event.eventId.toInt())
+            repo.addDiaryLocal(event.eventId.toInt(), content, imgList)
+            repo.updateHasDiary(1, event.eventId.toInt())
         }.start()
     }
 
@@ -185,12 +184,14 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
 
             val intent = Intent().apply {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
             }
             intent.type = "image/*"
             intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
-            intent.action = Intent.ACTION_GET_CONTENT
+            intent.action = Intent.ACTION_PICK
 
             getImage.launch(intent)
 
@@ -202,7 +203,7 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
                 requireActivity(),
                 arrayOf(
                     android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
                 ),
                 200
             )

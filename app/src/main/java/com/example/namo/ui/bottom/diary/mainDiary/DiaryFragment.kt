@@ -82,7 +82,7 @@ class DiaryFragment : Fragment(), GetMonthDiaryView {  // 다이어리 리스트
         val r = Runnable {
             try {
 
-                diaryItems = repo.getDiaryList(yearMonth)
+                diaryItems = repo.getDiaryListLocal(yearMonth)
 
                 diaryDateAdapter = DiaryAdapter(parentFragmentManager)
                 diaryDateAdapter.submitList(diaryItems)
@@ -101,12 +101,7 @@ class DiaryFragment : Fragment(), GetMonthDiaryView {  // 다이어리 리스트
                             allData.categoryColor,
                             allData.categoryName,
                             allData.categoryIdx,
-                            allData.placeName,
-                            allData.placeX,
-                            allData.placeY,
-                            allData.placeId,
-                            allData.order,
-                            allData.alarmList
+                            allData.placeName
                         )
 
                         bundle.putSerializable("event", event)

@@ -19,10 +19,10 @@ interface DiaryDao {
     fun deleteDiary(diary: Diary)
 
     @Query("UPDATE calendar_event_table SET has_diary= :hasDiary WHERE eventId =:scheduleIdx")
-    fun updateHasDiary(hasDiary: Boolean, scheduleIdx: Int)
+    fun updateHasDiary(hasDiary: Int, scheduleIdx: Int)
 
     @Query("UPDATE calendar_event_table SET has_diary= :hasDiary WHERE eventId =:scheduleIdx")
-    fun deleteHasDiary(hasDiary: Boolean, scheduleIdx: Int)
+    fun deleteHasDiary(hasDiary: Int, scheduleIdx: Int)
 
     @Query("SELECT * FROM diaryTable WHERE scheduleIdx=:scheduleId")
     fun getDiaryDaily(scheduleId: Int): Diary

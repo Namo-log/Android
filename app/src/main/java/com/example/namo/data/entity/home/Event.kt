@@ -51,7 +51,7 @@ data class Event(
     var alarmList: List<Int>? = listOf(),
 
     @ColumnInfo(name = "has_diary")
-    var hasDiary: Boolean = FALSE
+    var hasDiary: Int = 0
 
 
 ) : Serializable

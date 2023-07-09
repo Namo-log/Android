@@ -32,7 +32,6 @@ import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryModifyBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import java.lang.Boolean.FALSE
 import java.text.SimpleDateFormat
 
 class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // 다이어리 편집 화면
@@ -65,12 +64,13 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
         val diaryService = DiaryService()
 
 
-        repo = DiaryRepository(diaryDao, categoryDao, diaryService,requireContext())
+        repo = DiaryRepository(diaryDao, categoryDao, diaryService, requireContext())
 
-        event=(arguments?.getSerializable("event") as? Event)!!
+        event = (arguments?.getSerializable("event") as? Event)!!
 
-        Thread{
-            diary=repo.getDiaryDaily(event.eventId.toInt())
+
+        Thread {
+            diary = repo.getDiaryDailyLocal(event.eventId.toInt())
             category = repo.getCategoryId(event.categoryIdx)
 
             galleryAdapter = GalleryListAdapter(requireContext())
@@ -81,8 +81,10 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
             }
         }.start()
 
+        // repo.getDayDiaryRetrofit(scheduleId)
+        diaryService.getDayDiaryView(this)
 
-        onClickListener()
+        onClickListener(diaryService)
         charCnt()
 
 
@@ -90,23 +92,23 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
     }
 
     override fun onEditDiarySuccess(code: Int, message: String, result: String) {
-        when(code){
-            1000-> {
-                Log.d("onEditDiary","success")
+        when (code) {
+            1000 -> {
+                Log.d("onEditDiary", "success")
 
             }
         }
-        Log.d("onEditDiary","$code $message $result")
+        Log.d("onEditDiary", "$code $message $result")
     }
 
     override fun onDeleteDiarySuccess(code: Int, message: String, result: String) {
-        when(code){
-            1000-> {
-                Log.d("onDeleteDiary","success")
+        when (code) {
+            1000 -> {
+                Log.d("onDeleteDiary", "success")
 
             }
         }
-        Log.d("onDeleteDiary","$code $message $result")
+        Log.d("onDeleteDiary", "$code $message $result")
     }
 
     override fun onGetDayDiarySuccess(
@@ -114,13 +116,13 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
         message: String,
         result: DiaryResponse.DayDiaryDto
     ) {
-        when(code){
-            1000-> {
-                Log.d("onGetDayDiary","success")
+        when (code) {
+            1000 -> {
+                Log.d("onGetDayDiary", "success")
 
             }
         }
-        Log.d("onGetDayDiary","$code $message $result")
+        Log.d("onGetDayDiary", "$code $message $result")
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -152,7 +154,7 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
         }
     }
 
-    private fun onClickListener(){
+    private fun onClickListener(diaryService: DiaryService) {
 
         binding.diaryEditTv.setOnClickListener {
             if (binding.diaryEditTv.text.toString().isEmpty()) {
@@ -161,6 +163,8 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
                 updateDiary()
                 view?.findNavController()?.navigate(R.id.diaryFragment)
                 hideBottomNavigation(false)
+                diaryService.setDiaryView(this)
+
             }
         }
 
@@ -173,6 +177,7 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
             deleteDiary()
             view?.findNavController()?.navigate(R.id.diaryFragment)
             hideBottomNavigation(false)
+            diaryService.setDiaryView(this)
         }
 
         binding.diaryGalleryClickIv.setOnClickListener {
@@ -190,7 +195,8 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
             else diary.images = imgList
 
             diary.images?.let {
-                repo.editDiary(event.eventId.toInt(),binding.diaryContentsEt.text.toString(),
+                repo.editDiary(
+                    event.eventId.toInt(), binding.diaryContentsEt.text.toString(),
                     it
                 )
             }
@@ -202,8 +208,8 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
         Thread {
-            diary.images?.let { repo.deleteDiary(diary.scheduleIdx,diary.content, it) }
-            repo.deleteHasDiary(FALSE,event.eventId.toInt())
+            diary.images?.let { repo.deleteDiary(diary.scheduleIdx, diary.content, it) }
+            repo.deleteHasDiary(0, event.eventId.toInt())
         }.start()
 
         Toast.makeText(requireContext(), "삭제되었습니다", Toast.LENGTH_SHORT).show()
@@ -235,11 +241,13 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
             // 권한 있음
             val intent = Intent().apply {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
             }
             intent.type = "image/*"
             intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
-            intent.action = Intent.ACTION_GET_CONTENT
+            intent.action = Intent.ACTION_PICK
 
             getImage.launch(intent)
         }
@@ -275,6 +283,8 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
         }
         galleryAdapter.addImages(imgList)
         galleryAdapter.notifyDataSetChanged()
+
+        Log.d("img", imgList.toString())
     }
 
     private fun onRecyclerView() {
