@@ -17,6 +17,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.DatePicker
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -27,6 +28,7 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -35,18 +37,24 @@ import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
+import com.example.namo.data.entity.home.EventForUpload
+import com.example.namo.data.remote.event.EditEventResponse
+import com.example.namo.data.remote.event.EventService
+import com.example.namo.data.remote.event.EventView
+import com.example.namo.data.remote.event.PostEventResponse
 import com.example.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.example.namo.ui.bottom.home.notify.PushNotificationReceiver
 import com.example.namo.ui.bottom.home.schedule.adapter.DialogCategoryRVAdapter
 import com.example.namo.ui.bottom.home.schedule.map.MapActivity
 import com.example.namo.utils.CalendarUtils.Companion.getInterval
+import com.example.namo.utils.NetworkManager
 import com.google.android.material.chip.Chip
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 import org.joda.time.DateTime
 
-class ScheduleDialogBasicFragment : Fragment() {
+class ScheduleDialogBasicFragment : Fragment(), EventView {
 
     private lateinit var binding : FragmentScheduleDialogBasicBinding
     private val args : ScheduleDialogBasicFragmentArgs by navArgs()
@@ -81,7 +89,6 @@ class ScheduleDialogBasicFragment : Fragment() {
     private var place_name : String = "없음"
     private var place_x : Double = 0.0
     private var place_y : Double = 0.0
-    private var place_id : String = ""
 
     private var date = DateTime(System.currentTimeMillis())
 
@@ -95,12 +102,14 @@ class ScheduleDialogBasicFragment : Fragment() {
     private lateinit var getResult : ActivityResultLauncher<Intent>
 
     private var selectedAlarm : ArrayList<Int> = arrayListOf()
-    private var scheduelIdx : Int = 0
+    private var scheduelIdx : Long = 0
 
     private var prevChecked : MutableList<Int> = mutableListOf()
     private var alarmList : MutableList<Int> = mutableListOf()
     private var prevAlarmList : List<Int>? = null
     private var alarmText : String = ""
+
+    private val failList = ArrayList<Event>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -130,6 +139,7 @@ class ScheduleDialogBasicFragment : Fragment() {
 
         if (event.eventId != 0L) {
             binding.dialogScheduleHeaderTv.text = "일정 편집"
+            scheduelIdx = event.eventId
         } else {
             binding.dialogScheduleHeaderTv.text = "새 일정"
         }
@@ -146,13 +156,11 @@ class ScheduleDialogBasicFragment : Fragment() {
                 place_name = it.data?.getStringExtra(MainActivity.PLACE_NAME_INTENT_KEY)!!
                 place_x = it.data?.getDoubleExtra(MainActivity.PLACE_X_INTENT_KEY, 0.0)!!
                 place_y = it.data?.getDoubleExtra(MainActivity.PLACE_Y_INTENT_KEY, 0.0)!!
-                place_id = it.data?.getStringExtra(MainActivity.PLACE_ID_INTENT_KEY)!!
-                Log.d("PLACE_INFO", "name : $place_name , x : $place_x , y : $place_y , id : $place_id")
+                Log.d("PLACE_INFO", "name : $place_name , x : $place_x , y : $place_y")
 
                 event.placeName = place_name
                 event.placeX = place_x
                 event.placeY = place_y
-                event.placeId = place_id
 
                 initMapView()
                 if (place_x != 0.0 || place_y != 0.0) {
@@ -183,6 +191,7 @@ class ScheduleDialogBasicFragment : Fragment() {
     private fun clickListener() {
         //카테고리 클릭
         binding.dialogScheduleCategoryLayout.setOnClickListener {
+            hidekeyboard()
             storeContent()
 
             val action = ScheduleDialogBasicFragmentDirections.actionScheduleDialogBasicFragmentToScheduleDialogCategoryFragment(event)
@@ -205,23 +214,28 @@ class ScheduleDialogBasicFragment : Fragment() {
         }
 
         binding.dialogScheduleStartDateTv.setOnClickListener {
+            hidekeyboard()
             showPicker(binding.dialogScheduleStartDateTv, binding.dialogScheduleDateLayout)
         }
 
         binding.dialogScheduleEndDateTv.setOnClickListener {
+            hidekeyboard()
             showPicker(binding.dialogScheduleEndDateTv, binding.dialogScheduleDateLayout)
         }
 
         binding.dialogScheduleStartTimeTv.setOnClickListener {
+            hidekeyboard()
             showPicker(binding.dialogScheduleStartTimeTv, binding.dialogScheduleStartTimeLayout)
         }
 
         binding.dialogScheduleEndTimeTv.setOnClickListener {
+            hidekeyboard()
             showPicker(binding.dialogScheduleEndTimeTv, binding.dialogScheduleEndTimeLayout)
         }
 
         //알람 클릭
         binding.dialogScheduleAlarmLayout.setOnClickListener {
+            hidekeyboard()
             if (!isAlarm) binding.dialogScheduleAlarmContentLayout.visibility = View.VISIBLE
             else binding.dialogScheduleAlarmContentLayout.visibility = View.GONE
             isAlarm = !isAlarm
@@ -274,10 +288,13 @@ class ScheduleDialogBasicFragment : Fragment() {
 
         // 장소 클릭
         binding.dialogSchedulePlaceLayout.setOnClickListener {
+            hidekeyboard()
             getLocationPermission()
         }
 
         binding.dialogSchedulePlaceKakaoBtn.setOnClickListener {
+            hidekeyboard()
+
             val url = "kakaomap://route?sp=&ep=${place_y},${place_x}&by=PUBLICTRANSIT"
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
@@ -295,7 +312,7 @@ class ScheduleDialogBasicFragment : Fragment() {
             if (event.eventId == 0L) {
                 // 새 일정 등록
                 var storeDB = Thread {
-                    scheduelIdx = db.eventDao.insertEvent(event).toInt()
+                    scheduelIdx = db.eventDao.insertEvent(event)
                 }
                 storeDB.start()
                 try {
@@ -305,6 +322,8 @@ class ScheduleDialogBasicFragment : Fragment() {
                 }
 
                 setAlarm(event.startLong)
+
+                uploadToServer(R.string.event_current_added.toString())
             } else {
                 // 일정 편집 저장
                 var updateDB : Thread = Thread {
@@ -323,10 +342,17 @@ class ScheduleDialogBasicFragment : Fragment() {
                     deleteNotification(event.eventId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt())
                 }
                 setAlarm(event.startLong)
+
+                uploadToServer(R.string.event_current_edited.toString())
             }
 
             requireActivity().finish()
         }
+    }
+
+    private fun hidekeyboard() {
+        val inputManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(binding.dialogScheduleTitleEt.windowToken, 0)
     }
 
 
@@ -371,7 +397,7 @@ class ScheduleDialogBasicFragment : Fragment() {
                 early = true
                 continue
             }
-            val id = scheduelIdx + time.toInt()
+            val id = scheduelIdx.toInt() + time.toInt()
             checkNotificationPermission(requireActivity(), time, id)
         }
         if (early) {
@@ -569,7 +595,6 @@ class ScheduleDialogBasicFragment : Fragment() {
         place_name = event.placeName
         place_x = event.placeX
         place_y = event.placeY
-        place_id = event.placeId
 
         if (event.placeX != 0.0 || event.placeY != 0.0) {
             initMapView()
@@ -716,5 +741,137 @@ class ScheduleDialogBasicFragment : Fragment() {
     private fun setCategory() {
         binding.dialogScheduleCategoryNameTv.text = event.categoryName
         binding.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(event.categoryColor))
+    }
+
+
+//    서버 연결
+    private fun uploadToServer(state : String) {
+        if (!NetworkManager.checkNetworkState(requireContext())) {
+            //인터넷 연결 안 됨
+            //룸디비에 isUpload, serverId, state 업데이트하기
+            var thread = Thread {
+                db.eventDao.updateEventAfterUpload(scheduelIdx, 0, event.serverIdx, state)
+                failList.clear()
+                failList.addAll(db.eventDao.getNotUploadedEvent() as ArrayList<Event>)
+            }
+            thread.start()
+            try {
+                thread.join()
+            } catch ( e: InterruptedException) {
+                e.printStackTrace()
+            }
+
+            Log.d("ScheduleBasic", "WIFI ERROR : $failList")
+
+            return
+        }
+
+        val eventService = EventService()
+        eventService.setEventView(this)
+
+        when(state) {
+            R.string.event_current_added.toString() -> {
+                eventService.postEvent(eventToEventForUpload(event))
+            }
+            R.string.event_current_edited.toString() -> {
+                eventService.editEvent(event.serverIdx, eventToEventForUpload(event))
+            }
+            else -> {
+                Log.d("ScheduleBasic", "서버 업로드 중 state 오류")
+            }
+        }
+    }
+
+    override fun onPostEventSuccess(response: PostEventResponse, eventId : Long) {
+        Log.d("ScheduleBasic", "onPostEventSuccess")
+
+        val result = response.result
+
+        //룸디비에 isUpload, serverId, state 업데이트하기
+        var thread = Thread {
+            db.eventDao.updateEventAfterUpload(eventId, 1, result.eventIdx, R.string.event_current_default.toString())
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch ( e: InterruptedException) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onPostEventFailure(message: String, eventId: Long) {
+        Log.d("ScheduleBasic", "onPostEventFailure")
+
+        var thread = Thread {
+            db.eventDao.updateEventAfterUpload(eventId, 0, event.serverIdx, R.string.event_current_added.toString())
+            failList.clear()
+            failList.addAll(db.eventDao.getNotUploadedEvent() as ArrayList<Event>)
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch ( e: InterruptedException) {
+            e.printStackTrace()
+        }
+
+        Log.d("ScheduleBasic", "Server Fail : $failList")
+
+        return
+    }
+
+    override fun onEditEventSuccess(response: EditEventResponse, eventId: Long) {
+        Log.d("ScheduleBasic", "onEditEventSuccess")
+
+        val result = response.result
+
+        //룸디비에 isUpload, serverId, state 업데이트하기
+        var thread = Thread {
+            db.eventDao.updateEventAfterUpload(eventId, 1, result.eventIdx, R.string.event_current_default.toString())
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch ( e: InterruptedException) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onEditEventFailure(message: String, eventId : Long, serverId : Int) {
+        Log.d("ScheduleBasic", "onEditEventFailure")
+
+        var thread = Thread {
+            db.eventDao.updateEventAfterUpload(eventId, 0, serverId, R.string.event_current_edited.toString())
+            failList.clear()
+            failList.addAll(db.eventDao.getNotUploadedEvent() as ArrayList<Event>)
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch ( e: InterruptedException) {
+            e.printStackTrace()
+        }
+
+        Log.d("ScheduleBasic", "Server Fail : $failList")
+
+        return
+    }
+
+    companion object {
+        private fun eventToEventForUpload(event : Event) : EventForUpload {
+            return EventForUpload(
+                eventId = event.eventId,
+                name = event.title,
+                startDate = event.startLong,
+                endDate = event.endLong,
+                dayInterval = event.dayInterval,
+                categoryColor = event.categoryColor,
+                categoryName = event.categoryName,
+                categoryId = event.categoryIdx,
+                placeName = event.placeName,
+                placeX = event.placeX,
+                placeY = event.placeY,
+                alarmList = event.alarmList
+            )
+        }
     }
 }

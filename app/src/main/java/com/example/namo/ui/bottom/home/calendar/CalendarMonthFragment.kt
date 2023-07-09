@@ -1,12 +1,16 @@
 package com.example.namo.ui.bottom.home.calendar
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,6 +40,19 @@ class CalendarMonthFragment : Fragment() {
     private var event_group : ArrayList<Event> = arrayListOf()
     private val personalEventRVAdapter = DailyPersonalRVAdapter()
     private val groupEventRVAdapter = DailyGroupRVAdapter()
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (isShow) {
+                binding.constraintLayout.transitionToStart()
+                isShow = !isShow
+                prevIdx = nowIdx
+                binding.calendarMonthView.invalidate()
+            } else {
+                requireActivity().finish()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +106,48 @@ class CalendarMonthFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//
+//        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
+//    }
+
+    override fun onResume() {
+        super.onResume()
+        setAdapter()
+        var forDB : Thread = Thread {
+            tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis, monthList[41].plusDays(1).withTimeAtStartOfDay().millis)
+        }
+        forDB.start()
+        try {
+            forDB.join()
+        } catch (e : InterruptedException) {
+            e.printStackTrace()
+        }
+        binding.calendarMonthView.setEventList(tempEvent)
+
+//        onBackPressedCallback.isEnabled = true
+        Log.d("CalendarMonth2", "OnResume")
+        Log.d("CALENDAR_CHECK", binding.calendarMonthView.getDayList().toString())
+        Log.d("CALENDAR_CHECK", binding.calendarMonthView.getEventList().toString())
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("CalendarMonth2", "OnPause")
+        val listener = object : CustomCalendarView.OnDateClickListener {
+            override fun onDateClick(date: DateTime?, pos : Int?) {
+                binding.calendarMonthView.selectedDate = null
+                binding.constraintLayout.transitionToStart()
+                isShow = false
+                binding.calendarMonthView.invalidate()
+            }
+        }
+        listener.onDateClick(null, null)
+
+//        onBackPressedCallback.isEnabled = false
     }
 
     private fun setAdapter() {
@@ -179,38 +238,6 @@ class CalendarMonthFragment : Fragment() {
         } catch (e : InterruptedException) {
             e.printStackTrace()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        setAdapter()
-        var forDB : Thread = Thread {
-            tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis, monthList[41].plusDays(1).withTimeAtStartOfDay().millis)
-        }
-        forDB.start()
-        try {
-            forDB.join()
-        } catch (e : InterruptedException) {
-            e.printStackTrace()
-        }
-        binding.calendarMonthView.setEventList(tempEvent)
-        Log.d("CalendarMonth2", "OnResume")
-        Log.d("CALENDAR_CHECK", binding.calendarMonthView.getDayList().toString())
-        Log.d("CALENDAR_CHECK", binding.calendarMonthView.getEventList().toString())
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d("CalendarMonth2", "OnPause")
-        val listener = object : CustomCalendarView.OnDateClickListener {
-            override fun onDateClick(date: DateTime?, pos : Int?) {
-                binding.calendarMonthView.selectedDate = null
-                binding.constraintLayout.transitionToStart()
-                isShow = false
-                binding.calendarMonthView.invalidate()
-            }
-        }
-        listener.onDateClick(null, null)
     }
 
     companion object {

@@ -37,6 +37,7 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
         fun bind(group : Event) {
             val time = DateTime(group.startLong).toString("HH:mm") + " - " + DateTime(group.endLong).toString("HH:mm")
             binding.itemCalendarEventTitle.text = group.title
+            binding.itemCalendarEventTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
             binding.itemCalendarEventColorView.background.setTint(context.resources.getColor(group.categoryColor))
         }
