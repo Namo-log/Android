@@ -18,11 +18,15 @@ import com.example.namo.databinding.FragmentCategoryDetailBinding
 import com.example.namo.ui.bottom.home.category.CategorySettingFragment.Companion.CATEGORY_KEY_DATA
 import com.example.namo.ui.bottom.home.category.adapter.CategoryPaletteRVAdapter
 import com.example.namo.data.entity.home.Category
+import com.example.namo.data.remote.category.CategoryBody
+import com.example.namo.data.remote.category.CategoryDetailView
+import com.example.namo.data.remote.category.CategoryService
+import com.example.namo.data.remote.category.PostCategoryResponse
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
 
-class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
+class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), CategoryDetailView {
     private var _binding: FragmentCategoryDetailBinding? = null
     private val binding get() = _binding!!
 
@@ -87,9 +91,13 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
                     Toast.makeText(requireContext(), "카테고리를 입력해주세요", Toast.LENGTH_SHORT).show()
                 } else {
                     // 수정 모드 -> 카테고리 update
-                    if (isEditMode) updateData()
+                    if (isEditMode) {
+                        updateData()
+                    }
                     // 생성 모드 -> 카테고리 insert
-                    else insertData()
+                    else {
+                        insertData()
+                    }
                     // 화면 이동
                     moveToSettingFrag(isEditMode)
                 }
@@ -106,11 +114,14 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
     }
 
     private fun insertData() {
+        // RoomDB
         Thread{
             name = binding.categoryDetailTitleEt.text.toString()
             category = Category(0, name, color, share)
             db.categoryDao.insertCategory(category)
         }.start()
+        // 서버 통신
+        CategoryService(this@CategoryDetailFragment).tryPostCategory(CategoryBody(name, color, share))
     }
 
     private fun updateData() {
@@ -293,5 +304,14 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
                 .replace(R.id.category_frm, CategorySettingFragment())
                 .commitAllowingStateLoss()
         }
+    }
+
+    override fun onPostCategorySuccess(response: PostCategoryResponse) {
+        Log.d("CategoryDetailFrag", "onPostCategorySuccess, categoryIdx = $categoryIdx")
+        // 서버 업로드 변수 update
+    }
+
+    override fun onPostCategoryFailure(message: String) {
+        Log.d("CategoryDetailFrag", "onPostCategoryFailure")
     }
 }
