@@ -11,7 +11,6 @@ import retrofit2.Response
 
 class DiaryService {
     private val diaryRetrofitInterface: DiaryInterface =
-
         ApplicationClass.sRetrofit.create(DiaryInterface::class.java)
 
     private lateinit var diaryView: DiaryView
@@ -39,11 +38,11 @@ class DiaryService {
     fun addDiary(
         localId: Int,
         scheduleId: Int,
-        imgs: List<MultipartBody.Part?>,
+        images: List<MultipartBody.Part?>?,
         content: RequestBody?,
         scheduleIdx: RequestBody
     ) {
-        diaryRetrofitInterface.addDiary(imgs, content, scheduleIdx)
+        diaryRetrofitInterface.addDiary(images, content, scheduleIdx)
             .enqueue(object : Callback<DiaryResponse.DiaryAddResponse> {
 
                 override fun onResponse(
@@ -74,11 +73,11 @@ class DiaryService {
     fun editDiary(
         localId: Int,
         serverId: Int,
-        imgs: List<MultipartBody.Part?>,
+        images: List<MultipartBody.Part?>?,
         content: RequestBody?,
         scheduleIdx: RequestBody
     ) {
-        diaryRetrofitInterface.editDiary(imgs, content, scheduleIdx)
+        diaryRetrofitInterface.editDiary(images, content, scheduleIdx)
             .enqueue(object : Callback<DiaryResponse.DiaryEditResponse> {
 
                 @SuppressLint("SuspiciousIndentation")

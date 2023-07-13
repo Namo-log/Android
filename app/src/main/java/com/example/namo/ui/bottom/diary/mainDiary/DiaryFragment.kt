@@ -57,7 +57,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
         CoroutineScope(Dispatchers.Main).launch {
             val nonup=repo.getNotUploaded()
-            Log.d("es,",nonup.toString())
+            Log.d("erfes,",nonup.toString())
         }
 
 

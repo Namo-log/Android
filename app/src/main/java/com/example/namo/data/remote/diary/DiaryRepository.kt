@@ -2,12 +2,9 @@ package com.example.namo.data.remote.diary
 
 
 import android.content.Context
-import android.net.Uri
-import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.core.net.toUri
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.diary.Diary
@@ -24,11 +21,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -58,6 +50,45 @@ class DiaryRepository(
         failList.clear()
         failList.addAll(diaryDao.getNotUploadedDiary() as ArrayList<Diary>)
         return@withContext failList
+    }
+
+    suspend fun getUpload(eventServerId: Int) {  // 스케줄 아이디가 있을때만
+
+        if (eventServerId != 0 && NetworkManager.checkNetworkState(context)) {
+
+            val notUploaded = getNotUploaded()
+            for (diary in notUploaded) {
+
+                if (diary.isUpload == R.string.event_current_added) {
+                    addDiaryToServer(
+                        diary.diaryLocalId,
+                        diary.diaryServerId,
+                        diary.content,
+                        diary.images
+                    )
+                    diaryService.addDiaryView(this)
+                }
+
+                if (diary.isUpload == R.string.event_current_edited){
+                    editDiaryToServer(
+                        diary.diaryLocalId,
+                        diary.diaryServerId,
+                        diary.content,
+                        diary.images
+                    )
+                    diaryService.setDiaryView(this)
+                }
+
+
+                if (diary.isUpload == R.string.event_current_deleted){
+                    diaryService.deleteDiary(
+                        diary.diaryLocalId,diary.diaryServerId
+                    )
+                    diaryService.setDiaryView(this)
+                }
+            }
+
+        }
     }
 
 
@@ -113,13 +144,15 @@ class DiaryRepository(
         localId: Int,
         scheduleId: Int,
         content: String,
-        images: List<String?>
+        images: List<String?>?
     ) {
 
-        val imageMultiPart = images.map { imgPath ->
-            val file = File(absolutelyPath(imgPath?.toUri(), context)!!)
-            val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-            MultipartBody.Part.createFormData("imgs", file.name, requestFile)
+        val imageMultiPart = images?.map { imagePath ->
+            imagePath?.let { path ->
+                val file = File(path)
+                val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                MultipartBody.Part.createFormData("imgs", file.name, requestFile)
+            }
         }
 
         val contentRequestBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -251,11 +284,8 @@ class DiaryRepository(
             return
         }
 
-        if (images != null) {
-            editDiaryToServer(diaryLocalId, serverId, content, images)
-        }
+        editDiaryToServer(diaryLocalId, serverId, content, images)
         diaryService.setDiaryView(this)
-
     }
 
 
@@ -263,13 +293,15 @@ class DiaryRepository(
         localId: Int,
         scheduleId: Int,
         content: String,
-        images: List<String?>
+        images: List<String?>?
     ) {
 
-        val imageMultiPart = images.map { imgPath ->
-            val file = absolutelyPath(imgPath?.toUri(), context)?.let { File(it) }
-            val requestFile = file!!.asRequestBody("image/*".toMediaTypeOrNull())
-            MultipartBody.Part.createFormData("imgs", file.name, requestFile)
+        val imageMultiPart = images?.map { imagePath ->
+            imagePath?.let { path ->
+                val file = File(path)
+                val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                MultipartBody.Part.createFormData("imgs", file.name, requestFile)
+            }
         }
 
         val contentRequestBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -343,8 +375,6 @@ class DiaryRepository(
     }
 
     override fun onDeleteDiarySuccess(localId: Int, serverId: Int) {
-
-        diaryService.deleteDiary(localId, serverId)
 
         Thread {
             diaryDao.deleteDiary(localId)
@@ -465,7 +495,6 @@ class DiaryRepository(
         return result
     }
 
-
     private fun updateHasDiary(localId: Int) {
         diaryDao.updateHasDiary(1, localId)
     }
@@ -473,47 +502,6 @@ class DiaryRepository(
     private fun deleteHasDiary(localId: Int) {
         diaryDao.deleteHasDiary(0, localId)
     }
-
-    // 이미지 절대 경로 변환
-    private fun absolutelyPath(uri: Uri?, context: Context?): String? {
-        var inputStream: InputStream? = null
-        var file: File? = null
-        var filePath: String? = null
-        try {
-            if (context != null) {
-                inputStream = uri?.let { context.contentResolver.openInputStream(it) }
-            }
-            file = context?.let { createTemporalFile(it) }
-            if (file != null) {
-                if (inputStream != null) {
-                    copyInputStreamToFile(inputStream, file)
-                }
-                filePath = file.absolutePath
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            inputStream?.close()
-            file?.deleteOnExit()
-        }
-        return filePath
-    }
-
-    private fun createTemporalFile(context: Context): File? {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile("IMG_$timeStamp", ".jpg", storageDir)
-    }
-
-    @Throws(IOException::class)
-    private fun copyInputStreamToFile(inputStream: InputStream, file: File) {
-        inputStream.use { input ->
-            FileOutputStream(file).use { output ->
-                input.copyTo(output)
-            }
-        }
-    }
-
 
 }
 

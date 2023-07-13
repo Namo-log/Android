@@ -37,4 +37,5 @@ interface DiaryDao {
 
     @Query("SELECT * FROM diaryTable WHERE diary_upload = 0")
     fun getNotUploadedDiary() : List<Diary>
+
 }

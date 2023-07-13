@@ -1,5 +1,6 @@
 package com.example.namo.ui.bottom.diary.mainDiary
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -144,11 +145,11 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
     private fun hasImagePermission(): Boolean { // 갤러리 권한 여부
         val writePermission = ContextCompat.checkSelfPermission(
             requireContext(),
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
         val readPermission = ContextCompat.checkSelfPermission(
             requireContext(),
-            android.Manifest.permission.READ_EXTERNAL_STORAGE
+            Manifest.permission.READ_EXTERNAL_STORAGE
         )
 
         return writePermission == PackageManager.PERMISSION_GRANTED && readPermission == PackageManager.PERMISSION_GRANTED
@@ -164,11 +165,10 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
                 addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
             }
-            intent.type = "image/*"
-            intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
+            intent.type = MediaStore.Images.Media.CONTENT_TYPE
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
-            intent.action = Intent.ACTION_PICK
+            intent.action = Intent.ACTION_GET_CONTENT
 
             getImage.launch(intent)
 
@@ -179,8 +179,8 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
             ActivityCompat.requestPermissions(
                 requireActivity(),
                 arrayOf(
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
                 ),
                 200
             )
