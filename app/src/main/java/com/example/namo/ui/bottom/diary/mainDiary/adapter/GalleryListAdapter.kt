@@ -11,14 +11,13 @@ import com.example.namo.databinding.ItemGalleryListBinding
 
 class GalleryListAdapter(  // 다이어리 추가, 수정 화면의 이미지(점선 테두리 O)
     private val context: Context,
-  //  private val imgList: List<String>?,
 ):
     RecyclerView.Adapter<GalleryListAdapter.ViewHolder>(){
 
-    private val items = ArrayList<String>()
+    private val items = ArrayList<String?>()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addImages(image: List<String>) {
+    fun addImages(image: List<String?>) {
         this.items.clear()
         this.items.addAll(image)
         notifyDataSetChanged()
@@ -33,9 +32,11 @@ class GalleryListAdapter(  // 다이어리 추가, 수정 화면의 이미지(�
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val uri= items[position]
-        Glide.with(context)
-            .load(uri?.toUri())
-            .into(holder.imageUrl)
+        if (uri != null) {
+            Glide.with(context)
+                .load(uri.toUri())
+                .into(holder.imageUrl)
+        }
     }
 
     override fun getItemCount(): Int = items.size

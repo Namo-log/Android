@@ -24,7 +24,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
-import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.diary.Diary
 import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
@@ -32,9 +31,12 @@ import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryModifyBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
-class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // 다이어리 편집 화면
+class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
 
     private var _binding: FragmentDiaryModifyBinding? = null
     private val binding get() = _binding!!
@@ -44,7 +46,6 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
     private lateinit var repo: DiaryRepository
 
     private lateinit var event: Event
-    private lateinit var diary: Diary
     private lateinit var category: Category
 
 
@@ -59,85 +60,46 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
 
         hideBottomNavigation(true)
 
-        val diaryDao = NamoDatabase.getInstance(requireContext()).diaryDao
-        val categoryDao = NamoDatabase.getInstance(requireContext()).categoryDao
-        val diaryService = DiaryService()
-
-
-        repo = DiaryRepository(diaryDao, categoryDao, diaryService, requireContext())
+        repo = DiaryRepository(requireContext())
+        repo.setFragment(this)
 
         event = (arguments?.getSerializable("event") as? Event)!!
+        repo.setDiary(event.eventId.toInt(), event.serverIdx)
 
-
-        Thread {
-            diary = repo.getDiaryDailyLocal(event.eventId.toInt())
-            category = repo.getCategoryId(event.categoryIdx)
-
-            galleryAdapter = GalleryListAdapter(requireContext())
-            diary.images?.let { galleryAdapter.addImages(it) }
-
-            requireActivity().runOnUiThread {
-                bind()
-            }
-        }.start()
-
-
-        onClickListener(diaryService)
+        bind()
         charCnt()
 
 
         return binding.root
     }
 
-    override fun onEditDiarySuccess(code: Int, message: String, result: String) {
-        when (code) {
-            1000 -> {
-                Log.d("onEditDiary", "success")
 
-            }
-        }
-        Log.d("onEditDiary", "$code $message $result")
+    fun bindDiary(diary: Diary) {
+
+        galleryAdapter = GalleryListAdapter(requireContext())
+        diary.images?.let { galleryAdapter.addImages(it) }
+        binding.diaryContentsEt.setText(diary.content)
+        onRecyclerView()
+        onClickListener(diary)
+
     }
 
-    override fun onDeleteDiarySuccess(code: Int, message: String, result: String) {
-        when (code) {
-            1000 -> {
-                Log.d("onDeleteDiary", "success")
-
-            }
-        }
-        Log.d("onDeleteDiary", "$code $message $result")
-    }
-
-    override fun onEditDiaryFailure(message: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onDeleteDiaryFailure(message: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onGetDayDiarySuccess(
-        code: Int,
-        message: String,
-        result: DiaryResponse.DayDiaryDto
-    ) {
-        when (code) {
-            1000 -> {
-                Log.d("onGetDayDiary", "success")
-
-            }
-        }
-        Log.d("onGetDayDiary", "$code $message $result")
-    }
-
-    override fun onGetDayhDiaryFailure(message: String) {
-        TODO("Not yet implemented")
-    }
 
     @SuppressLint("SimpleDateFormat")
     private fun bind() {
 
+        CoroutineScope(Dispatchers.Main).launch {
+            category = repo.getCategoryId(event.categoryIdx)
+
+            context?.resources?.let {
+                binding.itemDiaryCategoryColorIv.background.setTint(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        category.color
+                    )
+                )
+            }
+        }
 
         binding.apply {
             val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong)
@@ -146,32 +108,20 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
             diaryInputPlaceTv.text = event.placeName
             diaryTitleTv.text = event.title
             diaryTitleTv.isSelected = true  // marquee
-            diaryContentsEt.setText(diary.content)
-            context?.resources?.let {
-                itemDiaryCategoryColorIv.background.setTint(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        category.color
-                    )
-                )
-            }
 
             diaryTodayDayTv.text = SimpleDateFormat("EE").format(event.startLong)
             diaryTodayNumTv.text = SimpleDateFormat("dd").format(event.startLong)
-
-            onRecyclerView()
-
         }
     }
 
-    private fun onClickListener(diaryService: DiaryService) {
+    private fun onClickListener(diary: Diary) {
 
         binding.diaryEditTv.setOnClickListener {
             if (binding.diaryEditTv.text.toString().isEmpty()) {
                 Toast.makeText(requireContext(), "메모를 입력해주세용", Toast.LENGTH_SHORT).show()
             } else {
-                updateDiary()
-                view?.findNavController()?.navigate(R.id.diaryFragment)
+                updateDiary(diary)
+                findNavController().popBackStack()
                 hideBottomNavigation(false)
 
             }
@@ -195,32 +145,24 @@ class DiaryModifyFragment : Fragment(), DiaryDetailView, GetDayDiaryView {  // �
 
 
     /** 다이어리 수정 **/
-    private fun updateDiary() {
-        Thread {
-            diary.content = binding.diaryContentsEt.text.toString()
+    private fun updateDiary(diary: Diary) {
+        diary.content = binding.diaryContentsEt.text.toString()
 
-            if (imgList.isEmpty()) diary.images = diary.images
-            else diary.images = imgList
+        if (imgList.isEmpty()) diary.images = diary.images
+        else diary.images = imgList
 
-            diary.images?.let {
-                repo.editDiaryLocal(
-                    event.eventId.toInt(), binding.diaryContentsEt.text.toString(),
-                    it
-                )
-            }
-
-        }.start()
+        repo.editDiary(
+            event.eventId.toInt(),
+            binding.diaryContentsEt.text.toString(),
+            diary.images,
+            event.serverIdx
+        )
         Toast.makeText(requireContext(), "수정되었습니다", Toast.LENGTH_SHORT).show()
     }
 
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
-        Thread {
-            diary.images?.let { repo.deleteDiaryLocal(diary.scheduleIdx, diary.content, it) }
-            repo.deleteHasDiary(0, event.eventId.toInt())
-        }.start()
-
-        Toast.makeText(requireContext(), "삭제되었습니다", Toast.LENGTH_SHORT).show()
+        repo.deleteDiary(event.eventId.toInt(), event.serverIdx)
     }
 
     @SuppressLint("IntentReset")

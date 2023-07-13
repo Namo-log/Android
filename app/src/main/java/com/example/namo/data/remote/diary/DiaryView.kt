@@ -1,29 +1,27 @@
 package com.example.namo.data.remote.diary
 
 interface DiaryView {
-    fun onAddDiarySuccess(code: Int, message: String, result: DiaryResponse.GetScheduleIdx)
-    fun onAddDiaryFailure(message: String)
+    fun onAddDiarySuccess(result: DiaryResponse.GetScheduleIdx, localId: Int)
+    fun onAddDiaryFailure(localId: Int, serverId: Int)
 }
 
 interface DiaryDetailView {
-    fun onEditDiarySuccess(code: Int, message: String, result: String)
-    fun onDeleteDiarySuccess(code: Int, message: String, result: String)
-    fun onEditDiaryFailure(message: String)
-    fun onDeleteDiaryFailure(message: String)
+    fun onEditDiarySuccess(result: String, localId: Int,serverId: Int)
+    fun onDeleteDiarySuccess(localId: Int,serverId: Int)
+    fun onEditDiaryFailure(localId: Int,serverId: Int)
+    fun onDeleteDiaryFailure()
 }
 
 interface GetMonthDiaryView {
     fun onGetMonthDiarySuccess(
-        code: Int,
-        message: String,
         result: List<DiaryResponse.MonthDiaryDto>
     )
 
-    fun onGetMonthDiaryFailure(message: String)
+    fun onGetMonthDiaryFailure()
 }
 
 interface GetDayDiaryView {
-    fun onGetDayDiarySuccess(code: Int, message: String, result: DiaryResponse.DayDiaryDto)
-    fun onGetDayhDiaryFailure(message: String)
+    fun onGetDayDiarySuccess(localId: Int, result: DiaryResponse.DayDiaryDto)
+    fun onGetDayDiaryFailure(localId: Int)
 }
 

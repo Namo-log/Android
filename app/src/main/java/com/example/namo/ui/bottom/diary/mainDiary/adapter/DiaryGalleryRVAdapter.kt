@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.namo.databinding.ItemDiaryListGalleryBinding
 
 class DiaryGalleryRVAdapter(
@@ -37,6 +39,14 @@ class DiaryGalleryRVAdapter(
         val uri = imgList?.get(position)
         Glide.with(context)
             .load(uri)
+            .into(holder.imageUrl)
+
+        val requestOptions = RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.DATA)
+
+        Glide.with(context)
+            .load(uri)
+            .apply(requestOptions)
             .into(holder.imageUrl)
 
 //        holder.imageUrl.setOnClickListener {
