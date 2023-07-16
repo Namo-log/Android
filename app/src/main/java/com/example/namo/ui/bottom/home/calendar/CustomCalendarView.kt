@@ -33,8 +33,8 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
     private var endY = 0f
     private var isScroll = false
 
-    private var cellWidth = 0
-    private var cellHeight = 0
+    private var cellWidth = 0f
+    private var cellHeight = 0f
     private val bounds = Rect()
     private val today = DateTime.now().withTimeAtStartOfDay().millis
 
@@ -161,8 +161,8 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
 
-        cellWidth = width / DAYS_PER_WEEK
-        cellHeight = height / WEEKS_PER_MONTH
+        cellWidth = width.toFloat() / DAYS_PER_WEEK
+        cellHeight = height.toFloat() / WEEKS_PER_MONTH
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -174,14 +174,12 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
 
             if (dayList[day].isEqual(today)) {
                 todayPaint.getTextBounds(dayList[day].dayOfMonth.toString(), 0, dayList[day].dayOfMonth.toString().length, bounds)
+//                Log.d("RECT_CHECK", "left : ${bounds.left} | right : ${bounds.right} | center : ${bounds.width().toFloat() / 2}")
                 canvas!!.drawCircle((x + cellWidth / 2).toFloat(), (y + _dayTextHeight - bounds.height() / 2), bounds.height().toFloat(), todayNoticePaint)
-                canvas!!.drawText(dayList[day].dayOfMonth.toString(), (x + cellWidth / 2 - bounds.width() / 2).toFloat(), y + _dayTextHeight, todayPaint)
-//                Log.d("DATE_CHECK", "날짜 ${dayList[day].dayOfMonth}, paint : todayPaint")
+                canvas!!.drawText(dayList[day].dayOfMonth.toString(), (x + cellWidth / 2 - bounds.right.toFloat() / 2), y + _dayTextHeight, todayPaint)
             } else {
-//                isSameMonth(dayList[day])
                 datePaint.getTextBounds(dayList[day].dayOfMonth.toString(), 0, dayList[day].dayOfMonth.toString().length, bounds)
-                canvas!!.drawText(dayList[day].dayOfMonth.toString(), (x + cellWidth / 2 - bounds.width() / 2).toFloat(), y + _dayTextHeight, datePaint)
-//                Log.d("DATE_CHECK", "날짜 ${dayList[day].dayOfMonth}, paint : datePaint")
+                canvas!!.drawText(dayList[day].dayOfMonth.toString(), (x + cellWidth / 2 - bounds.right.toFloat() / 2), y + _dayTextHeight, datePaint)
             }
 
         }
@@ -194,7 +192,7 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
                     val y = (i / DAYS_PER_WEEK) * cellHeight
 
                     selectedPaint.getTextBounds(selectedDay.toString(), 0, selectedDay.toString().length, bounds)
-                    canvas!!.drawText(selectedDay.toString(), (x + cellWidth / 2 - bounds.width() / 2).toFloat(), y + _dayTextHeight, selectedPaint)
+                    canvas!!.drawText(selectedDay.toString(), (x + cellWidth / 2 - bounds.right.toFloat() / 2), y + _dayTextHeight, selectedPaint)
                     break
                 }
             }
@@ -212,12 +210,12 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
 //                x계산하고, y계산하기
                 val startIdx = dayList.indexOf(DateTime(eventList[i].startLong).withTimeAtStartOfDay())
                 val endIdx = dayList.indexOf(DateTime(eventList[i].endLong).withTimeAtStartOfDay())
-                Log.d("CHECK_EVENT", "start idx : $startIdx | end idx : $endIdx")
+                Log.d("CalendarView", "CHECK EVENT = start idx : $startIdx | end idx : $endIdx")
 
                 for (splitEvent in splitWeek(startIdx, endIdx)) {
-                    Log.d("CHECK_WEEK_SINGLE", "Start drawing different week, start idx : ${splitEvent.startIdx} | end idx : ${splitEvent.endIdx}")
+                    Log.d("CalendarView", "CHECK WEEK SINGLE = Start drawing different week, start idx : ${splitEvent.startIdx} | end idx : ${splitEvent.endIdx}")
                     val order = findMaxOrderInEvent(splitEvent.startIdx, splitEvent.endIdx)
-                    Log.d("CHECK_ORDER", order.toString())
+                    Log.d("CalendarView", "CHECK ORDER = $order")
                     setOrder(order, splitEvent.startIdx, splitEvent.endIdx)
 
                     if (cellHeight - getEventBottom(order) < _eventHeight) {
@@ -228,7 +226,7 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
                     }
 
                     rect = setRect(order, splitEvent.startIdx, splitEvent.endIdx)
-                    Log.d("CHECK_RECT", rect.toString())
+                    Log.d("CalendarView", "CHECK RECT = $rect")
                     val path = Path()
                     path.addRoundRect(rect, corners, Path.Direction.CW)
                     setBgPaintColor(eventList[i])
@@ -236,15 +234,15 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
 
                     val textWidth = eventPaint.measureText(eventList[i].title) + (2 * _eventHorizontalPadding)
                     val pathWidth = rect.width()
-                    Log.d("DRAW_TEXT", "path : $pathWidth")
-                    Log.d("DRAW_TEXT", "eventTitle : $textWidth")
+                    Log.d("CalendarView", "DRAW TEXT = path : $pathWidth")
+                    Log.d("CalendarView", "DRAW TEXT = eventTitle : $textWidth")
 
                     if (textWidth > pathWidth) {
                         val ellipsizedText = TextUtils.ellipsize(eventList[i].title, eventPaint, pathWidth - (2 * _eventHorizontalPadding), TextUtils.TruncateAt.END)
 
                         eventPaint.getTextBounds(ellipsizedText.toString(), 0, ellipsizedText.toString().length, eventBounds)
 
-                        Log.d("DRAW_TEXT", "ellipsized : ${ellipsizedText.toString()}")
+                        Log.d("CalendarView", "DRAW TEXT = ellipsized : ${ellipsizedText.toString()}")
                         canvas.drawText(
                             ellipsizedText.toString(),
                             getEventTextStart(ellipsizedText.toString(), splitEvent.startIdx, splitEvent.endIdx),
@@ -262,19 +260,10 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
                             eventPaint
                         )
                     }
-
-//                    canvas!!.drawText(
-//                        eventList[i].title,
-//                        getEventTextStart(eventList[i].title, splitEvent.startIdx, splitEvent.endIdx),
-//                        getEventTextBottom(eventList[i].title, splitEvent.startIdx, splitEvent.endIdx, order),
-//                        eventPaint
-//                    )
-
-                    Log.d("CHECK_WEEK_SINGLE", "Finish drawing different week, start idx : ${splitEvent.startIdx} | end idx : ${splitEvent.endIdx}")
                 }
             }
 
-            Log.d("CHECK_MORE", moreList.toString())
+            Log.d("CalendarView", "CHECK MORE = $moreList")
             for (more in 0 until 42) {
                 if (moreList[more] != 0) {
                     var moreText : String = "+${moreList[more]}"
@@ -293,12 +282,12 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
 //                x계산하고, y계산하기
                 val startIdx = dayList.indexOf(DateTime(eventList[i].startLong).withTimeAtStartOfDay())
                 val endIdx = dayList.indexOf(DateTime(eventList[i].endLong).withTimeAtStartOfDay())
-                Log.d("CHECK_EVENT", "start idx : $startIdx | end idx : $endIdx")
+                Log.d("CalendarView", "CHECK EVENT = start idx : $startIdx | end idx : $endIdx")
 
                 for (splitEvent in splitWeek(startIdx, endIdx)) {
-                    Log.d("CHECK_WEEK_SINGLE", "Start drawing different week, start idx : ${splitEvent.startIdx} | end idx : ${splitEvent.endIdx}")
+                    Log.d("CalendarView", "CHECK WEEK SINGLE = Start drawing different week, start idx : ${splitEvent.startIdx} | end idx : ${splitEvent.endIdx}")
                     val order = findMaxOrderInEvent(splitEvent.startIdx, splitEvent.endIdx)
-                    Log.d("CHECK_ORDER", order.toString())
+                    Log.d("CalendarView", "CHECK ORDER = $order")
                     setOrder(order, splitEvent.startIdx, splitEvent.endIdx)
 
                     if (getEventLineBottom(order) >= cellHeight) {
@@ -306,13 +295,13 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
                     }
 
                     rect = setLineRect(order, splitEvent.startIdx, splitEvent.endIdx)
-                    Log.d("CHECK_RECT", rect.toString())
+                    Log.d("CalendarView", "CHECK RECT = $rect")
                     val path = Path()
                     path.addRoundRect(rect, corners, Path.Direction.CW)
                     setBgPaintColor(eventList[i])
                     canvas!!.drawPath(path, bgPaint)
 
-                    Log.d("CHECK_WEEK_SINGLE", "Finish drawing different week, start idx : ${splitEvent.startIdx} | end idx : ${splitEvent.endIdx}")
+                    Log.d("CalendarView", "CHECK WEEK SINGLE = Finish drawing different week, start idx : ${splitEvent.startIdx} | end idx : ${splitEvent.endIdx}")
                 }
             }
         }
@@ -322,7 +311,7 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
         var next = 0
         while (!isSameMonth(dayList[prev])) prev++
         while (!isSameMonth(dayList[41-next])) next++
-        Log.d("CHECK_OTHERS", "prev : $prev | next : $next")
+        Log.d("CalendarView", "CHECK OTHERS = prev : $prev | next : $next")
         drawPrevMonthRect(prev, canvas)
         drawNextMonthRect(next, canvas)
     }
@@ -345,12 +334,12 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
                     val col = (event.x / cellWidth).toInt()
                     if (row in 0..5 && col in 0..6) {
                         val day = dayList[row * 7 + col]
-                        Log.d("TOUCH_DAY", (row * 7 + col).toString())
+                        Log.d("CalendarView", "TOUCH DAY = " + (row * 7 + col).toString())
                         onDateClickListener?.onDateClick(day, row * 7 + col)
                         return true
                     }
                 }
-                else onDateClickListener?.onDateClick(null, null)
+//                else onDateClickListener?.onDateClick(null, null)
             }
         }
 
@@ -371,7 +360,7 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
             start = mid + 1
         }
 
-        Log.d("CHECK_SPLIT_WEEK", result.toString())
+        Log.d("CalendarView", "CHECK SPLIT WEEK $result")
 
         return result
     }
@@ -516,7 +505,7 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
     fun setEventList(events : List<Event>) {
         eventList.clear()
         eventList.addAll(events)
-        invalidate()
+//        invalidate()
     }
 
     fun getDayList() : MutableList<DateTime> {
