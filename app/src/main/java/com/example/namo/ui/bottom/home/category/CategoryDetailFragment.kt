@@ -13,15 +13,18 @@ import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.namo.R
+import com.example.namo.config.ApplicationClass
 import com.example.namo.data.NamoDatabase
 import com.example.namo.databinding.FragmentCategoryDetailBinding
 import com.example.namo.ui.bottom.home.category.CategorySettingFragment.Companion.CATEGORY_KEY_DATA
 import com.example.namo.ui.bottom.home.category.adapter.CategoryPaletteRVAdapter
 import com.example.namo.data.entity.home.Category
+import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.category.CategoryBody
 import com.example.namo.data.remote.category.CategoryDetailView
 import com.example.namo.data.remote.category.CategoryService
 import com.example.namo.data.remote.category.PostCategoryResponse
+import com.example.namo.utils.NetworkManager
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
@@ -34,6 +37,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
     private lateinit var db: NamoDatabase
     private lateinit var category: Category
+
+    private val failList = ArrayList<Category>()
 
     // 카테고리에 들어갈 데이터
     var categoryIdx = -1
@@ -68,13 +73,11 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         clickCategoryItem()
         initPaletteColorRv(color)
 
+//        for (i: Int in colorList.indices) {
+//            Log.d("CategoryColor", colorList.toString())
+//        }
+
         return binding.root
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-
     }
 
     private fun onClickListener() {
@@ -93,10 +96,12 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                     // 수정 모드 -> 카테고리 update
                     if (isEditMode) {
                         updateData()
+//                        uploadToServer(R.string.event_current_edited.toString())
                     }
                     // 생성 모드 -> 카테고리 insert
                     else {
                         insertData()
+//                        uploadToServer(R.string.event_current_added.toString())
                     }
                     // 화면 이동
                     moveToSettingFrag(isEditMode)
@@ -110,6 +115,42 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         if (isEditMode) {
             // 이전 화면에서 저장한 spf 받아오기
             loadPref()
+        }
+    }
+
+    private fun uploadToServer(state : String) {
+        if (!NetworkManager.checkNetworkState(requireContext())) {
+            // 인터넷 연결 안 됨
+            // 룸디비에 isUpload, serverId, state 업데이트하기
+            val thread = Thread {
+                db.categoryDao.updateCategoryAfterUpload(categoryIdx, 0, category.serverIdx, state)
+                failList.clear()
+                failList.addAll(db.categoryDao.getNotUploadedCategory() as ArrayList<Category>)
+            }
+            thread.start()
+            try {
+                thread.join()
+            } catch ( e: InterruptedException) {
+                e.printStackTrace()
+            }
+
+            Log.d("CategoryDetailFrag", "WIFI ERROR : $failList")
+
+            return
+        }
+
+        when(state) {
+            R.string.event_current_added.toString() -> {
+                // 카테고리 생성
+                CategoryService(this@CategoryDetailFragment).tryPostCategory(CategoryBody(name, color, share))
+            }
+            R.string.event_current_edited.toString() -> {
+                // 카테고리 수정
+                CategoryService(this@CategoryDetailFragment).tryPatchCategory(category.serverIdx, CategoryBody(name, color, share))
+            }
+            else -> {
+                Log.d("CategoryDetailFrag", "서버 업로드 중 state 오류")
+            }
         }
     }
 
