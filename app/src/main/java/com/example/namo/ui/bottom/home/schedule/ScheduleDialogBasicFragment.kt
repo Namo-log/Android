@@ -857,7 +857,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
     }
 
     companion object {
-        private fun eventToEventForUpload(event : Event) : EventForUpload {
+        fun eventToEventForUpload(event : Event) : EventForUpload {
             return EventForUpload(
                 eventId = event.eventId,
                 name = event.title,

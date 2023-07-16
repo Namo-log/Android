@@ -41,19 +41,6 @@ class CalendarMonthFragment : Fragment() {
     private val personalEventRVAdapter = DailyPersonalRVAdapter()
     private val groupEventRVAdapter = DailyGroupRVAdapter()
 
-    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            if (isShow) {
-                binding.constraintLayout.transitionToStart()
-                isShow = !isShow
-                prevIdx = nowIdx
-                binding.calendarMonthView.invalidate()
-            } else {
-                requireActivity().finish()
-            }
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -73,8 +60,8 @@ class CalendarMonthFragment : Fragment() {
 
 
         binding.homeFab.setOnClickListener {
-            Log.d("DIALOG_OPEN", nowIdx.toString())
-            Log.d("DIALOG_OPEN", monthList[nowIdx].toString())
+            Log.d("CalendarMonth", "Dialog open : $nowIdx")
+            Log.d("CalendarMonth", "Dialog open : " + monthList[nowIdx].toString())
             val intent = Intent(context, ScheduleActivity::class.java)
             intent.putExtra("nowDay", monthList[nowIdx].millis)
             requireActivity().startActivity(intent)
@@ -82,8 +69,8 @@ class CalendarMonthFragment : Fragment() {
 
         binding.calendarMonthView.onDateClickListener = object : CustomCalendarView.OnDateClickListener {
             override fun onDateClick(date: DateTime?, pos : Int?) {
-                if (date == null) Log.d("CALENDAR_FRAGMENT", "The NULL clicked!")
-                Log.d("CALENDAR_FRAGMENT", "THE $date is clicked!")
+                if (date == null) Log.d("CalendarMonth", "The NULL clicked!")
+                Log.d("CalendarMonth", "THE $date is clicked!")
                 binding.calendarMonthView.selectedDate = date
 
                 if (date != null && pos != null) {
@@ -92,16 +79,16 @@ class CalendarMonthFragment : Fragment() {
 
                     if (isShow && prevIdx == nowIdx) {
                         binding.constraintLayout.transitionToStart()
-                        isShow = !isShow
+                        binding.calendarMonthView.selectedDate = null
                     }
                     else if (!isShow) {
                         binding.constraintLayout.transitionToEnd()
-                        isShow = !isShow
                     }
+                    isShow = !isShow
                     prevIdx = nowIdx
                 }
 
-                binding.calendarMonthView.invalidate()
+//                binding.calendarMonthView.invalidate()
             }
         }
 
@@ -129,23 +116,23 @@ class CalendarMonthFragment : Fragment() {
         binding.calendarMonthView.setEventList(tempEvent)
 
 //        onBackPressedCallback.isEnabled = true
-        Log.d("CalendarMonth2", "OnResume")
-        Log.d("CALENDAR_CHECK", binding.calendarMonthView.getDayList().toString())
-        Log.d("CALENDAR_CHECK", binding.calendarMonthView.getEventList().toString())
+        Log.d("CalendarMonth", "OnResume")
+        Log.d("CalendarMonth", "Day list : " + binding.calendarMonthView.getDayList().toString())
+        Log.d("CalendarMonth", "Event list : " + binding.calendarMonthView.getEventList().toString())
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d("CalendarMonth2", "OnPause")
-        val listener = object : CustomCalendarView.OnDateClickListener {
-            override fun onDateClick(date: DateTime?, pos : Int?) {
-                binding.calendarMonthView.selectedDate = null
-                binding.constraintLayout.transitionToStart()
-                isShow = false
-                binding.calendarMonthView.invalidate()
-            }
-        }
-        listener.onDateClick(null, null)
+        Log.d("CalendarMonth", "OnPause")
+//        val listener = object : CustomCalendarView.OnDateClickListener {
+//            override fun onDateClick(date: DateTime?, pos : Int?) {
+//                binding.calendarMonthView.selectedDate = null
+//                binding.constraintLayout.transitionToStart()
+//                isShow = false
+////                binding.calendarMonthView.invalidate()
+//            }
+//        }
+//        listener.onDateClick(null, null)
 
 //        onBackPressedCallback.isEnabled = false
     }
@@ -225,7 +212,7 @@ class CalendarMonthFragment : Fragment() {
             event_personal = db.eventDao.getEventDaily(todayStart, todayEnd) as ArrayList<Event>
             personalEventRVAdapter.addPersonal(event_personal)
             requireActivity().runOnUiThread {
-                Log.d("NOTIFY", event_personal.toString())
+                Log.d("CalendarMonth", "Personal Event : $event_personal")
                 personalEventRVAdapter.notifyDataSetChanged()
             }
         }
