@@ -134,7 +134,7 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
         }
 
         binding.diaryDeleteIv.setOnClickListener {
-            deleteDiary()
+            deleteDiary(diary)
             view?.findNavController()?.navigate(R.id.diaryFragment)
             hideBottomNavigation(false)
         }
@@ -153,18 +153,18 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
         else diary.images = imgList
 
         repo.editDiary(
-            event.eventId.toInt(),
+            diary.diaryLocalId,
             binding.diaryContentsEt.text.toString(),
             diary.images,
-            event.serverIdx
+            diary.diaryServerId
         )
 
         Toast.makeText(requireContext(), "수정되었습니다", Toast.LENGTH_SHORT).show()
     }
 
     /** 다이어리 삭제 **/
-    private fun deleteDiary() {
-        repo.deleteDiary(event.eventId.toInt(), event.serverIdx)
+    private fun deleteDiary(diary: Diary) {
+        repo.deleteDiary(diary.diaryLocalId, diary.diaryServerId)
     }
 
     @SuppressLint("IntentReset")

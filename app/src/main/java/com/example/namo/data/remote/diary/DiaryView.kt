@@ -9,7 +9,7 @@ interface DiaryDetailView {
     fun onEditDiarySuccess(result: String, localId: Int,serverId: Int)
     fun onDeleteDiarySuccess(localId: Int,serverId: Int)
     fun onEditDiaryFailure(localId: Int,serverId: Int)
-    fun onDeleteDiaryFailure()
+    fun onDeleteDiaryFailure(localId: Int,serverId: Int)
 }
 
 interface GetMonthDiaryView {

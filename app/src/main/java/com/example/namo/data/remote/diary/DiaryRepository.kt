@@ -36,7 +36,7 @@ class DiaryRepository(
     private var fragment: DiaryModifyFragment? = null
     private var fragment2: DiaryFragment? = null
 
-    private val failList = ArrayList<Diary>()
+    private val failList: ArrayList<Diary> = arrayListOf()
     fun setFragment(fragment: DiaryModifyFragment) {
         this.fragment = fragment
     }
@@ -52,14 +52,15 @@ class DiaryRepository(
         return@withContext failList
     }
 
-    suspend fun getUpload(eventServerId: Int) {  // 스케줄 아이디가 있을때만
+
+    suspend fun getUpload(eventServerId: Int) {
 
         if (eventServerId != 0 && NetworkManager.checkNetworkState(context)) {
 
             val notUploaded = getNotUploaded()
             for (diary in notUploaded) {
 
-                if (diary.isUpload == R.string.event_current_added) {
+                if (diary.state == R.string.event_current_added.toString()) {
                     addDiaryToServer(
                         diary.diaryLocalId,
                         diary.diaryServerId,
@@ -69,7 +70,7 @@ class DiaryRepository(
                     diaryService.addDiaryView(this)
                 }
 
-                if (diary.isUpload == R.string.event_current_edited){
+                if (diary.state == R.string.event_current_edited.toString()) {
                     editDiaryToServer(
                         diary.diaryLocalId,
                         diary.diaryServerId,
@@ -80,9 +81,9 @@ class DiaryRepository(
                 }
 
 
-                if (diary.isUpload == R.string.event_current_deleted){
+                if (diary.state == R.string.event_current_deleted.toString()) {
                     diaryService.deleteDiary(
-                        diary.diaryLocalId,diary.diaryServerId
+                        diary.diaryLocalId, diary.diaryServerId
                     )
                     diaryService.setDiaryView(this)
                 }
@@ -120,6 +121,7 @@ class DiaryRepository(
                 )
                 failList.clear()
                 failList.addAll(diaryDao.getNotUploadedDiary() as ArrayList<Diary>)
+
             }
             thread.start()
             try {
@@ -181,6 +183,7 @@ class DiaryRepository(
             )
         }.start()
 
+
         Log.d("addDiaryServer", "success")
     }
 
@@ -195,6 +198,7 @@ class DiaryRepository(
             )
             failList.clear()
             failList.addAll(diaryDao.getNotUploadedDiary() as ArrayList<Diary>)
+
         }.start()
 
         Log.d("addDiaryServer", "failure")
@@ -244,10 +248,10 @@ class DiaryRepository(
 
     /** edit diary **/
     fun editDiary(
-        diaryLocalId: Int, // eventId
+        diaryLocalId: Int,
         content: String,
         images: List<String?>?,
-        serverId: Int // eventServerId
+        serverId: Int
     ) {
 
         Thread {
@@ -271,6 +275,7 @@ class DiaryRepository(
                 )
                 failList.clear()
                 failList.addAll(diaryDao.getNotUploadedDiary() as ArrayList<Diary>)
+
             }
             thread.start()
             try {
@@ -344,6 +349,7 @@ class DiaryRepository(
             )
             failList.clear()
             failList.addAll(diaryDao.getNotUploadedDiary() as ArrayList<Diary>)
+
         }.start()
 
         Log.d("editDiaryServer", "failure")
@@ -387,15 +393,17 @@ class DiaryRepository(
             )
         }.start()
 
+
         Log.d("deleteDiary", "seccess")
     }
 
 
-    override fun onDeleteDiaryFailure() {
+    override fun onDeleteDiaryFailure(localId: Int, serverId: Int) {
 
         val thread = Thread {
             failList.clear()
             failList.addAll(diaryDao.getNotUploadedDiary() as ArrayList<Diary>)
+
         }
         thread.start()
         Log.d("deleteDiary", "failure")

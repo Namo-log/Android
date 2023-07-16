@@ -124,7 +124,7 @@ class DiaryService {
                                 localId, scheduleIdx
                             )
                         }
-                        else -> diaryDetailView.onDeleteDiaryFailure()
+                        else -> diaryDetailView.onDeleteDiaryFailure(localId, scheduleIdx)
                     }
                 }
 
@@ -132,7 +132,7 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryDeleteResponse>,
                     t: Throwable
                 ) {
-                    diaryDetailView.onDeleteDiaryFailure()
+                    diaryDetailView.onDeleteDiaryFailure(localId, scheduleIdx)
                 }
             })
     }
