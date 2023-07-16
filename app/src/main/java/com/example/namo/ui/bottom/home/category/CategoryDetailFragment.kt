@@ -125,6 +125,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
     }
 
     private fun updateData() {
+        // RoomDB
         val thread = Thread{
             name = binding.categoryDetailTitleEt.text.toString()
             category = Category(categoryIdx, name, color, share)
@@ -137,6 +138,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         } catch (e : InterruptedException) {
             e.printStackTrace()
         }
+        // 서버 통신
+        CategoryService(this@CategoryDetailFragment).tryPatchCategory(categoryIdx, CategoryBody(name, color, share))
 
         updateEventWithCategory()
     }
@@ -306,12 +309,34 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         }
     }
 
+    // RoomDB 카테고리와 서버 카테고리 동기화
+    private fun updateCategoryId(id: Int) {
+        Thread{
+            category = db.categoryDao.getCategoryContent(categoryIdx)
+            // 삭제 대신 비활성화 처리
+            db.categoryDao.updateCategory(category.copy(categoryIdx = id))
+        }.start()
+    }
+
+
+    // 카테고리 생성
     override fun onPostCategorySuccess(response: PostCategoryResponse) {
         Log.d("CategoryDetailFrag", "onPostCategorySuccess, categoryIdx = $categoryIdx")
-        // 서버 업로드 변수 update
+        //TODO: 서버 업로드 변수 update
+        updateCategoryId(response.result.categoryIdx)
     }
 
     override fun onPostCategoryFailure(message: String) {
         Log.d("CategoryDetailFrag", "onPostCategoryFailure")
+    }
+
+    // 카테고리 수정
+    override fun onPatchCategorySuccess(response: PostCategoryResponse) {
+        Log.d("CategoryDetailFrag", "onPatchCategorySuccess, categoryIdx = $categoryIdx")
+        //TODO: 서버 업로드 변수 update
+    }
+
+    override fun onPatchCategoryFailure(message: String) {
+        Log.d("CategoryDetailFrag", "onPatchCategoryFailure")
     }
 }
