@@ -24,4 +24,20 @@ class CategoryService(val view: CategoryDetailView) {
             }
         })
     }
+
+    fun tryPatchCategory(categoryId: Int, body: CategoryBody) {
+        retrofitInterface.patchCategory(categoryId, body).enqueue(object : Callback<PostCategoryResponse> {
+
+            override fun onResponse(call: Call<PostCategoryResponse>, response: Response<PostCategoryResponse>) {
+                when(response.code()) {
+                    200 -> view.onPostCategorySuccess(response.body() as PostCategoryResponse)
+                }
+            }
+
+            override fun onFailure(call: Call<PostCategoryResponse>, t: Throwable) {
+                Log.d("PostCategory", "onFailure")
+                view.onPostCategoryFailure(t.message ?: "통신 오류")
+            }
+        })
+    }
 }
