@@ -2,6 +2,7 @@ package com.example.namo.data.dao
 
 import androidx.room.*
 import com.example.namo.data.entity.home.Category
+import com.example.namo.data.entity.home.Event
 
 @Dao
 interface CategoryDao {
@@ -22,7 +23,12 @@ interface CategoryDao {
     fun getActiveCategoryList(isActive: Boolean): List<Category>
 
     @Query("SELECT * FROM category_table WHERE categoryIdx=:categoryIdx UNION ALL SELECT * FROM category_table WHERE categoryIdx <> :categoryIdx LIMIT 1")
-
     fun getCategoryContent(categoryIdx: Int): Category
+
+    @Query("SELECT * FROM category_table WHERE isUpload = 0")
+    fun getNotUploadedCategory() : List<Category>
+
+    @Query("UPDATE category_table SET isUpload=:isUpload, categoryIdx=:serverIdx, state=:state WHERE categoryIdx=:categoryIdx")
+    fun updateCategoryAfterUpload(categoryIdx : Int, isUpload : Int, serverIdx : Int, state : String)
 
 }

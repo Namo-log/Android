@@ -7,9 +7,8 @@ class DiaryResponse {
 
     /** 기록 생성 **/
     data class DiaryAddResponse(
-        val code: Int,
-        val message: String,
-        val result: GetScheduleIdx
+        val result: GetScheduleIdx,
+        val localId :Int
     )
 
     data class GetScheduleIdx(
@@ -19,24 +18,18 @@ class DiaryResponse {
 
     /** 기록 수정 **/
     data class DiaryEditResponse(
-        val code: Int,
-        val message: String,
         val result: String
     )
 
 
     /** 기록 삭제 **/
     data class DiaryDeleteResponse(
-        val code: Int,
-        val message: String,
         val result: String
     )
 
 
     /** 기록 월 별 조회 **/
     data class DiaryGetMonthResponse(
-        val code: Int,
-        val message: String,
         val result: List<MonthDiaryDto>
     )
 
@@ -51,8 +44,6 @@ class DiaryResponse {
 
     /** 기록 일 별 조회 **/
     data class DiaryGetDayResponse(
-        val code: Int,
-        val message: String,
         val result: DayDiaryDto
     )
 

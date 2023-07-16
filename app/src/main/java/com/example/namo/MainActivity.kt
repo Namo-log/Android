@@ -33,6 +33,7 @@ import com.example.namo.data.remote.event.EditEventResponse
 import com.example.namo.data.remote.event.EventService
 import com.example.namo.data.remote.event.EventView
 import com.example.namo.data.remote.event.PostEventResponse
+import com.example.namo.config.ApplicationClass
 import com.example.namo.databinding.ActivityMainBinding
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogBasicFragment.Companion.eventToEventForUpload
 import com.example.namo.utils.NetworkManager
@@ -62,6 +63,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView {
         db = NamoDatabase.getInstance(this)
         initNavigation()
 
+        logToken()
         checkPermissions()
         checkNetworkUpload()
     }
@@ -108,6 +110,11 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView {
                 }
             }
         }
+    }
+
+    private fun logToken() {
+        val accessToken: String? = ApplicationClass.sSharedPreferences.getString(ApplicationClass.X_ACCESS_TOKEN, null)
+        Log.d("Token", "$accessToken")
     }
 
     private fun checkPermissions() {

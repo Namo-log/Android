@@ -1,5 +1,6 @@
 package com.example.namo.ui.bottom.diary.mainDiary
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -10,7 +11,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,15 +24,18 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
-import com.example.namo.data.NamoDatabase
+import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryAddBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
-class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
+class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
     private var _binding: FragmentDiaryAddBinding? = null
     private val binding get() = _binding!!
@@ -42,6 +45,7 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
     private lateinit var repo: DiaryRepository
     private var imgList = arrayListOf<String>()
     private lateinit var event: Event
+    private lateinit var category: Category
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
@@ -56,11 +60,7 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
 
         galleryAdapter = GalleryListAdapter(requireContext())
 
-        val diaryDao = NamoDatabase.getInstance(requireContext()).diaryDao
-        val categoryDao = NamoDatabase.getInstance(requireContext()).categoryDao
-        val diaryService = DiaryService()
-
-        repo = DiaryRepository(diaryDao, categoryDao, diaryService, requireContext())
+        repo = DiaryRepository(requireContext())
         setEvent()
         onClickListener()
         charCnt()
@@ -68,63 +68,40 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
         return binding.root
     }
 
-    override fun onAddDiarySuccess(
-        code: Int,
-        message: String,
-        result: DiaryResponse.GetScheduleIdx
-    ) {
-        when (code) {
-            1000 -> {
-
-                Log.d("inputMemo", "success")
-
-            }
-        }
-        Log.d("addDiary", "$code $message $result")
-    }
-
-    override fun onAddDiaryFailure(message: String) {
-        TODO("Not yet implemented")
-    }
-
 
     @SuppressLint("SimpleDateFormat")
     private fun setEvent() {
 
-        val r = Runnable {
-            try {
+        event = (arguments?.getSerializable("event") as? Event)!!
 
-                event = (arguments?.getSerializable("event") as? Event)!!
-                val category = repo.getCategoryId(event.categoryIdx)
+        CoroutineScope(Dispatchers.Main).launch {
+            category = repo.getCategoryId(event.categoryIdx)
 
-                requireActivity().runOnUiThread {
-                    binding.apply {
-
-                        val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong)
-                        diaryTodayDayTv.text = SimpleDateFormat("EE").format(event.startLong)
-                        diaryTodayNumTv.text = SimpleDateFormat("dd").format(event.startLong)
-                        diaryTitleTv.isSelected = true  // marquee
-                        diaryTitleTv.text = event.title
-
-                        if (event.placeName.isEmpty()) diaryInputPlaceTv.text = "장소 없음"
-                        else diaryInputPlaceTv.text = event.placeName
-
-                        context?.resources?.let {
-                            itemDiaryCategoryColorIv.background.setTint(
-                                ContextCompat.getColor(requireContext(), category.color)
-                            )
-                        }
-                        diaryInputDateTv.text = formatDate
-                    }
+            binding.apply {
+                context?.resources?.let {
+                    itemDiaryCategoryColorIv.background.setTint(
+                        ContextCompat.getColor(requireContext(), category.color)
+                    )
                 }
-
-            } catch (e: Exception) {
-                Log.d("tag", "Error - $e")
             }
         }
 
-        val thread = Thread(r)
-        thread.start()
+        binding.apply {
+
+            val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong)
+            diaryTodayDayTv.text = SimpleDateFormat("EE").format(event.startLong)
+            diaryTodayNumTv.text = SimpleDateFormat("dd").format(event.startLong)
+            diaryTitleTv.isSelected = true  // marquee
+            diaryTitleTv.text = event.title
+
+            if (event.placeName.isEmpty()) diaryInputPlaceTv.text = "장소 없음"
+            else diaryInputPlaceTv.text = event.placeName
+
+
+            diaryInputDateTv.text = formatDate
+        }
+
+
     }
 
 
@@ -158,28 +135,21 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
 
     /** 다이어리 추가 **/
     private fun insertData() {
-        Thread {
-            val content = binding.diaryContentsEt.text.toString()
-            repo.addDiaryLocal(event.eventId.toInt(), content, imgList)
 
-        }.start()
-    }
-
-
-    private fun insertDataServer(){
         val content = binding.diaryContentsEt.text.toString()
-        repo.updateHasDiary(1, event.eventId.toInt())
+        repo.addDiary(event.eventId.toInt(), content, imgList, event.serverIdx)
+
     }
 
 
     private fun hasImagePermission(): Boolean { // 갤러리 권한 여부
         val writePermission = ContextCompat.checkSelfPermission(
             requireContext(),
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
         val readPermission = ContextCompat.checkSelfPermission(
             requireContext(),
-            android.Manifest.permission.READ_EXTERNAL_STORAGE
+            Manifest.permission.READ_EXTERNAL_STORAGE
         )
 
         return writePermission == PackageManager.PERMISSION_GRANTED && readPermission == PackageManager.PERMISSION_GRANTED
@@ -195,11 +165,10 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
                 addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
             }
-            intent.type = "image/*"
-            intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
+            intent.type = MediaStore.Images.Media.CONTENT_TYPE
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
-            intent.action = Intent.ACTION_PICK
+            intent.action = Intent.ACTION_GET_CONTENT
 
             getImage.launch(intent)
 
@@ -210,8 +179,8 @@ class DiaryAddFragment : Fragment(), DiaryView {  // 다이어리 추가 화면
             ActivityCompat.requestPermissions(
                 requireActivity(),
                 arrayOf(
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
                 ),
                 200
             )

@@ -13,15 +13,17 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
-import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.diary.DiaryItem
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import java.lang.Boolean.TRUE
 
-class DiaryFragment : Fragment(), GetMonthDiaryView {  // 다이어리 리스트 화면(bottomNavi)
+class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     private var _binding: FragmentDiaryBinding? = null
     private val binding get() = _binding!!
@@ -31,7 +33,6 @@ class DiaryFragment : Fragment(), GetMonthDiaryView {  // 다이어리 리스트
 
     private lateinit var diaryDateAdapter: DiaryAdapter
     private lateinit var yearMonth: String
-    private lateinit var diaryItems: List<DiaryItem>
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -45,13 +46,20 @@ class DiaryFragment : Fragment(), GetMonthDiaryView {  // 다이어리 리스트
         binding.diaryMonth.text = DateTime(dateTime).toString("yyyy.MM")
         yearMonth = binding.diaryMonth.text.toString()
 
-        val diaryDao = NamoDatabase.getInstance(requireContext()).diaryDao
-        val categoryDao = NamoDatabase.getInstance(requireContext()).categoryDao
-        val diaryService = DiaryService()
+        repo = DiaryRepository(requireContext())
+        repo.setFragment2(this)
 
-        repo = DiaryRepository(diaryDao, categoryDao, diaryService, requireContext())
 
-        getList()
+        CoroutineScope(Dispatchers.Main).launch {
+        repo.getDiaryList(yearMonth)
+        }
+
+
+        CoroutineScope(Dispatchers.Main).launch {
+            val nonup=repo.getNotUploaded()
+            Log.d("erfes,",nonup.toString())
+        }
+
 
         binding.diaryMonth.setOnClickListener {
             dialogCreate()
@@ -66,25 +74,12 @@ class DiaryFragment : Fragment(), GetMonthDiaryView {  // 다이어리 리스트
         return binding.root
     }
 
-    override fun onGetMonthDiarySuccess(
-        code: Int,
-        message: String,
-        result: List<DiaryResponse.MonthDiaryDto>
-    ) {
-        Log.d("getMonthDiary", result.toString())
-
-    }
-
-    override fun onGetMonthDiaryFailure(message: String) {
-        TODO("Not yet implemented")
-    }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun getList() {
+    fun getList(diaryItems: List<DiaryItem>) {
         val r = Runnable {
             try {
 
-                diaryItems = repo.getDiaryListLocal(yearMonth)
 
                 diaryDateAdapter = DiaryAdapter(parentFragmentManager)
                 diaryDateAdapter.submitList(diaryItems)
@@ -96,14 +91,15 @@ class DiaryFragment : Fragment(), GetMonthDiaryView {  // 다이어리 리스트
 
                         val event = Event(
                             allData.eventId,
-                            allData.title,
-                            allData.startLong,
-                            allData.endLong,
-                            allData.dayInterval,
-                            allData.categoryColor,
-                            allData.categoryName,
-                            allData.categoryIdx,
-                            allData.placeName
+                            allData.event_title,
+                            allData.event_start, 0, 0,
+                            allData.event_category_color, "",
+                            allData.event_category_idx,
+                            allData.event_place_name, 0.0, 0.0, "", 0, null,
+                            allData.event_upload,
+                            allData.event_state,
+                            allData.event_server_idx,
+                            allData.has_diary
                         )
 
                         bundle.putSerializable("event", event)
@@ -149,7 +145,6 @@ class DiaryFragment : Fragment(), GetMonthDiaryView {  // 다이어리 리스트
         YearMonthDialog(dateTime) {
             yearMonth = DateTime(it).toString("yyyy.MM")
             binding.diaryMonth.text = yearMonth
-            getList()
         }.show(parentFragmentManager, "test")
 
     }
