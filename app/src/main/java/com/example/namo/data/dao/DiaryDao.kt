@@ -15,8 +15,8 @@ interface DiaryDao {
     @Update
     fun updateDiary(diary: Diary)
 
-    @Delete
-    fun deleteDiary(diary: Diary)
+    @Query("DELETE FROM diaryTable WHERE diaryLocalId=:eventId")
+    fun deleteDiary(eventId:Int)
 
     @Query("UPDATE calendar_event_table SET has_diary= :hasDiary WHERE eventId =:scheduleIdx")
     fun updateHasDiary(hasDiary: Int, scheduleIdx: Int)
@@ -24,13 +24,18 @@ interface DiaryDao {
     @Query("UPDATE calendar_event_table SET has_diary= :hasDiary WHERE eventId =:scheduleIdx")
     fun deleteHasDiary(hasDiary: Int, scheduleIdx: Int)
 
-    @Query("SELECT * FROM diaryTable WHERE scheduleIdx=:scheduleId")
+    @Query("SELECT * FROM diaryTable WHERE diaryLocalId=:scheduleId")
     fun getDiaryDaily(scheduleId: Int): Diary
 
     @Query(
-        "SELECT * FROM calendar_event_table JOIN diaryTable ON scheduleIdx = eventId " +
+        "SELECT * FROM calendar_event_table JOIN diaryTable ON diaryLocalId = eventId " +
                 "WHERE strftime('%Y.%m', event_start/1000, 'unixepoch') = :yearMonth  ORDER BY event_start DESC")
     fun getDiaryEventList(yearMonth: String): List<DiaryEvent>
 
+    @Query("UPDATE diaryTable SET diary_upload=:isUpload, scheduleId=:serverIdx, diary_state=:state WHERE diaryLocalId=:localId")
+    fun updateDiaryAfterUpload(localId :Int, isUpload : Int, serverIdx : Int, state : String)
+
+    @Query("SELECT * FROM diaryTable WHERE diary_upload = 0")
+    fun getNotUploadedDiary() : List<Diary>
 
 }

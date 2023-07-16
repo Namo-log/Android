@@ -103,11 +103,11 @@ class DiaryAdapter(
             binding.apply {
                 itemDiaryContentTv.text
                 itemDiaryContentTv.text = item.content
-                itemDiaryTitleTv.text = item.title
+                itemDiaryTitleTv.text = item.event_title
                 itemDiaryCategoryColorIv.background.setTint(
                     ContextCompat.getColor(
                         itemView.context,
-                        item.categoryColor
+                        item.event_category_color
                     )
                 )
                 val adapter = DiaryGalleryRVAdapter(itemView.context, item.images)

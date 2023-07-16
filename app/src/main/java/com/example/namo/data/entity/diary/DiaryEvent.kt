@@ -1,42 +1,23 @@
 package com.example.namo.data.entity.diary
 
-import androidx.room.ColumnInfo
+import com.example.namo.R
 import java.lang.Boolean.FALSE
 
 data class DiaryEvent(
-    @ColumnInfo(name = "eventId")
     var eventId: Long = 0,
-    @ColumnInfo(name = "event_title")
-    var title: String = "",
-    @ColumnInfo(name = "event_start")
-    var startLong: Long = 0,
-    @ColumnInfo(name = "event_end")
-    var endLong: Long = 0,
-    @ColumnInfo(name = "event_day_interval")
-    var dayInterval: Int = 0,
-    @ColumnInfo(name = "event_category_color")
-    var categoryColor: Int = 0,
-    @ColumnInfo(name = "event_category_name")
-    var categoryName: String = "",
-    @ColumnInfo(name = "event_category_idx")
-    var categoryIdx: Int = 0,
-    @ColumnInfo(name = "event_place_name")
-    var placeName: String = "없음",
-    @ColumnInfo(name = "event_place_x")
-    var placeX: Double = 0.0,
-    @ColumnInfo(name = "event_place_y")
-    var placeY: Double = 0.0,
-    @ColumnInfo(name = "event_place_id")
-    var placeId: String = "",
-    @ColumnInfo(name = "event_order")
-    var order: Int = 0,
-    @ColumnInfo(name = "alarm_list")
-    var alarmList: List<Int>? = listOf(),
-    @ColumnInfo(name = "has_diary")
-    var hasDiary: Boolean = FALSE,
-    val scheduleIdx: Int,
+    var event_title: String = "",
+    var event_start: Long = 0,
+    var event_category_idx: Int = 0,
+    var event_category_color: Int = 0,
+    var event_place_name: String = "없음",
+    var has_diary: Int = 0,
+    val diaryLocalId: Int,
     var content: String = "",
-    var images: List<String>? = null
-)
+    var images: List<String>? = null,
+    var event_upload: Int = 0,
+    var event_state: String = R.string.event_current_default.toString(),
+    var event_server_idx: Int = 0,
+
+    )
 
 
