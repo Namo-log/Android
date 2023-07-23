@@ -38,7 +38,8 @@ class DiaryResponse {
         @SerializedName("scheduleId") val scheduleIdx: Int,
         @SerializedName("startDate") var startDate: Long,
         @SerializedName("texts") val content: String,
-        @SerializedName("urls") val imgUrl: List<String>
+        @SerializedName("urls") val imgUrl: List<String>,
+        @SerializedName("categoryId") val categoryId: Int
     ) : Serializable
 
 

@@ -18,7 +18,6 @@ sealed class DiaryItem {
         var event_category_color: Int = 0,
         var event_place_name: String = "없음",
         var has_diary: Int = 0,
-        val diaryLocalId: Int,
         var content: String = "",
         var images: List<String>? = null,
         var event_upload: Int = 0,

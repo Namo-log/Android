@@ -51,15 +51,8 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
 
         CoroutineScope(Dispatchers.Main).launch {
-        repo.getDiaryList(yearMonth)
+            repo.getDiaryList(yearMonth)
         }
-
-
-        CoroutineScope(Dispatchers.Main).launch {
-            val nonup=repo.getNotUploaded()
-            Log.d("erfes,",nonup.toString())
-        }
-
 
         binding.diaryMonth.setOnClickListener {
             dialogCreate()
