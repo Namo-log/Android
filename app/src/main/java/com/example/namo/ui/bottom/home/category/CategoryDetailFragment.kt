@@ -13,13 +13,11 @@ import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.namo.R
-import com.example.namo.config.ApplicationClass
 import com.example.namo.data.NamoDatabase
 import com.example.namo.databinding.FragmentCategoryDetailBinding
 import com.example.namo.ui.bottom.home.category.CategorySettingFragment.Companion.CATEGORY_KEY_DATA
 import com.example.namo.ui.bottom.home.category.adapter.CategoryPaletteRVAdapter
 import com.example.namo.data.entity.home.Category
-import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.category.CategoryBody
 import com.example.namo.data.remote.category.CategoryDetailView
 import com.example.namo.data.remote.category.CategoryService
@@ -45,6 +43,10 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
     var name: String = ""
     var color: Int = 0
     var share: Boolean = true
+
+    // 서버에 보낼 때 필요한 값
+    var serverId = 0
+    var paletteId: Int = 0
 
     var selectedPalettePosition: Int? = null // 팔레트 -> 기본 색상 선택 시 사용될 변수
 
@@ -162,7 +164,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             db.categoryDao.insertCategory(category)
         }.start()
         // 서버 통신
-        CategoryService(this@CategoryDetailFragment).tryPostCategory(CategoryBody(name, color, share))
+        CategoryService(this@CategoryDetailFragment).tryPostCategory(CategoryBody(name, paletteId, share))
     }
 
     private fun updateData() {
@@ -171,7 +173,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             name = binding.categoryDetailTitleEt.text.toString()
             category = Category(categoryIdx, name, color, share)
             db.categoryDao.updateCategory(category)
-            Log.d("CategoryDetailFragment", "updateCategory: ${db.categoryDao.getCategoryContent(categoryIdx)}")
+            Log.d("CategoryDetailFragment", "updateCategory: ${db.categoryDao.getCategoryWithId(categoryIdx)}")
         }
         thread.start()
         try {
@@ -180,7 +182,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             e.printStackTrace()
         }
         // 서버 통신
-        CategoryService(this@CategoryDetailFragment).tryPatchCategory(categoryIdx, CategoryBody(name, color, share))
+        CategoryService(this@CategoryDetailFragment).tryPatchCategory(7, CategoryBody(name, paletteId, share))
 
         updateEventWithCategory()
     }
@@ -251,6 +253,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                 }
                 // 색상값 세팅
                 this@CategoryDetailFragment.color = selectedColor
+                paletteId = position + 5 // 팔레트는 paletteId 5번부터 시작
                 // notifyItemChanged()에서 인자로 넘겨주기 위함. 기본 색상을 클릭했다면 이전에 선택된 팔레트 색상의 체크 표시는 해제
                 selectedPalettePosition = position
             }
@@ -272,6 +275,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                 // 선택한 카테고리 표시
                 checkList[i].visibility = View.VISIBLE
                 color = colorList[i]
+                paletteId = i + 1 // 기본 색상은 paletteId 1번부터 시작
                 // 이제 팔레트가 아니라 기본 색상에서 설정한 색임
                 selectedPalettePosition = null
             }
@@ -309,13 +313,10 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
                 // 데이터 값 넣어주기
                 with(binding) {
-
                     //카테고리 ID로 넘겨받은 카테고리 세팅
                     categoryIdx = data.categoryIdx
-
                     // 카테고리 이름
                     categoryDetailTitleEt.setText(data.name)
-
                     // 카테고리 색
                     color = data.color
                     for (i: Int in colorList.indices) {
@@ -324,7 +325,6 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                             checkList[i].visibility = View.VISIBLE
                         }
                     }
-
                     // 카테고리 공유 여부
                     share = data.share
                 }
@@ -353,9 +353,10 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
     // RoomDB 카테고리와 서버 카테고리 동기화
     private fun updateCategoryId(id: Int) {
         Thread{
-            category = db.categoryDao.getCategoryContent(categoryIdx)
-            // 삭제 대신 비활성화 처리
-            db.categoryDao.updateCategory(category.copy(categoryIdx = id))
+            // 업데이트할 카테고리 조회
+            category = db.categoryDao.getCategoryWithId(categoryIdx)
+            // 카테고리 서버 id 업데이트
+            db.categoryDao.updateCategory(category.copy(serverIdx = id))
         }.start()
     }
 
@@ -364,7 +365,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
     override fun onPostCategorySuccess(response: PostCategoryResponse) {
         Log.d("CategoryDetailFrag", "onPostCategorySuccess, categoryIdx = $categoryIdx")
         //TODO: 서버 업로드 변수 update
-        updateCategoryId(response.result.categoryIdx)
+        updateCategoryId(response.result.categoryId)
     }
 
     override fun onPostCategoryFailure(message: String) {
