@@ -411,7 +411,7 @@ class DiaryRepository(
 
 
     suspend fun getCategoryId(categoryId: Int): Category = withContext(Dispatchers.IO) {
-        categoryDao.getCategoryContent(categoryId)
+        categoryDao.getCategoryWithId(categoryId)
     }
 
     suspend fun getDiaryList(yearMonth: String) {
@@ -475,7 +475,7 @@ class DiaryRepository(
             }
             //  task 추가
 
-            val category = categoryDao.getCategoryContent(task.event_category_idx)
+            val category = categoryDao.getCategoryWithId(task.event_category_idx)
 
             result.add(
                 DiaryItem.Content(

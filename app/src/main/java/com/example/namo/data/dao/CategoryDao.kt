@@ -23,7 +23,7 @@ interface CategoryDao {
     fun getActiveCategoryList(isActive: Boolean): List<Category>
 
     @Query("SELECT * FROM category_table WHERE categoryIdx=:categoryIdx UNION ALL SELECT * FROM category_table WHERE categoryIdx <> :categoryIdx LIMIT 1")
-    fun getCategoryContent(categoryIdx: Int): Category
+    fun getCategoryWithId(categoryIdx: Int): Category
 
     @Query("SELECT * FROM category_table WHERE isUpload = 0")
     fun getNotUploadedCategory() : List<Category>

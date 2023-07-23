@@ -58,7 +58,7 @@ class CategoryEditActivity : AppCompatActivity() {
             Toast.makeText(this, "기본 카테고리는 삭제할 수 없습니다", Toast.LENGTH_SHORT).show()
         } else {
             Thread{
-                category = db.categoryDao.getCategoryContent(categoryIdx)
+                category = db.categoryDao.getCategoryWithId(categoryIdx)
                 // 삭제 대신 비활성화 처리
                 db.categoryDao.updateCategory(category.copy(active = false))
 //                db.categoryDao.deleteCategory(category)
