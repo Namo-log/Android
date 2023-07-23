@@ -15,7 +15,6 @@ sealed class DiaryItem {
         var event_title: String = "",
         var event_start: Long = 0,
         var event_category_idx: Int = 0,
-        var event_category_color: Int = 0,
         var event_place_name: String = "없음",
         var has_diary: Int = 0,
         var content: String = "",

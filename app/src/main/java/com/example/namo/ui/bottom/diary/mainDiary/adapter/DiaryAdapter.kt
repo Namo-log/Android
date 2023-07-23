@@ -1,4 +1,5 @@
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,14 +9,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.R
 import com.example.namo.data.entity.diary.DiaryItem
+import com.example.namo.data.remote.diary.DiaryRepository
 import com.example.namo.databinding.ItemDiaryDateListBinding
 import com.example.namo.databinding.ItemDiaryListBinding
 import com.example.namo.ui.bottom.diary.mainDiary.ImageDialog
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.DiaryGalleryRVAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
 class DiaryAdapter(
     private val fragmentManagers: FragmentManager,
+    val context: Context,
     initialItems: List<DiaryItem> = emptyList(),
 
     ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -104,12 +110,21 @@ class DiaryAdapter(
                 itemDiaryContentTv.text
                 itemDiaryContentTv.text = item.content
                 itemDiaryTitleTv.text = item.event_title
-                itemDiaryCategoryColorIv.background.setTint(
-                    ContextCompat.getColor(
-                        itemView.context,
-                        item.event_category_color
-                    )
-                )
+
+                val repo=DiaryRepository(context)
+                CoroutineScope(Dispatchers.Main).launch {
+                    val category = repo.getCategoryId(item.event_category_idx)
+
+                    context.resources?.let {
+                        itemDiaryCategoryColorIv.background.setTint(
+                            ContextCompat.getColor(
+                                context,
+                                category.color
+                            )
+                        )
+                    }
+                }
+
                 val adapter = DiaryGalleryRVAdapter(itemView.context, item.images)
                 diaryGalleryRv.adapter = adapter
                 diaryGalleryRv.layoutManager =

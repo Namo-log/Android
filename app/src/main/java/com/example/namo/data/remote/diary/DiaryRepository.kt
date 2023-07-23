@@ -433,16 +433,30 @@ class DiaryRepository(
     override fun onGetMonthDiarySuccess(
         result: List<DiaryResponse.MonthDiaryDto>
     ) {
-//        val diaryList= arrayListOf<DiaryItem>()
-//        for (it in result){
-//            val item=DiaryItem()
-//            diaryList.add()
-//        }
+        val diaryList = arrayListOf<DiaryItem>()
+        for (it in result) {
+            val item = DiaryItem.Content(
+                it.eventId.toLong(),
+                it.title,
+                it.startDate,
+                it.categoryId,
+                it.placeName,
+                1,
+                it.content,
+                it.imgUrl,
+                1,
+                R.string.event_current_default.toString(),
+                it.scheduleIdx
+            )
+            diaryList.add(item)
+        }
 
     }
+
     override fun onGetMonthDiaryFailure() {
 
     }
+
     /** 같은 날짜끼리 묶어서 그룹 헤더로 추가 **/
     private fun List<DiaryEvent>.toListItems(): List<DiaryItem> {
         val result = arrayListOf<DiaryItem>() // 결과를 리턴할 리스트
@@ -456,8 +470,6 @@ class DiaryRepository(
             }
             //  task 추가
 
-            val category = categoryDao.getCategoryContent(task.event_category_idx)
-
             result.add(
                 DiaryItem.Content(
 
@@ -465,7 +477,6 @@ class DiaryRepository(
                     task.event_title,
                     task.event_start,
                     task.event_category_idx,
-                    category.color,
                     task.event_place_name,
                     task.has_diary,
                     task.content,
