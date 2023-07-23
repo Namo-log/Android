@@ -16,10 +16,12 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
+import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.FragmentCalendarMonthBinding
 import com.example.namo.ui.bottom.diary.mainDiary.DiaryAddFragment
 import com.example.namo.ui.bottom.diary.mainDiary.DiaryModifyFragment
+import com.example.namo.ui.bottom.home.HomeFragment
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
 import com.example.namo.ui.bottom.home.schedule.ScheduleActivity
@@ -28,9 +30,10 @@ import org.joda.time.DateTime
 class CalendarMonthFragment : Fragment() {
     lateinit var db : NamoDatabase
     private lateinit var binding : FragmentCalendarMonthBinding
+    private lateinit var categoryList : List<Category>
 
     private var millis : Long = 0L
-    private var isShow = false
+    var isShow = false
     private lateinit var monthList : List<DateTime>
     private lateinit var tempEvent : List<Event>
 
@@ -69,6 +72,17 @@ class CalendarMonthFragment : Fragment() {
 
         binding.calendarMonthView.onDateClickListener = object : CustomCalendarView.OnDateClickListener {
             override fun onDateClick(date: DateTime?, pos : Int?) {
+                val prevFragment = HomeFragment.currentFragment as CalendarMonthFragment?
+                if (prevFragment != null && prevFragment != this@CalendarMonthFragment) {
+                    prevFragment.binding.calendarMonthView.selectedDate = null
+                    prevFragment.binding.constraintLayout.transitionToStart()
+                }
+
+                HomeFragment.currentFragment = this@CalendarMonthFragment
+                HomeFragment.currentSelectedPos = pos
+                HomeFragment.currentSelectedDate = date
+                Log.d("CalendarMonth", HomeFragment.currentFragment.toString())
+
                 if (date == null) Log.d("CalendarMonth", "The NULL clicked!")
                 Log.d("CalendarMonth", "THE $date is clicked!")
                 binding.calendarMonthView.selectedDate = date
@@ -76,10 +90,14 @@ class CalendarMonthFragment : Fragment() {
                 if (date != null && pos != null) {
                     nowIdx = pos
                     setDaily(nowIdx)
+                    Log.d("CHECK_TODAY", "isShow : $isShow | prevIdx : $prevIdx | nowIdx : $nowIdx")
 
                     if (isShow && prevIdx == nowIdx) {
                         binding.constraintLayout.transitionToStart()
                         binding.calendarMonthView.selectedDate = null
+                        HomeFragment.currentFragment = null
+                        HomeFragment.currentSelectedPos = null
+                        HomeFragment.currentSelectedDate = null
                     }
                     else if (!isShow) {
                         binding.constraintLayout.transitionToEnd()
@@ -104,6 +122,8 @@ class CalendarMonthFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         setAdapter()
+        getCategoryList()
+
         var forDB : Thread = Thread {
             tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis, monthList[41].plusDays(1).withTimeAtStartOfDay().millis)
         }
@@ -119,6 +139,21 @@ class CalendarMonthFragment : Fragment() {
         Log.d("CalendarMonth", "OnResume")
         Log.d("CalendarMonth", "Day list : " + binding.calendarMonthView.getDayList().toString())
         Log.d("CalendarMonth", "Event list : " + binding.calendarMonthView.getEventList().toString())
+
+        if (HomeFragment.currentFragment == null) {
+            return
+        }
+        else if (this@CalendarMonthFragment != HomeFragment.currentFragment) {
+            isShow = false
+            prevIdx = -1
+        } else {
+            binding.calendarMonthView.selectedDate = HomeFragment.currentSelectedDate
+            nowIdx = HomeFragment.currentSelectedPos!!
+            setDaily(nowIdx)
+            binding.constraintLayout.transitionToEnd()
+            isShow = true
+            prevIdx = nowIdx
+        }
     }
 
     override fun onPause() {
@@ -133,8 +168,6 @@ class CalendarMonthFragment : Fragment() {
 //            }
 //        }
 //        listener.onDateClick(null, null)
-
-//        onBackPressedCallback.isEnabled = false
     }
 
     private fun setAdapter() {
@@ -177,6 +210,20 @@ class CalendarMonthFragment : Fragment() {
             }
         })
         /** ----- **/
+    }
+
+    private fun getCategoryList() {
+        val thread = Thread {
+            categoryList = db.categoryDao.getCategoryList()
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch ( e : InterruptedException) {
+            e.printStackTrace()
+        }
+
+        binding.calendarMonthView.setCategoryList(categoryList)
     }
 
     private fun setDaily(idx : Int) {

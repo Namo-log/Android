@@ -34,6 +34,7 @@ import com.example.namo.data.remote.event.EventService
 import com.example.namo.data.remote.event.EventView
 import com.example.namo.data.remote.event.PostEventResponse
 import com.example.namo.config.ApplicationClass
+import com.example.namo.data.remote.diary.DiaryRepository
 import com.example.namo.databinding.ActivityMainBinding
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogBasicFragment.Companion.eventToEventForUpload
 import com.example.namo.utils.NetworkManager
@@ -74,6 +75,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView {
             return
         }
 
+        val repo=DiaryRepository(this)
         val thread = Thread {
             unUploaded = db.eventDao.getNotUploadedEvent()
         }
@@ -108,7 +110,9 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView {
                 else {
                     eventService.editEvent(i.serverIdx, eventToEventForUpload(i))
                 }
+                repo.getUpload(i.serverIdx)
             }
+
         }
     }
 

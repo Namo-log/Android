@@ -84,4 +84,10 @@ class HomeFragment : Fragment() {
             binding.homeCalendarVp.setCurrentItem(todayPos, true)
         }
     }
+
+    companion object {
+        var currentFragment : Fragment? = null
+        var currentSelectedPos : Int? = null
+        var currentSelectedDate : DateTime? = null
+    }
 }

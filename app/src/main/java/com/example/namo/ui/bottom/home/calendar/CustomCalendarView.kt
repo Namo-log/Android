@@ -10,7 +10,9 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.withStyledAttributes
 import com.example.namo.R
+import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
+import com.example.namo.ui.bottom.home.HomeFragment
 import com.example.namo.ui.bottom.home.calendar.data.StartEnd
 import com.example.namo.utils.CalendarUtils.Companion.DAYS_PER_WEEK
 import com.example.namo.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
@@ -40,6 +42,7 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
 
     private val dayList = mutableListOf<DateTime>()
     private val eventList = mutableListOf<Event>()
+    private val categoryList = mutableListOf<Category>()
     private val orderList = mutableListOf<Int>()
     private val moreList = mutableListOf<Int>()
     private val otherRect : ArrayList<RectF> = arrayListOf()
@@ -475,7 +478,10 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
     }
 
     private fun setBgPaintColor(event: Event) {
-        bgPaint.color = resources.getColor(event.categoryColor)
+//        bgPaint.color = resources.getColor(event.categoryColor)
+        Log.d("TEST_CATEGORY", "CATEGORY LIST : ${categoryList}")
+        Log.d("TEST_CATEGORY", "event category LIST : ${event.categoryIdx}")
+        bgPaint.color = resources.getColor(categoryList.find { it.categoryIdx == event.categoryIdx }!!.color)
 //        if (!CalendarUtils.isSameMonth(date, firstDayOfMonth)) {
 //            bgPaint.alpha = 50
 //        }
@@ -506,6 +512,11 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
         eventList.clear()
         eventList.addAll(events)
 //        invalidate()
+    }
+
+    fun setCategoryList(category : List<Category>) {
+        categoryList.clear()
+        categoryList.addAll(category)
     }
 
     fun getDayList() : MutableList<DateTime> {

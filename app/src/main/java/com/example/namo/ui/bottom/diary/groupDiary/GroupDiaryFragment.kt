@@ -112,7 +112,7 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
         moneyText = layout.findViewById(R.id.item_place_money_tv)
         gallery = layout.findViewById(R.id.group_gallery_lv)
         imgRv = layout.findViewById(R.id.group_add_gallery_rv)
-        val moneyImg = layout.findViewById<ImageView>(R.id.item_place_money_iv)
+        val moneyImg = layout.findViewById<LinearLayout>(R.id.click_money_ly)
 
         gallery.setOnClickListener {
             getGallery()

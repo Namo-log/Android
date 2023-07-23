@@ -51,15 +51,8 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
 
         CoroutineScope(Dispatchers.Main).launch {
-        repo.getDiaryList(yearMonth)
+            repo.getDiaryList(yearMonth)
         }
-
-
-        CoroutineScope(Dispatchers.Main).launch {
-            val nonup=repo.getNotUploaded()
-            Log.d("erfes,",nonup.toString())
-        }
-
 
         binding.diaryMonth.setOnClickListener {
             dialogCreate()
@@ -80,8 +73,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         val r = Runnable {
             try {
 
-
-                diaryDateAdapter = DiaryAdapter(parentFragmentManager)
+                diaryDateAdapter = DiaryAdapter(parentFragmentManager,requireContext())
                 diaryDateAdapter.submitList(diaryItems)
 
                 // 수정 버튼 클릭리스너
@@ -93,7 +85,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
                             allData.eventId,
                             allData.event_title,
                             allData.event_start, 0, 0,
-                            allData.event_category_color, "",
+                            0, "",
                             allData.event_category_idx,
                             allData.event_place_name, 0.0, 0.0, "", 0, null,
                             allData.event_upload,
