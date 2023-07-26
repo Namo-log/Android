@@ -127,9 +127,6 @@ class LoginFragment: Fragment(), LoginView {
     }
 
     private fun setLoginFinished(){
-        val prefs = requireActivity().getSharedPreferences("setLogin", Context.MODE_PRIVATE)
-        prefs.edit().putBoolean("finished",true).apply()
-
         val intent = Intent(requireContext(), MainActivity::class.java)
         requireActivity().finish()
         startActivity(intent)
