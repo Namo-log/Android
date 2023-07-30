@@ -22,4 +22,8 @@ interface CategoryRetrofitInterface {
         @Path("categoryId") categoryId: Int,
         @Body body: CategoryBody
     ) : Call<PostCategoryResponse>
+
+    // 카테고리 조회
+    @GET("/categories")
+    fun getCategories() : Call<GetCategoryResponse>
 }

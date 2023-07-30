@@ -17,3 +17,15 @@ class PostCategoryResponse (
 class PostCategoryResult (
     @SerializedName("id") val categoryId: Int = 0
 )
+
+// 모든 카테고리 조회
+class GetCategoryResponse (
+    val result: ArrayList<GetCategoryReselt>
+) : BaseResponse()
+
+class GetCategoryReselt (
+    val catgoryId: Int,
+    val name: String,
+    val paletteId: Int,
+    val isShare: Boolean
+)

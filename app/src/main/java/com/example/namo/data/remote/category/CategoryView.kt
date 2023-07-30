@@ -10,3 +10,9 @@ interface CategoryDetailView {
     fun onPatchCategorySuccess(response: PostCategoryResponse)
     fun onPatchCategoryFailure(message: String)
 }
+
+interface  CategorySettingView {
+    // 모든 카테고리 조회
+    fun onGetAllCategorySuccess(response: GetCategoryResponse)
+    fun onGetAllCategoryFailure(message: String)
+}
