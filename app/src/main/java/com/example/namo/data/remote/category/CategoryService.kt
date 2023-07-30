@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.namo.config.ApplicationClass
 import com.example.namo.config.ApplicationClass.Companion.X_ACCESS_TOKEN
 import com.example.namo.config.ApplicationClass.Companion.sSharedPreferences
+import com.example.namo.config.BaseResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -59,6 +60,26 @@ class CategorySettingService(val view: CategorySettingView) {
             override fun onFailure(call: Call<GetCategoryResponse>, t: Throwable) {
                 Log.d("GetCategory", "onFailure")
                 view.onGetAllCategoryFailure(t.message ?: "통신 오류")
+            }
+        })
+    }
+}
+
+class CategoryDeleteService(val view: CategoryDeleteView) {
+    val retrofitInterface = ApplicationClass.sRetrofit.create(CategoryRetrofitInterface::class.java)
+
+    fun tryDeleteCategory(categoryId: Int) {
+        retrofitInterface.deleteCategory(categoryId).enqueue(object : Callback<BaseResponse> {
+
+            override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
+                when(response.code()) {
+                    200 -> view.onDeleteCategorySuccess(response.body() as BaseResponse)
+                }
+            }
+
+            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
+                Log.d("GetCategory", "onFailure")
+                view.onDeleteCategoryFailure(t.message ?: "통신 오류")
             }
         })
     }
