@@ -1,7 +1,9 @@
 package com.example.namo.data.remote.category
 
+import com.example.namo.config.BaseResponse
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
@@ -22,4 +24,14 @@ interface CategoryRetrofitInterface {
         @Path("categoryId") categoryId: Int,
         @Body body: CategoryBody
     ) : Call<PostCategoryResponse>
+
+    // 카테고리 조회
+    @GET("/categories")
+    fun getCategories() : Call<GetCategoryResponse>
+
+    // 카테고리 삭제
+    @DELETE("/categories/{categoryId}")
+    fun deleteCategory(
+        @Path("categoryId") categoryId: Int
+    ) : Call<BaseResponse>
 }

@@ -14,9 +14,14 @@ import com.example.namo.data.NamoDatabase
 import com.example.namo.databinding.FragmentCategorySettingBinding
 import com.example.namo.ui.bottom.home.category.adapter.SetCategoryRVAdapter
 import com.example.namo.data.entity.home.Category
+import com.example.namo.data.remote.category.CategoryBody
+import com.example.namo.data.remote.category.CategoryService
+import com.example.namo.data.remote.category.CategorySettingService
+import com.example.namo.data.remote.category.CategorySettingView
+import com.example.namo.data.remote.category.GetCategoryResponse
 import com.google.gson.Gson
 
-class CategorySettingFragment: Fragment() {
+class CategorySettingFragment: Fragment(), CategorySettingView {
 
     lateinit var binding: FragmentCategorySettingBinding //플로팅 카테고리 설정 화면
 
@@ -84,13 +89,12 @@ class CategorySettingFragment: Fragment() {
     private fun getCategoryList() {
         val rv = binding.categoryCalendarRv
 
+        // roomDB
         val r = Runnable {
             try {
                 // 활성화 상태인 리스트만 보여줌
                 categoryList = db.categoryDao.getActiveCategoryList(true)
-//                categoryList = db.categoryDao.getCategoryList()
 
-//                categoryRVAdapter.notifyDataSetChanged()
                 categoryRVAdapter.notifyItemChanged(categoryList.size)
                 categoryRVAdapter = SetCategoryRVAdapter(requireContext(), categoryList)
                 categoryRVAdapter.setCategoryClickListener(object: SetCategoryRVAdapter.MyItemClickListener {
@@ -119,6 +123,9 @@ class CategorySettingFragment: Fragment() {
 
         val thread = Thread(r)
         thread.start()
+
+        // 서버 통신
+        CategorySettingService(this@CategorySettingFragment).tryGetAllCategory()
     }
 
     private fun saveClickedData(dataSet: Category) {
@@ -152,5 +159,13 @@ class CategorySettingFragment: Fragment() {
         const val CATEGORY_KEY_PREFS = "category"
         const val CATEGORY_KEY_DATA = "category_data"
         const val CATEGORY_KEY_IDX = "categoryIdx"
+    }
+
+    override fun onGetAllCategorySuccess(response: GetCategoryResponse) {
+        Log.d("CategorySettingFrag", "onGetAllCategorySuccess")
+    }
+
+    override fun onGetAllCategoryFailure(message: String) {
+        Log.d("CategorySettingFrag", "onGetAllCategoryFailure")
     }
 }

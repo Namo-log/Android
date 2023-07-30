@@ -6,11 +6,14 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.namo.R
+import com.example.namo.config.BaseResponse
 import com.example.namo.data.NamoDatabase
 import com.example.namo.databinding.ActivityCategoryEditBinding
 import com.example.namo.data.entity.home.Category
+import com.example.namo.data.remote.category.CategoryDeleteService
+import com.example.namo.data.remote.category.CategoryDeleteView
 
-class CategoryEditActivity : AppCompatActivity() {
+class CategoryEditActivity : AppCompatActivity(), CategoryDeleteView {
 
     lateinit var binding: ActivityCategoryEditBinding
 
@@ -51,6 +54,7 @@ class CategoryEditActivity : AppCompatActivity() {
     }
 
     private fun deleteCategory() {
+        // roomDB
         val spf = getSharedPreferences(CategorySettingFragment.CATEGORY_KEY_PREFS, Context.MODE_PRIVATE)
         categoryIdx = spf.getInt(CategorySettingFragment.CATEGORY_KEY_IDX, -1)
 
@@ -66,6 +70,17 @@ class CategoryEditActivity : AppCompatActivity() {
             }.start()
             finish()
         }
+
+        // 서버 통신
+        CategoryDeleteService(this).tryDeleteCategory(7)
+    }
+
+    override fun onDeleteCategorySuccess(response: BaseResponse) {
+        Log.d("CategoryEditFrag", "onDeleteCategorySuccess")
+    }
+
+    override fun onDeleteCategoryFailure(message: String) {
+        Log.d("CategoryEditFrag", "onDeleteCategoryFailure")
     }
 
 }

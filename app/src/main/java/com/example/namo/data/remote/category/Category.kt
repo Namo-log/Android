@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName
 
 // 카테고리 생성
 class CategoryBody (
-    val name : String = "",
-    val paletteId: Int = 0,
-    val isShare: Boolean = true
+    val name : String,
+    val paletteId: Int,
+    val isShare: Boolean
 )
 
 class PostCategoryResponse (
@@ -16,4 +16,16 @@ class PostCategoryResponse (
 
 class PostCategoryResult (
     @SerializedName("id") val categoryId: Int = 0
+)
+
+// 모든 카테고리 조회
+class GetCategoryResponse (
+    val result: ArrayList<GetCategoryReselt>
+) : BaseResponse()
+
+class GetCategoryReselt (
+    val catgoryId: Int,
+    val name: String,
+    val paletteId: Int,
+    val isShare: Boolean
 )
