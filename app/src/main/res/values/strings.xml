@@ -94,5 +94,6 @@
     <string name="event_current_added">ADDED</string>
     <string name="event_current_edited">EDITED</string>
     <string name="event_current_deleted">DELETED</string>
+    <string name="more_view">더보기</string>
 
 </resources>
