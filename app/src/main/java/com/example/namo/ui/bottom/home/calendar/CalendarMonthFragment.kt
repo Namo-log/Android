@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.namo.MainActivity.Companion.setCategoryList
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Category
@@ -213,17 +214,10 @@ class CalendarMonthFragment : Fragment() {
     }
 
     private fun getCategoryList() {
-        val thread = Thread {
-            categoryList = db.categoryDao.getCategoryList()
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch ( e : InterruptedException) {
-            e.printStackTrace()
-        }
-
+        categoryList = setCategoryList(db)
         binding.calendarMonthView.setCategoryList(categoryList)
+        personalEventRVAdapter.setCategory(categoryList)
+        groupEventRVAdapter.setCategory(categoryList)
     }
 
     private fun setDaily(idx : Int) {

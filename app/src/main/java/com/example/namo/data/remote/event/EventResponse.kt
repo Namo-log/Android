@@ -8,7 +8,7 @@ data class PostEventResponse (
 ) : BaseResponse()
 
 data class PostEventResult (
-    @SerializedName("scheduleIdx")  val eventIdx : Int
+    @SerializedName("scheduleIdx")  val eventIdx : Long
 )
 
 data class EditEventResponse (
@@ -16,7 +16,7 @@ data class EditEventResponse (
 ) : BaseResponse()
 
 data class EditEventResult (
-    @SerializedName("scheduleIdx")  val eventIdx : Int
+    @SerializedName("scheduleIdx")  val eventIdx : Long
 )
 
 data class DeleteEventResponse (

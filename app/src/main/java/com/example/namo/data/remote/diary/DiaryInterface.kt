@@ -30,7 +30,7 @@ interface DiaryInterface {
     /** 기록 삭제 **/
     @DELETE("/schedules/diary/{scheduleId}")
     fun deleteDiary(
-        @Path("scheduleId") scheduleId: Int
+        @Path("scheduleId") scheduleId: Long
     ): Call<DiaryResponse.DiaryDeleteResponse>
 
 
@@ -44,7 +44,7 @@ interface DiaryInterface {
     /**  기록 일 별 조회 **/
     @GET("/schedules/diary/day/{scheduleId}}")
     fun getDayDiary(
-        @Path("scheduleId") scheduleId: Int
+        @Path("scheduleId") scheduleId: Long
     ): Call<DiaryResponse.DiaryGetDayResponse>
 
 }

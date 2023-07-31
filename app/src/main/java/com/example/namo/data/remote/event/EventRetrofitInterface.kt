@@ -18,14 +18,14 @@ interface EventRetrofitInterface {
 
     @PATCH("schedules/{serverIdx}")
     fun editEvent(
-        @Path("serverIdx") serverIdx : Int,
+        @Path("serverIdx") serverIdx : Long,
 //        @Header("Authorization") token : String,
         @Body event : EventForUpload
     ) : Call<EditEventResponse>
 
     @DELETE("schedules/{serverIdx}")
     fun deleteEvent(
-        @Path("serverIdx") serverIdx : Int,
+        @Path("serverIdx") serverIdx : Long,
 //        @Header("Authorization") token : String,
     ) : Call<DeleteEventResponse>
 }

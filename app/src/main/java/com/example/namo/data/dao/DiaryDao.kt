@@ -16,16 +16,16 @@ interface DiaryDao {
     fun updateDiary(diary: Diary)
 
     @Query("DELETE FROM diaryTable WHERE diaryLocalId=:eventId")
-    fun deleteDiary(eventId:Int)
+    fun deleteDiary(eventId:Long)
 
     @Query("UPDATE calendar_event_table SET has_diary= :hasDiary WHERE eventId =:scheduleIdx")
-    fun updateHasDiary(hasDiary: Int, scheduleIdx: Int)
+    fun updateHasDiary(hasDiary: Int, scheduleIdx: Long)
 
     @Query("UPDATE calendar_event_table SET has_diary= :hasDiary WHERE eventId =:scheduleIdx")
-    fun deleteHasDiary(hasDiary: Int, scheduleIdx: Int)
+    fun deleteHasDiary(hasDiary: Int, scheduleIdx: Long)
 
     @Query("SELECT * FROM diaryTable WHERE diaryLocalId=:scheduleId")
-    fun getDiaryDaily(scheduleId: Int): Diary
+    fun getDiaryDaily(scheduleId: Long): Diary
 
     @Query(
         "SELECT * FROM calendar_event_table JOIN diaryTable ON diaryLocalId = eventId " +
@@ -33,7 +33,7 @@ interface DiaryDao {
     fun getDiaryEventList(yearMonth: String): List<DiaryEvent>
 
     @Query("UPDATE diaryTable SET diary_upload=:isUpload, scheduleId=:serverIdx, diary_state=:state WHERE diaryLocalId=:localId")
-    fun updateDiaryAfterUpload(localId :Int, isUpload : Int, serverIdx : Int, state : String)
+    fun updateDiaryAfterUpload(localId :Long, isUpload : Int, serverIdx : Long, state : String)
 
     @Query("SELECT * FROM diaryTable WHERE diary_upload = 0")
     fun getNotUploadedDiary() : List<Diary>

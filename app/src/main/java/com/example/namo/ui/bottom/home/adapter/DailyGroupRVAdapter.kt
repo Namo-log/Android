@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.ItemCalendarEventGroupBinding
 import org.joda.time.DateTime
@@ -12,6 +13,7 @@ import org.joda.time.DateTime
 class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>() {
 
     private val group = ArrayList<Event>()
+    private val categoryList = ArrayList<Category>()
     private lateinit var context : Context
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
@@ -33,13 +35,20 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
         this.group.addAll(group)
     }
 
+    fun setCategory(categoryList : List<Category>) {
+        this.categoryList.clear()
+        this.categoryList.addAll(categoryList)
+    }
+
     inner class ViewHolder(val binding : ItemCalendarEventGroupBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(group : Event) {
             val time = DateTime(group.startLong).toString("HH:mm") + " - " + DateTime(group.endLong).toString("HH:mm")
+            val category = categoryList.find { it.categoryIdx == group.categoryIdx }!!
+
             binding.itemCalendarEventTitle.text = group.title
             binding.itemCalendarEventTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
-            binding.itemCalendarEventColorView.background.setTint(context.resources.getColor(group.categoryColor))
+            binding.itemCalendarEventColorView.background.setTint(context.resources.getColor(category.color))
         }
     }
 }

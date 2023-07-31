@@ -28,7 +28,7 @@ class CategoryService(val view: CategoryDetailView) {
         })
     }
 
-    fun tryPatchCategory(categoryId: Int, body: CategoryBody) {
+    fun tryPatchCategory(categoryId: Long, body: CategoryBody) {
         retrofitInterface.patchCategory(categoryId, body).enqueue(object : Callback<PostCategoryResponse> {
 
             override fun onResponse(call: Call<PostCategoryResponse>, response: Response<PostCategoryResponse>) {
@@ -68,7 +68,7 @@ class CategorySettingService(val view: CategorySettingView) {
 class CategoryDeleteService(val view: CategoryDeleteView) {
     val retrofitInterface = ApplicationClass.sRetrofit.create(CategoryRetrofitInterface::class.java)
 
-    fun tryDeleteCategory(categoryId: Int) {
+    fun tryDeleteCategory(categoryId: Long) {
         retrofitInterface.deleteCategory(categoryId).enqueue(object : Callback<BaseResponse> {
 
             override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {

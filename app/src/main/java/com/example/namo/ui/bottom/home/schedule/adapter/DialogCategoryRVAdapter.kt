@@ -14,7 +14,7 @@ class DialogCategoryRVAdapter(
     private val categoryList: List<Category>
 ) : RecyclerView.Adapter<DialogCategoryRVAdapter.ViewHolder>() {
 
-    private var selectedIdx : Int = 0
+    private var selectedIdx : Long = 0
 
     interface MyItemClickListener {
         fun onSendIdx(category: Category)
@@ -61,7 +61,7 @@ class DialogCategoryRVAdapter(
 
     override fun getItemCount(): Int = categoryList.size
 
-    fun setSelectedIdx(idx : Int) {
+    fun setSelectedIdx(idx : Long) {
         this.selectedIdx = idx
         notifyDataSetChanged()
     }

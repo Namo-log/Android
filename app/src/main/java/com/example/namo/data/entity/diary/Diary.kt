@@ -7,7 +7,7 @@ import com.example.namo.R
 
 @Entity(tableName = "diaryTable")
 data class Diary(
-    @PrimaryKey(autoGenerate = false) val diaryLocalId: Int = 0,
+    @PrimaryKey(autoGenerate = false) val diaryLocalId: Long = 0L,
     var content: String = "",
     var images: List<String?>? = null,
     @ColumnInfo(name = "diary_upload")
@@ -15,5 +15,5 @@ data class Diary(
     @ColumnInfo(name = "diary_state")
     var state: String = R.string.event_current_default.toString(),
     @ColumnInfo(name = "scheduleId")
-    val diaryServerId: Int = 0,
+    val diaryServerId: Long = 0L,
 )

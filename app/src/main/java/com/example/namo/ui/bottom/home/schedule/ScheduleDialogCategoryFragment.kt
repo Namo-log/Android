@@ -29,7 +29,7 @@ class ScheduleDialogCategoryFragment : Fragment() {
     private lateinit var categoryRVAdapter : DialogCategoryRVAdapter
     private var categoryList : List<Category> = arrayListOf()
     private var initCategory : Int = 0
-    private var selectedCategory : Int = 0
+    private var selectedCategory : Long = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,10 +71,8 @@ class ScheduleDialogCategoryFragment : Fragment() {
                     override fun onSendIdx(category: Category) {
                         // 카테고리 세팅
                         selectedCategory = category.categoryIdx
-
-                        event.categoryIdx = category.categoryIdx
-                        event.categoryName = category.name
-                        event.categoryColor = category.color
+                        event.categoryIdx = selectedCategory
+                        Log.d("CATEGORY_TEST", "In category : ${event.categoryIdx}")
 
                         val action = ScheduleDialogCategoryFragmentDirections.actionScheduleDialogCategoryFragmentToScheduleDialogBasicFragment(event)
                         findNavController().navigate(action)

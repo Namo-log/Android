@@ -15,7 +15,7 @@ class PostCategoryResponse (
 ) : BaseResponse()
 
 class PostCategoryResult (
-    @SerializedName("id") val categoryId: Int = 0
+    @SerializedName("id") val categoryId: Long = 0
 )
 
 // 모든 카테고리 조회

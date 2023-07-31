@@ -20,7 +20,7 @@ class CategoryEditActivity : AppCompatActivity(), CategoryDeleteView {
     private lateinit var db: NamoDatabase
     private lateinit var category: Category
 
-    var categoryIdx = -1
+    var categoryIdx : Long = -1
     var name = ""
     var color = 0
     var share = true
@@ -56,9 +56,9 @@ class CategoryEditActivity : AppCompatActivity(), CategoryDeleteView {
     private fun deleteCategory() {
         // roomDB
         val spf = getSharedPreferences(CategorySettingFragment.CATEGORY_KEY_PREFS, Context.MODE_PRIVATE)
-        categoryIdx = spf.getInt(CategorySettingFragment.CATEGORY_KEY_IDX, -1)
+        categoryIdx = spf.getLong(CategorySettingFragment.CATEGORY_KEY_IDX, -1)
 
-        if (categoryIdx == 1 || categoryIdx == 2) {
+        if (categoryIdx == 1L || categoryIdx == 2L) {
             Toast.makeText(this, "기본 카테고리는 삭제할 수 없습니다", Toast.LENGTH_SHORT).show()
         } else {
             Thread{

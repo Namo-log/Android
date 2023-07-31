@@ -82,16 +82,22 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
                         val bundle = Bundle()
 
                         val event = Event(
-                            allData.eventId,
-                            allData.event_title,
-                            allData.event_start, 0, 0,
-                            0, "",
-                            allData.event_category_idx,
-                            allData.event_place_name, 0.0, 0.0, "", 0, null,
-                            allData.event_upload,
-                            allData.event_state,
-                            allData.event_server_idx,
-                            allData.has_diary
+                            eventId = allData.eventId,
+                            title = allData.event_title,
+                            startLong = allData.event_start,
+                            endLong = 0,
+                            dayInterval = 0,
+                            categoryIdx = allData.event_category_idx,
+                            placeName = allData.event_place_name,
+                            placeX = 0.0,
+                            placeY = 0.0,
+                            order = 0,
+                            alarmList = null,
+                            isUpload = allData.event_upload,
+                            state = allData.event_state,
+                            serverIdx = allData.event_server_idx,
+                            categoryServerIdx = 0L,
+                            hasDiary = allData.has_diary
                         )
 
                         bundle.putSerializable("event", event)

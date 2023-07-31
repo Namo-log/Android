@@ -34,6 +34,7 @@ import com.example.namo.data.remote.event.EventService
 import com.example.namo.data.remote.event.EventView
 import com.example.namo.data.remote.event.PostEventResponse
 import com.example.namo.config.ApplicationClass
+import com.example.namo.data.entity.home.Category
 import com.example.namo.data.remote.diary.DiaryRepository
 import com.example.namo.databinding.ActivityMainBinding
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogBasicFragment.Companion.eventToEventForUpload
@@ -56,6 +57,23 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView {
         const val PLACE_NAME_INTENT_KEY : String = "place_name"
         const val PLACE_X_INTENT_KEY : String = "place_x"
         const val PLACE_Y_INTENT_KEY : String = "place_y"
+
+        fun setCategoryList(db : NamoDatabase) : List<Category> {
+            var categoryList = listOf<Category>()
+            val thread = Thread {
+                categoryList = db.categoryDao.getCategoryList()
+            }
+            thread.start()
+            try {
+                thread.join()
+            } catch (e : InterruptedException) {
+                e.printStackTrace()
+            }
+
+            Log.d("SetCategory", categoryList.toString())
+
+            return categoryList
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,7 +112,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView {
         eventService.setDeleteEventView(this)
 
         for (i in unUploaded) {
-            if (i.serverIdx == 0) {
+            if (i.serverIdx == 0L) {
                 if (i.state == R.string.event_current_deleted.toString()) {
                     return
                 }
@@ -242,7 +260,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView {
         }
     }
 
-    override fun onEditEventFailure(message: String, eventId: Long, serverId: Int) {
+    override fun onEditEventFailure(message: String, eventId: Long, serverId: Long) {
         Log.d("MainActivity", "onEditEventFailure")
     }
 

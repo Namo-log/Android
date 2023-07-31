@@ -4,7 +4,7 @@ interface EventView {
     fun onPostEventSuccess(response : PostEventResponse, eventId : Long)
     fun onPostEventFailure(message : String, eventId: Long)
     fun onEditEventSuccess(response : EditEventResponse, eventId: Long)
-    fun onEditEventFailure(message : String, eventId : Long, serverId : Int)
+    fun onEditEventFailure(message : String, eventId : Long, serverId : Long)
 }
 
 interface DeleteEventView {

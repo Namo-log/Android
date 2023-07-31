@@ -139,7 +139,7 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
         // spf에 저장
         editor
             .putString(CATEGORY_KEY_DATA, json)
-            .putInt(CATEGORY_KEY_IDX, dataSet.categoryIdx)
+            .putLong(CATEGORY_KEY_IDX, dataSet.categoryIdx)
             .apply()
 
         Log.d("debug", "Category Data saved")
