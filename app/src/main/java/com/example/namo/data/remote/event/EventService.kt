@@ -41,7 +41,7 @@ class EventService() {
         })
     }
 
-    fun editEvent(serverIdx : Int, body: EventForUpload) {
+    fun editEvent(serverIdx : Long, body: EventForUpload) {
         eventRetrofitInterface.editEvent(serverIdx, body).enqueue(object : Callback<EditEventResponse> {
             override fun onResponse(call: Call<EditEventResponse>, response: Response<EditEventResponse>) {
                 when (response.code()) {
@@ -61,7 +61,7 @@ class EventService() {
         })
     }
 
-    fun deleteEvent(serverIdx: Int, eventId : Long) {
+    fun deleteEvent(serverIdx: Long, eventId : Long) {
         eventRetrofitInterface.deleteEvent(serverIdx).enqueue(object : Callback<DeleteEventResponse> {
             override fun onResponse(call: Call<DeleteEventResponse>, response: Response<DeleteEventResponse>) {
                 when (response.code()) {

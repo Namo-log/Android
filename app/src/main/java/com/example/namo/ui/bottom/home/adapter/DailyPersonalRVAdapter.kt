@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.home.Event
 import com.example.namo.R
+import com.example.namo.data.entity.home.Category
 import com.example.namo.databinding.ItemCalendarEventBinding
 import org.joda.time.DateTime
 import java.lang.Boolean.FALSE
@@ -15,6 +16,7 @@ import java.lang.Boolean.TRUE
 class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewHolder>() {
 
     private val personal = ArrayList<Event>()
+    private val categoryList = ArrayList<Category>()
     private lateinit var context : Context
 
     /** 기록 아이템 클릭 리스너 **/
@@ -69,17 +71,22 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
         this.personal.addAll(personal)
     }
 
+    fun setCategory(categoryList : List<Category>) {
+        this.categoryList.clear()
+        this.categoryList.addAll(categoryList)
+    }
+
     inner class ViewHolder(val binding : ItemCalendarEventBinding) : RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("ResourceType")
         fun bind(personal : Event) {
             val time = DateTime(personal.startLong).toString("HH:mm") + " - " + DateTime(personal.endLong).toString("HH:mm")
-            val color = personal.categoryColor
+            val category = categoryList.find { it.categoryIdx == personal.categoryIdx }!!
 
             binding.itemCalendarEventTitle.text = personal.title
             binding.itemCalendarEventTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
-            binding.itemCalendarEventColorView.background.setTint(context.resources.getColor(personal.categoryColor))
+            binding.itemCalendarEventColorView.background.setTint(context.resources.getColor(category.color))
             binding.itemCalendarEventRecord.setColorFilter(context.resources.getColor(R.color.realGray))
             /** 기록 아이콘 색깔 **/
             if(personal.hasDiary !=0)

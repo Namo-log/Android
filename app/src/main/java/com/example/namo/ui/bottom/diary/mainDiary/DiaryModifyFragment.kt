@@ -61,7 +61,7 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
         repo.setFragment(this)
 
         event = (arguments?.getSerializable("event") as? Event)!!
-        repo.setDiary(event.eventId.toInt(), event.serverIdx)
+        repo.setDiary(event.eventId, event.serverIdx)
 
         bind()
         charCnt()

@@ -36,8 +36,8 @@ class DiaryService {
 
     /** 기록 추가 **/
     fun addDiary(
-        localId: Int,
-        scheduleId: Int,
+        localId: Long,
+        scheduleId: Long,
         images: List<MultipartBody.Part?>?,
         content: RequestBody?,
         scheduleIdx: RequestBody
@@ -71,8 +71,8 @@ class DiaryService {
 
     /** 기록 수정 **/
     fun editDiary(
-        localId: Int,
-        serverId: Int,
+        localId: Long,
+        serverId: Long,
         images: List<MultipartBody.Part?>?,
         content: RequestBody?,
         scheduleIdx: RequestBody
@@ -106,8 +106,8 @@ class DiaryService {
 
     /** 기록 삭제 **/
     fun deleteDiary(
-        localId: Int,
-        scheduleIdx: Int
+        localId: Long,
+        scheduleIdx: Long
     ) {
         diaryRetrofitInterface.deleteDiary(scheduleIdx)
             .enqueue(object : Callback<DiaryResponse.DiaryDeleteResponse> {
@@ -173,8 +173,8 @@ class DiaryService {
 
     /** 기록 일 별 조회 **/
     fun getDayDiary(
-        localId: Int,
-        scheduleIdx: Int,
+        localId: Long,
+        scheduleIdx: Long,
     ) {
         diaryRetrofitInterface.getDayDiary(scheduleIdx)
             .enqueue(object : Callback<DiaryResponse.DiaryGetDayResponse> {

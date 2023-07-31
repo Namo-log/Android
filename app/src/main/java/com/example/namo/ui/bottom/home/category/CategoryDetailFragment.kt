@@ -39,7 +39,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
     private val failList = ArrayList<Category>()
 
     // 카테고리에 들어갈 데이터
-    var categoryIdx = -1
+    var categoryIdx : Long = -1
     var name: String = ""
     var color: Int = 0
     var share: Boolean = true
@@ -161,7 +161,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         Thread{
             name = binding.categoryDetailTitleEt.text.toString()
             category = Category(0, name, color, share)
-            db.categoryDao.insertCategory(category)
+            categoryIdx = db.categoryDao.insertCategory(category)
+            Log.d("CategoryDetailFrag", "Insert Category : $categoryIdx")
         }.start()
         // 서버 통신
         CategoryService(this@CategoryDetailFragment).tryPostCategory(CategoryBody(name, paletteId, share))
@@ -173,7 +174,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             name = binding.categoryDetailTitleEt.text.toString()
             category = Category(categoryIdx, name, color, share)
             db.categoryDao.updateCategory(category)
-            Log.d("CategoryDetailFragment", "updateCategory: ${db.categoryDao.getCategoryWithId(categoryIdx)}")
+            Log.d("CategoryDetailFrag", "updateCategory: ${db.categoryDao.getCategoryWithId(categoryIdx)}")
         }
         thread.start()
         try {
@@ -184,29 +185,29 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         // 서버 통신
         CategoryService(this@CategoryDetailFragment).tryPatchCategory(7, CategoryBody(name, paletteId, share))
 
-        updateEventWithCategory()
+//        updateEventWithCategory()
     }
 
-    private fun updateEventWithCategory() {
-        val thread = Thread {
-            val eventList = db.eventDao.getEventWithCategoryIdx(categoryIdx)
-            Log.d("UPDATE_BEFORE", eventList.toString())
-            for (i in eventList) {
-                i.categoryName = name
-                i.categoryColor = color
-
-                db.eventDao.updateEvent(i)
-            }
-
-            Log.d("UPDATE_AFTER", eventList.toString())
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch (e : InterruptedException) {
-            e.printStackTrace()
-        }
-    }
+//    private fun updateEventWithCategory() {
+//        val thread = Thread {
+//            val eventList = db.eventDao.getEventWithCategoryIdx(categoryIdx)
+//            Log.d("UPDATE_BEFORE", eventList.toString())
+//            for (i in eventList) {
+//                i.categoryName = name
+//                i.categoryColor = color
+//
+//                db.eventDao.updateEvent(i)
+//            }
+//
+//            Log.d("UPDATE_AFTER", eventList.toString())
+//        }
+//        thread.start()
+//        try {
+//            thread.join()
+//        } catch (e : InterruptedException) {
+//            e.printStackTrace()
+//        }
+//    }
 
     private fun initBasicColor() {
         // 기본 색상 관련 리스트 설정
@@ -351,7 +352,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
     }
 
     // RoomDB 카테고리와 서버 카테고리 동기화
-    private fun updateCategoryId(id: Int) {
+    private fun updateCategoryId(id: Long) {
         Thread{
             // 업데이트할 카테고리 조회
             category = db.categoryDao.getCategoryWithId(categoryIdx)

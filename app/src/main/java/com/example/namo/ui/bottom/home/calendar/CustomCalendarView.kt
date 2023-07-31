@@ -479,8 +479,8 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
 
     private fun setBgPaintColor(event: Event) {
 //        bgPaint.color = resources.getColor(event.categoryColor)
-        Log.d("TEST_CATEGORY", "CATEGORY LIST : ${categoryList}")
-        Log.d("TEST_CATEGORY", "event category LIST : ${event.categoryIdx}")
+//        Log.d("TEST_CATEGORY", "CATEGORY LIST : ${categoryList}")
+//        Log.d("TEST_CATEGORY", "event category LIST : ${event.categoryIdx}")
         bgPaint.color = resources.getColor(categoryList.find { it.categoryIdx == event.categoryIdx }!!.color)
 //        if (!CalendarUtils.isSameMonth(date, firstDayOfMonth)) {
 //            bgPaint.alpha = 50

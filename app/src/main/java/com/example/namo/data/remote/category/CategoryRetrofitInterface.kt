@@ -21,7 +21,7 @@ interface CategoryRetrofitInterface {
     // 카테고리 수정
     @PATCH("/categories/{categoryId}")
     fun patchCategory(
-        @Path("categoryId") categoryId: Int,
+        @Path("categoryId") categoryId: Long,
         @Body body: CategoryBody
     ) : Call<PostCategoryResponse>
 
@@ -32,6 +32,6 @@ interface CategoryRetrofitInterface {
     // 카테고리 삭제
     @DELETE("/categories/{categoryId}")
     fun deleteCategory(
-        @Path("categoryId") categoryId: Int
+        @Path("categoryId") categoryId: Long
     ) : Call<BaseResponse>
 }
