@@ -7,13 +7,16 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="vertical"
+        android:padding="16dp"
+        android:minWidth="250dp"
         android:background="@drawable/border_round_all_10dp">
 
         <LinearLayout
-            android:layout_width="350dp"
-            android:layout_height="150dp"
+            android:layout_width="300dp"
+            android:layout_height="130dp"
             android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:layout_gravity="center">
 
             <NumberPicker
                 android:id="@+id/year_picker"
@@ -26,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:text="년"
                 android:textSize="17sp"
-                android:textColor="@color/black"
+                android:textColor="@color/textGray"
                 android:textStyle="bold"/>
 
             <NumberPicker
@@ -40,40 +43,45 @@
                 android:layout_height="wrap_content"
                 android:text="월"
                 android:textSize="17sp"
-                android:textColor="@color/black"
+                android:textColor="@color/textGray"
                 android:textStyle="bold"/>
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="350dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="20dp"
-            android:gravity="center">
+            android:gravity="center"
+            android:layout_marginTop="16dp">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/cancel_btn"
-                android:layout_width="130dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:text="닫기"
-                android:paddingVertical="3dp"
-                android:textColor="@color/white"
-                android:textStyle="bold"
+                android:layout_weight="1"
+                android:paddingVertical="11dp"
+                android:layout_marginEnd="4dp"
                 android:background="@drawable/border_round_all_fill_mainorange"
-                android:layout_marginHorizontal="10dp"/>
+                android:backgroundTint="@color/groupCodeGray"
+                android:textColor="@color/textGray"
+                android:text="@string/dialog_cancel"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textAlignment="center" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/accept_btn"
-                android:layout_width="130dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:text="확인"
-                android:paddingVertical="3dp"
-                android:textColor="@color/white"
-                android:textStyle="bold"
+                android:layout_weight="1"
+                android:paddingVertical="11dp"
+                android:layout_marginStart="4dp"
                 android:background="@drawable/border_round_all_fill_mainorange"
-                android:layout_marginHorizontal="10dp"/>
+                android:textColor="@color/white"
+                android:text="@string/dialog_confirm"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textAlignment="center" />
 
         </LinearLayout>
 
