@@ -3,6 +3,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -111,7 +112,9 @@ class DiaryAdapter(
                 itemDiaryContentTv.text = item.content
                 itemDiaryTitleTv.text = item.event_title
 
-                val repo=DiaryRepository(context)
+                setViewMore(itemDiaryContentTv, viewMore)
+
+                val repo = DiaryRepository(context)
                 CoroutineScope(Dispatchers.Main).launch {
                     val category = repo.getCategoryId(item.event_category_idx)
 
@@ -138,6 +141,25 @@ class DiaryAdapter(
 
                 if (item.content.isEmpty()) itemDiaryContentTv.visibility = View.GONE
                 if (item.images?.isEmpty() == true) diaryGalleryRv.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun setViewMore(contentTextView: TextView, viewMoreTextView: TextView) {
+        // getEllipsisCount()을 통한 더보기 표시 및 구현
+        contentTextView.post {
+            val lineCount = contentTextView.layout.lineCount
+            if (lineCount > 0) {
+                if (contentTextView.layout.getEllipsisCount(lineCount - 1) > 0) {
+                    // 더보기 표시
+                    viewMoreTextView.visibility = View.VISIBLE
+
+                    // 더보기 클릭 이벤트
+                    viewMoreTextView.setOnClickListener {
+                        contentTextView.maxLines = Int.MAX_VALUE
+                        viewMoreTextView.visibility = View.GONE
+                    }
+                }
             }
         }
     }

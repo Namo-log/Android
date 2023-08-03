@@ -8,11 +8,11 @@ class DiaryResponse {
     /** 기록 생성 **/
     data class DiaryAddResponse(
         val result: GetScheduleIdx,
-        val localId :Int
+        val localId :Long
     )
 
     data class GetScheduleIdx(
-        val scheduleIdx: Int
+        val scheduleIdx: Long
     )
 
 
@@ -35,12 +35,12 @@ class DiaryResponse {
 
     data class MonthDiaryDto(
         @SerializedName("name") val title: String,
-        @SerializedName("scheduleId") val scheduleIdx: Int,
+        @SerializedName("scheduleId") val scheduleIdx: Long,
         @SerializedName("startDate") var startDate: Long,
         @SerializedName("texts") val content: String,
         @SerializedName("urls") val imgUrl: List<String>,
-        @SerializedName("categoryId") val categoryId: Int,
-        @SerializedName("eventId") val eventId:Int,
+        @SerializedName("categoryId") val categoryId: Long,
+        @SerializedName("eventId") val eventId:Long,
         @SerializedName("placeName") val placeName:String
 
     ) : Serializable

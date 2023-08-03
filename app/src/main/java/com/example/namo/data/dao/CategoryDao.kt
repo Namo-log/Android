@@ -8,7 +8,7 @@ import com.example.namo.data.entity.home.Event
 interface CategoryDao {
 
     @Insert
-    fun insertCategory(category: Category)
+    fun insertCategory(category: Category) : Long
 
     @Update
     fun updateCategory(category: Category)
@@ -23,12 +23,12 @@ interface CategoryDao {
     fun getActiveCategoryList(isActive: Boolean): List<Category>
 
     @Query("SELECT * FROM category_table WHERE categoryIdx=:categoryIdx UNION ALL SELECT * FROM category_table WHERE categoryIdx <> :categoryIdx LIMIT 1")
-    fun getCategoryWithId(categoryIdx: Int): Category
+    fun getCategoryWithId(categoryIdx: Long): Category
 
     @Query("SELECT * FROM category_table WHERE isUpload = 0")
     fun getNotUploadedCategory() : List<Category>
 
     @Query("UPDATE category_table SET isUpload=:isUpload, categoryIdx=:serverIdx, state=:state WHERE categoryIdx=:categoryIdx")
-    fun updateCategoryAfterUpload(categoryIdx : Int, isUpload : Int, serverIdx : Int, state : String)
+    fun updateCategoryAfterUpload(categoryIdx : Long, isUpload : Int, serverIdx : Long, state : String)
 
 }

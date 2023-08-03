@@ -33,6 +33,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.namo.MainActivity
+import com.example.namo.MainActivity.Companion.setCategoryList
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Category
@@ -61,27 +62,16 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
 
     var isEdit : Boolean = false
     private var event : Event = Event()
-    private var category : Category = Category()
-
-    private var prevView : Int = 0
-    private var recentView : Int = 0
 
     var isAlarm : Boolean = false
 
-    private lateinit var categoryRVAdapter : DialogCategoryRVAdapter
     private var categoryList : List<Category> = arrayListOf()
-    private var selectedCategory : Int = 0
+    private lateinit var selectedCategory : Category
 
-    private var prevPicker : MotionLayout? = null
     private var prevClicked : TextView? = null
-    private var picker : Int = 0
     private var startDateTime = DateTime(System.currentTimeMillis())
     private var endDateTime = DateTime(System.currentTimeMillis())
     private var selectedDate = DateTime(System.currentTimeMillis())
-    private var selectedHourStr : String = "00"
-    private var selectedMinStr : String = "00"
-    private var isAmOrPm : String = "AM"
-    private var closeOtherTime : Boolean = false
 
     lateinit var mapView: MapView
     var mapViewContainer: RelativeLayout? = null
@@ -96,12 +86,10 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
 
     private val PERMISSIONS_REQUEST_CODE = 100
     private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-    private val REQUIRED_PERMISSIONS_PUSH = arrayOf(Manifest.permission.RECEIVE_BOOT_COMPLETED)
     private val NOTIFICATION_PERMISSION_REQUEST_CODE = 777
 
     private lateinit var getResult : ActivityResultLauncher<Intent>
 
-    private var selectedAlarm : ArrayList<Int> = arrayListOf()
     private var scheduelIdx : Long = 0
 
     private var prevChecked : MutableList<Int> = mutableListOf()
@@ -567,9 +555,16 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         binding.dialogScheduleTitleEt.setText(event.title)
 
         //카테고리
-        selectedCategory = event.categoryIdx
-        binding.dialogScheduleCategoryNameTv.text = event.categoryName
-        binding.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(event.categoryColor))
+        val getCategoryThread = Thread {
+            selectedCategory = db.categoryDao.getCategoryWithId(event.categoryIdx)
+        }
+        getCategoryThread.start()
+        try {
+            getCategoryThread.join()
+        } catch ( e : InterruptedException) {
+            e.printStackTrace()
+        }
+        setCategory()
 
         //시작일, 종료일
         startDateTime = DateTime(event.startLong)
@@ -699,25 +694,9 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         // 카테고리가 아무것도 없으면 기본 카테고리 2개 생성 (일정, 모임)
         setInitialCategory()
 
-        val r = Runnable {
-            try {
-                categoryList = db.categoryDao.getCategoryList()
-                category = categoryList[0]
-            } catch (e : Exception) {
-                e.printStackTrace()
-            }
-        }
-
-        val thread = Thread(r)
-        thread.start()
-        try {
-            thread.join()
-        } catch (e : InterruptedException) {
-            e.printStackTrace()
-        }
-        event.categoryIdx = category.categoryIdx
-        event.categoryName = category.name
-        event.categoryColor = category.color
+        categoryList = setCategoryList(db)
+        selectedCategory = categoryList[0]
+        event.categoryIdx = selectedCategory.categoryIdx
 
         setCategory()
     }
@@ -739,8 +718,8 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
     }
 
     private fun setCategory() {
-        binding.dialogScheduleCategoryNameTv.text = event.categoryName
-        binding.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(event.categoryColor))
+        binding.dialogScheduleCategoryNameTv.text = selectedCategory.name
+        binding.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(selectedCategory.color))
     }
 
 
@@ -836,7 +815,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         }
     }
 
-    override fun onEditEventFailure(message: String, eventId : Long, serverId : Int) {
+    override fun onEditEventFailure(message: String, eventId : Long, serverId : Long) {
         Log.d("ScheduleBasic", "onEditEventFailure")
 
         var thread = Thread {
@@ -859,18 +838,17 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
     companion object {
         fun eventToEventForUpload(event : Event) : EventForUpload {
             return EventForUpload(
-                eventId = event.eventId,
                 name = event.title,
                 startDate = event.startLong,
                 endDate = event.endLong,
-                dayInterval = event.dayInterval,
-                categoryColor = event.categoryColor,
-                categoryName = event.categoryName,
-                categoryId = event.categoryIdx,
-                placeName = event.placeName,
-                placeX = event.placeX,
-                placeY = event.placeY,
-                alarmList = event.alarmList
+                interval = event.dayInterval,
+                eventId = event.eventId,
+                alarmDate = event.alarmList,
+                x = event.placeX,
+                y = event.placeY,
+                locationName = event.placeName,
+//                categoryId = event.categoryServerIdx,
+                categoryId = 10 // 지금 category 등록이 안되어서 임시방편
             )
         }
     }

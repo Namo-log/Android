@@ -137,7 +137,7 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
     private fun insertData() {
 
         val content = binding.diaryContentsEt.text.toString()
-        repo.addDiary(event.eventId.toInt(), content, imgList, event.serverIdx)
+        repo.addDiary(event.eventId, content, imgList, event.serverIdx)
 
     }
 

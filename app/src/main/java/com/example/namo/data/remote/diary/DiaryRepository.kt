@@ -49,10 +49,10 @@ class DiaryRepository(
 
     /** add diary **/
     fun addDiary(
-        diaryLocalId: Int, // eventId
+        diaryLocalId: Long, // eventId
         content: String,
         images: List<String?>?,
-        serverId: Int // eventServerId
+        serverId: Long // eventServerId
     ) {
 
         Thread {
@@ -97,8 +97,8 @@ class DiaryRepository(
     }
 
     private fun addDiaryToServer(
-        localId: Int,
-        scheduleId: Int,
+        localId: Long,
+        scheduleId: Long,
         content: String,
         images: List<String?>?
     ) {
@@ -126,7 +126,7 @@ class DiaryRepository(
 
     override fun onAddDiarySuccess(
         result: DiaryResponse.GetScheduleIdx,
-        localId: Int
+        localId: Long
     ) {
         Thread {
             diaryDao.updateDiaryAfterUpload(
@@ -141,7 +141,7 @@ class DiaryRepository(
         Log.d("addDiaryServer", "success")
     }
 
-    override fun onAddDiaryFailure(localId: Int, serverId: Int) {
+    override fun onAddDiaryFailure(localId: Long, serverId: Long) {
 
         Thread {
             diaryDao.updateDiaryAfterUpload(
@@ -160,10 +160,10 @@ class DiaryRepository(
 
     /** edit diary **/
     fun editDiary(
-        diaryLocalId: Int,
+        diaryLocalId: Long,
         content: String,
         images: List<String?>?,
-        serverId: Int
+        serverId: Long
     ) {
 
         Thread {
@@ -207,8 +207,8 @@ class DiaryRepository(
 
 
     private fun editDiaryToServer(
-        localId: Int,
-        scheduleId: Int,
+        localId: Long,
+        scheduleId: Long,
         content: String,
         images: List<String?>?
     ) {
@@ -235,7 +235,7 @@ class DiaryRepository(
     }
 
 
-    override fun onEditDiarySuccess(result: String, localId: Int, serverId: Int) {
+    override fun onEditDiarySuccess(result: String, localId: Long, serverId: Long) {
 
         Thread {
             diaryDao.updateDiaryAfterUpload(
@@ -250,7 +250,7 @@ class DiaryRepository(
     }
 
 
-    override fun onEditDiaryFailure(localId: Int, serverId: Int) {
+    override fun onEditDiaryFailure(localId: Long, serverId: Long) {
 
         Thread {
             diaryDao.updateDiaryAfterUpload(
@@ -269,7 +269,7 @@ class DiaryRepository(
     }
 
 
-    fun deleteDiary(localId: Int, serverId: Int) {
+    fun deleteDiary(localId: Long, serverId: Long) {
 
         Thread {
             diaryDao.updateDiaryAfterUpload(
@@ -292,7 +292,7 @@ class DiaryRepository(
 
     }
 
-    override fun onDeleteDiarySuccess(localId: Int, serverId: Int) {
+    override fun onDeleteDiarySuccess(localId: Long, serverId: Long) {
 
         Thread {
             diaryDao.deleteDiary(localId)
@@ -310,7 +310,7 @@ class DiaryRepository(
     }
 
 
-    override fun onDeleteDiaryFailure(localId: Int, serverId: Int) {
+    override fun onDeleteDiaryFailure(localId: Long, serverId: Long) {
 
         val thread = Thread {
             failList.clear()
@@ -322,7 +322,7 @@ class DiaryRepository(
     }
 
 
-    fun getUpload(eventServerId: Int) {
+    fun getUpload(eventServerId: Long) {
 
         Thread {
             notUploaded = diaryDao.getNotUploadedDiary()
@@ -333,7 +333,7 @@ class DiaryRepository(
 
         for (diary in notUploaded) {
 
-            if (diary.diaryServerId == 0) {
+            if (diary.diaryServerId == 0L) {
                 if (diary.state == R.string.event_current_deleted.toString()) return
                 else {
                     addDiaryToServer(diary.diaryLocalId, eventServerId, diary.content, diary.images)
@@ -354,12 +354,12 @@ class DiaryRepository(
     }
 
 
-    suspend fun getCategoryId(categoryId: Int): Category = withContext(Dispatchers.IO) {
+    suspend fun getCategoryId(categoryId: Long): Category = withContext(Dispatchers.IO) {
         categoryDao.getCategoryWithId(categoryId)
     }
 
     /** get diary **/
-    fun setDiary(localId: Int, serverId: Int) {
+    fun setDiary(localId: Long, serverId: Long) {
         if (!NetworkManager.checkNetworkState(context)) {
 
             Thread {
@@ -378,7 +378,7 @@ class DiaryRepository(
         }
     }
 
-    override fun onGetDayDiarySuccess(localId: Int, result: DiaryResponse.DayDiaryDto) {
+    override fun onGetDayDiarySuccess(localId: Long, result: DiaryResponse.DayDiaryDto) {
 
         val diary = Diary(localId, result.content, result.imgUrl)
         fragment?.bindDiary(diary)
@@ -387,7 +387,7 @@ class DiaryRepository(
 
     }
 
-    override fun onGetDayDiaryFailure(localId: Int) {
+    override fun onGetDayDiaryFailure(localId: Long) {
         Thread {
             val diary = diaryDao.getDiaryDaily(localId)
             Handler(Looper.getMainLooper()).post {
@@ -436,7 +436,7 @@ class DiaryRepository(
         val diaryList = arrayListOf<DiaryItem>()
         for (it in result) {
             val item = DiaryItem.Content(
-                it.eventId.toLong(),
+                it.eventId,
                 it.title,
                 it.startDate,
                 it.categoryId,
@@ -497,11 +497,11 @@ class DiaryRepository(
         return result
     }
 
-    private fun updateHasDiary(localId: Int) {
+    private fun updateHasDiary(localId: Long) {
         diaryDao.updateHasDiary(1, localId)
     }
 
-    private fun deleteHasDiary(localId: Int) {
+    private fun deleteHasDiary(localId: Long) {
         diaryDao.deleteHasDiary(0, localId)
     }
 

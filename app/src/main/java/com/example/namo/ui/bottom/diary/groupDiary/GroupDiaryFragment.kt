@@ -101,7 +101,6 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
             binding.groupPlaceSaveBtn.visibility = View.GONE
         }
 
-
     }
 
 
