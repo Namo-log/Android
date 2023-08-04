@@ -17,9 +17,6 @@ import com.example.namo.data.entity.diary.DiaryItem
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import java.lang.Boolean.TRUE
 
@@ -43,17 +40,6 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
         _binding = FragmentDiaryBinding.inflate(inflater, container, false)
 
-        binding.diaryMonth.text = DateTime(dateTime).toString("yyyy.MM")
-        yearMonth = binding.diaryMonth.text.toString()
-
-        repo = DiaryRepository(requireContext())
-        repo.setFragment2(this)
-
-
-        CoroutineScope(Dispatchers.Main).launch {
-            repo.getDiaryList(yearMonth)
-        }
-
         binding.diaryMonth.setOnClickListener {
             dialogCreate()
         }
@@ -67,6 +53,21 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        binding.diaryMonth.text = DateTime(dateTime).toString("yyyy.MM")
+        yearMonth = binding.diaryMonth.text.toString()
+
+        repo = DiaryRepository(requireContext())
+        repo.setFragment2(this)
+
+        updateDiaryList()
+    }
+
+    private fun updateDiaryList() {
+        repo.getDiaryList(yearMonth)
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     fun getList(diaryItems: List<DiaryItem>) {
@@ -82,22 +83,14 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
                         val bundle = Bundle()
 
                         val event = Event(
-                            eventId = allData.eventId,
-                            title = allData.event_title,
-                            startLong = allData.event_start,
-                            endLong = 0,
-                            dayInterval = 0,
-                            categoryIdx = allData.event_category_idx,
-                            placeName = allData.event_place_name,
-                            placeX = 0.0,
-                            placeY = 0.0,
-                            order = 0,
-                            alarmList = null,
-                            isUpload = allData.event_upload,
-                            state = allData.event_state,
-                            serverIdx = allData.event_server_idx,
-                            categoryServerIdx = 0L,
-                            hasDiary = allData.has_diary
+                            allData.eventId,
+                            allData.event_title,
+                            allData.event_start, 0L, 0,
+                            allData.event_category_idx, allData.event_place_name,
+                            0.0, 0.0, 0, null, 1,
+                            R.string.event_current_default.toString(),
+                            allData.event_server_idx,
+                            0L
                         )
 
                         bundle.putSerializable("event", event)
@@ -143,6 +136,9 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         YearMonthDialog(dateTime) {
             yearMonth = DateTime(it).toString("yyyy.MM")
             binding.diaryMonth.text = yearMonth
+
+            updateDiaryList()
+
         }.show(parentFragmentManager, "test")
 
     }

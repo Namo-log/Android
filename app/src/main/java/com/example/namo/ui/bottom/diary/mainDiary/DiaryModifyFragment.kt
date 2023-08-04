@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,17 +56,22 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
 
         hideBottomNavigation(true)
 
+        event = (arguments?.getSerializable("event") as? Event)!!
+
         repo = DiaryRepository(requireContext())
         repo.setFragment(this)
-
-        event = (arguments?.getSerializable("event") as? Event)!!
         repo.setDiary(event.eventId, event.serverIdx)
 
-        bind()
         charCnt()
 
-
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+
+        bind()
     }
 
 
@@ -76,14 +80,14 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
         galleryAdapter = GalleryListAdapter(requireContext())
         diary.images?.let { galleryAdapter.addImages(it) }
         binding.diaryContentsEt.setText(diary.content)
-        onRecyclerView()
         onClickListener(diary)
-
+        onRecyclerView()
     }
 
 
     @SuppressLint("SimpleDateFormat")
     private fun bind() {
+
 
         CoroutineScope(Dispatchers.Main).launch {
             category = repo.getCategoryId(event.categoryIdx)
@@ -130,7 +134,7 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
         }
 
         binding.diaryDeleteIv.setOnClickListener {
-            deleteDiary(diary)
+            deleteDiary()
             view?.findNavController()?.navigate(R.id.diaryFragment)
             hideBottomNavigation(false)
         }
@@ -149,18 +153,18 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
         else diary.images = imgList
 
         repo.editDiary(
-            diary.diaryLocalId,
+            event.eventId,
             binding.diaryContentsEt.text.toString(),
             diary.images,
-            diary.diaryServerId
+            event.serverIdx
         )
 
         Toast.makeText(requireContext(), "수정되었습니다", Toast.LENGTH_SHORT).show()
     }
 
     /** 다이어리 삭제 **/
-    private fun deleteDiary(diary: Diary) {
-        repo.deleteDiary(diary.diaryLocalId, diary.diaryServerId)
+    private fun deleteDiary() {
+        repo.deleteDiary(event.eventId, event.serverIdx)
     }
 
     @SuppressLint("IntentReset")
@@ -231,11 +235,12 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
                 }
             }
         }
+
         galleryAdapter.addImages(imgList)
         galleryAdapter.notifyDataSetChanged()
 
-        Log.d("img", imgList.toString())
     }
+
 
     private fun onRecyclerView() {
 
