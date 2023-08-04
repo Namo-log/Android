@@ -764,10 +764,10 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
     override fun onPostEventSuccess(response: PostEventResponse, eventId : Long) {
         Log.d("ScheduleBasic", "onPostEventSuccess")
 
-        val result = response.result
+        var result = response.result
 
         //룸디비에 isUpload, serverId, state 업데이트하기
-        var thread = Thread {
+        val thread = Thread {
             db.eventDao.updateEventAfterUpload(eventId, 1, result.eventIdx, R.string.event_current_default.toString())
         }
         thread.start()

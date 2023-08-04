@@ -20,7 +20,7 @@ import com.example.namo.databinding.FragmentDiaryBinding
 import org.joda.time.DateTime
 import java.lang.Boolean.TRUE
 
-class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
+class DiaryFragment : Fragment(), DiaryRepository.DiaryCallback {  // 다이어리 리스트 화면(bottomNavi)
 
     private var _binding: FragmentDiaryBinding? = null
     private val binding get() = _binding!!
@@ -49,8 +49,14 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
             view?.findNavController()?.navigate(R.id.action_diaryFragment_to_groupDiaryFragment)
         }
 
+        repo = DiaryRepository(requireContext())
+        repo.setCallBack(this)
 
         return binding.root
+    }
+
+    override fun onGetDiaryItems(diaryItem: List<DiaryItem>) {
+        getList(diaryItem)
     }
 
     override fun onResume() {
@@ -58,9 +64,6 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
         binding.diaryMonth.text = DateTime(dateTime).toString("yyyy.MM")
         yearMonth = binding.diaryMonth.text.toString()
-
-        repo = DiaryRepository(requireContext())
-        repo.setFragment2(this)
 
         updateDiaryList()
     }
@@ -142,6 +145,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         }.show(parentFragmentManager, "test")
 
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

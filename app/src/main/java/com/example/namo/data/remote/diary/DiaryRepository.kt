@@ -7,6 +7,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
 import androidx.core.net.toUri
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
@@ -14,8 +15,6 @@ import com.example.namo.data.entity.diary.Diary
 import com.example.namo.data.entity.diary.DiaryEvent
 import com.example.namo.data.entity.diary.DiaryItem
 import com.example.namo.data.entity.home.Category
-import com.example.namo.ui.bottom.diary.mainDiary.DiaryFragment
-import com.example.namo.ui.bottom.diary.mainDiary.DiaryModifyFragment
 import com.example.namo.utils.NetworkManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +27,6 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
-
 class DiaryRepository(
     val context: Context,
 ) : DiaryView, DiaryDetailView, GetMonthDiaryView, GetDayDiaryView {
@@ -38,18 +36,27 @@ class DiaryRepository(
     private val diaryDao = db.diaryDao
     private val categoryDao = db.categoryDao
 
-    private var fragment: DiaryModifyFragment? = null
-    private var fragment2: DiaryFragment? = null
-
     private val scope = CoroutineScope(IO)
 
     private lateinit var notUploaded: List<Diary>
-    fun setFragment(fragment: DiaryModifyFragment) {
-        this.fragment = fragment
+
+    private var callback: DiaryCallback? = null
+    private var callback2: DiaryModifyCallback? = null
+
+    fun setCallBack(callback: DiaryCallback) {
+        this.callback = callback
     }
 
-    fun setFragment2(fragment: DiaryFragment) {
-        this.fragment2 = fragment
+    fun setCallBack2(callback: DiaryModifyCallback) {
+        this.callback2 = callback
+    }
+
+    interface DiaryCallback {
+        fun onGetDiaryItems(diaryItem: List<DiaryItem>)
+    }
+
+    interface DiaryModifyCallback {
+        fun onGetDiary(diary: Diary)
     }
 
 
@@ -65,7 +72,7 @@ class DiaryRepository(
             val diary = Diary(diaryLocalId, content, images)
             diaryDao.insertDiary(diary)
             updateHasDiary(diaryLocalId)
-        }
+        } // 일단 roomdb에 다이어리 데이터 추가함
 
         if (!NetworkManager.checkNetworkState(context)) {
             // 인터넷 연결 안 됨
@@ -84,7 +91,6 @@ class DiaryRepository(
         }
 
         addDiaryToServer(diaryLocalId, serverId, content, images)
-
         diaryService.addDiaryView(this)
 
     }
@@ -158,7 +164,7 @@ class DiaryRepository(
             if (diary != null) {
                 diaryDao.updateDiary(diary)
             }
-        }  // 일단 roomdb에 다이어리 데이터 추가함
+        }
 
 
         if (!NetworkManager.checkNetworkState(context)) {
@@ -239,6 +245,7 @@ class DiaryRepository(
     }
 
 
+    /** delete diary **/
     fun deleteDiary(localId: Long, serverId: Long) {
 
         scope.launch {
@@ -264,20 +271,27 @@ class DiaryRepository(
     override fun onDeleteDiarySuccess(localId: Long) {
 
         scope.launch {
-            diaryDao.deleteDiary(localId)
+            diaryDao.deleteDiary(localId) // roomDB에서 삭제
             diaryDao.updateDiaryAfterUpload(
                 localId,
                 1,
                 R.string.event_current_default.toString()
             )
-            deleteHasDiary(localId)
+            deleteHasDiary(localId) // roomdb hasDiary 0으로 변경
         }
 
         Log.d("deleteDiary", "success")
     }
 
 
+    @SuppressLint("ResourceType")
     override fun onDeleteDiaryFailure(localId: Long, message: String) {
+
+        val result = when (message) {
+            "500" -> "서버 오류"
+            else -> "네트워크 연결 실패"
+        }
+        Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
 
         Log.d("deleteDiary", message)
     }
@@ -329,7 +343,7 @@ class DiaryRepository(
             scope.launch {
                 withContext(Dispatchers.Main) {
                     val diary = diaryDao.getDiaryDaily(localId)
-                    fragment?.bindDiary(diary)
+                    callback2?.onGetDiary(diary)
                 }
             }
 
@@ -344,7 +358,7 @@ class DiaryRepository(
     override fun onGetDayDiarySuccess(result: DiaryResponse.DayDiaryDto, serverId: Long) {
 
         val diary = Diary(serverId, result.content, result.imgUrl)
-        fragment?.bindDiary(diary)
+        callback2?.onGetDiary(diary)
 
         Log.d("getDayDiary", "success")
 
@@ -355,11 +369,9 @@ class DiaryRepository(
         scope.launch {
             val diary = diaryDao.getDiaryDaily(localId)
             withContext(Dispatchers.Main) {
-                fragment?.bindDiary(diary)
+                callback2?.onGetDiary(diary)
             }
         }
-
-
 
         Log.d("getDayDiary", message)
     }
@@ -371,7 +383,7 @@ class DiaryRepository(
 
                 val diaryItems = getDiaryListLocal(yearMonth)
                 withContext(Dispatchers.Main) {
-                    fragment2?.getList(diaryItems)
+                    callback?.onGetDiaryItems(diaryItems)
                 }
             }
 
@@ -418,7 +430,7 @@ class DiaryRepository(
             }
         }
 
-        fragment2?.getList(diaryList)
+        callback?.onGetDiaryItems(diaryList)
     }
 
     override fun onGetMonthDiaryFailure(yearMonth: String, message: String) {
@@ -432,7 +444,7 @@ class DiaryRepository(
 
             val diaryItems = getDiaryListLocal(formatYearMonth)
             withContext(Dispatchers.Main) {
-                fragment2?.getList(diaryItems)
+                callback?.onGetDiaryItems(diaryItems)
             }
 
         }
@@ -504,7 +516,4 @@ class DiaryRepository(
         return result
     }
 
-
 }
-
-
