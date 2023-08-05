@@ -116,6 +116,7 @@ class DiaryAdapter(
 
                 val repo = DiaryRepository(context)
                 CoroutineScope(Dispatchers.Main).launch {
+                    
                     val category = repo.getCategoryId(item.event_category_idx)
 
                     context.resources?.let {
@@ -139,7 +140,7 @@ class DiaryAdapter(
                     }
                 })
 
-                if (item.content.isEmpty()) itemDiaryContentTv.visibility = View.GONE
+                if (item.content?.isEmpty() == true) itemDiaryContentTv.visibility = View.GONE
                 if (item.images?.isEmpty() == true) diaryGalleryRv.visibility = View.GONE
             }
         }

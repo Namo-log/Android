@@ -53,8 +53,7 @@ class DiaryService {
 
                         200 -> if (resp != null) {
                             diaryView.onAddDiarySuccess(
-                                resp.result,
-                                localId
+                                resp, localId
                             )
                         }
                         else -> diaryView.onAddDiaryFailure(localId, response.toString())
@@ -87,7 +86,7 @@ class DiaryService {
                     when (response.code()) {
                         200 -> if (resp != null) {
                             diaryDetailView.onEditDiarySuccess(
-                                resp.result,
+                                resp,
                                 localId
                             )
                         }
@@ -120,7 +119,7 @@ class DiaryService {
                     when (response.code()) {
                         200 -> if (resp != null) {
                             diaryDetailView.onDeleteDiarySuccess(
-                                localId
+                                resp, localId
                             )
                         }
                         else -> diaryDetailView.onDeleteDiaryFailure(
@@ -156,7 +155,7 @@ class DiaryService {
                     when (response.code()) {
                         200 -> if (resp != null) {
                             getMonthDiaryView.onGetMonthDiarySuccess(
-                                resp.result
+                                resp
                             )
                         }
                         else -> getMonthDiaryView.onGetMonthDiaryFailure(month, response.toString())
@@ -190,7 +189,7 @@ class DiaryService {
                     when (response.code()) {
                         200 -> resp?.result?.let {
                             getDayDiaryView.onGetDayDiarySuccess(
-                                it, scheduleIdx
+                                resp, scheduleIdx
                             )
                         }
                         else ->

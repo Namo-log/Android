@@ -9,7 +9,7 @@ import com.example.namo.R
 data class Diary(
     @PrimaryKey(autoGenerate = false)
     val diaryLocalId: Long = 0L,  // local eventId
-    var content: String? = "",
+    var content: String?,
     var images: List<String>? = null,
     @ColumnInfo(name = "diary_upload")
     var isUpload: Int = 0,

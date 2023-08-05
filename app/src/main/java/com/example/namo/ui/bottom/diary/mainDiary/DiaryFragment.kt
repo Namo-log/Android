@@ -57,6 +57,7 @@ class DiaryFragment : Fragment(), DiaryRepository.DiaryCallback {  // 다이어�
 
     override fun onGetDiaryItems(diaryItem: List<DiaryItem>) {
         getList(diaryItem)
+        Log.d("checkDiaryList",diaryItem.toString())
     }
 
     override fun onResume() {
@@ -93,7 +94,7 @@ class DiaryFragment : Fragment(), DiaryRepository.DiaryCallback {  // 다이어�
                             0.0, 0.0, 0, null, 1,
                             R.string.event_current_default.toString(),
                             allData.event_server_idx,
-                            0L
+                            allData.event_category_server_idx
                         )
 
                         bundle.putSerializable("event", event)

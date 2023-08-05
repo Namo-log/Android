@@ -6,19 +6,17 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -40,8 +38,8 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
     private val binding get() = _binding!!
 
     private var memberNames = ArrayList<GroupDiaryMember>()  // 그룹 다이어리 구성원
-    private var placeEvent: ArrayList<DiaryGroupEvent> = arrayListOf()  // 장소, 정산 금액, 이미지
-    private var imgList = mutableListOf<String>() // 장소별 이미지
+    private var placeEvent: ArrayList<DiaryGroupEvent> =arrayListOf()  // 장소, 정산 금액, 이미지
+    private var imgList =mutableListOf<String>() // 장소별 이미지
 
     private lateinit var memberadapter: GroupMemberRVAdapter
     private lateinit var imgAdapter: GroupPlaceGalleryAdapter
@@ -55,7 +53,6 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
 
     private var layoutCount: Int = 0
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -77,7 +74,7 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
 
 
     private fun addEventView() {
-        binding.groudPlaceAddBtn.setOnClickListener {
+        binding.groudPlaceAddBtn.setOnClickListener{
 
             groupLayout = binding.groupLayout   // addView를 하기 위한 LinearLayout
             eventLayout = LayoutInflater.from(requireContext())
@@ -95,9 +92,9 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
             }
         }
 
-        binding.groupPlaceSaveBtn.setOnClickListener {
+        binding.groupPlaceSaveBtn.setOnClickListener{
             saveEvent()
-            binding.groudPlaceAddBtn.visibility = View.VISIBLE
+            binding.groudPlaceAddBtn.visibility= View.VISIBLE
             binding.groupPlaceSaveBtn.visibility = View.GONE
         }
 
@@ -107,18 +104,18 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
     private fun setupEventLayout(layout: View) {
         imgList.clear()
         placeText = layout.findViewById(R.id.item_place_name_tv)
-        placeText.isSingleLine = true
+        placeText.isSingleLine= true
         moneyText = layout.findViewById(R.id.item_place_money_tv)
         gallery = layout.findViewById(R.id.group_gallery_lv)
         imgRv = layout.findViewById(R.id.group_add_gallery_rv)
         val moneyImg = layout.findViewById<LinearLayout>(R.id.click_money_ly)
 
-        gallery.setOnClickListener {
+        gallery.setOnClickListener{
             getGallery()
 
             imgAdapter = GroupPlaceGalleryAdapter(requireContext())
-            imgRv.adapter = imgAdapter
-            imgRv.layoutManager = LinearLayoutManager(
+            imgRv.adapter= imgAdapter
+            imgRv.layoutManager= LinearLayoutManager(
                 requireContext(),
                 LinearLayoutManager.HORIZONTAL,
                 false
@@ -126,9 +123,9 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
 
         }
 
-        moneyImg.setOnClickListener {
-            GroupPayDialog(memberNames) { moneyValue ->
-                moneyText.text = moneyValue.toString()
+        moneyImg.setOnClickListener{
+            GroupPayDialog(memberNames){moneyValue->
+                moneyText.text= moneyValue.toString()
             }.show(parentFragmentManager, "show")
         }
 
@@ -146,7 +143,7 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
             android.Manifest.permission.READ_EXTERNAL_STORAGE
         )
 
-        return writePermission == PackageManager.PERMISSION_GRANTED && readPermission == PackageManager.PERMISSION_GRANTED
+        return writePermission == PackageManager.PERMISSION_GRANTED&& readPermission == PackageManager.PERMISSION_GRANTED
     }
 
     @SuppressLint("IntentReset")
@@ -158,15 +155,15 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
         if (hasImagePermission()) {  // 권한 있으면 갤러리 불러오기
 
             val intent = Intent()
-            intent.type = "image/*"
-            intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            intent.type= "image/*"
+            intent.data= MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
-            intent.action = Intent.ACTION_GET_CONTENT
+            intent.action= Intent.ACTION_GET_CONTENT
 
             getImage.launch(intent)
 
-            gallery.visibility = View.GONE
-            imgRv.visibility = View.VISIBLE
+            gallery.visibility= View.GONE
+            imgRv.visibility= View.VISIBLE
 
         } else {  // 없으면 권한 받기
             ActivityCompat.requestPermissions(
@@ -178,18 +175,18 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
                 200
             )
 
-            gallery.visibility = View.VISIBLE
+            gallery.visibility= View.VISIBLE
         }
     }
 
 
     private val getImage = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) { result ->
+    ){result->
 
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode== Activity.RESULT_OK) {
             imgList.clear()
-            if (result.data?.clipData != null) { // 사진 여러개 선택한 경우
+            if (result.data?.clipData!= null) { // 사진 여러개 선택한 경우
                 val count = result.data?.clipData!!.itemCount
                 if (count > 3) {
                     Toast.makeText(requireContext(), "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT)
@@ -203,7 +200,7 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
                 }
             }
         } else { // 단일 선택
-            result.data?.data?.let {
+            result.data?.data?.let{
                 val imageUri: Uri? = result.data!!.data
                 if (imageUri != null) {
                     imgList.add(imageUri.toString())
@@ -212,8 +209,8 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
             }
         }
 
-        if (imgList.isEmpty()) gallery.visibility = View.VISIBLE
-        else gallery.visibility = View.GONE
+        if (imgList.isEmpty()) gallery.visibility= View.VISIBLE
+        else gallery.visibility= View.GONE
 
         imgAdapter.addItem(imgList)
 
@@ -230,52 +227,54 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
                 newImage
             )
         )
+
     }
 
 
     @SuppressLint("NotifyDataSetChanged")
     private fun onClickListener() {
 
-        binding.upArrow.setOnClickListener {// 화살표가 위쪽 방향일 때 리사이클러뷰 숨기기
+        binding.upArrow.setOnClickListener{// 화살표가 위쪽 방향일 때 리사이클러뷰 숨기기
             setMember(true)
         }
 
-        binding.bottomArrow.setOnClickListener {
+        binding.bottomArrow.setOnClickListener{
             setMember(false)
         }
 
-        binding.groupAddBackIv.setOnClickListener { // 뒤로가기
+        binding.groupAddBackIv.setOnClickListener{// 뒤로가기
             findNavController().popBackStack()
         }
 
-        binding.groupPlaceSaveTv.setOnClickListener {// 저장하기
-            findNavController().popBackStack()
+        binding.groupPlaceSaveTv.setOnClickListener{// 저장하기
+            //findNavController().popBackStack()
+            Log.d("event",placeEvent.toString())
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun onRecyclerView() {
 
-        binding.apply {
+        binding.apply{
 
-            // 멤버 이름 리사이클러뷰
+// 멤버 이름 리사이클러뷰
             memberadapter = GroupMemberRVAdapter(memberNames)
-            groupAddPeopleRv.adapter = memberadapter
-            groupAddPeopleRv.layoutManager =
+            groupAddPeopleRv.adapter= memberadapter
+            groupAddPeopleRv.layoutManager=
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         }
     }
 
     private fun setMember(isVisible: Boolean) {
         if (isVisible) {
-            binding.groupAddPeopleRv.visibility = View.GONE
-            binding.bottomArrow.visibility = View.VISIBLE
-            binding.upArrow.visibility = View.GONE
+            binding.groupAddPeopleRv.visibility= View.GONE
+            binding.bottomArrow.visibility= View.VISIBLE
+            binding.upArrow.visibility= View.GONE
 
         } else {
-            binding.groupAddPeopleRv.visibility = View.VISIBLE
-            binding.bottomArrow.visibility = View.GONE
-            binding.upArrow.visibility = View.VISIBLE
+            binding.groupAddPeopleRv.visibility= View.VISIBLE
+            binding.bottomArrow.visibility= View.GONE
+            binding.upArrow.visibility= View.VISIBLE
         }
     }
 
@@ -284,14 +283,14 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
         val bottomNavigationView: BottomNavigationView =
             requireActivity().findViewById(R.id.nav_bar)
         if (bool) {
-            bottomNavigationView.visibility = View.GONE
+            bottomNavigationView.visibility= View.GONE
         } else {
-            bottomNavigationView.visibility = View.VISIBLE
+            bottomNavigationView.visibility= View.VISIBLE
         }
     }
 
     private fun dummy() {
-        memberNames.apply {
+        memberNames.apply{
             add(GroupDiaryMember("코코아"))
             add(GroupDiaryMember("지니"))
             add(GroupDiaryMember("앨리"))

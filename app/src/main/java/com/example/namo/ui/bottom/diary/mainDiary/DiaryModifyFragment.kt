@@ -64,7 +64,6 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
 
         galleryAdapter = GalleryListAdapter(requireContext())
         bind()
-        charCnt()
 
         return binding.root
     }
@@ -78,13 +77,16 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
 
         onClickListener(diary)
         onRecyclerView()
+        charCnt()
     }
 
     @SuppressLint("SimpleDateFormat")
     private fun bind() {
 
         CoroutineScope(Dispatchers.Main).launch {
-            category = repo.getCategoryId(event.categoryIdx)
+
+            val categoryIdx = if (event.categoryServerIdx == 0L) event.categoryIdx else event.categoryServerIdx
+            category = repo.getCategoryId(categoryIdx)
 
             context?.resources?.let {
                 binding.itemDiaryCategoryColorIv.background.setTint(

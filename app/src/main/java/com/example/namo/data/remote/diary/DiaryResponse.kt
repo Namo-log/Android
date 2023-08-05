@@ -2,14 +2,12 @@ package com.example.namo.data.remote.diary
 
 import com.example.namo.config.BaseResponse
 import com.google.gson.annotations.SerializedName
-import java.io.Serializable
 
 class DiaryResponse {
 
     /** 기록 생성 **/
     data class DiaryAddResponse(
-        val result: GetScheduleIdx,
-        val localId :Long
+        val result: GetScheduleIdx
     ) : BaseResponse()
 
     data class GetScheduleIdx(
@@ -31,7 +29,7 @@ class DiaryResponse {
 
     /** 기록 월 별 조회 **/
     data class DiaryGetMonthResponse(
-        val result: List<Result>
+        val result: Result
     ) : BaseResponse()
 
     data class Result(
@@ -45,15 +43,13 @@ class DiaryResponse {
     data class MonthDiary(
         @SerializedName("scheduleId") val scheduleIdx: Long,
         @SerializedName("name") val title: String,
-        @SerializedName("startDate") var startDate: Long,
-        @SerializedName("contents") val content: String,
+        @SerializedName("startDate") var startDate: String,
+        @SerializedName("contents") val content: String?,
         @SerializedName("urls") val imgUrl: List<String>,
         @SerializedName("categoryId") val categoryId: Long,
-        @SerializedName("color") val categoryColor:Long,
-        @SerializedName("placeName") val placeName:String
-
-    ) : Serializable
-
+        @SerializedName("color") val categoryColor: Long,
+        @SerializedName("placeName") val placeName: String
+    )
 
     /** 기록 일 별 조회 **/
     data class DiaryGetDayResponse(
@@ -63,6 +59,6 @@ class DiaryResponse {
     data class DayDiaryDto(
         @SerializedName("texts") val content: String?,
         @SerializedName("urls") val imgUrl: List<String>?
-    ) : Serializable
+    )
 }
 

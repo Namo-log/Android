@@ -45,7 +45,6 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
     private lateinit var event: Event
     private lateinit var category: Category
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -60,7 +59,6 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
         repo = DiaryRepository(requireContext())
         setEvent()
-        onClickListener()
         charCnt()
 
         return binding.root
@@ -69,7 +67,7 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
     override fun onResume() {
         super.onResume()
 
-        if (imgList.isEmpty()){
+        if (imgList.isEmpty()) {
             binding.diaryGalleryClickIv.visibility = View.VISIBLE
         }
         onClickListener()
