@@ -20,7 +20,6 @@ interface EventRetrofitInterface {
     @PATCH("schedules/{serverIdx}")
     fun editEvent(
         @Path("serverIdx") serverIdx : Long,
-//        @Header("Authorization") token : String,
         @Body event : EventForUpload
     ) : Call<EditEventResponse>
 

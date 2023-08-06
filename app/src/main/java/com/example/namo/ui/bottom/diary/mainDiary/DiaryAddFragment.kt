@@ -84,9 +84,7 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
             binding.apply {
                 context?.resources?.let {
-                    itemDiaryCategoryColorIv.background.setTint(
-                        ContextCompat.getColor(requireContext(), category.color)
-                    )
+                    itemDiaryCategoryColorIv.background.setTint(category.color)
                 }
             }
         }

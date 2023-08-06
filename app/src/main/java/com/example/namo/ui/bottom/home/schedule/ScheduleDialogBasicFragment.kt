@@ -50,6 +50,10 @@ import com.example.namo.ui.bottom.home.schedule.map.MapActivity
 import com.example.namo.utils.CalendarUtils.Companion.getInterval
 import com.example.namo.utils.NetworkManager
 import com.google.android.material.chip.Chip
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
@@ -59,6 +63,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
 
     private lateinit var binding : FragmentScheduleDialogBasicBinding
     private val args : ScheduleDialogBasicFragmentArgs by navArgs()
+    private val scope = CoroutineScope(IO)
 
     var isEdit : Boolean = false
     private var event : Event = Event()
@@ -777,9 +782,18 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
     }
 
     override fun onPostEventSuccess(response: PostEventResponse, eventId : Long) {
-        Log.d("ScheduleBasic", "onPostEventSuccess")
+        Log.d("ScheduleBasic", "onPostEventSuccess : ${response.result.eventIdx} eventId : ${eventId}")
 
         var result = response.result
+
+//        scope.launch {
+//            db.eventDao.updateEventAfterUpload(
+//                eventId,
+//                1,
+//                result.eventIdx,
+//                R.string.event_current_default.toString()
+//            )
+//        }
 
         //룸디비에 isUpload, serverId, state 업데이트하기
         val thread = Thread {
@@ -791,6 +805,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         } catch ( e: InterruptedException) {
             e.printStackTrace()
         }
+        Log.d("ScheduleBasic", "Update after Post finish")
     }
 
     override fun onPostEventFailure(message: String) {
