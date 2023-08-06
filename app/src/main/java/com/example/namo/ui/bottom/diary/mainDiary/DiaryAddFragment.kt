@@ -6,7 +6,6 @@ import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
@@ -16,7 +15,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -47,7 +45,6 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
     private lateinit var event: Event
     private lateinit var category: Category
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -62,10 +59,18 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
         repo = DiaryRepository(requireContext())
         setEvent()
-        onClickListener()
         charCnt()
 
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (imgList.isEmpty()) {
+            binding.diaryGalleryClickIv.visibility = View.VISIBLE
+        }
+        onClickListener()
     }
 
 
@@ -100,7 +105,6 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
             diaryInputDateTv.text = formatDate
         }
-
 
     }
 

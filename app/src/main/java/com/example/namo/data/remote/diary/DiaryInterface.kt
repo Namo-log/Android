@@ -11,9 +11,10 @@ interface DiaryInterface {
     @Multipart
     @POST("/schedules/diary")
     fun addDiary(
-        @Part imgs: List<MultipartBody.Part?>?,
+        @Part("scheduleId") scheduleIdx: RequestBody,
         @Part("content") content: RequestBody?,
-        @Part("scheduleId") scheduleIdx: RequestBody
+        @Part imgs: List<MultipartBody.Part>?
+
     ): Call<DiaryResponse.DiaryAddResponse>
 
 
@@ -21,9 +22,9 @@ interface DiaryInterface {
     @Multipart
     @PATCH("/schedules/diary")
     fun editDiary(
-        @Part imgs: List<MultipartBody.Part?>?,
+        @Part("scheduleId") scheduleIdx: RequestBody,
         @Part("content") content: RequestBody?,
-        @Part("scheduleId") scheduleIdx: RequestBody
+        @Part imgs: List<MultipartBody.Part>?
     ): Call<DiaryResponse.DiaryEditResponse>
 
 
@@ -37,12 +38,14 @@ interface DiaryInterface {
     /** 기록 월 별 조회 **/
     @GET("/schedules/diary/{month}")
     fun getMonthDiary(
-        @Path("month") month: String
+        @Path("month") month: String,
+        @Query("page") page: Int,
+        @Query("size") size: Int
     ): Call<DiaryResponse.DiaryGetMonthResponse>
 
 
     /**  기록 일 별 조회 **/
-    @GET("/schedules/diary/day/{scheduleId}}")
+    @GET("/schedules/diary/day/{scheduleId}")
     fun getDayDiary(
         @Path("scheduleId") scheduleId: Long
     ): Call<DiaryResponse.DiaryGetDayResponse>

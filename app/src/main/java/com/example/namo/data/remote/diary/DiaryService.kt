@@ -37,12 +37,11 @@ class DiaryService {
     /** 기록 추가 **/
     fun addDiary(
         localId: Long,
-        scheduleId: Long,
-        images: List<MultipartBody.Part?>?,
+        images: List<MultipartBody.Part>?,
         content: RequestBody?,
         scheduleIdx: RequestBody
     ) {
-        diaryRetrofitInterface.addDiary(images, content, scheduleIdx)
+        diaryRetrofitInterface.addDiary(scheduleIdx, content, images)
             .enqueue(object : Callback<DiaryResponse.DiaryAddResponse> {
 
                 override fun onResponse(
@@ -54,16 +53,15 @@ class DiaryService {
 
                         200 -> if (resp != null) {
                             diaryView.onAddDiarySuccess(
-                                resp.result,
-                                localId
+                                resp, localId
                             )
                         }
-                        else -> diaryView.onAddDiaryFailure(localId, scheduleId)
+                        else -> diaryView.onAddDiaryFailure(localId, response.toString())
                     }
                 }
 
                 override fun onFailure(call: Call<DiaryResponse.DiaryAddResponse>, t: Throwable) {
-                    diaryView.onAddDiaryFailure(localId, scheduleId)
+                    diaryView.onAddDiaryFailure(localId, t.message.toString())
                 }
             })
     }
@@ -72,12 +70,11 @@ class DiaryService {
     /** 기록 수정 **/
     fun editDiary(
         localId: Long,
-        serverId: Long,
-        images: List<MultipartBody.Part?>?,
+        images: List<MultipartBody.Part>?,
         content: RequestBody?,
         scheduleIdx: RequestBody
     ) {
-        diaryRetrofitInterface.editDiary(images, content, scheduleIdx)
+        diaryRetrofitInterface.editDiary(scheduleIdx, content, images)
             .enqueue(object : Callback<DiaryResponse.DiaryEditResponse> {
 
                 @SuppressLint("SuspiciousIndentation")
@@ -89,16 +86,17 @@ class DiaryService {
                     when (response.code()) {
                         200 -> if (resp != null) {
                             diaryDetailView.onEditDiarySuccess(
-                                resp.result,
-                                localId, serverId
+                                resp,
+                                localId
                             )
                         }
-                        else -> diaryDetailView.onEditDiaryFailure(localId, serverId)
+                        else -> diaryDetailView.onEditDiaryFailure(localId, response.toString())
+
                     }
                 }
 
                 override fun onFailure(call: Call<DiaryResponse.DiaryEditResponse>, t: Throwable) {
-                    diaryDetailView.onEditDiaryFailure(localId, serverId)
+                    diaryDetailView.onEditDiaryFailure(localId, t.message.toString())
                 }
             })
     }
@@ -121,10 +119,13 @@ class DiaryService {
                     when (response.code()) {
                         200 -> if (resp != null) {
                             diaryDetailView.onDeleteDiarySuccess(
-                                localId, scheduleIdx
+                                resp, localId
                             )
                         }
-                        else -> diaryDetailView.onDeleteDiaryFailure(localId, scheduleIdx)
+                        else -> diaryDetailView.onDeleteDiaryFailure(
+                            localId,
+                            response.code().toString()
+                        )
                     }
                 }
 
@@ -132,7 +133,7 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryDeleteResponse>,
                     t: Throwable
                 ) {
-                    diaryDetailView.onDeleteDiaryFailure(localId, scheduleIdx)
+                    diaryDetailView.onDeleteDiaryFailure(localId, t.message.toString())
                 }
             })
     }
@@ -140,9 +141,11 @@ class DiaryService {
 
     /** 기록 월 별 조회 **/
     fun getMonthDiary(
-        month: String
+        month: String,
+        page: Int,
+        size: Int
     ) {
-        diaryRetrofitInterface.getMonthDiary(month)
+        diaryRetrofitInterface.getMonthDiary(month, page, size)
             .enqueue(object : Callback<DiaryResponse.DiaryGetMonthResponse> {
 
                 @SuppressLint("SuspiciousIndentation")
@@ -154,10 +157,15 @@ class DiaryService {
                     when (response.code()) {
                         200 -> if (resp != null) {
                             getMonthDiaryView.onGetMonthDiarySuccess(
-                                resp.result
+                                resp
                             )
                         }
-                        else -> getMonthDiaryView.onGetMonthDiaryFailure()
+                        else -> getMonthDiaryView.onGetMonthDiaryFailure(
+                            month,
+                            response.toString(),
+                            page,
+                            size
+                        )
                     }
 
                 }
@@ -166,7 +174,12 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryGetMonthResponse>,
                     t: Throwable
                 ) {
-                    getMonthDiaryView.onGetMonthDiaryFailure()
+                    getMonthDiaryView.onGetMonthDiaryFailure(
+                        month,
+                        t.message.toString(),
+                        page,
+                        size
+                    )
                 }
             })
     }
@@ -188,11 +201,11 @@ class DiaryService {
                     when (response.code()) {
                         200 -> resp?.result?.let {
                             getDayDiaryView.onGetDayDiarySuccess(
-                                localId,
-                                it
+                                resp, scheduleIdx
                             )
                         }
-                        else -> getDayDiaryView.onGetDayDiaryFailure(localId)
+                        else ->
+                            getDayDiaryView.onGetDayDiaryFailure(localId, response.toString())
                     }
 
                 }
@@ -201,7 +214,7 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryGetDayResponse>,
                     t: Throwable
                 ) {
-                    getDayDiaryView.onGetDayDiaryFailure(localId)
+                    getDayDiaryView.onGetDayDiaryFailure(localId, t.message.toString())
                 }
             })
     }

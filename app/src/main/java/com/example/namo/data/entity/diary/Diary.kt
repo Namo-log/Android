@@ -7,13 +7,12 @@ import com.example.namo.R
 
 @Entity(tableName = "diaryTable")
 data class Diary(
-    @PrimaryKey(autoGenerate = false) val diaryLocalId: Long = 0L,
-    var content: String = "",
-    var images: List<String?>? = null,
+    @PrimaryKey(autoGenerate = false)
+    val diaryLocalId: Long = 0L,  // local eventId
+    var content: String?,
+    var images: List<String>? = null,
     @ColumnInfo(name = "diary_upload")
     var isUpload: Int = 0,
     @ColumnInfo(name = "diary_state")
-    var state: String = R.string.event_current_default.toString(),
-    @ColumnInfo(name = "scheduleId")
-    val diaryServerId: Long = 0L,
+    var state: String = R.string.event_current_default.toString()
 )
