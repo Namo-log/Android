@@ -347,8 +347,6 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
 
                 uploadToServer(R.string.event_current_edited.toString())
             }
-
-            requireActivity().finish()
         }
     }
 
@@ -798,6 +796,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         //룸디비에 isUpload, serverId, state 업데이트하기
         val thread = Thread {
             db.eventDao.updateEventAfterUpload(eventId, 1, result.eventIdx, R.string.event_current_default.toString())
+            Log.d("UPDATE_AFTER",db.eventDao.getEventById(eventId).toString())
         }
         thread.start()
         try {
@@ -805,7 +804,9 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         } catch ( e: InterruptedException) {
             e.printStackTrace()
         }
-        Log.d("ScheduleBasic", "Update after Post finish")
+        Log.d("UPDATE_AFTER", "Update after Post finish")
+
+        requireActivity().finish()
     }
 
     override fun onPostEventFailure(message: String) {
@@ -830,6 +831,8 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         } catch ( e: InterruptedException) {
             e.printStackTrace()
         }
+
+        requireActivity().finish()
     }
 
     override fun onEditEventFailure(message: String) {

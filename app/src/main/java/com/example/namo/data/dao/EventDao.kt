@@ -42,4 +42,7 @@ interface EventDao {
 
     @Query("DELETE FROM calendar_event_table WHERE eventId=:eventId")
     fun deleteEventById(eventId : Long)
+
+    @Query("SELECT * FROM calendar_event_table WHERE eventId=:eventId")
+    fun getEventById(eventId: Long) : Event
 }
