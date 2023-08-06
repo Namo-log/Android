@@ -171,10 +171,14 @@
 
                 <TextView
                     android:id="@+id/group_info_code_tv"
-                    android:layout_width="wrap_content"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="50dp"
-                    android:textAlignment="textEnd"
+                    android:layout_marginStart="20dp"
+                    android:textAlignment="textStart"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:focusable="true"
+                    android:singleLine="true"
                     android:textSize="14sp"
                     android:textColor="@color/textGray"
                     android:text="0A0B0C" />
@@ -187,7 +191,7 @@
                     android:layout_weight="1"
                     android:visibility="visible"
                     android:src="@drawable/ic_group_cord_copy"
-                    android:layout_marginStart="30dp"/>
+                    android:layout_marginStart="20dp"/>
 
             </LinearLayout>
 

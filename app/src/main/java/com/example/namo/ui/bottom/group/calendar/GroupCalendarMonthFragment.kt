@@ -10,15 +10,23 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Event
+import com.example.namo.data.remote.moim.GetMoimScheduleResponse
+import com.example.namo.data.remote.moim.GetMoimScheduleView
+import com.example.namo.data.remote.moim.Moim
+import com.example.namo.data.remote.moim.MoimSchedule
+import com.example.namo.data.remote.moim.MoimService
 import com.example.namo.databinding.FragmentGroupCalendarMonthBinding
+import com.example.namo.ui.bottom.group.calendar.GroupCalendarAdapter.Companion.GROUP_ID
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
 import com.example.namo.ui.bottom.home.calendar.CustomCalendarView
+import com.example.namo.utils.NetworkManager
 import org.joda.time.DateTime
 
-class GroupCalendarMonthFragment : Fragment() {
+class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
     lateinit var db : NamoDatabase
     private lateinit var binding : FragmentGroupCalendarMonthBinding
+    private var groupId : Long = 0L
 
     private var millis : Long = 0L
     private var isShow = false
@@ -83,21 +91,22 @@ class GroupCalendarMonthFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        groupId = GROUP_ID
+        Log.d("GroupCalMonFrag", "Group ID : $groupId")
+        Log.d("GroupCalMonFrag", "YearMonth : ${DateTime(millis).toString("yyyy,MM")} ")
+    }
+
     override fun onResume() {
         super.onResume()
         setAdapter()
-//        var forDB : Thread = Thread {
-//            tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis, monthList[41].plusDays(1).withTimeAtStartOfDay().millis)
-//        }
-//        forDB.start()
-//        try {
-//            forDB.join()
-//        } catch (e : InterruptedException) {
-//            e.printStackTrace()
-//        }
+        getGroupSchedule()
+
         tempEvent = listOf()
 
-        binding.groupCalendarMonthView.setEventList(tempEvent)
+//        binding.groupCalendarMonthView.setEventList(tempEvent)
     }
 
     override fun onPause() {
@@ -180,5 +189,28 @@ class GroupCalendarMonthFragment : Fragment() {
                 putLong(MILLIS, millis)
             }
         }
+    }
+
+
+    // API 관련
+    private fun getGroupSchedule() {
+        if (!NetworkManager.checkNetworkState(requireContext())) {
+            Toast.makeText(context, "네트워크 연결을 확인해주세요.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val moimService = MoimService()
+        moimService.setGetMoimScheduleView(this)
+
+//        moimService.getMoimSchedule(groupId, )
+    }
+
+    override fun onGetMoimScheduleSuccess(response: GetMoimScheduleResponse) {
+        Log.d("GroupCalMonFrag", "onGetMoimScheduleSuccess")
+        Log.d("GroupCalMonFrag", response.result.toString())
+    }
+
+    override fun onGetMoimScheduleFailure(message: String) {
+        Log.d("GroupCalMonFrag", "onGetMoimScheduleFailure")
     }
 }

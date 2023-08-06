@@ -84,6 +84,9 @@
             app:destination="@id/groupListFragment"
             app:popUpTo="@id/groupListFragment"
             app:popUpToInclusive="true" />
+        <argument
+            android:name="group"
+            app:argType="com.example.namo.data.remote.moim.Moim" />
     </fragment>
     <fragment
         android:id="@+id/groupModifyFragment"
