@@ -20,11 +20,11 @@ class PostCategoryResult (
 
 // 모든 카테고리 조회
 class GetCategoryResponse (
-    val result: ArrayList<GetCategoryReselt>
+    val result: ArrayList<GetCategoryResult>
 ) : BaseResponse()
 
-class GetCategoryReselt (
-    val catgoryId: Int,
+class GetCategoryResult (
+    val categoryId: Long,
     val name: String,
     val paletteId: Int,
     val isShare: Boolean

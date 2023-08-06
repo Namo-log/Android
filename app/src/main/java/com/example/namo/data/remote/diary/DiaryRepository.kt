@@ -106,6 +106,8 @@ class DiaryRepository(
         val imageMultiPart = images?.map { imagePath ->
             imagePath?.let { path ->
                 val file = File(path)
+                Log.d("TEST_DIARY", path)
+                Log.d("TEST_DIARY", file.name)
                 val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
                 MultipartBody.Part.createFormData("imgs", file.name, requestFile)
             }
@@ -324,9 +326,15 @@ class DiaryRepository(
 
     fun getUpload(eventServerId: Long) {
 
-        Thread {
+        val thread = Thread {
             notUploaded = diaryDao.getNotUploadedDiary()
-        }.start()
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch (e : InterruptedException) {
+            e.printStackTrace()
+        }
 
         diaryService.setDiaryView(this)
         diaryService.addDiaryView(this)

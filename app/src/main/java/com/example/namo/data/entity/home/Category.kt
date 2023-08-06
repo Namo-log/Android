@@ -14,7 +14,7 @@ data class Category(
     var active : Boolean = true,
     var isUpload : Int = 0,
     var state : String = R.string.event_current_default.toString(),
-    var serverIdx : Long = 0
+    var serverIdx : Long = 0L
 ) : Serializable
 
 data class CategoryForUpload(

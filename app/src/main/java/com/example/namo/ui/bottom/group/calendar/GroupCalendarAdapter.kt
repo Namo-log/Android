@@ -27,5 +27,7 @@ class GroupCalendarAdapter(fm : FragmentActivity) : FragmentStateAdapter(fm) {
 
     companion object {
         const val START_POSITION = Int.MAX_VALUE / 2
+
+        var GROUP_ID : Long = 0L
     }
 }

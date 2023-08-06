@@ -211,8 +211,8 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
         if (cellHeight - eventTop > _eventHeight * 3) {
             for (i in 0 until eventList.size) {
 //                x계산하고, y계산하기
-                val startIdx = dayList.indexOf(DateTime(eventList[i].startLong).withTimeAtStartOfDay())
-                val endIdx = dayList.indexOf(DateTime(eventList[i].endLong).withTimeAtStartOfDay())
+                val startIdx = dayList.indexOf(DateTime(eventList[i].startLong * 1000L).withTimeAtStartOfDay())
+                val endIdx = dayList.indexOf(DateTime(eventList[i].endLong * 1000L).withTimeAtStartOfDay())
                 Log.d("CalendarView", "CHECK EVENT = start idx : $startIdx | end idx : $endIdx")
 
                 for (splitEvent in splitWeek(startIdx, endIdx)) {
@@ -283,8 +283,8 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
         else {
             for (i in 0 until eventList.size) {
 //                x계산하고, y계산하기
-                val startIdx = dayList.indexOf(DateTime(eventList[i].startLong).withTimeAtStartOfDay())
-                val endIdx = dayList.indexOf(DateTime(eventList[i].endLong).withTimeAtStartOfDay())
+                val startIdx = dayList.indexOf(DateTime(eventList[i].startLong * 1000L).withTimeAtStartOfDay())
+                val endIdx = dayList.indexOf(DateTime(eventList[i].endLong * 1000L).withTimeAtStartOfDay())
                 Log.d("CalendarView", "CHECK EVENT = start idx : $startIdx | end idx : $endIdx")
 
                 for (splitEvent in splitWeek(startIdx, endIdx)) {
@@ -481,7 +481,9 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
 //        bgPaint.color = resources.getColor(event.categoryColor)
 //        Log.d("TEST_CATEGORY", "CATEGORY LIST : ${categoryList}")
 //        Log.d("TEST_CATEGORY", "event category LIST : ${event.categoryIdx}")
-        bgPaint.color = resources.getColor(categoryList.find { it.categoryIdx == event.categoryIdx }!!.color)
+        bgPaint.color = categoryList.find {
+                if (it.serverIdx != 0L) it.serverIdx == event.categoryServerIdx
+                else it.categoryIdx == event.categoryIdx }!!.color
 //        if (!CalendarUtils.isSameMonth(date, firstDayOfMonth)) {
 //            bgPaint.alpha = 50
 //        }
@@ -511,7 +513,6 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
     fun setEventList(events : List<Event>) {
         eventList.clear()
         eventList.addAll(events)
-//        invalidate()
     }
 
     fun setCategoryList(category : List<Category>) {

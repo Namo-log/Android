@@ -41,6 +41,8 @@ class ScheduleActivity : AppCompatActivity(), DeleteEventView {
     private var alarmList : MutableList<Int> = mutableListOf()
     private val failList = ArrayList<Event>()
 
+    private var event : Event? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,8 +55,8 @@ class ScheduleActivity : AppCompatActivity(), DeleteEventView {
 
         if (event != null) {
             binding.scheduleDeleteBtn.visibility = View.VISIBLE
-
-            deleteClick(event)
+            this.event = event
+            deleteClick()
         } else {
             binding.scheduleDeleteBtn.visibility = View.GONE
             binding.scheduleDeleteBtn.setOnClickListener {
@@ -80,25 +82,15 @@ class ScheduleActivity : AppCompatActivity(), DeleteEventView {
         }
     }
 
-    private fun deleteClick(event : Event) {
+    private fun deleteClick() {
         binding.scheduleDeleteBtn.setOnClickListener {
             //일정 삭제하고 닫기
-            alarmList = event.alarmList!!.toMutableList()
+            alarmList = event!!.alarmList!!.toMutableList()
             for (i in alarmList) {
-                deleteNotification(event.eventId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt(), event)
+                deleteNotification(event!!.eventId.toInt() + DateTime(event!!.startLong).minusMinutes(i).millis.toInt(), event!!)
             }
 
-//            var deleteDB : Thread = Thread {
-//                db.eventDao.deleteEvent(event)
-//            }
-//            deleteDB.start()
-//            try {
-//                deleteDB.join()
-//            } catch ( e: InterruptedException) {
-//                e.printStackTrace()
-//            }
-
-            uploadToServer(R.string.event_current_deleted.toString(), event)
+            uploadToServer(event!!)
 
             Toast.makeText(this, "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
 
@@ -122,12 +114,10 @@ class ScheduleActivity : AppCompatActivity(), DeleteEventView {
         alarmManager.cancel(pendingIntent)
     }
 
-    private fun uploadToServer(state : String, event: Event) {
+    private fun uploadToServer(event: Event) {
         //룸디비에 isUpload, serverId, state 업데이트하기
         var thread = Thread {
             db.eventDao.updateEventAfterUpload(event.eventId, 0, event.serverIdx, R.string.event_current_deleted.toString())
-            failList.clear()
-            failList.addAll(db.eventDao.getNotUploadedEvent() as ArrayList<Event>)
         }
         thread.start()
         try {
@@ -138,13 +128,28 @@ class ScheduleActivity : AppCompatActivity(), DeleteEventView {
 
         if (!NetworkManager.checkNetworkState(this)) {
             //인터넷 연결 안 됨
-            Log.d("ScheduleActivity", "WIFI ERROR : $failList")
+            printNotUploaded()
             return
         }
 
         val eventService = EventService()
         eventService.setDeleteEventView(this)
         eventService.deleteEvent(event.serverIdx, event.eventId)
+    }
+
+    private fun printNotUploaded() {
+        val thread = Thread {
+            failList.clear()
+            failList.addAll(db.eventDao.getNotUploadedEvent() as ArrayList<Event>)
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch ( e : InterruptedException) {
+            e.printStackTrace()
+        }
+
+        Log.d("ScheduleActivity", "Not uploaded Schedule : ${failList}")
     }
 
     override fun onDeleteEventSuccess(response: DeleteEventResponse, eventId : Long) {
@@ -154,7 +159,7 @@ class ScheduleActivity : AppCompatActivity(), DeleteEventView {
         Toast.makeText(this, "$eventId 번 일정의 $result", Toast.LENGTH_SHORT).show()
 
 
-        var deleteDB : Thread = Thread {
+        var deleteDB = Thread {
             db.eventDao.deleteEventById(eventId)
         }
         deleteDB.start()
@@ -167,18 +172,6 @@ class ScheduleActivity : AppCompatActivity(), DeleteEventView {
 
     override fun onDeleteEventFailure(message: String) {
         Log.d("ScheduleActivity", "onDeleteEventFailure")
-
-        var thread = Thread {
-            failList.clear()
-            failList.addAll(db.eventDao.getNotUploadedEvent() as ArrayList<Event>)
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch ( e: InterruptedException) {
-            e.printStackTrace()
-        }
-
-        Log.d("ScheduleActivity", "Server Fail : $failList")
+        printNotUploaded()
     }
 }

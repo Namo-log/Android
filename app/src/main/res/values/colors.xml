@@ -45,4 +45,22 @@
     <color name="palette8">#8571BF</color>
     <color name="palette9">#E36488</color>
     <color name="palette10">#858585</color>
+
+    <!--  Color Array  -->
+    <array name="categoryColorArr">
+        <item>@color/schedule</item>
+        <item>@color/schedule_plan</item>
+        <item>@color/schedule_parttime</item>
+        <item>@color/schedule_group</item>
+        <item>@color/palette1</item>
+        <item>@color/palette2</item>
+        <item>@color/palette3</item>
+        <item>@color/palette4</item>
+        <item>@color/palette5</item>
+        <item>@color/palette6</item>
+        <item>@color/palette7</item>
+        <item>@color/palette8</item>
+        <item>@color/palette9</item>
+        <item>@color/palette10</item>
+    </array>
 </resources>

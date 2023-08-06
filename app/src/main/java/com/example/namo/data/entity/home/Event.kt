@@ -65,7 +65,6 @@ data class EventForUpload(
     var startDate : Long = 0L,
     var endDate : Long = 0L,
     var interval : Int = 0,
-    var eventId : Long = 0L,
     var alarmDate : List<Int>? = listOf(),
     var x : Double = 0.0,
     var y : Double = 0.0,
