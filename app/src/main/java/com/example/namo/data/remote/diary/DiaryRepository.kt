@@ -48,6 +48,7 @@ class DiaryRepository(
     private var callback: DiaryCallback? = null
     private var callback2: DiaryModifyCallback? = null
 
+
     fun setCallBack(callback: DiaryCallback) {
         this.callback = callback
     }
@@ -62,8 +63,9 @@ class DiaryRepository(
 
     interface DiaryModifyCallback {
         fun onGetDiary(diary: Diary)
+        fun onModify()
+        fun onDelete()
     }
-
 
     /** add diary **/
     fun addDiary(
@@ -193,16 +195,6 @@ class DiaryRepository(
         images: List<String>?
     ) {
 
-
-//        val isAbsolutePath = images?.all { imagePath ->
-//            imagePath.startsWith("http")
-//        }
-//
-//        val imgList = if (isAbsolutePath==true) {
-//            convertedMultipart(images)
-//        } else {
-//            imageToMultipart(images)
-//        }
         val imgList = imageToMultipart(images)
 
         val contentRequestBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -229,6 +221,7 @@ class DiaryRepository(
             )
         }
 
+        callback2?.onModify()
         Log.d("editDiaryServerSuccess", response.result)
     }
 
@@ -243,6 +236,7 @@ class DiaryRepository(
             )
         }
 
+        callback2?.onModify()
         Log.d("editDiaryServerFailure", message)
 
     }
@@ -254,17 +248,6 @@ class DiaryRepository(
             MultipartBody.Part.createFormData("imgs", file.name, requestFile)
         }
     }
-
-//    private fun convertedMultipart(images: List<String>?) :List<MultipartBody.Part>?{
-//        return images?.map { path ->
-//
-//            val file=File(path)
-//
-//            Log.d("wewerwe",file.toString())
-//            val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-//            MultipartBody.Part.createFormData("imgs", file.name, requestFile)
-//        }
-//    }
 
 
     /** delete diary **/
@@ -301,6 +284,7 @@ class DiaryRepository(
             deleteHasDiary(localId) // roomdb hasDiary 0으로 변경
         }
 
+        callback2?.onDelete()
         Log.d("deleteDiary", response.result)
     }
 
@@ -315,6 +299,7 @@ class DiaryRepository(
 
         Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
 
+        callback2?.onDelete()
         Log.d("deleteDiary", message)
     }
 
@@ -471,6 +456,7 @@ class DiaryRepository(
         callback?.onGetDiaryItems(diaryItems)
 
         Log.d("getMonthDiary", response.result.content.toString())
+
     }
 
     @SuppressLint("SimpleDateFormat")

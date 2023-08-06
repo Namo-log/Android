@@ -150,8 +150,7 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
 
         Log.d("sewerw",imgList.toString())
 
-        findNavController().popBackStack()
-        hideBottomNavigation(false)
+
 
         Toast.makeText(requireContext(), "수정되었습니다", Toast.LENGTH_SHORT).show()
     }
@@ -160,8 +159,7 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
     private fun deleteDiary() {
         repo.deleteDiary(event.eventId, event.serverIdx)
 
-        view?.findNavController()?.navigate(R.id.diaryFragment)
-        hideBottomNavigation(false)
+
     }
 
     private fun onRecyclerView() {
@@ -308,6 +306,16 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
         super.onDestroy()
 
         _binding = null
+        hideBottomNavigation(false)
+    }
+
+    override fun onModify() {
+        findNavController().popBackStack()
+        hideBottomNavigation(false)
+    }
+
+    override fun onDelete() {
+        view?.findNavController()?.navigate(R.id.diaryFragment)
         hideBottomNavigation(false)
     }
 

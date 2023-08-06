@@ -83,19 +83,19 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
             setupEventLayout(eventLayout)
             layoutCount++  // 장소 추가 버튼 클릭 수
 
-            if (layoutCount == 0) {
-                binding.groudPlaceAddBtn.visibility = View.VISIBLE
-                binding.groupPlaceSaveBtn.visibility = View.GONE
-            } else {
-                binding.groudPlaceAddBtn.visibility = View.GONE
-                binding.groupPlaceSaveBtn.visibility = View.VISIBLE
-            }
+//            if (layoutCount == 0) {
+//                binding.groudPlaceAddBtn.visibility = View.VISIBLE
+//                binding.groupPlaceSaveBtn.visibility = View.GONE
+//            } else {
+//                binding.groudPlaceAddBtn.visibility = View.GONE
+//                binding.groupPlaceSaveBtn.visibility = View.VISIBLE
+//            }
         }
 
         binding.groupPlaceSaveBtn.setOnClickListener{
             saveEvent()
             binding.groudPlaceAddBtn.visibility= View.VISIBLE
-            binding.groupPlaceSaveBtn.visibility = View.GONE
+           // binding.groupPlaceSaveBtn.visibility = View.GONE
         }
 
     }

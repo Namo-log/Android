@@ -33,7 +33,7 @@ class DiaryFragment : Fragment(), DiaryRepository.DiaryCallback {  // 다이어�
     private lateinit var yearMonth: String
 
     var currentPage = 0 // 초기 페이지
-    val pageSize = 10 // 페이지 당 아이템 수
+    val pageSize = 7 // 페이지 당 아이템 수
     var isLoading = false
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -99,11 +99,13 @@ class DiaryFragment : Fragment(), DiaryRepository.DiaryCallback {  // 다이어�
 
                     val lastVisibleItemPosition =
                         (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
+
+                //    val firstVisibleItemPosition=(recyclerView.layoutManager as LinearLayoutManager?)!!.findFirstCompletelyVisibleItemPosition()
                     val itemTotalCount = recyclerView.adapter!!.itemCount
 
 
                     // 마지막 아이템이 보여지고, 로딩 중이 아닌 경우
-                    if (lastVisibleItemPosition >= itemTotalCount - 1 && !isLoading) {
+                    if (lastVisibleItemPosition >= itemTotalCount -1 && !isLoading) {
                         isLoading = true
 
                         if ((currentPage + 1) * pageSize < itemTotalCount) {
@@ -114,6 +116,19 @@ class DiaryFragment : Fragment(), DiaryRepository.DiaryCallback {  // 다이어�
 
                         isLoading = false
                     }
+
+                    // 첫 번째 아이템이 보여지고, 로딩 중이 아닌 경우
+//                    if (firstVisibleItemPosition == 0 && !isLoading) {
+//                        isLoading = true
+//
+//                        if (currentPage > 0) {
+//                            currentPage--
+//                            val offset = currentPage * pageSize
+//                            repo.getDiaryList(yearMonth, currentPage, offset)
+//                        }
+//
+//                        isLoading = false
+//                    }
                 }
 
             })
