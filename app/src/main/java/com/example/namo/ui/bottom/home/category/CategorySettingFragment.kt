@@ -140,6 +140,7 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
         editor
             .putString(CATEGORY_KEY_DATA, json)
             .putLong(CATEGORY_KEY_IDX, dataSet.categoryIdx)
+            .putLong(CATEGORY_KEY_SERVER_IDX, dataSet.serverIdx)
             .apply()
 
         Log.d("debug", "Category Data saved")
@@ -159,6 +160,7 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
         const val CATEGORY_KEY_PREFS = "category"
         const val CATEGORY_KEY_DATA = "category_data"
         const val CATEGORY_KEY_IDX = "categoryIdx"
+        const val CATEGORY_KEY_SERVER_IDX = "serverIdx"
     }
 
     override fun onGetAllCategorySuccess(response: GetCategoryResponse) {

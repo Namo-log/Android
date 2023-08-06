@@ -31,7 +31,7 @@ interface CategoryDao {
     @Query("SELECT * FROM category_table WHERE isUpload = 0")
     fun getNotUploadedCategory() : List<Category>
 
-    @Query("UPDATE category_table SET isUpload=:isUpload, categoryIdx=:serverIdx, state=:state WHERE categoryIdx=:categoryIdx")
+    @Query("UPDATE category_table SET isUpload=:isUpload, serverIdx=:serverIdx, state=:state WHERE categoryIdx=:categoryIdx")
     fun updateCategoryAfterUpload(categoryIdx : Long, isUpload : Int, serverIdx : Long, state : String)
 
 }
