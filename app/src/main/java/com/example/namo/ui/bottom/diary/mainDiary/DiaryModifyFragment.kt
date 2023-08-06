@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -118,9 +119,6 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
                 Toast.makeText(requireContext(), "메모를 입력해주세용", Toast.LENGTH_SHORT).show()
             } else {
                 updateDiary(diary)
-                findNavController().popBackStack()
-                hideBottomNavigation(false)
-
             }
         }
 
@@ -131,8 +129,6 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
 
         binding.diaryDeleteIv.setOnClickListener {
             deleteDiary()
-            view?.findNavController()?.navigate(R.id.diaryFragment)
-            hideBottomNavigation(false)
         }
 
         binding.diaryGalleryClickIv.setOnClickListener {
@@ -145,15 +141,17 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
     private fun updateDiary(diary: Diary) {
         diary.content = binding.diaryContentsEt.text.toString()
 
-        if (imgList.isEmpty()) diary.images = diary.images
-        else diary.images = imgList as ArrayList<String>
-
         repo.editDiary(
             event.eventId,
             binding.diaryContentsEt.text.toString(),
-            diary.images,
+            imgList as List<String>?,
             event.serverIdx
         )
+
+        Log.d("sewerw",imgList.toString())
+
+        findNavController().popBackStack()
+        hideBottomNavigation(false)
 
         Toast.makeText(requireContext(), "수정되었습니다", Toast.LENGTH_SHORT).show()
     }
@@ -161,6 +159,9 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
         repo.deleteDiary(event.eventId, event.serverIdx)
+
+        view?.findNavController()?.navigate(R.id.diaryFragment)
+        hideBottomNavigation(false)
     }
 
     private fun onRecyclerView() {

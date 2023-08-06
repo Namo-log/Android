@@ -25,14 +25,19 @@ interface DiaryDao {
     @Query("SELECT * FROM diaryTable WHERE diaryLocalId=:scheduleId")
     fun getDiaryDaily(scheduleId: Long): Diary
 
-    @Query("SELECT * FROM calendar_event_table JOIN diaryTable ON diaryLocalId = eventId " +
-                "WHERE strftime('%Y.%m', event_start/1000, 'unixepoch') = :yearMonth  ORDER BY event_start DESC")
-    fun getDiaryEventList(yearMonth: String): List<DiaryEvent>
+    @Query(
+        "SELECT * FROM calendar_event_table JOIN diaryTable ON diaryLocalId = eventId " +
+                "WHERE strftime('%Y.%m', event_start/1000, 'unixepoch') = :yearMonth " +
+                "ORDER BY event_start DESC LIMIT :size OFFSET :page"
+    )
+    fun getDiaryEventList(yearMonth: String, page: Int, size: Int): List<DiaryEvent>
+
 
     @Query("UPDATE diaryTable SET diary_upload=:isUpload, diary_state=:state WHERE diaryLocalId=:localId")
     fun updateDiaryAfterUpload(localId: Long, isUpload: Int, state: String)
 
     @Query("SELECT * FROM diaryTable WHERE diary_upload = 0")
     fun getNotUploadedDiary(): List<Diary>
+
 
 }

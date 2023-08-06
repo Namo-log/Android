@@ -116,8 +116,9 @@ class DiaryAdapter(
 
                 val repo = DiaryRepository(context)
                 CoroutineScope(Dispatchers.Main).launch {
-                    
-                    val category = repo.getCategoryId(item.event_category_idx)
+
+                    val categoryIdx = if (item.event_category_server_idx == 0L) item.event_category_idx else item.event_category_server_idx
+                    val category = repo.getCategoryId(categoryIdx)
 
                     context.resources?.let {
                         itemDiaryCategoryColorIv.background.setTint(

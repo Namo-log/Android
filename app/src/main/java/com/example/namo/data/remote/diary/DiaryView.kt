@@ -14,7 +14,7 @@ interface DiaryDetailView {
 
 interface GetMonthDiaryView {
     fun onGetMonthDiarySuccess(response: DiaryResponse.DiaryGetMonthResponse)
-    fun onGetMonthDiaryFailure(yearMonth: String, message: String)
+    fun onGetMonthDiaryFailure(yearMonth: String, message: String, page: Int, size: Int)
 }
 
 interface GetDayDiaryView {

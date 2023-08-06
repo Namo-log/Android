@@ -141,9 +141,11 @@ class DiaryService {
 
     /** 기록 월 별 조회 **/
     fun getMonthDiary(
-        month: String
+        month: String,
+        page: Int,
+        size: Int
     ) {
-        diaryRetrofitInterface.getMonthDiary(month, 0, 10)
+        diaryRetrofitInterface.getMonthDiary(month, page, size)
             .enqueue(object : Callback<DiaryResponse.DiaryGetMonthResponse> {
 
                 @SuppressLint("SuspiciousIndentation")
@@ -158,7 +160,12 @@ class DiaryService {
                                 resp
                             )
                         }
-                        else -> getMonthDiaryView.onGetMonthDiaryFailure(month, response.toString())
+                        else -> getMonthDiaryView.onGetMonthDiaryFailure(
+                            month,
+                            response.toString(),
+                            page,
+                            size
+                        )
                     }
 
                 }
@@ -167,7 +174,12 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryGetMonthResponse>,
                     t: Throwable
                 ) {
-                    getMonthDiaryView.onGetMonthDiaryFailure(month, t.message.toString())
+                    getMonthDiaryView.onGetMonthDiaryFailure(
+                        month,
+                        t.message.toString(),
+                        page,
+                        size
+                    )
                 }
             })
     }

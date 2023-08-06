@@ -107,13 +107,7 @@ class DiaryRepository(
         images: List<String>?
     ) {
 
-        val imageMultiPart = images?.map { imagePath ->
-            imagePath.let { path ->
-                val file = File(absolutelyPath(path.toUri(), context))
-                val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-                MultipartBody.Part.createFormData("imgs", file.name, requestFile)
-            }
-        }
+        val imgList = imageToMultipart(images)
 
         val contentRequestBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
         val scheduleIdRequestBody =
@@ -121,7 +115,7 @@ class DiaryRepository(
 
         diaryService.addDiary(
             localId,
-            imageMultiPart,
+            imgList,
             contentRequestBody,
             scheduleIdRequestBody
         )
@@ -199,13 +193,17 @@ class DiaryRepository(
         images: List<String>?
     ) {
 
-        val imageMultiPart = images?.map { imagePath ->
-            imagePath.let { path ->
-                val file = File(absolutelyPath(path.toUri(), context))
-                val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-                MultipartBody.Part.createFormData("imgs", file.name, requestFile)
-            }
-        }
+
+//        val isAbsolutePath = images?.all { imagePath ->
+//            imagePath.startsWith("http")
+//        }
+//
+//        val imgList = if (isAbsolutePath==true) {
+//            convertedMultipart(images)
+//        } else {
+//            imageToMultipart(images)
+//        }
+        val imgList = imageToMultipart(images)
 
         val contentRequestBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
         val scheduleIdRequestBody =
@@ -213,10 +211,11 @@ class DiaryRepository(
 
         diaryService.editDiary(
             localId,
-            imageMultiPart,
+            imgList,
             contentRequestBody,
             scheduleIdRequestBody
         )
+
     }
 
 
@@ -230,7 +229,7 @@ class DiaryRepository(
             )
         }
 
-        Log.d("editDiaryServer", response.result)
+        Log.d("editDiaryServerSuccess", response.result)
     }
 
 
@@ -244,9 +243,28 @@ class DiaryRepository(
             )
         }
 
-        Log.d("editDiaryServer", message)
+        Log.d("editDiaryServerFailure", message)
 
     }
+
+    private fun imageToMultipart(images: List<String>?): List<MultipartBody.Part>? {
+        return images?.map { path ->
+            val file = File(absolutelyPath(path.toUri(), context))
+            val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+            MultipartBody.Part.createFormData("imgs", file.name, requestFile)
+        }
+    }
+
+//    private fun convertedMultipart(images: List<String>?) :List<MultipartBody.Part>?{
+//        return images?.map { path ->
+//
+//            val file=File(path)
+//
+//            Log.d("wewerwe",file.toString())
+//            val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+//            MultipartBody.Part.createFormData("imgs", file.name, requestFile)
+//        }
+//    }
 
 
     /** delete diary **/
@@ -388,14 +406,14 @@ class DiaryRepository(
         Log.d("getDayDiary", message)
     }
 
-    fun getDiaryList(yearMonth: String) {
+    fun getDiaryList(yearMonth: String, page: Int, size: Int) {
 
         if (!NetworkManager.checkNetworkState(context)) {
 
             scope.launch {
 
                 val diaryItems = withContext(IO) {
-                    getDiaryListLocal(yearMonth)
+                    getDiaryListLocal(yearMonth, page, size)
                 }
                 withContext(Dispatchers.Main) {
                     callback?.onGetDiaryItems(diaryItems)
@@ -403,26 +421,26 @@ class DiaryRepository(
             }
 
         } else {
-            getDiaryListFromServer(yearMonth)
+            getDiaryListFromServer(yearMonth, page, size)
 
         }
     }
 
-    private fun getDiaryListLocal(yearMonth: String): List<DiaryItem> {
+    private fun getDiaryListLocal(yearMonth: String, page: Int, size: Int): List<DiaryItem> {
 
-        val diaryEvent = diaryDao.getDiaryEventList(yearMonth)
+        val diaryEvent = diaryDao.getDiaryEventList(yearMonth, page, size)
         return diaryEvent.toListItems()
     }
 
 
-    private fun getDiaryListFromServer(yearMonth: String) {
+    private fun getDiaryListFromServer(yearMonth: String, page: Int, size: Int) {
 
         val yearMonthSplit = yearMonth.split(".")
         val year = yearMonthSplit[0]
         val month = yearMonthSplit[1].removePrefix("0")
         val formatYearMonth = "$year,$month"
 
-        diaryService.getMonthDiary(formatYearMonth)
+        diaryService.getMonthDiary(formatYearMonth, page, size)
         diaryService.getMonthDiaryView(this)
     }
 
@@ -442,14 +460,14 @@ class DiaryRepository(
                     content = schedules.content,
                     images = schedules.imgUrl,
                     event_server_idx = schedules.scheduleIdx,
-                    event_category_server_idx = schedules.scheduleIdx
+                    event_category_server_idx = schedules.categoryId
                 )
 
             diaryList.add(item)
 
         }
 
-        val diaryItems=diaryList.toListItems()
+        val diaryItems = diaryList.toListItems()
         callback?.onGetDiaryItems(diaryItems)
 
         Log.d("getMonthDiary", response.result.content.toString())
@@ -470,7 +488,7 @@ class DiaryRepository(
         return timeInMilliseconds
     }
 
-    override fun onGetMonthDiaryFailure(yearMonth: String, message: String) {
+    override fun onGetMonthDiaryFailure(yearMonth: String, message: String, page: Int, size: Int) {
 
         val yearMonthSplit = yearMonth.split(",")
         val year = yearMonthSplit[0]
@@ -480,7 +498,7 @@ class DiaryRepository(
         scope.launch {
 
             val diaryItems = withContext(IO) {
-                getDiaryListLocal(formatYearMonth)
+                getDiaryListLocal(formatYearMonth, page, size)
             }
             withContext(Dispatchers.Main) {
                 callback?.onGetDiaryItems(diaryItems)
@@ -491,7 +509,7 @@ class DiaryRepository(
     }
 
     /** 같은 날짜끼리 묶어서 그룹 헤더로 추가 **/
-    private fun List<DiaryEvent>.toListItems(): List<DiaryItem> {
+    fun List<DiaryEvent>.toListItems(): List<DiaryItem> {
         val result = arrayListOf<DiaryItem>() // 결과를 리턴할 리스트
 
         var groupHeaderDate: Long = 0 // 그룹날짜
