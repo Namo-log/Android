@@ -121,12 +121,7 @@ class DiaryAdapter(
                     val category = repo.getCategoryId(categoryIdx)
 
                     context.resources?.let {
-                        itemDiaryCategoryColorIv.background.setTint(
-                            ContextCompat.getColor(
-                                context,
-                                category.color
-                            )
-                        )
+                        itemDiaryCategoryColorIv.background.setTint(category.color)
                     }
                 }
 

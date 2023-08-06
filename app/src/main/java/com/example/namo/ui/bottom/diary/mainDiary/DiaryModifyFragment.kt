@@ -90,12 +90,7 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
             category = repo.getCategoryId(categoryIdx)
 
             context?.resources?.let {
-                binding.itemDiaryCategoryColorIv.background.setTint(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        category.color
-                    )
-                )
+                binding.itemDiaryCategoryColorIv.background.setTint(category.color)
             }
         }
 
