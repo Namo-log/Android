@@ -19,6 +19,9 @@ interface EventDao {
     @Update
     fun updateEvent(event : Event)
 
+    @Query("SELECT COUNT(*) FROM calendar_event_table")
+    fun getAllEvent() : Int
+
     @Query("SELECT * FROM calendar_event_table WHERE event_start <= :todayEnd AND event_end >= :todayStart AND event_state != ${R.string.event_current_deleted} ORDER BY event_day_interval DESC")
     fun getEventDaily(todayStart : Long, todayEnd : Long) : List<Event>
 

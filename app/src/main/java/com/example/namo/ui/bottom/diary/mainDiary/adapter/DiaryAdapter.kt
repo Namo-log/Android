@@ -116,7 +116,9 @@ class DiaryAdapter(
 
                 val repo = DiaryRepository(context)
                 CoroutineScope(Dispatchers.Main).launch {
-                    val category = repo.getCategoryId(item.event_category_idx)
+
+                    val categoryIdx = if (item.event_category_server_idx == 0L) item.event_category_idx else item.event_category_server_idx
+                    val category = repo.getCategoryId(categoryIdx)
 
                     context.resources?.let {
                         itemDiaryCategoryColorIv.background.setTint(
@@ -139,7 +141,7 @@ class DiaryAdapter(
                     }
                 })
 
-                if (item.content.isEmpty()) itemDiaryContentTv.visibility = View.GONE
+                if (item.content?.isEmpty() == true) itemDiaryContentTv.visibility = View.GONE
                 if (item.images?.isEmpty() == true) diaryGalleryRv.visibility = View.GONE
             }
         }
@@ -148,9 +150,9 @@ class DiaryAdapter(
     private fun setViewMore(contentTextView: TextView, viewMoreTextView: TextView) {
         // getEllipsisCount()을 통한 더보기 표시 및 구현
         contentTextView.post {
-            val lineCount = contentTextView.layout.lineCount
+            val lineCount = contentTextView.layout?.lineCount ?: 0
             if (lineCount > 0) {
-                if (contentTextView.layout.getEllipsisCount(lineCount - 1) > 0) {
+                if ((contentTextView.layout?.getEllipsisCount(lineCount - 1) ?: 0) > 0) {
                     // 더보기 표시
                     viewMoreTextView.visibility = View.VISIBLE
 
@@ -161,6 +163,7 @@ class DiaryAdapter(
                     }
                 }
             }
+
         }
     }
 }

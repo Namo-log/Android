@@ -4,6 +4,7 @@ import com.example.namo.data.entity.home.EventForUpload
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -28,4 +29,9 @@ interface EventRetrofitInterface {
         @Path("serverIdx") serverIdx : Long,
 //        @Header("Authorization") token : String,
     ) : Call<DeleteEventResponse>
+
+    @GET("schedules/{yearMonth}")
+    fun getMonthEvent(
+        @Path("yearMonth") yearMonth : String,
+    ) : Call<GetMonthEventResponse>
 }

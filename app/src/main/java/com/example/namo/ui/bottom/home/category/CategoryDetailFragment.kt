@@ -38,6 +38,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
     private val failList = ArrayList<Category>()
 
+    private lateinit var categoryColorArray : IntArray
+
     // 카테고리에 들어갈 데이터
     var categoryId : Long = -1
     var name: String = ""
@@ -67,6 +69,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
         db = NamoDatabase.getInstance(requireContext())
 
+        categoryColorArray = resources.getIntArray(R.array.categoryColorArr)
         initBasicColor()
 
         checkEditingMode(isEditMode)
@@ -152,8 +155,9 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
     private fun insertData() {
         // RoomDB
+        name = binding.categoryDetailTitleEt.text.toString()
+        category = Category(0, name, color, share)
         Thread{
-            name = binding.categoryDetailTitleEt.text.toString()
             category = Category(0, name, color, share)
             categoryId = db.categoryDao.insertCategory(category)
             Log.d("CategoryDetailFrag", "Insert Category : $categoryId")
@@ -221,8 +225,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
         // 더미데이터 냅다 집어 넣기
         val paletteDatas = arrayListOf(
-            R.color.palette1, R.color.palette2, R.color.palette3, R.color.palette4, R.color.palette5,
-            R.color.palette6, R.color.palette7, R.color.palette8, R.color.palette9, R.color.palette10
+            categoryColorArray[4], categoryColorArray[5], categoryColorArray[6], categoryColorArray[7], categoryColorArray[8],
+            categoryColorArray[9], categoryColorArray[10], categoryColorArray[11], categoryColorArray[12], categoryColorArray[13]
         )
 
         for (i: Int in paletteDatas.indices) {
@@ -272,7 +276,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                 }
                 // 선택한 카테고리 표시
                 checkList[i].visibility = View.VISIBLE
-                color = defaultColorList[i]
+                color = categoryColorArray[i]
                 paletteId = i + 1 // 기본 색상은 paletteId 1번부터 시작
                 // 이제 팔레트가 아니라 기본 색상에서 설정한 색임
                 selectedPalettePosition = null

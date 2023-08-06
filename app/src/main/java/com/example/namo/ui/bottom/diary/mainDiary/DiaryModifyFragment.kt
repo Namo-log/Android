@@ -35,12 +35,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
-class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
+class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  // 다이어리 편집 화면
 
     private var _binding: FragmentDiaryModifyBinding? = null
     private val binding get() = _binding!!
 
-    private var imgList = arrayListOf<String>()
+    private var imgList: ArrayList<String?> = arrayListOf()
     private lateinit var galleryAdapter: GalleryListAdapter
     private lateinit var repo: DiaryRepository
 
@@ -57,36 +57,37 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
 
         hideBottomNavigation(true)
 
-        repo = DiaryRepository(requireContext())
-        repo.setFragment(this)
-
         event = (arguments?.getSerializable("event") as? Event)!!
+
+        repo = DiaryRepository(requireContext())
+        repo.setCallBack2(this)
         repo.setDiary(event.eventId, event.serverIdx)
 
+        galleryAdapter = GalleryListAdapter(requireContext())
         bind()
-        charCnt()
-
 
         return binding.root
     }
 
+    override fun onGetDiary(diary: Diary) {
 
-    fun bindDiary(diary: Diary) {
-
-        galleryAdapter = GalleryListAdapter(requireContext())
-        diary.images?.let { galleryAdapter.addImages(it) }
         binding.diaryContentsEt.setText(diary.content)
-        onRecyclerView()
+
+        imgList.addAll(diary.images as List<String?>)
+        viewImages()
+
         onClickListener(diary)
-
+        onRecyclerView()
+        charCnt()
     }
-
 
     @SuppressLint("SimpleDateFormat")
     private fun bind() {
 
         CoroutineScope(Dispatchers.Main).launch {
-            category = repo.getCategoryId(event.categoryIdx)
+
+            val categoryIdx = if (event.categoryServerIdx == 0L) event.categoryIdx else event.categoryServerIdx
+            category = repo.getCategoryId(categoryIdx)
 
             context?.resources?.let {
                 binding.itemDiaryCategoryColorIv.background.setTint(
@@ -118,9 +119,6 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
                 Toast.makeText(requireContext(), "메모를 입력해주세용", Toast.LENGTH_SHORT).show()
             } else {
                 updateDiary(diary)
-                findNavController().popBackStack()
-                hideBottomNavigation(false)
-
             }
         }
 
@@ -130,9 +128,7 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
         }
 
         binding.diaryDeleteIv.setOnClickListener {
-            deleteDiary(diary)
-            view?.findNavController()?.navigate(R.id.diaryFragment)
-            hideBottomNavigation(false)
+            deleteDiary()
         }
 
         binding.diaryGalleryClickIv.setOnClickListener {
@@ -145,22 +141,42 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
     private fun updateDiary(diary: Diary) {
         diary.content = binding.diaryContentsEt.text.toString()
 
-        if (imgList.isEmpty()) diary.images = diary.images
-        else diary.images = imgList
-
         repo.editDiary(
-            diary.diaryLocalId,
+            event.eventId,
             binding.diaryContentsEt.text.toString(),
-            diary.images,
-            diary.diaryServerId
+            imgList as List<String>?,
+            event.serverIdx
         )
+
+        Log.d("sewerw",imgList.toString())
+
+
 
         Toast.makeText(requireContext(), "수정되었습니다", Toast.LENGTH_SHORT).show()
     }
 
     /** 다이어리 삭제 **/
-    private fun deleteDiary(diary: Diary) {
-        repo.deleteDiary(diary.diaryLocalId, diary.diaryServerId)
+    private fun deleteDiary() {
+        repo.deleteDiary(event.eventId, event.serverIdx)
+
+
+    }
+
+    private fun onRecyclerView() {
+
+        val galleryViewRVAdapter = galleryAdapter
+        binding.diaryGallerySavedRy.adapter = galleryViewRVAdapter
+        binding.diaryGallerySavedRy.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun viewImages() {
+
+        galleryAdapter.addImages(imgList)
+        galleryAdapter.notifyDataSetChanged()
+
     }
 
     @SuppressLint("IntentReset")
@@ -209,6 +225,7 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
     ) { result ->
 
         if (result.resultCode == Activity.RESULT_OK) {
+            imgList.clear()
 
             if (result.data?.clipData != null) { // 사진 여러개 선택한 경우
                 val count = result.data?.clipData!!.itemCount
@@ -219,32 +236,23 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
                 } else {
                     for (i in 0 until count) {
                         val imageUri = result.data?.clipData!!.getItemAt(i).uri
+
+                        imgList.add(imageUri.toString())
+                    }
+                }
+            } else { // 단일 선택
+                result.data?.data?.let {
+                    val imageUri: Uri? = result.data!!.data
+                    if (imageUri != null) {
                         imgList.add(imageUri.toString())
                     }
                 }
             }
-        } else { // 단일 선택
-            result.data?.data?.let {
-                val imageUri: Uri? = result.data!!.data
-                if (imageUri != null) {
-                    imgList.add(imageUri.toString())
-                }
-            }
+
+            viewImages()
         }
-        galleryAdapter.addImages(imgList)
-        galleryAdapter.notifyDataSetChanged()
-
-        Log.d("img", imgList.toString())
     }
 
-    private fun onRecyclerView() {
-
-        val galleryViewRVAdapter = galleryAdapter
-        binding.diaryGallerySavedRy.adapter = galleryViewRVAdapter
-        binding.diaryGallerySavedRy.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-
-    }
 
     private fun charCnt() {
         with(binding) {
@@ -301,5 +309,14 @@ class DiaryModifyFragment : Fragment() {  // 다이어리 편집 화면
         hideBottomNavigation(false)
     }
 
+    override fun onModify() {
+        findNavController().popBackStack()
+        hideBottomNavigation(false)
+    }
+
+    override fun onDelete() {
+        view?.findNavController()?.navigate(R.id.diaryFragment)
+        hideBottomNavigation(false)
+    }
 
 }

@@ -19,6 +19,9 @@ interface CategoryDao {
     @Query("SELECT * FROM category_table")
     fun getCategoryList(): List<Category>
 
+    @Query("SELECT COUNT(*) FROM category_table")
+    fun getAllCategorySize() : Int
+
     @Query("SELECT * FROM category_table WHERE active=:isActive")
     fun getActiveCategoryList(isActive: Boolean): List<Category>
 

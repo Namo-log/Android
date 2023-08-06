@@ -11,6 +11,7 @@ import retrofit2.Response
 class EventService() {
     private lateinit var eventView : EventView
     private lateinit var deleteEventView : DeleteEventView
+    private lateinit var getMonthEventView : GetMonthEventView
 
     fun setEventView(eventView : EventView) {
         this.eventView = eventView
@@ -20,35 +21,39 @@ class EventService() {
         this.deleteEventView = deleteEventView
     }
 
+    fun setGetMonthEventView(getMonthEventView: GetMonthEventView) {
+        this.getMonthEventView = getMonthEventView
+    }
+
     val eventRetrofitInterface = ApplicationClass.sRetrofit.create(EventRetrofitInterface::class.java)
 
-    fun postEvent(body : EventForUpload) {
+    fun postEvent(body : EventForUpload, eventId : Long) {
         eventRetrofitInterface.postEvent(body).enqueue(object : Callback<PostEventResponse> {
             override fun onResponse(call: Call<PostEventResponse>, response: Response<PostEventResponse>) {
                 when (response.code()) {
-                    200 -> eventView.onPostEventSuccess(response.body() as PostEventResponse, body.eventId)
+                    200 -> eventView.onPostEventSuccess(response.body() as PostEventResponse, eventId)
                     else -> {
                         Log.d("PostEvent", "Success but error")
-                        eventView.onPostEventFailure("통신 중 200 외 기타 코드", body.eventId)
+                        eventView.onPostEventFailure("통신 중 200 외 기타 코드")
                     }
                 }
             }
 
             override fun onFailure(call: Call<PostEventResponse>, t: Throwable) {
                 Log.d("PostEvent", "onFailure")
-                eventView.onPostEventFailure(t.message ?: "통신 오류", body.eventId)
+                eventView.onPostEventFailure(t.message ?: "통신 오류")
             }
         })
     }
 
-    fun editEvent(serverIdx : Long, body: EventForUpload) {
+    fun editEvent(serverIdx : Long, body: EventForUpload, eventId : Long) {
         eventRetrofitInterface.editEvent(serverIdx, body).enqueue(object : Callback<EditEventResponse> {
             override fun onResponse(call: Call<EditEventResponse>, response: Response<EditEventResponse>) {
                 when (response.code()) {
-                    200 -> eventView.onEditEventSuccess(response.body() as EditEventResponse, body.eventId)
+                    200 -> eventView.onEditEventSuccess(response.body() as EditEventResponse, eventId)
                     else -> {
                         Log.d("EditEvent", "Success but error")
-                        eventView.onEditEventFailure("통신 중 200 외 기타 코드", body.eventId, serverIdx)
+                        eventView.onEditEventFailure("통신 중 200 외 기타 코드")
                     }
                 }
 
@@ -56,7 +61,7 @@ class EventService() {
 
             override fun onFailure(call: Call<EditEventResponse>, t: Throwable) {
                 Log.d("EditEvent", "OnFailure")
-                eventView.onEditEventFailure(t.message ?: "통신 오류", body.eventId, serverIdx)
+                eventView.onEditEventFailure(t.message ?: "통신 오류")
             }
         })
     }
@@ -79,5 +84,29 @@ class EventService() {
                 deleteEventView.onDeleteEventFailure(t.message ?: "통신 오류")
             }
         })
+    }
+
+    fun getMonthEvent(yearMonth : String) {
+        eventRetrofitInterface.getMonthEvent(yearMonth)
+            .enqueue(object : Callback<GetMonthEventResponse> {
+                override fun onResponse(
+                    call: Call<GetMonthEventResponse>,
+                    response: Response<GetMonthEventResponse>
+                ) {
+                    when (response.code()) {
+                        200 -> getMonthEventView.onGetMonthEventSuccess(response.body() as GetMonthEventResponse)
+                        else -> {
+                            Log.d("GetMonthEvent", "Success but error")
+                            getMonthEventView.onGetMonthEventFailure("통신 중 200 외 기타 코드")
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<GetMonthEventResponse>, t: Throwable) {
+                    Log.d("GetMonthEvent", "OnFailure")
+                    getMonthEventView.onGetMonthEventFailure(t.message ?: "통신 오류")
+                }
+
+            })
     }
 }

@@ -1,22 +1,28 @@
 package com.example.namo.ui.bottom.group.calendar
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.namo.MainActivity
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Event
+import com.example.namo.data.remote.moim.Moim
 import com.example.namo.databinding.FragmentGroupCalendarBinding
 import com.example.namo.ui.bottom.group.GroupInfoActivity
+import com.example.namo.ui.bottom.group.calendar.GroupCalendarAdapter.Companion.GROUP_ID
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
 import com.example.namo.ui.bottom.home.calendar.SetMonthDialog
@@ -27,6 +33,9 @@ class GroupCalendarFragment : Fragment() {
 
     private lateinit var calendarAdapter : GroupCalendarAdapter
     private lateinit var binding: FragmentGroupCalendarBinding
+    private val args : GroupCalendarFragmentArgs by navArgs()
+
+    private lateinit var group : Moim
     private lateinit var monthList : List<DateTime>
 
     private var millis = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
@@ -45,6 +54,12 @@ class GroupCalendarFragment : Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_group_calendar, container, false)
         db = NamoDatabase.getInstance(requireContext())
+
+        //그룹 정보 저장
+        group = args.group
+        GROUP_ID = group.groupId
+        setGroupInfo()
+
         calendarAdapter = GroupCalendarAdapter(context as MainActivity)
 
         binding.groupCalendarVp.orientation = ViewPager2.ORIENTATION_HORIZONTAL
@@ -70,7 +85,8 @@ class GroupCalendarFragment : Fragment() {
     private fun clickListener() {
         binding.groupCalendarInfoIv.setOnClickListener {
             val intent = Intent(context, GroupInfoActivity::class.java)
-            requireActivity().startActivity(intent)
+            intent.putExtra("group", group)
+            launcher.launch(intent)
         }
 
         binding.groupCalendarYearMonthTv.setOnClickListener {
@@ -81,5 +97,20 @@ class GroupCalendarFragment : Fragment() {
                 binding.groupCalendarVp.setCurrentItem(pos + result, true)
             }.show()
         }
+    }
+
+    private val launcher : ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                view?.findNavController()?.navigate(R.id.action_groupCalendarFragment_to_groupListFragment)
+            }
+        }
+
+    private fun setGroupInfo() {
+        binding.groupCalendarGroupTitleTv.text = group.groupName
+    }
+
+    fun getGroupId() : Long {
+        return group.groupId
     }
 }

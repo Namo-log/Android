@@ -43,7 +43,7 @@ class SetCategoryRVAdapter(
     inner class ViewHolder(val binding: ItemCategoryBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(category : Category) {
-            binding.itemCategoryColorIv.background.setTint(context.resources.getColor(category.color))
+            binding.itemCategoryColorIv.background.setTint(category.color)
             binding.itemCategoryNameTv.text = category.name
         }
 

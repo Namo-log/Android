@@ -1,27 +1,24 @@
 package com.example.namo.data.remote.diary
 
 interface DiaryView {
-    fun onAddDiarySuccess(result: DiaryResponse.GetScheduleIdx, localId: Long)
-    fun onAddDiaryFailure(localId: Long, serverId: Long)
+    fun onAddDiarySuccess(response: DiaryResponse.DiaryAddResponse, localId: Long)
+    fun onAddDiaryFailure(localId: Long, message: String)
 }
 
 interface DiaryDetailView {
-    fun onEditDiarySuccess(result: String, localId: Long,serverId: Long)
-    fun onDeleteDiarySuccess(localId: Long,serverId: Long)
-    fun onEditDiaryFailure(localId: Long,serverId: Long)
-    fun onDeleteDiaryFailure(localId: Long,serverId: Long)
+    fun onEditDiarySuccess(response: DiaryResponse.DiaryEditResponse, localId: Long)
+    fun onEditDiaryFailure(localId: Long, message: String)
+    fun onDeleteDiarySuccess(response: DiaryResponse.DiaryDeleteResponse, localId: Long)
+    fun onDeleteDiaryFailure(localId: Long, message: String)
 }
 
 interface GetMonthDiaryView {
-    fun onGetMonthDiarySuccess(
-        result: List<DiaryResponse.MonthDiaryDto>
-    )
-
-    fun onGetMonthDiaryFailure()
+    fun onGetMonthDiarySuccess(response: DiaryResponse.DiaryGetMonthResponse)
+    fun onGetMonthDiaryFailure(yearMonth: String, message: String, page: Int, size: Int)
 }
 
 interface GetDayDiaryView {
-    fun onGetDayDiarySuccess(localId: Long, result: DiaryResponse.DayDiaryDto)
-    fun onGetDayDiaryFailure(localId: Long)
+    fun onGetDayDiarySuccess(response: DiaryResponse.DiaryGetDayResponse, serverId: Long)
+    fun onGetDayDiaryFailure(localId: Long, message: String)
 }
 

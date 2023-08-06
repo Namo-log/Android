@@ -12,18 +12,16 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.R
 import com.example.namo.data.entity.diary.DiaryItem
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import java.lang.Boolean.TRUE
 
-class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
+class DiaryFragment : Fragment(), DiaryRepository.DiaryCallback {  // 다이어리 리스트 화면(bottomNavi)
 
     private var _binding: FragmentDiaryBinding? = null
     private val binding get() = _binding!!
@@ -33,6 +31,10 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     private lateinit var diaryDateAdapter: DiaryAdapter
     private lateinit var yearMonth: String
+
+    var currentPage = 0 // 초기 페이지
+    val pageSize = 7 // 페이지 당 아이템 수
+    var isLoading = false
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -47,34 +49,98 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         yearMonth = binding.diaryMonth.text.toString()
 
         repo = DiaryRepository(requireContext())
-        repo.setFragment2(this)
-
-
-        CoroutineScope(Dispatchers.Main).launch {
-            repo.getDiaryList(yearMonth)
-        }
+        repo.setCallBack(this)
 
         binding.diaryMonth.setOnClickListener {
             dialogCreate()
         }
 
+        diaryDateAdapter = DiaryAdapter(parentFragmentManager, requireContext())
+        onRecyclerview()
+
         // 그룹 다이어리 테스트, 확인하고 지우기....
         binding.groupdiarytest.setOnClickListener {
             view?.findNavController()?.navigate(R.id.action_diaryFragment_to_groupDiaryFragment)
         }
-
-
         return binding.root
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onResume() {
+        super.onResume()
+
+        diaryDateAdapter.notifyDataSetChanged()
+    }
+
+    override fun onGetDiaryItems(diaryItem: List<DiaryItem>) {
+
+        diaryDateAdapter.submitList(diaryItem)
+        getList(diaryItem)
+
+        Log.d("checkDiaryList", diaryItem.toString())
     }
 
 
     @SuppressLint("NotifyDataSetChanged")
-    fun getList(diaryItems: List<DiaryItem>) {
+    fun onRecyclerview() {
+
+        binding.diaryListRv.apply {
+            adapter = diaryDateAdapter
+            layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            setHasFixedSize(TRUE)
+            (adapter as DiaryAdapter).notifyDataSetChanged()
+        }
+
+        binding.diaryListRv.apply {
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    val lastVisibleItemPosition =
+                        (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
+
+                //    val firstVisibleItemPosition=(recyclerView.layoutManager as LinearLayoutManager?)!!.findFirstCompletelyVisibleItemPosition()
+                    val itemTotalCount = recyclerView.adapter!!.itemCount
+
+
+                    // 마지막 아이템이 보여지고, 로딩 중이 아닌 경우
+                    if (lastVisibleItemPosition >= itemTotalCount -1 && !isLoading) {
+                        isLoading = true
+
+                        if ((currentPage + 1) * pageSize < itemTotalCount) {
+                            currentPage++
+                            val offset = currentPage * pageSize
+                            repo.getDiaryList(yearMonth, currentPage, offset)
+                        }
+
+                        isLoading = false
+                    }
+
+                    // 첫 번째 아이템이 보여지고, 로딩 중이 아닌 경우
+//                    if (firstVisibleItemPosition == 0 && !isLoading) {
+//                        isLoading = true
+//
+//                        if (currentPage > 0) {
+//                            currentPage--
+//                            val offset = currentPage * pageSize
+//                            repo.getDiaryList(yearMonth, currentPage, offset)
+//                        }
+//
+//                        isLoading = false
+//                    }
+                }
+
+            })
+
+            repo.getDiaryList(yearMonth, currentPage, pageSize)
+        }
+    }
+
+
+    private fun getList(diaryItems: List<DiaryItem>) {
         val r = Runnable {
             try {
-
-                diaryDateAdapter = DiaryAdapter(parentFragmentManager, requireContext())
-                diaryDateAdapter.submitList(diaryItems)
 
                 // 수정 버튼 클릭리스너
                 diaryDateAdapter.setRecordClickListener(object : DiaryAdapter.DiaryEditInterface {
@@ -82,22 +148,14 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
                         val bundle = Bundle()
 
                         val event = Event(
-                            eventId = allData.eventId,
-                            title = allData.event_title,
-                            startLong = allData.event_start,
-                            endLong = 0,
-                            dayInterval = 0,
-                            categoryIdx = allData.event_category_idx,
-                            placeName = allData.event_place_name,
-                            placeX = 0.0,
-                            placeY = 0.0,
-                            order = 0,
-                            alarmList = null,
-                            isUpload = allData.event_upload,
-                            state = allData.event_state,
-                            serverIdx = allData.event_server_idx,
-                            categoryServerIdx = 0L,
-                            hasDiary = allData.has_diary
+                            allData.eventId,
+                            allData.event_title,
+                            allData.event_start, 0L, 0,
+                            allData.event_category_idx, allData.event_place_name,
+                            0.0, 0.0, 0, null, 1,
+                            R.string.event_current_default.toString(),
+                            allData.event_server_idx,
+                            allData.event_category_server_idx
                         )
 
                         bundle.putSerializable("event", event)
@@ -119,13 +177,6 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
                         binding.diaryListEmptyTv.visibility = View.VISIBLE
                     }
 
-                    binding.diaryListRv.apply {
-                        adapter = diaryDateAdapter
-                        layoutManager =
-                            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-                        setHasFixedSize(TRUE)
-                        (adapter as DiaryAdapter).notifyDataSetChanged()
-                    }
                 }
             } catch (e: Exception) {
                 Log.d("tag", "Error - $e")
@@ -143,9 +194,13 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         YearMonthDialog(dateTime) {
             yearMonth = DateTime(it).toString("yyyy.MM")
             binding.diaryMonth.text = yearMonth
+
+            onRecyclerview()
+
         }.show(parentFragmentManager, "test")
 
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
