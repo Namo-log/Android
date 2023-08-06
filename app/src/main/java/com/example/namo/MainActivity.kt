@@ -47,7 +47,7 @@ import java.util.Arrays
 
 private const val PERMISSION_REQUEST_CODE = 1001
 private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 777
-class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEventView, CategorySettingView, GetMonthDiaryView {
+class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEventView, CategorySettingView {
 
     private lateinit var binding : ActivityMainBinding
     lateinit var db : NamoDatabase
@@ -162,9 +162,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         eventService.getMonthEvent(time)
 
         //다이어리
-        val diaryService = DiaryService()
-        diaryService.getMonthDiaryView(this)
-        diaryService.getMonthDiary(time)
+
     }
 
     private fun uploadRoomToServer() {
@@ -391,25 +389,13 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         Log.d("TEST_CHECK", "서버에 있던 카테고리 : " + serverCategory.toString())
         Log.d("MAIN_SERVER_UPLOAD", "Get Category Finish")
         isCategorySuccess = true
+        isDiarySuccess = true
         checkServerDownloadCompleted()
     }
 
     override fun onGetAllCategoryFailure(message: String) {
         Log.d("MAIN_SERVER_UPLOAD", "onGetAllCategoryFailure")
         isCategorySuccess = false
-    }
-
-    override fun onGetMonthDiarySuccess(result: List<DiaryResponse.MonthDiaryDto>) {
-        Log.d("MAIN_SERVER_UPLOAD", "onGetMonthDiarySuccess")
-        //다이어리도 serverDiary에 저장해야됨
-        isDiarySuccess = true
-        checkServerDownloadCompleted()
-    }
-
-    override fun onGetMonthDiaryFailure() {
-        Log.d("MAIN_SERVER_UPLOAD", "onGetMonthDiaryFailure")
-        isDiarySuccess = true //원래 false여야 함
-        checkServerDownloadCompleted()
     }
 
     private fun checkServerDownloadCompleted() {
