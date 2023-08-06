@@ -126,7 +126,7 @@ class CalendarMonthFragment : Fragment() {
         getCategoryList()
 
         var forDB : Thread = Thread {
-            tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis, monthList[41].plusDays(1).withTimeAtStartOfDay().millis)
+            tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis / 1000, monthList[41].plusDays(1).withTimeAtStartOfDay().millis / 1000)
         }
         forDB.start()
         try {
@@ -250,7 +250,7 @@ class CalendarMonthFragment : Fragment() {
         var todayEnd = monthList[idx].plusDays(1).withTimeAtStartOfDay().millis - 1
 
         var forPersonalEvent : Thread = Thread {
-            event_personal = db.eventDao.getEventDaily(todayStart, todayEnd) as ArrayList<Event>
+            event_personal = db.eventDao.getEventDaily(todayStart / 1000, todayEnd / 1000) as ArrayList<Event>
             personalEventRVAdapter.addPersonal(event_personal)
             requireActivity().runOnUiThread {
                 Log.d("CalendarMonth", "Personal Event : $event_personal")

@@ -1,5 +1,6 @@
 package com.example.namo.ui.bottom.group
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -10,15 +11,19 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
-import com.example.namo.data.entity.group.Group
+import com.example.namo.data.remote.moim.GetMoimListResponse
+import com.example.namo.data.remote.moim.GetMoimListView
+import com.example.namo.data.remote.moim.Moim
+import com.example.namo.data.remote.moim.MoimService
 import com.example.namo.databinding.FragmentGroupListBinding
+import com.example.namo.ui.bottom.group.adapter.GroupListRVAdapter
 
 
-class GroupListFragment : Fragment() {
+class GroupListFragment : Fragment(), GetMoimListView {
 
     lateinit var binding: FragmentGroupListBinding
 
-    private var groupList = listOf<Group>()
+    private var groupList = listOf<Moim>()
     lateinit var groupAdapter: GroupListRVAdapter
 
     private lateinit var db: NamoDatabase
@@ -40,41 +45,23 @@ class GroupListFragment : Fragment() {
         db = NamoDatabase.getInstance(requireContext())
         groupAdapter = GroupListRVAdapter(groupList)
 
+        onClickMenu()
+
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val moimService = MoimService()
+        moimService.setGetMoimListView(this)
+        moimService.getMoimList()
     }
 
     override fun onStart() {
         super.onStart()
 
-        initRecyclerView()
-        onClickMenu()
-    }
-
-    private fun initRecyclerView() {
-        val r = Runnable {
-            try {
-                groupList = db.groupDao.getGroupList()
-                groupAdapter = GroupListRVAdapter(groupList)
-                requireActivity().runOnUiThread {
-                    // 어댑터와 데이터리스트 연결
-                    binding.groupListRv.adapter = groupAdapter
-                    groupAdapter.notifyDataSetChanged()
-                    binding.groupListRv.layoutManager =
-                        LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-                    binding.groupListRv.setHasFixedSize(true)
-                }
-                groupAdapter.setMyItemClickListener(object : GroupListRVAdapter.ItemClickListener {
-                    override fun onItemClick(group: Group) { // 그룹 캘린더로 이동
-                        Log.d("CLICK", "click item")
-                        view?.findNavController()?.navigate(R.id.action_groupListFragment_to_groupCalendarFragment)
-                    }
-                })
-            } catch (e: Exception) {
-                Log.d("Group", "Error - $e")
-            }
-        }
-        val thread = Thread(r)
-        thread.start()
+//        initRecyclerView()
     }
 
     //메뉴 클릭시
@@ -107,5 +94,43 @@ class GroupListFragment : Fragment() {
         GroupCodeDialog(requireContext()) {
             //viewModel.setName(it)
         }.show()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onGetMoimListSuccess(response: GetMoimListResponse) {
+        Log.d("GroupListFrag", "onGetMoimListSuccess")
+        Log.d("GroupListFrag", response.result.toString())
+
+        if (response.result.isEmpty()) {
+            binding.groupListRv.visibility = View.GONE
+            binding.groupListEmptyTv.visibility = View.VISIBLE
+        } else {
+            binding.groupListNetworkTv.visibility = View.GONE
+            binding.groupListRv.visibility = View.VISIBLE
+        }
+
+        groupList = response.result
+        groupAdapter = GroupListRVAdapter(groupList)
+        binding.groupListRv.adapter = groupAdapter
+        groupAdapter.notifyDataSetChanged()
+        binding.groupListRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.groupListRv.setHasFixedSize(true)
+
+        groupAdapter.setMyItemClickListener(object : GroupListRVAdapter.ItemClickListener {
+            override fun onItemClick(moim: Moim) { // 그룹 캘린더로 이동
+                Log.d("GroupListFrag", "Click Moim Item")
+
+                val action = GroupListFragmentDirections.actionGroupListFragmentToGroupCalendarFragment(moim)
+                view?.findNavController()?.navigate(action)
+
+            }
+        })
+    }
+
+    override fun onGetMoimListFailure(message: String) {
+        Log.d("GroupListFrag", "onGetMoimListFailure")
+
+        binding.groupListNetworkTv.visibility = View.VISIBLE
+        binding.groupListRv.visibility = View.GONE
     }
 }

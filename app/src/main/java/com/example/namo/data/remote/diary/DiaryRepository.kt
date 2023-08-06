@@ -306,7 +306,7 @@ class DiaryRepository(
 
     fun getUpload(eventServerId: Long) {
 
-        scope.launch {
+    scope.launch {
             notUploaded = diaryDao.getNotUploadedDiary()
 
             for (diary in notUploaded) {

@@ -28,7 +28,7 @@ class DialogCategoryRVAdapter(
 
     inner class ViewHolder(val binding : ItemDialogScheduleCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(category : Category) {
-            binding.categoryColorView.background.setTint(context.resources.getColor(category.color))
+            binding.categoryColorView.background.setTint(category.color)
             binding.categoryNameTv.text = category.name
 
             if (category.categoryIdx == selectedIdx) {

@@ -90,7 +90,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
 
     private lateinit var getResult : ActivityResultLauncher<Intent>
 
-    private var scheduelIdx : Long = 0
+    private var scheduleIdx : Long = 0
 
     private var prevChecked : MutableList<Int> = mutableListOf()
     private var alarmList : MutableList<Int> = mutableListOf()
@@ -127,7 +127,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
 
         if (event.eventId != 0L) {
             binding.dialogScheduleHeaderTv.text = "일정 편집"
-            scheduelIdx = event.eventId
+            scheduleIdx = event.eventId
         } else {
             binding.dialogScheduleHeaderTv.text = "새 일정"
         }
@@ -298,9 +298,15 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
             storeContent()
 
             if (event.eventId == 0L) {
+                // 일정 추가
+                // 현재 일정의 상태가 추가 상태임을 나타냄
+                event.state = R.string.event_current_added.toString()
+                event.isUpload = 0
+                event.serverIdx = 0
+
                 // 새 일정 등록
                 var storeDB = Thread {
-                    scheduelIdx = db.eventDao.insertEvent(event)
+                    scheduleIdx = db.eventDao.insertEvent(event)
                 }
                 storeDB.start()
                 try {
@@ -313,7 +319,10 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
 
                 uploadToServer(R.string.event_current_added.toString())
             } else {
-                // 일정 편집 저장
+                // 일정 수정
+                event.state = R.string.event_current_edited.toString()
+                event.isUpload = 0
+
                 var updateDB : Thread = Thread {
                     db.eventDao.updateEvent(event)
                 }
@@ -385,7 +394,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
                 early = true
                 continue
             }
-            val id = scheduelIdx.toInt() + time.toInt()
+            val id = scheduleIdx.toInt() + time.toInt()
             checkNotificationPermission(requireActivity(), time, id)
         }
         if (early) {
@@ -557,6 +566,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         //카테고리
         val getCategoryThread = Thread {
             selectedCategory = db.categoryDao.getCategoryWithId(event.categoryIdx)
+            Log.d("TEST_CHECK", "selected category : $selectedCategory")
         }
         getCategoryThread.start()
         try {
@@ -567,14 +577,14 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         setCategory()
 
         //시작일, 종료일
-        startDateTime = DateTime(event.startLong)
-        endDateTime = DateTime(event.endLong)
-        binding.dialogScheduleStartDateTv.text = DateTime(event.startLong).toString(getString(R.string.dateFormat))
-        binding.dialogScheduleEndDateTv.text = DateTime(event.endLong).toString(getString(R.string.dateFormat))
+        startDateTime = DateTime(event.startLong * 1000L)
+        endDateTime = DateTime(event.endLong * 1000L)
+        binding.dialogScheduleStartDateTv.text = startDateTime.toString(getString(R.string.dateFormat))
+        binding.dialogScheduleEndDateTv.text = endDateTime.toString(getString(R.string.dateFormat))
 
         //시작 시간, 종료 시간
-        binding.dialogScheduleStartTimeTv.text = DateTime(event.startLong).toString(getString(R.string.timeFormat))
-        binding.dialogScheduleEndTimeTv.text = DateTime(event.endLong).toString(getString(R.string.timeFormat))
+        binding.dialogScheduleStartTimeTv.text = startDateTime.toString(getString(R.string.timeFormat))
+        binding.dialogScheduleEndTimeTv.text = endDateTime.toString(getString(R.string.timeFormat))
 
         //알람
         setAlarmClicked(event.alarmList!!)
@@ -599,12 +609,14 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
 
     private fun storeContent() {
         event.title = binding.dialogScheduleTitleEt.text.toString()
-        event.startLong = startDateTime.millis
-        event.endLong = endDateTime.millis
+        event.startLong = startDateTime.millis / 1000
+        event.endLong = endDateTime.millis / 1000
         event.dayInterval = getInterval(event.startLong, event.endLong)
 
         setAlarmList()
         event.alarmList = alarmList
+
+        Log.d("STORE_CONTENT", event.toString())
     }
 
 
@@ -697,6 +709,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         categoryList = setCategoryList(db)
         selectedCategory = categoryList[0]
         event.categoryIdx = selectedCategory.categoryIdx
+        event.categoryServerIdx = selectedCategory.serverIdx
 
         setCategory()
     }
@@ -718,8 +731,9 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
     }
 
     private fun setCategory() {
+        event.categoryServerIdx = selectedCategory.serverIdx
         binding.dialogScheduleCategoryNameTv.text = selectedCategory.name
-        binding.dialogScheduleCategoryColorIv.background.setTint(resources.getColor(selectedCategory.color))
+        binding.dialogScheduleCategoryColorIv.background.setTint(selectedCategory.color)
     }
 
 
@@ -727,21 +741,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
     private fun uploadToServer(state : String) {
         if (!NetworkManager.checkNetworkState(requireContext())) {
             //인터넷 연결 안 됨
-            //룸디비에 isUpload, serverId, state 업데이트하기
-            var thread = Thread {
-                db.eventDao.updateEventAfterUpload(scheduelIdx, 0, event.serverIdx, state)
-                failList.clear()
-                failList.addAll(db.eventDao.getNotUploadedEvent() as ArrayList<Event>)
-            }
-            thread.start()
-            try {
-                thread.join()
-            } catch ( e: InterruptedException) {
-                e.printStackTrace()
-            }
-
-            Log.d("ScheduleBasic", "WIFI ERROR : $failList")
-
+            printNotUploaded()
             return
         }
 
@@ -750,15 +750,30 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
 
         when(state) {
             R.string.event_current_added.toString() -> {
-                eventService.postEvent(eventToEventForUpload(event))
+                eventService.postEvent(eventToEventForUpload(event), scheduleIdx)
             }
             R.string.event_current_edited.toString() -> {
-                eventService.editEvent(event.serverIdx, eventToEventForUpload(event))
+                eventService.editEvent(event.serverIdx, eventToEventForUpload(event), scheduleIdx)
             }
             else -> {
                 Log.d("ScheduleBasic", "서버 업로드 중 state 오류")
             }
         }
+    }
+
+    private fun printNotUploaded() {
+        val thread = Thread {
+            failList.clear()
+            failList.addAll(db.eventDao.getNotUploadedEvent() as ArrayList<Event>)
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch ( e : InterruptedException) {
+            e.printStackTrace()
+        }
+
+        Log.d("ScheduleBasic", "Not uploaded Schedule : ${failList}")
     }
 
     override fun onPostEventSuccess(response: PostEventResponse, eventId : Long) {
@@ -778,27 +793,14 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         }
     }
 
-    override fun onPostEventFailure(message: String, eventId: Long) {
+    override fun onPostEventFailure(message: String) {
         Log.d("ScheduleBasic", "onPostEventFailure")
-
-        var thread = Thread {
-            db.eventDao.updateEventAfterUpload(eventId, 0, event.serverIdx, R.string.event_current_added.toString())
-            failList.clear()
-            failList.addAll(db.eventDao.getNotUploadedEvent() as ArrayList<Event>)
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch ( e: InterruptedException) {
-            e.printStackTrace()
-        }
-
-        Log.d("ScheduleBasic", "Server Fail : $failList")
+        printNotUploaded()
 
         return
     }
 
-    override fun onEditEventSuccess(response: EditEventResponse, eventId: Long) {
+    override fun onEditEventSuccess(response: EditEventResponse, eventId : Long) {
         Log.d("ScheduleBasic", "onEditEventSuccess")
 
         val result = response.result
@@ -815,22 +817,9 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         }
     }
 
-    override fun onEditEventFailure(message: String, eventId : Long, serverId : Long) {
+    override fun onEditEventFailure(message: String) {
         Log.d("ScheduleBasic", "onEditEventFailure")
-
-        var thread = Thread {
-            db.eventDao.updateEventAfterUpload(eventId, 0, serverId, R.string.event_current_edited.toString())
-            failList.clear()
-            failList.addAll(db.eventDao.getNotUploadedEvent() as ArrayList<Event>)
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch ( e: InterruptedException) {
-            e.printStackTrace()
-        }
-
-        Log.d("ScheduleBasic", "Server Fail : $failList")
+        printNotUploaded()
 
         return
     }
@@ -842,13 +831,12 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
                 startDate = event.startLong,
                 endDate = event.endLong,
                 interval = event.dayInterval,
-                eventId = event.eventId,
                 alarmDate = event.alarmList,
                 x = event.placeX,
                 y = event.placeY,
                 locationName = event.placeName,
-//                categoryId = event.categoryServerIdx,
-                categoryId = 10 // 지금 category 등록이 안되어서 임시방편
+                categoryId = event.categoryServerIdx,
+//                categoryId = 10 // 지금 category 등록이 안되어서 임시방편
             )
         }
     }

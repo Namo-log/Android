@@ -80,13 +80,15 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
 
         @SuppressLint("ResourceType")
         fun bind(personal : Event) {
-            val time = DateTime(personal.startLong).toString("HH:mm") + " - " + DateTime(personal.endLong).toString("HH:mm")
-            val category = categoryList.find { it.categoryIdx == personal.categoryIdx }!!
+            val time = DateTime(personal.startLong * 1000L).toString("HH:mm") + " - " + DateTime(personal.endLong * 1000L).toString("HH:mm")
+            val category = categoryList.find {
+                if (it.serverIdx != 0L) it.serverIdx == personal.categoryServerIdx
+                else it.categoryIdx == personal.categoryIdx }!!
 
             binding.itemCalendarEventTitle.text = personal.title
             binding.itemCalendarEventTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
-            binding.itemCalendarEventColorView.background.setTint(context.resources.getColor(category.color))
+            binding.itemCalendarEventColorView.background.setTint(category.color)
             binding.itemCalendarEventRecord.setColorFilter(context.resources.getColor(R.color.realGray))
             /** 기록 아이콘 색깔 **/
             if(personal.hasDiary !=0)

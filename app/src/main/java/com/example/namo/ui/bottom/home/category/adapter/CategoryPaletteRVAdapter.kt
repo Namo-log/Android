@@ -68,7 +68,7 @@ class CategoryPaletteRVAdapter(
             // 카테고리 색 확인
 //            Log.d("PaletteColor", "position = ${absoluteAdapterPosition} color = $color")
             // 카드뷰에 색 넣어주기
-            binding.itemPaletteColorCv.background.setTint(context.resources.getColor(color))
+            binding.itemPaletteColorCv.background.setTint(color)
             // 체크 표시 초기화
             if (adapterPosition == currentSelectPosition) selectIv.visibility = View.VISIBLE
             else selectIv.visibility = View.GONE
