@@ -52,10 +52,6 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
     var selectedPalettePosition: Int? = null // 팔레트 -> 기본 색상 선택 시 사용될 변수
 
-    private var defaultColorList = listOf( // 기본 색상 리스트
-        R.color.schedule, R.color.schedule_plan, R.color.schedule_parttime, R.color.schedule_group
-    )
-
     private lateinit var categoryList : List<CardView>
     private lateinit var checkList : List<ImageView>
 
@@ -161,7 +157,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         Thread{
             category = Category(0, name, color, share)
             categoryId = db.categoryDao.insertCategory(category)
-            Log.d("CategoryDetailFrag", "Insert Category : $categoryId")
+            Log.d("CategoryDetailFrag", "Insert roomCategory : $categoryId")
         }.start()
         // 서버 통신
         uploadToServer(R.string.event_current_added.toString())
@@ -174,7 +170,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             name = binding.categoryDetailTitleEt.text.toString()
             category = Category(categoryId, name, color, share)
             db.categoryDao.updateCategory(category)
-            Log.d("CategoryDetailFrag", "updateCategory: ${db.categoryDao.getCategoryWithId(categoryId)}")
+            Log.d("CategoryDetailFrag", "update roomCategory: ${db.categoryDao.getCategoryWithId(categoryId)}")
         }
         thread.start()
         try {
@@ -322,9 +318,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                     categoryDetailTitleEt.setText(data.name)
                     // 카테고리 색
                     color = data.color
-                    Log.e("CategoryColor", "data.color = ${data.color}")
-                    for (i: Int in defaultColorList.indices) {
-                        if (data.color == defaultColorList[i]) {
+                    for (i: Int in 0 until 4) {
+                        if (data.color == categoryColorArray[i]) {
                             // 기본 카테고리 체크 표시
                             checkList[i].visibility = View.VISIBLE
                             // 기본 색상은 paletteId 1번부터 시작
