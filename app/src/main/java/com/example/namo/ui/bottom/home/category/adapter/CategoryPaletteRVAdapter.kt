@@ -31,7 +31,7 @@ class CategoryPaletteRVAdapter(
         val binding: ItemPaletteColorBinding = ItemPaletteColorBinding.inflate(
             LayoutInflater.from(viewGroup.context), viewGroup, false)
 
-        Log.d("bori", "최초 initColor: $currentSelectPosition")
+//        Log.d("bori", "최초 initColor: $currentSelectPosition")
 
         return ViewHolder(binding)
     }
@@ -44,7 +44,7 @@ class CategoryPaletteRVAdapter(
                 currentSelectPosition = position.toInt()
                 // 팔레트 색상 내에서 단일 선택
                 if (previousSelectPosition != -1) {
-                    Log.d("shine", "currentPosition: ${currentSelectPosition}, prevPosition: $previousSelectPosition")
+//                    Log.d("shine", "currentPosition: ${currentSelectPosition}, prevPosition: $previousSelectPosition")
                     holder.bind(colorList[position])
                     notifyItemChanged(previousSelectPosition)
                 }
@@ -54,7 +54,7 @@ class CategoryPaletteRVAdapter(
                 mItemClickListener.onItemClick(position, colorList[position])
 
                 previousSelectPosition = currentSelectPosition
-                Log.d("CategoryPaletteRVA", "selectedPosition: $position")
+//                Log.d("CategoryPaletteRVA", "selectedPosition: $position")
             }
         }
     }
