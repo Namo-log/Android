@@ -16,7 +16,6 @@ class DiaryService {
     private lateinit var diaryView: DiaryView
     private lateinit var diaryDetailView: DiaryDetailView
     private lateinit var getMonthDiaryView: GetMonthDiaryView
-    private lateinit var getDayDiaryView: GetDayDiaryView
 
     fun addDiaryView(diaryView: DiaryView) {
         this.diaryView = diaryView
@@ -28,10 +27,6 @@ class DiaryService {
 
     fun getMonthDiaryView(getMonthDiaryView: GetMonthDiaryView) {
         this.getMonthDiaryView = getMonthDiaryView
-    }
-
-    fun getDayDiaryView(getDayDiaryView: GetDayDiaryView) {
-        this.getDayDiaryView = getDayDiaryView
     }
 
     /** 기록 추가 **/
@@ -56,12 +51,12 @@ class DiaryService {
                                 resp, localId
                             )
                         }
-                        else -> diaryView.onAddDiaryFailure(localId, response.toString())
+                        else -> diaryView.onAddDiaryFailure(response.toString())
                     }
                 }
 
                 override fun onFailure(call: Call<DiaryResponse.DiaryAddResponse>, t: Throwable) {
-                    diaryView.onAddDiaryFailure(localId, t.message.toString())
+                    diaryView.onAddDiaryFailure(t.message.toString())
                 }
             })
     }
@@ -70,6 +65,7 @@ class DiaryService {
     /** 기록 수정 **/
     fun editDiary(
         localId: Long,
+        serverId:Long,
         images: List<MultipartBody.Part>?,
         content: RequestBody?,
         scheduleIdx: RequestBody
@@ -87,16 +83,16 @@ class DiaryService {
                         200 -> if (resp != null) {
                             diaryDetailView.onEditDiarySuccess(
                                 resp,
-                                localId
+                                localId,serverId
                             )
                         }
-                        else -> diaryDetailView.onEditDiaryFailure(localId, response.toString())
+                        else -> diaryDetailView.onEditDiaryFailure(response.toString())
 
                     }
                 }
 
                 override fun onFailure(call: Call<DiaryResponse.DiaryEditResponse>, t: Throwable) {
-                    diaryDetailView.onEditDiaryFailure(localId, t.message.toString())
+                    diaryDetailView.onEditDiaryFailure(t.message.toString())
                 }
             })
     }
@@ -123,7 +119,6 @@ class DiaryService {
                             )
                         }
                         else -> diaryDetailView.onDeleteDiaryFailure(
-                            localId,
                             response.code().toString()
                         )
                     }
@@ -133,7 +128,7 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryDeleteResponse>,
                     t: Throwable
                 ) {
-                    diaryDetailView.onDeleteDiaryFailure(localId, t.message.toString())
+                    diaryDetailView.onDeleteDiaryFailure(t.message.toString())
                 }
             })
     }
@@ -161,10 +156,7 @@ class DiaryService {
                             )
                         }
                         else -> getMonthDiaryView.onGetMonthDiaryFailure(
-                            month,
-                            response.toString(),
-                            page,
-                            size
+                            response.toString()
                         )
                     }
 
@@ -175,49 +167,12 @@ class DiaryService {
                     t: Throwable
                 ) {
                     getMonthDiaryView.onGetMonthDiaryFailure(
-                        month,
-                        t.message.toString(),
-                        page,
-                        size
+                        t.message.toString()
                     )
                 }
             })
     }
 
-    /** 기록 일 별 조회 **/
-    fun getDayDiary(
-        localId: Long,
-        scheduleIdx: Long,
-    ) {
-        diaryRetrofitInterface.getDayDiary(scheduleIdx)
-            .enqueue(object : Callback<DiaryResponse.DiaryGetDayResponse> {
-
-                @SuppressLint("SuspiciousIndentation")
-                override fun onResponse(
-                    call: Call<DiaryResponse.DiaryGetDayResponse>,
-                    response: Response<DiaryResponse.DiaryGetDayResponse>
-                ) {
-                    val resp: DiaryResponse.DiaryGetDayResponse? = response.body()
-                    when (response.code()) {
-                        200 -> resp?.result?.let {
-                            getDayDiaryView.onGetDayDiarySuccess(
-                                resp, scheduleIdx
-                            )
-                        }
-                        else ->
-                            getDayDiaryView.onGetDayDiaryFailure(localId, response.toString())
-                    }
-
-                }
-
-                override fun onFailure(
-                    call: Call<DiaryResponse.DiaryGetDayResponse>,
-                    t: Throwable
-                ) {
-                    getDayDiaryView.onGetDayDiaryFailure(localId, t.message.toString())
-                }
-            })
-    }
 }
 
 

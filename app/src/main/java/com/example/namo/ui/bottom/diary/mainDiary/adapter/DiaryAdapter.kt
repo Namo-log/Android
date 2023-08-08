@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,12 +29,16 @@ class DiaryAdapter(
     private val items = ArrayList<DiaryItem>(initialItems)
 
     @SuppressLint("NotifyDataSetChanged")
-    fun submitList(items: List<DiaryItem>) {
+    fun submitPersonalList(items: List<DiaryItem>) {
         this.items.clear()
         this.items.addAll(items)
         notifyDataSetChanged()
     }
 
+    fun submitGroupList(){
+        this.items.clear()
+    }
+    fun
     /** 기록 아이템 클릭 리스너 **/
     interface DiaryEditInterface {
         fun onEditClicked(allData: DiaryItem.Content)
@@ -117,7 +120,7 @@ class DiaryAdapter(
                 val repo = DiaryRepository(context)
                 CoroutineScope(Dispatchers.Main).launch {
 
-                    val categoryIdx = if (item.event_category_server_idx == 0L) item.event_category_idx else item.event_category_server_idx
+                    val categoryIdx = item.event_category_idx
                     val category = repo.getCategoryId(categoryIdx)
 
                     context.resources?.let {

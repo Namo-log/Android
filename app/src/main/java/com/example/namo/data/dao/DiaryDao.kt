@@ -1,19 +1,21 @@
 package com.example.namo.data.dao
 
 import androidx.room.*
+import com.example.namo.R
 import com.example.namo.data.entity.diary.Diary
 import com.example.namo.data.entity.diary.DiaryEvent
+import com.example.namo.data.entity.home.Event
 
 @Dao
 interface DiaryDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertDiary(diary: Diary)
 
     @Update
     fun updateDiary(diary: Diary)
 
-    @Query("DELETE FROM diaryTable WHERE diaryLocalId=:eventId")
+    @Query("DELETE FROM diaryTable WHERE diaryId=:eventId")
     fun deleteDiary(eventId: Long)
 
     @Query("UPDATE calendar_event_table SET has_diary= :hasDiary WHERE eventId =:scheduleIdx")
@@ -22,22 +24,27 @@ interface DiaryDao {
     @Query("UPDATE calendar_event_table SET has_diary= :hasDiary WHERE eventId =:scheduleIdx")
     fun deleteHasDiary(hasDiary: Int, scheduleIdx: Long)
 
-    @Query("SELECT * FROM diaryTable WHERE diaryLocalId=:scheduleId")
+    @Query("SELECT * FROM diaryTable WHERE diaryId=:scheduleId")
     fun getDiaryDaily(scheduleId: Long): Diary
 
     @Query(
-        "SELECT * FROM calendar_event_table JOIN diaryTable ON diaryLocalId = eventId " +
-                "WHERE strftime('%Y.%m', event_start/1000, 'unixepoch') = :yearMonth " +
-                "ORDER BY event_start DESC LIMIT :size OFFSET :page"
+        "SELECT * FROM calendar_event_table JOIN diaryTable ON diaryId = eventId " +
+                "WHERE strftime('%Y.%m', event_start, 'unixepoch') = :yearMonth AND diary_state != ${R.string.event_current_deleted} " +
+                "AND event_is_group = 0 ORDER BY event_start DESC LIMIT :size OFFSET :page"
     )
     fun getDiaryEventList(yearMonth: String, page: Int, size: Int): List<DiaryEvent>
 
-
-    @Query("UPDATE diaryTable SET diary_upload=:isUpload, diary_state=:state WHERE diaryLocalId=:localId")
-    fun updateDiaryAfterUpload(localId: Long, isUpload: Int, state: String)
+    @Query("UPDATE diaryTable SET diary_upload=:isUpload, serverId=:serverId, diary_state=:state WHERE diaryId=:localId")
+    fun updateDiaryAfterUpload(localId: Long, serverId: Long, isUpload: Int, state: String)
 
     @Query("SELECT * FROM diaryTable WHERE diary_upload = 0")
     fun getNotUploadedDiary(): List<Diary>
+
+    @Query("UPDATE diaryTable SET diaryId=:eventId WHERE serverId=:scheduleId")
+    fun downloadFromServer(eventId: Long, scheduleId: Long)
+
+    @Query("SELECT * FROM calendar_event_table")
+    fun getAllEvent(): List<Event>
 
 
 }

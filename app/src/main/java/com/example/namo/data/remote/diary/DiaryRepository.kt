@@ -17,9 +17,9 @@ import com.example.namo.data.entity.diary.Diary
 import com.example.namo.data.entity.diary.DiaryEvent
 import com.example.namo.data.entity.diary.DiaryItem
 import com.example.namo.data.entity.home.Category
+import com.example.namo.data.entity.home.Event
 import com.example.namo.utils.NetworkManager
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -28,13 +28,11 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
-import java.text.ParseException
-import java.text.SimpleDateFormat
 
 
 class DiaryRepository(
     val context: Context,
-) : DiaryView, DiaryDetailView, GetMonthDiaryView, GetDayDiaryView {
+) : DiaryView, DiaryDetailView, GetMonthDiaryView {
 
     private val diaryService = DiaryService()
     private val db = NamoDatabase.getInstance(context)
@@ -44,25 +42,15 @@ class DiaryRepository(
     private val scope = CoroutineScope(IO)
 
     private lateinit var notUploaded: List<Diary>
+    private var callback: DiaryModifyCallback? = null
 
-    private var callback: DiaryCallback? = null
-    private var callback2: DiaryModifyCallback? = null
+    private val failList = ArrayList<Diary>()
 
-
-    fun setCallBack(callback: DiaryCallback) {
+    fun setCallBack(callback: DiaryModifyCallback) {
         this.callback = callback
     }
 
-    fun setCallBack2(callback: DiaryModifyCallback) {
-        this.callback2 = callback
-    }
-
-    interface DiaryCallback {
-        fun onGetDiaryItems(diaryItem: List<DiaryItem>)
-    }
-
     interface DiaryModifyCallback {
-        fun onGetDiary(diary: Diary)
         fun onModify()
         fun onDelete()
     }
@@ -76,29 +64,24 @@ class DiaryRepository(
     ) {
 
         scope.launch {
-            val diary = Diary(diaryLocalId, content, images)
+            val diary = Diary(
+                diaryLocalId,
+                serverId,
+                content,
+                images,
+                R.string.event_current_added.toString()
+            )
             diaryDao.insertDiary(diary)
             updateHasDiary(diaryLocalId)
         } // 일단 roomdb에 다이어리 데이터 추가함
 
-        if (!NetworkManager.checkNetworkState(context)) {
-            // 인터넷 연결 안 됨
-            // 룸디비에 isUpload, serverId, state 업데이트하기
-            scope.launch {
-                diaryDao.updateDiaryAfterUpload(
-                    diaryLocalId,
-                    0,
-                    R.string.event_current_added.toString()
-                )
-            }
+        if (NetworkManager.checkNetworkState(context)) {
 
-            Log.d("ADD_DIARY", "WIFI ERROR")
+            // 와이파이 연결 시, 서버에 데이터 추가
+            addDiaryToServer(diaryLocalId, serverId, content, images)
+            diaryService.addDiaryView(this)
 
-            return
         }
-
-        addDiaryToServer(diaryLocalId, serverId, content, images)
-        diaryService.addDiaryView(this)
 
     }
 
@@ -130,25 +113,19 @@ class DiaryRepository(
         scope.launch {
             diaryDao.updateDiaryAfterUpload(
                 localId,
+                response.result.scheduleIdx,
                 1,
                 R.string.event_current_default.toString()
             )
         }
 
-        Log.d("addDiaryServer", response.result.toString())
+        Log.d("addDiaryServerSuccess", response.result.toString())
     }
 
-    override fun onAddDiaryFailure(localId: Long, message: String) {
+    override fun onAddDiaryFailure(message: String) {
 
-        scope.launch {
-            diaryDao.updateDiaryAfterUpload(
-                localId,
-                0,
-                R.string.event_current_added.toString()
-            )
-        }
-
-        Log.d("addDiaryServer", message)
+        printNotUploaded()
+        Log.d("addDiaryServerFailure", message)
     }
 
 
@@ -161,30 +138,26 @@ class DiaryRepository(
     ) {
 
         scope.launch {
-            val diary = images?.let { Diary(diaryLocalId, content, it) }
+            val diary = images?.let {
+                Diary(
+                    diaryLocalId,
+                    serverId,
+                    content,
+                    it,
+                    R.string.event_current_edited.toString()
+                )
+            }
             if (diary != null) {
                 diaryDao.updateDiary(diary)
             }
         }
 
-        if (!NetworkManager.checkNetworkState(context)) {
-            //인터넷 연결 안 됨
-            //룸디비에 isUpload, serverId, state 업데이트하기
-            scope.launch {
-                diaryDao.updateDiaryAfterUpload(
-                    diaryLocalId,
-                    0,
-                    R.string.event_current_edited.toString()
-                )
-            }
+        if (NetworkManager.checkNetworkState(context)) {
 
-            Log.d("EDIT_DIARY", "WIFI ERROR ")
-
-            return
+            editDiaryToServer(diaryLocalId, serverId, content, images)
+            diaryService.setDiaryView(this)
         }
 
-        editDiaryToServer(diaryLocalId, serverId, content, images)
-        diaryService.setDiaryView(this)
     }
 
 
@@ -203,6 +176,7 @@ class DiaryRepository(
 
         diaryService.editDiary(
             localId,
+            scheduleId,
             imgList,
             contentRequestBody,
             scheduleIdRequestBody
@@ -211,32 +185,30 @@ class DiaryRepository(
     }
 
 
-    override fun onEditDiarySuccess(response: DiaryResponse.DiaryEditResponse, localId: Long) {
+    override fun onEditDiarySuccess(
+        response: DiaryResponse.DiaryEditResponse,
+        localId: Long,
+        serverId: Long
+    ) {
 
         scope.launch {
             diaryDao.updateDiaryAfterUpload(
                 localId,
+                serverId,
                 1,
                 R.string.event_current_default.toString()
             )
         }
 
-        callback2?.onModify()
+        callback?.onModify()
         Log.d("editDiaryServerSuccess", response.result)
     }
 
 
-    override fun onEditDiaryFailure(localId: Long, message: String) {
+    override fun onEditDiaryFailure(message: String) {
 
-        scope.launch {
-            diaryDao.updateDiaryAfterUpload(
-                localId,
-                0,
-                R.string.event_current_edited.toString()
-            )
-        }
-
-        callback2?.onModify()
+        printNotUploaded()
+        callback?.onModify()
         Log.d("editDiaryServerFailure", message)
 
     }
@@ -256,9 +228,11 @@ class DiaryRepository(
         scope.launch {
             diaryDao.updateDiaryAfterUpload(
                 localId,
+                serverId,
                 0,
                 R.string.event_current_deleted.toString()
             )
+            deleteHasDiary(localId) // roomdb hasDiary 0으로 변경
         }  // 일단 delete 상태로 업로드
 
         if (!NetworkManager.checkNetworkState(context)) {
@@ -276,63 +250,66 @@ class DiaryRepository(
 
         scope.launch {
             diaryDao.deleteDiary(localId) // roomDB에서 삭제
-            diaryDao.updateDiaryAfterUpload(
-                localId,
-                1,
-                R.string.event_current_default.toString()
-            )
-            deleteHasDiary(localId) // roomdb hasDiary 0으로 변경
         }
 
-        callback2?.onDelete()
+        callback?.onDelete()
         Log.d("deleteDiary", response.result)
     }
 
 
     @SuppressLint("ResourceType")
-    override fun onDeleteDiaryFailure(localId: Long, message: String) {
+    override fun onDeleteDiaryFailure(message: String) {
 
-        val result = when (message) {
-            "500" -> "서버 오류"
-            else -> "error"
-        }
-
-        Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
-
-        callback2?.onDelete()
+        printNotUploaded()
+        callback?.onDelete()
         Log.d("deleteDiary", message)
     }
+
+    suspend fun getDiary(localId: Long): Diary = withContext(IO) {
+        return@withContext diaryDao.getDiaryDaily(localId)
+    }
+
+    suspend fun getDiaryList(yearMonth: String, page: Int, size: Int): List<DiaryItem> =
+        withContext(IO) {
+            val diaryEvent = diaryDao.getDiaryEventList(yearMonth, page, size)
+            return@withContext diaryEvent.toListItems()
+        }
 
 
     fun getUpload(eventServerId: Long) {
 
-    scope.launch {
+        scope.launch {
             notUploaded = diaryDao.getNotUploadedDiary()
 
             for (diary in notUploaded) {
 
-                when (diary.state) {
-                    R.string.event_current_added.toString() ->
+                if (diary.serverId == 0L) { // 서버 아이디 없는 것들
+                    if (diary.state == R.string.event_current_deleted.toString()) {
+                        return@launch
+                    } else {
                         diary.content?.let {
                             addDiaryToServer(
-                                diary.diaryLocalId,
+                                diary.diaryId,
                                 eventServerId,
                                 it,
                                 diary.images
                             )
                         }
-                    R.string.event_current_edited.toString() ->
+                    }
+                } else {
+
+                    if (diary.state == R.string.event_current_deleted.toString()) {
+                        deleteDiary(diary.diaryId, diary.serverId)
+                    } else {
                         diary.content?.let {
                             editDiaryToServer(
-                                diary.diaryLocalId,
-                                eventServerId,
+                                diary.diaryId,
+                                diary.serverId,
                                 it,
                                 diary.images
                             )
                         }
-                    R.string.event_current_deleted.toString() ->
-                        deleteDiary(diary.diaryLocalId, eventServerId)
-
+                    }
                 }
             }
         }
@@ -342,168 +319,54 @@ class DiaryRepository(
 
     }
 
+    fun getServerToRoom(yearMonth: String) {
 
-    /** get diary **/
-    fun setDiary(localId: Long, serverId: Long) {
-        if (!NetworkManager.checkNetworkState(context)) {
-
-            scope.launch {
-                val diary = withContext(IO) {
-                    diaryDao.getDiaryDaily(localId)
-                }
-
-                withContext(Dispatchers.Main) {
-                    callback2?.onGetDiary(diary)
-
-                }
-            }
-
-        } else {
-
-            diaryService.getDayDiary(localId, serverId)
-            diaryService.getDayDiaryView(this)
-
-        }
-    }
-
-    override fun onGetDayDiarySuccess(response: DiaryResponse.DiaryGetDayResponse, serverId: Long) {
-
-        val diary = Diary(serverId, response.result.content, response.result.imgUrl)
-        callback2?.onGetDiary(diary)
-
-        Log.d("getDayDiary", "success")
-
-    }
-
-    override fun onGetDayDiaryFailure(localId: Long, message: String) {
-
-        scope.launch {
-            val diary = withContext(IO) {
-                diaryDao.getDiaryDaily(localId)
-            }
-
-            withContext(Dispatchers.Main) {
-                callback2?.onGetDiary(diary)
-
-            }
-        }
-
-        Log.d("getDayDiary", message)
-    }
-
-    fun getDiaryList(yearMonth: String, page: Int, size: Int) {
-
-        if (!NetworkManager.checkNetworkState(context)) {
-
-            scope.launch {
-
-                val diaryItems = withContext(IO) {
-                    getDiaryListLocal(yearMonth, page, size)
-                }
-                withContext(Dispatchers.Main) {
-                    callback?.onGetDiaryItems(diaryItems)
-                }
-            }
-
-        } else {
-            getDiaryListFromServer(yearMonth, page, size)
-
-        }
-    }
-
-    private fun getDiaryListLocal(yearMonth: String, page: Int, size: Int): List<DiaryItem> {
-
-        val diaryEvent = diaryDao.getDiaryEventList(yearMonth, page, size)
-        return diaryEvent.toListItems()
-    }
-
-
-    private fun getDiaryListFromServer(yearMonth: String, page: Int, size: Int) {
-
-        val yearMonthSplit = yearMonth.split(".")
-        val year = yearMonthSplit[0]
-        val month = yearMonthSplit[1].removePrefix("0")
-        val formatYearMonth = "$year,$month"
-
-        diaryService.getMonthDiary(formatYearMonth, page, size)
+        diaryService.getMonthDiary(yearMonth, 0, 15)
         diaryService.getMonthDiaryView(this)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override fun onGetMonthDiarySuccess(response: DiaryResponse.DiaryGetMonthResponse) {
-        val diaryList = mutableListOf<DiaryEvent>()
 
         for (schedules in response.result.content) {
 
-            val item =
-                DiaryEvent(
-                    eventId = 0L,
-                    event_title = schedules.title,
-                    event_start = dateTimeToMillSec(schedules.startDate),
-                    event_category_idx = 0,
-                    event_place_name = schedules.placeName,
-                    content = schedules.content,
-                    images = schedules.imgUrl,
-                    event_server_idx = schedules.scheduleIdx,
-                    event_category_server_idx = schedules.categoryId
-                )
-
-            diaryList.add(item)
-
+            scope.launch {
+                val diary = Diary(0, schedules.scheduleIdx, schedules.content, schedules.imgUrl)
+                diaryDao.insertDiary(diary)
+            }
         }
-
-        val diaryItems = diaryList.toListItems()
-        callback?.onGetDiaryItems(diaryItems)
 
         Log.d("getMonthDiary", response.result.content.toString())
 
     }
 
-    @SuppressLint("SimpleDateFormat")
-    fun dateTimeToMillSec(dateTime: String): Long {
-        var timeInMilliseconds: Long = 0
-        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-        try {
-            val mDate = sdf.parse(dateTime)
-            if (mDate != null) {
-                timeInMilliseconds = mDate.time
-            }
-        } catch (e: ParseException) {
-            e.printStackTrace()
+    fun updateDownloadEventId() {
+        scope.launch {
+            val allEvent=diaryDao.getAllEvent()
+
+            Log.d("ewer",allEvent.toString())
+//            allEvent.map { it->
+//                diaryDao.downloadFromServer(it.eventId, it.serverIdx)
+//            }
         }
-        return timeInMilliseconds
     }
 
-    override fun onGetMonthDiaryFailure(yearMonth: String, message: String, page: Int, size: Int) {
 
-        val yearMonthSplit = yearMonth.split(",")
-        val year = yearMonthSplit[0]
-        val month = yearMonthSplit[1].padStart(2, '0')
-        val formatYearMonth = "$year.$month"
-
-        scope.launch {
-
-            val diaryItems = withContext(IO) {
-                getDiaryListLocal(formatYearMonth, page, size)
-            }
-            withContext(Dispatchers.Main) {
-                callback?.onGetDiaryItems(diaryItems)
-            }
-        }
+    override fun onGetMonthDiaryFailure(message: String) {
 
         Log.d("getMonthDiary", message)
     }
 
     /** 같은 날짜끼리 묶어서 그룹 헤더로 추가 **/
-    fun List<DiaryEvent>.toListItems(): List<DiaryItem> {
+    private fun List<DiaryEvent>.toListItems(): List<DiaryItem> {
         val result = arrayListOf<DiaryItem>() // 결과를 리턴할 리스트
 
         var groupHeaderDate: Long = 0 // 그룹날짜
         this.forEach { task ->
             // 날짜가 달라지면 그룹 헤더를 추가
 
-            if (groupHeaderDate != task.event_start) {
-                result.add(DiaryItem.Header(task.event_start))
+            if (groupHeaderDate * 1000 != task.event_start * 1000) {
+                result.add(DiaryItem.Header(task.event_start * 1000))
             }
             //  task 추가
 
@@ -559,4 +422,12 @@ class DiaryRepository(
         return result
     }
 
+    private fun printNotUploaded() {
+        scope.launch {
+            failList.clear()
+            failList.addAll(diaryDao.getNotUploadedDiary() as ArrayList<Diary>)
+        }
+
+        Log.d("diary", "Not uploaded Diary : $failList")
+    }
 }

@@ -44,11 +44,5 @@ interface DiaryInterface {
     ): Call<DiaryResponse.DiaryGetMonthResponse>
 
 
-    /**  기록 일 별 조회 **/
-    @GET("/schedules/diary/day/{scheduleId}")
-    fun getDayDiary(
-        @Path("scheduleId") scheduleId: Long
-    ): Call<DiaryResponse.DiaryGetDayResponse>
-
 }
 

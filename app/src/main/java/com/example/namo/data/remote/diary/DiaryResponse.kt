@@ -10,16 +10,14 @@ class DiaryResponse {
         val result: GetScheduleIdx
     ) : BaseResponse()
 
-    data class GetScheduleIdx(
-        val scheduleIdx: Long
-    )
-
-
     /** 기록 수정 **/
     data class DiaryEditResponse(
         val result: String
     ) : BaseResponse()
 
+    data class GetScheduleIdx(
+        val scheduleIdx: Long
+    )
 
     /** 기록 삭제 **/
     data class DiaryDeleteResponse(
@@ -51,14 +49,5 @@ class DiaryResponse {
         @SerializedName("placeName") val placeName: String
     )
 
-    /** 기록 일 별 조회 **/
-    data class DiaryGetDayResponse(
-        val result: DayDiaryDto
-    ) : BaseResponse()
-
-    data class DayDiaryDto(
-        @SerializedName("texts") val content: String?,
-        @SerializedName("urls") val imgUrl: List<String>?
-    )
 }
 

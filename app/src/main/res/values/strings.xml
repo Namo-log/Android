@@ -96,5 +96,7 @@
     <string name="event_current_edited">EDITED</string>
     <string name="event_current_deleted">DELETED</string>
     <string name="more_view">더보기</string>
+    <string name="diary_personal">개인</string>
+    <string name="diary_group">모임</string>
 
 </resources>
