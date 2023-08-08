@@ -52,10 +52,6 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
     var selectedPalettePosition: Int? = null // 팔레트 -> 기본 색상 선택 시 사용될 변수
 
-    private val defaultColorList = listOf( // 기본 색상 리스트
-        R.color.schedule, R.color.schedule_plan, R.color.schedule_parttime, R.color.schedule_group
-    )
-
     private lateinit var categoryList : List<CardView>
     private lateinit var checkList : List<ImageView>
 
@@ -102,8 +98,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                     else {
                         insertData()
                     }
-                    // 화면 이동
-                    moveToSettingFrag(isEditMode)
+//                    // 화면 이동
+//                    moveToSettingFrag(isEditMode)
                 }
             }
         }
@@ -122,6 +118,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             // 인터넷 연결 안 됨
             // 룸디비에 isUpload, serverId, state 업데이트하기
             val thread = Thread {
+                category = db.categoryDao.getCategoryWithId(categoryId)
                 db.categoryDao.updateCategoryAfterUpload(categoryId, 0, category.serverIdx, state)
                 failList.clear()
                 failList.addAll(db.categoryDao.getNotUploadedCategory() as ArrayList<Category>)
@@ -145,7 +142,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             }
             R.string.event_current_edited.toString() -> {
                 // 카테고리 수정
-                CategoryService(this@CategoryDetailFragment).tryPatchCategory(category.categoryIdx, CategoryBody(name, paletteId, share))
+                CategoryService(this@CategoryDetailFragment).tryPatchCategory(serverId, CategoryBody(name, paletteId, share))
             }
             else -> {
                 Log.d("CategoryDetailFrag", "서버 업로드 중 state 오류")
@@ -160,7 +157,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         Thread{
             category = Category(0, name, color, share)
             categoryId = db.categoryDao.insertCategory(category)
-            Log.d("CategoryDetailFrag", "Insert Category : $categoryId")
+            Log.d("CategoryDetailFrag", "Insert roomCategory : $categoryId")
         }.start()
         // 서버 통신
         uploadToServer(R.string.event_current_added.toString())
@@ -173,7 +170,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             name = binding.categoryDetailTitleEt.text.toString()
             category = Category(categoryId, name, color, share)
             db.categoryDao.updateCategory(category)
-            Log.d("CategoryDetailFrag", "updateCategory: ${db.categoryDao.getCategoryWithId(categoryId)}")
+            Log.d("CategoryDetailFrag", "update roomCategory: ${db.categoryDao.getCategoryWithId(categoryId)}")
         }
         thread.start()
         try {
@@ -183,7 +180,6 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         }
         // 서버 통신
         uploadToServer(R.string.event_current_edited.toString())
-//        CategoryService(this@CategoryDetailFragment).tryPatchCategory(serverId, CategoryBody(name, paletteId, share))
 
 //        updateEventWithCategory()
     }
@@ -322,8 +318,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                     categoryDetailTitleEt.setText(data.name)
                     // 카테고리 색
                     color = data.color
-                    for (i: Int in defaultColorList.indices) {
-                        if (data.color == defaultColorList[i]) {
+                    for (i: Int in 0 until 4) {
+                        if (data.color == categoryColorArray[i]) {
                             // 기본 카테고리 체크 표시
                             checkList[i].visibility = View.VISIBLE
                             // 기본 색상은 paletteId 1번부터 시작
@@ -334,7 +330,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                     share = data.share
                 }
 
-                Log.e("CategoryDetailFrag", "categoryId: ${categoryId}, serverId: ${serverId}")
+                Log.e("CategoryDetailFrag", "roomId: ${categoryId}, serverId: ${serverId}")
             } catch (e: JsonParseException) { // 파싱이 안 될 경우
                 e.printStackTrace()
             }
@@ -364,6 +360,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             R.string.event_current_default.toString() -> {
                 val thread = Thread {
                     db.categoryDao.updateCategoryAfterUpload(categoryId, 1, result!!.categoryId, state)
+                    db.categoryDao.updateCategory(category.copy(serverIdx = result.categoryId))
                 }
                 thread.start()
                 try {
@@ -371,7 +368,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                 } catch ( e: InterruptedException) {
                     e.printStackTrace()
                 }
-                Log.e("CategoryDetailFrag", "serverId 업데이트 성공, serverId: ${category.serverIdx}, categoryId: ${result!!.categoryId}")
+//                Log.e("CategoryDetailFrag", "serverId 업데이트 성공, 업데이트 serverId: ${category.serverIdx}, 실제: ${result!!.categoryId}")
             }
             // 서버 업로드 실패
             else -> {
@@ -390,9 +387,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             }
         }
 
-//        val thread = Thread {
-//            db.categoryDao.updateCategoryAfterUpload(categoryId, 1, result.categoryId, state)
-//        }
+        // 화면 이동
+        moveToSettingFrag(isEditMode)
     }
 
 

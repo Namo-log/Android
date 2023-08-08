@@ -125,7 +125,7 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
         thread.start()
 
         // 서버 통신
-        CategorySettingService(this@CategorySettingFragment).tryGetAllCategory()
+//        CategorySettingService(this@CategorySettingFragment).tryGetAllCategory()
     }
 
     private fun saveClickedData(dataSet: Category) {
