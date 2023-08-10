@@ -5,11 +5,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
-import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
@@ -17,12 +15,9 @@ import com.example.namo.data.entity.diary.Diary
 import com.example.namo.data.entity.diary.DiaryEvent
 import com.example.namo.data.entity.diary.DiaryItem
 import com.example.namo.data.entity.home.Category
-import com.example.namo.data.entity.home.Event
 import com.example.namo.utils.NetworkManager
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -32,7 +27,7 @@ import java.io.File
 
 class DiaryRepository(
     val context: Context,
-) : DiaryView, DiaryDetailView, GetMonthDiaryView {
+) : DiaryView, DiaryDetailView {
 
     private val diaryService = DiaryService()
     private val db = NamoDatabase.getInstance(context)
@@ -82,7 +77,6 @@ class DiaryRepository(
             diaryService.addDiaryView(this)
 
         }
-
     }
 
     private fun addDiaryToServer(
@@ -200,7 +194,10 @@ class DiaryRepository(
             )
         }
 
-        callback?.onModify()
+        runBlocking {
+            callback?.onModify()
+        }
+
         Log.d("editDiaryServerSuccess", response.result)
     }
 
@@ -276,28 +273,18 @@ class DiaryRepository(
         }
 
 
-    fun getUpload(eventServerId: Long) {
+    suspend fun uploadDiaryToServer() {
 
         scope.launch {
             notUploaded = diaryDao.getNotUploadedDiary()
-
+        }.join()
             for (diary in notUploaded) {
 
                 if (diary.serverId == 0L) { // 서버 아이디 없는 것들
                     if (diary.state == R.string.event_current_deleted.toString()) {
-                        return@launch
-                    } else {
-                        diary.content?.let {
-                            addDiaryToServer(
-                                diary.diaryId,
-                                eventServerId,
-                                it,
-                                diary.images
-                            )
-                        }
+                        return
                     }
                 } else {
-
                     if (diary.state == R.string.event_current_deleted.toString()) {
                         deleteDiary(diary.diaryId, diary.serverId)
                     } else {
@@ -312,50 +299,35 @@ class DiaryRepository(
                     }
                 }
             }
-        }
 
         diaryService.setDiaryView(this)
-        diaryService.addDiaryView(this)
-
     }
 
-    fun getServerToRoom(yearMonth: String) {
+    fun postDiaryToServer(eventServerId: Long, eventId: Long) {
 
-        diaryService.getMonthDiary(yearMonth, 0, 15)
-        diaryService.getMonthDiaryView(this)
-    }
+        scope.launch {
+            notUploaded = diaryDao.getNotUploadedDiary()
 
+            for (diary in notUploaded) {
 
-    override fun onGetMonthDiarySuccess(response: DiaryResponse.DiaryGetMonthResponse) {
-
-        for (schedules in response.result.content) {
-
-            scope.launch {
-                val diary = Diary(0, schedules.scheduleIdx, schedules.content, schedules.imgUrl)
-                diaryDao.insertDiary(diary)
+                if (diary.serverId == 0L) { // 서버 아이디 없는 것들
+                    if (diary.state !== R.string.event_current_deleted.toString() && eventId == diary.diaryId) {
+                        diary.content?.let {
+                            addDiaryToServer(
+                                diary.diaryId,
+                                eventServerId,
+                                it,
+                                diary.images
+                            )
+                        }
+                    }
+                }
             }
         }
 
-        Log.d("getMonthDiary", response.result.content.toString())
-
+        diaryService.addDiaryView(this)
     }
 
-    fun updateDownloadEventId() {
-        scope.launch {
-            val allEvent=diaryDao.getAllEvent()
-
-            Log.d("ewer",allEvent.toString())
-//            allEvent.map { it->
-//                diaryDao.downloadFromServer(it.eventId, it.serverIdx)
-//            }
-        }
-    }
-
-
-    override fun onGetMonthDiaryFailure(message: String) {
-
-        Log.d("getMonthDiary", message)
-    }
 
     /** 같은 날짜끼리 묶어서 그룹 헤더로 추가 **/
     private fun List<DiaryEvent>.toListItems(): List<DiaryItem> {

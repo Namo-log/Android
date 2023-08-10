@@ -40,11 +40,7 @@ interface DiaryDao {
     @Query("SELECT * FROM diaryTable WHERE diary_upload = 0")
     fun getNotUploadedDiary(): List<Diary>
 
-    @Query("UPDATE diaryTable SET diaryId=:eventId WHERE serverId=:scheduleId")
-    fun downloadFromServer(eventId: Long, scheduleId: Long)
-
     @Query("SELECT * FROM calendar_event_table")
     fun getAllEvent(): List<Event>
-
 
 }

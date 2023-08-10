@@ -18,7 +18,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
@@ -119,7 +118,7 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
         }
 
         binding.diaryBackIv.setOnClickListener {
-            findNavController().popBackStack()
+            findNavController().navigate(R.id.action_diaryModifyFragment_to_diaryFragment)
             hideBottomNavigation(false)
         }
 
@@ -301,12 +300,12 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
     }
 
     override fun onModify() {
-        view?.findNavController()?.popBackStack()
+        findNavController().navigate(R.id.action_diaryModifyFragment_to_diaryFragment)
         hideBottomNavigation(false)
     }
 
     override fun onDelete() {
-        view?.findNavController()?.navigate(R.id.diaryFragment)
+        findNavController().navigate(R.id.action_diaryModifyFragment_to_diaryFragment)
         hideBottomNavigation(false)
     }
 

@@ -173,9 +173,6 @@ class CalendarMonthFragment : Fragment() {
                 val bundle=Bundle()
                 bundle.putSerializable("event",event)
 
-                val diaryFrag= DiaryAddFragment()
-                diaryFrag.arguments=bundle
-
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
             }
             override fun onEditClicked(event: Event) {
@@ -183,8 +180,6 @@ class CalendarMonthFragment : Fragment() {
                 val bundle=Bundle()
                 bundle.putSerializable("event",event)
 
-                val editFrag= DiaryModifyFragment()
-                editFrag.arguments=bundle
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryModifyFragment,bundle)
             }
         })

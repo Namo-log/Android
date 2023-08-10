@@ -98,5 +98,6 @@
     <string name="more_view">더보기</string>
     <string name="diary_personal">개인</string>
     <string name="diary_group">모임</string>
+    <string name="diary_add_place">장소 추가</string>
 
 </resources>

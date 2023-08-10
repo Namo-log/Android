@@ -16,6 +16,4 @@ data class Diary(
     var state: String = R.string.event_current_default.toString(),
     @ColumnInfo(name = "diary_upload")
     var isUpload: Int = 0,
-
-
 )

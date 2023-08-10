@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 /** dummy **/
 data class DiaryGroupEvent(
     @PrimaryKey(autoGenerate = true)
-    val place: String? = "",
-    val pay: Int = 0,
-    var imgs: List<String>?
+    var place: String? = "",
+    var pay: Int = 0,
+    var imgs: ArrayList<String?>
 ) :java.io.Serializable
 
 

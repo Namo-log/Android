@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!-- 다이어리 리스트 화면 (바텀네비) -->
+<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/framelayout"
@@ -25,54 +24,50 @@
             android:id="@+id/groupdiarytest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="30dp"
             android:text="groupDiaryTest"
             android:textSize="15sp"
-            app:layout_constraintEnd_toStartOf="@id/diary_switch_btn"
+            app:layout_constraintEnd_toStartOf="@id/tabLayout"
             app:layout_constraintTop_toTopOf="@id/diary_month" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/diary_switch_btn"
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:checked="false"
-            android:textOff="@string/diary_personal"
-            android:textOn="@string/diary_group"
-            android:textSize="15sp"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:thumb="@drawable/thumb_selector"
-            app:showText="true"
-            app:track="@drawable/track_selector"
+            android:layout_height="33dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/tab_corner_bg"
+            app:layout_constraintBottom_toBottomOf="@id/diary_month"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/diary_month"
-            app:layout_constraintBottom_toBottomOf="@id/diary_month"/>
+            app:tabBackground="@drawable/tab_layout_selector"
+            app:tabIndicator="@color/transparent"
+            app:tabMode="fixed"
+            app:tabRippleColor="@color/transparent"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextColor="@color/textGray">
 
-        <TextView
-            android:id="@+id/diary_list_empty_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="메모가 없습니다. 메모를 추가해 보세요!"
-            android:visibility="visible"
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/diary_personal" />
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/diary_group" />
+
+        </com.google.android.material.tabs.TabLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewpager2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/diary_month" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/diary_list_rv"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="15dp"
-            android:background="@color/white"
-            android:orientation="vertical"
-            android:visibility="gone"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/diary_month"
-            tools:listitem="@layout/item_diary_list" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
