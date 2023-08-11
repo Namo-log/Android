@@ -171,4 +171,29 @@ class MoimService {
 
             })
     }
+
+    fun updateMoimName(
+        body: UpdateMoimNameBody
+    ) {
+        moimRetrofitInterface.updateMoimName(body)
+            .enqueue(object : Callback<AddMoimResponse> {
+                override fun onResponse(
+                    call: Call<AddMoimResponse>,
+                    response: Response<AddMoimResponse>
+                ) {
+                    when(response.code()) {
+                        200 -> deleteMoimMemberView.onUpdateMoimNameSuccess(response.body() as AddMoimResponse)
+                        else -> {
+                            Log.d("UpdateMoimName", "Success but error")
+                            deleteMoimMemberView.onDeleteMoimMemberFailure("통신 중 200 외 기타 코드")
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<AddMoimResponse>, t: Throwable) {
+                    Log.d("UpdateMoimName", "onFailure")
+                    deleteMoimMemberView.onUpdateMoimNameFailure(t.message ?: "통신 오류")
+                }
+            })
+    }
 }

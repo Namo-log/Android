@@ -32,6 +32,12 @@ interface MoimRetrofitInterface {
         @Path("yearMonth") yearMonth : String
     ) : Call<GetMoimScheduleResponse>
 
+    // 모임 이름 바꾸기
+    @PATCH("moims/name")
+    fun updateMoimName(
+        @Body body: UpdateMoimNameBody
+    ) : Call<AddMoimResponse>
+
     @PATCH("moims/participate/{groupCode}")
     fun participateMoim(
         @Path("groupCode") groupCode : String

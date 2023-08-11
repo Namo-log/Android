@@ -52,3 +52,8 @@ data class ErrorResponse(
     val errorMessage : String,
     val errorCode : Int
 )
+
+data class UpdateMoimNameBody(
+    val moimId: Long,
+    val moimName: String
+)

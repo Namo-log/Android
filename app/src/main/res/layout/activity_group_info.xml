@@ -82,10 +82,14 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/group_info_group_name_content_tv"
+                <EditText
+                    android:id="@+id/group_info_group_name_content_et"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:inputType="text"
+                    android:hint="그룹명 입력"
+                    android:textColorHint="@color/textGray"
                     android:text="나모 앱런칭 캘린더"
                     android:textColor="@color/textGray"
                     android:textSize="15sp"
