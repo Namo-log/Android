@@ -17,21 +17,29 @@ import com.example.namo.R
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.DiaryRepository
 import com.example.namo.databinding.FragmentDiaryPersonalMonthBinding
-import com.example.namo.utils.NetworkManager
 import kotlinx.coroutines.runBlocking
 
-class PersonalMonthFragment(val yearMonth: String) : Fragment() {
+class PersonalMonthFragment : Fragment() {
 
     private var _binding: FragmentDiaryPersonalMonthBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var repo: DiaryRepository
-
     private lateinit var diaryDateAdapter: DiaryAdapter
 
+    var yearMonth: String = ""
     var currentPage = 0 // 초기 페이지
-    val pageSize = 7 // 페이지 당 아이템 수
+    val pageSize = 10 // 페이지 당 아이템 수
     var isLoading = false
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        arguments?.let {
+            yearMonth = it.getString("yearMonth", "")
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -41,6 +49,7 @@ class PersonalMonthFragment(val yearMonth: String) : Fragment() {
     ): View {
 
         _binding = FragmentDiaryPersonalMonthBinding.inflate(inflater, container, false)
+
         repo = DiaryRepository(requireContext())
         Log.d("yearMonthPersonal", yearMonth)
 
@@ -152,6 +161,14 @@ class PersonalMonthFragment(val yearMonth: String) : Fragment() {
         val thread = Thread(r)
         thread.start()
 
+    }
+
+    companion object {
+        fun newInstance(yearMonth: String) = PersonalMonthFragment().apply {
+            arguments = Bundle().apply {
+                putString("yearMonth", yearMonth)
+            }
+        }
     }
 
     override fun onDestroyView() {

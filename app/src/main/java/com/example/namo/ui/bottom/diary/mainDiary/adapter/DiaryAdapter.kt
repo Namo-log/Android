@@ -35,9 +35,6 @@ class DiaryAdapter(
         notifyDataSetChanged()
     }
 
-    fun submitGroupList(){
-        this.items.clear()
-    }
     fun
     /** 기록 아이템 클릭 리스너 **/
     interface DiaryEditInterface {

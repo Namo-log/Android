@@ -42,7 +42,8 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
         binding.diaryMonth.text = DateTime(dateTime).toString("yyyy.MM")
         yearMonth = binding.diaryMonth.text.toString()
-        getDiaryList(yearMonth,currentTabPosition)
+
+        getDiaryList(yearMonth, currentTabPosition)
 
         // 그룹 다이어리 테스트, 확인하고 지우기....
         binding.groupdiarytest.setOnClickListener {
@@ -69,7 +70,8 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     @SuppressLint("ResourceAsColor")
     private fun getDiaryList(yearMonth: String, tabPosition: Int) {
-        val adapter = ViewPagerAdapter(parentFragmentManager, lifecycle, yearMonth)
+
+        val adapter = ViewPagerAdapter(childFragmentManager, lifecycle, yearMonth)
         binding.viewpager2.adapter = adapter
         binding.viewpager2.isUserInputEnabled = false // 슬라이드 못하게
 

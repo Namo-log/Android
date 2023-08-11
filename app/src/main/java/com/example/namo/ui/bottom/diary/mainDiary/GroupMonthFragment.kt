@@ -11,10 +11,19 @@ import androidx.fragment.app.Fragment
 import com.example.namo.databinding.FragmentDiaryGroupMonthBinding
 
 
-class GroupMonthFragment(val yearMonth: String) : Fragment() {
+class GroupMonthFragment : Fragment() {
 
     private var _binding: FragmentDiaryGroupMonthBinding? = null
     private val binding get() = _binding!!
+
+    var yearMonth: String = ""
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        arguments?.let {
+            yearMonth = it.getString("yearMonth", "")
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -27,6 +36,14 @@ class GroupMonthFragment(val yearMonth: String) : Fragment() {
         Log.d("yearMonthGroup", yearMonth)
 
         return binding.root
+    }
+
+    companion object {
+        fun newInstance(yearMonth: String) = GroupMonthFragment().apply {
+            arguments = Bundle().apply {
+                putString("yearMonth", yearMonth)
+            }
+        }
     }
 
     override fun onDestroyView() {

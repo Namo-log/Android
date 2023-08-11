@@ -214,7 +214,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
             }
         }
         val repo=DiaryRepository(this)
-        runBlocking { repo.uploadDiaryToServer() } // 다이어리 서버에 올림
+        repo.uploadDiaryToServer()  // 다이어리 서버에 올림
     }
 
     private fun logToken() {

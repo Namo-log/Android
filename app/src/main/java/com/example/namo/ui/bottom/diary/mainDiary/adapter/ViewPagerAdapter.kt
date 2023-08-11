@@ -20,8 +20,8 @@ class ViewPagerAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> PersonalMonthFragment(yearMonth)
-            1 -> GroupMonthFragment(yearMonth)
+            0 -> PersonalMonthFragment.newInstance(yearMonth)
+            1 -> GroupMonthFragment.newInstance(yearMonth)
             else -> throw IllegalArgumentException("Invalid position")
         }
     }

@@ -2,16 +2,14 @@ package com.example.namo.data.entity.diary
 
 
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 
-/** dummy **/
 data class DiaryGroupEvent(
-    @PrimaryKey(autoGenerate = true)
-    var place: String? = "",
-    var pay: Int = 0,
-    var imgs: ArrayList<String?>
+    @PrimaryKey(autoGenerate = false)
+    @SerializedName("name") var place: String? = "",
+    @SerializedName("money") var pay: Int = 0,
+    @SerializedName("participants") var members: MutableList<String>,
+    @SerializedName("imgs") var imgs: ArrayList<String?>
 ) :java.io.Serializable
 
 
-data class GroupDiaryMember(
-    val memberName: String = ""
-)

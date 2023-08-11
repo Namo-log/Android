@@ -300,12 +300,12 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
     }
 
     override fun onModify() {
-        findNavController().navigate(R.id.action_diaryModifyFragment_to_diaryFragment)
+        findNavController().popBackStack()
         hideBottomNavigation(false)
     }
 
     override fun onDelete() {
-        findNavController().navigate(R.id.action_diaryModifyFragment_to_diaryFragment)
+        findNavController().popBackStack()
         hideBottomNavigation(false)
     }
 

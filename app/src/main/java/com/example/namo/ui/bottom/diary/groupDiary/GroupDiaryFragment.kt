@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.R
 import com.example.namo.data.entity.diary.DiaryGroupEvent
-import com.example.namo.data.entity.diary.GroupDiaryMember
 import com.example.namo.databinding.FragmentDiaryGroupAddBinding
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupMemberRVAdapter
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupPlaceEventAdapter
@@ -37,11 +36,12 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
     private lateinit var memberadapter: GroupMemberRVAdapter
     private lateinit var placeadapter: GroupPlaceEventAdapter
 
-    private var memberNames = ArrayList<GroupDiaryMember>()  // 그룹 다이어리 구성원
+    private var memberNames: MutableList<String> = mutableListOf() // 그룹 다이어리 구성원
     private var placeEvent: MutableList<DiaryGroupEvent> = mutableListOf() // 장소, 정산 금액, 이미지
     private var imgList: ArrayList<String?> = ArrayList() // 장소별 이미지
     private var positionForGallery: Int = -1
 
+    var i = 2
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -52,6 +52,7 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
 
         hideBottomNavigation(true)
 
+        initialize()
         onRecyclerView()
         onClickListener()
         dummy()
@@ -88,15 +89,13 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
                     position: Int,
                     payText: TextView
                 ) {
-                    GroupPayDialog(memberNames) {
-                        if (position != RecyclerView.NO_POSITION) {
-                            placeEvent[position].pay = it
-                            payText.text = it.toString()
-                        }
+                    GroupPayDialog(memberNames, placeEvent[position]) {
+                        placeEvent[position].pay = it
+                        payText.text = it.toString()
+                        placeEvent[position].members = memberNames
                     }.show(parentFragmentManager, "show")
                 }
             })
-
 
             // 이미지 불러오기
             placeadapter.groupGalleryClickListener(object :
@@ -144,8 +143,16 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
 
         // 장소 추가 버튼 클릭리스너
         binding.groudPlaceAddTv.setOnClickListener {
-            placeEvent.add(DiaryGroupEvent("장소", 0, arrayListOf()))
+            val string = "장소 $i"
+            i++
+            placeEvent.add(DiaryGroupEvent(string, 0, memberNames, arrayListOf()))
             placeadapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun initialize() {
+        with(placeEvent) {
+            add(DiaryGroupEvent("장소 1", 0, arrayListOf(), arrayListOf()))
         }
     }
 
@@ -248,9 +255,9 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
 
     private fun dummy() {
         memberNames.apply {
-            add(GroupDiaryMember("코코아"))
-            add(GroupDiaryMember("지니"))
-            add(GroupDiaryMember("앨리"))
+            add("코코아")
+            add("지니")
+            add("앨리")
         }
     }
 

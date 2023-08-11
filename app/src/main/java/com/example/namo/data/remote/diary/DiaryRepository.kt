@@ -17,7 +17,6 @@ import com.example.namo.data.entity.diary.DiaryItem
 import com.example.namo.data.entity.home.Category
 import com.example.namo.utils.NetworkManager
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -34,13 +33,14 @@ class DiaryRepository(
     private val diaryDao = db.diaryDao
     private val categoryDao = db.categoryDao
 
-    private val scope = CoroutineScope(IO)
-
     private lateinit var notUploaded: List<Diary>
     private var callback: DiaryModifyCallback? = null
 
     private val failList = ArrayList<Diary>()
 
+    private lateinit var category: Category
+    private lateinit var diary: Diary
+    private lateinit var diaryItem: List<DiaryItem>
     fun setCallBack(callback: DiaryModifyCallback) {
         this.callback = callback
     }
@@ -58,7 +58,7 @@ class DiaryRepository(
         serverId: Long // eventServerId
     ) {
 
-        scope.launch {
+        val storeDB = Thread {
             val diary = Diary(
                 diaryLocalId,
                 serverId,
@@ -68,7 +68,13 @@ class DiaryRepository(
             )
             diaryDao.insertDiary(diary)
             updateHasDiary(diaryLocalId)
-        } // 일단 roomdb에 다이어리 데이터 추가함
+        }
+        storeDB.start()
+        try {
+            storeDB.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }  // 일단 roomdb에 다이어리 데이터 추가함
 
         if (NetworkManager.checkNetworkState(context)) {
 
@@ -104,13 +110,20 @@ class DiaryRepository(
         response: DiaryResponse.DiaryAddResponse,
         localId: Long
     ) {
-        scope.launch {
+
+        val storeDB = Thread {
             diaryDao.updateDiaryAfterUpload(
                 localId,
                 response.result.scheduleIdx,
                 1,
                 R.string.event_current_default.toString()
             )
+        }
+        storeDB.start()
+        try {
+            storeDB.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
         }
 
         Log.d("addDiaryServerSuccess", response.result.toString())
@@ -131,7 +144,7 @@ class DiaryRepository(
         serverId: Long
     ) {
 
-        scope.launch {
+        val storeDB = Thread {
             val diary = images?.let {
                 Diary(
                     diaryLocalId,
@@ -144,6 +157,12 @@ class DiaryRepository(
             if (diary != null) {
                 diaryDao.updateDiary(diary)
             }
+        }
+        storeDB.start()
+        try {
+            storeDB.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
         }
 
         if (NetworkManager.checkNetworkState(context)) {
@@ -185,7 +204,7 @@ class DiaryRepository(
         serverId: Long
     ) {
 
-        scope.launch {
+        val storeDB = Thread {
             diaryDao.updateDiaryAfterUpload(
                 localId,
                 serverId,
@@ -193,10 +212,14 @@ class DiaryRepository(
                 R.string.event_current_default.toString()
             )
         }
-
-        runBlocking {
-            callback?.onModify()
+        storeDB.start()
+        try {
+            storeDB.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
         }
+
+        callback?.onModify()  // 화면 이동
 
         Log.d("editDiaryServerSuccess", response.result)
     }
@@ -222,7 +245,7 @@ class DiaryRepository(
     /** delete diary **/
     fun deleteDiary(localId: Long, serverId: Long) {
 
-        scope.launch {
+        val storeDB = Thread {
             diaryDao.updateDiaryAfterUpload(
                 localId,
                 serverId,
@@ -230,7 +253,13 @@ class DiaryRepository(
                 R.string.event_current_deleted.toString()
             )
             deleteHasDiary(localId) // roomdb hasDiary 0으로 변경
-        }  // 일단 delete 상태로 업로드
+        }
+        storeDB.start()
+        try {
+            storeDB.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        } // 일단 delete 상태로 업로드
 
         if (!NetworkManager.checkNetworkState(context)) {
             //인터넷 연결 안 됨
@@ -245,8 +274,14 @@ class DiaryRepository(
 
     override fun onDeleteDiarySuccess(response: DiaryResponse.DiaryDeleteResponse, localId: Long) {
 
-        scope.launch {
+        val storeDB = Thread {
             diaryDao.deleteDiary(localId) // roomDB에서 삭제
+        }
+        storeDB.start()
+        try {
+            storeDB.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
         }
 
         callback?.onDelete()
@@ -262,64 +297,93 @@ class DiaryRepository(
         Log.d("deleteDiary", message)
     }
 
-    suspend fun getDiary(localId: Long): Diary = withContext(IO) {
-        return@withContext diaryDao.getDiaryDaily(localId)
+    fun getDiary(localId: Long): Diary {
+        val storeDB = Thread {
+            diary = diaryDao.getDiaryDaily(localId)
+        }
+        storeDB.start()
+        try {
+            storeDB.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        return diary
     }
 
-    suspend fun getDiaryList(yearMonth: String, page: Int, size: Int): List<DiaryItem> =
-        withContext(IO) {
-            val diaryEvent = diaryDao.getDiaryEventList(yearMonth, page, size)
-            return@withContext diaryEvent.toListItems()
+    fun getDiaryList(yearMonth: String, page: Int, size: Int): List<DiaryItem> {
+        val storeDB = Thread {
+            diaryItem = diaryDao.getDiaryEventList(yearMonth, page, size).toListItems()
+        }
+        storeDB.start()
+        try {
+            storeDB.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        return diaryItem
+    }
+
+
+    fun uploadDiaryToServer() {
+
+        val storeDB = Thread {
+            notUploaded = diaryDao.getNotUploadedDiary()
+        }
+        storeDB.start()
+        try {
+            storeDB.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
         }
 
+        for (diary in notUploaded) {
 
-    suspend fun uploadDiaryToServer() {
-
-        scope.launch {
-            notUploaded = diaryDao.getNotUploadedDiary()
-        }.join()
-            for (diary in notUploaded) {
-
-                if (diary.serverId == 0L) { // 서버 아이디 없는 것들
-                    if (diary.state == R.string.event_current_deleted.toString()) {
-                        return
-                    }
+            if (diary.serverId == 0L) { // 서버 아이디 없는 것들
+                if (diary.state == R.string.event_current_deleted.toString()) {
+                    return
+                }
+            } else {
+                if (diary.state == R.string.event_current_deleted.toString()) {
+                    deleteDiary(diary.diaryId, diary.serverId)
                 } else {
-                    if (diary.state == R.string.event_current_deleted.toString()) {
-                        deleteDiary(diary.diaryId, diary.serverId)
-                    } else {
-                        diary.content?.let {
-                            editDiaryToServer(
-                                diary.diaryId,
-                                diary.serverId,
-                                it,
-                                diary.images
-                            )
-                        }
+                    diary.content?.let {
+                        editDiaryToServer(
+                            diary.diaryId,
+                            diary.serverId,
+                            it,
+                            diary.images
+                        )
                     }
                 }
             }
+        }
 
         diaryService.setDiaryView(this)
     }
 
     fun postDiaryToServer(eventServerId: Long, eventId: Long) {
 
-        scope.launch {
+        val storeDB = Thread {
             notUploaded = diaryDao.getNotUploadedDiary()
+        }
+        storeDB.start()
+        try {
+            storeDB.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
 
-            for (diary in notUploaded) {
+        for (diary in notUploaded) {
 
-                if (diary.serverId == 0L) { // 서버 아이디 없는 것들
-                    if (diary.state !== R.string.event_current_deleted.toString() && eventId == diary.diaryId) {
-                        diary.content?.let {
-                            addDiaryToServer(
-                                diary.diaryId,
-                                eventServerId,
-                                it,
-                                diary.images
-                            )
-                        }
+            if (diary.serverId == 0L) { // 서버 아이디 없는 것들
+                if (diary.state !== R.string.event_current_deleted.toString() && eventId == diary.diaryId) {
+                    diary.content?.let {
+                        addDiaryToServer(
+                            diary.diaryId,
+                            eventServerId,
+                            it,
+                            diary.images
+                        )
                     }
                 }
             }
@@ -365,8 +429,18 @@ class DiaryRepository(
         return result
     }
 
-    suspend fun getCategoryId(categoryId: Long): Category = withContext(IO) {
-        categoryDao.getCategoryWithId(categoryId)
+    fun getCategoryId(categoryId: Long): Category {
+
+        val storeDB = Thread {
+            category = categoryDao.getCategoryWithId(categoryId)
+        }
+        storeDB.start()
+        try {
+            storeDB.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        return category
     }
 
     private fun updateHasDiary(localId: Long) {
@@ -395,11 +469,17 @@ class DiaryRepository(
     }
 
     private fun printNotUploaded() {
-        scope.launch {
+
+        val storeDB = Thread {
             failList.clear()
             failList.addAll(diaryDao.getNotUploadedDiary() as ArrayList<Diary>)
         }
-
+        storeDB.start()
+        try {
+            storeDB.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
         Log.d("diary", "Not uploaded Diary : $failList")
     }
 }
