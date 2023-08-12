@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.home.calendar
+package com.example.namo.ui.bottom.group.calendar
 
 import android.content.Context
 import android.graphics.*
@@ -12,6 +12,7 @@ import androidx.core.content.withStyledAttributes
 import com.example.namo.R
 import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
+import com.example.namo.data.remote.moim.MoimSchedule
 import com.example.namo.ui.bottom.home.HomeFragment
 import com.example.namo.ui.bottom.home.calendar.data.StartEnd
 import com.example.namo.utils.CalendarUtils.Companion.DAYS_PER_WEEK
@@ -21,7 +22,7 @@ import com.example.namo.utils.CalendarUtils.Companion.getMonthList
 import org.joda.time.DateTime
 import kotlin.math.abs
 
-class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context, attrs) {
+class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(context, attrs) {
 
     interface OnDateClickListener {
         fun onDateClick(date : DateTime?, pos : Int?)
@@ -41,7 +42,7 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
     private val today = DateTime.now().withTimeAtStartOfDay().millis
 
     private val dayList = mutableListOf<DateTime>()
-    private val eventList = mutableListOf<Event>()
+    private val eventList = mutableListOf<MoimSchedule>()
     private val categoryList = mutableListOf<Category>()
     private val orderList = mutableListOf<Int>()
     private val moreList = mutableListOf<Int>()
@@ -77,6 +78,8 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
     private var _eventHorizontalPadding: Float = 0f
     private var _eventCornerRadius : Float = 0f
     private var _eventLineHeight : Float = 0f
+
+    private val colorArray = resources.getIntArray(R.array.categoryColorArr)
 
     init {
         context.withStyledAttributes(attrs, R.styleable.CalendarView, defStyleAttr = R.attr.itemViewStyle, defStyleRes = R.style.Calendar_ItemViewStyle) {
@@ -210,8 +213,8 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
         if (cellHeight - eventTop > _eventHeight * 3) {
             for (i in 0 until eventList.size) {
 //                x계산하고, y계산하기
-                val startIdx = dayList.indexOf(DateTime(eventList[i].startLong * 1000L).withTimeAtStartOfDay())
-                val endIdx = dayList.indexOf(DateTime(eventList[i].endLong * 1000L).withTimeAtStartOfDay())
+                val startIdx = dayList.indexOf(DateTime(eventList[i].startDate * 1000L).withTimeAtStartOfDay())
+                val endIdx = dayList.indexOf(DateTime(eventList[i].endDate * 1000L).withTimeAtStartOfDay())
 
                 for (splitEvent in splitWeek(startIdx, endIdx)) {
                     val order = findMaxOrderInEvent(splitEvent.startIdx, splitEvent.endIdx)
@@ -230,11 +233,11 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
                     setBgPaintColor(eventList[i])
                     canvas!!.drawPath(path, bgPaint)
 
-                    val textWidth = eventPaint.measureText(eventList[i].title) + (2 * _eventHorizontalPadding)
+                    val textWidth = eventPaint.measureText(eventList[i].name) + (2 * _eventHorizontalPadding)
                     val pathWidth = rect.width()
 
                     if (textWidth > pathWidth) {
-                        val ellipsizedText = TextUtils.ellipsize(eventList[i].title, eventPaint, pathWidth - (2 * _eventHorizontalPadding), TextUtils.TruncateAt.END)
+                        val ellipsizedText = TextUtils.ellipsize(eventList[i].name, eventPaint, pathWidth - (2 * _eventHorizontalPadding), TextUtils.TruncateAt.END)
 
                         eventPaint.getTextBounds(ellipsizedText.toString(), 0, ellipsizedText.toString().length, eventBounds)
 
@@ -246,12 +249,12 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
                         )
 
                     } else {
-                        eventPaint.getTextBounds(eventList[i].title, 0, eventList[i].title.length, eventBounds)
+                        eventPaint.getTextBounds(eventList[i].name, 0, eventList[i].name.length, eventBounds)
 
                         canvas.drawText(
-                            eventList[i].title,
-                            getEventTextStart(eventList[i].title, splitEvent.startIdx, splitEvent.endIdx),
-                            getEventTextBottom(eventList[i].title, splitEvent.startIdx, splitEvent.endIdx, order),
+                            eventList[i].name,
+                            getEventTextStart(eventList[i].name, splitEvent.startIdx, splitEvent.endIdx),
+                            getEventTextBottom(eventList[i].name, splitEvent.startIdx, splitEvent.endIdx, order),
                             eventPaint
                         )
                     }
@@ -274,8 +277,8 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
         else {
             for (i in 0 until eventList.size) {
 //                x계산하고, y계산하기
-                val startIdx = dayList.indexOf(DateTime(eventList[i].startLong * 1000L).withTimeAtStartOfDay())
-                val endIdx = dayList.indexOf(DateTime(eventList[i].endLong * 1000L).withTimeAtStartOfDay())
+                val startIdx = dayList.indexOf(DateTime(eventList[i].startDate * 1000L).withTimeAtStartOfDay())
+                val endIdx = dayList.indexOf(DateTime(eventList[i].endDate * 1000L).withTimeAtStartOfDay())
 
                 for (splitEvent in splitWeek(startIdx, endIdx)) {
                     val order = findMaxOrderInEvent(splitEvent.startIdx, splitEvent.endIdx)
@@ -459,13 +462,11 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
         )
     }
 
-    private fun setBgPaintColor(event: Event) {
-        bgPaint.color = categoryList.find {
-                if (it.serverIdx != 0L) it.serverIdx == event.categoryServerIdx
-                else it.categoryIdx == event.categoryIdx }!!.color
-//        if (!CalendarUtils.isSameMonth(date, firstDayOfMonth)) {
-//            bgPaint.alpha = 50
-//        }
+    private fun setBgPaintColor(event: MoimSchedule) {
+        val paletteId = if (event.users.size < 2 && event.users[0].paletteId != 0) event.users[0].paletteId
+                        else 3
+        Log.d("GroupCalView", "유저 : ${event.users} | paletteId : ${paletteId}")
+        bgPaint.color = colorArray[paletteId]
     }
 
     private fun getEventTextStart(title : String, startIdx : Int, endIdx : Int) : Float {
@@ -489,21 +490,16 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
         dayList.addAll(getMonthList(DateTime(millis)))
     }
 
-    fun setEventList(events : List<Event>) {
+    fun setEventList(events : List<MoimSchedule>) {
         eventList.clear()
         eventList.addAll(events)
-    }
-
-    fun setCategoryList(category : List<Category>) {
-        categoryList.clear()
-        categoryList.addAll(category)
     }
 
     fun getDayList() : MutableList<DateTime> {
         return dayList
     }
 
-    fun getEventList() : MutableList<Event> {
+    fun getEventList() : MutableList<MoimSchedule> {
         return eventList
     }
 }

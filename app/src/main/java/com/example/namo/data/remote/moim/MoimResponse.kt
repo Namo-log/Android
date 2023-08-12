@@ -41,17 +41,13 @@ data class MoimSchedule(
     @SerializedName("interval") var interval : Int = 0,
     @SerializedName("users") var users : List<MoimUser>,
     @SerializedName("moimId") var moimId : Long?,
+    @SerializedName("moimScheduleId") var moimScheduleId : Long?,
     @SerializedName("curMoimSchedule") var curMoimSchedule : Boolean
 )
 
 data class ParticipateMoimResponse(
     @SerializedName("result") val result : Long = 0L
 ) : BaseResponse()
-
-data class ErrorResponse(
-    val errorMessage : String,
-    val errorCode : Int
-)
 
 data class UpdateMoimNameBody(
     val moimId: Long,

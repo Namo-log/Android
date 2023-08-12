@@ -10,16 +10,14 @@ class DiaryResponse {
         val result: GetScheduleIdx
     ) : BaseResponse()
 
-    data class GetScheduleIdx(
-        val scheduleIdx: Long
-    )
-
-
     /** 기록 수정 **/
     data class DiaryEditResponse(
         val result: String
     ) : BaseResponse()
 
+    data class GetScheduleIdx(
+        val scheduleIdx: Long
+    )
 
     /** 기록 삭제 **/
     data class DiaryDeleteResponse(
@@ -51,14 +49,28 @@ class DiaryResponse {
         @SerializedName("placeName") val placeName: String
     )
 
-    /** 기록 일 별 조회 **/
-    data class DiaryGetDayResponse(
-        val result: DayDiaryDto
+    /** 모임 기록 개별 조회 **/
+    data class GroupDiaryGetResponse(
+        val result : GroupDiaryResult
     ) : BaseResponse()
 
-    data class DayDiaryDto(
-        @SerializedName("texts") val content: String?,
-        @SerializedName("urls") val imgUrl: List<String>?
+    data class GroupDiaryResult(
+        val startDate: Long,
+        val locationName: String,
+        val users: List<GroupUser>,
+        val locationDtos: List<LocationDto>
     )
+    data class GroupUser(
+        val userId: Int,
+        val userName: String
+    ) :java.io.Serializable
+
+    data class LocationDto(
+        val moimMemoLocationId: Int,
+        @SerializedName("name")var place: String,
+        @SerializedName("money")var pay: Int,
+        @SerializedName("participants") var members: MutableList<String>,  // 원래는 int
+        @SerializedName("urls")var imgs: List<String>
+    ) : java.io.Serializable
 }
 

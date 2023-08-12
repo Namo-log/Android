@@ -1,6 +1,7 @@
 package com.example.namo.ui.bottom.group
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -21,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -121,10 +123,12 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
         val moimService = MoimService()
         moimService.setAddMoimView(this)
 
+        val imgFile = imageToMultipart(imagePath)
+
         val groupNameRequestBody = binding.createGroupTitleEt.text.toString()
             .toRequestBody("text/plain".toMediaTypeOrNull())
 
-        moimService.addMoim(getImgMultiPart(), groupNameRequestBody)
+        moimService.addMoim(imgFile, groupNameRequestBody)
     }
 
     private fun insertRoom() {
@@ -171,33 +175,19 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK) {
-            imageUri = result.data?.data
-            if (imageUri != null) {
-                imagePath = getPathFromUri(imageUri!!)
-                Log.d("PATH_URI", imagePath)
+            result.data?.data?.let {
+                imageUri = result.data!!.data
+                if (imageUri != null) {
+                    imagePath = imageUri.toString()
+                    Log.d("PATH_URI", imagePath)
 
-                Glide.with(this)
-                    .load(imageUri)
-                    .fitCenter()
-                    .apply(RequestOptions().override(500,500))
-                    .into(binding.createGroupCoverImgIv)
+                    Glide.with(this)
+                        .load(imageUri)
+                        .fitCenter()
+                        .apply(RequestOptions().override(500,500))
+                        .into(binding.createGroupCoverImgIv)
+                }
             }
-        }
-    }
-
-    private fun getPathFromUri(uri: Uri) : String {
-        val projection = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = mContext.contentResolver.query(uri, projection, null, null, null)
-        val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        cursor?.moveToFirst()
-
-        val path = cursor?.getString(columnIndex ?: -1)
-        cursor?.close()
-
-        if (path.isNullOrEmpty()) {
-            return "Empty_Path"
-        } else {
-            return path
         }
     }
 
@@ -208,17 +198,27 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
         hideBottomNavigation(false)
     }
 
-
-    // API 관련
-    private fun getImgMultiPart() : MultipartBody.Part {
-
-        val file = File(imagePath)
-        Log.d("CreateGroupFrag", imagePath)
-        Log.d("CreateGroupFrag", file.name)
+    private fun imageToMultipart(img: String): MultipartBody.Part? {
+        val file = File(absolutelyPath(img.toUri(), mContext))
         val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-        val imagePart = MultipartBody.Part.createFormData("img", file.name, requestFile)
+        return MultipartBody.Part.createFormData("img", file.name, requestFile)
+    }
 
-        return imagePart
+    @SuppressLint("Recycle")
+    fun absolutelyPath(path: Uri?, context: Context): String {
+        if (path == null) {
+            return ""
+        }
+        val proj: Array<String> = arrayOf(MediaStore.Images.Media.DATA)
+        val c: Cursor? = context.contentResolver.query(path, proj, null, null, null)
+        val index = c?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        c?.moveToFirst()
+
+        val result = c?.getString(index ?: 0) ?: ""
+
+        c?.close()
+
+        return result
     }
 
     override fun onAddMoimSuccess(response: AddMoimResponse) {

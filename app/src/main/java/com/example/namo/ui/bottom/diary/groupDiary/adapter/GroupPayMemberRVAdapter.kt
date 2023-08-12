@@ -3,17 +3,16 @@ package com.example.namo.ui.bottom.diary.groupDiary.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.namo.data.entity.diary.GroupDiaryMember
 import com.example.namo.databinding.ItemDiaryGroupPayMemberBinding
 
 class GroupPayMemberRVAdapter (  // 그룹 장소별 정산 다이얼로그 멤버
-    private val members:List<GroupDiaryMember>,private var memberIsChecked:ArrayList<Boolean>
+    private val members:List<String>,private var memberIsChecked:ArrayList<Boolean>
 ):
     RecyclerView.Adapter<GroupPayMemberRVAdapter.ViewHolder>(){
 
     /** 체크한 멤버 정산 **/
     interface PeopleItemClickListener{
-        fun onItemClick(peopleList : ArrayList<GroupDiaryMember>, memberIsChecked: ArrayList<Boolean>)
+        fun onItemClick(peopleList : ArrayList<String>, memberIsChecked: ArrayList<Boolean>)
     }
     private lateinit var mItemClickListener : PeopleItemClickListener
     fun setPeopleItemClickListener(itemClickListener : PeopleItemClickListener){
@@ -33,15 +32,15 @@ class GroupPayMemberRVAdapter (  // 그룹 장소별 정산 다이얼로그 멤�
         holder.binding.itemGroupPayMemberCheckBox.setOnClickListener {
 
             memberIsChecked[position] = holder.binding.itemGroupPayMemberCheckBox.isChecked
-            mItemClickListener.onItemClick(members as ArrayList<GroupDiaryMember>, memberIsChecked)
+            mItemClickListener.onItemClick(members as ArrayList<String>, memberIsChecked)
         }
     }
 
     override fun getItemCount(): Int = members.size
 
     inner class ViewHolder(val binding:ItemDiaryGroupPayMemberBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(member: GroupDiaryMember,isChecked:Boolean){
-            binding.itemGroupMemberName.text=member.memberName
+        fun bind(member: String,isChecked:Boolean){
+            binding.itemGroupMemberName.text=member
             binding.itemGroupPayMemberCheckBox.isChecked=isChecked
         }
     }
