@@ -46,5 +46,10 @@ data class MoimSchedule(
 )
 
 data class ParticipateMoimResponse(
-    @SerializedName("result") val result : Long
+    @SerializedName("result") val result : Long = 0L
 ) : BaseResponse()
+
+data class UpdateMoimNameBody(
+    val moimId: Long,
+    val moimName: String
+)
