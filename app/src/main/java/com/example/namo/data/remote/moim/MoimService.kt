@@ -41,7 +41,7 @@ class MoimService {
     }
 
     fun addMoim(
-        img : MultipartBody.Part,
+        img : MultipartBody.Part?,
         groupName : RequestBody
     ) {
         moimRetrofitInterface.addMoim(img, groupName)
@@ -127,13 +127,17 @@ class MoimService {
                     call: Call<ParticipateMoimResponse>,
                     response: Response<ParticipateMoimResponse>
                 ) {
-                    if (response.isSuccessful) {
-                        participateMoimView.onParticipateMoimSuccess(response as ParticipateMoimResponse)
-                    } else {
-                        if (response.errorBody() != null) {
-                            participateMoimView.onParticipateMoimFailure(response.errorBody()?.string().toString())
-                        } else {
-                            participateMoimView.onParticipateMoimFailure("Success but failure")
+                    when(response.code()) {
+                        200 -> {
+                            Log.d("ParticipateMoim","Code : 200")
+                            participateMoimView.onParticipateMoimSuccess(response as ParticipateMoimResponse)
+                        }
+                        else -> {
+                            if (response.errorBody() != null) {
+                                participateMoimView.onParticipateMoimFailure(response.errorBody()?.string().toString())
+                            } else {
+                                participateMoimView.onParticipateMoimFailure("Success but failure")
+                            }
                         }
                     }
                 }

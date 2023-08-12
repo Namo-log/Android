@@ -19,7 +19,7 @@ interface MoimRetrofitInterface {
     @Multipart
     @POST("moims")
     fun addMoim (
-        @Part img : MultipartBody.Part,
+        @Part img : MultipartBody.Part?,
         @Part("groupName") groupName : RequestBody
     ) : Call<AddMoimResponse>
 

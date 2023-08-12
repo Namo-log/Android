@@ -113,4 +113,10 @@ class GroupCalendarFragment : Fragment() {
     fun getGroupId() : Long {
         return group.groupId
     }
+
+    companion object{
+        var currentFragment : Fragment? = null
+        var currentSelectedPos : Int? = null
+        var currentSelectedDate : DateTime? = null
+    }
 }
