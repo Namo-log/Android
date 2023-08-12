@@ -17,6 +17,8 @@ import com.example.namo.data.remote.moim.MoimSchedule
 import com.example.namo.data.remote.moim.MoimService
 import com.example.namo.databinding.FragmentGroupCalendarMonthBinding
 import com.example.namo.ui.bottom.group.calendar.GroupCalendarAdapter.Companion.GROUP_ID
+import com.example.namo.ui.bottom.group.calendar.adapter.GroupDailyPersonalRVAdapter
+import com.example.namo.ui.bottom.home.HomeFragment
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
 import com.example.namo.ui.bottom.home.calendar.CustomCalendarView
@@ -27,9 +29,12 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
     lateinit var db : NamoDatabase
     private lateinit var binding : FragmentGroupCalendarMonthBinding
     private var groupId : Long = 0L
+    private var yearMonth : String = ""
 
     private var millis : Long = 0L
     private var isShow = false
+    private val eventList : ArrayList<MoimSchedule> = arrayListOf()
+    private val dailyEvents : ArrayList<MoimSchedule> = arrayListOf()
     private lateinit var monthList : List<DateTime>
     private lateinit var tempEvent : List<Event>
 
@@ -37,7 +42,7 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
     private var nowIdx = 0
     private var event_personal : ArrayList<Event> = arrayListOf()
     private var event_group : ArrayList<Event> = arrayListOf()
-    private val personalEventRVAdapter = DailyPersonalRVAdapter()
+    private val personalEventRVAdapter = GroupDailyPersonalRVAdapter()
     private val groupEventRVAdapter = DailyGroupRVAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,11 +67,18 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
             Toast.makeText(requireContext(), "Click group Fab!", Toast.LENGTH_SHORT).show()
         }
 
-        binding.groupCalendarMonthView.onDateClickListener = object : CustomCalendarView.OnDateClickListener {
+        binding.groupCalendarMonthView.onDateClickListener = object : GroupCustomCalendarView.OnDateClickListener {
             override fun onDateClick(date: DateTime?, pos: Int?) {
-                if (date == null) Log.d("GROUP_CALENDAR", "The NULL clicked!")
+                val prevFragment = GroupCalendarFragment.currentFragment as GroupCalendarMonthFragment?
+                if (prevFragment != null && prevFragment != this@GroupCalendarMonthFragment) {
+                    prevFragment.binding.groupCalendarMonthView.selectedDate = null
+                    prevFragment.binding.constraintLayout2.transitionToStart()
+                }
 
-                Log.d("GROUP_CALENDAR", "The $date is clicked!")
+                GroupCalendarFragment.currentFragment = this@GroupCalendarMonthFragment
+                GroupCalendarFragment.currentSelectedPos = pos
+                GroupCalendarFragment.currentSelectedDate = date
+
                 binding.groupCalendarMonthView.selectedDate = date
 
                 if (date != null && pos != null) {
@@ -75,12 +87,15 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
 
                     if (isShow && prevIdx == nowIdx) {
                         binding.constraintLayout2.transitionToStart()
-                        isShow = !isShow
+                        binding.groupCalendarMonthView.selectedDate = null
+                        GroupCalendarFragment.currentFragment = null
+                        GroupCalendarFragment.currentSelectedPos = null
+                        GroupCalendarFragment.currentSelectedDate = null
                     }
                     else if (!isShow) {
                         binding.constraintLayout2.transitionToEnd()
-                        isShow = !isShow
                     }
+                    isShow = !isShow
                     prevIdx = nowIdx
                 }
 
@@ -95,6 +110,7 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
         super.onViewCreated(view, savedInstanceState)
 
         groupId = GROUP_ID
+        yearMonth = DateTime(millis).toString("yyyy,MM")
         Log.d("GroupCalMonFrag", "Group ID : $groupId")
         Log.d("GroupCalMonFrag", "YearMonth : ${DateTime(millis).toString("yyyy,MM")} ")
     }
@@ -103,10 +119,6 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
         super.onResume()
         setAdapter()
         getGroupSchedule()
-
-        tempEvent = listOf()
-
-//        binding.groupCalendarMonthView.setEventList(tempEvent)
     }
 
     override fun onPause() {
@@ -128,12 +140,6 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
 
         binding.groupDailyGroupEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.groupDailyGroupEventRv.adapter = groupEventRVAdapter
-
-        personalEventRVAdapter.setContentClickListener(object : DailyPersonalRVAdapter.ContentClickListener {
-            override fun onContentClick(event: Event) {
-                Log.d("GROUP_CALENDAR", "개인 일정 클릭")
-            }
-        })
     }
 
     private fun setDaily(idx : Int) {
@@ -143,42 +149,29 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
     }
 
     private fun setData(idx : Int) {
-//        getEvent(idx)
-
-        personalEventRVAdapter.addPersonal(event_personal)
-        groupEventRVAdapter.addGroup(event_group)
+        getEvent(idx)
         setEmptyMsg()
     }
 
     private fun setEmptyMsg() {
-        if (event_personal.size == 0 ) binding.groupDailyEventNoneTv.visibility = View.VISIBLE
+        if (dailyEvents.size == 0 ) binding.groupDailyEventNoneTv.visibility = View.VISIBLE
         else binding.groupDailyEventNoneTv.visibility = View.GONE
-
-        if (event_group.size == 0) binding.groupDailyGroupEventNoneTv.visibility = View.VISIBLE
-        else binding.groupDailyGroupEventNoneTv.visibility = View.GONE
     }
 
     private fun getEvent(idx : Int) {
-        event_personal.clear()
-        event_group.clear()
         var todayStart = monthList[idx].withTimeAtStartOfDay().millis
         var todayEnd = monthList[idx].plusDays(1).withTimeAtStartOfDay().millis - 1
 
-        var forPersonalEvent : Thread = Thread {
-            event_personal = db.eventDao.getEventDaily(todayStart, todayEnd) as ArrayList<Event>
-            personalEventRVAdapter.addPersonal(event_personal)
-            requireActivity().runOnUiThread {
-                Log.d("NOTIFY", event_personal.toString())
-                personalEventRVAdapter.notifyDataSetChanged()
+        dailyEvents.clear()
+        dailyEvents.addAll(
+            eventList.filter { event ->
+                event.startDate <= todayEnd / 1000 && event.endDate >= todayStart / 1000
             }
-        }
-        forPersonalEvent.start()
+        )
+        Log.d("GroupCalMonFrag", dailyEvents.toString())
 
-        try {
-            forPersonalEvent.join()
-        } catch (e : InterruptedException) {
-            e.printStackTrace()
-        }
+        personalEventRVAdapter.addPersonal(dailyEvents)
+
     }
 
     companion object {
@@ -202,12 +195,32 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
         val moimService = MoimService()
         moimService.setGetMoimScheduleView(this)
 
-//        moimService.getMoimSchedule(groupId, )
+        moimService.getMoimSchedule(groupId, yearMonth)
     }
 
     override fun onGetMoimScheduleSuccess(response: GetMoimScheduleResponse) {
         Log.d("GroupCalMonFrag", "onGetMoimScheduleSuccess")
         Log.d("GroupCalMonFrag", response.result.toString())
+        eventList.clear()
+        eventList.addAll(response.result)
+        binding.groupCalendarMonthView.setEventList(eventList)
+        binding.groupCalendarMonthView.invalidate()
+
+
+        if (GroupCalendarFragment.currentFragment == null) {
+            return
+        }
+        else if (this@GroupCalendarMonthFragment != GroupCalendarFragment.currentFragment) {
+            isShow = false
+            prevIdx = -1
+        } else {
+            binding.groupCalendarMonthView.selectedDate = GroupCalendarFragment.currentSelectedDate
+            nowIdx = GroupCalendarFragment.currentSelectedPos!!
+            setDaily(nowIdx)
+            binding.constraintLayout2.transitionToEnd()
+            isShow = true
+            prevIdx = nowIdx
+        }
     }
 
     override fun onGetMoimScheduleFailure(message: String) {
