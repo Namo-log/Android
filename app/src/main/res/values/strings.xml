@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Namo</string>
+    <string name="app_name">나모</string>
 
     <!-- 기본적으로 쓰이는 String -->
     <string name="okay">확인</string>
