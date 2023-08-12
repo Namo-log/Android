@@ -14,11 +14,11 @@ import com.example.namo.data.entity.diary.DiaryGroupEvent
 import com.example.namo.databinding.ItemDiaryGroupEventBinding
 
 
-class GroupModifyRVAdapter(
+class GroupPlaceEventAdapter(
+    // 그룹 다이어리 장소 추가, 정산, 이미지
     val context: Context,
     private val listData: MutableList<DiaryGroupEvent>,
-) : RecyclerView.Adapter<GroupModifyRVAdapter.Holder>(),
-    ItemTouchHelperListener {
+) : RecyclerView.Adapter<GroupPlaceEventAdapter.Holder>(), ItemTouchHelperListener {
 
     private val items = arrayListOf<ArrayList<String?>>()
 
@@ -30,7 +30,7 @@ class GroupModifyRVAdapter(
 
     /** 금액 정산 화살표 누르면 정산 다이얼로그로 이동**/
     interface PayInterface {
-        fun onPayClicked(pay: Int, position: Int, eventPay: DiaryGroupEvent, payText: TextView)
+        fun onPayClicked(pay: Int, position: Int, payText: TextView)
     }
 
     private lateinit var groupPayClickListener: PayInterface
@@ -42,8 +42,7 @@ class GroupModifyRVAdapter(
     interface GalleryInterface {
         fun onGalleryClicked(
             imgLists: ArrayList<String?>,
-            position: Int,
-            eventImage: DiaryGroupEvent
+            position: Int
         )
     }
 
@@ -62,26 +61,23 @@ class GroupModifyRVAdapter(
     override fun onBindViewHolder(holder: Holder, position: Int) {
 
         val event = listData[position]
-
+        val updatedPosition = holder.bindingAdapterPosition
         // 장소
         holder.place.setText(event.place)
+
         holder.place.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
-                val updatedPosition = holder.bindingAdapterPosition
-                if (updatedPosition != RecyclerView.NO_POSITION) {
-                    listData[updatedPosition] = event.copy(place = p0.toString())
-                }
+                listData[updatedPosition].place = p0.toString()
             }
         })
-
 
         // 정산 다이얼로그
         holder.money.text = event.pay.toString()
         holder.payClick.setOnClickListener {
-            val updatedPosition = holder.bindingAdapterPosition
-            groupPayClickListener.onPayClicked(event.pay, updatedPosition, event, holder.money)
+
+            groupPayClickListener.onPayClicked(event.pay, updatedPosition, holder.money)
         }
 
         // 장소별 이미지 가져오기
@@ -100,13 +96,10 @@ class GroupModifyRVAdapter(
         }
 
         holder.gallery.setOnClickListener {
-            val updatedPosition = holder.bindingAdapterPosition
-            groupGalleryClickListener.onGalleryClicked(event.imgs, updatedPosition, event)
+            groupGalleryClickListener.onGalleryClicked(event.imgs, updatedPosition)
         }
 
         adapter.addItem(event.imgs)
-        adapter.notifyDataSetChanged()
-
     }
 
     override fun getItemCount(): Int {
@@ -122,6 +115,7 @@ class GroupModifyRVAdapter(
         val gallery = binding.groupGalleryLv
         val galleryAdapter = binding.groupAddGalleryRv
     }
+
 
     override fun onItemSwipe(position: Int) {
         listData.removeAt(position)

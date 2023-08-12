@@ -3,11 +3,10 @@ package com.example.namo.ui.bottom.diary.groupDiary.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.namo.data.entity.diary.GroupDiaryMember
 import com.example.namo.databinding.ItemDiaryGroupMembersBinding
 
 class GroupMemberRVAdapter (  // 그룹 다이어리 화면 멤버 이름
-    private val members:List<GroupDiaryMember>
+    private val members:List<String>
 ):
     RecyclerView.Adapter<GroupMemberRVAdapter.ViewHolder>(){
 
@@ -25,8 +24,8 @@ class GroupMemberRVAdapter (  // 그룹 다이어리 화면 멤버 이름
     override fun getItemCount(): Int = members.size
 
     inner class ViewHolder(val binding: ItemDiaryGroupMembersBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(member:GroupDiaryMember){
-            binding.peopleNameTv.text=member.memberName
+        fun bind(member:String){
+            binding.peopleNameTv.text=member
         }
     }
 }

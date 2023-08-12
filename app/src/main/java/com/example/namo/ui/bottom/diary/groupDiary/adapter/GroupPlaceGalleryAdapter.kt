@@ -9,18 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.namo.databinding.ItemGalleryListBinding
 
-class GroupPlaceGalleryAdapter(  // 그룹 다이어리 장소별 이미지
+class GroupPlaceGalleryAdapter(
+    // 그룹 다이어리 장소별 이미지
     private val context: Context,
-    initialItems: List<String> = emptyList()
+) :
+    RecyclerView.Adapter<GroupPlaceGalleryAdapter.ViewHolder>() {
 
-):
-    RecyclerView.Adapter<GroupPlaceGalleryAdapter.ViewHolder>(){
+    private val items: ArrayList<String?> = arrayListOf()
 
-
-    private val items = ArrayList<String>(initialItems)
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addItem(image: List<String>) {
+    fun addItem(image: List<String?>) {
         this.items.clear()
         this.items.addAll(image)
         notifyDataSetChanged()
@@ -29,23 +28,26 @@ class GroupPlaceGalleryAdapter(  // 그룹 다이어리 장소별 이미지
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemGalleryListBinding = ItemGalleryListBinding.inflate(
-            LayoutInflater.from(viewGroup.context),viewGroup,false)
+            LayoutInflater.from(viewGroup.context), viewGroup, false
+        )
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val uri= items[position]
+        val uri = items[position]
 
         Glide.with(context)
-                .load(uri.toUri())
-                .into(holder.imageUrl)
+            .load(uri?.toUri())
+            .into(holder.imageUrl)
+
     }
 
     override fun getItemCount(): Int = items.size
 
-    inner class ViewHolder(val binding: ItemGalleryListBinding): RecyclerView.ViewHolder(binding.root){
-        val imageUrl=binding.galleryImgIv
+    inner class ViewHolder(val binding: ItemGalleryListBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        val imageUrl = binding.galleryImgIv
 
     }
 }

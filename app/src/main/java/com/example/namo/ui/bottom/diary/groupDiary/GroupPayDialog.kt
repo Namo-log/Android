@@ -12,14 +12,15 @@ import android.view.Window
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.namo.data.entity.diary.GroupDiaryMember
+import com.example.namo.data.entity.diary.DiaryGroupEvent
 import com.example.namo.databinding.DialogGroupPayBinding
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupPayMemberRVAdapter
 import java.lang.Boolean.TRUE
 
 
 class GroupPayDialog(
-    private var placeMember: List<GroupDiaryMember>,
+    private var placeMember: List<String>,
+    private var placeEvent:DiaryGroupEvent,
     private val pay: (Int) -> Unit
 ) : DialogFragment(), View.OnClickListener {  // 그룹 다이어리 장소별 정산 다이얼로그
 
@@ -68,7 +69,7 @@ class GroupPayDialog(
             GroupPayMemberRVAdapter.PeopleItemClickListener {
             @SuppressLint("SetTextI18n")
             override fun onItemClick(
-                peopleList: ArrayList<GroupDiaryMember>,
+                peopleList: ArrayList<String>,
                 memberIsChecked: ArrayList<Boolean>
             ) {
                 val checkedPeopleCount = memberIsChecked.count { it.and(TRUE) }

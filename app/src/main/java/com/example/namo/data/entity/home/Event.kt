@@ -55,7 +55,10 @@ data class Event(
     var categoryServerIdx : Long = 0L,
 
     @ColumnInfo(name = "has_diary")
-    var hasDiary: Int = 0
+    var hasDiary: Int = 0,
+
+    @ColumnInfo(name = "event_is_group")
+    var isGroup: Int = 0
 
 ) : Serializable
 
