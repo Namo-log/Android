@@ -38,8 +38,6 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
         _binding = FragmentDiaryBinding.inflate(inflater, container, false)
 
-        dialogCreate()
-
         binding.diaryMonth.text = DateTime(dateTime).toString("yyyy.MM")
         yearMonth = binding.diaryMonth.text.toString()
 
@@ -50,6 +48,8 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
             view?.findNavController()?.navigate(R.id.action_diaryFragment_to_groupDiaryFragment)
         }
 
+        dialogCreate()
+
         return binding.root
     }
 
@@ -57,7 +57,11 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     private fun dialogCreate() {
 
         binding.diaryMonth.setOnClickListener {
-            YearMonthDialog(dateTime) { selectedYearMonth ->
+
+            val year = yearMonth.split(".")[0]
+            val month = yearMonth.split(".")[1]
+
+            YearMonthDialog(year.toInt(), month.toInt()) { selectedYearMonth ->
                 yearMonth = DateTime(selectedYearMonth).toString("yyyy.MM")
                 binding.diaryMonth.text = yearMonth
                 if (yearMonth != currentYearMonth) {

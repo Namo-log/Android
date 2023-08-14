@@ -7,7 +7,6 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
 import androidx.core.net.toUri
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
@@ -263,7 +262,8 @@ class DiaryRepository(
 
         if (!NetworkManager.checkNetworkState(context)) {
             //인터넷 연결 안 됨
-            Toast.makeText(context, "WIFI ERROR", Toast.LENGTH_SHORT).show()
+            Log.d("deleteDiary","WIFI ERROR")
+            callback?.onDelete()
             return
         }
 
@@ -444,11 +444,11 @@ class DiaryRepository(
     }
 
     private fun updateHasDiary(localId: Long) {
-        diaryDao.updateHasDiary(1, localId)
+        diaryDao.updateHasDiary(localId)
     }
 
     private fun deleteHasDiary(localId: Long) {
-        diaryDao.deleteHasDiary(0, localId)
+        diaryDao.deleteHasDiary(localId)
     }
 
     @SuppressLint("Recycle")

@@ -18,11 +18,11 @@ interface DiaryDao {
     @Query("DELETE FROM diaryTable WHERE diaryId=:eventId")
     fun deleteDiary(eventId: Long)
 
-    @Query("UPDATE calendar_event_table SET has_diary= :hasDiary WHERE eventId =:scheduleIdx")
-    fun updateHasDiary(hasDiary: Int, scheduleIdx: Long)
+    @Query("UPDATE calendar_event_table SET has_diary= 1 WHERE eventId =:scheduleIdx")
+    fun updateHasDiary(scheduleIdx: Long)
 
-    @Query("UPDATE calendar_event_table SET has_diary= :hasDiary WHERE eventId =:scheduleIdx")
-    fun deleteHasDiary(hasDiary: Int, scheduleIdx: Long)
+    @Query("UPDATE calendar_event_table SET has_diary= 0 WHERE eventId =:scheduleIdx")
+    fun deleteHasDiary(scheduleIdx: Long)
 
     @Query("SELECT * FROM diaryTable WHERE diaryId=:scheduleId")
     fun getDiaryDaily(scheduleId: Long): Diary
@@ -42,5 +42,4 @@ interface DiaryDao {
 
     @Query("SELECT * FROM calendar_event_table")
     fun getAllEvent(): List<Event>
-
 }
