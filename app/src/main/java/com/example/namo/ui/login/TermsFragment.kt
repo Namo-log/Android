@@ -1,7 +1,9 @@
 package com.example.namo.ui.login
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +36,7 @@ class TermsFragment: Fragment() {
         binding.termsNextBtn.setOnClickListener {
             findNavController().navigate(R.id.action_termsFragment_to_loginFragment)
         }
+        setTermsSee()
     }
 
     private fun checkboxListener() {
@@ -127,6 +130,26 @@ class TermsFragment: Fragment() {
 
             binding.termsNextBtn.setTextColor(Color.parseColor("#D68359"))
             binding.termsNextBtn.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#F7F7F7"))
+        }
+    }
+
+    private fun setTermsSee() {
+        with(binding) {
+            // 이용약관
+            termsAgreeServiceSeeIv.setOnClickListener {
+                val url = "https://www.notion.so/30d9c6cf5b9f414cb624780360d2da8c?pvs=4"
+
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                startActivity(intent)
+            }
+
+            // 개인정보 처리방침
+            termsAgreePersonalSeeIv.setOnClickListener {
+                val url = "https://www.notion.so/ca8d93c7a4ef4ad98fd6169c444a5f32?pvs=4"
+
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                startActivity(intent)
+            }
         }
     }
 }

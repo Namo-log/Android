@@ -106,9 +106,9 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/terms_agree_service_see_iv"
-                android:layout_width="10dp"
-                android:layout_height="20dp"
-                android:padding="1dp"
+                android:layout_width="15dp"
+                android:layout_height="25dp"
+                android:padding="3dp"
                 android:src="@drawable/ic_arrow_right_gray"
                 app:layout_constraintTop_toTopOf="@id/terms_agree_service_btn"
                 app:layout_constraintBottom_toBottomOf="@id/terms_agree_service_btn"
@@ -142,9 +142,9 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/terms_agree_personal_see_iv"
-                android:layout_width="10dp"
-                android:layout_height="20dp"
-                android:padding="1dp"
+                android:layout_width="15dp"
+                android:layout_height="25dp"
+                android:padding="3dp"
                 android:src="@drawable/ic_arrow_right_gray"
                 app:layout_constraintTop_toTopOf="@id/terms_agree_personal_btn"
                 app:layout_constraintBottom_toBottomOf="@id/terms_agree_personal_btn"
