@@ -9,19 +9,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
-import com.example.namo.data.NamoDatabase
 import com.example.namo.databinding.DialogSetMonthBinding
 import org.joda.time.DateTime
 
 class YearMonthDialog( // 다이어리 리스트 달 별 출력을 위한 다이얼로그
-    private var dateTime: Long,
-    private val okCallback : (DateTime) -> Unit
-) : DialogFragment(), View.OnClickListener{
+    private val year: Int,
+    private val month: Int,
+    private val okCallback: (DateTime) -> Unit
+) : DialogFragment(), View.OnClickListener {
 
     private val maxYear = 2099
     private val minYear = 2000
 
-    private lateinit var db: NamoDatabase
     lateinit var binding: DialogSetMonthBinding
 
     override fun onCreateView(
@@ -34,11 +33,10 @@ class YearMonthDialog( // 다이어리 리스트 달 별 출력을 위한 다이
 
         initView()
 
-        db=NamoDatabase.getInstance(requireContext())
         return binding.root
     }
 
-    private fun initView(){
+    private fun initView() {
 
         binding.apply {
 
@@ -51,21 +49,21 @@ class YearMonthDialog( // 다이어리 리스트 달 별 출력을 위한 다이
             yearPicker.minValue = minYear
             yearPicker.maxValue = maxYear
 
-            val date=DateTime(dateTime)
-            yearPicker.value=date.year
-            monthPicker.value=date.monthOfYear
+
+            yearPicker.value = year
+            monthPicker.value = month
 
             onClickListener()
         }
     }
 
     @SuppressLint("SuspiciousIndentation")
-    private fun onClickListener(){
+    private fun onClickListener() {
 
         binding.apply {
 
             acceptBtn.setOnClickListener {
-                val date=DateTime(binding.yearPicker.value,binding.monthPicker.value,1,0,0)
+                val date = DateTime(binding.yearPicker.value, binding.monthPicker.value, 1, 0, 0)
 
                 okCallback(date)
 
@@ -73,7 +71,7 @@ class YearMonthDialog( // 다이어리 리스트 달 별 출력을 위한 다이
             }
 
             cancelBtn.setOnClickListener {
-                okCallback(DateTime(dateTime))
+                okCallback(DateTime(binding.yearPicker.value, binding.monthPicker.value, 1, 0, 0))
                 dismiss()
             }
         }

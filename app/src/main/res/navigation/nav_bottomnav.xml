@@ -29,6 +29,9 @@
         <action
             android:id="@+id/action_diaryFragment_to_groupDiaryFragment"
             app:destination="@id/groupDiaryFragment" />
+        <action
+            android:id="@+id/action_diaryFragment_to_groupModifyFragment"
+            app:destination="@id/groupModifyFragment" />
     </fragment>
 
     <fragment

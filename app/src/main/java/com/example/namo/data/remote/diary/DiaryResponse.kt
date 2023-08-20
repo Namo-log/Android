@@ -49,9 +49,16 @@ class DiaryResponse {
         @SerializedName("placeName") val placeName: String
     )
 
+
+    /** 모임 기록 추가 **/
+    data class AddGroupDiaryResponse(
+        val result: String
+    ) : BaseResponse()
+
+
     /** 모임 기록 개별 조회 **/
-    data class GroupDiaryGetResponse(
-        val result : GroupDiaryResult
+    data class GetGroupDiaryResponse(
+        val result: GroupDiaryResult
     ) : BaseResponse()
 
     data class GroupDiaryResult(
@@ -60,17 +67,19 @@ class DiaryResponse {
         val users: List<GroupUser>,
         val locationDtos: List<LocationDto>
     )
+
     data class GroupUser(
         val userId: Int,
         val userName: String
-    ) :java.io.Serializable
+    ) : java.io.Serializable
 
     data class LocationDto(
         val moimMemoLocationId: Int,
-        @SerializedName("name")var place: String,
-        @SerializedName("money")var pay: Int,
-        @SerializedName("participants") var members: MutableList<String>,  // 원래는 int
-        @SerializedName("urls")var imgs: List<String>
+        @SerializedName("name") var place: String,
+        @SerializedName("money") var pay: Int,
+        @SerializedName("participants") var members: MutableList<Int>,  // 원래는 int
+        @SerializedName("urls") var imgs: List<String>
     ) : java.io.Serializable
+
 }
 

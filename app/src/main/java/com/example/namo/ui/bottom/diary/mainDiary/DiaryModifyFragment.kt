@@ -194,15 +194,15 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
             )
         } else {
             // 권한 있음
-            val intent = Intent().apply {
+            val intent = Intent(Intent.ACTION_PICK).apply {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
             }
 
-            intent.type = MediaStore.Images.Media.CONTENT_TYPE
+            intent.type = "image/*"
+            intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
-            intent.action = Intent.ACTION_GET_CONTENT
 
             getImage.launch(intent)
         }

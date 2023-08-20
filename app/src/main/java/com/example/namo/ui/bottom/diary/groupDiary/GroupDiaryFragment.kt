@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Insets.add
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -14,15 +16,19 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.R
 import com.example.namo.data.entity.diary.DiaryGroupEvent
+import com.example.namo.data.remote.diary.DiaryRepository
+import com.example.namo.data.remote.diary.DiaryResponse
 import com.example.namo.databinding.FragmentDiaryGroupAddBinding
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupMemberRVAdapter
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupPlaceEventAdapter
@@ -35,13 +41,14 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
 
     private lateinit var memberadapter: GroupMemberRVAdapter
     private lateinit var placeadapter: GroupPlaceEventAdapter
+    private lateinit var repo: DiaryRepository
 
-    private var memberNames: MutableList<String> = mutableListOf() // 그룹 다이어리 구성원
+    private var memberNames = ArrayList<DiaryResponse.GroupUser>()  // 그룹 다이어리 구성원
     private var placeEvent: MutableList<DiaryGroupEvent> = mutableListOf() // 장소, 정산 금액, 이미지
     private var imgList: ArrayList<String?> = ArrayList() // 장소별 이미지
     private var positionForGallery: Int = -1
 
-    var i = 2
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -52,10 +59,12 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
 
         hideBottomNavigation(true)
 
+        repo = DiaryRepository(requireContext())
         initialize()
         onRecyclerView()
         onClickListener()
         dummy()
+
 
         return binding.root
     }
@@ -89,11 +98,12 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
                     position: Int,
                     payText: TextView
                 ) {
-                    GroupPayDialog(memberNames, placeEvent[position]) {
+                    GroupPayDialog(memberNames, placeEvent[position], {
                         placeEvent[position].pay = it
                         payText.text = it.toString()
-                        placeEvent[position].members = memberNames
-                    }.show(parentFragmentManager, "show")
+                    }, {
+                        placeEvent[position].members = it
+                    }).show(parentFragmentManager, "show")
                 }
             })
 
@@ -125,34 +135,32 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
         }
 
         binding.groupAddBackIv.setOnClickListener { // 뒤로가기
-            val bundle = Bundle()
-            bundle.putSerializable("groupDiary", ArrayList(placeEvent))
-
-            view?.findNavController()
-                ?.navigate(R.id.action_groupDiaryFragment_to_groupModifyFragment, bundle)
+            findNavController().popBackStack(R.id.diaryFragment,true)
         }
 
         binding.groupPlaceSaveTv.setOnClickListener {// 저장하기
-            val bundle = Bundle()
-            bundle.putSerializable("groupDiary", ArrayList(placeEvent))
 
             view?.findNavController()
-                ?.navigate(R.id.action_groupDiaryFragment_to_groupModifyFragment, bundle)
+                ?.navigate(R.id.action_groupDiaryFragment_to_groupModifyFragment)
             Log.d("placeEvent", "$placeEvent")
+
+            placeEvent.map {
+                repo.addMoimDiary(3, it.place, it.pay, it.members, it.imgs as List<String>?)
+            }
+
         }
 
         // 장소 추가 버튼 클릭리스너
         binding.groudPlaceAddTv.setOnClickListener {
-            val string = "장소 $i"
-            i++
-            placeEvent.add(DiaryGroupEvent(string, 0, memberNames, arrayListOf()))
+
+            placeEvent.add(DiaryGroupEvent("", 0, arrayListOf(), arrayListOf()))
             placeadapter.notifyDataSetChanged()
         }
     }
 
     private fun initialize() {
         with(placeEvent) {
-            add(DiaryGroupEvent("장소 1", 0, arrayListOf(), arrayListOf()))
+            add(DiaryGroupEvent("", 0, arrayListOf(), arrayListOf()))
         }
     }
 
@@ -193,11 +201,15 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
             )
         } else {
             // 권한 있음
-            val intent = Intent()
+            val intent = Intent(Intent.ACTION_PICK).apply {
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+            }
+
             intent.type = "image/*"
             intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
-            intent.action = Intent.ACTION_GET_CONTENT
 
             getImage.launch(intent)
         }
@@ -253,12 +265,15 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
         }
     }
 
+
     private fun dummy() {
-        memberNames.apply {
-            add("코코아")
-            add("지니")
-            add("앨리")
-        }
+        memberNames.addAll(
+            listOf(
+                DiaryResponse.GroupUser(1, "앨리"),
+                DiaryResponse.GroupUser(2, "지니"),
+                DiaryResponse.GroupUser(3, "코코아")
+            )
+        )
     }
 
     override fun onDestroy() {

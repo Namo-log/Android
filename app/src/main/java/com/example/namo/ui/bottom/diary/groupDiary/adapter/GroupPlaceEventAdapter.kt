@@ -22,6 +22,7 @@ class GroupPlaceEventAdapter(
 
     private val items = arrayListOf<ArrayList<String?>>()
 
+
     @SuppressLint("NotifyDataSetChanged")
     fun addItem(image: ArrayList<String?>) {
         this.items.add(image)
@@ -99,7 +100,9 @@ class GroupPlaceEventAdapter(
             groupGalleryClickListener.onGalleryClicked(event.imgs, updatedPosition)
         }
 
+        holder.place.hint = "장소"
         adapter.addItem(event.imgs)
+
     }
 
     override fun getItemCount(): Int {
@@ -114,6 +117,8 @@ class GroupPlaceEventAdapter(
         val money = binding.itemPlaceMoneyTv
         val gallery = binding.groupGalleryLv
         val galleryAdapter = binding.groupAddGalleryRv
+
+
     }
 
 
