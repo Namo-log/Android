@@ -28,7 +28,6 @@
                 android:maxLines="1"
                 android:minWidth="48dp"
                 android:minHeight="32dp"
-                android:text="@string/group_place"
                 android:textColor="@color/textGray"
                 android:textSize="17sp"
                 app:layout_constraintStart_toStartOf="parent"

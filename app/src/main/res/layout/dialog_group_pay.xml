@@ -161,7 +161,6 @@
                     android:layout_height="25dp"
                     android:gravity="center_vertical|end"
                     android:paddingEnd="10dp"
-                    android:text="0 원"
                     android:textColor="@color/textGray"
                     android:textSize="15sp" />
 

@@ -159,15 +159,15 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
         if (hasImagePermission()) {  // 권한 있으면 갤러리 불러오기
 
-            val intent = Intent().apply {
+            val intent = Intent(Intent.ACTION_PICK).apply {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
             }
 
-            intent.type = MediaStore.Images.Media.CONTENT_TYPE
+            intent.type = "image/*"
+            intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
-            intent.action = Intent.ACTION_GET_CONTENT
 
             getImage.launch(intent)
 

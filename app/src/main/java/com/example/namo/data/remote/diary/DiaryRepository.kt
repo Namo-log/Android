@@ -25,7 +25,7 @@ import java.io.File
 
 class DiaryRepository(
     val context: Context,
-) : DiaryView, DiaryDetailView {
+) : DiaryView, DiaryDetailView, AddGroupDiaryView {
 
     private val diaryService = DiaryService()
     private val db = NamoDatabase.getInstance(context)
@@ -262,7 +262,7 @@ class DiaryRepository(
 
         if (!NetworkManager.checkNetworkState(context)) {
             //인터넷 연결 안 됨
-            Log.d("deleteDiary","WIFI ERROR")
+            Log.d("deleteDiary", "WIFI ERROR")
             callback?.onDelete()
             return
         }
@@ -451,6 +451,43 @@ class DiaryRepository(
         diaryDao.deleteHasDiary(localId)
     }
 
+    fun addMoimDiary(
+        moimSchduleId: Long,
+        place: String,
+        money: Int,
+        members: List<Int>,
+        images: List<String>?
+    ) {
+
+        val scheduleIdRequestBody =
+            moimSchduleId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val placeRequestBody = place.toRequestBody("text/plain".toMediaTypeOrNull())
+        val moneyRequestBody = money.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val membersRequestBody =
+            members.map {
+                it.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+            }
+
+        val imgList = imageToMultipart(images)
+
+        diaryService.addGroupDiary(
+            scheduleIdRequestBody,
+            placeRequestBody,
+            moneyRequestBody,
+            membersRequestBody,
+            imgList
+        )
+        diaryService.addGroupDiaryView(this)
+    }
+
+    override fun onAddGroupDiarySuccess(response: DiaryResponse.AddGroupDiaryResponse) {
+        Log.d("ADD_GROUP_DIARY", response.result)
+    }
+
+    override fun onAddGroupDiaryFailure(message: String) {
+        Log.d("ADD_GROUP_DIARY", message)
+    }
+
     @SuppressLint("Recycle")
     fun absolutelyPath(path: Uri?, context: Context): String {
         if (path == null) {
@@ -468,6 +505,7 @@ class DiaryRepository(
         return result
     }
 
+
     private fun printNotUploaded() {
 
         val storeDB = Thread {
@@ -482,4 +520,5 @@ class DiaryRepository(
         }
         Log.d("diary", "Not uploaded Diary : $failList")
     }
+
 }

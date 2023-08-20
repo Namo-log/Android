@@ -16,6 +16,8 @@ class DiaryService {
     private lateinit var diaryView: DiaryView
     private lateinit var diaryDetailView: DiaryDetailView
     private lateinit var getMonthDiaryView: GetMonthDiaryView
+    private lateinit var addGroupDiaryView: AddGroupDiaryView
+    private lateinit var getGroupDiaryView: GetGroupDiaryView
 
     fun addDiaryView(diaryView: DiaryView) {
         this.diaryView = diaryView
@@ -27,6 +29,14 @@ class DiaryService {
 
     fun getMonthDiaryView(getMonthDiaryView: GetMonthDiaryView) {
         this.getMonthDiaryView = getMonthDiaryView
+    }
+
+    fun addGroupDiaryView(addGroupView: AddGroupDiaryView) {
+        this.addGroupDiaryView = addGroupView
+    }
+
+    fun getGroupDiaryView(getGroupDiaryView: GetGroupDiaryView) {
+        this.getGroupDiaryView = getGroupDiaryView
     }
 
     /** 기록 추가 **/
@@ -65,7 +75,7 @@ class DiaryService {
     /** 기록 수정 **/
     fun editDiary(
         localId: Long,
-        serverId:Long,
+        serverId: Long,
         images: List<MultipartBody.Part>?,
         content: RequestBody?,
         scheduleIdx: RequestBody
@@ -83,7 +93,7 @@ class DiaryService {
                         200 -> if (resp != null) {
                             diaryDetailView.onEditDiarySuccess(
                                 resp,
-                                localId,serverId
+                                localId, serverId
                             )
                         }
                         else -> diaryDetailView.onEditDiaryFailure(response.toString())
@@ -172,6 +182,76 @@ class DiaryService {
                 }
             })
     }
+
+
+    /** 그룹 메모 추가 **/
+    fun addGroupDiary(
+        moimScheduleIdx: RequestBody,
+        name: RequestBody,
+        money: RequestBody,
+        members: List<RequestBody>,
+        imgs: List<MultipartBody.Part>?
+    ) {
+        diaryRetrofitInterface.addGroupDiary(moimScheduleIdx, name, money, members, imgs)
+            .enqueue(object : Callback<DiaryResponse.AddGroupDiaryResponse> {
+
+                @SuppressLint("SuspiciousIndentation")
+                override fun onResponse(
+                    call: Call<DiaryResponse.AddGroupDiaryResponse>,
+                    response: Response<DiaryResponse.AddGroupDiaryResponse>
+                ) {
+                    val resp: DiaryResponse.AddGroupDiaryResponse? = response.body()
+                    when (response.code()) {
+                        200 -> if (resp != null) {
+                            addGroupDiaryView.onAddGroupDiarySuccess(resp)
+                        }
+                        else -> addGroupDiaryView.onAddGroupDiaryFailure(response.toString())
+                    }
+
+                }
+
+                override fun onFailure(
+                    call: Call<DiaryResponse.AddGroupDiaryResponse>,
+                    t: Throwable
+                ) {
+                    addGroupDiaryView.onAddGroupDiaryFailure(t.message.toString())
+                }
+            })
+    }
+
+
+    /** 그룹 기록 일 별 조회 **/
+    fun getGroupDiary(
+        moimScheduleIdx: Long
+    ) {
+        diaryRetrofitInterface.getGroupDiary(moimScheduleIdx)
+            .enqueue(object : Callback<DiaryResponse.GetGroupDiaryResponse> {
+
+                @SuppressLint("SuspiciousIndentation")
+                override fun onResponse(
+                    call: Call<DiaryResponse.GetGroupDiaryResponse>,
+                    response: Response<DiaryResponse.GetGroupDiaryResponse>
+                ) {
+                    val resp: DiaryResponse.GetGroupDiaryResponse? = response.body()
+                    when (response.code()) {
+                        200 -> if (resp != null) {
+                            getGroupDiaryView.onGetGroupDiarySuccess(resp)
+                        }
+                        else ->
+                            getGroupDiaryView.onGetGroupDiaryFailure(response.toString())
+                    }
+
+                }
+
+                override fun onFailure(
+                    call: Call<DiaryResponse.GetGroupDiaryResponse>,
+                    t: Throwable
+                ) {
+                    getGroupDiaryView.onGetGroupDiaryFailure(t.message.toString())
+                }
+            })
+    }
+
 
 }
 
