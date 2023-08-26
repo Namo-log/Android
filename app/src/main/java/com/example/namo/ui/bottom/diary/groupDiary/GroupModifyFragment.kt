@@ -61,7 +61,7 @@ class GroupModifyFragment : Fragment(), GetGroupDiaryView {  // 그룹 다이어
         hideBottomNavigation(true)
 
         val diaryService = DiaryService()
-        diaryService.getGroupDiary(3)
+        diaryService.getGroupDiary(7)
         diaryService.getGroupDiaryView(this)
 
         onClickListener()

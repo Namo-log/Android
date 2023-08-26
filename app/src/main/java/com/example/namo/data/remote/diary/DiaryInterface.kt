@@ -40,19 +40,19 @@ interface DiaryInterface {
 
 
     @Multipart
-    @POST("/moims/schedule/diary")
+    @POST("/moims/schedule/memo/{moimId}")
     fun addGroupDiary(
-        @Part("moimScheduleId") scheduleIdx: RequestBody,
+        @Path("moimId") scheduleIdx: Long,
         @Part("name") place: RequestBody?, // String
         @Part("money") pay: RequestBody?,  // Int
-        @Part("participants") member: List<RequestBody>?,  // List<Int>
+        @Part("participants") member:RequestBody?,  // List<Int>
         @Part imgs: List<MultipartBody.Part>?  // List<String>
     ): Call<DiaryResponse.AddGroupDiaryResponse>
 
 
-    @GET("moims/schedule/{moimScheduleId}")
+    @GET("/moims/schedule/memo/{moimId}")
     fun getGroupDiary(
-        @Path("moimScheduleId") scheduleIdx: Long
+        @Path("moimId") scheduleIdx: Long
     ): Call<DiaryResponse.GetGroupDiaryResponse>
 }
 

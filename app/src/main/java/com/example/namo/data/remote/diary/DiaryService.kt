@@ -186,10 +186,10 @@ class DiaryService {
 
     /** 그룹 메모 추가 **/
     fun addGroupDiary(
-        moimScheduleIdx: RequestBody,
+        moimScheduleIdx: Long,
         name: RequestBody,
         money: RequestBody,
-        members: List<RequestBody>,
+        members: RequestBody?,
         imgs: List<MultipartBody.Part>?
     ) {
         diaryRetrofitInterface.addGroupDiary(moimScheduleIdx, name, money, members, imgs)

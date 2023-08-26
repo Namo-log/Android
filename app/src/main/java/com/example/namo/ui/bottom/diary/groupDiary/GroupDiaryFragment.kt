@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Insets.add
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -16,7 +14,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -145,7 +142,7 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
             Log.d("placeEvent", "$placeEvent")
 
             placeEvent.map {
-                repo.addMoimDiary(3, it.place, it.pay, it.members, it.imgs as List<String>?)
+                repo.addMoimDiary(7, it.place, it.pay, it.members, it.imgs as List<String>?)
             }
 
         }
@@ -269,10 +266,9 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
     private fun dummy() {
         memberNames.addAll(
             listOf(
-                DiaryResponse.GroupUser(1, "앨리"),
-                DiaryResponse.GroupUser(2, "지니"),
-                DiaryResponse.GroupUser(3, "코코아")
-            )
+                DiaryResponse.GroupUser(4, "앨리"),
+                DiaryResponse.GroupUser(6, "수빈")
+           )
         )
     }
 
