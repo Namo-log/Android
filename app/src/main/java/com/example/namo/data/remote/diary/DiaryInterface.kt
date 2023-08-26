@@ -31,12 +31,8 @@ interface DiaryInterface {
     ): Call<DiaryResponse.DiaryDeleteResponse>
 
 
-    @GET("/schedules/diary/{month}")
-    fun getMonthDiary(
-        @Path("month") month: String,
-        @Query("page") page: Int,
-        @Query("size") size: Int
-    ): Call<DiaryResponse.DiaryGetMonthResponse>
+    @GET("/schedules/diary/all")
+    fun getAllDiary():Call<DiaryResponse.DiaryGetAllResponse>
 
 
     @Multipart

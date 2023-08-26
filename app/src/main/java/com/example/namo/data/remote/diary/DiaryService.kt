@@ -145,20 +145,16 @@ class DiaryService {
 
 
     /** 기록 월 별 조회 **/
-    fun getMonthDiary(
-        month: String,
-        page: Int,
-        size: Int
-    ) {
-        diaryRetrofitInterface.getMonthDiary(month, page, size)
-            .enqueue(object : Callback<DiaryResponse.DiaryGetMonthResponse> {
+    fun getAllDiary() {
+        diaryRetrofitInterface.getAllDiary()
+            .enqueue(object : Callback<DiaryResponse.DiaryGetAllResponse> {
 
                 @SuppressLint("SuspiciousIndentation")
                 override fun onResponse(
-                    call: Call<DiaryResponse.DiaryGetMonthResponse>,
-                    response: Response<DiaryResponse.DiaryGetMonthResponse>
+                    call: Call<DiaryResponse.DiaryGetAllResponse>,
+                    response: Response<DiaryResponse.DiaryGetAllResponse>
                 ) {
-                    val resp: DiaryResponse.DiaryGetMonthResponse? = response.body()
+                    val resp: DiaryResponse.DiaryGetAllResponse? = response.body()
                     when (response.code()) {
                         200 -> if (resp != null) {
                             getMonthDiaryView.onGetMonthDiarySuccess(
@@ -173,7 +169,7 @@ class DiaryService {
                 }
 
                 override fun onFailure(
-                    call: Call<DiaryResponse.DiaryGetMonthResponse>,
+                    call: Call<DiaryResponse.DiaryGetAllResponse>,
                     t: Throwable
                 ) {
                     getMonthDiaryView.onGetMonthDiaryFailure(
