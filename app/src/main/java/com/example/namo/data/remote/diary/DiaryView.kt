@@ -13,7 +13,7 @@ interface DiaryDetailView {
 }
 
 interface GetMonthDiaryView {
-    fun onGetMonthDiarySuccess(response: DiaryResponse.DiaryGetMonthResponse)
+    fun onGetMonthDiarySuccess(response: DiaryResponse.DiaryGetAllResponse)
     fun onGetMonthDiaryFailure(message: String)
 }
 

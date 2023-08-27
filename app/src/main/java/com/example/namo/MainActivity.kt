@@ -171,7 +171,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
 
         // 다이어리
         val diaryService = DiaryService()
-        diaryService.getMonthDiary(time, 0, 15)
+        diaryService.getAllDiary()
         diaryService.getMonthDiaryView(this)
 
     }
@@ -422,10 +422,10 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         isCategorySuccess = false
     }
 
-    override fun onGetMonthDiarySuccess(response: DiaryResponse.DiaryGetMonthResponse) {
+    override fun onGetMonthDiarySuccess(response: DiaryResponse.DiaryGetAllResponse) {
         Log.d("MAIN_SERVER_UPLOAD", "onGetAllDiarySuccess")
 
-        val result = response.result.content
+        val result = response.result
 
         serverDiary.clear()
         serverDiary.addAll(result.map{serverToDiary(it)})
@@ -539,13 +539,13 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         )
     }
 
-    private fun serverToDiary(diary: DiaryResponse.MonthDiary): Diary {
+    private fun serverToDiary(diary: DiaryResponse.Result): Diary {
 
         return Diary(
             0,
-            diary.scheduleIdx,
-            diary.content,
-            diary.imgUrl,
+            diary.scheduleId,
+            diary.contents,
+            diary.urls,
             R.string.event_current_default.toString(),
             1
         )

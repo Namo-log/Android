@@ -232,14 +232,6 @@ class DiaryRepository(
 
     }
 
-    private fun imageToMultipart(images: List<String>?): List<MultipartBody.Part>? {
-        return images?.map { path ->
-            val file = File(absolutelyPath(path.toUri(), context))
-            val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-            MultipartBody.Part.createFormData("imgs", file.name, requestFile)
-        }
-    }
-
 
     /** delete diary **/
     fun deleteDiary(localId: Long, serverId: Long) {
@@ -455,23 +447,20 @@ class DiaryRepository(
         moimSchduleId: Long,
         place: String,
         money: Int,
-        members: List<Int>,
+        members: List<Int>?,
         images: List<String>?
     ) {
 
-        val scheduleIdRequestBody =
-            moimSchduleId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
         val placeRequestBody = place.toRequestBody("text/plain".toMediaTypeOrNull())
         val moneyRequestBody = money.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-        val membersRequestBody =
-            members.map {
-                it.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-            }
 
-        val imgList = imageToMultipart(images)
+        val member = members?.joinToString(",") ?: ""
+        val membersRequestBody = member.toRequestBody("text/plain".toMediaTypeOrNull())
+
+       val imgList = imageToMultipart(images)
 
         diaryService.addGroupDiary(
-            scheduleIdRequestBody,
+            moimSchduleId,
             placeRequestBody,
             moneyRequestBody,
             membersRequestBody,
@@ -480,8 +469,17 @@ class DiaryRepository(
         diaryService.addGroupDiaryView(this)
     }
 
+
+    private fun imageToMultipart(images: List<String>?): List<MultipartBody.Part>? {
+        return images?.map { path ->
+            val file = File(absolutelyPath(path.toUri(), context))
+            val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+            MultipartBody.Part.createFormData("imgs", file.name, requestFile)
+        }
+    }
+
     override fun onAddGroupDiarySuccess(response: DiaryResponse.AddGroupDiaryResponse) {
-        Log.d("ADD_GROUP_DIARY", response.result)
+        Log.d("ADD_GROUP_DIARY", response.message)
     }
 
     override fun onAddGroupDiaryFailure(message: String) {

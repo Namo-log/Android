@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,9 +55,9 @@ class GroupPayDialog(
 
         if (placeEvent.pay != 0) {
             val memberSize = placeEvent.members.size
-            binding.groupPayTotalEt.setText("${placeEvent.pay * memberSize}")
+            binding.groupPayTotalEt.setText("${placeEvent.pay}")
             binding.groupPayCountTv.text = "$memberSize  명"
-            binding.groupPayResultTv.text = "${placeEvent.pay}  원"
+            binding.groupPayResultTv.text = "${placeEvent.pay / memberSize}  원"
 
             for (i in placeEvent.members) {
                 val index = memberIsChecked.indexOfFirst { it.first == i }
@@ -130,11 +129,11 @@ class GroupPayDialog(
             }
             groupPaySaveTv.setOnClickListener {
 
-                if (eachPay == 0) {
-                    eachPay =
+                if (totalPay == 0) {
+                    totalPay =
                         binding.groupPayResultTv.text.toString().replace("  원", "").trim().toInt()
                 }
-                pay(eachPay)
+                pay(totalPay)
 
                 val checkedMemberId = mutableListOf<Int>()
 
