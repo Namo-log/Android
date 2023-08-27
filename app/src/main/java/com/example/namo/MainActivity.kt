@@ -44,11 +44,7 @@ import com.example.namo.data.remote.event.GetMonthEventView
 import com.example.namo.databinding.ActivityMainBinding
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogBasicFragment.Companion.eventToEventForUpload
 import com.example.namo.utils.NetworkManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
-import java.util.Arrays
 
 
 private const val PERMISSION_REQUEST_CODE= 1001

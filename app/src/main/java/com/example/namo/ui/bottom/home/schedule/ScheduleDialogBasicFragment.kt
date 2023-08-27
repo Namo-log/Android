@@ -28,7 +28,6 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -45,15 +44,12 @@ import com.example.namo.data.remote.event.EventView
 import com.example.namo.data.remote.event.PostEventResponse
 import com.example.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.example.namo.ui.bottom.home.notify.PushNotificationReceiver
-import com.example.namo.ui.bottom.home.schedule.adapter.DialogCategoryRVAdapter
 import com.example.namo.ui.bottom.home.schedule.map.MapActivity
 import com.example.namo.utils.CalendarUtils.Companion.getInterval
 import com.example.namo.utils.NetworkManager
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView

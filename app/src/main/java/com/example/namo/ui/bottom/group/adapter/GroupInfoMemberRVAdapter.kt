@@ -36,10 +36,6 @@ class GroupInfoMemberRVAdapter(
 
     inner class ViewHolder(val binding : ItemGroupMemberBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(member : MoimListUser) {
-            Log.d("TEST_MEMBER", member.color.toString())
-            Log.d("TEST_COLOR", R.color.palette1.toString())
-            Log.d("TEST_COLOR", R.color.palette2.toString())
-            Log.d("TEST_COLOR", R.color.palette3.toString())
             val color = if (member.color < 20) categoryColorArray[member.color - 1]
                         else context.resources.getColor(member.color)
 
