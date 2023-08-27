@@ -17,6 +17,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -54,7 +55,8 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
     private lateinit var group: Group
 
     private var title: String = ""
-    private var coverImage: Uri? = null
+    lateinit var coverImg: MultipartBody.Part
+//    private var coverImage: Uri? = null
     private var member: List<String>? = null
     private var imageUri: Uri? = null
     private var imagePath : String = ""
@@ -64,7 +66,6 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
         mContext = context
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -89,6 +90,13 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
         onClickListener() //클릭 동작
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        _binding = null
+        hideBottomNavigation(false)
+    }
+
     private fun onClickListener() {
         // 닫기
         binding.createGroupBackTv.setOnClickListener {
@@ -97,10 +105,8 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
         }
         // 확인
         binding.createGroupSaveTv.setOnClickListener {
-            if (!binding.createGroupTitleEt.toString().isEmpty() && imageUri != null) {
+            if (binding.createGroupTitleEt.toString().isNotEmpty() && imageUri != null) {
                 insertData()
-                findNavController().popBackStack() //뒤로가기
-                hideBottomNavigation(false)
             } else {
                 Toast.makeText(context, "그룹 이미지 또는 이름을 올바르게 등록해주세요.", Toast.LENGTH_SHORT).show()
             }
@@ -115,7 +121,7 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
     private fun insertData() {
         insertRoom()
 
-        if(!NetworkManager.checkNetworkState(requireContext())) {
+        if (!NetworkManager.checkNetworkState(requireContext())) {
             //인터넷 연결 안 됨
             return
         }
@@ -123,12 +129,17 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
         val moimService = MoimService()
         moimService.setAddMoimView(this)
 
-        val imgFile = imageToMultipart(imagePath)
+        imageUri?.let { uri ->
+            val imgFile = imageToMultipart(uri)
+            if (imgFile != null) {
+                val groupNameRequestBody = binding.createGroupTitleEt.text.toString()
+                    .toRequestBody("text/plain".toMediaTypeOrNull())
 
-        val groupNameRequestBody = binding.createGroupTitleEt.text.toString()
-            .toRequestBody("text/plain".toMediaTypeOrNull())
-
-        moimService.addMoim(imgFile, groupNameRequestBody)
+                moimService.addMoim(imgFile, groupNameRequestBody)
+            } else {
+                Toast.makeText(context, "이미지 파일을 가져올 수 없습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun insertRoom() {
@@ -166,7 +177,6 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
                 data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
                 action = Intent.ACTION_GET_CONTENT
             }
-
             getImage.launch(intent)
         }
     }
@@ -190,43 +200,38 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
             }
         }
     }
+    private fun imageToMultipart(imgUri: Uri): MultipartBody.Part? {
+        val imagePath = getImagePathFromUri(imgUri)
+        if (imagePath.isNullOrEmpty()) {
+            return null
+        }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-        _binding = null
-        hideBottomNavigation(false)
-    }
-
-    private fun imageToMultipart(img: String): MultipartBody.Part? {
-        val file = File(absolutelyPath(img.toUri(), mContext))
+        val file = File(imagePath)
         val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
         return MultipartBody.Part.createFormData("img", file.name, requestFile)
     }
 
-    @SuppressLint("Recycle")
-    fun absolutelyPath(path: Uri?, context: Context): String {
-        if (path == null) {
-            return ""
+    private fun getImagePathFromUri(uri: Uri): String? {
+        val cursor = mContext.contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) { // 커서에 데이터가 있는지 확인
+                val idx = it.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+                if (idx != -1) { // 인덱스가 유효한지 확인
+                    return it.getString(idx)
+                }
+            }
         }
-        val proj: Array<String> = arrayOf(MediaStore.Images.Media.DATA)
-        val c: Cursor? = context.contentResolver.query(path, proj, null, null, null)
-        val index = c?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        c?.moveToFirst()
-
-        val result = c?.getString(index ?: 0) ?: ""
-
-        c?.close()
-
-        return result
+        return null
     }
 
     override fun onAddMoimSuccess(response: AddMoimResponse) {
         Log.d("CreateGroupFrag", "onAddMoimSuccess : Moim Id = ${response.result.moimId}")
+        findNavController().popBackStack() //뒤로가기
+        hideBottomNavigation(false)
     }
 
     override fun onAddMoimFailure(message: String) {
-        Log.d("CreateGroupFrag", "onAddMoimFailure")
+        Log.d("CreateGroupFrag", "onAddMoimFailure, $message")
 
     }
 }
