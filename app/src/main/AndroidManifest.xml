@@ -36,7 +36,8 @@
         android:theme="@style/Theme.NaMo"
         tools:targetApi="31"
         android:hardwareAccelerated="false"
-        android:largeHeap="true">
+        android:largeHeap="true"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"
             android:exported="false"
