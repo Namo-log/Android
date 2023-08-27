@@ -20,7 +20,6 @@ import com.example.namo.data.remote.moim.AddMoimResponse
 import com.example.namo.data.remote.moim.DeleteMoimMemberView
 import com.example.namo.data.remote.moim.Moim
 import com.example.namo.data.remote.moim.MoimService
-import com.example.namo.data.remote.moim.MoimUser
 import com.example.namo.data.remote.moim.UpdateMoimNameBody
 import com.example.namo.databinding.ActivityGroupInfoBinding
 import com.example.namo.ui.bottom.group.adapter.GroupInfoMemberRVAdapter
