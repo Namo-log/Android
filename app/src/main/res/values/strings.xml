@@ -77,6 +77,14 @@
     <string name="timeFormat">hh:mm a</string>
     <string name="noticeFormat">yyyy.MM.dd (E) hh:mm a</string>
 
+    <!-- setting fragent 관련 string -->
+    <string name="custom_setting">설정</string>
+    <string name="custom_setting_ver">버전 정보</string>
+    <string name="custom_setting_term">이용 약관</string>
+    <string name="custom_setting_individual_policy">개인정보 처리방침</string>
+    <string name="custom_setting_logout">로그아웃</string>
+    <string name="custom_setting_withdrawal">회원탈퇴</string>
+
     <!-- 카테고리 관련 String -->
     <string name="category_edit">카테고리 편집</string>
     <string name="category_setting">카테고리 설정</string>

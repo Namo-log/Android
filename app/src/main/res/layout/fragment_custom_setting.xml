@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?><!-- 다이어리 추가 화면 -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/custom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/custom_setting_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/custom_setting_back_iv"
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:src="@drawable/ic_back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/custom_setting_title_tv"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:gravity="center"
+                android:text="@string/custom_setting"
+                android:textColor="@color/black"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/custom_setting_back_iv"
+                app:layout_constraintBottom_toBottomOf="@id/custom_setting_back_iv"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginTop="30dp"
+            app:layout_constraintTop_toBottomOf="@id/custom_setting_top"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/custom_setting_ver_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/custom_setting_ver"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                style="@style/custom_setting_15sp_tv"/>
+
+            <TextView
+                android:id="@+id/custom_setting_ver_info_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textGray"
+                android:textSize="14sp"
+                android:text="1.0.0"
+                app:layout_constraintTop_toTopOf="@id/custom_setting_ver_tv"
+                app:layout_constraintBottom_toBottomOf="@id/custom_setting_ver_tv"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/custom_setting_default_spacing"
+                app:layout_constraintTop_toBottomOf="@id/custom_setting_ver_tv"
+                app:layout_constraintStart_toStartOf="parent">
+                <View style="@style/default_underline"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/custom_setting_term_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/custom_setting_default_spacing"
+                    android:text="@string/custom_setting_term"
+                    style="@style/custom_setting_15sp_tv"/>
+                <View style="@style/default_underline"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/custom_setting_individual_policy_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/custom_setting_default_spacing"
+                    android:text="@string/custom_setting_individual_policy"
+                    style="@style/custom_setting_15sp_tv"/>
+                <View style="@style/default_underline"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/custom_setting_logout_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/custom_setting_default_spacing"
+                    android:text="@string/custom_setting_logout"
+                    style="@style/custom_setting_15sp_tv"/>
+                <View style="@style/default_underline"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/custom_setting_quit_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="@dimen/custom_setting_default_spacing"
+                    android:text="@string/custom_setting_withdrawal"
+                    style="@style/custom_setting_15sp_tv"/>
+                <View style="@style/default_underline"/>
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
