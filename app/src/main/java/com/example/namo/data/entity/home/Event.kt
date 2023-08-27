@@ -40,7 +40,7 @@ data class Event(
     var order: Int = 0,
   
     @ColumnInfo(name = "alarm_list")
-    var alarmList : List<Int>? = listOf(),
+    var alarmList : List<Int> = listOf(),
 
     @ColumnInfo(name = "event_upload")
     var isUpload : Int = 0,

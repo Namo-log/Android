@@ -21,13 +21,19 @@ data class Moim(
     @SerializedName("groupName") var groupName : String,
     @SerializedName("groupImgUrl") var groupImgUrl : String,
     @SerializedName("groupCode") var groupCode : String,
-    @SerializedName("moimUsers") var moimUsers : List<MoimUser>
+    @SerializedName("moimUsers") var moimUsers : List<MoimListUser>
 ) : Serializable
 
-data class MoimUser (
+data class MoimListUser (
     @SerializedName("userId") var userId : Long,
     @SerializedName("userName") var userName : String,
-    @SerializedName("userColor") var paletteId : Int
+    @SerializedName("userColor") var color : Int
+) : Serializable
+
+data class MoimScheduleUser (
+    @SerializedName("userId") var userId : Long,
+    @SerializedName("userName") var userName : String,
+    @SerializedName("color") var color : Int
 ) : Serializable
 
 data class GetMoimScheduleResponse (
@@ -39,7 +45,7 @@ data class MoimSchedule(
     @SerializedName("startDate") var startDate : Long = 0L,
     @SerializedName("endDate") var endDate : Long = 0L,
     @SerializedName("interval") var interval : Int = 0,
-    @SerializedName("users") var users : List<MoimUser>,
+    @SerializedName("users") var users : List<MoimScheduleUser>,
     @SerializedName("moimId") var moimId : Long?,
     @SerializedName("moimScheduleId") var moimScheduleId : Long?,
     @SerializedName("curMoimSchedule") var curMoimSchedule : Boolean

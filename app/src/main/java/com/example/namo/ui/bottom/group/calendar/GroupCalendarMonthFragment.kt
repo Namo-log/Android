@@ -1,5 +1,6 @@
 package com.example.namo.ui.bottom.group.calendar
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,6 +17,8 @@ import com.example.namo.data.remote.moim.Moim
 import com.example.namo.data.remote.moim.MoimSchedule
 import com.example.namo.data.remote.moim.MoimService
 import com.example.namo.databinding.FragmentGroupCalendarMonthBinding
+import com.example.namo.ui.bottom.group.GroupCalendarActivity
+import com.example.namo.ui.bottom.group.GroupScheduleActivity
 import com.example.namo.ui.bottom.group.calendar.GroupCalendarAdapter.Companion.GROUP_ID
 import com.example.namo.ui.bottom.group.calendar.adapter.GroupDailyPersonalRVAdapter
 import com.example.namo.ui.bottom.home.HomeFragment
@@ -64,20 +67,22 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
         monthList = binding.groupCalendarMonthView.getDayList()
 
         binding.groupFab.setOnClickListener {
-            Toast.makeText(requireContext(), "Click group Fab!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(context, GroupScheduleActivity::class.java)
+            intent.putExtra("nowDay", monthList[nowIdx].millis)
+            requireActivity().startActivity(intent)
         }
 
         binding.groupCalendarMonthView.onDateClickListener = object : GroupCustomCalendarView.OnDateClickListener {
             override fun onDateClick(date: DateTime?, pos: Int?) {
-                val prevFragment = GroupCalendarFragment.currentFragment as GroupCalendarMonthFragment?
+                val prevFragment = GroupCalendarActivity.currentFragment as GroupCalendarMonthFragment?
                 if (prevFragment != null && prevFragment != this@GroupCalendarMonthFragment) {
                     prevFragment.binding.groupCalendarMonthView.selectedDate = null
                     prevFragment.binding.constraintLayout2.transitionToStart()
                 }
 
-                GroupCalendarFragment.currentFragment = this@GroupCalendarMonthFragment
-                GroupCalendarFragment.currentSelectedPos = pos
-                GroupCalendarFragment.currentSelectedDate = date
+                GroupCalendarActivity.currentFragment = this@GroupCalendarMonthFragment
+                GroupCalendarActivity.currentSelectedPos = pos
+                GroupCalendarActivity.currentSelectedDate = date
 
                 binding.groupCalendarMonthView.selectedDate = date
 
@@ -88,9 +93,9 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
                     if (isShow && prevIdx == nowIdx) {
                         binding.constraintLayout2.transitionToStart()
                         binding.groupCalendarMonthView.selectedDate = null
-                        GroupCalendarFragment.currentFragment = null
-                        GroupCalendarFragment.currentSelectedPos = null
-                        GroupCalendarFragment.currentSelectedDate = null
+                        GroupCalendarActivity.currentFragment = null
+                        GroupCalendarActivity.currentSelectedPos = null
+                        GroupCalendarActivity.currentSelectedDate = null
                     }
                     else if (!isShow) {
                         binding.constraintLayout2.transitionToEnd()
@@ -207,15 +212,15 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
         binding.groupCalendarMonthView.invalidate()
 
 
-        if (GroupCalendarFragment.currentFragment == null) {
+        if (GroupCalendarActivity.currentFragment == null) {
             return
         }
-        else if (this@GroupCalendarMonthFragment != GroupCalendarFragment.currentFragment) {
+        else if (this@GroupCalendarMonthFragment != GroupCalendarActivity.currentFragment) {
             isShow = false
             prevIdx = -1
         } else {
-            binding.groupCalendarMonthView.selectedDate = GroupCalendarFragment.currentSelectedDate
-            nowIdx = GroupCalendarFragment.currentSelectedPos!!
+            binding.groupCalendarMonthView.selectedDate = GroupCalendarActivity.currentSelectedDate
+            nowIdx = GroupCalendarActivity.currentSelectedPos!!
             setDaily(nowIdx)
             binding.constraintLayout2.transitionToEnd()
             isShow = true

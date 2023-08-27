@@ -2,6 +2,7 @@ package com.example.namo.ui.bottom.group
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -120,8 +121,12 @@ class GroupListFragment : Fragment(), GetMoimListView {
             override fun onItemClick(moim: Moim) { // 그룹 캘린더로 이동
                 Log.d("GroupListFrag", "Click Moim Item")
 
-                val action = GroupListFragmentDirections.actionGroupListFragmentToGroupCalendarFragment(moim)
-                view?.findNavController()?.navigate(action)
+//                val action = GroupListFragmentDirections.actionGroupListFragmentToGroupCalendarFragment(moim)
+//                view?.findNavController()?.navigate(action)
+
+                val intent = Intent(context, GroupCalendarActivity::class.java)
+                intent.putExtra("moim", moim)
+                startActivity(intent)
 
             }
         })
