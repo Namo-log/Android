@@ -55,14 +55,14 @@ class LoginFragment: Fragment(), LoginView {
         }
 
         // 임시 로그인
-        binding.loginTempBt.setOnClickListener {
-//            setAlarm(System.currentTimeMillis())
-//            setContent("NAMO","나모 이용방법을 알려드려요.")
-//            setAlarm(System.currentTimeMillis() + 10000)
-//            setContent("나모","두 번째 알람입니다.")
-//            setAlarm(System.currentTimeMillis() + 20000)
-            setLoginFinished()
-        }
+//        binding.loginTempBt.setOnClickListener {
+////            setAlarm(System.currentTimeMillis())
+////            setContent("NAMO","나모 이용방법을 알려드려요.")
+////            setAlarm(System.currentTimeMillis() + 10000)
+////            setContent("나모","두 번째 알람입니다.")
+////            setAlarm(System.currentTimeMillis() + 20000)
+//            setLoginFinished()
+//        }
     }
 
     private fun kakaoLogin() {
@@ -70,13 +70,16 @@ class LoginFragment: Fragment(), LoginView {
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {  //토큰 에러
                 Log.e(ContentValues.TAG, "카카오계정으로 로그인 실패", error)
+                // 카카오톡 설치는 되어있지만, 로그인이 안 되어있는 경우 예외 처리
+                if (error.toString().contains("statusCode=302")){
+                    loginWithKakaoAccount()
+                }
             } else if (token != null) {
                 Log.i(ContentValues.TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
                 Toast.makeText(requireContext(), "카카오 로그인 성공", Toast.LENGTH_SHORT).show()
 
                 // 서버 통신
                 LoginService(this).tryPostKakaoSDK(TokenBody(token.accessToken, token.refreshToken))
-
 //                Log.d("kakao_access_token", token.accessToken)
 //                Log.d("kakao_refresh_token", token.refreshToken)
             }
@@ -88,9 +91,19 @@ class LoginFragment: Fragment(), LoginView {
             if (UserApiClient.instance.isKakaoTalkLoginAvailable(requireContext())) {
                 UserApiClient.instance.loginWithKakaoTalk(requireContext(), callback = callback)
             } else {
-                UserApiClient.instance.loginWithKakaoAccount(requireContext(), callback = callback)
+                loginWithKakaoAccount()
             }
         }
+    }
+
+    private fun loginWithKakaoAccount() {
+        val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+            if (token != null) {
+                // 서버 통신
+                LoginService(this).tryPostKakaoSDK(TokenBody(token.accessToken, token.refreshToken))
+            }
+        }
+        UserApiClient.instance.loginWithKakaoAccount(requireContext(), callback = callback)
     }
 
     private fun startNaverLogin() {
