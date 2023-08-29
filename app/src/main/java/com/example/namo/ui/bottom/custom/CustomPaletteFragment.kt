@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
+import com.example.namo.data.entity.custom.Palette
 import com.example.namo.ui.bottom.custom.adapter.PaletteRVAdapter
 import com.example.namo.databinding.FragmentCustomPaletteBinding
 

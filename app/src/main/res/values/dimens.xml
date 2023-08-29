@@ -9,5 +9,6 @@
     <dimen name="onboarding_skip_text_size">15sp</dimen>
     <dimen name="test_100">100dp</dimen>
     <dimen name="test_10">10dp</dimen>
+    <dimen name="custom_setting_default_spacing">20dp</dimen>
 
 </resources>
