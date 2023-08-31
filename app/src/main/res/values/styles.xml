@@ -76,4 +76,12 @@
         <item name="android:textColor">@color/textGray</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <!-- 토글 -->
+    <style name="category_toggle">
+        <item name="thumbTint">@color/white</item>
+        <item name="track">@drawable/style_toggle_btn</item>
+        <item name="android:thumb">@drawable/style_toggle_thumb</item>
+        <item name="android:enabled">true</item>
+    </style>
 </resources>
