@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import com.example.namo.MainActivity
 import com.example.namo.R
 import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryBinding
@@ -78,7 +79,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     @SuppressLint("ResourceAsColor")
     private fun getDiaryList(yearMonth: String, tabPosition: Int) {
 
-        val adapter = ViewPagerAdapter(childFragmentManager, lifecycle, yearMonth)
+        val adapter = ViewPagerAdapter(yearMonth,context as MainActivity)
         binding.viewpager2.adapter = adapter
         binding.viewpager2.isUserInputEnabled = false // 슬라이드 못하게
 

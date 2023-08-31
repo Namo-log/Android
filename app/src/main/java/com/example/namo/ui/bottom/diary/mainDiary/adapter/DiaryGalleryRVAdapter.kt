@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.namo.databinding.ItemDiaryListGalleryBinding
 
@@ -13,17 +14,9 @@ class DiaryGalleryRVAdapter(
     // 다이어리 리스트의 이미지(둥근 모서리, 점선 테두리 X)
     private val context: Context,
     private val imgList: List<String>?,
+    private val imageClickListener: (String) -> Unit
 ) :
     RecyclerView.Adapter<DiaryGalleryRVAdapter.ViewHolder>() {
-
-    interface DiaryImageInterface {
-        fun onImageClicked(image: String)
-    }
-
-    private lateinit var diaryImageClickListener: DiaryImageInterface
-    fun setImageClickListener(itemClickListener: DiaryImageInterface) {
-        diaryImageClickListener = itemClickListener
-    }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemDiaryListGalleryBinding = ItemDiaryListGalleryBinding.inflate(
@@ -36,24 +29,23 @@ class DiaryGalleryRVAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
+        val context = context
         val uri = imgList?.get(position)
-        Glide.with(context)
-            .load(uri)
-            .into(holder.imageUrl)
 
         val requestOptions = RequestOptions()
             .diskCacheStrategy(DiskCacheStrategy.DATA)
 
         Glide.with(context)
             .load(uri)
-            .apply(requestOptions)
+            .apply(requestOptions.transform(RoundedCorners(50)))
             .into(holder.imageUrl)
 
         holder.imageUrl.setOnClickListener {
             if (uri != null) {
-                diaryImageClickListener.onImageClicked(uri)
+                imageClickListener(uri)
             }
         }
+
     }
 
     override fun getItemCount(): Int = imgList!!.size

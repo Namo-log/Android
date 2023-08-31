@@ -1,6 +1,7 @@
 package com.example.namo.data.remote.diary
 
 
+import DiaryItem
 import android.annotation.SuppressLint
 import android.content.Context
 import android.database.Cursor
@@ -12,7 +13,6 @@ import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.diary.Diary
 import com.example.namo.data.entity.diary.DiaryEvent
-import com.example.namo.data.entity.diary.DiaryItem
 import com.example.namo.data.entity.home.Category
 import com.example.namo.utils.NetworkManager
 import kotlinx.coroutines.*
@@ -39,7 +39,8 @@ class DiaryRepository(
 
     private lateinit var category: Category
     private lateinit var diary: Diary
-    private lateinit var diaryItem: List<DiaryItem>
+
+
     fun setCallBack(callback: DiaryModifyCallback) {
         this.callback = callback
     }
@@ -302,19 +303,6 @@ class DiaryRepository(
         return diary
     }
 
-    fun getDiaryList(yearMonth: String, page: Int, size: Int): List<DiaryItem> {
-        val storeDB = Thread {
-            diaryItem = diaryDao.getDiaryEventList(yearMonth, page, size).toListItems()
-        }
-        storeDB.start()
-        try {
-            storeDB.join()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
-        return diaryItem
-    }
-
 
     fun uploadDiaryToServer() {
 
@@ -385,6 +373,10 @@ class DiaryRepository(
     }
 
 
+    fun getDiaryList(yearMonth: String, page: Int, size: Int): List<DiaryItem> {
+        return diaryDao.getDiaryEventList(yearMonth).toListItems()
+    }
+
     /** 같은 날짜끼리 묶어서 그룹 헤더로 추가 **/
     private fun List<DiaryEvent>.toListItems(): List<DiaryItem> {
         val result = arrayListOf<DiaryItem>() // 결과를 리턴할 리스트
@@ -394,7 +386,7 @@ class DiaryRepository(
             // 날짜가 달라지면 그룹 헤더를 추가
 
             if (groupHeaderDate * 1000 != task.event_start * 1000) {
-                result.add(DiaryItem.Header(task.event_start * 1000))
+                result.add(DiaryItem.Header(task.eventId, task.event_start * 1000))
             }
             //  task 추가
 
@@ -409,7 +401,8 @@ class DiaryRepository(
                     task.content,
                     task.images,
                     task.event_server_idx,
-                    task.event_category_server_idx
+                    task.event_category_server_idx,
+                    task.eventId
 
                 )
             )
@@ -421,17 +414,23 @@ class DiaryRepository(
         return result
     }
 
-    fun getCategoryId(categoryId: Long): Category {
+    fun getCategory(categoryId: Long, categoryServerId: Long): Category {
 
-        val storeDB = Thread {
-            category = categoryDao.getCategoryWithId(categoryId)
+        val db = Thread {
+            val categoryList = categoryDao.getCategoryList()
+            category = categoryList.find {
+                if (it.serverIdx != 0L) it.serverIdx == categoryServerId
+                else it.categoryIdx == categoryId
+            } ?: Category()
         }
-        storeDB.start()
+
+        db.start()
         try {
-            storeDB.join()
+            db.join()
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+
         return category
     }
 
@@ -457,7 +456,7 @@ class DiaryRepository(
         val member = members?.joinToString(",") ?: ""
         val membersRequestBody = member.toRequestBody("text/plain".toMediaTypeOrNull())
 
-       val imgList = imageToMultipart(images)
+        val imgList = imageToMultipart(images)
 
         diaryService.addGroupDiary(
             moimSchduleId,

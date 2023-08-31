@@ -10,10 +10,12 @@ import android.view.Window
 import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.example.namo.databinding.DialogImageFullBinding
 
-class ImageDialog(val image:String)
-    : DialogFragment(), View.OnClickListener{
+class ImageDialog(val image: String) : DialogFragment(), View.OnClickListener {
 
     lateinit var binding: DialogImageFullBinding
 
@@ -25,16 +27,22 @@ class ImageDialog(val image:String)
 
         binding = DialogImageFullBinding.inflate(inflater, container, false)
 
+
+        val requestOptions = RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.DATA)
+
         Glide.with(this)
             .load(image.toUri())
+            .apply(requestOptions.transform(RoundedCorners(50)))
             .into(binding.galleryImgIv)
+
 
         initView()
 
         return binding.root
     }
 
-    private fun initView(){
+    private fun initView() {
 
         binding.apply {
 

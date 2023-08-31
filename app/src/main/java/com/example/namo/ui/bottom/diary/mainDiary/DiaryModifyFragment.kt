@@ -22,15 +22,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.entity.diary.Diary
-import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryModifyBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 
@@ -44,7 +40,6 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
     private lateinit var repo: DiaryRepository
 
     private lateinit var event: Event
-    private lateinit var category: Category
     private lateinit var diary: Diary
 
     override fun onCreateView(
@@ -88,14 +83,10 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
     @SuppressLint("SimpleDateFormat")
     private fun bind() {
 
-        CoroutineScope(Dispatchers.Main).launch {
+        val category=repo.getCategory(event.categoryIdx,event.categoryServerIdx)
 
-            val categoryIdx = event.categoryIdx
-            category = repo.getCategoryId(categoryIdx)
-
-            context?.resources?.let {
-                binding.itemDiaryCategoryColorIv.background.setTint(category.color)
-            }
+        context?.resources?.let {
+            binding.itemDiaryCategoryColorIv.background.setTint(category.color)
         }
 
         binding.apply {
@@ -118,7 +109,7 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
         }
 
         binding.diaryBackIv.setOnClickListener {
-            findNavController().navigate(R.id.action_diaryModifyFragment_to_diaryFragment)
+            findNavController().popBackStack()
             hideBottomNavigation(false)
         }
 
