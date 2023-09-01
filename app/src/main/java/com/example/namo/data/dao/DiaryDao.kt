@@ -37,7 +37,7 @@ interface DiaryDao {
 
     @Query(
         "SELECT * FROM calendar_event_table JOIN diaryTable ON diaryId = eventId " +
-                "WHERE strftime('%Y.%m', event_start, 'unixepoch') = :yearMonth AND diary_state != ${R.string.event_current_deleted} " +
+                "WHERE strftime('%Y.%m', event_start, 'unixepoch','localtime') = :yearMonth AND diary_state != ${R.string.event_current_deleted} " +
                 "AND event_is_group = 0 ORDER BY event_start DESC "
     )
     fun getDiaryEventList(yearMonth: String): List<DiaryEvent>

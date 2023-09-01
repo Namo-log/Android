@@ -18,14 +18,16 @@ import com.example.namo.utils.NetworkManager
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.net.URL
 
 
 class DiaryRepository(
     val context: Context,
-) : DiaryView, DiaryDetailView, AddGroupDiaryView {
+) : DiaryView, DiaryDetailView, AddGroupDiaryView, EditGroupDiaryView, DeleteGroupDiaryView {
 
     private val diaryService = DiaryService()
     private val db = NamoDatabase.getInstance(context)
@@ -199,7 +201,7 @@ class DiaryRepository(
 
 
     override fun onEditDiarySuccess(
-        response: DiaryResponse.DiaryEditResponse,
+        response: DiaryResponse.DiaryResponse,
         localId: Long,
         serverId: Long
     ) {
@@ -265,7 +267,7 @@ class DiaryRepository(
 
     }
 
-    override fun onDeleteDiarySuccess(response: DiaryResponse.DiaryDeleteResponse, localId: Long) {
+    override fun onDeleteDiarySuccess(response: DiaryResponse.DiaryResponse, localId: Long) {
 
         val storeDB = Thread {
             diaryDao.deleteDiary(localId) // roomDB에서 삭제
@@ -304,6 +306,7 @@ class DiaryRepository(
     }
 
 
+    /** 서버에 있던 것 룸디비에 업데이트 **/
     fun uploadDiaryToServer() {
 
         val storeDB = Thread {
@@ -341,6 +344,7 @@ class DiaryRepository(
         diaryService.setDiaryView(this)
     }
 
+    /** 서버 아이디 없던 것 post로 올리기 **/
     fun postDiaryToServer(eventServerId: Long, eventId: Long) {
 
         val storeDB = Thread {
@@ -373,12 +377,13 @@ class DiaryRepository(
     }
 
 
+    /** 월 별 개인 다이어리 리스트 조회 **/
     fun getDiaryList(yearMonth: String, page: Int, size: Int): List<DiaryItem> {
         return diaryDao.getDiaryEventList(yearMonth).toListItems()
     }
 
-    /** 같은 날짜끼리 묶어서 그룹 헤더로 추가 **/
-    private fun List<DiaryEvent>.toListItems(): List<DiaryItem> {
+
+    private fun List<DiaryEvent>.toListItems(): List<DiaryItem> { // 같은 날짜끼리 묶어서 그룹 헤더로 추
         val result = arrayListOf<DiaryItem>() // 결과를 리턴할 리스트
 
         var groupHeaderDate: Long = 0 // 그룹날짜
@@ -389,6 +394,8 @@ class DiaryRepository(
                 result.add(DiaryItem.Header(task.eventId, task.event_start * 1000))
             }
             //  task 추가
+            Log.d("ewer", groupHeaderDate.toString())
+            Log.d("ewr", task.event_start.toString())
 
             result.add(
                 DiaryItem.Content(
@@ -414,6 +421,7 @@ class DiaryRepository(
         return result
     }
 
+    /** 카테고리 id로 Category 조회 **/
     fun getCategory(categoryId: Long, categoryServerId: Long): Category {
 
         val db = Thread {
@@ -442,6 +450,7 @@ class DiaryRepository(
         diaryDao.deleteHasDiary(localId)
     }
 
+    /** 그룹 다이어리 추가 **/
     fun addMoimDiary(
         moimSchduleId: Long,
         place: String,
@@ -468,6 +477,67 @@ class DiaryRepository(
         diaryService.addGroupDiaryView(this)
     }
 
+    override fun onAddGroupDiarySuccess(response: DiaryResponse.DiaryResponse) {
+        Log.d("ADD_GROUP_DIARY", response.message)
+    }
+
+    override fun onAddGroupDiaryFailure(message: String) {
+        Log.d("ADD_GROUP_DIARY", message)
+    }
+
+
+    /** 그룹 다이어리 별 장소 수정 **/
+    fun editGroupPlace(
+        moimPlaceId: Long,
+        place: String,
+        money: Int,
+        members: List<Int>?,
+        images: List<String>?
+    ) {
+        val placeRequestBody = place.toRequestBody("text/plain".toMediaTypeOrNull())
+        val moneyRequestBody = money.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+
+        val member = members?.joinToString(",") ?: ""
+        val membersRequestBody = member.toRequestBody("text/plain".toMediaTypeOrNull())
+
+        val imgList = imageToMultipart(images)
+
+        Log.d("erwer",imgList.toString())
+        Log.d("ewe",images.toString())
+
+        diaryService.editGroupDiary(
+            moimPlaceId,
+            placeRequestBody,
+            moneyRequestBody,
+            membersRequestBody,
+            imgList
+        )
+        diaryService.editGroupDiaryView(this)
+    }
+
+
+    override fun onEditGroupDiarySuccess(response: DiaryResponse.DiaryResponse) {
+        Log.d("EDIT_GROUP_DIARY", response.message)
+    }
+
+    override fun onEditGroupDiaryFailure(message: String) {
+        Log.d("EDIT_GROUP_DIARY", message)
+    }
+
+    /** 그룹 다이어리 별 장소 삭제 **/
+    fun deleteGroupPlace(moimPlaceId: Long) {
+        diaryService.deleteGroupDiary(moimPlaceId)
+        diaryService.deleteGroupDiaryView(this)
+    }
+
+    override fun onDeleteGroupDiarySuccess(response: DiaryResponse.DiaryResponse) {
+        Log.d("DELETE_GROUP_DIARY", response.message)
+    }
+
+    override fun onDeleteGroupDiaryFailure(message: String) {
+        Log.d("DELETE_GROUP_DIARY", message)
+    }
+
 
     private fun imageToMultipart(images: List<String>?): List<MultipartBody.Part>? {
         return images?.map { path ->
@@ -477,13 +547,26 @@ class DiaryRepository(
         }
     }
 
-    override fun onAddGroupDiarySuccess(response: DiaryResponse.AddGroupDiaryResponse) {
-        Log.d("ADD_GROUP_DIARY", response.message)
-    }
+//    private fun imageToMultipart(images: List<String>?): List<MultipartBody.Part>? {
+//        return images?.map { pathOrUrl ->
+//            val requestFile: RequestBody = if (pathOrUrl.startsWith("http")) {
+//                // 웹 이미지의 경우 URL을 통해 이미지를 다운로드
+//                val url = URL(pathOrUrl)
+//                val inputStream = url.openStream()
+//                val buffer = inputStream.readBytes()
+//                inputStream.close()
+//                buffer.toRequestBody("image/*".toMediaTypeOrNull())
+//            } else {
+//                // 갤러리에서 가져온 이미지의 경우 절대 경로를 사용
+//                val file = File(absolutelyPath(pathOrUrl.toUri(),context))
+//                file.asRequestBody("image/*".toMediaTypeOrNull())
+//            }
+//
+//            MultipartBody.Part.createFormData("imgs", null, requestFile)
+//        }
+//    }
 
-    override fun onAddGroupDiaryFailure(message: String) {
-        Log.d("ADD_GROUP_DIARY", message)
-    }
+
 
     @SuppressLint("Recycle")
     fun absolutelyPath(path: Uri?, context: Context): String {
@@ -502,7 +585,6 @@ class DiaryRepository(
         return result
     }
 
-
     private fun printNotUploaded() {
 
         val storeDB = Thread {
@@ -517,5 +599,4 @@ class DiaryRepository(
         }
         Log.d("diary", "Not uploaded Diary : $failList")
     }
-
 }

@@ -56,17 +56,9 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
         repo = DiaryRepository(requireContext())
         setEvent()
         charCnt()
+        onClickListener()
 
         return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        if (imgList.isEmpty()) {
-            binding.diaryGalleryClickIv.visibility = View.VISIBLE
-        }
-        onClickListener()
     }
 
 
@@ -168,8 +160,6 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
             getImage.launch(intent)
 
-            binding.diaryGalleryClickIv.visibility = View.GONE
-            binding.diaryGallerySavedRy.visibility = View.VISIBLE
 
         } else {  // 없으면 권한 받기
             ActivityCompat.requestPermissions(
@@ -181,7 +171,6 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
                 200
             )
 
-            binding.diaryGalleryClickIv.visibility = View.VISIBLE
         }
     }
 
@@ -191,13 +180,13 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
     ) { result ->
 
         if (result.resultCode == RESULT_OK) {
-
+          //  imgList.clear()
             if (result.data?.clipData != null) { // 사진 여러개 선택한 경우
                 val count = result.data?.clipData!!.itemCount
                 if (count > 3) {
                     Toast.makeText(requireContext(), "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT)
                         .show()
-                    binding.diaryGalleryClickIv.visibility = View.VISIBLE
+
                     return@registerForActivityResult
                 } else {
                     for (i in 0 until count) {

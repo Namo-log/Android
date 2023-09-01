@@ -139,6 +139,7 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
 
             view?.findNavController()
                 ?.navigate(R.id.action_groupDiaryFragment_to_groupModifyFragment)
+            findNavController().popBackStack(R.id.diaryFragment, true)
             Log.d("placeEvent", "$placeEvent")
 
             placeEvent.map {
@@ -218,7 +219,7 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
     ) { result ->
 
         if (result.resultCode == Activity.RESULT_OK) {
-            imgList.clear()
+           // imgList.clear()
             if (result.data?.clipData != null) { // 사진 여러개 선택한 경우
                 val count = result.data?.clipData!!.itemCount
                 if (count > 3) {
@@ -266,8 +267,10 @@ class GroupDiaryFragment : Fragment() {  // 그룹 다이어리 추가 화면
     private fun dummy() {
         memberNames.addAll(
             listOf(
-                DiaryResponse.GroupUser(4, "앨리"),
-                DiaryResponse.GroupUser(6, "수빈")
+                DiaryResponse.GroupUser(4, "김현재"),
+//                DiaryResponse.GroupUser(3, "수빈"),
+//                DiaryResponse.GroupUser(5, "나현"),
+//                DiaryResponse.GroupUser(6, "어진"),
            )
         )
     }

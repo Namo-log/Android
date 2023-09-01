@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.diary.DiaryGroupEvent
+import com.example.namo.data.remote.diary.DiaryRepository
 import com.example.namo.databinding.ItemDiaryGroupEventBinding
 
 
@@ -88,12 +89,9 @@ class GroupPlaceEventAdapter(
         holder.galleryAdapter.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-        if (event.imgs.isEmpty()) {
-            holder.binding.groupGalleryLv.visibility = View.VISIBLE
-            holder.binding.groupAddGalleryRv.visibility = View.GONE
-        } else {
-            holder.binding.groupGalleryLv.visibility = View.GONE
-            holder.binding.groupAddGalleryRv.visibility = View.VISIBLE
+        if (event.imgs.isNotEmpty()) {
+            holder.binding.img2.visibility=View.GONE
+            holder.binding.img3.visibility=View.GONE
         }
 
         holder.gallery.setOnClickListener {
@@ -123,6 +121,13 @@ class GroupPlaceEventAdapter(
 
 
     override fun onItemSwipe(position: Int) {
+
+        val placeIdx = listData[position].placeIdx
+        if (placeIdx != 0L) {
+            val repo = DiaryRepository(context)
+            repo.deleteGroupPlace(placeIdx)
+        }
+
         listData.removeAt(position)
         notifyItemRemoved(position)
     }

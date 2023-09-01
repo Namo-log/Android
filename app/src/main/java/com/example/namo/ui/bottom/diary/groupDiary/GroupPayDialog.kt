@@ -4,11 +4,12 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.namo.data.entity.diary.DiaryGroupEvent
@@ -28,8 +29,6 @@ class GroupPayDialog(
     lateinit var binding: DialogGroupPayBinding
     private lateinit var payMemberRVAdapter: GroupPayMemberRVAdapter
 
-    private var totalPay: Int = 0
-    private var eachPay: Int = 0
     private var memberIsChecked = mutableListOf<Pair<Int, Boolean>>()
 
     @SuppressLint("SetTextI18n")
@@ -53,11 +52,25 @@ class GroupPayDialog(
         account()
         onClickListener()
 
+
+        binding.groupPayTotalEt.isSingleLine = true
+        binding.groupPayTotalEt.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updateResultText()
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                updateResultText()
+            }
+        })
+
         if (placeEvent.pay != 0) {
             val memberSize = placeEvent.members.size
-            binding.groupPayTotalEt.setText("${placeEvent.pay}")
-            binding.groupPayCountTv.text = "$memberSize  명"
-            binding.groupPayResultTv.text = "${placeEvent.pay / memberSize}  원"
+            binding.groupPayCountTv.text = memberSize.toString()
+            binding.groupPayTotalEt.setText(placeEvent.pay.toString())
+            updateResultText()
 
             for (i in placeEvent.members) {
                 val index = memberIsChecked.indexOfFirst { it.first == i }
@@ -92,31 +105,28 @@ class GroupPayDialog(
                 val checkedPeopleCount = memberIsChecked.count {
                     it.second
                 }
-                binding.groupPayCountTv.text = "$checkedPeopleCount  명"
-                // 체크된 멤버 수 계산
-
-                val totalText = binding.groupPayTotalEt.text.toString()
-                binding.groupPayTotalEt.isSingleLine = true
-
-                if (totalText.contains(Regex("[a-zA-Z]"))) {
-                    binding.groupPayTotalEt.text.clear()
-                    Toast.makeText(requireContext(), "숫자만 입력 가능합니다!", Toast.LENGTH_SHORT).show()
-                }
-
-                if (totalText.isNotEmpty() and (totalText.toIntOrNull() != null)) {   // 총 금액을 입력했을 때 계산
-                    totalPay = binding.groupPayTotalEt.text.toString().toLong().toInt()
-                    if (checkedPeopleCount != 0) {
-                        eachPay = totalPay / checkedPeopleCount
-                    } else {
-                        Toast.makeText(requireContext(), "멤버를 선택해주세요", Toast.LENGTH_SHORT).show()
-                    }
-                    binding.groupPayResultTv.text = "$eachPay  원"
-
-                } else { // 총 금액 입력 안하면 메세지
-                    Toast.makeText(requireContext(), "금액을 입력해주세요", Toast.LENGTH_SHORT).show()
-                }
+                binding.groupPayCountTv.text = "$checkedPeopleCount"
             }
         })
+    }
+
+    private fun updateResultText() {
+        val totalText = binding.groupPayTotalEt.text.toString()
+
+        if (totalText.isNotEmpty() && totalText.toIntOrNull() != null) {
+            val totalPay = totalText.toLong()
+            val memberSize = binding.groupPayCountTv.text.toString().toLong()
+
+            if (memberSize != 0L) {
+                val result = totalPay / memberSize
+                binding.groupPayResultTv.text = result.toString()
+            } else {
+                binding.groupPayResultTv.text = "0"
+            }
+        } else {
+            // 빈 문자열
+            binding.groupPayResultTv.text = "0"
+        }
     }
 
     @SuppressLint("SuspiciousIndentation")
@@ -129,10 +139,7 @@ class GroupPayDialog(
             }
             groupPaySaveTv.setOnClickListener {
 
-                if (totalPay == 0) {
-                    totalPay =
-                        binding.groupPayResultTv.text.toString().replace("  원", "").trim().toInt()
-                }
+                val totalPay = binding.groupPayTotalEt.text.toString().toInt()
                 pay(totalPay)
 
                 val checkedMemberId = mutableListOf<Int>()

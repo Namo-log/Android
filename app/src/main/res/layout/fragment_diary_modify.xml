@@ -197,39 +197,40 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/diary_gallery_click_iv"
-            android:layout_width="50dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/MainOrange"
-            android:elevation="0dp"
-            app:cardCornerRadius="15dp"
-            app:layout_constraintEnd_toEndOf="@id/linear_corner"
-            app:layout_constraintTop_toBottomOf="@id/diary_gallery_saved_ry">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/floating_add" />
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/diary_gallery_saved_ry"
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="25dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="15dp"
             android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:scrollbars="none"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_num_tv"
-            tools:itemCount="3"
-            tools:listitem="@layout/item_diary_gallery" />
+            app:layout_constraintTop_toBottomOf="@id/text_num_tv">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/diary_gallery_saved_ry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/diary_gallery_click_iv"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/gallery_background"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_gallery" />
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

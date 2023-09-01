@@ -27,7 +27,6 @@ import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryModifyBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 
 class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  // 다이어리 편집 화면
@@ -74,10 +73,9 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
         return binding.root
     }
 
+
     private fun getDiary() {
-        diary = runBlocking {
-            repo.getDiary(event.eventId) // 개별 다이어리 조회
-        }
+        diary = repo.getDiary(event.eventId) // 개별 다이어리 조회
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -207,13 +205,11 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
 
         if (result.resultCode == Activity.RESULT_OK) {
             imgList.clear()
-
             if (result.data?.clipData != null) { // 사진 여러개 선택한 경우
                 val count = result.data?.clipData!!.itemCount
                 if (count > 3) {
                     Toast.makeText(requireContext(), "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT)
                         .show()
-                    binding.diaryGalleryClickIv.visibility = View.VISIBLE
                 } else {
                     for (i in 0 until count) {
                         val imageUri = result.data?.clipData!!.getItemAt(i).uri
