@@ -76,13 +76,18 @@
         <item name="android:textColor">@color/textGray</item>
         <item name="android:textStyle">bold</item>
     </style>
-
+    <!-- 토글 -->
+    <style name="category_toggle">
+        <item name="thumbTint">@color/white</item>
+        <item name="track">@drawable/style_toggle_btn</item>
+        <item name="android:thumb">@drawable/style_toggle_thumb</item>
+        <item name="android:enabled">true</item>
+    </style>
     <style name="custom_setting_15sp_tv">
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/textGray</item>
     </style>
-
     <style name="default_underline">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1px</item>
