@@ -19,10 +19,9 @@
             <item>
                 <shape>
                     <corners android:radius="300dp" />
-                    <solid android:color="@color/MainOrange" />
+                    <solid android:color="@color/textGray" />
                 </shape>
             </item>
-
         </layer-list>
     </item>
 </selector>

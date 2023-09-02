@@ -3,6 +3,8 @@ package com.example.namo.data.remote.moim
 import android.util.Log
 import com.example.namo.config.ApplicationClass
 import com.example.namo.config.BaseResponse
+import com.example.namo.data.entity.group.AddMoimSchedule
+import com.example.namo.data.entity.group.EditMoimSchedule
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -19,6 +21,7 @@ class MoimService {
     private lateinit var getMoimScheduleView : GetMoimScheduleView
     private lateinit var deleteMoimMemberView : DeleteMoimMemberView
     private lateinit var participateMoimView: ParticipateMoimView
+    private lateinit var moimScheduleView : MoimScheduleView
 
     fun setAddMoimView(addMoimView: AddMoimView) {
         this.addMoimView = addMoimView
@@ -38,6 +41,10 @@ class MoimService {
 
     fun setParticipateMoimView (participateMoimView: ParticipateMoimView) {
         this.participateMoimView = participateMoimView
+    }
+
+    fun setMoimScheduleView (moimScheduleView : MoimScheduleView) {
+        this.moimScheduleView = moimScheduleView
     }
 
     fun addMoim(
@@ -199,5 +206,71 @@ class MoimService {
                     deleteMoimMemberView.onUpdateMoimNameFailure(t.message ?: "통신 오류")
                 }
             })
+    }
+
+    fun postMoimSchedule(body : AddMoimSchedule) {
+        moimRetrofitInterface.postMoimSchedule(body).enqueue(object : Callback<AddMoimScheduleResponse> {
+            override fun onResponse(
+                call: Call<AddMoimScheduleResponse>,
+                response: Response<AddMoimScheduleResponse>
+            ) {
+                when(response.code()) {
+                    200 -> moimScheduleView.onAddMoimScheduleSuccess(response.body() as AddMoimScheduleResponse)
+                    else -> {
+                        Log.d("PostMoimSchedule", "Success but error")
+                        moimScheduleView.onAddMoimScheduleFailure("통신 중 200 외 기타 코드")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<AddMoimScheduleResponse>, t: Throwable) {
+                Log.d("PostMoimSchedule", "onFailure")
+                moimScheduleView.onAddMoimScheduleFailure(t.message ?: "통신 오류")
+            }
+        })
+    }
+
+    fun editMoimSchedule(body : EditMoimSchedule) {
+        moimRetrofitInterface.editMoimSchedule(body).enqueue(object : Callback<BaseResponse> {
+            override fun onResponse(
+                call: Call<BaseResponse>,
+                response: Response<BaseResponse>
+            ) {
+                when(response.code()) {
+                    200 -> moimScheduleView.onEditMoimScheduleSuccess(response.message())
+                    else -> {
+                        Log.d("EditMoimSchedule", "Success but error")
+                        moimScheduleView.onEditMoimScheduleFailure("통신 중 200 외 기타 코드")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
+                Log.d("EditMoimSchedule", "onFailure")
+                moimScheduleView.onEditMoimScheduleFailure(t.message ?: "통신 오류")
+            }
+        })
+    }
+
+    fun deleteMoimSchedule(moimScheduleId : Long) {
+        moimRetrofitInterface.deleteMoimSchedule(moimScheduleId).enqueue(object : Callback<BaseResponse> {
+            override fun onResponse(
+                call: Call<BaseResponse>,
+                response: Response<BaseResponse>
+            ) {
+                when(response.code()) {
+                    200 -> moimScheduleView.onDeleteMoimScheduleSuccess(response.message())
+                    else -> {
+                        Log.d("DeleteMoimSchedule", "Success but error")
+                        moimScheduleView.onDeleteMoimScheduleFailure("통신 중 200 외 기타 코드")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
+                Log.d("DeleteMoimSchedule", "onFailure")
+                moimScheduleView.onDeleteMoimScheduleFailure(t.message ?: "통신 오류")
+            }
+        })
     }
 }

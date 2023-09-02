@@ -30,6 +30,10 @@ data class MoimListUser (
     @SerializedName("userColor") var color : Int
 ) : Serializable
 
+data class MoimListUserList(
+    var memberList : List<MoimListUser>
+) : Serializable
+
 data class MoimScheduleUser (
     @SerializedName("userId") var userId : Long,
     @SerializedName("userName") var userName : String,
@@ -45,11 +49,11 @@ data class MoimSchedule(
     @SerializedName("startDate") var startDate : Long = 0L,
     @SerializedName("endDate") var endDate : Long = 0L,
     @SerializedName("interval") var interval : Int = 0,
-    @SerializedName("users") var users : List<MoimScheduleUser>,
-    @SerializedName("moimId") var moimId : Long?,
-    @SerializedName("moimScheduleId") var moimScheduleId : Long?,
-    @SerializedName("curMoimSchedule") var curMoimSchedule : Boolean
-)
+    @SerializedName("users") var users : List<MoimScheduleUser> = listOf(),
+    @SerializedName("moimId") var moimId : Long = 0L,
+    @SerializedName("moimScheduleId") var moimScheduleId : Long = 0L,
+    @SerializedName("curMoimSchedule") var curMoimSchedule : Boolean = false
+) : Serializable
 
 data class ParticipateMoimResponse(
     @SerializedName("result") val result : Long = 0L
@@ -59,3 +63,7 @@ data class UpdateMoimNameBody(
     val moimId: Long,
     val moimName: String
 )
+
+data class AddMoimScheduleResponse(
+    @SerializedName("result") val result : Long
+) : BaseResponse()

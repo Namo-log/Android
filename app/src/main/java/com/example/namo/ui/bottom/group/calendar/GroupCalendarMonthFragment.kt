@@ -20,6 +20,7 @@ import com.example.namo.databinding.FragmentGroupCalendarMonthBinding
 import com.example.namo.ui.bottom.group.GroupCalendarActivity
 import com.example.namo.ui.bottom.group.GroupScheduleActivity
 import com.example.namo.ui.bottom.group.calendar.GroupCalendarAdapter.Companion.GROUP_ID
+import com.example.namo.ui.bottom.group.calendar.adapter.GroupDailyGroupRVAdapter
 import com.example.namo.ui.bottom.group.calendar.adapter.GroupDailyPersonalRVAdapter
 import com.example.namo.ui.bottom.home.HomeFragment
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
@@ -38,15 +39,16 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
     private var isShow = false
     private val eventList : ArrayList<MoimSchedule> = arrayListOf()
     private val dailyEvents : ArrayList<MoimSchedule> = arrayListOf()
+    private val dailyGroupEvents : ArrayList<MoimSchedule> = arrayListOf()
     private lateinit var monthList : List<DateTime>
-    private lateinit var tempEvent : List<Event>
+    private var tempEvent : ArrayList<MoimSchedule> = arrayListOf()
 
     private var prevIdx = -1
     private var nowIdx = 0
     private var event_personal : ArrayList<Event> = arrayListOf()
     private var event_group : ArrayList<Event> = arrayListOf()
     private val personalEventRVAdapter = GroupDailyPersonalRVAdapter()
-    private val groupEventRVAdapter = DailyGroupRVAdapter()
+    private val groupEventRVAdapter = GroupDailyGroupRVAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +71,8 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
         binding.groupFab.setOnClickListener {
             val intent = Intent(context, GroupScheduleActivity::class.java)
             intent.putExtra("nowDay", monthList[nowIdx].millis)
-            requireActivity().startActivity(intent)
+            intent.putExtra("group", (activity as GroupCalendarActivity).getGroup() )
+            startActivity(intent)
         }
 
         binding.groupCalendarMonthView.onDateClickListener = object : GroupCustomCalendarView.OnDateClickListener {
@@ -145,6 +148,15 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
 
         binding.groupDailyGroupEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.groupDailyGroupEventRv.adapter = groupEventRVAdapter
+
+        groupEventRVAdapter.setContentClickListener(object : GroupDailyGroupRVAdapter.ContentClickListener {
+            override fun onContentClick(groupSchedule: MoimSchedule) {
+                val intent = Intent(context, GroupScheduleActivity::class.java)
+                intent.putExtra("group", (activity as GroupCalendarActivity).getGroup())
+                intent.putExtra("moimSchedule", groupSchedule)
+                requireActivity().startActivity(intent)
+            }
+        })
     }
 
     private fun setDaily(idx : Int) {
@@ -167,15 +179,29 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
         var todayStart = monthList[idx].withTimeAtStartOfDay().millis
         var todayEnd = monthList[idx].plusDays(1).withTimeAtStartOfDay().millis - 1
 
+        tempEvent.clear()
+        tempEvent.addAll(eventList.filter { event ->
+            event.startDate <= todayEnd / 1000 && event.endDate >= todayStart / 1000
+        })
+
         dailyEvents.clear()
+        dailyGroupEvents.clear()
         dailyEvents.addAll(
-            eventList.filter { event ->
-                event.startDate <= todayEnd / 1000 && event.endDate >= todayStart / 1000
+            tempEvent.filter { event ->
+                !event.curMoimSchedule
+            }
+        )
+        dailyGroupEvents.addAll(
+            tempEvent.filter { event ->
+                event.curMoimSchedule
             }
         )
         Log.d("GroupCalMonFrag", dailyEvents.toString())
+        Log.d("GroupCalMonFrag", "Group Schedule : " + dailyGroupEvents.toString())
 
         personalEventRVAdapter.addPersonal(dailyEvents)
+        groupEventRVAdapter.addGroupSchedule(dailyGroupEvents)
+
 
     }
 

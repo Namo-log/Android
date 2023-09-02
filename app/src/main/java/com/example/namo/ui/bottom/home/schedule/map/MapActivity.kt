@@ -21,11 +21,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.example.namo.MainActivity
+import com.example.namo.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
 import com.example.namo.MainActivity.Companion.PLACE_NAME_INTENT_KEY
 import com.example.namo.MainActivity.Companion.PLACE_X_INTENT_KEY
 import com.example.namo.MainActivity.Companion.PLACE_Y_INTENT_KEY
 import com.example.namo.R
 import com.example.namo.databinding.ActivityMapBinding
+import com.example.namo.ui.bottom.group.GroupScheduleActivity
+import com.example.namo.ui.bottom.home.schedule.ScheduleActivity
 import com.example.namo.ui.bottom.home.schedule.map.adapter.MapRVAdapter
 import com.example.namo.ui.bottom.home.schedule.map.data.KakaoAPI
 import com.example.namo.ui.bottom.home.schedule.map.data.Place
@@ -59,9 +62,6 @@ class MapActivity : AppCompatActivity() {
 
     private var originHeight : Int = 0
 
-    private val PERMISSIONS_REQUEST_CODE = 100
-    private val REQUIRED_PERMISSIONS = arrayOf(ACCESS_FINE_LOCATION)
-
     private var uLatitude : Double = 0.0
     private var uLongitude : Double = 0.0
 
@@ -82,6 +82,7 @@ class MapActivity : AppCompatActivity() {
 
         behavior = BottomSheetBehavior.from(binding.searchView.dialogMapBehaviorView)
         originHeight = binding.mapView.height
+
 
         getLocationPermission()
         setCurrentLocation()
@@ -126,6 +127,12 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun clickListener() {
+        val targetActivityClass = when(intent.getStringExtra(ORIGIN_ACTIVITY_INTENT_KEY)) {
+            "GroupSchedule" -> GroupScheduleActivity::class.java
+            "Schedule" -> ScheduleActivity::class.java
+            else -> ScheduleActivity::class.java
+        }
+
         binding.searchView.mapSearchBtn.setOnClickListener {
 
             behavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -181,7 +188,7 @@ class MapActivity : AppCompatActivity() {
         }
 
         binding.selectBtn.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, targetActivityClass)
             intent.putExtra(PLACE_NAME_INTENT_KEY, selectedPlace.place_name)
             intent.putExtra(PLACE_X_INTENT_KEY, selectedPlace.x)
             intent.putExtra(PLACE_Y_INTENT_KEY, selectedPlace.y)

@@ -68,9 +68,11 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
     private var isDiarySuccess = false
 
     companion object {
+        const val ORIGIN_ACTIVITY_INTENT_KEY: String = "original_activity"
         const val PLACE_NAME_INTENT_KEY: String = "place_name"
         const val PLACE_X_INTENT_KEY: String = "place_x"
         const val PLACE_Y_INTENT_KEY: String = "place_y"
+        const val GROUP_MEMBER_INTENT_KEY : String = "group_member"
 
         fun setCategoryList(db: NamoDatabase): List<Category> {
             var categoryList =listOf<Category>()
