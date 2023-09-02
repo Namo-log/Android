@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.R
 import com.example.namo.data.entity.diary.DiaryGroupEvent
+import com.example.namo.data.remote.diary.DiaryRepository
 import com.example.namo.data.remote.diary.DiaryResponse
 import com.example.namo.data.remote.diary.DiaryService
 import com.example.namo.data.remote.diary.GetGroupDiaryView
@@ -45,11 +46,12 @@ class GroupModifyFragment : Fragment(), GetGroupDiaryView {  // 그룹 다이어
     private var positionForGallery: Int = -1
 
     private var placeEvent = ArrayList<DiaryGroupEvent>()
+
     private lateinit var groupMembers: List<DiaryResponse.GroupUser>
     private lateinit var groupData: DiaryResponse.GroupDiaryResult
     private lateinit var groupEvent: List<DiaryResponse.LocationDto>
     private lateinit var memberIntList: List<Int>
-
+    private lateinit var repo: DiaryRepository
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -60,12 +62,13 @@ class GroupModifyFragment : Fragment(), GetGroupDiaryView {  // 그룹 다이어
 
         hideBottomNavigation(true)
 
+        repo = DiaryRepository(requireContext())
+
         val diaryService = DiaryService()
         diaryService.getGroupDiary(7)
         diaryService.getGroupDiaryView(this)
 
         onClickListener()
-        dummy()
 
         return binding.root
     }
@@ -82,15 +85,18 @@ class GroupModifyFragment : Fragment(), GetGroupDiaryView {  // 그룹 다이어
         memberIntList = groupMembers.map { it.userId }
 
         groupEvent.map {
+
             placeEvent.add(
                 DiaryGroupEvent(
                     it.place,
                     it.pay,
                     it.members,
-                    it.imgs as ArrayList<String?>
+                    it.imgs as ArrayList<String?>,
+                    it.moimMemoLocationId
                 )
             )
         }
+
 
         val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(groupData.startDate * 1000)
         binding.groupAddInputDateTv.text = formatDate
@@ -175,8 +181,19 @@ class GroupModifyFragment : Fragment(), GetGroupDiaryView {  // 그룹 다이어
         }
 
         binding.groupModifySaveTv.setOnClickListener {// 저장하기
-            findNavController().popBackStack(R.id.diaryFragment, true)
-            Log.d("placeEvent", "$placeEvent")
+
+            for (placeEventItem in placeEvent) {
+
+                repo.editGroupPlace(
+                    placeEventItem.placeIdx,
+                    placeEventItem.place,
+                    placeEventItem.pay,
+                    placeEventItem.members,
+                    placeEventItem.imgs as List<String>?
+                )
+
+            }
+
         }
 
         // 장소 추가 버튼 클릭리스너
@@ -289,13 +306,6 @@ class GroupModifyFragment : Fragment(), GetGroupDiaryView {  // 그룹 다이어
         }
     }
 
-    private fun dummy() {
-        memberNames.apply {
-            add("코코아")
-            add("지니")
-            add("앨리")
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()

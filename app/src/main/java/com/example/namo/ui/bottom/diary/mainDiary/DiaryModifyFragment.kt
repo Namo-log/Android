@@ -22,16 +22,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.entity.diary.Diary
-import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryModifyBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 
 class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  // 다이어리 편집 화면
@@ -44,7 +39,6 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
     private lateinit var repo: DiaryRepository
 
     private lateinit var event: Event
-    private lateinit var category: Category
     private lateinit var diary: Diary
 
     override fun onCreateView(
@@ -79,23 +73,18 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
         return binding.root
     }
 
+
     private fun getDiary() {
-        diary = runBlocking {
-            repo.getDiary(event.eventId) // 개별 다이어리 조회
-        }
+        diary = repo.getDiary(event.eventId) // 개별 다이어리 조회
     }
 
     @SuppressLint("SimpleDateFormat")
     private fun bind() {
 
-        CoroutineScope(Dispatchers.Main).launch {
+        val category=repo.getCategory(event.categoryIdx,event.categoryServerIdx)
 
-            val categoryIdx = event.categoryIdx
-            category = repo.getCategoryId(categoryIdx)
-
-            context?.resources?.let {
-                binding.itemDiaryCategoryColorIv.background.setTint(category.color)
-            }
+        context?.resources?.let {
+            binding.itemDiaryCategoryColorIv.background.setTint(category.color)
         }
 
         binding.apply {
@@ -118,7 +107,7 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
         }
 
         binding.diaryBackIv.setOnClickListener {
-            findNavController().navigate(R.id.action_diaryModifyFragment_to_diaryFragment)
+            findNavController().popBackStack()
             hideBottomNavigation(false)
         }
 
@@ -216,13 +205,11 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
 
         if (result.resultCode == Activity.RESULT_OK) {
             imgList.clear()
-
             if (result.data?.clipData != null) { // 사진 여러개 선택한 경우
                 val count = result.data?.clipData!!.itemCount
                 if (count > 3) {
                     Toast.makeText(requireContext(), "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT)
                         .show()
-                    binding.diaryGalleryClickIv.visibility = View.VISIBLE
                 } else {
                     for (i in 0 until count) {
                         val imageUri = result.data?.clipData!!.getItemAt(i).uri

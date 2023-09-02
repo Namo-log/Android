@@ -125,11 +125,20 @@
 
                 <TextView
                     android:id="@+id/group_pay_count_tv"
-                    android:layout_width="130dp"
+                    android:layout_width="110dp"
                     android:layout_height="25dp"
                     android:gravity="center_vertical|end"
                     android:paddingEnd="10dp"
-                    android:text="0 명"
+                    android:text="0"
+                    android:textColor="@color/textGray"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|end"
+                    android:paddingEnd="5dp"
+                    android:text="명"
                     android:textColor="@color/textGray"
                     android:textSize="15sp" />
 
@@ -149,7 +158,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="130dp"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:text="인당 금액"
                     android:textColor="@color/textGray"
@@ -157,10 +166,19 @@
 
                 <TextView
                     android:id="@+id/group_pay_result_tv"
-                    android:layout_width="130dp"
+                    android:layout_width="118dp"
                     android:layout_height="25dp"
                     android:gravity="center_vertical|end"
                     android:paddingEnd="10dp"
+                    android:textColor="@color/textGray"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|end"
+                    android:paddingEnd="5dp"
+                    android:text="원"
                     android:textColor="@color/textGray"
                     android:textSize="15sp" />
 

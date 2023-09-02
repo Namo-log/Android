@@ -22,15 +22,12 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
-import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryAddBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 
 class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
@@ -43,7 +40,6 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
     private lateinit var repo: DiaryRepository
     private var imgList = arrayListOf<String>()
     private lateinit var event: Event
-    private lateinit var category: Category
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,17 +56,9 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
         repo = DiaryRepository(requireContext())
         setEvent()
         charCnt()
+        onClickListener()
 
         return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        if (imgList.isEmpty()) {
-            binding.diaryGalleryClickIv.visibility = View.VISIBLE
-        }
-        onClickListener()
     }
 
 
@@ -79,14 +67,10 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
         event = (arguments?.getSerializable("event") as? Event)!!
 
-        CoroutineScope(Dispatchers.Main).launch {
-            category = repo.getCategoryId(event.categoryIdx)
+        val category = repo.getCategory(event.categoryIdx, event.categoryServerIdx)
 
-            binding.apply {
-                context?.resources?.let {
-                    itemDiaryCategoryColorIv.background.setTint(category.color)
-                }
-            }
+        context?.resources?.let {
+            binding.itemDiaryCategoryColorIv.background.setTint(category.color)
         }
 
         binding.apply {
@@ -117,10 +101,7 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
             }
 
             diaryEditTv.setOnClickListener {
-
                 insertData()
-                view?.findNavController()?.navigate(R.id.homeFragment)
-                hideBottomNavigation(false)
             }
 
             diaryGalleryClickIv.setOnClickListener {
@@ -136,7 +117,15 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
     private fun insertData() {
 
         val content = binding.diaryContentsEt.text.toString()
-        repo.addDiary(event.eventId, content, imgList, event.serverIdx)
+
+        if (content.isEmpty() && imgList.isEmpty()) {
+            Snackbar.make(binding.root, "내용이나 이미지를 추가해주세요!", Snackbar.LENGTH_SHORT).show()
+            return
+        } else {
+            repo.addDiary(event.eventId, content, imgList, event.serverIdx)
+            view?.findNavController()?.navigate(R.id.homeFragment)
+            hideBottomNavigation(false)
+        }
 
     }
 
@@ -171,8 +160,6 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
             getImage.launch(intent)
 
-            binding.diaryGalleryClickIv.visibility = View.GONE
-            binding.diaryGallerySavedRy.visibility = View.VISIBLE
 
         } else {  // 없으면 권한 받기
             ActivityCompat.requestPermissions(
@@ -184,7 +171,6 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
                 200
             )
 
-            binding.diaryGalleryClickIv.visibility = View.VISIBLE
         }
     }
 
@@ -194,13 +180,13 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
     ) { result ->
 
         if (result.resultCode == RESULT_OK) {
-
+          //  imgList.clear()
             if (result.data?.clipData != null) { // 사진 여러개 선택한 경우
                 val count = result.data?.clipData!!.itemCount
                 if (count > 3) {
                     Toast.makeText(requireContext(), "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT)
                         .show()
-                    binding.diaryGalleryClickIv.visibility = View.VISIBLE
+
                     return@registerForActivityResult
                 } else {
                     for (i in 0 until count) {

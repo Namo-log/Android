@@ -22,33 +22,49 @@ interface DiaryInterface {
         @Part("scheduleId") scheduleIdx: RequestBody,
         @Part("content") content: RequestBody?,
         @Part imgs: List<MultipartBody.Part>?
-    ): Call<DiaryResponse.DiaryEditResponse>
+    ): Call<DiaryResponse.DiaryResponse>
 
 
     @DELETE("/schedules/diary/{scheduleId}")
     fun deleteDiary(
         @Path("scheduleId") scheduleId: Long
-    ): Call<DiaryResponse.DiaryDeleteResponse>
+    ): Call<DiaryResponse.DiaryResponse>
 
 
     @GET("/schedules/diary/all")
-    fun getAllDiary():Call<DiaryResponse.DiaryGetAllResponse>
+    fun getAllDiary(): Call<DiaryResponse.DiaryGetAllResponse>
 
 
     @Multipart
     @POST("/moims/schedule/memo/{moimId}")
     fun addGroupDiary(
         @Path("moimId") scheduleIdx: Long,
-        @Part("name") place: RequestBody?, // String
-        @Part("money") pay: RequestBody?,  // Int
-        @Part("participants") member:RequestBody?,  // List<Int>
-        @Part imgs: List<MultipartBody.Part>?  // List<String>
-    ): Call<DiaryResponse.AddGroupDiaryResponse>
+        @Part("name") place: RequestBody?,
+        @Part("money") pay: RequestBody?,
+        @Part("participants") member: RequestBody?,
+        @Part imgs: List<MultipartBody.Part>?
+    ): Call<DiaryResponse.DiaryResponse>
 
 
     @GET("/moims/schedule/memo/{moimId}")
     fun getGroupDiary(
         @Path("moimId") scheduleIdx: Long
     ): Call<DiaryResponse.GetGroupDiaryResponse>
+
+
+    @Multipart
+    @PATCH("/moims/schedule/memo/{moimMemoLocationId}")
+    fun patchGroupDiaryPlace(
+        @Path("moimMemoLocationId") moimScheduldIdx: Long,
+        @Part("name") place: RequestBody?,
+        @Part("money") pay: RequestBody?,
+        @Part("participants") member: RequestBody?,
+        @Part imgs: List<MultipartBody.Part>?
+    ): Call<DiaryResponse.DiaryResponse>
+
+    @DELETE("/moims/schedule/memo/{moimMemoLocationId}")
+    fun deleteGroupDiaryPlace(
+        @Path("moimMemoLocationId") moimScheduldIdx: Long
+    ): Call<DiaryResponse.DiaryResponse>
 }
 

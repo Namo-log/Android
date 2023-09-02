@@ -49,7 +49,6 @@ class YearMonthDialog( // 다이어리 리스트 달 별 출력을 위한 다이
             yearPicker.minValue = minYear
             yearPicker.maxValue = maxYear
 
-
             yearPicker.value = year
             monthPicker.value = month
 
@@ -72,6 +71,7 @@ class YearMonthDialog( // 다이어리 리스트 달 별 출력을 위한 다이
 
             cancelBtn.setOnClickListener {
                 okCallback(DateTime(binding.yearPicker.value, binding.monthPicker.value, 1, 0, 0))
+
                 dismiss()
             }
         }

@@ -6,9 +6,9 @@ interface DiaryView {
 }
 
 interface DiaryDetailView {
-    fun onEditDiarySuccess(response: DiaryResponse.DiaryEditResponse, localId: Long, serverId: Long)
+    fun onEditDiarySuccess(response: DiaryResponse.DiaryResponse, localId: Long, serverId: Long)
     fun onEditDiaryFailure(message: String)
-    fun onDeleteDiarySuccess(response: DiaryResponse.DiaryDeleteResponse, localId: Long)
+    fun onDeleteDiarySuccess(response: DiaryResponse.DiaryResponse, localId: Long)
     fun onDeleteDiaryFailure(message: String)
 }
 
@@ -18,12 +18,22 @@ interface GetMonthDiaryView {
 }
 
 interface AddGroupDiaryView {
-    fun onAddGroupDiarySuccess(response: DiaryResponse.AddGroupDiaryResponse)
+    fun onAddGroupDiarySuccess(response: DiaryResponse.DiaryResponse)
     fun onAddGroupDiaryFailure(message: String)
 }
 
 interface GetGroupDiaryView {
     fun onGetGroupDiarySuccess(response: DiaryResponse.GetGroupDiaryResponse)
     fun onGetGroupDiaryFailure(message: String)
+}
+
+interface EditGroupDiaryView {
+    fun onEditGroupDiarySuccess(response: DiaryResponse.DiaryResponse)
+    fun onEditGroupDiaryFailure(message: String)
+}
+
+interface DeleteGroupDiaryView {
+    fun onDeleteGroupDiarySuccess(response: DiaryResponse.DiaryResponse)
+    fun onDeleteGroupDiaryFailure(message: String)
 }
 

@@ -5,25 +5,19 @@ import com.google.gson.annotations.SerializedName
 
 class DiaryResponse {
 
-    /** 기록 생성 **/
+    data class DiaryResponse(
+        val result: String
+    ) : BaseResponse() // 기본 string
+
+
+    /** 기록 추가 **/
     data class DiaryAddResponse(
         val result: GetScheduleIdx
-    ) : BaseResponse()
-
-    /** 기록 수정 **/
-    data class DiaryEditResponse(
-        val result: String
     ) : BaseResponse()
 
     data class GetScheduleIdx(
         val scheduleIdx: Long
     )
-
-    /** 기록 삭제 **/
-    data class DiaryDeleteResponse(
-        val result: String
-    ) : BaseResponse()
-
 
     /** 기록 월 별 조회 **/
     data class DiaryGetAllResponse(
@@ -35,12 +29,6 @@ class DiaryResponse {
         val contents: String?,
         val urls: List<String>,
     )
-
-
-    /** 모임 기록 추가 **/
-    data class AddGroupDiaryResponse(
-        val result: String
-    ) : BaseResponse()
 
 
     /** 모임 기록 개별 조회 **/
@@ -61,7 +49,7 @@ class DiaryResponse {
     ) : java.io.Serializable
 
     data class LocationDto(
-        val moimMemoLocationId: Int,
+        val moimMemoLocationId: Long,
         @SerializedName("name") var place: String,
         @SerializedName("money") var pay: Int,
         @SerializedName("participants") var members: MutableList<Int>,  // 원래는 int
