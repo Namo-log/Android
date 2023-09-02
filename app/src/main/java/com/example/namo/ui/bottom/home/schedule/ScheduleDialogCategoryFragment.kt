@@ -65,15 +65,17 @@ class ScheduleDialogCategoryFragment : Fragment() {
             try {
                 categoryList = db.categoryDao.getActiveCategoryList(true)
                 categoryRVAdapter = DialogCategoryRVAdapter(requireContext(), categoryList)
+                Log.d("TEST_CATEGORY", "Category dialog : $categoryList")
                 categoryRVAdapter.setSelectedIdx(selectedCategory)
                 categoryRVAdapter.setMyItemClickListener(object: DialogCategoryRVAdapter.MyItemClickListener {
                     // 아이템 클릭
                     override fun onSendIdx(category: Category) {
                         // 카테고리 세팅
-                        selectedCategory = category.categoryIdx
-                        event.categoryIdx = selectedCategory
-                        Log.d("CATEGORY_TEST", "In category : ${event.categoryIdx}")
-
+                        event.categoryIdx = category.categoryIdx
+                        event.categoryServerIdx = category.serverIdx
+                        Log.d("TEST_CATEGORY", "In category : ${event.categoryIdx}")
+                        Log.d("TEST_CATEGORY", "In category Server: ${event.categoryServerIdx}")
+                        Log.d("TEST_CATEGORY", "In category Result: ${event}")
                         val action = ScheduleDialogCategoryFragmentDirections.actionScheduleDialogCategoryFragmentToScheduleDialogBasicFragment(event)
                         findNavController().navigate(action)
                     }

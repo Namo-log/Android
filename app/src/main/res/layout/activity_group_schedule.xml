@@ -138,10 +138,10 @@
                     android:layout_marginEnd="15dp">
 
                     <TextView
-                        android:id="@+id/dialog_group_schedule_member_name_tv"
+                        android:id="@+id/dialog_group_schedule_member_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="일정"
+                        android:text="코코아, 앨리, 지니"
                         android:textColor="@color/black"
                         android:textSize="15dp"/>
 
@@ -256,13 +256,32 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.motion.widget.MotionLayout
-                android:id="@+id/dialog_group_schedule_date_layout"
+                android:id="@+id/dialog_group_schedule_start_date_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layoutDescription="@xml/fragment_schedule_dialog_basic_xml_date_scene">
+                app:layoutDescription="@xml/activity_group_schedule_start_date_layout_scene">
 
                 <DatePicker
-                    android:id="@+id/dialog_group_schedule_date_dp"
+                    android:id="@+id/dialog_group_schedule_start_date_dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:calendarTextColor="@color/black"
+                    android:calendarViewShown="false"
+                    android:datePickerMode="spinner"
+                    android:theme="@style/MyDatePicker"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.motion.widget.MotionLayout>
+
+            <androidx.constraintlayout.motion.widget.MotionLayout
+                android:id="@+id/dialog_group_schedule_end_date_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutDescription="@xml/activity_group_schedule_end_date_layout_scene">
+
+                <DatePicker
+                    android:id="@+id/dialog_group_schedule_end_date_dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:calendarTextColor="@color/black"
@@ -278,7 +297,7 @@
                 android:id="@+id/dialog_group_schedule_start_time_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layoutDescription="@xml/fragment_schedule_dialog_basic_xml_start_time_scene">
+                app:layoutDescription="@xml/activity_group_schedule_start_time_layout_scene">
 
                 <TimePicker
                     android:id="@+id/dialog_group_schedule_start_time_tp"
@@ -295,7 +314,7 @@
                 android:id="@+id/dialog_group_schedule_end_time_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layoutDescription="@xml/fragment_schedule_dialog_basic_xml_end_time_scene">
+                app:layoutDescription="@xml/activity_group_schedule_end_time_layout_scene">
 
                 <TimePicker
                     android:id="@+id/dialog_group_schedule_end_time_tp"
@@ -307,48 +326,6 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.motion.widget.MotionLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/dialog_group_schedule_alarm_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="알람"
-                    android:textColor="@color/textGray"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/dialog_group_schedule_alarm_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_arrow_right_gray_floating"
-                    android:tint="@color/textGray"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/dialog_group_schedule_alarm_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="15dp"
-                    android:text="없음"
-                    android:textColor="@color/textGray"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/dialog_group_schedule_alarm_btn"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/dialog_group_schedule_alarm_content_layout"

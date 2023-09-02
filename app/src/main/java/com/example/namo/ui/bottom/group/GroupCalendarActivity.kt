@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.remote.moim.Moim
+import com.example.namo.data.remote.moim.MoimListUser
 import com.example.namo.databinding.ActivityGroupCalendarBinding
 import com.example.namo.ui.bottom.group.calendar.GroupCalendarAdapter
 import com.example.namo.ui.bottom.group.calendar.GroupCalendarAdapter.Companion.GROUP_ID
@@ -77,8 +78,8 @@ class GroupCalendarActivity : AppCompatActivity() {
         binding.groupCalendarGroupTitleTv.text = group.groupName
     }
 
-    fun getGroupId() : Long {
-        return group.groupId
+    fun getGroup() : Moim {
+        return group
     }
 
     companion object{

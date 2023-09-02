@@ -107,6 +107,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
     ): View? {
         binding = FragmentScheduleDialogBasicBinding.inflate(inflater, container, false)
         db = NamoDatabase.getInstance(requireContext())
+        categoryList = setCategoryList(db)
 
         binding.dialogSchedulePlaceKakaoBtn.visibility = View.GONE
         binding.dialogSchedulePlaceContainer.visibility = View.GONE
@@ -511,7 +512,6 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
 
     private fun setMapContent() {
         binding.dialogSchedulePlaceNameTv.text = place_name
-
         binding.dialogSchedulePlaceKakaoBtn.visibility = View.VISIBLE
         binding.dialogSchedulePlaceContainer.visibility = ViewGroup.VISIBLE
         mapViewContainer?.visibility = View.VISIBLE
@@ -538,6 +538,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
                 val userNowLocation : Location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
 
                 val intent = Intent(requireActivity(), MapActivity::class.java)
+                intent.putExtra(MainActivity.ORIGIN_ACTIVITY_INTENT_KEY, "Schedule")
                 getResult.launch(intent)
 //                startActivity(intent)
 
@@ -563,16 +564,15 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         binding.dialogScheduleTitleEt.setText(event.title)
 
         //카테고리
-        val getCategoryThread = Thread {
-            selectedCategory = db.categoryDao.getCategoryWithId(event.categoryIdx)
-            Log.d("TEST_CHECK", "selected category : $selectedCategory")
-        }
-        getCategoryThread.start()
-        try {
-            getCategoryThread.join()
-        } catch ( e : InterruptedException) {
-            e.printStackTrace()
-        }
+        Log.d("TEST_CATEGORY", categoryList.toString())
+        Log.d("TEST_CATEGORY", event.toString())
+        val category = categoryList.find {
+            if (it.serverIdx != 0L) it.serverIdx == event.categoryServerIdx
+            else it.categoryIdx == event.categoryIdx
+        }!!
+        selectedCategory = category
+        event.categoryIdx = selectedCategory.categoryIdx
+        event.categoryServerIdx = selectedCategory.serverIdx
         setCategory()
 
         //시작일, 종료일
