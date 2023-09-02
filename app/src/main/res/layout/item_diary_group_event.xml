@@ -8,12 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="10dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:paddingBottom="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -29,9 +24,7 @@
                 android:minWidth="48dp"
                 android:minHeight="32dp"
                 android:textColor="@color/textGray"
-                android:textSize="17sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:textSize="17sp" />
 
             <View
                 android:layout_width="0dp"
@@ -49,12 +42,10 @@
                     android:id="@+id/item"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="총"
                     android:layout_marginEnd="5dp"
+                    android:text="총"
                     android:textColor="@color/textGray"
-                    android:textSize="17sp"
-                    app:layout_constraintEnd_toStartOf="@id/item_place_money_iv"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textSize="17sp" />
 
                 <TextView
                     android:id="@+id/item_place_money_tv"
@@ -63,9 +54,7 @@
                     android:layout_marginEnd="5dp"
                     android:text="금액 정산"
                     android:textColor="@color/textGray"
-                    android:textSize="17sp"
-                    app:layout_constraintEnd_toStartOf="@id/item_place_money_iv"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textSize="17sp" />
 
                 <TextView
                     android:id="@+id/item_tv"
@@ -74,31 +63,39 @@
                     android:layout_marginEnd="10dp"
                     android:text="원"
                     android:textColor="@color/textGray"
-                    android:textSize="17sp"
-                    app:layout_constraintEnd_toStartOf="@id/item_place_money_iv"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:textSize="17sp" />
 
                 <ImageView
                     android:id="@+id/item_place_money_iv"
                     android:layout_width="15dp"
                     android:layout_height="match_parent"
                     android:src="@drawable/ic_arrow_right_gray"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:visibility="visible" />
 
             </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/group_gallery_lv"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/group_add_gallery_rv"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/item_place_name_tv">
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_gallery_list" />
+
+
+        <LinearLayout
+            android:id="@+id/group_gallery_lv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp">
 
             <ImageView
                 android:id="@+id/img1"
@@ -129,21 +126,7 @@
 
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/group_add_gallery_rv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/item_place_name_tv"
-            tools:itemCount="3"
-            tools:listitem="@layout/item_gallery_list" />
-
-
+        </LinearLayout>
     </LinearLayout>
 
 </layout>

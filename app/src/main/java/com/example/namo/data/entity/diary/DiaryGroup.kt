@@ -9,7 +9,10 @@ data class DiaryGroupEvent(
     var place: String = "",
     var pay: Int = 0,
     var members: List<Int>,
-    var imgs: ArrayList<String?>
-) :java.io.Serializable
+    var imgs: ArrayList<String?>,
+    var placeIdx: Long = 0L
+) : java.io.Serializable
+
+
 
 

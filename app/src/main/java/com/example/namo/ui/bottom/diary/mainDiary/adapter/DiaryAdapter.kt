@@ -1,96 +1,82 @@
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.namo.R
-import com.example.namo.data.entity.diary.DiaryItem
 import com.example.namo.data.remote.diary.DiaryRepository
 import com.example.namo.databinding.ItemDiaryDateListBinding
 import com.example.namo.databinding.ItemDiaryListBinding
-import com.example.namo.ui.bottom.diary.mainDiary.ImageDialog
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.DiaryGalleryRVAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
+private const val ITEM_VIEW_TYPE_HEADER = 0
+private const val ITEM_VIEW_TYPE_ITEM = 1
+
 class DiaryAdapter(
-    private val fragmentManagers: FragmentManager,
-    val context: Context,
-    initialItems: List<DiaryItem> = emptyList(),
+    val editClickListener: (DiaryItem.Content) -> Unit,
+    val imageClickListener: (String) -> Unit
+) : ListAdapter<DiaryItem, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
 
-    ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val items = ArrayList<DiaryItem>(initialItems)
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun submitPersonalList(items: List<DiaryItem>) {
-        this.items.clear()
-        this.items.addAll(items)
-        notifyDataSetChanged()
+    fun updateData(newData: List<DiaryItem>) {
+        submitList(newData)
     }
 
-    fun
-    /** 기록 아이템 클릭 리스너 **/
-    interface DiaryEditInterface {
-        fun onEditClicked(allData: DiaryItem.Content)
-    }
+    class DiaryDiffCallback : DiffUtil.ItemCallback<DiaryItem>() {
+        override fun areItemsTheSame(oldItem: DiaryItem, newItem: DiaryItem): Boolean {
+            return oldItem.id == newItem.id
+        }
 
-    private lateinit var diaryRecordClickListener: DiaryEditInterface
-    fun setRecordClickListener(itemClickListener: DiaryEditInterface) {
-        diaryRecordClickListener = itemClickListener
+        @SuppressLint("DiffUtilEquals")
+        override fun areContentsTheSame(oldItem: DiaryItem, newItem: DiaryItem): Boolean {
+            return oldItem == newItem
+        }
     }
 
 
-    override fun getItemCount(): Int {
-        return items.size
-    }
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is DiaryHeaderViewHolder -> {
+                val diaryItem = getItem(position) as DiaryItem.Header
+                holder.bind(diaryItem)
+            }
+            is DiaryContentViewHolder -> {
+                val diaryItems = getItem(position) as DiaryItem.Content
+                holder.bind(diaryItems)
+                holder.onclick.setOnClickListener {
+                    editClickListener(diaryItems)
+                    Log.d("onclick", "clicked")
+                }
+            }
+        }
 
-    override fun getItemViewType(position: Int): Int {
-        return items[position].viewType
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            R.layout.item_diary_list -> {
-                val binding = ItemDiaryListBinding.inflate(
-                    LayoutInflater.from(parent.context), parent, false
-                )
-                DiaryHeaderViewHolder(binding)
-            }
-
-            R.layout.item_diary_date_list -> {
-                val binding = ItemDiaryDateListBinding.inflate(
-                    LayoutInflater.from(parent.context), parent, false
-                )
-                DiaryContentVewHolder(binding)
-            }
-            else -> throw IllegalArgumentException("Cannot find ViewHolder for viewType : $viewType")
+            ITEM_VIEW_TYPE_HEADER -> DiaryHeaderViewHolder.from(parent)
+            ITEM_VIEW_TYPE_ITEM -> DiaryContentViewHolder.from(parent, imageClickListener)
+            else -> throw ClassCastException("Unknown viewType $viewType")
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = items[position]
-
-        when (holder) {
-            is DiaryHeaderViewHolder -> holder.bind(item as DiaryItem.Header)
-            is DiaryContentVewHolder -> {
-                holder.bind(item as DiaryItem.Content)
-                holder.onclick.setOnClickListener {
-                    diaryRecordClickListener.onEditClicked(item)
-                }
-            }
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is DiaryItem.Header -> ITEM_VIEW_TYPE_HEADER
+            is DiaryItem.Content -> ITEM_VIEW_TYPE_ITEM
+            else -> throw ClassCastException("Unknown viewType $position")
         }
     }
 
-    inner class DiaryHeaderViewHolder(
-        private val binding: ItemDiaryListBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    class DiaryHeaderViewHolder
+    private constructor(private val binding: ItemDiaryListBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SimpleDateFormat")
         fun bind(item: DiaryItem.Header) {
@@ -99,67 +85,104 @@ class DiaryAdapter(
                 diaryDayTv.text = formattedDate
             }
         }
+
+        companion object {
+            fun from(parent: ViewGroup): RecyclerView.ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = ItemDiaryListBinding.inflate(layoutInflater, parent, false)
+                return DiaryHeaderViewHolder(binding)
+            }
+        }
     }
 
-    inner class DiaryContentVewHolder(
-        val binding: ItemDiaryDateListBinding
+    class DiaryContentViewHolder private constructor(
+        private val binding: ItemDiaryDateListBinding,
+        private val context: Context,
+        private val imageClickListener: (String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         val onclick = binding.diaryEditTv
 
         fun bind(item: DiaryItem.Content) {
             binding.apply {
-                itemDiaryContentTv.text
+
                 itemDiaryContentTv.text = item.content
                 itemDiaryTitleTv.text = item.event_title
 
                 setViewMore(itemDiaryContentTv, viewMore)
 
                 val repo = DiaryRepository(context)
-                CoroutineScope(Dispatchers.Main).launch {
 
-                    val categoryIdx = item.event_category_idx
-                    val category = repo.getCategoryId(categoryIdx)
+                val category =
+                    repo.getCategory(item.event_category_idx, item.event_category_server_idx)
 
-                    context.resources?.let {
-                        itemDiaryCategoryColorIv.background.setTint(category.color)
-                    }
+                context.resources?.let {
+                    binding.itemDiaryCategoryColorIv.background.setTint(category.color)
                 }
 
-                val adapter = DiaryGalleryRVAdapter(itemView.context, item.images)
+                val adapter =
+                    DiaryGalleryRVAdapter(context, item.images, imageClickListener)
                 diaryGalleryRv.adapter = adapter
                 diaryGalleryRv.layoutManager =
-                    LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
+                    LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-                adapter.setImageClickListener(object : DiaryGalleryRVAdapter.DiaryImageInterface {
-                    override fun onImageClicked(image: String) {
-                        ImageDialog(image).show(fragmentManagers, "test")
-                    }
-                })
-
-                if (item.content?.isEmpty() == true) itemDiaryContentTv.visibility = View.GONE
-                if (item.images?.isEmpty() == true) diaryGalleryRv.visibility = View.GONE
             }
         }
-    }
 
-    private fun setViewMore(contentTextView: TextView, viewMoreTextView: TextView) {
-        // getEllipsisCount()을 통한 더보기 표시 및 구현
-        contentTextView.post {
-            val lineCount = contentTextView.layout?.lineCount ?: 0
-            if (lineCount > 0) {
-                if ((contentTextView.layout?.getEllipsisCount(lineCount - 1) ?: 0) > 0) {
-                    // 더보기 표시
-                    viewMoreTextView.visibility = View.VISIBLE
+        companion object {
+            fun from(
+                parent: ViewGroup,
+                imageClickListener: (String) -> Unit
+            ): RecyclerView.ViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = ItemDiaryDateListBinding.inflate(layoutInflater, parent, false)
+                return DiaryContentViewHolder(binding, parent.context, imageClickListener)
+            }
+        }
 
-                    // 더보기 클릭 이벤트
-                    viewMoreTextView.setOnClickListener {
-                        contentTextView.maxLines = Int.MAX_VALUE
-                        viewMoreTextView.visibility = View.GONE
+        private fun setViewMore(contentTextView: TextView, viewMoreTextView: TextView) {
+            // getEllipsisCount()을 통한 더보기 표시 및 구현
+            contentTextView.post {
+                val lineCount = contentTextView.layout?.lineCount ?: 0
+                if (lineCount > 0) {
+                    if ((contentTextView.layout?.getEllipsisCount(lineCount - 1) ?: 0) > 0) {
+                        // 더보기 표시
+                        viewMoreTextView.visibility = View.VISIBLE
+
+                        // 더보기 클릭 이벤트
+                        viewMoreTextView.setOnClickListener {
+                            contentTextView.maxLines = Int.MAX_VALUE
+                            viewMoreTextView.visibility = View.GONE
+                        }
                     }
                 }
-            }
 
+            }
         }
     }
+
+
+}
+
+sealed class DiaryItem {
+    abstract val id: Long
+
+    data class Header(override val id: Long, val date: Long) : DiaryItem()
+
+    data class Content(
+
+        var eventId: Long = 0L,
+        var event_title: String = "",
+        var event_start: Long = 0L,
+        var event_category_idx: Long = 0L,
+        var event_place_name: String = "없음",
+        var content: String?,
+        var images: List<String>? = null,
+        var event_server_idx: Long = 0L,
+        var event_category_server_idx: Long = 0L,
+        override val id: Long
+
+    ) : DiaryItem()
+
+
 }
 

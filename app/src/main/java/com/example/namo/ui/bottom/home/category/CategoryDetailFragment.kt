@@ -69,7 +69,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         initBasicColor()
 
         checkEditingMode(isEditMode)
-        switchToggle(share)
+        switchToggle()
         onClickListener()
         clickCategoryItem()
         initPaletteColorRv(color)
@@ -280,20 +280,14 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         }
     }
 
-    private fun switchToggle(isShare: Boolean) {
+    private fun switchToggle() {
         val toggle = binding.categoryToggleIv
-        val toggleImg = listOf(
-            R.drawable.ic_toggle_off, R.drawable.ic_toggle_on
-        )
         // 첫 진입 시 토글 이미지 세팅
-        if (isShare) toggle.setImageResource(toggleImg[1])
-        else toggle.setImageResource(toggleImg[0])
+        toggle.isChecked = share
         // 토글 클릭 시 이미지 세팅
         toggle.setOnClickListener {
-            if (isShare) toggle.setImageResource(toggleImg[0])
-            else toggle.setImageResource(toggleImg[1])
-
-            share = !isShare
+            toggle.isChecked = !share
+            share = !share
         }
     }
 

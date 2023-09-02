@@ -9,7 +9,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class DiaryService {
+class DiaryService{
     private val diaryRetrofitInterface: DiaryInterface =
         ApplicationClass.sRetrofit.create(DiaryInterface::class.java)
 
@@ -18,26 +18,17 @@ class DiaryService {
     private lateinit var getMonthDiaryView: GetMonthDiaryView
     private lateinit var addGroupDiaryView: AddGroupDiaryView
     private lateinit var getGroupDiaryView: GetGroupDiaryView
+    private lateinit var editGroupDiaryView: EditGroupDiaryView
+    private lateinit var deleteGroupDiaryView: DeleteGroupDiaryView
 
-    fun addDiaryView(diaryView: DiaryView) {
-        this.diaryView = diaryView
-    }
+    fun addDiaryView(diaryView: DiaryView) { this.diaryView = diaryView }
+    fun setDiaryView(diaryDetailView: DiaryDetailView) { this.diaryDetailView = diaryDetailView }
+    fun getMonthDiaryView(getMonthDiaryView: GetMonthDiaryView) { this.getMonthDiaryView = getMonthDiaryView }
+    fun addGroupDiaryView(addGroupView: AddGroupDiaryView) { this.addGroupDiaryView = addGroupView }
+    fun getGroupDiaryView(getGroupDiaryView: GetGroupDiaryView) { this.getGroupDiaryView = getGroupDiaryView }
+    fun editGroupDiaryView(editGroupView: EditGroupDiaryView) { this.editGroupDiaryView = editGroupView }
+    fun deleteGroupDiaryView(deleteGroupDiaryView: DeleteGroupDiaryView) { this.deleteGroupDiaryView = deleteGroupDiaryView }
 
-    fun setDiaryView(diaryDetailView: DiaryDetailView) {
-        this.diaryDetailView = diaryDetailView
-    }
-
-    fun getMonthDiaryView(getMonthDiaryView: GetMonthDiaryView) {
-        this.getMonthDiaryView = getMonthDiaryView
-    }
-
-    fun addGroupDiaryView(addGroupView: AddGroupDiaryView) {
-        this.addGroupDiaryView = addGroupView
-    }
-
-    fun getGroupDiaryView(getGroupDiaryView: GetGroupDiaryView) {
-        this.getGroupDiaryView = getGroupDiaryView
-    }
 
     /** 기록 추가 **/
     fun addDiary(
@@ -81,14 +72,14 @@ class DiaryService {
         scheduleIdx: RequestBody
     ) {
         diaryRetrofitInterface.editDiary(scheduleIdx, content, images)
-            .enqueue(object : Callback<DiaryResponse.DiaryEditResponse> {
+            .enqueue(object : Callback<DiaryResponse.DiaryResponse> {
 
                 @SuppressLint("SuspiciousIndentation")
                 override fun onResponse(
-                    call: Call<DiaryResponse.DiaryEditResponse>,
-                    response: Response<DiaryResponse.DiaryEditResponse>
+                    call: Call<DiaryResponse.DiaryResponse>,
+                    response: Response<DiaryResponse.DiaryResponse>
                 ) {
-                    val resp: DiaryResponse.DiaryEditResponse? = response.body()
+                    val resp: DiaryResponse.DiaryResponse? = response.body()
                     when (response.code()) {
                         200 -> if (resp != null) {
                             diaryDetailView.onEditDiarySuccess(
@@ -101,7 +92,7 @@ class DiaryService {
                     }
                 }
 
-                override fun onFailure(call: Call<DiaryResponse.DiaryEditResponse>, t: Throwable) {
+                override fun onFailure(call: Call<DiaryResponse.DiaryResponse>, t: Throwable) {
                     diaryDetailView.onEditDiaryFailure(t.message.toString())
                 }
             })
@@ -114,14 +105,14 @@ class DiaryService {
         scheduleIdx: Long
     ) {
         diaryRetrofitInterface.deleteDiary(scheduleIdx)
-            .enqueue(object : Callback<DiaryResponse.DiaryDeleteResponse> {
+            .enqueue(object : Callback<DiaryResponse.DiaryResponse> {
 
                 @SuppressLint("SuspiciousIndentation")
                 override fun onResponse(
-                    call: Call<DiaryResponse.DiaryDeleteResponse>,
-                    response: Response<DiaryResponse.DiaryDeleteResponse>
+                    call: Call<DiaryResponse.DiaryResponse>,
+                    response: Response<DiaryResponse.DiaryResponse>
                 ) {
-                    val resp: DiaryResponse.DiaryDeleteResponse? = response.body()
+                    val resp: DiaryResponse.DiaryResponse? = response.body()
                     when (response.code()) {
                         200 -> if (resp != null) {
                             diaryDetailView.onDeleteDiarySuccess(
@@ -135,7 +126,7 @@ class DiaryService {
                 }
 
                 override fun onFailure(
-                    call: Call<DiaryResponse.DiaryDeleteResponse>,
+                    call: Call<DiaryResponse.DiaryResponse>,
                     t: Throwable
                 ) {
                     diaryDetailView.onDeleteDiaryFailure(t.message.toString())
@@ -189,14 +180,14 @@ class DiaryService {
         imgs: List<MultipartBody.Part>?
     ) {
         diaryRetrofitInterface.addGroupDiary(moimScheduleIdx, name, money, members, imgs)
-            .enqueue(object : Callback<DiaryResponse.AddGroupDiaryResponse> {
+            .enqueue(object : Callback<DiaryResponse.DiaryResponse> {
 
                 @SuppressLint("SuspiciousIndentation")
                 override fun onResponse(
-                    call: Call<DiaryResponse.AddGroupDiaryResponse>,
-                    response: Response<DiaryResponse.AddGroupDiaryResponse>
+                    call: Call<DiaryResponse.DiaryResponse>,
+                    response: Response<DiaryResponse.DiaryResponse>
                 ) {
-                    val resp: DiaryResponse.AddGroupDiaryResponse? = response.body()
+                    val resp: DiaryResponse.DiaryResponse? = response.body()
                     when (response.code()) {
                         200 -> if (resp != null) {
                             addGroupDiaryView.onAddGroupDiarySuccess(resp)
@@ -207,7 +198,7 @@ class DiaryService {
                 }
 
                 override fun onFailure(
-                    call: Call<DiaryResponse.AddGroupDiaryResponse>,
+                    call: Call<DiaryResponse.DiaryResponse>,
                     t: Throwable
                 ) {
                     addGroupDiaryView.onAddGroupDiaryFailure(t.message.toString())
@@ -248,6 +239,72 @@ class DiaryService {
             })
     }
 
+
+    /** 그룹 메모 수정 **/
+    fun editGroupDiary(
+        moimScheduleIdx: Long,
+        name: RequestBody,
+        money: RequestBody,
+        members: RequestBody?,
+        imgs: List<MultipartBody.Part>?
+    ) {
+        diaryRetrofitInterface.patchGroupDiaryPlace(moimScheduleIdx, name, money, members, imgs)
+            .enqueue(object : Callback<DiaryResponse.DiaryResponse> {
+
+                @SuppressLint("SuspiciousIndentation")
+                override fun onResponse(
+                    call: Call<DiaryResponse.DiaryResponse>,
+                    response: Response<DiaryResponse.DiaryResponse>
+                ) {
+                    val resp: DiaryResponse.DiaryResponse? = response.body()
+                    when (response.code()) {
+                        200 -> if (resp != null) {
+                            editGroupDiaryView.onEditGroupDiarySuccess(resp)
+                        }
+                        else ->
+                            editGroupDiaryView.onEditGroupDiaryFailure(response.message())
+                    }
+
+                }
+
+                override fun onFailure(
+                    call: Call<DiaryResponse.DiaryResponse>,
+                    t: Throwable
+                ) {
+                    editGroupDiaryView.onEditGroupDiaryFailure(t.message.toString())
+                }
+            })
+    }
+
+    fun deleteGroupDiary(
+        moimScheduleIdx: Long,
+    ) {
+        diaryRetrofitInterface.deleteGroupDiaryPlace(moimScheduleIdx)
+            .enqueue(object : Callback<DiaryResponse.DiaryResponse> {
+
+                @SuppressLint("SuspiciousIndentation")
+                override fun onResponse(
+                    call: Call<DiaryResponse.DiaryResponse>,
+                    response: Response<DiaryResponse.DiaryResponse>
+                ) {
+                    val resp: DiaryResponse.DiaryResponse? = response.body()
+                    when (response.code()) {
+                        200 -> if (resp != null) {
+                            deleteGroupDiaryView.onDeleteGroupDiarySuccess(resp)
+                        }
+                        else -> deleteGroupDiaryView.onDeleteGroupDiaryFailure(response.toString())
+                    }
+
+                }
+
+                override fun onFailure(
+                    call: Call<DiaryResponse.DiaryResponse>,
+                    t: Throwable
+                ) {
+                    deleteGroupDiaryView.onDeleteGroupDiaryFailure(t.message.toString())
+                }
+            })
+    }
 
 }
 

@@ -174,14 +174,14 @@
                     app:layout_constraintStart_toStartOf="parent"
                     style="@style/category_setting_tv"/>
 
-                <ImageView
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/category_toggle_iv"
                     android:layout_width="50dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/ic_toggle_on"
+                    android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="@id/category_share_tv"
                     app:layout_constraintBottom_toBottomOf="@id/category_share_tv"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    style="@style/category_toggle"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
