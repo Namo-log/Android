@@ -46,6 +46,7 @@ class GroupModifyFragment : Fragment(), GetGroupDiaryView {  // 그룹 다이어
     private var positionForGallery: Int = -1
 
     private var placeEvent = ArrayList<DiaryGroupEvent>()
+
     private lateinit var groupMembers: List<DiaryResponse.GroupUser>
     private lateinit var groupData: DiaryResponse.GroupDiaryResult
     private lateinit var groupEvent: List<DiaryResponse.LocationDto>
@@ -68,7 +69,6 @@ class GroupModifyFragment : Fragment(), GetGroupDiaryView {  // 그룹 다이어
         diaryService.getGroupDiaryView(this)
 
         onClickListener()
-        dummy()
 
         return binding.root
     }
@@ -306,13 +306,6 @@ class GroupModifyFragment : Fragment(), GetGroupDiaryView {  // 그룹 다이어
         }
     }
 
-    private fun dummy() {
-        memberNames.apply {
-            add("코코아")
-            add("지니")
-            add("앨리")
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()

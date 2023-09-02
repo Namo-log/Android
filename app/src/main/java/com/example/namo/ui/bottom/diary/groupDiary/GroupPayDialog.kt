@@ -49,9 +49,6 @@ class GroupPayDialog(
             userId to false
         })
 
-        account()
-        onClickListener()
-
 
         binding.groupPayTotalEt.isSingleLine = true
         binding.groupPayTotalEt.addTextChangedListener(object : TextWatcher {
@@ -60,10 +57,7 @@ class GroupPayDialog(
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 updateResultText()
             }
-
-            override fun afterTextChanged(s: Editable?) {
-                updateResultText()
-            }
+            override fun afterTextChanged(s: Editable?) {}
         })
 
         if (placeEvent.pay != 0) {
@@ -79,6 +73,9 @@ class GroupPayDialog(
                 }
             }
         }
+
+        account()
+        onClickListener()
 
         return binding.root
     }
@@ -106,9 +103,11 @@ class GroupPayDialog(
                     it.second
                 }
                 binding.groupPayCountTv.text = "$checkedPeopleCount"
+                updateResultText()
             }
         })
     }
+
 
     private fun updateResultText() {
         val totalText = binding.groupPayTotalEt.text.toString()

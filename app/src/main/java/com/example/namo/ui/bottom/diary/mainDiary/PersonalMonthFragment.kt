@@ -68,7 +68,7 @@ class PersonalMonthFragment : Fragment() {
         val storeDB = Thread {
             val diaryItems = repo.getDiaryList(yearMonth, page, size)  // 월 별 다이어리 조회
 
-            Log.d("ewr",diaryItems.toString())
+            Log.d("ewer",diaryItems.toString())
             requireActivity().runOnUiThread {
                 diaryAdapter.updateData(diaryItems)
 
@@ -167,6 +167,7 @@ class PersonalMonthFragment : Fragment() {
             }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

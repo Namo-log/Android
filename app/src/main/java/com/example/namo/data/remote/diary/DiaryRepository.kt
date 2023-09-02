@@ -16,13 +16,17 @@ import com.example.namo.data.entity.diary.DiaryEvent
 import com.example.namo.data.entity.home.Category
 import com.example.namo.utils.NetworkManager
 import kotlinx.coroutines.*
+import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
+import java.io.*
+import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.coroutines.suspendCoroutine
 
 
 class DiaryRepository(
@@ -394,8 +398,6 @@ class DiaryRepository(
                 result.add(DiaryItem.Header(task.eventId, task.event_start * 1000))
             }
             //  task 추가
-            Log.d("ewer", groupHeaderDate.toString())
-            Log.d("ewr", task.event_start.toString())
 
             result.add(
                 DiaryItem.Content(
@@ -502,8 +504,6 @@ class DiaryRepository(
 
         val imgList = imageToMultipart(images)
 
-        Log.d("erwer",imgList.toString())
-        Log.d("ewe",images.toString())
 
         diaryService.editGroupDiary(
             moimPlaceId,
@@ -547,25 +547,58 @@ class DiaryRepository(
         }
     }
 
-//    private fun imageToMultipart(images: List<String>?): List<MultipartBody.Part>? {
-//        return images?.map { pathOrUrl ->
-//            val requestFile: RequestBody = if (pathOrUrl.startsWith("http")) {
-//                // 웹 이미지의 경우 URL을 통해 이미지를 다운로드
-//                val url = URL(pathOrUrl)
-//                val inputStream = url.openStream()
-//                val buffer = inputStream.readBytes()
-//                inputStream.close()
-//                buffer.toRequestBody("image/*".toMediaTypeOrNull())
+
+//        private fun imageToMultipart(images: List<String>?): List<MultipartBody.Part>? {
+//        return images?.map { path ->
+//            if (path.startsWith("http")) {
+//                Log.d("path",path)
+//                Log.d("url", createMultipartFromImageURL(path)!!.toString())
+//                  createMultipartFromImageURL(path)!!
+//
 //            } else {
-//                // 갤러리에서 가져온 이미지의 경우 절대 경로를 사용
-//                val file = File(absolutelyPath(pathOrUrl.toUri(),context))
-//                file.asRequestBody("image/*".toMediaTypeOrNull())
+//                val file = File(absolutelyPath(path.toUri(), context))
+//                val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+//                MultipartBody.Part.createFormData("imgs", file.name, requestFile)
 //            }
 //
-//            MultipartBody.Part.createFormData("imgs", null, requestFile)
 //        }
 //    }
-
+//
+//    @OptIn(DelicateCoroutinesApi::class)
+//    @Throws(IOException::class)
+//     fun createMultipartFromImageURL(imageUrl: String): MultipartBody.Part? {
+//            val url = URL(imageUrl)
+//            val connection = url.openConnection() as HttpURLConnection
+//
+//            try {
+//                connection.doInput = true
+//                connection.connect()
+//
+//                if (connection.responseCode == HttpURLConnection.HTTP_OK) {
+//                    val inputStream = BufferedInputStream(connection.inputStream)
+//                    val contentType: MediaType? = connection.contentType?.toMediaTypeOrNull()
+//
+//                    // InputStream에서 데이터를 읽어 바이트 배열로 변환
+//                    val byteArrayOutputStream = ByteArrayOutputStream()
+//                    val buffer = ByteArray(4096)
+//                    var bytesRead: Int
+//
+//                    while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+//                        byteArrayOutputStream.write(buffer, 0, bytesRead)
+//                    }
+//
+//                    val bytes = byteArrayOutputStream.toByteArray()
+//
+//                    // 바이트 배열을 RequestBody로 변환
+//                    val requestBody = bytes.toRequestBody(contentType)
+//
+//                    return MultipartBody.Part.createFormData("", "test.png", requestBody)
+//                }
+//            } finally {
+//                connection.disconnect()
+//            }
+//        return null
+//    }
 
 
     @SuppressLint("Recycle")

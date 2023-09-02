@@ -2,6 +2,7 @@ package com.example.namo
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Rect
@@ -564,4 +565,12 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         return super.dispatchTouchEvent(ev)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        val sf= this.getSharedPreferences("sf", Context.MODE_PRIVATE)
+        val editor = sf.edit()
+        editor.remove("yearMonth")
+        editor.apply()
+    }
 }

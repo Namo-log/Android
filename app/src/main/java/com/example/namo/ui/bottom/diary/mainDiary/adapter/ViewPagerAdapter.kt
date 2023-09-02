@@ -1,11 +1,13 @@
 package com.example.namo.ui.bottom.diary.mainDiary.adapter
 
 
+
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.namo.ui.bottom.diary.mainDiary.GroupMonthFragment
 import com.example.namo.ui.bottom.diary.mainDiary.PersonalMonthFragment
+
 
 
 class ViewPagerAdapter(val yearMonth: String, fragmentActivity: FragmentActivity) :
@@ -23,3 +25,4 @@ class ViewPagerAdapter(val yearMonth: String, fragmentActivity: FragmentActivity
         }
     }
 }
+

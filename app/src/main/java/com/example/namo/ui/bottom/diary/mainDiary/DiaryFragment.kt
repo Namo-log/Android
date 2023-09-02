@@ -2,8 +2,11 @@ package com.example.namo.ui.bottom.diary.mainDiary
 
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +30,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     private var dateTime = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
     private var currentTabPosition: Int = 0
     private var currentYearMonth: String = ""
+    private lateinit var sf: SharedPreferences
 
     private lateinit var yearMonth: String
 
@@ -39,8 +43,15 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
         _binding = FragmentDiaryBinding.inflate(inflater, container, false)
 
-        binding.diaryMonth.text = DateTime(dateTime).toString("yyyy.MM")
-        yearMonth = binding.diaryMonth.text.toString()
+        yearMonth = DateTime(dateTime).toString("yyyy.MM")
+        sf = requireContext().getSharedPreferences("sf", Context.MODE_PRIVATE)
+
+        val savedString = sf.getString("yearMonth", "")
+        if (savedString.isNullOrEmpty())  binding.diaryMonth.text = yearMonth
+         else {
+            binding.diaryMonth.text = savedString
+            yearMonth = savedString
+        }
 
         getDiaryList(yearMonth, currentTabPosition)
 
@@ -72,6 +83,9 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
                     currentYearMonth = yearMonth
                     getDiaryList(yearMonth, currentTabPosition)
                 }
+                val editor = sf.edit()
+                editor.putString("yearMonth", yearMonth)
+                editor.apply()
             }.show(parentFragmentManager, "test")
         }
     }
@@ -79,7 +93,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     @SuppressLint("ResourceAsColor")
     private fun getDiaryList(yearMonth: String, tabPosition: Int) {
 
-        val adapter = ViewPagerAdapter(yearMonth,context as MainActivity)
+        val adapter = ViewPagerAdapter(yearMonth, context as MainActivity)
         binding.viewpager2.adapter = adapter
         binding.viewpager2.isUserInputEnabled = false // 슬라이드 못하게
 

@@ -120,6 +120,7 @@ class GroupPlaceEventAdapter(
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onItemSwipe(position: Int) {
 
         val placeIdx = listData[position].placeIdx
@@ -130,5 +131,6 @@ class GroupPlaceEventAdapter(
 
         listData.removeAt(position)
         notifyItemRemoved(position)
+        notifyDataSetChanged()
     }
 }
