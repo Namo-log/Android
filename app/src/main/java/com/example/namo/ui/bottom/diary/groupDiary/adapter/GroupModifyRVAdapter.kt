@@ -2,67 +2,129 @@ package com.example.namo.ui.bottom.diary.groupDiary.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.diary.DiaryGroupEvent
 import com.example.namo.databinding.ItemDiaryGroupEventBinding
 
-class GroupModifyRVAdapter(  // 그룹 다이어리 수정
+
+class GroupModifyRVAdapter(
     val context: Context,
-    initialItems: List<DiaryGroupEvent> = emptyList()
-) :
-    RecyclerView.Adapter<GroupModifyRVAdapter.ViewHolder>(),
+    private val listData: MutableList<DiaryGroupEvent>,
+) : RecyclerView.Adapter<GroupModifyRVAdapter.Holder>(),
     ItemTouchHelperListener {
 
-    private val items = ArrayList<DiaryGroupEvent>(initialItems)
+    private val items = arrayListOf<ArrayList<String?>>()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addItem(image: List<DiaryGroupEvent>) {
-        this.items.clear()
-        this.items.addAll(image)
+    fun addItem(image: ArrayList<String?>) {
+        this.items.add(image)
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val binding: ItemDiaryGroupEventBinding = ItemDiaryGroupEventBinding.inflate(
-            LayoutInflater.from(viewGroup.context), viewGroup, false
-        )
-        return ViewHolder(binding)
+    /** 금액 정산 화살표 누르면 정산 다이얼로그로 이동**/
+    interface PayInterface {
+        fun onPayClicked(pay: Int, position: Int, eventPay: DiaryGroupEvent, payText: TextView)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position])
+    private lateinit var groupPayClickListener: PayInterface
+    fun groupPayClickListener(itemClickListener: PayInterface) {
+        groupPayClickListener = itemClickListener
+    }
+
+    /** 장소별 이미지 추가 **/
+    interface GalleryInterface {
+        fun onGalleryClicked(
+            imgLists: ArrayList<String?>,
+            position: Int,
+            eventImage: DiaryGroupEvent
+        )
+    }
+
+    private lateinit var groupGalleryClickListener: GalleryInterface
+    fun groupGalleryClickListener(itemClickListener: GalleryInterface) {
+        groupGalleryClickListener = itemClickListener
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
+        val binding =
+            ItemDiaryGroupEventBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return Holder(binding)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onBindViewHolder(holder: Holder, position: Int) {
+
+        val event = listData[position]
+
+        // 장소
+        holder.place.setText(event.place)
+        holder.place.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(p0: Editable?) {
+                val updatedPosition = holder.bindingAdapterPosition
+                if (updatedPosition != RecyclerView.NO_POSITION) {
+                    listData[updatedPosition] = event.copy(place = p0.toString())
+                }
+            }
+        })
+
+
+        // 정산 다이얼로그
+        holder.money.text = event.pay.toString()
+        holder.payClick.setOnClickListener {
+            val updatedPosition = holder.bindingAdapterPosition
+            groupPayClickListener.onPayClicked(event.pay, updatedPosition, event, holder.money)
+        }
+
+        // 장소별 이미지 가져오기
 
         val adapter = GroupPlaceGalleryAdapter(context)
-        holder.binding.groupAddGalleryRv.adapter = adapter
-        holder.binding.groupAddGalleryRv.layoutManager =
+        holder.galleryAdapter.adapter = adapter
+        holder.galleryAdapter.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        items[position].imgs?.let { adapter.addItem(it) }
+
+        if (event.imgs.isEmpty()) {
+            holder.binding.groupGalleryLv.visibility = View.VISIBLE
+            holder.binding.groupAddGalleryRv.visibility = View.GONE
+        } else {
+            holder.binding.groupGalleryLv.visibility = View.GONE
+            holder.binding.groupAddGalleryRv.visibility = View.VISIBLE
+        }
+
+        holder.gallery.setOnClickListener {
+            val updatedPosition = holder.bindingAdapterPosition
+            groupGalleryClickListener.onGalleryClicked(event.imgs, updatedPosition, event)
+        }
+
+        adapter.addItem(event.imgs)
+        adapter.notifyDataSetChanged()
 
     }
 
+    override fun getItemCount(): Int {
+        return listData.size
+    }
 
-    override fun getItemCount(): Int = items.size
 
-    inner class ViewHolder(val binding: ItemDiaryGroupEventBinding) :
+    inner class Holder(val binding: ItemDiaryGroupEventBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(item: DiaryGroupEvent) {
-            binding.itemPlaceNameTv.setText(item.place)
-            binding.itemPlaceMoneyTv.text = item.pay.toString()
-
-            binding.groupGalleryLv.visibility = View.GONE
-            binding.groupAddGalleryRv.visibility = View.VISIBLE
-
-            binding.itemPlaceMoneyIv.visibility=View.GONE
-        }
+        val place = binding.itemPlaceNameTv
+        val payClick = binding.clickMoneyLy
+        val money = binding.itemPlaceMoneyTv
+        val gallery = binding.groupGalleryLv
+        val galleryAdapter = binding.groupAddGalleryRv
     }
 
     override fun onItemSwipe(position: Int) {
-        items.removeAt(position)
+        listData.removeAt(position)
         notifyItemRemoved(position)
     }
 }

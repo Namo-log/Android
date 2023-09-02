@@ -1,15 +1,16 @@
 package com.example.namo.ui.bottom.group.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.R
-import com.example.namo.data.remote.moim.MoimUser
+import com.example.namo.data.remote.moim.MoimListUser
 import com.example.namo.databinding.ItemGroupMemberBinding
 
 class GroupInfoMemberRVAdapter(
-    private val members : List<MoimUser>
+    private val members : List<MoimListUser>
 ) : RecyclerView.Adapter<GroupInfoMemberRVAdapter.ViewHolder>() {
 
     private lateinit var context : Context
@@ -34,9 +35,9 @@ class GroupInfoMemberRVAdapter(
 
 
     inner class ViewHolder(val binding : ItemGroupMemberBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(member : MoimUser) {
-            val color = if (member.paletteId < 20) categoryColorArray[member.paletteId - 1]
-                        else context.resources.getColor(member.paletteId)
+        fun bind(member : MoimListUser) {
+            val color = if (member.color < 20) categoryColorArray[member.color - 1]
+                        else context.resources.getColor(member.color)
 
             binding.itemGroupMemberColorView.background.setTint(color)
             binding.itemGroupMemberNameTv.text = member.userName

@@ -16,7 +16,8 @@ class DiaryService {
     private lateinit var diaryView: DiaryView
     private lateinit var diaryDetailView: DiaryDetailView
     private lateinit var getMonthDiaryView: GetMonthDiaryView
-    private lateinit var getDayDiaryView: GetDayDiaryView
+    private lateinit var addGroupDiaryView: AddGroupDiaryView
+    private lateinit var getGroupDiaryView: GetGroupDiaryView
 
     fun addDiaryView(diaryView: DiaryView) {
         this.diaryView = diaryView
@@ -30,8 +31,12 @@ class DiaryService {
         this.getMonthDiaryView = getMonthDiaryView
     }
 
-    fun getDayDiaryView(getDayDiaryView: GetDayDiaryView) {
-        this.getDayDiaryView = getDayDiaryView
+    fun addGroupDiaryView(addGroupView: AddGroupDiaryView) {
+        this.addGroupDiaryView = addGroupView
+    }
+
+    fun getGroupDiaryView(getGroupDiaryView: GetGroupDiaryView) {
+        this.getGroupDiaryView = getGroupDiaryView
     }
 
     /** 기록 추가 **/
@@ -56,12 +61,12 @@ class DiaryService {
                                 resp, localId
                             )
                         }
-                        else -> diaryView.onAddDiaryFailure(localId, response.toString())
+                        else -> diaryView.onAddDiaryFailure(response.toString())
                     }
                 }
 
                 override fun onFailure(call: Call<DiaryResponse.DiaryAddResponse>, t: Throwable) {
-                    diaryView.onAddDiaryFailure(localId, t.message.toString())
+                    diaryView.onAddDiaryFailure(t.message.toString())
                 }
             })
     }
@@ -70,6 +75,7 @@ class DiaryService {
     /** 기록 수정 **/
     fun editDiary(
         localId: Long,
+        serverId: Long,
         images: List<MultipartBody.Part>?,
         content: RequestBody?,
         scheduleIdx: RequestBody
@@ -87,16 +93,16 @@ class DiaryService {
                         200 -> if (resp != null) {
                             diaryDetailView.onEditDiarySuccess(
                                 resp,
-                                localId
+                                localId, serverId
                             )
                         }
-                        else -> diaryDetailView.onEditDiaryFailure(localId, response.toString())
+                        else -> diaryDetailView.onEditDiaryFailure(response.toString())
 
                     }
                 }
 
                 override fun onFailure(call: Call<DiaryResponse.DiaryEditResponse>, t: Throwable) {
-                    diaryDetailView.onEditDiaryFailure(localId, t.message.toString())
+                    diaryDetailView.onEditDiaryFailure(t.message.toString())
                 }
             })
     }
@@ -123,7 +129,6 @@ class DiaryService {
                             )
                         }
                         else -> diaryDetailView.onDeleteDiaryFailure(
-                            localId,
                             response.code().toString()
                         )
                     }
@@ -133,27 +138,23 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryDeleteResponse>,
                     t: Throwable
                 ) {
-                    diaryDetailView.onDeleteDiaryFailure(localId, t.message.toString())
+                    diaryDetailView.onDeleteDiaryFailure(t.message.toString())
                 }
             })
     }
 
 
     /** 기록 월 별 조회 **/
-    fun getMonthDiary(
-        month: String,
-        page: Int,
-        size: Int
-    ) {
-        diaryRetrofitInterface.getMonthDiary(month, page, size)
-            .enqueue(object : Callback<DiaryResponse.DiaryGetMonthResponse> {
+    fun getAllDiary() {
+        diaryRetrofitInterface.getAllDiary()
+            .enqueue(object : Callback<DiaryResponse.DiaryGetAllResponse> {
 
                 @SuppressLint("SuspiciousIndentation")
                 override fun onResponse(
-                    call: Call<DiaryResponse.DiaryGetMonthResponse>,
-                    response: Response<DiaryResponse.DiaryGetMonthResponse>
+                    call: Call<DiaryResponse.DiaryGetAllResponse>,
+                    response: Response<DiaryResponse.DiaryGetAllResponse>
                 ) {
-                    val resp: DiaryResponse.DiaryGetMonthResponse? = response.body()
+                    val resp: DiaryResponse.DiaryGetAllResponse? = response.body()
                     when (response.code()) {
                         200 -> if (resp != null) {
                             getMonthDiaryView.onGetMonthDiarySuccess(
@@ -161,63 +162,93 @@ class DiaryService {
                             )
                         }
                         else -> getMonthDiaryView.onGetMonthDiaryFailure(
-                            month,
-                            response.toString(),
-                            page,
-                            size
+                            response.toString()
                         )
                     }
 
                 }
 
                 override fun onFailure(
-                    call: Call<DiaryResponse.DiaryGetMonthResponse>,
+                    call: Call<DiaryResponse.DiaryGetAllResponse>,
                     t: Throwable
                 ) {
                     getMonthDiaryView.onGetMonthDiaryFailure(
-                        month,
-                        t.message.toString(),
-                        page,
-                        size
+                        t.message.toString()
                     )
                 }
             })
     }
 
-    /** 기록 일 별 조회 **/
-    fun getDayDiary(
-        localId: Long,
-        scheduleIdx: Long,
+
+    /** 그룹 메모 추가 **/
+    fun addGroupDiary(
+        moimScheduleIdx: Long,
+        name: RequestBody,
+        money: RequestBody,
+        members: RequestBody?,
+        imgs: List<MultipartBody.Part>?
     ) {
-        diaryRetrofitInterface.getDayDiary(scheduleIdx)
-            .enqueue(object : Callback<DiaryResponse.DiaryGetDayResponse> {
+        diaryRetrofitInterface.addGroupDiary(moimScheduleIdx, name, money, members, imgs)
+            .enqueue(object : Callback<DiaryResponse.AddGroupDiaryResponse> {
 
                 @SuppressLint("SuspiciousIndentation")
                 override fun onResponse(
-                    call: Call<DiaryResponse.DiaryGetDayResponse>,
-                    response: Response<DiaryResponse.DiaryGetDayResponse>
+                    call: Call<DiaryResponse.AddGroupDiaryResponse>,
+                    response: Response<DiaryResponse.AddGroupDiaryResponse>
                 ) {
-                    val resp: DiaryResponse.DiaryGetDayResponse? = response.body()
+                    val resp: DiaryResponse.AddGroupDiaryResponse? = response.body()
                     when (response.code()) {
-                        200 -> resp?.result?.let {
-                            getDayDiaryView.onGetDayDiarySuccess(
-                                resp, scheduleIdx
-                            )
+                        200 -> if (resp != null) {
+                            addGroupDiaryView.onAddGroupDiarySuccess(resp)
                         }
-                        else ->
-                            getDayDiaryView.onGetDayDiaryFailure(localId, response.toString())
+                        else -> addGroupDiaryView.onAddGroupDiaryFailure(response.toString())
                     }
 
                 }
 
                 override fun onFailure(
-                    call: Call<DiaryResponse.DiaryGetDayResponse>,
+                    call: Call<DiaryResponse.AddGroupDiaryResponse>,
                     t: Throwable
                 ) {
-                    getDayDiaryView.onGetDayDiaryFailure(localId, t.message.toString())
+                    addGroupDiaryView.onAddGroupDiaryFailure(t.message.toString())
                 }
             })
     }
+
+
+    /** 그룹 기록 일 별 조회 **/
+    fun getGroupDiary(
+        moimScheduleIdx: Long
+    ) {
+        diaryRetrofitInterface.getGroupDiary(moimScheduleIdx)
+            .enqueue(object : Callback<DiaryResponse.GetGroupDiaryResponse> {
+
+                @SuppressLint("SuspiciousIndentation")
+                override fun onResponse(
+                    call: Call<DiaryResponse.GetGroupDiaryResponse>,
+                    response: Response<DiaryResponse.GetGroupDiaryResponse>
+                ) {
+                    val resp: DiaryResponse.GetGroupDiaryResponse? = response.body()
+                    when (response.code()) {
+                        200 -> if (resp != null) {
+                            getGroupDiaryView.onGetGroupDiarySuccess(resp)
+                        }
+                        else ->
+                            getGroupDiaryView.onGetGroupDiaryFailure(response.toString())
+                    }
+
+                }
+
+                override fun onFailure(
+                    call: Call<DiaryResponse.GetGroupDiaryResponse>,
+                    t: Throwable
+                ) {
+                    getGroupDiaryView.onGetGroupDiaryFailure(t.message.toString())
+                }
+            })
+    }
+
+
 }
 
 

@@ -15,12 +15,12 @@ import android.widget.GridLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.namo.R
 import com.example.namo.config.BaseResponse
 import com.example.namo.data.remote.moim.AddMoimResponse
 import com.example.namo.data.remote.moim.DeleteMoimMemberView
 import com.example.namo.data.remote.moim.Moim
 import com.example.namo.data.remote.moim.MoimService
-import com.example.namo.data.remote.moim.MoimUser
 import com.example.namo.data.remote.moim.UpdateMoimNameBody
 import com.example.namo.databinding.ActivityGroupInfoBinding
 import com.example.namo.ui.bottom.group.adapter.GroupInfoMemberRVAdapter
@@ -40,6 +40,10 @@ class GroupInfoActivity : AppCompatActivity(), DeleteMoimMemberView {
 
         binding = ActivityGroupInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        Log.d("TEST_COLOR", R.color.palette1.toString())
+        Log.d("TEST_COLOR", R.color.palette2.toString())
+        Log.d("TEST_COLOR", R.color.palette3.toString())
 
         group = intent.getSerializableExtra("group") as Moim
         setAdapter()

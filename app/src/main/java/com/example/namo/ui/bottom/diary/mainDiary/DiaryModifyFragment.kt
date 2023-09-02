@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
@@ -33,6 +31,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 
 class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  // 다이어리 편집 화면
@@ -46,6 +45,7 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
 
     private lateinit var event: Event
     private lateinit var category: Category
+    private lateinit var diary: Diary
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,25 +60,29 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
         event = (arguments?.getSerializable("event") as? Event)!!
 
         repo = DiaryRepository(requireContext())
-        repo.setCallBack2(this)
-        repo.setDiary(event.eventId, event.serverIdx)
+        repo.setCallBack(this)  // 화면 이동 콜백
+
+        getDiary()
 
         galleryAdapter = GalleryListAdapter(requireContext())
         bind()
-
-        return binding.root
-    }
-
-    override fun onGetDiary(diary: Diary) {
 
         binding.diaryContentsEt.setText(diary.content)
 
         imgList.addAll(diary.images as List<String?>)
         viewImages()
 
-        onClickListener(diary)
+        onClickListener()
         onRecyclerView()
         charCnt()
+
+        return binding.root
+    }
+
+    private fun getDiary() {
+        diary = runBlocking {
+            repo.getDiary(event.eventId) // 개별 다이어리 조회
+        }
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -86,44 +90,35 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
 
         CoroutineScope(Dispatchers.Main).launch {
 
-            val categoryIdx = if (event.categoryServerIdx == 0L) event.categoryIdx else event.categoryServerIdx
+            val categoryIdx = event.categoryIdx
             category = repo.getCategoryId(categoryIdx)
 
             context?.resources?.let {
-                binding.itemDiaryCategoryColorIv.background.setTint(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        category.color
-                    )
-                )
+                binding.itemDiaryCategoryColorIv.background.setTint(category.color)
             }
         }
 
         binding.apply {
-            val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong)
+            val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong * 1000)
 
             diaryInputDateTv.text = formatDate
             diaryInputPlaceTv.text = event.placeName
             diaryTitleTv.text = event.title
             diaryTitleTv.isSelected = true  // marquee
 
-            diaryTodayDayTv.text = SimpleDateFormat("EE").format(event.startLong)
-            diaryTodayNumTv.text = SimpleDateFormat("dd").format(event.startLong)
+            diaryTodayDayTv.text = SimpleDateFormat("EE").format(event.startLong * 1000)
+            diaryTodayNumTv.text = SimpleDateFormat("dd").format(event.startLong * 1000)
         }
     }
 
-    private fun onClickListener(diary: Diary) {
+    private fun onClickListener() {
 
         binding.diaryEditTv.setOnClickListener {
-            if (binding.diaryEditTv.text.toString().isEmpty()) {
-                Toast.makeText(requireContext(), "메모를 입력해주세용", Toast.LENGTH_SHORT).show()
-            } else {
-                updateDiary(diary)
-            }
+            updateDiary()
         }
 
         binding.diaryBackIv.setOnClickListener {
-            findNavController().popBackStack()
+            findNavController().navigate(R.id.action_diaryModifyFragment_to_diaryFragment)
             hideBottomNavigation(false)
         }
 
@@ -138,7 +133,7 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
 
 
     /** 다이어리 수정 **/
-    private fun updateDiary(diary: Diary) {
+    private fun updateDiary() {
         diary.content = binding.diaryContentsEt.text.toString()
 
         repo.editDiary(
@@ -148,18 +143,13 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
             event.serverIdx
         )
 
-        Log.d("sewerw",imgList.toString())
-
-
-
         Toast.makeText(requireContext(), "수정되었습니다", Toast.LENGTH_SHORT).show()
     }
 
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
+
         repo.deleteDiary(event.eventId, event.serverIdx)
-
-
     }
 
     private fun onRecyclerView() {
@@ -204,15 +194,15 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
             )
         } else {
             // 권한 있음
-            val intent = Intent().apply {
+            val intent = Intent(Intent.ACTION_PICK).apply {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
             }
 
-            intent.type = MediaStore.Images.Media.CONTENT_TYPE
+            intent.type = "image/*"
+            intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
-            intent.action = Intent.ACTION_GET_CONTENT
 
             getImage.launch(intent)
         }
@@ -315,7 +305,7 @@ class DiaryModifyFragment : Fragment(), DiaryRepository.DiaryModifyCallback {  /
     }
 
     override fun onDelete() {
-        view?.findNavController()?.navigate(R.id.diaryFragment)
+        findNavController().popBackStack()
         hideBottomNavigation(false)
     }
 

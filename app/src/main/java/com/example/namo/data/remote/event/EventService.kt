@@ -47,6 +47,7 @@ class EventService() {
     }
 
     fun editEvent(serverIdx : Long, body: EventForUpload, eventId : Long) {
+        Log.d("EditEvent", "serverIdx : $serverIdx")
         eventRetrofitInterface.editEvent(serverIdx, body).enqueue(object : Callback<EditEventResponse> {
             override fun onResponse(call: Call<EditEventResponse>, response: Response<EditEventResponse>) {
                 when (response.code()) {

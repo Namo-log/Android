@@ -4,10 +4,13 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.view.MotionEvent
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -42,42 +45,42 @@ import com.example.namo.databinding.ActivityMainBinding
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogBasicFragment.Companion.eventToEventForUpload
 import com.example.namo.utils.NetworkManager
 import org.joda.time.DateTime
-import java.util.Arrays
 
 
-private const val PERMISSION_REQUEST_CODE = 1001
-private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 777
-class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEventView, CategorySettingView {
+private const val PERMISSION_REQUEST_CODE= 1001
+private const val NOTIFICATION_PERMISSION_REQUEST_CODE= 777
 
-    private lateinit var binding : ActivityMainBinding
-    lateinit var db : NamoDatabase
-    lateinit var unUploaded : List<Event>
+class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEventView,
+    CategorySettingView, GetMonthDiaryView {
+
+    private lateinit var binding: ActivityMainBinding
+    lateinit var db: NamoDatabase
+    lateinit var unUploaded: List<Event>
 
     private val serverEvent = ArrayList<Event>()
     private val serverCategory = ArrayList<Category>()
     private val serverDiary = ArrayList<Diary>()
 
-    private lateinit var categoryColorArray : IntArray
+    private lateinit var categoryColorArray: IntArray
 
     private var isCategorySuccess = false
     private var isEventSuccess = false
     private var isDiarySuccess = false
 
-
     companion object {
-        const val PLACE_NAME_INTENT_KEY : String = "place_name"
-        const val PLACE_X_INTENT_KEY : String = "place_x"
-        const val PLACE_Y_INTENT_KEY : String = "place_y"
+        const val PLACE_NAME_INTENT_KEY: String = "place_name"
+        const val PLACE_X_INTENT_KEY: String = "place_x"
+        const val PLACE_Y_INTENT_KEY: String = "place_y"
 
-        fun setCategoryList(db : NamoDatabase) : List<Category> {
-            var categoryList = listOf<Category>()
-            val thread = Thread {
+        fun setCategoryList(db: NamoDatabase): List<Category> {
+            var categoryList =listOf<Category>()
+            val thread = Thread{
                 categoryList = db.categoryDao.getCategoryList()
             }
             thread.start()
             try {
                 thread.join()
-            } catch (e : InterruptedException) {
+            } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
 
@@ -92,12 +95,13 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         db = NamoDatabase.getInstance(this)
         initNavigation()
-        categoryColorArray = resources.getIntArray(R.array.categoryColorArr)
+        categoryColorArray =resources.getIntArray(R.array.categoryColorArr)
         Log.d("CATEGORY_ARR", categoryColorArray.contentToString())
 
         logToken()
         checkPermissions()
         checkNetworkUpload()
+
     }
 
     private fun checkNetworkUpload() {
@@ -108,7 +112,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
 
         val size = getAllCategorySize()
         Log.d("MAIN_SERVER_UPLOAD", "RoomDB : $size category")
-        when(size) {
+        when (size) {
             0 -> {
                 //서버에서 데이터 받아오기
                 downloadServerToRoom()
@@ -120,30 +124,30 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         }
     }
 
-    private fun getAllCategorySize() : Int {
-        var size : Int = 0
-        val thread = Thread {
+    private fun getAllCategorySize(): Int {
+        var size: Int = 0
+        val thread = Thread{
             size = db.categoryDao.getAllCategorySize()
         }
         thread.start()
         try {
             thread.join()
-        } catch (e : InterruptedException) {
+        } catch (e: InterruptedException) {
             e.printStackTrace()
         }
 
         return size
     }
 
-    private fun getAllEventSize() : Int {
-        var size : Int = 0
-        val thread = Thread {
+    private fun getAllEventSize(): Int {
+        var size: Int = 0
+        val thread = Thread{
             size = db.eventDao.getAllEvent()
         }
         thread.start()
         try {
             thread.join()
-        } catch (e : InterruptedException) {
+        } catch (e: InterruptedException) {
             e.printStackTrace()
         }
 
@@ -161,19 +165,22 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         eventService.setGetMonthEventView(this)
         eventService.getMonthEvent(time)
 
-        //다이어리
+        // 다이어리
+        val diaryService = DiaryService()
+        diaryService.getAllDiary()
+        diaryService.getMonthDiaryView(this)
 
     }
 
     private fun uploadRoomToServer() {
-        val repo=DiaryRepository(this)
-        val thread = Thread {
+
+        val thread = Thread{
             unUploaded = db.eventDao.getNotUploadedEvent()
         }
         thread.start()
         try {
             thread.join()
-        } catch (e : InterruptedException) {
+        } catch (e: InterruptedException) {
             e.printStackTrace()
         }
         Log.d("MAIN_SERVER_UPLOAD", unUploaded.toString())
@@ -189,32 +196,31 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
             if (i.serverIdx == 0L) {
                 if (i.state == R.string.event_current_deleted.toString()) {
                     return
-                }
-                else {
+                } else {
                     //POST
                     eventService.postEvent(eventToEventForUpload(i), i.eventId)
                 }
-            }
-            else {
+            } else {
                 if (i.state == R.string.event_current_deleted.toString()) {
                     eventService.deleteEvent(i.serverIdx, i.eventId)
-                }
-                else {
+                } else {
                     eventService.editEvent(i.serverIdx, eventToEventForUpload(i), i.eventId)
                 }
-                repo.getUpload(i.serverIdx)
-            }
 
+            }
         }
+        val repo=DiaryRepository(this)
+        repo.uploadDiaryToServer()  // 다이어리 서버에 올림
     }
 
     private fun logToken() {
-        val accessToken: String? = ApplicationClass.sSharedPreferences.getString(ApplicationClass.X_ACCESS_TOKEN, null)
+        val accessToken: String? =
+            ApplicationClass.sSharedPreferences.getString(ApplicationClass.X_ACCESS_TOKEN, null)
         Log.d("Token", "$accessToken")
     }
 
     private fun checkPermissions() {
-        val permissionsToRequest = mutableListOf<String>()
+        val permissionsToRequest =mutableListOf<String>()
 
         if (ContextCompat.checkSelfPermission(
                 this,
@@ -258,7 +264,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
             Toast.makeText(this, "일정 알림을 위해 설정에서 알림 권한을 허용해주세요.", Toast.LENGTH_SHORT).show()
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
             val uri = Uri.fromParts("package", activity.packageName, null)
-            intent.data = uri
+            intent.data= uri
             activity.startActivity(intent)
         } else {
             return
@@ -267,7 +273,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+        if (requestCode ==NOTIFICATION_PERMISSION_REQUEST_CODE) {
             if (NotificationManagerCompat.from(this).areNotificationsEnabled()) {
                 Toast.makeText(this, "알림 권한이 허용되었습니다.", Toast.LENGTH_SHORT).show()
             } else {
@@ -282,7 +288,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_REQUEST_CODE) {
+        if (requestCode ==PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 return
             } else {
@@ -292,46 +298,59 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
     }
 
     private fun initNavigation() {
-        NavigationUI.setupWithNavController(binding.navBar, findNavController(R.id.nav_host))
+        NavigationUI.setupWithNavController(binding.navBar,findNavController(R.id.nav_host))
         //바텀내비 백스택 수정 필요
     }
 
-    override fun onPostEventSuccess(response: PostEventResponse, eventId : Long) {
+    override fun onPostEventSuccess(response: PostEventResponse, eventId: Long) {
         Log.d("MainActivity", "onPostEventSuccess")
         Log.d("MAIN_SERVER_UPLOAD", "$eventId 번 일정 post 완료")
 
         val result = response.result
 
         //룸디비에 isUpload, serverId, state 업데이트하기
-        var thread = Thread {
-            db.eventDao.updateEventAfterUpload(eventId, 1, result.eventIdx, R.string.event_current_default.toString())
+        var thread = Thread{
+            db.eventDao.updateEventAfterUpload(
+                eventId,
+                1,
+                result.eventIdx,
+                R.string.event_current_default.toString()
+            )
         }
         thread.start()
         try {
             thread.join()
-        } catch ( e: InterruptedException) {
+        } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+
+        val repo=DiaryRepository(this)
+        repo.postDiaryToServer(result.eventIdx , eventId)
     }
 
     override fun onPostEventFailure(message: String) {
         Log.d("MainActivity", "onPostEventFailure")
     }
 
-    override fun onEditEventSuccess(response: EditEventResponse, eventId : Long) {
+    override fun onEditEventSuccess(response: EditEventResponse, eventId: Long) {
         Log.d("MainActivity", "onEditEventSuccess")
         Log.d("MAIN_SERVER_UPLOAD", "$eventId 번 일정 edit 완료")
 
         val result = response.result
 
         //룸디비에 isUpload, serverId, state 업데이트하기
-        var thread = Thread {
-            db.eventDao.updateEventAfterUpload(eventId, 1, result.eventIdx, R.string.event_current_default.toString())
+        var thread = Thread{
+            db.eventDao.updateEventAfterUpload(
+                eventId,
+                1,
+                result.eventIdx,
+                R.string.event_current_default.toString()
+            )
         }
         thread.start()
         try {
             thread.join()
-        } catch ( e: InterruptedException) {
+        } catch (e: InterruptedException) {
             e.printStackTrace()
         }
     }
@@ -340,7 +359,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         Log.d("MainActivity", "onEditEventFailure")
     }
 
-    override fun onDeleteEventSuccess(response: DeleteEventResponse, eventId : Long) {
+    override fun onDeleteEventSuccess(response: DeleteEventResponse, eventId: Long) {
         Log.d("MainActivity", "onDeleteEventSuccess")
         Log.d("MAIN_SERVER_UPLOAD", "$eventId 번 일정 삭제 완료")
 
@@ -348,13 +367,13 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         Toast.makeText(this, "$eventId 번 일정의 $result", Toast.LENGTH_SHORT).show()
 
 
-        var deleteDB : Thread = Thread {
+        var deleteDB: Thread = Thread{
             db.eventDao.deleteEventById(eventId)
         }
         deleteDB.start()
         try {
             deleteDB.join()
-        } catch ( e: InterruptedException) {
+        } catch (e: InterruptedException) {
             e.printStackTrace()
         }
     }
@@ -368,11 +387,12 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
 
         val result = response.result
         serverEvent.clear()
-        serverEvent.addAll(result.map { serverToEvent(it) })
+        serverEvent.addAll(result.map{serverToEvent(it)})
         Log.d("TEST_CHECK", "서버에 있던 이벤트 : " + serverEvent.toString())
         Log.d("MAIN_SERVER_UPLOAD", "Get Event Finish")
         isEventSuccess = true
         checkServerDownloadCompleted()
+
     }
 
     override fun onGetMonthEventFailure(message: String) {
@@ -385,12 +405,12 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
 
         val result = response.result
         serverCategory.clear()
-        serverCategory.addAll(result.map { serverToCategory(it) })
+        serverCategory.addAll(result.map{serverToCategory(it)})
         Log.d("TEST_CHECK", "서버에 있던 카테고리 : " + serverCategory.toString())
         Log.d("MAIN_SERVER_UPLOAD", "Get Category Finish")
         isCategorySuccess = true
-        isDiarySuccess = true
         checkServerDownloadCompleted()
+
     }
 
     override fun onGetAllCategoryFailure(message: String) {
@@ -398,19 +418,37 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         isCategorySuccess = false
     }
 
+    override fun onGetMonthDiarySuccess(response: DiaryResponse.DiaryGetAllResponse) {
+        Log.d("MAIN_SERVER_UPLOAD", "onGetAllDiarySuccess")
+
+        val result = response.result
+
+        serverDiary.clear()
+        serverDiary.addAll(result.map{serverToDiary(it)})
+        Log.d("TEST_CHECK", "서버에 있던 다이어리 : $serverDiary")
+        Log.d("MAIN_SERVER_UPLOAD", "Get Diary Finish")
+
+        isDiarySuccess = true
+        checkServerDownloadCompleted()
+
+    }
+
+    override fun onGetMonthDiaryFailure(message: String) {
+        Log.d("MAIN_SERVER_UPLOAD", "onGetAllDiaryFailure")
+        isDiarySuccess = false
+    }
+
     private fun checkServerDownloadCompleted() {
+
         if (isCategorySuccess && isEventSuccess && isDiarySuccess) {
-            //그럼 걔네 룸디비 올려야 됨
-            val uploadRoom = Thread {
+            val uploadRoom = Thread{
                 for (category in serverCategory) {
                     db.categoryDao.insertCategory(category)
                 }
                 for (event in serverEvent) {
                     db.eventDao.insertEvent(event)
                 }
-
-                Log.d("TEST_CHECK", "Now category are ${db.categoryDao.getAllCategorySize()}")
-                //다이어리도 해줘야됨
+                Log.d("TEST_CHECK", "Now categories are ${db.categoryDao.getAllCategorySize()}")
             }
             uploadRoom.start()
             try {
@@ -419,17 +457,47 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
                 e.printStackTrace()
             }
 
-//            // Room에 다 업로드 했으면 새로고침하기?
-//            val intent = Intent(this, MainActivity::class.java)
-//            finish()
-//            startActivity(intent)
+            val uploadRoom2 = Thread{ // event,category 완료된 후 다이어리 업로드
+
+                val allEvent = db.diaryDao.getAllEvent()
+
+                for (diary in serverDiary) {
+                    for (event in allEvent){
+                        if (event.hasDiary == 1){
+                            if(event.serverIdx == diary.serverId) {
+                                val diaryData = Diary(
+                                    event.eventId,
+                                    diary.serverId,
+                                    diary.content,
+                                    diary.images,
+                                    R.string.event_current_default.toString(),
+                                    1
+                                )
+                                db.diaryDao.insertDiary(diaryData)
+                            }
+                        }
+                    }
+
+                }
+                Log.d("TEST_CHECK", "Now diaries are uploaded.")
+            }
+            uploadRoom2.start()
+            try {
+                uploadRoom2.join()
+            } catch (e : InterruptedException) {
+                e.printStackTrace()
+            }
+
+            // Room에 다 업로드 했으면 새로고침하기?
+            //            val intent = Intent(this, MainActivity::class.java)
+            //            finish()
+            //            startActivity(intent)
         }
-        else {
-            return
-        }
+
     }
 
-    fun serverToEvent(schedule : GetMonthEventResult) : Event {
+
+    private fun serverToEvent(schedule: GetMonthEventResult): Event {
         return Event(
             0,
             schedule.name,
@@ -441,7 +509,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
             schedule.x,
             schedule.y,
             0,
-            schedule.alarmDate ?: listOf(),
+            schedule.alarmDate ?:listOf(),
             1,
             (R.string.event_current_default).toString(),
             schedule.scheduleId,
@@ -450,8 +518,11 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         )
     }
 
-    fun serverToCategory(category : GetCategoryResult) : Category {
-        Log.d("CATEGORY_ARR", "Server to Category - color : ${categoryColorArray[category.paletteId - 1]}")
+    private fun serverToCategory(category: GetCategoryResult): Category {
+        Log.d(
+            "CATEGORY_ARR",
+            "Server to Category - color : ${categoryColorArray[category.paletteId - 1]}"
+        )
         return Category(
             0,
             category.name,
@@ -463,4 +534,34 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
             category.categoryId
         )
     }
+
+    private fun serverToDiary(diary: DiaryResponse.Result): Diary {
+
+        return Diary(
+            0,
+            diary.scheduleId,
+            diary.contents,
+            diary.urls,
+            R.string.event_current_default.toString(),
+            1
+        )
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {  // editText 외 터치 시 키보드 내려감
+        val focusView = currentFocus
+        if (focusView != null && ev != null) {
+            val rect = Rect()
+            focusView.getGlobalVisibleRect(rect)
+            val x = ev.x.toInt()
+            val y = ev.y.toInt()
+
+            if (!rect.contains(x, y)) {
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(focusView.windowToken, 0)
+                focusView.clearFocus()
+            }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
 }

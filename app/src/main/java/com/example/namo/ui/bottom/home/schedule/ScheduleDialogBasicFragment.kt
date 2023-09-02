@@ -28,7 +28,6 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -45,11 +44,12 @@ import com.example.namo.data.remote.event.EventView
 import com.example.namo.data.remote.event.PostEventResponse
 import com.example.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.example.namo.ui.bottom.home.notify.PushNotificationReceiver
-import com.example.namo.ui.bottom.home.schedule.adapter.DialogCategoryRVAdapter
 import com.example.namo.ui.bottom.home.schedule.map.MapActivity
 import com.example.namo.utils.CalendarUtils.Companion.getInterval
 import com.example.namo.utils.NetworkManager
 import com.google.android.material.chip.Chip
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
@@ -59,6 +59,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
 
     private lateinit var binding : FragmentScheduleDialogBasicBinding
     private val args : ScheduleDialogBasicFragmentArgs by navArgs()
+    private val scope = CoroutineScope(IO)
 
     var isEdit : Boolean = false
     private var event : Event = Event()
@@ -342,8 +343,6 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
 
                 uploadToServer(R.string.event_current_edited.toString())
             }
-
-            requireActivity().finish()
         }
     }
 
@@ -777,13 +776,23 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
     }
 
     override fun onPostEventSuccess(response: PostEventResponse, eventId : Long) {
-        Log.d("ScheduleBasic", "onPostEventSuccess")
+        Log.d("ScheduleBasic", "onPostEventSuccess : ${response.result.eventIdx} eventId : ${eventId}")
 
         var result = response.result
+
+//        scope.launch {
+//            db.eventDao.updateEventAfterUpload(
+//                eventId,
+//                1,
+//                result.eventIdx,
+//                R.string.event_current_default.toString()
+//            )
+//        }
 
         //룸디비에 isUpload, serverId, state 업데이트하기
         val thread = Thread {
             db.eventDao.updateEventAfterUpload(eventId, 1, result.eventIdx, R.string.event_current_default.toString())
+            Log.d("UPDATE_AFTER",db.eventDao.getEventById(eventId).toString())
         }
         thread.start()
         try {
@@ -791,6 +800,9 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         } catch ( e: InterruptedException) {
             e.printStackTrace()
         }
+        Log.d("UPDATE_AFTER", "Update after Post finish")
+
+        requireActivity().finish()
     }
 
     override fun onPostEventFailure(message: String) {
@@ -815,6 +827,8 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         } catch ( e: InterruptedException) {
             e.printStackTrace()
         }
+
+        requireActivity().finish()
     }
 
     override fun onEditEventFailure(message: String) {

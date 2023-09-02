@@ -34,7 +34,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NaMo"
-        tools:targetApi="31">
+        tools:targetApi="31"
+        android:hardwareAccelerated="false"
+        android:largeHeap="true"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"
             android:exported="false"
@@ -83,6 +86,11 @@
             android:exported="false"
             android:theme="@style/Theme.MaterialTransparent"
             android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".ui.bottom.group.GroupCalendarActivity"
+            android:exported="false"/>
+        <activity android:name=".ui.bottom.group.GroupScheduleActivity"
+            android:exported="false"
+            android:theme="@style/SlideAnimation"/>
         <meta-data android:name="com.kakao.sdk.AppKey" android:value="${KAKAO_API_KEY}"/>
         <receiver
             android:name=".ui.bottom.home.notify.PushNotificationReceiver"

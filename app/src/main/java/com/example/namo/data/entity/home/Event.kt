@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.namo.R
 import java.io.Serializable
-import java.lang.Boolean.FALSE
 
 @Entity(tableName = "calendar_event_table")
 data class Event(
@@ -38,24 +37,27 @@ data class Event(
 
     @ColumnInfo(name = "event_order")
     var order: Int = 0,
-  
+
     @ColumnInfo(name = "alarm_list")
-    var alarmList : List<Int>? = listOf(),
+    var alarmList: List<Int>? = listOf(),
 
     @ColumnInfo(name = "event_upload")
-    var isUpload : Int = 0,
+    var isUpload: Int = 0,
 
     @ColumnInfo(name = "event_state")
-    var state : String = R.string.event_current_default.toString(),
+    var state: String = R.string.event_current_default.toString(),
 
     @ColumnInfo(name = "event_server_idx")
-    var serverIdx : Long = 0L,
+    var serverIdx: Long = 0L,
 
     @ColumnInfo(name = "event_category_server_idx")
-    var categoryServerIdx : Long = 0L,
+    var categoryServerIdx: Long = 0L,
 
     @ColumnInfo(name = "has_diary")
-    var hasDiary: Int = 0
+    var hasDiary: Int = 0,
+
+    @ColumnInfo(name = "event_is_group")
+    var isGroup: Int = 0
 
 ) : Serializable
 

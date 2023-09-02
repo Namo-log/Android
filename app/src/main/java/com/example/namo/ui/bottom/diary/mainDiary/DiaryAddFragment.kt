@@ -84,18 +84,16 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
             binding.apply {
                 context?.resources?.let {
-                    itemDiaryCategoryColorIv.background.setTint(
-                        ContextCompat.getColor(requireContext(), category.color)
-                    )
+                    itemDiaryCategoryColorIv.background.setTint(category.color)
                 }
             }
         }
 
         binding.apply {
 
-            val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong)
-            diaryTodayDayTv.text = SimpleDateFormat("EE").format(event.startLong)
-            diaryTodayNumTv.text = SimpleDateFormat("dd").format(event.startLong)
+            val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong * 1000)
+            diaryTodayDayTv.text = SimpleDateFormat("EE").format(event.startLong * 1000)
+            diaryTodayNumTv.text = SimpleDateFormat("dd").format(event.startLong * 1000)
             diaryTitleTv.isSelected = true  // marquee
             diaryTitleTv.text = event.title
 
@@ -119,13 +117,10 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
             }
 
             diaryEditTv.setOnClickListener {
-                if (diaryEditTv.text.toString().isEmpty()) {
-                    Toast.makeText(requireContext(), "메모를 입력해주세용", Toast.LENGTH_SHORT).show()
-                } else {
-                    insertData()
-                    view?.findNavController()?.navigate(R.id.homeFragment)
-                    hideBottomNavigation(false)
-                }
+
+                insertData()
+                view?.findNavController()?.navigate(R.id.homeFragment)
+                hideBottomNavigation(false)
             }
 
             diaryGalleryClickIv.setOnClickListener {
@@ -164,15 +159,15 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
 
         if (hasImagePermission()) {  // 권한 있으면 갤러리 불러오기
 
-            val intent = Intent().apply {
+            val intent = Intent(Intent.ACTION_PICK).apply {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
             }
 
-            intent.type = MediaStore.Images.Media.CONTENT_TYPE
+            intent.type = "image/*"
+            intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
-            intent.action = Intent.ACTION_GET_CONTENT
 
             getImage.launch(intent)
 
