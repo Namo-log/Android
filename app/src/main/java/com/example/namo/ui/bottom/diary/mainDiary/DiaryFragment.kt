@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.namo.MainActivity
 import com.example.namo.R
 import com.example.namo.data.remote.diary.*
@@ -55,14 +56,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
         getDiaryList(yearMonth, currentTabPosition)
 
-        // 그룹 다이어리 테스트, 확인하고 지우기....
-        binding.groupdiarytest1.setOnClickListener {
-            view?.findNavController()?.navigate(R.id.action_diaryFragment_to_groupDiaryFragment)
-        }
 
-        binding.groupdiarytest2.setOnClickListener {
-            view?.findNavController()?.navigate(R.id.action_diaryFragment_to_groupModifyFragment)
-        }
         dialogCreate()
 
         return binding.root

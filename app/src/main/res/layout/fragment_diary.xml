@@ -20,25 +20,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/groupdiarytest1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:text="그룹 메모추가"
-            android:textSize="15sp"
-            app:layout_constraintStart_toEndOf="@id/diary_month"
-            app:layout_constraintTop_toTopOf="@id/diary_month" />
-
-        <TextView
-            android:id="@+id/groupdiarytest2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:text="수정"
-            android:textSize="15sp"
-            app:layout_constraintStart_toEndOf="@id/groupdiarytest1"
-            app:layout_constraintTop_toTopOf="@id/diary_month" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"

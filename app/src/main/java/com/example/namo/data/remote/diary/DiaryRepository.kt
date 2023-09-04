@@ -456,8 +456,8 @@ class DiaryRepository(
     fun addMoimDiary(
         moimSchduleId: Long,
         place: String,
-        money: Int,
-        members: List<Int>?,
+        money: Long,
+        members: List<Long>?,
         images: List<String>?
     ) {
 
@@ -492,8 +492,8 @@ class DiaryRepository(
     fun editGroupPlace(
         moimPlaceId: Long,
         place: String,
-        money: Int,
-        members: List<Int>?,
+        money: Long,
+        members: List<Long>?,
         images: List<String>?
     ) {
         val placeRequestBody = place.toRequestBody("text/plain".toMediaTypeOrNull())

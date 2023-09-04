@@ -25,14 +25,14 @@ class GroupPlaceEventAdapter(
 
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addItem(image: ArrayList<String?>) {
+    fun addImageItem(image: ArrayList<String?>) {
         this.items.add(image)
         notifyDataSetChanged()
     }
 
     /** 금액 정산 화살표 누르면 정산 다이얼로그로 이동**/
     interface PayInterface {
-        fun onPayClicked(pay: Int, position: Int, payText: TextView)
+        fun onPayClicked(pay: Long, position: Int, payText: TextView)
     }
 
     private lateinit var groupPayClickListener: PayInterface

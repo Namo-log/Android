@@ -7,8 +7,8 @@ import com.google.gson.annotations.SerializedName
 data class DiaryGroupEvent(
     @PrimaryKey(autoGenerate = false)
     var place: String = "",
-    var pay: Int = 0,
-    var members: List<Int>,
+    var pay: Long = 0L,
+    var members: List<Long>,
     var imgs: ArrayList<String?>,
     var placeIdx: Long = 0L
 ) : java.io.Serializable

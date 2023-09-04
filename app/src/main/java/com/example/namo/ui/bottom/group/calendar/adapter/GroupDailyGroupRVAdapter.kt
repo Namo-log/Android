@@ -20,6 +20,14 @@ class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter
     lateinit var colorArray: IntArray
     private lateinit var context : Context
 
+    interface DiaryInterface {
+        fun onGroupMemoClicked(groupEvent:MoimSchedule)
+    }
+    private lateinit var diaryGroupMemoClickListener: DiaryInterface
+    fun setRecordClickListener(itemClickListener: DiaryInterface){
+        diaryGroupMemoClickListener=itemClickListener
+    }
+
     interface ContentClickListener {
         fun onContentClick(groupSchedule: MoimSchedule)
     }
@@ -44,6 +52,10 @@ class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter
 
         holder.binding.itemCalendarEventContentLayout.setOnClickListener {
             contentClickListener.onContentClick(groupSchedule[position])
+        }
+
+        holder.binding.itemCalendarEventRecord.setOnClickListener {
+           diaryGroupMemoClickListener.onGroupMemoClicked(groupSchedule[position])
         }
     }
 

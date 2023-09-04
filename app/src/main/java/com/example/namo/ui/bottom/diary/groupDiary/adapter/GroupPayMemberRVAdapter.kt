@@ -8,7 +8,7 @@ import com.example.namo.databinding.ItemDiaryGroupPayMemberBinding
 
 class GroupPayMemberRVAdapter(  // 그룹 장소별 정산 다이얼로그 멤버
     private var members: List<DiaryResponse.GroupUser>,
-    private var memberIsChecked: MutableList<Pair<Int, Boolean>>
+    private var memberIsChecked: MutableList<Pair<Long, Boolean>>
 ) :
     RecyclerView.Adapter<GroupPayMemberRVAdapter.ViewHolder>() {
 
@@ -16,7 +16,7 @@ class GroupPayMemberRVAdapter(  // 그룹 장소별 정산 다이얼로그 멤�
     interface PeopleItemClickListener {
         fun onItemClick(
             peopleList: ArrayList<String>,
-            memberIsChecked: MutableList<Pair<Int, Boolean>>
+            memberIsChecked: MutableList<Pair<Long, Boolean>>
         )
     }
 

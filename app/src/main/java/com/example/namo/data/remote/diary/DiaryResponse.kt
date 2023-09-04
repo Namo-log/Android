@@ -44,15 +44,15 @@ class DiaryResponse {
     )
 
     data class GroupUser(
-        val userId: Int,
+        val userId: Long,
         val userName: String
     ) : java.io.Serializable
 
     data class LocationDto(
         val moimMemoLocationId: Long,
         @SerializedName("name") var place: String,
-        @SerializedName("money") var pay: Int,
-        @SerializedName("participants") var members: MutableList<Int>,  // 원래는 int
+        @SerializedName("money") var pay: Long,
+        @SerializedName("participants") var members: MutableList<Long>,
         @SerializedName("urls") var imgs: List<String>
     ) : java.io.Serializable
 

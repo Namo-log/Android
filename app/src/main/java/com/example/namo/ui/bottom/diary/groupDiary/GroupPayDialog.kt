@@ -22,14 +22,14 @@ import java.lang.Boolean.TRUE
 class GroupPayDialog(
     private var placeMember: List<DiaryResponse.GroupUser>,
     private var placeEvent: DiaryGroupEvent,
-    private val pay: (Int) -> Unit,
-    private val checkedMember: (List<Int>) -> Unit
+    private val pay: (Long) -> Unit,
+    private val checkedMember: (List<Long>) -> Unit
 ) : DialogFragment(), View.OnClickListener {  // 그룹 다이어리 장소별 정산 다이얼로그
 
     lateinit var binding: DialogGroupPayBinding
     private lateinit var payMemberRVAdapter: GroupPayMemberRVAdapter
 
-    private var memberIsChecked = mutableListOf<Pair<Int, Boolean>>()
+    private var memberIsChecked = mutableListOf<Pair<Long, Boolean>>()
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -60,7 +60,7 @@ class GroupPayDialog(
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        if (placeEvent.pay != 0) {
+        if (placeEvent.pay != 0L) {
             val memberSize = placeEvent.members.size
             binding.groupPayCountTv.text = memberSize.toString()
             binding.groupPayTotalEt.setText(placeEvent.pay.toString())
@@ -96,7 +96,7 @@ class GroupPayDialog(
             @SuppressLint("SetTextI18n")
             override fun onItemClick(
                 peopleList: ArrayList<String>,
-                memberIsChecked: MutableList<Pair<Int, Boolean>>
+                memberIsChecked: MutableList<Pair<Long, Boolean>>
             ) {
 
                 val checkedPeopleCount = memberIsChecked.count {
@@ -138,10 +138,10 @@ class GroupPayDialog(
             }
             groupPaySaveTv.setOnClickListener {
 
-                val totalPay = binding.groupPayTotalEt.text.toString().toInt()
+                val totalPay = binding.groupPayTotalEt.text.toString().toLong()
                 pay(totalPay)
 
-                val checkedMemberId = mutableListOf<Int>()
+                val checkedMemberId = mutableListOf<Long>()
 
                 for (i in memberIsChecked.indices) {
                     if (memberIsChecked[i].second) {

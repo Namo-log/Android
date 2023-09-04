@@ -30,7 +30,7 @@ class GroupModifyRVAdapter(
 
     /** 금액 정산 화살표 누르면 정산 다이얼로그로 이동**/
     interface PayInterface {
-        fun onPayClicked(pay: Int, position: Int, eventPay: DiaryGroupEvent, payText: TextView)
+        fun onPayClicked(pay: Long, position: Int, eventPay: DiaryGroupEvent, payText: TextView)
     }
 
     private lateinit var groupPayClickListener: PayInterface
