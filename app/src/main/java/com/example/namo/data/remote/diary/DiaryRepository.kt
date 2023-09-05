@@ -16,17 +16,11 @@ import com.example.namo.data.entity.diary.DiaryEvent
 import com.example.namo.data.entity.home.Category
 import com.example.namo.utils.NetworkManager
 import kotlinx.coroutines.*
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.*
-import java.net.HttpURLConnection
-import java.net.URL
-import kotlin.coroutines.suspendCoroutine
 
 
 class DiaryRepository(

@@ -85,8 +85,8 @@
     </fragment>
     <fragment
         android:id="@+id/groupModifyFragment"
-        tools:layout="@layout/activity_diary_group_modify"
-        android:name="com.example.namo.ui.bottom.diary.groupDiary.GroupModifyActivity"
+        tools:layout="@layout/activity_diary_group_memo"
+        android:name="com.example.namo.ui.bottom.diary.groupDiary.GroupMemoActivity"
         android:label="GroupModifyFragment" />
 
 

@@ -94,7 +94,7 @@
         <activity android:name=".ui.bottom.group.GroupScheduleMemberActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialTransparent"/>
-        <activity android:name=".ui.bottom.diary.groupDiary.GroupModifyActivity"
+        <activity android:name=".ui.bottom.diary.groupDiary.GroupMemoActivity"
             android:exported="false"/>
         <meta-data android:name="com.kakao.sdk.AppKey" android:value="${KAKAO_API_KEY}"/>
         <receiver

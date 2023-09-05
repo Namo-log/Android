@@ -199,7 +199,8 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/groupCodeGray"
-        app:layout_constraintBottom_toTopOf="@id/group_save_tv"/>
+        app:layout_constraintBottom_toTopOf="@id/group_save_tv" />
+
     <TextView
         android:id="@+id/group_save_tv"
         android:layout_width="match_parent"

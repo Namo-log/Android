@@ -60,16 +60,20 @@ class PersonalMonthFragment : Fragment() {
 
         getDiaryList(currentPage, pageSize)
 
+
         return binding.root
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun getDiaryList(page: Int, size: Int) {
 
         val storeDB = Thread {
             val diaryItems = repo.getDiaryList(yearMonth, page, size)  // 월 별 다이어리 조회
 
-            Log.d("ewer",diaryItems.toString())
+            Log.d("ewer", diaryItems.toString())
+
             requireActivity().runOnUiThread {
+
                 diaryAdapter.updateData(diaryItems)
 
                 // 달 별 메모 없으면 없다고 띄우기

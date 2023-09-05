@@ -8,9 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.moim.GetMoimScheduleResponse
@@ -18,7 +16,7 @@ import com.example.namo.data.remote.moim.GetMoimScheduleView
 import com.example.namo.data.remote.moim.MoimSchedule
 import com.example.namo.data.remote.moim.MoimService
 import com.example.namo.databinding.FragmentGroupCalendarMonthBinding
-import com.example.namo.ui.bottom.diary.groupDiary.GroupModifyActivity
+import com.example.namo.ui.bottom.diary.groupDiary.GroupMemoActivity
 import com.example.namo.ui.bottom.group.GroupCalendarActivity
 import com.example.namo.ui.bottom.group.GroupScheduleActivity
 import com.example.namo.ui.bottom.group.calendar.GroupCalendarAdapter.Companion.GROUP_ID
@@ -159,7 +157,7 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
 
         groupEventRVAdapter.setRecordClickListener(object :GroupDailyGroupRVAdapter.DiaryInterface{
             override fun onGroupMemoClicked(groupEvent: MoimSchedule) {
-                val intent = Intent(context, GroupModifyActivity::class.java)
+                val intent = Intent(context, GroupMemoActivity::class.java)
                 intent.putExtra("groupEvent", groupEvent)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 requireActivity().startActivity(intent)

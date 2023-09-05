@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -25,14 +24,14 @@ import com.example.namo.data.remote.diary.DiaryResponse
 import com.example.namo.data.remote.diary.DiaryService
 import com.example.namo.data.remote.diary.GetGroupDiaryView
 import com.example.namo.data.remote.moim.MoimSchedule
-import com.example.namo.databinding.ActivityDiaryGroupModifyBinding
+import com.example.namo.databinding.ActivityDiaryGroupMemoBinding
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupMemberRVAdapter
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupPlaceEventAdapter
 import java.text.SimpleDateFormat
 
-class GroupModifyActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 다이어리 추가 화면
+class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 다이어리 추가 화면
 
-    private lateinit var binding: ActivityDiaryGroupModifyBinding
+    private lateinit var binding: ActivityDiaryGroupMemoBinding
 
     private lateinit var memberadapter: GroupMemberRVAdapter
     private lateinit var placeadapter: GroupPlaceEventAdapter
@@ -48,11 +47,13 @@ class GroupModifyActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 
     private var positionForGallery: Int = -1
 
     private var placeEvent = ArrayList<DiaryGroupEvent>()
-    private var getComplete = false
+
+    private val itemTouchSimpleCallback = ItemTouchHelperCallback()
+    private val itemTouchHelper = ItemTouchHelper(itemTouchSimpleCallback)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDiaryGroupModifyBinding.inflate(layoutInflater)
+        binding = ActivityDiaryGroupMemoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         repo = DiaryRepository(this)
@@ -69,7 +70,6 @@ class GroupModifyActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 
     override fun onGetGroupDiarySuccess(response: DiaryResponse.GetGroupDiaryResponse) {
         Log.d("GET_GROUP_DIARY", response.toString())
 
-        getComplete = true
         val result = response.result
         groupMembers = result.users
         groupData = result
@@ -94,7 +94,9 @@ class GroupModifyActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 
         binding.groupAddInputPlaceTv.text = groupData.locationName
         binding.groupAddTitleTv.text = groupData.locationName
 
-        Log.d("placeEvent", placeEvent.toString())
+        onRecyclerView()
+        onClickListener()
+
         if (placeEvent.size == 0) {
             binding.groupSaveTv.text = "기록 저장"
             binding.groupSaveTv.setTextColor(
@@ -106,6 +108,7 @@ class GroupModifyActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 
             binding.groupSaveTv.setBackgroundResource(R.color.MainOrange)
 
             addPlace()
+
         } else {
             binding.groupSaveTv.text = "기록 수정"
             binding.groupSaveTv.setTextColor(
@@ -118,10 +121,6 @@ class GroupModifyActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 
 
             editPlace()
         }
-
-        onRecyclerView()
-
-        onClickListener()
     }
 
     override fun onGetGroupDiaryFailure(message: String) {
@@ -184,6 +183,7 @@ class GroupModifyActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun onRecyclerView() {
 
         binding.apply {
@@ -195,23 +195,10 @@ class GroupModifyActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 
                 LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
 
             // 장소 추가 리사이클러뷰
-            placeadapter = GroupPlaceEventAdapter(applicationContext, placeEvent)
-            diaryGroupAddPlaceRv.adapter = placeadapter
-            diaryGroupAddPlaceRv.layoutManager =
-                LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-
-            val itemTouchHelperCallback = ItemTouchHelperCallback(placeadapter)
-            val helper = ItemTouchHelper(itemTouchHelperCallback)
-            // RecyclerView에 ItemTouchHelper 연결
-            helper.attachToRecyclerView(binding.diaryGroupAddPlaceRv)
-
-            // 정산 다이얼로그
-            placeadapter.groupPayClickListener(object : GroupPlaceEventAdapter.PayInterface {
-                override fun onPayClicked(
-                    pay: Long,
-                    position: Int,
-                    payText: TextView
-                ) {
+            placeadapter = GroupPlaceEventAdapter(
+                applicationContext,
+                placeEvent,
+                payClickListener = { pay, position, payText ->
                     GroupPayDialog(groupMembers, placeEvent[position], {
                         placeEvent[position].pay = it
                         payText.text = it.toString()
@@ -219,23 +206,30 @@ class GroupModifyActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 
                     }, {
                         placeEvent[position].members = it
                     }).show(supportFragmentManager, "show")
-                }
-            })
 
-
-            // 이미지 불러오기
-            placeadapter.groupGalleryClickListener(object :
-                GroupPlaceEventAdapter.GalleryInterface {
-                override fun onGalleryClicked(
-                    imgLists: ArrayList<String?>,
-                    position: Int
-                ) {
-                    this@GroupModifyActivity.imgList = imgLists
-                    this@GroupModifyActivity.positionForGallery = position
+                },
+                imageClickListener = { imgs, position ->
+                    this@GroupMemoActivity.imgList = imgs
+                    this@GroupMemoActivity.positionForGallery = position
 
                     getPermission()
-                }
-            })
+
+                },
+                placeClickListener = { text, position ->
+                    placeEvent[position].place = text
+                })
+
+            diaryGroupAddPlaceRv.adapter = placeadapter
+            diaryGroupAddPlaceRv.layoutManager =
+                LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
+
+            itemTouchHelper.attachToRecyclerView(binding.diaryGroupAddPlaceRv)
+
+            // RecyclerView의 다른 곳을 터치하거나 Swipe 시 기존에 Swipe된 것은 제자리로 변경
+            binding.diaryGroupAddPlaceRv.setOnTouchListener { _, _ ->
+                itemTouchSimpleCallback.removePreviousClamp(binding.diaryGroupAddPlaceRv)
+                false
+            }
         }
     }
 
@@ -256,7 +250,7 @@ class GroupModifyActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 
 
         //  장소 추가 버튼 클릭리스너
         binding.groudPlaceAddTv.setOnClickListener {
-            placeEvent.add(DiaryGroupEvent("장소", 0, arrayListOf(), arrayListOf()))
+            placeEvent.add(DiaryGroupEvent("", 0, arrayListOf(), arrayListOf()))
             placeadapter.notifyDataSetChanged()
         }
 
