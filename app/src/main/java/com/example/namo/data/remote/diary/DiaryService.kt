@@ -9,7 +9,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class DiaryService{
+class DiaryService {
     private val diaryRetrofitInterface: DiaryInterface =
         ApplicationClass.sRetrofit.create(DiaryInterface::class.java)
 
@@ -20,15 +20,39 @@ class DiaryService{
     private lateinit var getGroupDiaryView: GetGroupDiaryView
     private lateinit var editGroupDiaryView: EditGroupDiaryView
     private lateinit var deleteGroupDiaryView: DeleteGroupDiaryView
+    private lateinit var getGroupMonthView: GetGroupMonthView
 
-    fun addDiaryView(diaryView: DiaryView) { this.diaryView = diaryView }
-    fun setDiaryView(diaryDetailView: DiaryDetailView) { this.diaryDetailView = diaryDetailView }
-    fun getMonthDiaryView(getMonthDiaryView: GetMonthDiaryView) { this.getMonthDiaryView = getMonthDiaryView }
-    fun addGroupDiaryView(addGroupView: AddGroupDiaryView) { this.addGroupDiaryView = addGroupView }
-    fun getGroupDiaryView(getGroupDiaryView: GetGroupDiaryView) { this.getGroupDiaryView = getGroupDiaryView }
-    fun editGroupDiaryView(editGroupView: EditGroupDiaryView) { this.editGroupDiaryView = editGroupView }
-    fun deleteGroupDiaryView(deleteGroupDiaryView: DeleteGroupDiaryView) { this.deleteGroupDiaryView = deleteGroupDiaryView }
+    fun addDiaryView(diaryView: DiaryView) {
+        this.diaryView = diaryView
+    }
 
+    fun setDiaryView(diaryDetailView: DiaryDetailView) {
+        this.diaryDetailView = diaryDetailView
+    }
+
+    fun getMonthDiaryView(getMonthDiaryView: GetMonthDiaryView) {
+        this.getMonthDiaryView = getMonthDiaryView
+    }
+
+    fun addGroupDiaryView(addGroupView: AddGroupDiaryView) {
+        this.addGroupDiaryView = addGroupView
+    }
+
+    fun getGroupDiaryView(getGroupDiaryView: GetGroupDiaryView) {
+        this.getGroupDiaryView = getGroupDiaryView
+    }
+
+    fun editGroupDiaryView(editGroupView: EditGroupDiaryView) {
+        this.editGroupDiaryView = editGroupView
+    }
+
+    fun deleteGroupDiaryView(deleteGroupDiaryView: DeleteGroupDiaryView) {
+        this.deleteGroupDiaryView = deleteGroupDiaryView
+    }
+
+    fun getGroupMonthView(getGroupMonthView: GetGroupMonthView) {
+        this.getGroupMonthView = getGroupMonthView
+    }
 
     /** 기록 추가 **/
     fun addDiary(
@@ -306,6 +330,38 @@ class DiaryService{
             })
     }
 
+    fun getGroupMonthDiary(
+        month: String,
+        page: Int,
+        size: Int
+    ) {
+        diaryRetrofitInterface.getGroupMonthDiary(month, page, size)
+            .enqueue(object : Callback<DiaryResponse.DiaryGetMonthResponse> {
+
+                @SuppressLint("SuspiciousIndentation")
+                override fun onResponse(
+                    call: Call<DiaryResponse.DiaryGetMonthResponse>,
+                    response: Response<DiaryResponse.DiaryGetMonthResponse>
+                ) {
+                    val resp: DiaryResponse.DiaryGetMonthResponse? = response.body()
+                    when (response.code()) {
+                        200 -> if (resp != null) {
+
+                            getGroupMonthView.onGetGroupMonthSuccess(resp)
+                        }
+                        else -> getGroupMonthView.onGetGroupMonthFailure(response.toString())
+                    }
+
+                }
+
+                override fun onFailure(
+                    call: Call<DiaryResponse.DiaryGetMonthResponse>,
+                    t: Throwable
+                ) {
+                    getGroupMonthView.onGetGroupMonthFailure(t.message.toString())
+                }
+            })
+    }
 }
 
 

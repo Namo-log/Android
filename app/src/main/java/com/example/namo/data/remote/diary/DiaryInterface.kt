@@ -34,7 +34,6 @@ interface DiaryInterface {
     @GET("/schedules/diary/all")
     fun getAllDiary(): Call<DiaryResponse.DiaryGetAllResponse>
 
-
     @Multipart
     @POST("/moims/schedule/memo/{moimId}")
     fun addGroupDiary(
@@ -66,5 +65,13 @@ interface DiaryInterface {
     fun deleteGroupDiaryPlace(
         @Path("moimMemoLocationId") moimScheduldIdx: Long
     ): Call<DiaryResponse.DiaryResponse>
+
+
+    @GET("/moims/schedule/memo/month/{month}")
+    fun getGroupMonthDiary(
+        @Path("month") month: String,
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): Call<DiaryResponse.DiaryGetMonthResponse>
 }
 

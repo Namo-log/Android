@@ -2,11 +2,13 @@ package com.example.namo.ui.bottom.diary.mainDiary.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.namo.databinding.ItemGalleryListBinding
 
 class GalleryListAdapter(  // 다이어리 추가, 수정 화면의 이미지(점선 테두리 O)
@@ -32,11 +34,15 @@ class GalleryListAdapter(  // 다이어리 추가, 수정 화면의 이미지(�
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val uri= items[position]
-        if (uri != null) {
-            Glide.with(context)
-                .load(uri.toUri())
-                .into(holder.imageUrl)
-        }
+
+        Log.d("uri",uri.toString())
+        val requestOptions = RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.DATA)
+
+        Glide.with(context)
+            .load(uri)
+            .apply(requestOptions)
+            .into(holder.imageUrl)
     }
 
     override fun getItemCount(): Int = items.size

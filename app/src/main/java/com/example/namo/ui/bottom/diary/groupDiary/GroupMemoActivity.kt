@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -29,7 +32,7 @@ import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupMemberRVAdapter
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupPlaceEventAdapter
 import java.text.SimpleDateFormat
 
-class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 다이어리 추가 화면
+class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 다이어리 추가, 수정, 삭제 화면
 
     private lateinit var binding: ActivityDiaryGroupMemoBinding
 
@@ -38,7 +41,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
     private lateinit var groupMembers: List<DiaryResponse.GroupUser>
     private lateinit var groupData: DiaryResponse.GroupDiaryResult
-    private lateinit var groupEvent: List<DiaryResponse.LocationDto>
+    private var groupEvent = listOf<DiaryResponse.LocationDto>()
     private lateinit var memberIntList: List<Long>
     private lateinit var repo: DiaryRepository
     private lateinit var moimSchedule: MoimSchedule
@@ -47,6 +50,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
     private var positionForGallery: Int = -1
 
     private var placeEvent = ArrayList<DiaryGroupEvent>()
+    var hasDifference = false
 
     private val itemTouchSimpleCallback = ItemTouchHelperCallback()
     private val itemTouchHelper = ItemTouchHelper(itemTouchSimpleCallback)
@@ -63,7 +67,6 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
         val diaryService = DiaryService()
         diaryService.getGroupDiary(moimSchedule.moimScheduleId)
         diaryService.getGroupDiaryView(this)
-
     }
 
     @SuppressLint("SimpleDateFormat", "NotifyDataSetChanged")
@@ -125,9 +128,12 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
     override fun onGetGroupDiaryFailure(message: String) {
         Log.d("GET_GROUP_DIARY", message)
+
+        binding.groupAddTitleTv.text = " 서버 오류 "
+        onClickListener()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+
     private fun addPlace() {
 
         initialize()
@@ -148,7 +154,6 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
     }
 
-    @SuppressLint()
     private fun editPlace() {
 
         binding.groupSaveTv.setOnClickListener {
@@ -163,7 +168,24 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
                     )
 
                 } else {
-                    repo.editGroupPlace(
+                    // 바뀐 데이터가 있을 때만 변경하기
+                    for (i in groupEvent) {
+                        var foundMatch = false
+
+                        for (j in placeEvent) {
+                            if (i.place == j.place && i.pay == j.pay && i.imgs == j.imgs) {
+                                foundMatch = true
+                                break
+                            }
+                        }
+
+                        if (!foundMatch) {
+                            hasDifference = true
+                            break
+                        }
+                    }
+
+                    if (hasDifference) repo.editGroupPlace(
                         it.placeIdx,
                         it.place,
                         it.pay,
@@ -345,6 +367,23 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
             placeadapter.addImageItem(images)
         }
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {  // editText 외 터치 시 키보드 내려감
+        val focusView = currentFocus
+        if (focusView != null && ev != null) {
+            val rect = Rect()
+            focusView.getGlobalVisibleRect(rect)
+            val x = ev.x.toInt()
+            val y = ev.y.toInt()
+
+            if (!rect.contains(x, y)) {
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(focusView.windowToken, 0)
+                focusView.clearFocus()
+            }
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
 }

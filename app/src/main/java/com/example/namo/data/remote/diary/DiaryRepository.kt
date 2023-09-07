@@ -4,11 +4,12 @@ package com.example.namo.data.remote.diary
 import DiaryItem
 import android.annotation.SuppressLint
 import android.content.Context
-import android.database.Cursor
+import android.graphics.Bitmap
 import android.net.Uri
-import android.provider.MediaStore
 import android.util.Log
-import androidx.core.net.toUri
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.diary.Diary
@@ -21,7 +22,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.*
-
 
 class DiaryRepository(
     val context: Context,
@@ -36,10 +36,10 @@ class DiaryRepository(
     private var callback: DiaryModifyCallback? = null
 
     private val failList = ArrayList<Diary>()
+    private lateinit var imgFile: File
 
     private lateinit var category: Category
     private lateinit var diary: Diary
-
 
     fun setCallBack(callback: DiaryModifyCallback) {
         this.callback = callback
@@ -186,6 +186,9 @@ class DiaryRepository(
         val contentRequestBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
         val scheduleIdRequestBody =
             scheduleId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+
+        Log.d("images", images.toString())
+        Log.d("imgserver", imgList.toString())
 
         diaryService.editDiary(
             localId,
@@ -376,12 +379,12 @@ class DiaryRepository(
 
 
     /** 월 별 개인 다이어리 리스트 조회 **/
-    fun getDiaryList(yearMonth: String, page: Int, size: Int): List<DiaryItem> {
+    fun getDiaryList(yearMonth: String): List<DiaryItem> {
         return diaryDao.getDiaryEventList(yearMonth).toListItems()
     }
 
 
-    private fun List<DiaryEvent>.toListItems(): List<DiaryItem> { // 같은 날짜끼리 묶어서 그룹 헤더로 추
+    fun List<DiaryEvent>.toListItems(): List<DiaryItem> { // 같은 날짜끼리 묶어서 그룹 헤더로 추가
         val result = arrayListOf<DiaryItem>() // 결과를 리턴할 리스트
 
         var groupHeaderDate: Long = 0 // 그룹날짜
@@ -535,82 +538,71 @@ class DiaryRepository(
 
     private fun imageToMultipart(images: List<String>?): List<MultipartBody.Part>? {
         return images?.map { path ->
-            val file = File(absolutelyPath(path.toUri(), context))
+
+            val uri = Uri.parse(path)
+            val file = imageToFile(uri, context)
+
             val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
             MultipartBody.Part.createFormData("imgs", file.name, requestFile)
         }
     }
 
+    // 이미지를 압축하고 크기를 조정하여 파일로 저장
+    private fun imageToFile(uri: Uri, context: Context): File {
 
-//        private fun imageToMultipart(images: List<String>?): List<MultipartBody.Part>? {
-//        return images?.map { path ->
-//            if (path.startsWith("http")) {
-//                Log.d("path",path)
-//                Log.d("url", createMultipartFromImageURL(path)!!.toString())
-//                  createMultipartFromImageURL(path)!!
-//
-//            } else {
-//                val file = File(absolutelyPath(path.toUri(), context))
-//                val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-//                MultipartBody.Part.createFormData("imgs", file.name, requestFile)
-//            }
-//
-//        }
-//    }
-//
-//    @OptIn(DelicateCoroutinesApi::class)
-//    @Throws(IOException::class)
-//     fun createMultipartFromImageURL(imageUrl: String): MultipartBody.Part? {
-//            val url = URL(imageUrl)
-//            val connection = url.openConnection() as HttpURLConnection
-//
-//            try {
-//                connection.doInput = true
-//                connection.connect()
-//
-//                if (connection.responseCode == HttpURLConnection.HTTP_OK) {
-//                    val inputStream = BufferedInputStream(connection.inputStream)
-//                    val contentType: MediaType? = connection.contentType?.toMediaTypeOrNull()
-//
-//                    // InputStream에서 데이터를 읽어 바이트 배열로 변환
-//                    val byteArrayOutputStream = ByteArrayOutputStream()
-//                    val buffer = ByteArray(4096)
-//                    var bytesRead: Int
-//
-//                    while (inputStream.read(buffer).also { bytesRead = it } != -1) {
-//                        byteArrayOutputStream.write(buffer, 0, bytesRead)
-//                    }
-//
-//                    val bytes = byteArrayOutputStream.toByteArray()
-//
-//                    // 바이트 배열을 RequestBody로 변환
-//                    val requestBody = bytes.toRequestBody(contentType)
-//
-//                    return MultipartBody.Part.createFormData("", "test.png", requestBody)
-//                }
-//            } finally {
-//                connection.disconnect()
-//            }
-//        return null
-//    }
+        val db = Thread {
+            val bitmap = loadWebImageToBitmap(context, uri.toString())
+            val bitmapHash = bitmap.hashCode()
+            val fileName = "image_$bitmapHash.jpg"
+            imgFile = File(context.cacheDir, fileName)
 
-
-    @SuppressLint("Recycle")
-    fun absolutelyPath(path: Uri?, context: Context): String {
-        if (path == null) {
-            return ""
+            if (!imgFile.exists()) {
+                try {
+                    val outputStream = FileOutputStream(imgFile)
+                    bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                    outputStream.flush()
+                    outputStream.close()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            } else {
+                Log.d("cache", "Image already exists: ${imgFile.path}")
+            }
         }
-        val proj: Array<String> = arrayOf(MediaStore.Images.Media.DATA)
-        val c: Cursor? = context.contentResolver.query(path, proj, null, null, null)
-        val index = c?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        c?.moveToFirst()
 
-        val result = c?.getString(index ?: 0) ?: ""
+        db.start()
+        try {
+            db.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        return imgFile
 
-        c?.close()
-
-        return result
     }
+
+
+    private fun loadWebImageToBitmap(context: Context, imageUrl: String): Bitmap? {
+        return try {
+            val requestOptions = RequestOptions()
+                .override(SIZE_ORIGINAL) // 원본 크기로 로딩
+                .fitCenter() // 이미지를 중앙에 맞춤
+                .disallowHardwareConfig() // 하드웨어 가속을 사용하지 않음
+
+            val bitmap: Bitmap? = Glide.with(context)
+                .asBitmap()
+                .load(imageUrl)
+                .apply(requestOptions)
+                .submit()
+                .get()
+
+            Log.d("bitmap", bitmap.toString())
+            bitmap // 비트맵 반환
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
 
     private fun printNotUploaded() {
 

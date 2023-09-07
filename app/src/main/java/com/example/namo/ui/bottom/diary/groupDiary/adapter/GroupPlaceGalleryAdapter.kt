@@ -2,12 +2,15 @@ package com.example.namo.ui.bottom.diary.groupDiary.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.namo.databinding.ItemGalleryListBinding
+import kotlinx.coroutines.*
 
 class GroupPlaceGalleryAdapter(
     // 그룹 다이어리 장소별 이미지
@@ -16,7 +19,6 @@ class GroupPlaceGalleryAdapter(
     RecyclerView.Adapter<GroupPlaceGalleryAdapter.ViewHolder>() {
 
     private val items: ArrayList<String?> = arrayListOf()
-
 
     @SuppressLint("NotifyDataSetChanged")
     fun addItem(image: List<String?>) {
@@ -33,12 +35,17 @@ class GroupPlaceGalleryAdapter(
         return ViewHolder(binding)
     }
 
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val uri = items[position]
 
+        val requestOptions = RequestOptions()
+            .diskCacheStrategy(DiskCacheStrategy.DATA)
+
         Glide.with(context)
-            .load(uri?.toUri())
+            .load(uri)
+            .apply(requestOptions)
             .into(holder.imageUrl)
 
     }
