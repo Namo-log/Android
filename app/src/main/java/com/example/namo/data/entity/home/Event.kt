@@ -57,7 +57,7 @@ data class Event(
     var hasDiary: Int = 0,
 
     @ColumnInfo(name = "event_is_group")
-    var isGroup: Int = 0
+    var moimSchedule: Boolean = false
 
 ) : Serializable
 

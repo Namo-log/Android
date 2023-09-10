@@ -38,5 +38,6 @@ data class GetMonthEventResult (
     @SerializedName("y") val y : Double,
     @SerializedName("locationName") val locationName : String,
     @SerializedName("categoryId") val categoryId : Long,
-    @SerializedName("hasDiary") val hasDiary : Boolean
+    @SerializedName("hasDiary") val hasDiary : Boolean,
+    @SerializedName("moimSchedule") val moimSchedule : Boolean,
 )

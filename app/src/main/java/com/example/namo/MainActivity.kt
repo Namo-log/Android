@@ -517,7 +517,8 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
             (R.string.event_current_default).toString(),
             schedule.scheduleId,
             schedule.categoryId,
-            if (schedule.hasDiary) 1 else 0
+            if (schedule.hasDiary) 1 else 0,
+            schedule.moimSchedule
         )
     }
 

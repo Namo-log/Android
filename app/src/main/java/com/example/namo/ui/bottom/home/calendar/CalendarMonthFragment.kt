@@ -19,6 +19,9 @@ import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
+import com.example.namo.data.remote.event.GetMonthEventResponse
+import com.example.namo.data.remote.event.GetMonthEventResult
+import com.example.namo.data.remote.event.GetMonthEventView
 import com.example.namo.databinding.FragmentCalendarMonthBinding
 import com.example.namo.ui.bottom.diary.mainDiary.DiaryAddFragment
 import com.example.namo.ui.bottom.diary.mainDiary.DiaryModifyFragment
@@ -28,7 +31,7 @@ import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
 import com.example.namo.ui.bottom.home.schedule.ScheduleActivity
 import org.joda.time.DateTime
 
-class CalendarMonthFragment : Fragment() {
+class CalendarMonthFragment : Fragment(), GetMonthEventView {
     lateinit var db : NamoDatabase
     private lateinit var binding : FragmentCalendarMonthBinding
     private lateinit var categoryList : List<Category>
@@ -36,7 +39,8 @@ class CalendarMonthFragment : Fragment() {
     private var millis : Long = 0L
     var isShow = false
     private lateinit var monthList : List<DateTime>
-    private lateinit var tempEvent : List<Event>
+    private lateinit var tempEvent : ArrayList<Event>
+    private var monthGroupEvent : ArrayList<Event> = arrayListOf()
 
     private var prevIdx = -1
     private var nowIdx = 0
@@ -120,7 +124,7 @@ class CalendarMonthFragment : Fragment() {
         getCategoryList()
 
         var forDB : Thread = Thread {
-            tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis / 1000, monthList[41].plusDays(1).withTimeAtStartOfDay().millis / 1000)
+            tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis / 1000, monthList[41].plusDays(1).withTimeAtStartOfDay().millis / 1000) as ArrayList<Event>
         }
         forDB.start()
         try {
@@ -128,7 +132,9 @@ class CalendarMonthFragment : Fragment() {
         } catch (e : InterruptedException) {
             e.printStackTrace()
         }
-        binding.calendarMonthView.setEventList(tempEvent)
+//        binding.calendarMonthView.setEventList(tempEvent)
+
+
 
 //        onBackPressedCallback.isEnabled = true
         Log.d("CalendarMonth", "Event list : " + binding.calendarMonthView.getEventList().toString())
@@ -245,5 +251,38 @@ class CalendarMonthFragment : Fragment() {
                 putLong(MILLIS, millis)
             }
         }
+    }
+
+    override fun onGetMonthEventSuccess(response: GetMonthEventResponse) {
+        Log.d("MONTH_CALENDAR", "onGetMonthEventSuccess")
+
+        val result = response.result
+        monthGroupEvent = result.filter { it.moimSchedule == true }.map { serverToEvent(it) } as ArrayList
+    }
+
+    override fun onGetMonthEventFailure(message: String) {
+        TODO("Not yet implemented")
+    }
+
+    private fun serverToEvent(schedule: GetMonthEventResult): Event {
+        return Event(
+            0,
+            schedule.name,
+            schedule.startDate,
+            schedule.endDate,
+            schedule.interval,
+            schedule.categoryId,
+            schedule.locationName,
+            schedule.x,
+            schedule.y,
+            0,
+            schedule.alarmDate ?:listOf(),
+            1,
+            (R.string.event_current_default).toString(),
+            schedule.scheduleId,
+            schedule.categoryId,
+            if (schedule.hasDiary) 1 else 0,
+            schedule.moimSchedule
+        )
     }
 }

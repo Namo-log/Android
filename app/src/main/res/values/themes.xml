@@ -95,7 +95,7 @@
         <item name="eventBetweenPadding">3dp</item>
         <item name="eventHorizontalPadding">1dp</item>
         <item name="eventCornerRadius">3dp</item>
-        <item name="eventMorePadding">10dp</item>
+        <item name="eventMorePadding">5dp</item>
         <item name="eventLineHeight">4dp</item>
     </style>
 
