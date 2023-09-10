@@ -18,8 +18,7 @@
         <ImageView
             android:id="@+id/item_group_cover_img_iv"
             android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:src="@drawable/app_logo_namo"/>
+            android:layout_height="45dp"/>
 
         <LinearLayout
             android:id="@+id/item_group_content_layout"
@@ -36,7 +35,7 @@
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:textColor="@color/textGray"
-                android:text="나모 앱 런칭 캘린더"/>
+                android:hint="나모 앱 런칭 캘린더"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -51,7 +50,7 @@
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="@color/textGray"
-                    android:text="7"/>
+                    android:hint="7"/>
 
                 <TextView
                     android:id="@+id/item_group_total_people_name_tv"
@@ -60,7 +59,7 @@
                     android:layout_marginStart="10dp"
                     android:textSize="12sp"
                     android:textColor="@color/textGray"
-                    android:text="코코아, 유즈, 지니, 앨리, 라나, 얼리시"/>
+                    android:hint="코코아, 유즈, 지니, 앨리, 라나, 얼리시"/>
 
             </LinearLayout>
 
@@ -68,15 +67,15 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/item_group_edit_iv"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:padding="5dp"
-        android:layout_marginEnd="10dp"
-        android:src="@drawable/ic_more_vertical"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+<!--    <ImageView-->
+<!--        android:id="@+id/item_group_edit_iv"-->
+<!--        android:layout_width="30dp"-->
+<!--        android:layout_height="30dp"-->
+<!--        android:padding="5dp"-->
+<!--        android:layout_marginEnd="10dp"-->
+<!--        android:src="@drawable/ic_more_vertical"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"/>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

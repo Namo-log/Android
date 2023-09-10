@@ -47,7 +47,7 @@ class GroupListRVAdapter(private val moimList: List<Moim>):  RecyclerView.Adapte
 
             Glide.with(context)
                 .load(moim.groupImgUrl)
-                .placeholder(R.drawable.app_logo_namo)
+                .placeholder(R.color.notyetGray)
                 .error(R.drawable.app_logo_namo)
                 .fallback(R.drawable.app_logo_namo)
                 .circleCrop()
