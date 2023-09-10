@@ -10,6 +10,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
@@ -26,6 +28,7 @@ import com.example.namo.ui.bottom.diary.mainDiary.adapter.DiaryGroupItem
 import com.example.namo.utils.NetworkManager
 import com.example.namo.databinding.FragmentDiaryBinding
 import org.joda.time.DateTime
+import kotlin.math.roundToInt
 
 
 class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트 화면(bottomNavi)
@@ -51,15 +54,21 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
         _binding = FragmentDiaryBinding.inflate(inflater, container, false)
 
+        repo = DiaryRepository(requireContext())
+
         yearMonthTextView = DateTime(dateTime).toString("yyyy.MM")
         sf = requireContext().getSharedPreferences("sf", Context.MODE_PRIVATE)
 
-        val savedString = sf.getString("yearMonth", "")
-        if (!savedString.isNullOrEmpty()) yearMonthTextView = savedString
+        val savedYearMonth = sf.getString("yearMonth", yearMonthTextView)
+        if (savedYearMonth != null) {
+            yearMonthTextView = savedYearMonth
+        }
+        val savedChecked=sf.getBoolean("checked",false)
+        checked=savedChecked
+
+        getList()
 
         binding.diaryMonth.text = yearMonthTextView
-
-        repo = DiaryRepository(requireContext())
 
         checkSwitchBtn()
         dialogCreate()
@@ -67,62 +76,91 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        getList()
-    }
 
     private fun getList() {
 
-        if (!checked) {  // 개인 기록 가져오기
-            binding.switchOnOff.isChecked = false
+        if (!checked) { // 개인 기록 가져오기
             getPersonalList()
 
+            binding.personalBtn.setPadding(
+                changeDP(0),
+                binding.personalBtn.paddingTop,
+                changeDP(0),
+                binding.personalBtn.paddingBottom
+            )
+            binding.groupBtn.setPadding(
+                changeDP(0),
+                binding.groupBtn.paddingTop,
+                changeDP(10),
+                binding.groupBtn.paddingBottom
+            )
+
+            setButton(binding.personalBtn, binding.groupBtn)
+
         } else { // 그룹 기록 가져오기
-            binding.switchOnOff.isChecked = true
             getGroupList()
+
+            binding.personalBtn.setPadding(
+                changeDP(10),
+                binding.personalBtn.paddingTop,
+                changeDP(0),
+                binding.personalBtn.paddingBottom
+            )
+            binding.groupBtn.setPadding(
+                changeDP(0),
+                binding.groupBtn.paddingTop,
+                changeDP(0),
+                binding.groupBtn.paddingBottom
+            )
+
+            setButton(binding.groupBtn, binding.personalBtn)
         }
+
+    }
+
+    private fun changeDP(value: Int): Int {
+        val displayMetrics = resources.displayMetrics
+        return (value * displayMetrics.density).roundToInt()
     }
 
     private fun checkSwitchBtn() {
 
-        binding.switchOnOff.setOnCheckedChangeListener { _, isChecked ->
-            if (!isChecked) { // 개인 기록
-                binding.personalBtn.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.white
-                    )
-                )
-                binding.groupBtn.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.textGray
-                    )
-                )
-
-                checked = false
-                getList()
-            } else {  // 그룹 기록
-                binding.personalBtn.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.textGray
-                    )
-                )
-                binding.groupBtn.setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.white
-                    )
-                )
-
-                checked = true
-                getList()
-            }
-
+        binding.personalBtn.setOnClickListener {
+            checked = false
+            getList()
         }
+
+        binding.groupBtn.setOnClickListener {
+            checked = true
+            getList()
+        }
+    }
+
+    private fun setButton(group: TextView, personal: TextView) {
+
+        group.setBackgroundResource(R.drawable.switch_thumb)
+        personal.setBackgroundResource(0)
+
+        val layoutParams = personal.layoutParams as LinearLayout.LayoutParams
+        layoutParams.weight = 1f
+        personal.layoutParams = layoutParams
+
+        val groupLayoutParams = group.layoutParams as LinearLayout.LayoutParams
+        groupLayoutParams.weight = 1.5f
+        group.layoutParams = groupLayoutParams
+
+        personal.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.textGray
+            )
+        )
+        group.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.white
+            )
+        )
     }
 
 
@@ -218,6 +256,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         val year = yearMonthSplit[0]
         val month = yearMonthSplit[1].removePrefix("0")
         val formatYearMonth = "$year,$month"
+
         val service = DiaryService()
         service.getGroupMonthDiary(formatYearMonth, 1, 7)
         service.getGroupMonthView(this)
@@ -331,10 +370,16 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         return result
     }
 
+
     override fun onDestroyView() {
         super.onDestroyView()
+
+        val editor = sf.edit()
+        editor.putBoolean("checked", checked)
+        editor.apply()
 
         _binding = null
     }
 
 }
+

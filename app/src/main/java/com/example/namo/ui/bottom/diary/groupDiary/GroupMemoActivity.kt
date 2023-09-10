@@ -41,16 +41,16 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
     private lateinit var groupMembers: List<DiaryResponse.GroupUser>
     private lateinit var groupData: DiaryResponse.GroupDiaryResult
-    private var groupEvent = listOf<DiaryResponse.LocationDto>()
+
     private lateinit var memberIntList: List<Long>
     private lateinit var repo: DiaryRepository
     private lateinit var moimSchedule: MoimSchedule
 
+    private var groupEvent = listOf<DiaryResponse.LocationDto>()
+    private var placeEvent = ArrayList<DiaryGroupEvent>()
+
     private var imgList: ArrayList<String?> = ArrayList() // 장소별 이미지
     private var positionForGallery: Int = -1
-
-    private var placeEvent = ArrayList<DiaryGroupEvent>()
-    var hasDifference = false
 
     private val itemTouchSimpleCallback = ItemTouchHelperCallback()
     private val itemTouchHelper = ItemTouchHelper(itemTouchSimpleCallback)
@@ -80,7 +80,8 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
         memberIntList = groupMembers.map { it.userId }
 
-        groupEvent.map {
+        placeEvent.clear()
+        groupEvent.forEach {
             placeEvent.add(
                 DiaryGroupEvent(
                     it.place,
@@ -95,7 +96,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
         val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(groupData.startDate * 1000)
         binding.groupAddInputDateTv.text = formatDate
         binding.groupAddInputPlaceTv.text = groupData.locationName
-        binding.groupAddTitleTv.text = groupData.locationName
+        binding.groupAddTitleTv.text = "title"
 
         onRecyclerView()
         onClickListener()
@@ -129,8 +130,32 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
     override fun onGetGroupDiaryFailure(message: String) {
         Log.d("GET_GROUP_DIARY", message)
 
-        binding.groupAddTitleTv.text = " 서버 오류 "
+        val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(moimSchedule.startDate * 1000)
+        binding.groupAddInputDateTv.text = formatDate
+        binding.groupAddInputPlaceTv.text = "장소 없음"
+        binding.groupAddTitleTv.text = moimSchedule.name
+
+        binding.groupSaveTv.text = "기록 저장"
+        binding.groupSaveTv.setTextColor(
+            ContextCompat.getColor(
+                this,
+                R.color.white
+            )
+        )
+        binding.groupSaveTv.setBackgroundResource(R.color.MainOrange)
+
+        val members= arrayListOf<DiaryResponse.GroupUser>()
+        moimSchedule.users.map {
+            members.add(DiaryResponse.GroupUser(it.userId,it.userName))
+        }
+
+        groupMembers=members
+        memberIntList = groupMembers.map { it.userId }
+
+        onRecyclerView()
         onClickListener()
+
+        addPlace()
     }
 
 
@@ -157,7 +182,8 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
     private fun editPlace() {
 
         binding.groupSaveTv.setOnClickListener {
-            placeEvent.map {
+
+            placeEvent.forEach {
                 if (it.placeIdx == 0L) {
                     repo.addMoimDiary(
                         moimSchedule.moimScheduleId,
@@ -169,23 +195,12 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
                 } else {
                     // 바뀐 데이터가 있을 때만 변경하기
-                    for (i in groupEvent) {
-                        var foundMatch = false
 
-                        for (j in placeEvent) {
-                            if (i.place == j.place && i.pay == j.pay && i.imgs == j.imgs) {
-                                foundMatch = true
-                                break
-                            }
-                        }
-
-                        if (!foundMatch) {
-                            hasDifference = true
-                            break
-                        }
+                    val hasDiffer = groupEvent.all { group ->
+                        group.place == it.place && group.pay == it.pay && group.imgs == it.imgs
                     }
 
-                    if (hasDifference) repo.editGroupPlace(
+                    if (!hasDiffer) repo.editGroupPlace(
                         it.placeIdx,
                         it.place,
                         it.pay,
@@ -220,7 +235,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
             placeadapter = GroupPlaceEventAdapter(
                 applicationContext,
                 placeEvent,
-                payClickListener = { pay, position, payText ->
+                payClickListener = { _, position, payText ->
                     GroupPayDialog(groupMembers, placeEvent[position], {
                         placeEvent[position].pay = it
                         payText.text = it.toString()
