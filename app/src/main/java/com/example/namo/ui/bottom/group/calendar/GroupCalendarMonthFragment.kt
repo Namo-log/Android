@@ -13,18 +13,15 @@ import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.moim.GetMoimScheduleResponse
 import com.example.namo.data.remote.moim.GetMoimScheduleView
-import com.example.namo.data.remote.moim.Moim
 import com.example.namo.data.remote.moim.MoimSchedule
 import com.example.namo.data.remote.moim.MoimService
 import com.example.namo.databinding.FragmentGroupCalendarMonthBinding
+import com.example.namo.ui.bottom.diary.groupDiary.GroupMemoActivity
 import com.example.namo.ui.bottom.group.GroupCalendarActivity
 import com.example.namo.ui.bottom.group.GroupScheduleActivity
 import com.example.namo.ui.bottom.group.calendar.GroupCalendarAdapter.Companion.GROUP_ID
 import com.example.namo.ui.bottom.group.calendar.adapter.GroupDailyGroupRVAdapter
 import com.example.namo.ui.bottom.group.calendar.adapter.GroupDailyPersonalRVAdapter
-import com.example.namo.ui.bottom.home.HomeFragment
-import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
-import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
 import com.example.namo.ui.bottom.home.calendar.CustomCalendarView
 import com.example.namo.utils.NetworkManager
 import org.joda.time.DateTime
@@ -155,6 +152,16 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
                 intent.putExtra("group", (activity as GroupCalendarActivity).getGroup())
                 intent.putExtra("moimSchedule", groupSchedule)
                 requireActivity().startActivity(intent)
+            }
+        })
+
+        groupEventRVAdapter.setRecordClickListener(object :GroupDailyGroupRVAdapter.DiaryInterface{
+            override fun onGroupMemoClicked(groupEvent: MoimSchedule) {
+                val intent = Intent(context, GroupMemoActivity::class.java)
+                intent.putExtra("groupEvent", groupEvent)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                requireActivity().startActivity(intent)
+
             }
         })
     }

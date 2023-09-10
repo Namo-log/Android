@@ -44,17 +44,41 @@ class DiaryResponse {
     )
 
     data class GroupUser(
-        val userId: Int,
+        val userId: Long,
         val userName: String
     ) : java.io.Serializable
 
     data class LocationDto(
         val moimMemoLocationId: Long,
         @SerializedName("name") var place: String,
-        @SerializedName("money") var pay: Int,
-        @SerializedName("participants") var members: MutableList<Int>,  // 원래는 int
+        @SerializedName("money") var pay: Long,
+        @SerializedName("participants") var members: MutableList<Long>,
         @SerializedName("urls") var imgs: List<String>
     ) : java.io.Serializable
 
+
+    /** 모임 기록 월 별 조회 **/
+    data class DiaryGetMonthResponse(
+        val result: GroupResult
+    ) : BaseResponse()
+
+    data class GroupResult(
+        val content: List<MonthDiary>,
+        val currentPage: Int,
+        val size: Int,
+        val first: Boolean,
+        val last: Boolean
+    )
+
+    data class MonthDiary(
+        @SerializedName("scheduleId") val scheduleIdx: Long,
+        @SerializedName("name") val title: String,
+        @SerializedName("startDate") var startDate: Long,
+        @SerializedName("contents") val content: String?,
+        @SerializedName("urls") val imgUrl: List<String>,
+        @SerializedName("categoryId") val categoryId: Long,
+        @SerializedName("color") val categoryColor: Long,
+        @SerializedName("placeName") val placeName: String
+    )
 }
 

@@ -105,6 +105,12 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         checkPermissions()
         checkNetworkUpload()
 
+        val sf= this.getSharedPreferences("sf", Context.MODE_PRIVATE)
+        val editor = sf.edit()
+        editor.remove("yearMonth")
+        editor.remove("checked")
+        editor.apply()
+
     }
 
     private fun checkNetworkUpload() {
@@ -568,12 +574,12 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         return super.dispatchTouchEvent(ev)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-        val sf= this.getSharedPreferences("sf", Context.MODE_PRIVATE)
-        val editor = sf.edit()
-        editor.remove("yearMonth")
-        editor.apply()
-    }
+//    override fun onDestroy() {
+//        super.onDestroy()
+//
+//        val sf= this.getSharedPreferences("sf", Context.MODE_PRIVATE)
+//        val editor = sf.edit()
+//        editor.remove("yearMonth")
+//        editor.apply()
+//    }
 }

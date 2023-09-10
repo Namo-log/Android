@@ -37,3 +37,7 @@ interface DeleteGroupDiaryView {
     fun onDeleteGroupDiaryFailure(message: String)
 }
 
+interface GetGroupMonthView {
+    fun onGetGroupMonthSuccess(response: DiaryResponse.DiaryGetMonthResponse)
+    fun onGetGroupMonthFailure(message: String)
+}
