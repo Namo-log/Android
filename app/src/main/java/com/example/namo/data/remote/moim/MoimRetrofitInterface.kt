@@ -25,9 +25,12 @@ interface MoimRetrofitInterface {
         @Part("groupName") groupName : RequestBody
     ) : Call<AddMoimResponse>
 
+    // 모임 리스트 조회
     @GET("moims")
     fun getMoimList () : Call<GetMoimListResponse>
 
+
+    // 월별 일정 조회
     @GET("moims/schedule/{moimId}/{yearMonth}")
     fun getMoimSchedule(
         @Path("moimId") moimId : Long,

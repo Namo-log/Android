@@ -210,7 +210,7 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
         moreList.clear()
         for (i in 0 until 42) moreList.add(0)
 
-        if (cellHeight - eventTop > _eventHeight * 3) {
+        if (cellHeight - eventTop > _eventHeight * 4) {
             for (i in 0 until eventList.size) {
 //                x계산하고, y계산하기
                 val startIdx = dayList.indexOf(DateTime(eventList[i].startDate * 1000L).withTimeAtStartOfDay())
@@ -264,13 +264,12 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
             for (more in 0 until 42) {
                 if (moreList[more] != 0) {
                     var moreText : String = "+${moreList[more]}"
+
+                    val x = (more % DAYS_PER_WEEK) * cellWidth
+                    val y = (more / DAYS_PER_WEEK + 1) * cellHeight - _eventMorePadding
+
                     morePaint.getTextBounds(moreText, 0, moreText.length, moreBounds)
-                    canvas!!.drawText(
-                        moreText,
-                        getEventTextStart(moreText, more, more),
-                        (more / DAYS_PER_WEEK + 1) * cellHeight - _eventMorePadding,
-                        morePaint
-                    )
+                    canvas!!.drawText(moreText, (x + cellWidth / 2 - moreBounds.right.toFloat() / 2), y, morePaint)
                 }
             }
         }
@@ -463,7 +462,8 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
     }
 
     private fun setBgPaintColor(event: MoimSchedule) {
-        val paletteId = if (event.users.size < 2 && event.users[0].color != 0) event.users[0].color
+        val paletteId = if (event.curMoimSchedule) 4
+                        else if (event.users.size < 2 && event.users[0].color != 0) event.users[0].color
                         else 3
         Log.d("GroupCalView", "유저 : ${event.users} | paletteId : ${paletteId}")
         bgPaint.color = colorArray[paletteId - 1]

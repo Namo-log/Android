@@ -261,13 +261,12 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
             for (more in 0 until 42) {
                 if (moreList[more] != 0) {
                     var moreText : String = "+${moreList[more]}"
+
+                    val x = (more % DAYS_PER_WEEK) * cellWidth
+                    val y = (more / DAYS_PER_WEEK + 1) * cellHeight - _eventMorePadding
+
                     morePaint.getTextBounds(moreText, 0, moreText.length, moreBounds)
-                    canvas!!.drawText(
-                        moreText,
-                        getEventTextStart(moreText, more, more),
-                        (more / DAYS_PER_WEEK + 1) * cellHeight - _eventMorePadding,
-                        morePaint
-                    )
+                    canvas!!.drawText(moreText, (x + cellWidth / 2 - moreBounds.right.toFloat() / 2), y, morePaint)
                 }
             }
         }

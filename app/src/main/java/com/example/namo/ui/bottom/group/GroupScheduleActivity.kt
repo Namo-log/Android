@@ -149,6 +149,7 @@ class GroupScheduleActivity : AppCompatActivity(), MoimScheduleView {
         editGroupSchedule.y = 0.0
         editGroupSchedule.locationName = "장소 추가 필요"
         editGroupSchedule.users = moimSchedule.users.map { user -> user.userId }
+        selectedIds = moimSchedule.users.map { user -> user.userId } as ArrayList<Long>
     }
 
     private fun clickListener() {
@@ -157,8 +158,8 @@ class GroupScheduleActivity : AppCompatActivity(), MoimScheduleView {
             val intent = Intent(this, GroupScheduleMemberActivity::class.java)
             intent.putExtra("members", originalMembers)
             intent.putExtra("selectedIds", selectedIds.toLongArray())
-            Log.d("PUT_INTENT", originalMembers.toString())
-            Log.d("PUT_INTENT", selectedIds.toString())
+//            Log.d("PUT_INTENT", originalMembers.toString())
+//            Log.d("PUT_INTENT", selectedIds.toString())
             getMemberResult.launch(intent)
         }
 
@@ -263,6 +264,7 @@ class GroupScheduleActivity : AppCompatActivity(), MoimScheduleView {
         binding.dialogGroupScheduleTitleEt.setText(editGroupSchedule.name)
 
         //참여자 넣어야됨
+        binding.dialogGroupScheduleMemberTv.text = group.moimUsers.filter { it.userId in editGroupSchedule.users }.map { it.userName }.joinToString(", ")
 
         //시작일, 종료일, 시작시간, 종료시간
         setDateTime(DateTime(editGroupSchedule.startLong * 1000L), DateTime(editGroupSchedule.endLong * 1000L))

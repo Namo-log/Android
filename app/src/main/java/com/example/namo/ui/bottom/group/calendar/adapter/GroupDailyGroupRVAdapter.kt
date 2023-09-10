@@ -64,9 +64,9 @@ class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter
                 DateTime(groupSchedule.startDate * 1000L).toString("HH:mm") + " - " + DateTime(groupSchedule.endDate * 1000L).toString(
                     "HH:mm"
                 )
-            val paletteId =
-                if (groupSchedule.users.size < 2 && groupSchedule.users[0].color != 0) groupSchedule.users[0].color
-                else 3
+            val paletteId = if (groupSchedule.curMoimSchedule) 4
+                        else if (groupSchedule.users.size < 2 && groupSchedule.users[0].color != 0) groupSchedule.users[0].color
+                        else 3
 
             binding.itemCalendarEventTitle.text = groupSchedule.name
             binding.itemCalendarEventTitle.isSelected = true
