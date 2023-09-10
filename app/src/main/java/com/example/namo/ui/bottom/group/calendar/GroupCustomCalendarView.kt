@@ -463,8 +463,10 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
 
     private fun setBgPaintColor(event: MoimSchedule) {
         val paletteId = if (event.curMoimSchedule) 4
-                        else if (event.users.size < 2 && event.users[0].color != 0) event.users[0].color
-                        else 3
+                        else {
+                            if (event.users.size < 2 && event.users[0].color != 0) event.users[0].color
+                            else 3
+                        }
         Log.d("GroupCalView", "유저 : ${event.users} | paletteId : ${paletteId}")
         bgPaint.color = colorArray[paletteId - 1]
     }

@@ -132,7 +132,7 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView {
         } catch (e : InterruptedException) {
             e.printStackTrace()
         }
-//        binding.calendarMonthView.setEventList(tempEvent)
+        binding.calendarMonthView.setEventList(tempEvent)
 
 
 
