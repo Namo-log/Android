@@ -1,29 +1,25 @@
 package com.example.namo.ui.bottom.group
 
+import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
+import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -56,10 +52,12 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
 
     private var title: String = ""
     lateinit var coverImg: MultipartBody.Part
-//    private var coverImage: Uri? = null
     private var member: List<String>? = null
     private var imageUri: Uri? = null
-    private var imagePath : String = ""
+    private var imagePath: String = ""
+
+    // 갤러리에서 이미지를 선택하기 위한 상수
+    private val REQUEST_IMAGE_PICK = 100
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -74,12 +72,12 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
 
         _binding = FragmentGroupCreateBinding.inflate(inflater, container, false)
 
-        //hideBottomNavigation(true)
+        hideBottomNavigation(true)
 
         // 레이아웃 배경을 투명하게 해줌
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        db= NamoDatabase.getInstance(requireContext())
+        db = NamoDatabase.getInstance(requireContext())
 
         return binding.root
     }
@@ -87,7 +85,7 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
     override fun onStart() {
         super.onStart()
 
-        onClickListener() //클릭 동작
+        onClickListener() // 클릭 동작
     }
 
     override fun onDestroy() {
@@ -100,7 +98,7 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
     private fun onClickListener() {
         // 닫기
         binding.createGroupBackTv.setOnClickListener {
-            findNavController().popBackStack() //뒤로가기
+            findNavController().popBackStack() // 뒤로가기
             hideBottomNavigation(false)
         }
         // 확인
@@ -108,13 +106,17 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
             if (binding.createGroupTitleEt.toString().isNotEmpty() && imageUri != null) {
                 insertData()
             } else {
-                Toast.makeText(context, "그룹 이미지 또는 이름을 올바르게 등록해주세요.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "그룹 이미지 또는 이름을 올바르게 등록해주세요.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
-        //앨범 권한 확인 후 연결
+        // 앨범 권한 확인 후 연결
         binding.createGroupCoverImgIv.setOnClickListener {
-            getPermission()
+            openGallery()
         }
     }
 
@@ -122,7 +124,7 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
         insertRoom()
 
         if (!NetworkManager.checkNetworkState(requireContext())) {
-            //인터넷 연결 안 됨
+            // 인터넷 연결 안 됨
             return
         }
 
@@ -132,8 +134,9 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
         imageUri?.let { uri ->
             val imgFile = imageToMultipart(uri)
             if (imgFile != null) {
-                val groupNameRequestBody = binding.createGroupTitleEt.text.toString()
-                    .toRequestBody("text/plain".toMediaTypeOrNull())
+                val groupNameRequestBody =
+                    binding.createGroupTitleEt.text.toString()
+                        .toRequestBody("text/plain".toMediaTypeOrNull())
 
                 moimService.addMoim(imgFile, groupNameRequestBody)
             } else {
@@ -147,38 +150,78 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
             with(binding) {
                 title = createGroupTitleEt.text.toString()
             }
-            //TODO: 그룹 프로필 추가
+            // TODO: 그룹 프로필 추가
             group = Group(0, title)
             db.groupDao.insertGroup(group)
         }.start()
     }
 
-    private fun hideBottomNavigation( bool : Boolean){
-        val bottomNavigationView : BottomNavigationView = requireActivity().findViewById(R.id.nav_bar)
-        if(bool) {
+    private fun hideBottomNavigation(bool: Boolean) {
+        val bottomNavigationView: BottomNavigationView =
+            requireActivity().findViewById(R.id.nav_bar)
+        if (bool) {
             bottomNavigationView.visibility = View.GONE
         } else {
             bottomNavigationView.visibility = View.VISIBLE
         }
     }
 
+    private fun hasImagePermission(): Boolean { // 갤러리 권한 여부
+        val writePermission = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        val readPermission = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+
+        return writePermission == PackageManager.PERMISSION_GRANTED && readPermission == PackageManager.PERMISSION_GRANTED
+    }
+
+//    private fun getPermission() {
+//        val readPermission = ContextCompat.checkSelfPermission(
+//            requireContext(),
+//            android.Manifest.permission.READ_EXTERNAL_STORAGE
+//        )
+//
+//        if (readPermission == PackageManager.PERMISSION_DENIED) {
+//            ActivityCompat.requestPermissions(
+//                requireActivity(),
+//                arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+//                200
+//            )
+//        } else {
+//            openGallery()
+//        }
+//    }
+
     @SuppressLint("IntentReset")
-    private fun getPermission(){
-
-        val writePermission = ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        val readPermission = ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE)
-
-        if (writePermission == PackageManager.PERMISSION_DENIED || readPermission == PackageManager.PERMISSION_DENIED) {
-            // 권한 없어서 요청
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE),200)
-        } else {
-            val intent = Intent().apply {
-                type = "image/*"
-                data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                action = Intent.ACTION_GET_CONTENT
+    private fun openGallery() {
+        if (hasImagePermission()) { // 권한이 있으면 갤러리 불러오기
+            val intent = Intent(Intent.ACTION_PICK).apply {
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
             }
+            intent.type = "image/*"
+            intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
+
             getImage.launch(intent)
+        } else {  // 없으면 권한 받기
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                ),
+                200
+            )
         }
+//        val intent = Intent(Intent.ACTION_GET_CONTENT)
+//        intent.type = "image/*"
+//        startActivityForResult(intent, REQUEST_IMAGE_PICK)
     }
 
     private val getImage = registerForActivityResult(
@@ -200,6 +243,15 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
             }
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK && data != null) {
+            imageUri = data.data
+            binding.createGroupCoverImgIv.setImageURI(imageUri)
+        }
+    }
+
     private fun imageToMultipart(imgUri: Uri): MultipartBody.Part? {
         val imagePath = getImagePathFromUri(imgUri)
         if (imagePath.isNullOrEmpty()) {
@@ -207,8 +259,19 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
         }
 
         val file = File(imagePath)
-        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-        return MultipartBody.Part.createFormData("img", file.name, requestFile)
+
+        // FileProvider를 사용하여 파일 경로를 생성
+        val uri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", file)
+
+        val requestFile = requireContext().contentResolver.openInputStream(uri)?.use {
+            file.asRequestBody("image/*".toMediaTypeOrNull())
+        }
+
+        return if (requestFile != null) {
+            MultipartBody.Part.createFormData("img", file.name, requestFile)
+        } else {
+            null
+        }
     }
 
     private fun getImagePathFromUri(uri: Uri): String? {
@@ -232,6 +295,5 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
 
     override fun onAddMoimFailure(message: String) {
         Log.d("CreateGroupFrag", "onAddMoimFailure, $message")
-
     }
 }

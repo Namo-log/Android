@@ -48,8 +48,8 @@ class MoimService {
     }
 
     fun addMoim(
-        img : MultipartBody.Part?,
-        groupName : RequestBody
+        img: MultipartBody.Part?,
+        groupName: RequestBody
     ) {
         moimRetrofitInterface.addMoim(img, groupName)
             .enqueue(object : Callback<AddMoimResponse> {
@@ -57,7 +57,7 @@ class MoimService {
                     call: Call<AddMoimResponse>,
                     response: Response<AddMoimResponse>
                 ) {
-                    when(response.code()) {
+                    when (response.code()) {
                         200 -> addMoimView.onAddMoimSuccess(response.body() as AddMoimResponse)
                         else -> {
                             Log.d("AddMoim", "Success but error")
