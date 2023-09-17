@@ -37,6 +37,7 @@ class DiaryResponse {
     ) : BaseResponse()
 
     data class GroupDiaryResult(
+        val name:String,
         val startDate: Long,
         val locationName: String,
         val users: List<GroupUser>,

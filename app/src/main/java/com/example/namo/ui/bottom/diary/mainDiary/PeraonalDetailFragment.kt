@@ -18,28 +18,30 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
+import com.example.namo.data.entity.diary.Diary
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.*
-import com.example.namo.databinding.FragmentDiaryAddBinding
+import com.example.namo.databinding.FragmentDiaryPersonalDetailBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
-import java.text.SimpleDateFormat
+import org.joda.time.DateTime
 
-class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
+class PeraonalDetailFragment : Fragment() {  // 다이어리 추가 화면
 
-    private var _binding: FragmentDiaryAddBinding? = null
+    private var _binding: FragmentDiaryPersonalDetailBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var galleryAdapter: GalleryListAdapter
 
     private lateinit var repo: DiaryRepository
-    private var imgList = arrayListOf<String>()
+    private var imgList: ArrayList<String?> = arrayListOf()
+
     private lateinit var event: Event
+    private lateinit var diary: Diary
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,13 +49,14 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentDiaryAddBinding.inflate(inflater, container, false)
+        _binding =FragmentDiaryPersonalDetailBinding.inflate(inflater, container, false)
 
         hideBottomNavigation(true)
 
         galleryAdapter = GalleryListAdapter(requireContext())
 
         repo = DiaryRepository(requireContext())
+
         setEvent()
         charCnt()
         onClickListener()
@@ -61,57 +64,85 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
         return binding.root
     }
 
+    private fun getDiary() {
+        diary = repo.getDiary(event.eventId) // 개별 다이어리 조회
 
-    @SuppressLint("SimpleDateFormat")
+        diary.images?.let {
+            galleryAdapter.addImages(it) }
+
+        imgList.addAll(diary.images as List<String?>)
+
+        binding.diaryContentsEt.setText(diary.content)
+    }
+
     private fun setEvent() {
 
         event = (arguments?.getSerializable("event") as? Event)!!
+        hasDiary()
 
         val category = repo.getCategory(event.categoryIdx, event.categoryServerIdx)
-
         context?.resources?.let {
             binding.itemDiaryCategoryColorIv.background.setTint(category.color)
         }
 
         binding.apply {
 
-            val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(event.startLong * 1000)
-            diaryTodayDayTv.text = SimpleDateFormat("EE").format(event.startLong * 1000)
-            diaryTodayNumTv.text = SimpleDateFormat("dd").format(event.startLong * 1000)
+            val formatDate = DateTime(event.startLong * 1000).toString("yyyy.MM.dd (EE)")
+            diaryTodayDayTv.text = DateTime(event.startLong * 1000).toString("EE")
+            diaryTodayNumTv.text = DateTime(event.startLong * 1000).toString("dd")
             diaryTitleTv.isSelected = true  // marquee
             diaryTitleTv.text = event.title
 
             if (event.placeName.isEmpty()) diaryInputPlaceTv.text = "장소 없음"
             else diaryInputPlaceTv.text = event.placeName
 
-
             diaryInputDateTv.text = formatDate
         }
 
     }
 
+    private fun hasDiary() {
 
-    private fun onClickListener() {
+        if (event.hasDiary == 0) {
 
-        binding.apply {
+            binding.diaryEditTv.text = "기록 저장"
+            binding.diaryEditTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.white
+                )
+            )
+            binding.diaryEditTv.setBackgroundResource(R.color.MainOrange)
+            binding.diaryDeleteIv.visibility = View.GONE
 
-            diaryBackIv.setOnClickListener {
-                findNavController().popBackStack()
-                hideBottomNavigation(false)
-            }
-
-            diaryEditTv.setOnClickListener {
+            binding.diaryEditTv.setOnClickListener {
                 insertData()
             }
 
-            diaryGalleryClickIv.setOnClickListener {
-                getGallery()
+        } else {
+
+            getDiary()
+            binding.diaryEditTv.text = "기록 수정"
+            binding.diaryEditTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.MainOrange
+                )
+            )
+            binding.diaryEditTv.setBackgroundResource(R.color.white)
+            binding.diaryDeleteIv.visibility = View.VISIBLE
+
+            binding.diaryDeleteIv.setOnClickListener {
+                deleteDiary()
             }
-            onRecyclerView()
+
+            binding.diaryEditTv.setOnClickListener {
+                updateDiary()
+            }
         }
 
-
     }
+
 
     /** 다이어리 추가 **/
     private fun insertData() {
@@ -122,13 +153,60 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
             Snackbar.make(binding.root, "내용이나 이미지를 추가해주세요!", Snackbar.LENGTH_SHORT).show()
             return
         } else {
-            repo.addDiary(event.eventId, content, imgList, event.serverIdx)
-            view?.findNavController()?.navigate(R.id.homeFragment)
+            repo.addDiary(event.eventId, content, imgList as List<String>?, event.serverIdx)
+            findNavController().popBackStack()
             hideBottomNavigation(false)
         }
 
     }
 
+    /** 다이어리 수정 **/
+    private fun updateDiary() {
+        diary.content = binding.diaryContentsEt.text.toString()
+
+        repo.editDiary(
+            event.eventId,
+            binding.diaryContentsEt.text.toString(),
+            imgList as List<String>?,
+            event.serverIdx
+        )
+
+        Toast.makeText(requireContext(), "수정되었습니다", Toast.LENGTH_SHORT).show()
+        findNavController().popBackStack()
+        hideBottomNavigation(false)
+    }
+
+    /** 다이어리 삭제 **/
+    private fun deleteDiary() {
+
+        repo.deleteDiary(event.eventId, event.serverIdx)
+        findNavController().popBackStack()
+        hideBottomNavigation(false)
+    }
+
+    private fun onClickListener() {
+
+        binding.apply {
+
+            diaryBackIv.setOnClickListener {
+                findNavController().popBackStack()
+                hideBottomNavigation(false)
+            }
+
+            diaryGalleryClickIv.setOnClickListener {
+                getGallery()
+            }
+            onRecyclerView()
+        }
+    }
+
+    private fun onRecyclerView() {
+
+        val galleryViewRVAdapter = galleryAdapter
+        binding.diaryGallerySavedRy.adapter = galleryViewRVAdapter
+        binding.diaryGallerySavedRy.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+    }
 
     private fun hasImagePermission(): Boolean { // 갤러리 권한 여부
         val writePermission = ContextCompat.checkSelfPermission(
@@ -180,7 +258,7 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
     ) { result ->
 
         if (result.resultCode == RESULT_OK) {
-          //  imgList.clear()
+            imgList.clear()
             if (result.data?.clipData != null) { // 사진 여러개 선택한 경우
                 val count = result.data?.clipData!!.itemCount
                 if (count > 3) {
@@ -204,14 +282,6 @@ class DiaryAddFragment : Fragment() {  // 다이어리 추가 화면
             }
         }
         galleryAdapter.addImages(imgList)
-    }
-
-    private fun onRecyclerView() {
-
-        val galleryViewRVAdapter = galleryAdapter
-        binding.diaryGallerySavedRy.adapter = galleryViewRVAdapter
-        binding.diaryGallerySavedRy.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
     /** 글자 수 반환 **/

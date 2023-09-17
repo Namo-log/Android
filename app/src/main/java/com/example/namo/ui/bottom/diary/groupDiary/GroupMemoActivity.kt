@@ -30,6 +30,7 @@ import com.example.namo.data.remote.moim.MoimSchedule
 import com.example.namo.databinding.ActivityDiaryGroupMemoBinding
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupMemberRVAdapter
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupPlaceEventAdapter
+import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 
 class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 다이어리 추가, 수정, 삭제 화면
@@ -64,8 +65,12 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
         moimSchedule = intent.getSerializableExtra("groupEvent") as MoimSchedule
 
+        val getScheduleIdx = intent.getLongExtra("groupScheduleId", 0L)
+        val groupScheduleId =
+            if (getScheduleIdx != 0L) getScheduleIdx else moimSchedule.moimScheduleId
+
         val diaryService = DiaryService()
-        diaryService.getGroupDiary(moimSchedule.moimScheduleId)
+        diaryService.getGroupDiary(groupScheduleId)
         diaryService.getGroupDiaryView(this)
     }
 
@@ -96,7 +101,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
         val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(groupData.startDate * 1000)
         binding.groupAddInputDateTv.text = formatDate
         binding.groupAddInputPlaceTv.text = groupData.locationName
-        binding.groupAddTitleTv.text = "title"
+        binding.groupAddTitleTv.text = groupData.name
 
         onRecyclerView()
         onClickListener()
@@ -130,9 +135,10 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
     override fun onGetGroupDiaryFailure(message: String) {
         Log.d("GET_GROUP_DIARY", message)
 
-        val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(moimSchedule.startDate * 1000)
+        val formatDate = DateTime(moimSchedule.startDate * 1000).toString("yyyy.MM.dd (EE)")
+
         binding.groupAddInputDateTv.text = formatDate
-        binding.groupAddInputPlaceTv.text = "장소 없음"
+        binding.groupAddInputPlaceTv.text = moimSchedule.locationName
         binding.groupAddTitleTv.text = moimSchedule.name
 
         binding.groupSaveTv.text = "기록 저장"
@@ -144,12 +150,12 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
         )
         binding.groupSaveTv.setBackgroundResource(R.color.MainOrange)
 
-        val members= arrayListOf<DiaryResponse.GroupUser>()
+        val members = arrayListOf<DiaryResponse.GroupUser>()
         moimSchedule.users.map {
-            members.add(DiaryResponse.GroupUser(it.userId,it.userName))
+            members.add(DiaryResponse.GroupUser(it.userId, it.userName))
         }
 
-        groupMembers=members
+        groupMembers = members
         memberIntList = groupMembers.map { it.userId }
 
         onRecyclerView()
@@ -263,10 +269,19 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
             itemTouchHelper.attachToRecyclerView(binding.diaryGroupAddPlaceRv)
 
             // RecyclerView의 다른 곳을 터치하거나 Swipe 시 기존에 Swipe된 것은 제자리로 변경
+            binding.root.setOnTouchListener { _, _ ->
+                itemTouchSimpleCallback.resetPreviousClamp(binding.diaryGroupAddPlaceRv)
+                false
+            }
+            binding.scrollViewLayout.setOnTouchListener { _, _ ->
+                itemTouchSimpleCallback.resetPreviousClamp(binding.diaryGroupAddPlaceRv)
+                false
+            }
             binding.diaryGroupAddPlaceRv.setOnTouchListener { _, _ ->
                 itemTouchSimpleCallback.removePreviousClamp(binding.diaryGroupAddPlaceRv)
                 false
             }
+
         }
     }
 
@@ -287,8 +302,13 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
         //  장소 추가 버튼 클릭리스너
         binding.groudPlaceAddTv.setOnClickListener {
-            placeEvent.add(DiaryGroupEvent("", 0, arrayListOf(), arrayListOf()))
-            placeadapter.notifyDataSetChanged()
+
+            if (placeEvent.size >= 3) Toast.makeText(this, "장소 추가는 3개까지 가능합니다", Toast.LENGTH_SHORT)
+                .show()
+            else {
+                placeEvent.add(DiaryGroupEvent("", 0, arrayListOf(), arrayListOf()))
+                placeadapter.notifyDataSetChanged()
+            }
         }
 
     }

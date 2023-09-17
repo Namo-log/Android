@@ -2,7 +2,6 @@ package com.example.namo.ui.bottom.diary.groupDiary
 
 
 import android.graphics.Canvas
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -103,7 +102,7 @@ class ItemTouchHelperCallback : ItemTouchHelper.SimpleCallback(
     // 스와이프 될 가로(수평평) 길이
     private fun clampViewPositionHorizontal(
         view: View,
-        dX: Float,  //
+        dX: Float,
         isClamped: Boolean,
         isCurrentlyActive: Boolean
     ): Float {
@@ -138,6 +137,15 @@ class ItemTouchHelperCallback : ItemTouchHelper.SimpleCallback(
     fun removePreviousClamp(recyclerView: RecyclerView) {
         if (currentPosition == previousPosition)
             return
+        previousPosition?.let {
+            val viewHolder = recyclerView.findViewHolderForAdapterPosition(it) ?: return
+            getView(viewHolder).translationX = 0f
+            setTag(viewHolder, false)
+            previousPosition = null
+        }
+    }
+
+    fun resetPreviousClamp(recyclerView: RecyclerView) {
         previousPosition?.let {
             val viewHolder = recyclerView.findViewHolderForAdapterPosition(it) ?: return
             getView(viewHolder).translationX = 0f

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.home.Event
 import com.example.namo.R
@@ -21,8 +22,7 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
 
     /** 기록 아이템 클릭 리스너 **/
     interface DiaryInterface {
-        fun onAddClicked(event:Event)
-        fun onEditClicked(event: Event)
+        fun onDetailClicked(event:Event)
     }
     private lateinit var diaryRecordClickListener: DiaryInterface
     fun setRecordClickListener(itemClickListener: DiaryInterface){
@@ -50,11 +50,7 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
 
         /** 기록 아이템 클릭 리스너 **/
         holder.binding.itemCalendarEventRecord.setOnClickListener {
-            if(personal[position].hasDiary == 0){  // 기록 추가
-                diaryRecordClickListener.onAddClicked(personal[position])
-            } else{  // 기록 편집
-                diaryRecordClickListener.onEditClicked(personal[position])
-            }
+            diaryRecordClickListener.onDetailClicked(personal[position])
         }
 
         holder.binding.itemCalendarEventContentLayout.setOnClickListener {
@@ -89,10 +85,11 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
             binding.itemCalendarEventTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
             binding.itemCalendarEventColorView.background.setTint(category.color)
-            binding.itemCalendarEventRecord.setColorFilter(context.resources.getColor(R.color.realGray))
+            binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
+
             /** 기록 아이콘 색깔 **/
             if(personal.hasDiary !=0)
-                binding.itemCalendarEventRecord.setColorFilter(context.resources.getColor(R.color.MainOrange))}
+                binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context , R.color.MainOrange))}
         }
 
 }

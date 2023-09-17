@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!-- 다이어리 편집 화면 -->
+<?xml version="1.0" encoding="utf-8"?><!-- 다이어리 추가 화면 -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -35,6 +35,7 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:singleLine="true"
+                android:text="UMC 스터디"
                 android:textColor="@color/black"
                 android:textSize="27sp"
                 android:textStyle="bold"
@@ -50,15 +51,15 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/diary_back_iv" />
 
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:id="@+id/date_ly"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:elevation="40dp"
-            android:backgroundTint="@color/whiteGray"
             android:background="@drawable/bg_diary_date"
+            android:backgroundTint="@color/whiteGray"
             android:gravity="center"
             android:orientation="vertical"
             android:paddingStart="20dp"
@@ -108,6 +109,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
+            android:text="2022.07.14"
             android:textSize="17sp"
             app:layout_constraintStart_toEndOf="@id/diary_date_tv"
             app:layout_constraintTop_toTopOf="@id/diary_date_tv" />
@@ -129,6 +131,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
+            android:text="탐앤탐스 건대점"
             android:textSize="17sp"
             app:layout_constraintStart_toEndOf="@id/diary_place_tv"
             app:layout_constraintTop_toTopOf="@id/diary_place_tv" />
@@ -190,14 +193,14 @@
             android:id="@+id/diary_edit_tv"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@color/white"
+            android:background="@color/MainOrange"
             android:padding="15dp"
-            android:text="기록 수정"
+            android:text="기록 추가"
             android:textAlignment="center"
-            android:textColor="@color/MainOrange"
+            android:textColor="@color/white"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent" />
+
 
         <HorizontalScrollView
             android:layout_width="match_parent"
@@ -205,7 +208,6 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="15dp"
-            android:orientation="horizontal"
             android:scrollbars="none"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_num_tv">
@@ -219,6 +221,8 @@
                     android:id="@+id/diary_gallery_saved_ry"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    tools:listitem="@layout/item_gallery_list"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     android:orientation="horizontal" />
 
                 <androidx.appcompat.widget.AppCompatImageView

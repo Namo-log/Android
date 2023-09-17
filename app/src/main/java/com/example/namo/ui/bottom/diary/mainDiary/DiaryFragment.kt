@@ -63,8 +63,8 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         if (savedYearMonth != null) {
             yearMonthTextView = savedYearMonth
         }
-        val savedChecked=sf.getBoolean("checked",false)
-        checked=savedChecked
+        val savedChecked = sf.getBoolean("checked", false)
+        checked = savedChecked
 
         getList()
 
@@ -234,7 +234,10 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         binding.diaryPersonalListRv.visibility = View.GONE
         binding.diaryGroupListRv.visibility = View.VISIBLE
 
-        diaryGroupAdapter = DiaryGroupAdapter(imageClickListener = {
+        diaryGroupAdapter = DiaryGroupAdapter(detailClickListener = { item ->
+            onDetailClickListener(item)
+
+        }, imageClickListener = {
             ImageDialog(it).show(parentFragmentManager, "test")
         })
         binding.diaryGroupListRv.apply {
@@ -277,15 +280,30 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
             0.0, 0.0, 0, null, 1,
             R.string.event_current_default.toString(),
             item.event_server_idx,
-            item.event_category_server_idx
+            item.event_category_server_idx,
+            1
         )
 
         bundle.putSerializable("event", event)
 
-        val editFrag = DiaryModifyFragment()
-        editFrag.arguments = bundle
+        val detailFrag = PeraonalDetailFragment()
+        detailFrag.arguments = bundle
+        view?.findNavController()?.navigate(R.id.action_diaryFragment_to_diaryAddFragment, bundle)
+
+    }
+
+    private fun onDetailClickListener(item: DiaryItem.Content) {
+
+        // 상세보기 버튼 클릭리스너
+
+        val bundle = Bundle()
+
+        bundle.putSerializable("groupDiaryItem", item)
+
+        val detailFrag = GroupDetailFragment()
+        detailFrag.arguments = bundle
         view?.findNavController()
-            ?.navigate(R.id.action_diaryFragment_to_diaryModifyFragment, bundle)
+            ?.navigate(R.id.action_diaryFragment_to_groupDetailFragment, bundle)
 
     }
 
@@ -359,7 +377,6 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
                     task.content,
                     task.images,
                     task.eventId
-
                 )
             )
 

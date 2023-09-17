@@ -32,14 +32,13 @@ class GroupPlaceEventAdapter(
         notifyDataSetChanged()
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding =
             ItemDiaryGroupEventBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return Holder(binding)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    @SuppressLint("NotifyDataSetChanged", "ClickableViewAccessibility")
     override fun onBindViewHolder(holder: Holder, position: Int) {
 
         val event = listData[position]
@@ -60,6 +59,9 @@ class GroupPlaceEventAdapter(
         if (event.imgs.isNotEmpty()) {
             holder.binding.img2.visibility = View.GONE
             holder.binding.img3.visibility = View.GONE
+        }else{
+            holder.binding.img2.visibility = View.VISIBLE
+            holder.binding.img3.visibility = View.VISIBLE
         }
 
         holder.binding.groupGalleryLv.setOnClickListener {
@@ -70,6 +72,7 @@ class GroupPlaceEventAdapter(
         adapter.addItem(event.imgs)
 
         holder.bind(event)
+
     }
 
     override fun getItemCount(): Int = listData.size
@@ -102,6 +105,7 @@ class GroupPlaceEventAdapter(
                 listData.remove(item)
                 notifyDataSetChanged()
             }
+
         }
     }
 }

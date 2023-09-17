@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.home.Event
 import com.example.namo.R
@@ -84,6 +85,11 @@ class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter
             binding.itemCalendarEventTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
             binding.itemCalendarEventColorView.background.setTint(colorArray[paletteId - 1])
+
+            if(groupSchedule.hasDiaryPlace)
+                binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.MainOrange))
+            else
+                binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
         }
     }
 
