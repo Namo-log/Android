@@ -1,5 +1,6 @@
 package com.example.namo.data.remote.moim
 
+import androidx.room.ColumnInfo
 import com.example.namo.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
@@ -52,6 +53,10 @@ data class MoimSchedule(
     @SerializedName("users") var users : List<MoimScheduleUser> = listOf(),
     @SerializedName("moimId") var moimId : Long = 0L,
     @SerializedName("moimScheduleId") var moimScheduleId : Long = 0L,
+    @SerializedName("x") var placeX: Double = 0.0,
+    @SerializedName("y") var placeY: Double = 0.0,
+    @SerializedName("locationName") val placeName: String = "없음",
+    @SerializedName("hasDiaryPlace") val hasPlace: Boolean = false,
     @SerializedName("curMoimSchedule") var curMoimSchedule : Boolean = false
 ) : Serializable
 

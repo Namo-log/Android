@@ -63,8 +63,8 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         if (savedYearMonth != null) {
             yearMonthTextView = savedYearMonth
         }
-        val savedChecked=sf.getBoolean("checked",false)
-        checked=savedChecked
+        val savedChecked = sf.getBoolean("checked", false)
+        checked = savedChecked
 
         getList()
 
@@ -234,7 +234,10 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         binding.diaryPersonalListRv.visibility = View.GONE
         binding.diaryGroupListRv.visibility = View.VISIBLE
 
-        diaryGroupAdapter = DiaryGroupAdapter(imageClickListener = {
+        diaryGroupAdapter = DiaryGroupAdapter(detailClickListener = { item ->
+            onDetailClickListener(item)
+
+        }, imageClickListener = {
             ImageDialog(it).show(parentFragmentManager, "test")
         })
         binding.diaryGroupListRv.apply {
@@ -284,8 +287,22 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
         val editFrag = DiaryModifyFragment()
         editFrag.arguments = bundle
+        view?.findNavController()?.navigate(R.id.action_diaryFragment_to_diaryModifyFragment, bundle)
+
+    }
+
+    private fun onDetailClickListener(item: DiaryItem.Content) {
+
+        // 상세보기 버튼 클릭리스너
+
+        val bundle = Bundle()
+
+        bundle.putSerializable("groupDiaryItem", item)
+
+        val editFrag = DiaryModifyFragment()
+        editFrag.arguments = bundle
         view?.findNavController()
-            ?.navigate(R.id.action_diaryFragment_to_diaryModifyFragment, bundle)
+            ?.navigate(R.id.action_diaryFragment_to_groupDetailFragment, bundle)
 
     }
 
@@ -359,7 +376,6 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
                     task.content,
                     task.images,
                     task.eventId
-
                 )
             )
 

@@ -2,7 +2,6 @@ package com.example.namo.ui.bottom.diary.mainDiary.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.R
-import com.example.namo.data.remote.diary.DiaryRepository
-import com.example.namo.databinding.ItemDiaryDateListBinding
+import com.example.namo.databinding.ItemDiaryGroupListBinding
 import com.example.namo.databinding.ItemDiaryListBinding
 import java.text.SimpleDateFormat
 
@@ -21,7 +19,7 @@ private const val ITEM_VIEW_TYPE_HEADER = 0
 private const val ITEM_VIEW_TYPE_ITEM = 1
 
 class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
-   // val editClickListener: (DiaryItem.Content) -> Unit,
+    val detailClickListener: (DiaryItem.Content) -> Unit,
     val imageClickListener: (String) -> Unit
 ) : ListAdapter<DiaryGroupItem, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
 
@@ -52,8 +50,7 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
                 val diaryItems = getItem(position) as DiaryItem.Content
                 holder.bind(diaryItems)
                 holder.onclick.setOnClickListener {
-                  //  editClickListener(diaryItems)
-                    Log.d("onclick","yet")
+                    detailClickListener(diaryItems)
                 }
             }
         }
@@ -98,11 +95,11 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
     }
 
     class DiaryContentViewHolder private constructor(
-        private val binding: ItemDiaryDateListBinding,
+        private val binding: ItemDiaryGroupListBinding,
         private val context: Context,
         private val imageClickListener: (String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        val onclick = binding.diaryEditTv
+        val onclick = binding.diaryDetailViewTv
 
         @SuppressLint("ResourceAsColor")
         fun bind(item: DiaryItem.Content) {
@@ -132,7 +129,7 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
                 imageClickListener: (String) -> Unit
             ): RecyclerView.ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = ItemDiaryDateListBinding.inflate(layoutInflater, parent, false)
+                val binding = ItemDiaryGroupListBinding.inflate(layoutInflater, parent, false)
                 return DiaryContentViewHolder(binding, parent.context, imageClickListener)
             }
         }

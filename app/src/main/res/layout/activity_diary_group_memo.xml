@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!-- 그룹 다이어리 추가 화면 -->
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/group_memo_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -127,6 +129,7 @@
         tools:listitem="@layout/item_diary_group_members" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
@@ -159,7 +162,8 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout"
-                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <ImageView

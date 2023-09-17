@@ -56,6 +56,7 @@
     <string name="diary_date">2022.12.28</string>
     <string name="diary_month">2022.12</string>
     <string name="diary_title">나몽몽</string>
+    <string name="diary_detail_view">상세보기</string>
 
     <!--연월 dialog 관련 String-->
     <string name="dialog_confirm">확인</string>
@@ -107,5 +108,7 @@
     <string name="diary_personal">개인</string>
     <string name="diary_group">모임</string>
     <string name="diary_add_place">장소 추가</string>
+    <string name="diary_detail_click">그룹 기록 보러가기</string>
+
 
 </resources>

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.home.Event
 import com.example.namo.R
@@ -89,10 +90,11 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
             binding.itemCalendarEventTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
             binding.itemCalendarEventColorView.background.setTint(category.color)
-            binding.itemCalendarEventRecord.setColorFilter(context.resources.getColor(R.color.realGray))
+            binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
+
             /** 기록 아이콘 색깔 **/
             if(personal.hasDiary !=0)
-                binding.itemCalendarEventRecord.setColorFilter(context.resources.getColor(R.color.MainOrange))}
+                binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context , R.color.MainOrange))}
         }
 
 }

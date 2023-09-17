@@ -180,7 +180,7 @@ sealed class DiaryItem {
         var event_category_server_idx: Long = 0L,
         override val id: Long
 
-    ) : DiaryItem()
+    ) : DiaryItem(),java.io.Serializable
 
 
 }
