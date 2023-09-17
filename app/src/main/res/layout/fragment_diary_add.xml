@@ -48,9 +48,9 @@
 
         <LinearLayout
             android:id="@+id/date_ly"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/circle_people"
+            android:background="@drawable/bg_diary_date"
             android:backgroundTint="@color/whiteGray"
             android:gravity="center"
             android:orientation="vertical"
@@ -58,6 +58,7 @@
             android:paddingTop="13dp"
             android:paddingEnd="20dp"
             android:paddingBottom="10dp"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintBottom_toBottomOf="@id/diary_place_tv"
             app:layout_constraintStart_toStartOf="@id/linear_corner"
             app:layout_constraintTop_toTopOf="@id/diary_date_tv">
