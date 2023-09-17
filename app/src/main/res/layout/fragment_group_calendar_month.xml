@@ -51,6 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="15dp"
+                android:overScrollMode="never"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/group_daily_header_tv"
                 app:layout_constraintStart_toStartOf="@id/group_daily_header_tv"
@@ -60,7 +61,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingBottom="20dp">
+                    android:paddingBottom="70dp">
 
                     <TextView
                         android:layout_width="match_parent"
@@ -76,7 +77,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:nestedScrollingEnabled="false"
-                        tools:listitem="@layout/item_calendar_event" />
+                        tools:listitem="@layout/item_calendar_event"/>
 
                     <TextView
                         android:id="@+id/group_daily_event_none_tv"
