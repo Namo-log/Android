@@ -71,7 +71,7 @@ class HomeFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility", "NotifyDataSetChanged")
     private fun clickListener() {
 
-        binding.homeCalendarYearMonthTv.setOnClickListener {
+        binding.homeCalenderYearMonthLayout.setOnClickListener {
             SetMonthDialog(requireContext(), millis) {
                 val date = it
                 var result = 0

@@ -64,7 +64,7 @@ class GroupCalendarActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        binding.groupCalendarYearMonthTv.setOnClickListener {
+        binding.groupCalendarYearMonthLayout.setOnClickListener {
             SetMonthDialog(this, millis) {
                 val date = it
                 var result = 0

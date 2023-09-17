@@ -15,8 +15,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:padding="20dp"
-            android:orientation="horizontal"
-            android:layout_marginLeft="5dp">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/custom_title_tv"
@@ -24,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="9"
                 android:text="@string/bottom_custom"
-                style="@style/title_text" />
+                style="@style/title_text"/>
 
             <ImageView
                 android:id="@+id/custom_setting_iv"
