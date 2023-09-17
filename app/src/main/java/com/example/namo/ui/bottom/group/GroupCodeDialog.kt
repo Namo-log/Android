@@ -46,22 +46,22 @@ class GroupCodeDialog(
                 moimService.setParticipateMoimView(this@GroupCodeDialog)
 
                 moimService.participateMoim(groupCodeEt.text.toString())
-
                 okCallback(groupCodeEt.text.toString())
-                dismiss()
             }
         }
     }
 
     override fun onParticipateMoimSuccess(response: ParticipateMoimResponse) {
         Log.d("GroupCodeDig", "onParticipateMoimSuccess : ${response.result}")
+        Toast.makeText(context, "모임 참여에 성공했습니다.", Toast.LENGTH_SHORT).show()
+        dismiss()
     }
 
     override fun onParticipateMoimFailure(message: String) {
         Log.d("GroupCodeDig", "onParticipateMoimFailure : $message")
 
         Toast.makeText(context, extractMessageFromResponse(message), Toast.LENGTH_SHORT).show()
-
+        dismiss()
 //        "message":"이미 가입한 모임입니다.","code":404
     }
 
