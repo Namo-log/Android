@@ -12,6 +12,7 @@ class EventService() {
     private lateinit var eventView : EventView
     private lateinit var deleteEventView : DeleteEventView
     private lateinit var getMonthEventView : GetMonthEventView
+    private lateinit var getAllEventView : GetAllEventView
 
     fun setEventView(eventView : EventView) {
         this.eventView = eventView
@@ -23,6 +24,10 @@ class EventService() {
 
     fun setGetMonthEventView(getMonthEventView: GetMonthEventView) {
         this.getMonthEventView = getMonthEventView
+    }
+
+    fun setGetAllEventView(getAllEventView: GetAllEventView) {
+        this.getAllEventView = getAllEventView
     }
 
     val eventRetrofitInterface = ApplicationClass.sRetrofit.create(EventRetrofitInterface::class.java)
@@ -106,6 +111,30 @@ class EventService() {
                 override fun onFailure(call: Call<GetMonthEventResponse>, t: Throwable) {
                     Log.d("GetMonthEvent", "OnFailure")
                     getMonthEventView.onGetMonthEventFailure(t.message ?: "통신 오류")
+                }
+
+            })
+    }
+
+    fun getAllEvent(yearMonth : String) {
+        eventRetrofitInterface.getAllEvent(yearMonth)
+            .enqueue(object : Callback<GetMonthEventResponse> {
+                override fun onResponse(
+                    call: Call<GetMonthEventResponse>,
+                    response: Response<GetMonthEventResponse>
+                ) {
+                    when (response.code()) {
+                        200 -> getAllEventView.onGetAllEventSuccess(response.body() as GetMonthEventResponse)
+                        else -> {
+                            Log.d("GetAllEvent", "Success but error")
+                            getAllEventView.onGetAllEventFailure("통신 중 200 외 기타 코드")
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<GetMonthEventResponse>, t: Throwable) {
+                    Log.d("GetMonthEvent", "OnFailure")
+                    getAllEventView.onGetAllEventFailure(t.message ?: "통신 오류")
                 }
 
             })
