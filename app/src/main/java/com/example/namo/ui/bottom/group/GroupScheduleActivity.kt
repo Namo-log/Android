@@ -150,10 +150,6 @@ class GroupScheduleActivity : AppCompatActivity(), MoimScheduleView {
         place_name = editGroupSchedule.name
         place_x = editGroupSchedule.x
         place_y = editGroupSchedule.y
-//        if (place_x != 0.0 || place_y != 0.0) {
-//            initMapView()
-//            setMapContent()
-//        }
 
         editGroupSchedule.users = moimSchedule.users.map { user -> user.userId }
         selectedIds = moimSchedule.users.map { user -> user.userId } as ArrayList<Long>
@@ -281,10 +277,6 @@ class GroupScheduleActivity : AppCompatActivity(), MoimScheduleView {
         place_name = editGroupSchedule.locationName
         place_x = editGroupSchedule.x
         place_y = editGroupSchedule.y
-        if (editGroupSchedule.x != 0.0 || editGroupSchedule.y != 0.0) {
-//            initMapView()
-//            setMapContent()
-        }
     }
 
     private fun setDateTime(start : DateTime, end : DateTime) {
@@ -409,6 +401,12 @@ class GroupScheduleActivity : AppCompatActivity(), MoimScheduleView {
             mapViewContainer?.layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             binding.dialogGroupSchedulePlaceContainer.addView(mapViewContainer)
             mapViewContainer?.addView(it)
+        }
+        Log.d("InitMapView", "InitMapView 실행")
+
+
+        if (place_x != 0.0 || place_y != 0.0) {
+            setMapContent()
         }
     }
 
