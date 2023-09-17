@@ -16,3 +16,8 @@ interface GetMonthEventView {
     fun onGetMonthEventSuccess(response : GetMonthEventResponse)
     fun onGetMonthEventFailure(message: String)
 }
+
+interface GetAllEventView {
+    fun onGetAllEventSuccess(response: GetMonthEventResponse)
+    fun onGetAllEventFailure(message : String)
+}

@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Recycler
-import com.example.namo.data.remote.moim.MoimListUser
+import com.example.namo.data.remote.moim.MoimUser
 import com.example.namo.databinding.ItemGroupScheduleMemberBinding
 
-class GroupScheduleMemberRVAdapter(var context: Context, private val memberList : List<MoimListUser>) : RecyclerView.Adapter<GroupScheduleMemberRVAdapter.ViewHolder>() {
+class GroupScheduleMemberRVAdapter(var context: Context, private val memberList : List<MoimUser>) : RecyclerView.Adapter<GroupScheduleMemberRVAdapter.ViewHolder>() {
 
     private val selectedMembers = ArrayList<Boolean>()
 
@@ -22,8 +22,8 @@ class GroupScheduleMemberRVAdapter(var context: Context, private val memberList 
         selectedMembers[position] = isSelected
     }
 
-    fun getSelectedMembers(): List<MoimListUser> {
-        val selectedList = ArrayList<MoimListUser>()
+    fun getSelectedMembers(): List<MoimUser> {
+        val selectedList = ArrayList<MoimUser>()
         for (i in memberList.indices) {
             if (selectedMembers[i]) {
                 selectedList.add(memberList[i])
@@ -64,7 +64,7 @@ class GroupScheduleMemberRVAdapter(var context: Context, private val memberList 
     }
 
     inner class ViewHolder(val binding: ItemGroupScheduleMemberBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(member : MoimListUser) {
+        fun bind(member : MoimUser) {
             binding.groupScheduleMemberNameTv.text = member.userName
         }
     }

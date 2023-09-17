@@ -86,7 +86,7 @@ class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter
             binding.itemCalendarEventTime.text = time
             binding.itemCalendarEventColorView.background.setTint(colorArray[paletteId - 1])
 
-            if(groupSchedule.hasPlace)
+            if(groupSchedule.hasDiaryPlace)
                 binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.MainOrange))
             else
                 binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))

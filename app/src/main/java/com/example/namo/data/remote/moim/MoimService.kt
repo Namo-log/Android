@@ -137,7 +137,7 @@ class MoimService {
                     when(response.code()) {
                         200 -> {
                             Log.d("ParticipateMoim","Code : 200")
-                            participateMoimView.onParticipateMoimSuccess(response as ParticipateMoimResponse)
+                            participateMoimView.onParticipateMoimSuccess(response.body() as ParticipateMoimResponse)
                         }
                         else -> {
                             if (response.errorBody() != null) {

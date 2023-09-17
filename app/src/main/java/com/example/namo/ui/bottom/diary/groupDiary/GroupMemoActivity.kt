@@ -138,7 +138,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
         val formatDate = DateTime(moimSchedule.startDate * 1000).toString("yyyy.MM.dd (EE)")
 
         binding.groupAddInputDateTv.text = formatDate
-        binding.groupAddInputPlaceTv.text = moimSchedule.placeName
+        binding.groupAddInputPlaceTv.text = moimSchedule.locationName
         binding.groupAddTitleTv.text = moimSchedule.name
 
         binding.groupSaveTv.text = "기록 저장"

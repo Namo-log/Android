@@ -166,7 +166,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
     private fun dialogCreate() {
 
-        binding.diaryMonth.setOnClickListener {
+        binding.diaryMonthLl.setOnClickListener {
 
             val year = yearMonthTextView.split(".")[0]
             val month = yearMonthTextView.split(".")[1]

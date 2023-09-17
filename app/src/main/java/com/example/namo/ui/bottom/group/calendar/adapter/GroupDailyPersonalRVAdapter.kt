@@ -51,15 +51,21 @@ class GroupDailyPersonalRVAdapter() : RecyclerView.Adapter<GroupDailyPersonalRVA
                 DateTime(personal.startDate * 1000L).toString("HH:mm") + " - " + DateTime(personal.endDate * 1000L).toString(
                     "HH:mm"
                 )
-            val paletteId =
-                if (personal.users.size < 2 && personal.users[0].color != 0) personal.users[0].color
-                else 3
+//            val paletteId =
+//                if (personal.users.size < 2 && personal.users[0].color != 0) personal.users[0].color
+//                else 14
+            val paletteId = personal.users[0].color
+
+            val userName =
+                if (personal.users.size < 2) personal.users[0].userName
+//                else personal.users.map { it -> it.userName }.joinToString("\n")
+                else personal.users.size.toString()
 
             binding.itemCalendarEventTitle.text = personal.name
             binding.itemCalendarEventTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
             binding.itemCalendarEventColorView.background.setTint(colorArray[paletteId - 1])
-            binding.itemCalendarUserName.text = personal.users[0].userName
+            binding.itemCalendarUserName.text = userName
         }
     }
 
