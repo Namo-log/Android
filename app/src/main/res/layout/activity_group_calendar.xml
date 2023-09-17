@@ -20,17 +20,34 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/group_calendar_year_month_tv"
+            <LinearLayout
+                android:id="@+id/group_calendar_year_month_layout"
                 android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:gravity="center_vertical|start"
-                android:text="@string/month_calendar_header_year_month"
-                android:textColor="@color/black"
-                android:textSize="22sp"
-                android:textStyle="bold"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/group_calendar_year_month_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:gravity="center_vertical|start"
+                    android:text="@string/month_calendar_header_year_month"
+                    style="@style/title_text"/>
+
+                <ImageView
+                    android:id="@+id/group_calendar_year_arrow_iv"
+                    android:layout_width="12dp"
+                    android:layout_height="5dp"
+                    android:layout_marginStart="13dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_arrow_down_black"
+                    app:layout_constraintTop_toTopOf="@id/diary_month"
+                    app:layout_constraintBottom_toBottomOf="@id/diary_month"
+                    app:layout_constraintStart_toEndOf="@id/diary_month"/>
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/group_calendar_group_title_tv"
@@ -38,13 +55,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:gravity="center"
-                android:text="나모 앱런칭 캘린더"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/group_calendar_year_month_tv"
+                app:layout_constraintBottom_toBottomOf="@id/group_calendar_year_month_layout"
                 app:layout_constraintEnd_toStartOf="@id/group_calendar_info_iv"
-                app:layout_constraintTop_toTopOf="@id/group_calendar_year_month_tv" />
+                app:layout_constraintTop_toTopOf="@id/group_calendar_year_month_layout"
+                tools:text="나모 앱런칭 캘린더"/>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/group_calendar_info_iv"
@@ -53,9 +70,9 @@
                 android:src="@drawable/ic_more_vertical"
                 android:scaleType="fitCenter"
                 android:layout_marginEnd="10dp"
-                app:layout_constraintBottom_toBottomOf="@id/group_calendar_year_month_tv"
+                app:layout_constraintBottom_toBottomOf="@id/group_calendar_year_month_layout"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/group_calendar_year_month_tv"/>
+                app:layout_constraintTop_toTopOf="@id/group_calendar_year_month_layout"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

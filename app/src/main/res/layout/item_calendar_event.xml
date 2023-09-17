@@ -10,7 +10,7 @@
         <View
             android:id="@+id/item_calendar_event_color_view"
             android:layout_width="30dp"
-            android:layout_height="55dp"
+            android:layout_height="0dp"
             android:background="@drawable/ic_calendar_event_color_corner"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -44,7 +44,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="11:00 - 13:00"
-                    android:textColor="@color/black"
+                    android:textColor="@color/textGray"
                     android:textSize="12sp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"/>
