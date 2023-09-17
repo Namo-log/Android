@@ -59,7 +59,7 @@ class GroupDailyPersonalRVAdapter() : RecyclerView.Adapter<GroupDailyPersonalRVA
             val userName =
                 if (personal.users.size < 2) personal.users[0].userName
 //                else personal.users.map { it -> it.userName }.joinToString("\n")
-                else personal.users.size.toString()
+                else personal.users.size.toString() + "명"
 
             binding.itemCalendarEventTitle.text = personal.name
             binding.itemCalendarEventTitle.isSelected = true
