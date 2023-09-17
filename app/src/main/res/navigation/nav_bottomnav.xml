@@ -14,9 +14,6 @@
         <action
             android:id="@+id/action_homeFragment_to_diaryDetailFragment2"
             app:destination="@id/diaryAddFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_diaryModifyFragment"
-            app:destination="@id/diaryModifyFragment" />
     </fragment>
 
 
@@ -27,35 +24,31 @@
         android:label="DiaryFragment"
         tools:layout="@layout/fragment_diary">
         <action
-            android:id="@+id/action_diaryFragment_to_diaryModifyFragment"
-            app:destination="@id/diaryModifyFragment" />
-        <action
             android:id="@+id/action_diaryFragment_to_groupModifyFragment"
             app:destination="@id/groupModifyFragment" />
         <action
             android:id="@+id/action_diaryFragment_to_groupDetailFragment"
             app:destination="@id/groupDetailFragment" />
+        <action
+            android:id="@+id/action_diaryFragment_to_diaryAddFragment"
+            app:destination="@id/diaryAddFragment" />
     </fragment>
     <fragment
         android:id="@+id/diaryAddFragment"
-        android:name="com.example.namo.ui.bottom.diary.mainDiary.DiaryAddFragment"
+        android:name="com.example.namo.ui.bottom.diary.mainDiary.PeraonalDetailFragment"
         android:label="DiaryAddFragment"
-        tools:layout="@layout/fragment_diary_add">
+        tools:layout="@layout/fragment_diary_personal_detail">
     </fragment>
-    <fragment
-        android:id="@+id/diaryModifyFragment"
-        tools:layout="@layout/fragment_diary_modify"
-        android:name="com.example.namo.ui.bottom.diary.mainDiary.DiaryModifyFragment"
-        android:label="DiaryModifyFragment" >
-        <action
-            android:id="@+id/action_diaryModifyFragment_to_diaryFragment"
-            app:destination="@id/diaryFragment" />
-    </fragment>
+
     <fragment
         android:id="@+id/groupDetailFragment"
         android:name="com.example.namo.ui.bottom.diary.mainDiary.GroupDetailFragment"
         android:label="GroupDetailFragment"
-        tools:layout="@layout/fragment_diary_group_detail"/>
+        tools:layout="@layout/fragment_diary_group_detail">
+        <action
+            android:id="@+id/action_groupDetailFragment_to_groupMemoActivity"
+            app:destination="@id/groupMemoActivity" />
+    </fragment>
 
 
     <!-- Group -->
@@ -97,6 +90,11 @@
         android:name="com.example.namo.ui.bottom.diary.groupDiary.GroupMemoActivity"
         android:label="GroupModifyFragment" />
 
+    <activity
+        android:id="@+id/groupMemoActivity"
+        android:name="com.example.namo.ui.bottom.diary.groupDiary.GroupMemoActivity"
+        android:label="GroupMemoActivity"
+        tools:layout="@layout/activity_diary_group_memo"/>
 
     <!-- Custom -->
     <fragment
@@ -113,5 +111,6 @@
         android:name="com.example.namo.ui.bottom.custom.CustomSettingFramgent"
         android:label="CustomSettingFragment"
         tools:layout="@layout/fragment_custom_setting"/>
+
 
 </navigation>

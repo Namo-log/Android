@@ -27,7 +27,7 @@ import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.DiaryRepository
 import com.example.namo.databinding.FragmentCustomBinding
 import com.example.namo.databinding.FragmentCustomSettingBinding
-import com.example.namo.databinding.FragmentDiaryAddBinding
+
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.CoroutineScope

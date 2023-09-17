@@ -280,14 +280,15 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
             0.0, 0.0, 0, null, 1,
             R.string.event_current_default.toString(),
             item.event_server_idx,
-            item.event_category_server_idx
+            item.event_category_server_idx,
+            1
         )
 
         bundle.putSerializable("event", event)
 
-        val editFrag = DiaryModifyFragment()
-        editFrag.arguments = bundle
-        view?.findNavController()?.navigate(R.id.action_diaryFragment_to_diaryModifyFragment, bundle)
+        val detailFrag = PeraonalDetailFragment()
+        detailFrag.arguments = bundle
+        view?.findNavController()?.navigate(R.id.action_diaryFragment_to_diaryAddFragment, bundle)
 
     }
 
@@ -299,8 +300,8 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
         bundle.putSerializable("groupDiaryItem", item)
 
-        val editFrag = DiaryModifyFragment()
-        editFrag.arguments = bundle
+        val detailFrag = GroupDetailFragment()
+        detailFrag.arguments = bundle
         view?.findNavController()
             ?.navigate(R.id.action_diaryFragment_to_groupDetailFragment, bundle)
 

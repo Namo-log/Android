@@ -1,16 +1,12 @@
 package com.example.namo.ui.bottom.home.calendar
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,8 +19,6 @@ import com.example.namo.data.remote.event.GetMonthEventResponse
 import com.example.namo.data.remote.event.GetMonthEventResult
 import com.example.namo.data.remote.event.GetMonthEventView
 import com.example.namo.databinding.FragmentCalendarMonthBinding
-import com.example.namo.ui.bottom.diary.mainDiary.DiaryAddFragment
-import com.example.namo.ui.bottom.diary.mainDiary.DiaryModifyFragment
 import com.example.namo.ui.bottom.home.HomeFragment
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
@@ -155,6 +149,7 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun setAdapter() {
         binding.homeDailyEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.homeDailyEventRv.adapter = personalEventRVAdapter
@@ -174,19 +169,12 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView {
 
         /** 기록 아이템 클릭 리스너 **/
         personalEventRVAdapter.setRecordClickListener(object : DailyPersonalRVAdapter.DiaryInterface{
-            override fun onAddClicked(event: Event) {
+            override fun onDetailClicked(event: Event) {
 
                 val bundle=Bundle()
                 bundle.putSerializable("event",event)
 
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
-            }
-            override fun onEditClicked(event: Event) {
-
-                val bundle=Bundle()
-                bundle.putSerializable("event",event)
-
-                view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryModifyFragment,bundle)
             }
         })
         /** ----- **/

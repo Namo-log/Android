@@ -65,8 +65,12 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
         moimSchedule = intent.getSerializableExtra("groupEvent") as MoimSchedule
 
+        val getScheduleIdx = intent.getLongExtra("groupScheduleId", 0L)
+        val groupScheduleId =
+            if (getScheduleIdx != 0L) getScheduleIdx else moimSchedule.moimScheduleId
+
         val diaryService = DiaryService()
-        diaryService.getGroupDiary(moimSchedule.moimScheduleId)
+        diaryService.getGroupDiary(groupScheduleId)
         diaryService.getGroupDiaryView(this)
     }
 
@@ -299,7 +303,8 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
         //  장소 추가 버튼 클릭리스너
         binding.groudPlaceAddTv.setOnClickListener {
 
-            if (placeEvent.size >= 3) Toast.makeText(this, "장소 추가는 3개까지 가능합니다", Toast.LENGTH_SHORT).show()
+            if (placeEvent.size >= 3) Toast.makeText(this, "장소 추가는 3개까지 가능합니다", Toast.LENGTH_SHORT)
+                .show()
             else {
                 placeEvent.add(DiaryGroupEvent("", 0, arrayListOf(), arrayListOf()))
                 placeadapter.notifyDataSetChanged()
