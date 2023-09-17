@@ -35,10 +35,8 @@ import com.example.namo.data.entity.group.EditMoimSchedule
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.moim.AddMoimScheduleResponse
 import com.example.namo.data.remote.moim.Moim
-import com.example.namo.data.remote.moim.MoimListUser
 import com.example.namo.data.remote.moim.MoimListUserList
 import com.example.namo.data.remote.moim.MoimSchedule
-import com.example.namo.data.remote.moim.MoimScheduleUser
 import com.example.namo.data.remote.moim.MoimScheduleView
 import com.example.namo.data.remote.moim.MoimService
 import com.example.namo.databinding.ActivityGroupScheduleBinding
@@ -145,11 +143,21 @@ class GroupScheduleActivity : AppCompatActivity(), MoimScheduleView {
         editGroupSchedule.startLong = moimSchedule.startDate
         editGroupSchedule.endLong = moimSchedule.endDate
         editGroupSchedule.interval = moimSchedule.interval
-        editGroupSchedule.x = 0.0
-        editGroupSchedule.y = 0.0
-        editGroupSchedule.locationName = "장소 추가 필요"
+        editGroupSchedule.x = moimSchedule.x
+        editGroupSchedule.y = moimSchedule.y
+        editGroupSchedule.locationName = moimSchedule.locationName
+
+        place_name = editGroupSchedule.name
+        place_x = editGroupSchedule.x
+        place_y = editGroupSchedule.y
+//        if (place_x != 0.0 || place_y != 0.0) {
+//            initMapView()
+//            setMapContent()
+//        }
+
         editGroupSchedule.users = moimSchedule.users.map { user -> user.userId }
         selectedIds = moimSchedule.users.map { user -> user.userId } as ArrayList<Long>
+        Log.d("SetEditSchedule", editGroupSchedule.toString())
     }
 
     private fun clickListener() {

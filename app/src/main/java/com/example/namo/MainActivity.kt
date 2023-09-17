@@ -39,6 +39,7 @@ import com.example.namo.data.remote.diary.DiaryRepository
 import com.example.namo.data.remote.diary.DiaryResponse
 import com.example.namo.data.remote.diary.DiaryService
 import com.example.namo.data.remote.diary.GetMonthDiaryView
+import com.example.namo.data.remote.event.GetAllEventView
 import com.example.namo.data.remote.event.GetMonthEventResponse
 import com.example.namo.data.remote.event.GetMonthEventResult
 import com.example.namo.data.remote.event.GetMonthEventView
@@ -51,7 +52,7 @@ import org.joda.time.DateTime
 private const val PERMISSION_REQUEST_CODE= 1001
 private const val NOTIFICATION_PERMISSION_REQUEST_CODE= 777
 
-class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEventView,
+class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEventView,
     CategorySettingView, GetMonthDiaryView {
 
     private lateinit var binding: ActivityMainBinding
@@ -171,8 +172,8 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
 
         //이벤트
         val eventService = EventService()
-        eventService.setGetMonthEventView(this)
-        eventService.getMonthEvent(time)
+        eventService.setGetAllEventView(this)
+        eventService.getAllEvent(time)
 
         // 다이어리
         val diaryService = DiaryService()
@@ -391,21 +392,21 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetMonthEv
         Log.d("MainActivity", "onDeleteEventFailure")
     }
 
-    override fun onGetMonthEventSuccess(response: GetMonthEventResponse) {
-        Log.d("MAIN_SERVER_UPLOAD", "onGetMonthEventSuccess")
+    override fun onGetAllEventSuccess (response: GetMonthEventResponse) {
+        Log.d("MAIN_SERVER_UPLOAD", "onGetAllEventSuccess")
 
         val result = response.result
         serverEvent.clear()
         serverEvent.addAll(result.map{serverToEvent(it)})
         Log.d("TEST_CHECK", "서버에 있던 이벤트 : " + serverEvent.toString())
-        Log.d("MAIN_SERVER_UPLOAD", "Get Event Finish")
+        Log.d("MAIN_SERVER_UPLOAD", "Get All Event Finish")
         isEventSuccess = true
         checkServerDownloadCompleted()
 
     }
 
-    override fun onGetMonthEventFailure(message: String) {
-        Log.d("MAIN_SERVER_UPLOAD", "onGetMonthEventFailure")
+    override fun onGetAllEventFailure (message: String) {
+        Log.d("MAIN_SERVER_UPLOAD", "onGetAllEventFailure")
         isEventSuccess = false
     }
 
