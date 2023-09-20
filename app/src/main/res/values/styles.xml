@@ -93,4 +93,9 @@
         <item name="android:layout_height">1px</item>
         <item name="android:background">@color/editTextGray</item>
     </style>
+    <!-- 탭바 -->
+    <style name="tabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>
