@@ -173,8 +173,14 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView {
 
                 val bundle=Bundle()
                 bundle.putSerializable("event",event)
-
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
+            }
+
+            override fun onGroupDetailClicked(event: Event) {
+
+//                val bundle=Bundle()
+//                bundle.putSerializable("groupDiaryItem",event)
+//                view?.findNavController()?.navigate(R.id.action_homeFragment_to_groupDetailFragment, bundle)
             }
         })
         /** ----- **/

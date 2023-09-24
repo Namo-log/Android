@@ -35,7 +35,6 @@ class GalleryListAdapter(  // 다이어리 추가, 수정 화면의 이미지(�
 
         val uri= items[position]
 
-        Log.d("uri",uri.toString())
         val requestOptions = RequestOptions()
             .diskCacheStrategy(DiskCacheStrategy.DATA)
 

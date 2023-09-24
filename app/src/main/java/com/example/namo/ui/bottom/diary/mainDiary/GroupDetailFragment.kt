@@ -1,16 +1,16 @@
 package com.example.namo.ui.bottom.diary.mainDiary
 
-import DiaryItem
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.databinding.FragmentDiaryGroupDetailBinding
+import com.example.namo.ui.bottom.diary.mainDiary.adapter.DiaryGroupItem
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.joda.time.DateTime
@@ -20,7 +20,7 @@ class GroupDetailFragment : Fragment() {
     private var _binding: FragmentDiaryGroupDetailBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var groupItem: DiaryItem.Content
+    private lateinit var groupItem: DiaryGroupItem.Content
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,8 +32,8 @@ class GroupDetailFragment : Fragment() {
 
         hideBottomNavigation(true)
 
-        groupItem = (arguments?.getSerializable("groupDiaryItem") as? DiaryItem.Content)!!
-
+        groupItem = (arguments?.getSerializable("groupDiaryItem") as? DiaryGroupItem.Content)!!
+        Log.e("scheduleIdx",groupItem.eventId.toString())
         bind()
 
         return binding.root
@@ -60,12 +60,10 @@ class GroupDetailFragment : Fragment() {
         }
 
         binding.groupDiaryDetailLy.setOnClickListener {
-            findNavController().navigate(R.id.action_groupDetailFragment_to_groupMemoActivity)
 
             val bundle = Bundle()
             bundle.putLong("groupScheduleId", groupItem.eventId)
-            view?.findNavController()
-                ?.navigate(R.id.action_diaryFragment_to_diaryAddFragment, bundle)
+            findNavController().navigate(R.id.action_groupDetailFragment_to_groupMemoActivity, bundle)
         }
     }
 
