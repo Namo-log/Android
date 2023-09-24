@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,9 +25,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.config.ApplicationClass
+import com.example.namo.config.BaseResponse
 import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.DiaryRepository
+import com.example.namo.data.remote.login.LogoutBody
+import com.example.namo.data.remote.login.LogoutService
+import com.example.namo.data.remote.login.LogoutView
 import com.example.namo.databinding.FragmentCustomBinding
 import com.example.namo.databinding.FragmentCustomSettingBinding
 
@@ -40,7 +45,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
-class CustomSettingFramgent: Fragment(), ConfirmDialogInterface {
+class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
 
     private var _binding: FragmentCustomSettingBinding? = null
     private val binding get() = _binding!!
@@ -131,17 +136,12 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface {
 
     override fun onClickYesButton(id: Int) { // 다이얼로그 확인 메시지 클릭
         if (id == 0) { // 로그아웃
-//            LogoutService(this).tryLogout()
+            val token = ApplicationClass.sSharedPreferences.getString(ApplicationClass.X_ACCESS_TOKEN, null)
+            token?.let { LogoutBody(it) }?.let { LogoutService(this).tryPostLogout(it) }
         }
         else if (id == 1) { // 회원탈퇴
 //            LogoutService(this).tryQuit()
         }
-
-        // 토큰 비우기
-        ApplicationClass.sSharedPreferences.edit().clear().apply()
-        // 화면 이동
-        activity?.finishAffinity()
-        startActivity(Intent(context, SplashActivity()::class.java))
     }
 
     private fun hideBottomNavigation(bool: Boolean) {
@@ -152,6 +152,19 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface {
         } else {
             bottomNavigationView.visibility = View.VISIBLE
         }
+    }
+
+    override fun onPostLogoutSuccess(response: BaseResponse) {
+        Log.d("CustomSettingFrag", "onPostLogoutSuccess")
+        // 토큰 비우기
+        ApplicationClass.sSharedPreferences.edit().clear().apply()
+        // 화면 이동
+        activity?.finishAffinity()
+        startActivity(Intent(context, SplashActivity()::class.java))
+    }
+
+    override fun onPostLogoutFailure(message: String) {
+        Log.d("CustomSettingFrag", "onPostLogoutFailure")
     }
 
 }
