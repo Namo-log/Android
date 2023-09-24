@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -19,7 +20,7 @@ private const val ITEM_VIEW_TYPE_HEADER = 0
 private const val ITEM_VIEW_TYPE_ITEM = 1
 
 class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
-    val detailClickListener: (DiaryItem.Content) -> Unit,
+    val detailClickListener: (DiaryGroupItem.Content) -> Unit,
     val imageClickListener: (String) -> Unit
 ) : ListAdapter<DiaryGroupItem, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
 
@@ -43,11 +44,11 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is DiaryHeaderViewHolder -> {
-                val diaryItem = getItem(position) as DiaryItem.Header
+                val diaryItem = getItem(position) as DiaryGroupItem.Header
                 holder.bind(diaryItem)
             }
             is DiaryContentViewHolder -> {
-                val diaryItems = getItem(position) as DiaryItem.Content
+                val diaryItems = getItem(position) as DiaryGroupItem.Content
                 holder.bind(diaryItems)
                 holder.onclick.setOnClickListener {
                     detailClickListener(diaryItems)
@@ -78,7 +79,7 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
         RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SimpleDateFormat")
-        fun bind(item: DiaryItem.Header) {
+        fun bind(item: DiaryGroupItem.Header) {
             binding.apply {
                 val formattedDate = SimpleDateFormat("yyyy.MM.dd").format(item.date)
                 diaryDayTv.text = formattedDate
@@ -102,7 +103,7 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
         val onclick = binding.diaryDetailViewTv
 
         @SuppressLint("ResourceAsColor")
-        fun bind(item: DiaryItem.Content) {
+        fun bind(item: DiaryGroupItem.Content) {
             binding.apply {
 
                 itemDiaryContentTv.text = item.content
@@ -110,9 +111,7 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
 
                 setViewMore(itemDiaryContentTv, viewMore)
 
-                context.resources?.let {
-                    binding.itemDiaryCategoryColorIv.background.setTint(R.color.MainOrange)
-                }
+                binding.itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(context,R.color.MainOrange))
 
                 val adapter =
                     DiaryGalleryRVAdapter(context, item.images, imageClickListener)
@@ -120,6 +119,7 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
                 diaryGalleryRv.layoutManager =
                     LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
+                if (itemDiaryContentTv.text.isNullOrEmpty()) itemDiaryContentTv.visibility = View.GONE
             }
         }
 
@@ -175,7 +175,7 @@ sealed class DiaryGroupItem {
 
         override val id: Long
 
-    ) : DiaryGroupItem()
+    ) : DiaryGroupItem(),java.io.Serializable
 
 
 }

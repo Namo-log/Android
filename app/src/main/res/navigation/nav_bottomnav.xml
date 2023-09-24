@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_homeFragment_to_diaryDetailFragment2"
             app:destination="@id/diaryAddFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_groupDetailFragment"
+            app:destination="@id/groupDetailFragment" />
     </fragment>
 
 

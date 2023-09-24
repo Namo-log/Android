@@ -2,6 +2,7 @@ package com.example.namo.data.remote.diary
 
 import com.example.namo.config.BaseResponse
 import com.google.gson.annotations.SerializedName
+import java.time.LocalDateTime
 
 class DiaryResponse {
 
@@ -74,7 +75,7 @@ class DiaryResponse {
     data class MonthDiary(
         @SerializedName("scheduleId") val scheduleIdx: Long,
         @SerializedName("name") val title: String,
-        @SerializedName("startDate") var startDate: Long,
+        @SerializedName("startDate") var startDate: String,
         @SerializedName("contents") val content: String?,
         @SerializedName("urls") val imgUrl: List<String>,
         @SerializedName("categoryId") val categoryId: Long,

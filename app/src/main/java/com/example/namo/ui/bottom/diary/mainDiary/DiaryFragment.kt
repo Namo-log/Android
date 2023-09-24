@@ -6,12 +6,14 @@ import DiaryItem
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
@@ -28,6 +30,9 @@ import com.example.namo.ui.bottom.diary.mainDiary.adapter.DiaryGroupItem
 import com.example.namo.utils.NetworkManager
 import com.example.namo.databinding.FragmentDiaryBinding
 import org.joda.time.DateTime
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 
@@ -261,7 +266,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         val formatYearMonth = "$year,$month"
 
         val service = DiaryService()
-        service.getGroupMonthDiary(formatYearMonth, 1, 7)
+        service.getGroupMonthDiary(formatYearMonth, 0, 7)
         service.getGroupMonthView(this)
 
     }
@@ -292,7 +297,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
     }
 
-    private fun onDetailClickListener(item: DiaryItem.Content) {
+    private fun onDetailClickListener(item: DiaryGroupItem.Content) {
 
         // 상세보기 버튼 클릭리스너
 
@@ -307,7 +312,16 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun stringToLong(dateTimeString: String): Long {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+        val localDateTime = LocalDateTime.parse(dateTimeString, formatter)
 
+        val instant = localDateTime.atZone(ZoneOffset.UTC).toInstant()
+        return instant.toEpochMilli() // 밀리초 단위로 변환하려면 toEpochMilli()를 사용
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onGetGroupMonthSuccess(response: DiaryResponse.DiaryGetMonthResponse) {
 
         val list = arrayListOf<DiaryEvent>()
@@ -317,7 +331,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
                 DiaryEvent(
                     it.scheduleIdx,
                     it.title,
-                    it.startDate,
+                    stringToLong(it.startDate)/1000,
                     it.categoryId,
                     it.placeName,
                     it.content,
@@ -325,6 +339,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
                 )
             )
         }
+
 
         // 달 별 메모 없으면 없다고 띄우기
         if (result.isNotEmpty()) {

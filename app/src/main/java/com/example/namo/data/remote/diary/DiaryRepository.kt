@@ -33,22 +33,12 @@ class DiaryRepository(
     private val categoryDao = db.categoryDao
 
     private lateinit var notUploaded: List<Diary>
-    private var callback: DiaryModifyCallback? = null
 
     private val failList = ArrayList<Diary>()
     private lateinit var imgFile: File
 
     private lateinit var category: Category
     private lateinit var diary: Diary
-
-    fun setCallBack(callback: DiaryModifyCallback) {
-        this.callback = callback
-    }
-
-    interface DiaryModifyCallback {
-        fun onModify()
-        fun onDelete()
-    }
 
     /** add diary **/
     fun addDiary(
@@ -222,7 +212,6 @@ class DiaryRepository(
             e.printStackTrace()
         }
 
-        callback?.onModify()  // 화면 이동
 
         Log.d("editDiaryServerSuccess", response.result)
     }
@@ -231,7 +220,7 @@ class DiaryRepository(
     override fun onEditDiaryFailure(message: String) {
 
         printNotUploaded()
-        callback?.onModify()
+
         Log.d("editDiaryServerFailure", message)
 
     }
@@ -259,7 +248,6 @@ class DiaryRepository(
         if (!NetworkManager.checkNetworkState(context)) {
             //인터넷 연결 안 됨
             Log.d("deleteDiary", "WIFI ERROR")
-            callback?.onDelete()
             return
         }
 
@@ -280,7 +268,6 @@ class DiaryRepository(
             e.printStackTrace()
         }
 
-        callback?.onDelete()
         Log.d("deleteDiary", response.result)
     }
 
@@ -289,7 +276,6 @@ class DiaryRepository(
     override fun onDeleteDiaryFailure(message: String) {
 
         printNotUploaded()
-        callback?.onDelete()
         Log.d("deleteDiary", message)
     }
 

@@ -23,6 +23,7 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
     /** 기록 아이템 클릭 리스너 **/
     interface DiaryInterface {
         fun onDetailClicked(event:Event)
+        fun onGroupDetailClicked(event:Event)
     }
     private lateinit var diaryRecordClickListener: DiaryInterface
     fun setRecordClickListener(itemClickListener: DiaryInterface){
@@ -49,8 +50,15 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
         holder.bind(personal[position])
 
         /** 기록 아이템 클릭 리스너 **/
-        holder.binding.itemCalendarEventRecord.setOnClickListener {
-            diaryRecordClickListener.onDetailClicked(personal[position])
+        if (!personal[position].moimSchedule){ // 개인 기록
+            holder.binding.itemCalendarEventRecord.setOnClickListener {
+                diaryRecordClickListener.onDetailClicked(personal[position])
+            }
+        }
+        else{ // 모임 기록
+            holder.binding.itemCalendarEventRecord.setOnClickListener {
+                diaryRecordClickListener.onGroupDetailClicked(personal[position])
+            }
         }
 
         holder.binding.itemCalendarEventContentLayout.setOnClickListener {
