@@ -47,7 +47,7 @@
 
     <!-- Custom 화면 관련 String -->
     <string name="custom_palette">palette fragment</string>
-    <string name="custom_font">font fragment</string>
+    <string name="custom_font">커스텀 폰트는 열심히 준비중이몽몽~!</string>
     <string name="custom_my">my fragment</string>
 
     <!--diary fragment 관련 String-->
