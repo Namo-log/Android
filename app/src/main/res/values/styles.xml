@@ -87,6 +87,7 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/textGray</item>
+        <item name="android:drawableEnd">@drawable/drawable_end_img_custom</item>
     </style>
     <style name="default_underline">
         <item name="android:layout_width">match_parent</item>
