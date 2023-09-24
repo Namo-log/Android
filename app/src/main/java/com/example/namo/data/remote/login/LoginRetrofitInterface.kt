@@ -1,5 +1,6 @@
 package com.example.namo.data.remote.login
 
+import com.example.namo.config.BaseResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -22,4 +23,10 @@ interface LoginRetrofitInterface {
     fun refreshToken(
         @Body body: TokenBody
     ) : Call<LoginResponse>
+
+    // 로그아웃
+    @POST("auth/logout")
+    fun postLogout(
+        @Body body: LogoutBody
+    ) : Call<BaseResponse>
 }

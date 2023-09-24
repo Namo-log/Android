@@ -1,5 +1,7 @@
 package com.example.namo.data.remote.login
 
+import com.example.namo.config.BaseResponse
+
 interface LoginView {
     // Kakao
     fun onPostKakaoSDKSuccess(response: LoginResponse)
@@ -11,4 +13,9 @@ interface LoginView {
 interface SplashView {
     fun onVerifyTokenSuccess(response: LoginResponse)
     fun onVerifyTokenFailure(message: String)
+}
+
+interface LogoutView {
+    fun onPostLogoutSuccess(response: BaseResponse)
+    fun onPostLogoutFailure(message: String)
 }

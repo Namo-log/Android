@@ -12,18 +12,19 @@
             android:id="@+id/custom_setting_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/custom_setting_back_iv"
-                android:layout_width="35dp"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_marginStart="30dp"
                 android:src="@drawable/ic_back"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
             <TextView
                 android:id="@+id/custom_setting_title_tv"
@@ -32,13 +33,11 @@
                 android:ellipsize="marquee"
                 android:gravity="center"
                 android:text="@string/custom_setting"
-                android:textColor="@color/black"
-                android:textSize="22sp"
-                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/custom_setting_back_iv"
-                app:layout_constraintBottom_toBottomOf="@id/custom_setting_back_iv"/>
+                app:layout_constraintBottom_toBottomOf="@id/custom_setting_back_iv"
+                style="@style/title_text"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -56,9 +55,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/custom_setting_ver"
+                android:textStyle="bold"
+                android:textColor="@color/textGray"
+                android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                style="@style/custom_setting_15sp_tv"/>
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
                 android:id="@+id/custom_setting_ver_info_tv"

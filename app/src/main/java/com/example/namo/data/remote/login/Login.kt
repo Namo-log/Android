@@ -19,3 +19,7 @@ data class TokenBody(
     val accessToken: String,
     val refreshToken: String
 )
+
+data class LogoutBody(
+    val accessToken: String
+)

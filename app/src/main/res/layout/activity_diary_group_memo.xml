@@ -19,23 +19,23 @@
 
         <ImageView
             android:id="@+id/group_add_back_iv"
-            android:layout_width="35dp"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/ic_back"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
             android:id="@+id/group_add_title_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:textColor="@color/black"
-            android:textSize="27sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/group_add_back_iv" />
+            app:layout_constraintTop_toTopOf="@id/group_add_back_iv"
+            app:layout_constraintBottom_toBottomOf="@id/group_add_back_iv"
+            style="@style/title_text"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

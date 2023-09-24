@@ -43,6 +43,7 @@
             app:tabIndicatorColor="@color/MainOrange"
             app:tabSelectedTextColor="@color/MainOrange"
             app:tabRippleColor="@color/transparent"
+            app:tabTextAppearance="@style/tabTextAppearance"
             app:layout_constraintTop_toBottomOf="@id/custom_titlebar"/>
 
         <androidx.viewpager2.widget.ViewPager2
