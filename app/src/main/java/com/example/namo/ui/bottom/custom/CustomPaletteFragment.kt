@@ -14,6 +14,7 @@ import com.example.namo.databinding.FragmentCustomPaletteBinding
 class CustomPaletteFragment : Fragment() {
 
     lateinit var binding : FragmentCustomPaletteBinding
+    lateinit var palette1ColorArr : IntArray
 //    private var paletteDatas = ArrayList<Palette>()
 
     override fun onCreateView(
@@ -24,12 +25,11 @@ class CustomPaletteFragment : Fragment() {
     ): View? {
         binding = FragmentCustomPaletteBinding.inflate(inflater, container, false)
 
-        //더미데이터 냅다 집어 넣기
+        palette1ColorArr = resources.getIntArray(R.array.palette1ColorArr)
+
+        // 팔레트 색 Arr 넣어주기
         val paletteDatas = arrayListOf(
-            Palette("기본 팔레트",
-                arrayListOf(
-                    R.color.palette1, R.color.palette2, R.color.palette3, R.color.palette4, R.color.palette5,
-                    R.color.palette6, R.color.palette7, R.color.palette8, R.color.palette9, R.color.palette10)),
+            Palette("기본 팔레트", palette1ColorArr)
         )
 
         //어댑터 연결
