@@ -35,7 +35,6 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="UMC 스터디"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/diary_back_iv"

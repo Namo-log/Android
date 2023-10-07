@@ -175,13 +175,15 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView {
                 bundle.putSerializable("event",event)
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
             }
+        })
 
+        groupEventRVAdapter.setRecordClickListener(object : DailyGroupRVAdapter.DiaryInterface{
             override fun onGroupDetailClicked(event: Event) {
 
-//                val bundle=Bundle()
-//                bundle.putSerializable("groupDiaryItem",event)
-//                view?.findNavController()?.navigate(R.id.action_homeFragment_to_groupDetailFragment, bundle)
-            }
+                val bundle=Bundle()
+                bundle.putLong("groupScheduleId",event.serverIdx)
+                view?.findNavController()?.navigate(R.id.action_homeFragment_to_groupDetailFragment, bundle)
+                }
         })
         /** ----- **/
     }

@@ -303,7 +303,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
         val bundle = Bundle()
 
-        bundle.putSerializable("groupDiaryItem", item)
+        bundle.putLong("groupScheduleId",item.eventId)
 
         val detailFrag = GroupDetailFragment()
         detailFrag.arguments = bundle
@@ -311,6 +311,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
             ?.navigate(R.id.action_diaryFragment_to_groupDetailFragment, bundle)
 
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun stringToLong(dateTimeString: String): Long {
