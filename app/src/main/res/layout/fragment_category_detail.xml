@@ -178,6 +178,7 @@
                     android:id="@+id/category_toggle_iv"
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"
+                    android:background="@null"
                     app:layout_constraintTop_toTopOf="@id/category_share_tv"
                     app:layout_constraintBottom_toBottomOf="@id/category_share_tv"
                     app:layout_constraintEnd_toEndOf="parent"
