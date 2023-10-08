@@ -13,17 +13,15 @@ class DiaryService {
     private val diaryRetrofitInterface: DiaryInterface =
         ApplicationClass.sRetrofit.create(DiaryInterface::class.java)
 
-    private lateinit var diaryView: DiaryView
+    private lateinit var addPersonalDiaryView: AddPersonalDiaryView
     private lateinit var diaryDetailView: DiaryDetailView
     private lateinit var getMonthDiaryView: GetMonthDiaryView
-    private lateinit var addGroupDiaryView: AddGroupDiaryView
     private lateinit var getGroupDiaryView: GetGroupDiaryView
-    private lateinit var editGroupDiaryView: EditGroupDiaryView
-    private lateinit var deleteGroupDiaryView: DeleteGroupDiaryView
     private lateinit var getGroupMonthView: GetGroupMonthView
+    private lateinit var diaryBasicView: DiaryBasicView
 
-    fun addDiaryView(diaryView: DiaryView) {
-        this.diaryView = diaryView
+    fun addDiaryView(addPersonalDiaryView: AddPersonalDiaryView) {
+        this.addPersonalDiaryView = addPersonalDiaryView
     }
 
     fun setDiaryView(diaryDetailView: DiaryDetailView) {
@@ -34,24 +32,16 @@ class DiaryService {
         this.getMonthDiaryView = getMonthDiaryView
     }
 
-    fun addGroupDiaryView(addGroupView: AddGroupDiaryView) {
-        this.addGroupDiaryView = addGroupView
-    }
-
     fun getGroupDiaryView(getGroupDiaryView: GetGroupDiaryView) {
         this.getGroupDiaryView = getGroupDiaryView
     }
 
-    fun editGroupDiaryView(editGroupView: EditGroupDiaryView) {
-        this.editGroupDiaryView = editGroupView
-    }
-
-    fun deleteGroupDiaryView(deleteGroupDiaryView: DeleteGroupDiaryView) {
-        this.deleteGroupDiaryView = deleteGroupDiaryView
-    }
-
     fun getGroupMonthView(getGroupMonthView: GetGroupMonthView) {
         this.getGroupMonthView = getGroupMonthView
+    }
+
+    fun diaryBasicView(basicView: DiaryBasicView) {
+        this.diaryBasicView = basicView
     }
 
     /** 기록 추가 **/
@@ -72,16 +62,16 @@ class DiaryService {
                     when (response.code()) {
 
                         200 -> if (resp != null) {
-                            diaryView.onAddDiarySuccess(
+                            addPersonalDiaryView.onAddDiarySuccess(
                                 resp, localId
                             )
                         }
-                        else -> diaryView.onAddDiaryFailure(response.toString())
+                        else -> addPersonalDiaryView.onAddDiaryFailure(response.toString())
                     }
                 }
 
                 override fun onFailure(call: Call<DiaryResponse.DiaryAddResponse>, t: Throwable) {
-                    diaryView.onAddDiaryFailure(t.message.toString())
+                    addPersonalDiaryView.onAddDiaryFailure(t.message.toString())
                 }
             })
     }
@@ -214,9 +204,9 @@ class DiaryService {
                     val resp: DiaryResponse.DiaryResponse? = response.body()
                     when (response.code()) {
                         200 -> if (resp != null) {
-                            addGroupDiaryView.onAddGroupDiarySuccess(resp)
+                            diaryBasicView.onSuccess(resp)
                         }
-                        else -> addGroupDiaryView.onAddGroupDiaryFailure(response.toString())
+                        else -> diaryBasicView.onFailure(response.toString())
                     }
 
                 }
@@ -225,7 +215,7 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryResponse>,
                     t: Throwable
                 ) {
-                    addGroupDiaryView.onAddGroupDiaryFailure(t.message.toString())
+                    diaryBasicView.onFailure(t.message.toString())
                 }
             })
     }
@@ -283,10 +273,10 @@ class DiaryService {
                     val resp: DiaryResponse.DiaryResponse? = response.body()
                     when (response.code()) {
                         200 -> if (resp != null) {
-                            editGroupDiaryView.onEditGroupDiarySuccess(resp)
+                            diaryBasicView.onSuccess(resp)
                         }
                         else ->
-                            editGroupDiaryView.onEditGroupDiaryFailure(response.message())
+                            diaryBasicView.onFailure(response.message())
                     }
 
                 }
@@ -295,7 +285,7 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryResponse>,
                     t: Throwable
                 ) {
-                    editGroupDiaryView.onEditGroupDiaryFailure(t.message.toString())
+                    diaryBasicView.onFailure(t.message.toString())
                 }
             })
     }
@@ -314,9 +304,9 @@ class DiaryService {
                     val resp: DiaryResponse.DiaryResponse? = response.body()
                     when (response.code()) {
                         200 -> if (resp != null) {
-                            deleteGroupDiaryView.onDeleteGroupDiarySuccess(resp)
+                            diaryBasicView.onSuccess(resp)
                         }
-                        else -> deleteGroupDiaryView.onDeleteGroupDiaryFailure(response.toString())
+                        else -> diaryBasicView.onFailure(response.toString())
                     }
 
                 }
@@ -325,7 +315,7 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryResponse>,
                     t: Throwable
                 ) {
-                    deleteGroupDiaryView.onDeleteGroupDiaryFailure(t.message.toString())
+                    diaryBasicView.onFailure(t.message.toString())
                 }
             })
     }
@@ -359,6 +349,37 @@ class DiaryService {
                     t: Throwable
                 ) {
                     getGroupMonthView.onGetGroupMonthFailure(t.message.toString())
+                }
+            })
+    }
+
+    fun addGroupAfterDiary(
+        groupScheduleIdx: Long,
+        content: String?
+    ) {
+        diaryRetrofitInterface.addGroupAfterDiary(groupScheduleIdx, content)
+            .enqueue(object : Callback<DiaryResponse.DiaryResponse> {
+
+                @SuppressLint("SuspiciousIndentation")
+                override fun onResponse(
+                    call: Call<DiaryResponse.DiaryResponse>,
+                    response: Response<DiaryResponse.DiaryResponse>
+                ) {
+                    val resp: DiaryResponse.DiaryResponse? = response.body()
+                    when (response.code()) {
+                        200 -> if (resp != null) {
+                            diaryBasicView.onSuccess(resp)
+                        }
+                        else -> diaryBasicView.onFailure(response.toString())
+                    }
+
+                }
+
+                override fun onFailure(
+                    call: Call<DiaryResponse.DiaryResponse>,
+                    t: Throwable
+                ) {
+                    diaryBasicView.onFailure(t.message.toString())
                 }
             })
     }

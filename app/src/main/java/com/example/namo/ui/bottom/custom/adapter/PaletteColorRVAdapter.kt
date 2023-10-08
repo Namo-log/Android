@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.databinding.ItemPaletteColorBinding
 
-class PaletteColorRVAdapter(val context: Context, private val colors: ArrayList<Int>) : RecyclerView.Adapter<PaletteColorRVAdapter.ViewHolder>() {
+class PaletteColorRVAdapter(val context: Context, private val colors: IntArray) : RecyclerView.Adapter<PaletteColorRVAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemPaletteColorBinding = ItemPaletteColorBinding.inflate(
@@ -24,7 +24,7 @@ class PaletteColorRVAdapter(val context: Context, private val colors: ArrayList<
     inner class ViewHolder(val binding: ItemPaletteColorBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(color : Int) {
-            binding.itemPaletteColorCv.background.setTint(context.resources.getColor(color))
+            binding.itemPaletteColorCv.background.setTint(color)
         }
     }
 }

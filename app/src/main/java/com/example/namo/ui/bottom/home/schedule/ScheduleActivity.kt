@@ -24,11 +24,13 @@ import com.example.namo.data.remote.event.DeleteEventView
 import com.example.namo.data.remote.event.EventService
 import com.example.namo.databinding.ActivityScheduleBinding
 import com.example.namo.ui.bottom.home.notify.PushNotificationReceiver
+import com.example.namo.utils.ConfirmDialog
+import com.example.namo.utils.ConfirmDialogInterface
 import com.example.namo.utils.NetworkManager
 import org.joda.time.DateTime
 import java.util.Date
 
-class ScheduleActivity : AppCompatActivity(), DeleteEventView {
+class ScheduleActivity : AppCompatActivity(), DeleteEventView, ConfirmDialogInterface {
 
     private lateinit var binding : ActivityScheduleBinding
     lateinit var db : NamoDatabase
@@ -84,18 +86,17 @@ class ScheduleActivity : AppCompatActivity(), DeleteEventView {
 
     private fun deleteClick() {
         binding.scheduleDeleteBtn.setOnClickListener {
-            //일정 삭제하고 닫기
-            alarmList = event!!.alarmList!!.toMutableList()
-            for (i in alarmList) {
-                deleteNotification(event!!.eventId.toInt() + DateTime(event!!.startLong).minusMinutes(i).millis.toInt(), event!!)
-            }
-
-            uploadToServer(event!!)
-
-            Toast.makeText(this, "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-
-            finish()
+            showDialog()
         }
+    }
+
+    private fun showDialog() {
+        // 삭제 확인 다이얼로그
+        val title = "일정을 정말 삭제하시겠습니까?"
+
+        val dialog = ConfirmDialog(this@ScheduleActivity, title, null, "삭제", 0)
+        dialog.isCancelable = false
+        dialog.show(this.supportFragmentManager, "ConfirmDialog")
     }
 
     private fun deleteNotification(id : Int, event : Event) {
@@ -173,5 +174,19 @@ class ScheduleActivity : AppCompatActivity(), DeleteEventView {
     override fun onDeleteEventFailure(message: String) {
         Log.d("ScheduleActivity", "onDeleteEventFailure")
         printNotUploaded()
+    }
+
+    override fun onClickYesButton(id: Int) {
+        //일정 삭제하고 닫기
+        alarmList = event!!.alarmList!!.toMutableList()
+        for (i in alarmList) {
+            deleteNotification(event!!.eventId.toInt() + DateTime(event!!.startLong).minusMinutes(i).millis.toInt(), event!!)
+        }
+
+        uploadToServer(event!!)
+
+        Toast.makeText(this, "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+
+        finish()
     }
 }

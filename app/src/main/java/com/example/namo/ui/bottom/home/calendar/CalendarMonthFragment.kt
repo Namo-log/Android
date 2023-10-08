@@ -15,6 +15,9 @@ import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
+import com.example.namo.data.remote.diary.DiaryResponse
+import com.example.namo.data.remote.diary.DiaryService
+import com.example.namo.data.remote.diary.GetGroupMonthView
 import com.example.namo.data.remote.event.GetMonthEventResponse
 import com.example.namo.data.remote.event.GetMonthEventResult
 import com.example.namo.data.remote.event.GetMonthEventView
@@ -23,9 +26,13 @@ import com.example.namo.ui.bottom.home.HomeFragment
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
 import com.example.namo.ui.bottom.home.schedule.ScheduleActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.joda.time.DateTime
+import java.text.SimpleDateFormat
 
-class CalendarMonthFragment : Fragment(), GetMonthEventView {
+class CalendarMonthFragment : Fragment(), GetMonthEventView,GetGroupMonthView {
     lateinit var db : NamoDatabase
     private lateinit var binding : FragmentCalendarMonthBinding
     private lateinit var categoryList : List<Category>
@@ -184,13 +191,15 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView {
                 bundle.putSerializable("event",event)
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
             }
+        })
 
-            override fun onGroupDetailClicked(event: Event) {
+        groupEventRVAdapter.setRecordClickListener(object : DailyGroupRVAdapter.DiaryInterface{
+            override fun onGroupDetailClicked(monthDiary: DiaryResponse.MonthDiary?) {
 
-//                val bundle=Bundle()
-//                bundle.putSerializable("groupDiaryItem",event)
-//                view?.findNavController()?.navigate(R.id.action_homeFragment_to_groupDetailFragment, bundle)
-            }
+                val bundle=Bundle()
+                bundle.putSerializable("groupDiary", monthDiary)
+                view?.findNavController()?.navigate(R.id.action_homeFragment_to_groupDetailFragment, bundle)
+                }
         })
         /** ----- **/
     }
@@ -209,8 +218,8 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView {
     }
 
     private fun setData(idx : Int) {
+        getGroupDiary()
         getEvent(idx)
-
         setEmptyMsg()
     }
 
@@ -252,6 +261,14 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView {
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
+    private fun getGroupDiary(){
+
+        val date = SimpleDateFormat("yyyy,MM").format(millis)
+        val service = DiaryService()
+        service.getGroupMonthDiary(date, 0, 20)
+        service.getGroupMonthView(this@CalendarMonthFragment)
+    }
     companion object {
         private const val MILLIS = "MILLIS"
 
@@ -293,5 +310,14 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView {
             if (schedule.hasDiary) 1 else 0,
             schedule.moimSchedule
         )
+    }
+
+    override fun onGetGroupMonthSuccess(response: DiaryResponse.DiaryGetMonthResponse) {
+        val data=response.result
+        groupEventRVAdapter.addGroupDiary(data.content as ArrayList<DiaryResponse.MonthDiary>)
+    }
+
+    override fun onGetGroupMonthFailure(message: String) {
+        Log.d("GET_GROUP_MONTH",message)
     }
 }

@@ -25,7 +25,7 @@ import java.io.*
 
 class DiaryRepository(
     val context: Context,
-) : DiaryView, DiaryDetailView, AddGroupDiaryView, EditGroupDiaryView, DeleteGroupDiaryView {
+) : AddPersonalDiaryView, DiaryDetailView, DiaryBasicView {
 
     private val diaryService = DiaryService()
     private val db = NamoDatabase.getInstance(context)
@@ -220,11 +220,9 @@ class DiaryRepository(
     override fun onEditDiaryFailure(message: String) {
 
         printNotUploaded()
-
         Log.d("editDiaryServerFailure", message)
 
     }
-
 
     /** delete diary **/
     fun deleteDiary(localId: Long, serverId: Long) {
@@ -459,15 +457,7 @@ class DiaryRepository(
             membersRequestBody,
             imgList
         )
-        diaryService.addGroupDiaryView(this)
-    }
-
-    override fun onAddGroupDiarySuccess(response: DiaryResponse.DiaryResponse) {
-        Log.d("ADD_GROUP_DIARY", response.message)
-    }
-
-    override fun onAddGroupDiaryFailure(message: String) {
-        Log.d("ADD_GROUP_DIARY", message)
+        diaryService.diaryBasicView(this)
     }
 
 
@@ -495,32 +485,15 @@ class DiaryRepository(
             membersRequestBody,
             imgList
         )
-        diaryService.editGroupDiaryView(this)
+        diaryService.diaryBasicView(this)
     }
 
-
-    override fun onEditGroupDiarySuccess(response: DiaryResponse.DiaryResponse) {
-        Log.d("EDIT_GROUP_DIARY", response.message)
-    }
-
-    override fun onEditGroupDiaryFailure(message: String) {
-        Log.d("EDIT_GROUP_DIARY", message)
-    }
 
     /** 그룹 다이어리 별 장소 삭제 **/
     fun deleteGroupPlace(moimPlaceId: Long) {
         diaryService.deleteGroupDiary(moimPlaceId)
-        diaryService.deleteGroupDiaryView(this)
+        diaryService.diaryBasicView(this)
     }
-
-    override fun onDeleteGroupDiarySuccess(response: DiaryResponse.DiaryResponse) {
-        Log.d("DELETE_GROUP_DIARY", response.message)
-    }
-
-    override fun onDeleteGroupDiaryFailure(message: String) {
-        Log.d("DELETE_GROUP_DIARY", message)
-    }
-
 
     private fun imageToMultipart(images: List<String>?): List<MultipartBody.Part>? {
         return images?.map { path ->
@@ -603,5 +576,13 @@ class DiaryRepository(
             e.printStackTrace()
         }
         Log.d("diary", "Not uploaded Diary : $failList")
+    }
+
+    override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+        Log.d("SUCCESS", response.message)
+    }
+
+    override fun onFailure(message: String) {
+        Log.d("FAILURE", message)
     }
 }
