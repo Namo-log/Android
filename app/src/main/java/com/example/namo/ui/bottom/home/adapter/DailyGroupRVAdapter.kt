@@ -19,6 +19,15 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
     private val categoryList = ArrayList<Category>()
     private lateinit var context : Context
 
+    interface GroupContentClickListener {
+        fun onGroupContentClick(event: Event)
+    }
+    private lateinit var groupContentClickListener: GroupContentClickListener
+
+    fun setGorupContentClickListener(groupContentClickListener: GroupContentClickListener) {
+        this.groupContentClickListener = groupContentClickListener
+    }
+
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
         val binding : ItemCalendarEventGroupBinding = ItemCalendarEventGroupBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
         context = viewGroup.context
@@ -28,6 +37,10 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
 
     override fun onBindViewHolder(holder : ViewHolder, position : Int) {
         holder.bind(group[position])
+
+        holder.binding.itemCalendarEventBaseLayout.setOnClickListener {
+            groupContentClickListener.onGroupContentClick(group[position])
+        }
     }
 
     override fun getItemCount(): Int = group.size

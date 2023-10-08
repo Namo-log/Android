@@ -116,8 +116,8 @@ class EventService() {
             })
     }
 
-    fun getAllEvent(yearMonth : String) {
-        eventRetrofitInterface.getAllEvent(yearMonth)
+    fun getAllEvent() {
+        eventRetrofitInterface.getAllEvent()
             .enqueue(object : Callback<GetMonthEventResponse> {
                 override fun onResponse(
                     call: Call<GetMonthEventResponse>,

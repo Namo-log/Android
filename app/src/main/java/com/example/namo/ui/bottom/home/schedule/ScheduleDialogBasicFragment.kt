@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -288,6 +289,16 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
             val url = "kakaomap://route?sp=&ep=${place_y},${place_x}&by=PUBLICTRANSIT"
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
+        }
+
+        if (event.moimSchedule) {
+            binding.dialogScheduleTitleEt.inputType = InputType.TYPE_NULL
+            binding.dialogScheduleStartDateTv.setOnClickListener { null }
+            binding.dialogScheduleEndDateTv.setOnClickListener { null }
+            binding.dialogScheduleStartTimeTv.setOnClickListener { null }
+            binding.dialogScheduleEndTimeTv.setOnClickListener { null }
+            binding.dialogSchedulePlaceBtn.visibility = View.INVISIBLE
+            binding.dialogSchedulePlaceLayout.setOnClickListener { null }
         }
 
         // 닫기 클릭
