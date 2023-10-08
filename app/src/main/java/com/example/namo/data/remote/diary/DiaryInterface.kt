@@ -73,5 +73,11 @@ interface DiaryInterface {
         @Query("page") page: Int,
         @Query("size") size: Int
     ): Call<DiaryResponse.DiaryGetMonthResponse>
+
+    @PATCH("/moims/schedule/memo/text/{scheduleId}")
+    fun addGroupAfterDiary(
+        @Path("scheduleId") scheduleId: Long,
+        @Body text: String?
+    ): Call<DiaryResponse.DiaryResponse>
 }
 

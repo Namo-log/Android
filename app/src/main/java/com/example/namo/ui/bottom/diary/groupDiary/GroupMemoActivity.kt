@@ -52,6 +52,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
     private var imgList: ArrayList<String?> = ArrayList() // 장소별 이미지
     private var positionForGallery: Int = -1
+    private var groupScheduleId:Long=0L
 
     private val itemTouchSimpleCallback = ItemTouchHelperCallback()
     private val itemTouchHelper = ItemTouchHelper(itemTouchSimpleCallback)
@@ -67,7 +68,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
         moimSchedule = intent?.getSerializableExtra("groupEvent") as MoimSchedule}
 
         val getScheduleIdx = intent.getLongExtra("groupScheduleId", 0L)
-        val groupScheduleId =
+        groupScheduleId =
             if (getScheduleIdx != 0L) getScheduleIdx else moimSchedule.moimScheduleId
 
         val diaryService = DiaryService()
@@ -174,7 +175,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
             placeEvent.map {
                 repo.addMoimDiary(
-                    moimSchedule.moimScheduleId,
+                    groupScheduleId,
                     it.place,
                     it.pay,
                     it.members,
@@ -193,7 +194,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
             placeEvent.forEach {
                 if (it.placeIdx == 0L) {
                     repo.addMoimDiary(
-                        moimSchedule.moimScheduleId,
+                        groupScheduleId,
                         it.place,
                         it.pay,
                         it.members,

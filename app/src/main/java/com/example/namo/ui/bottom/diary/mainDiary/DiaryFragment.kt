@@ -30,9 +30,6 @@ import com.example.namo.ui.bottom.diary.mainDiary.adapter.DiaryGroupItem
 import com.example.namo.utils.NetworkManager
 import com.example.namo.databinding.FragmentDiaryBinding
 import org.joda.time.DateTime
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 
@@ -302,8 +299,13 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         // 상세보기 버튼 클릭리스너
 
         val bundle = Bundle()
-
-        bundle.putSerializable("groupDiaryItem", item)
+        val monthDiary = item.images?.let {
+            DiaryResponse.MonthDiary(
+                item.eventId, item.event_title, item.event_start, item.content,
+                it, item.event_category_idx, 0L, item.event_place_name
+            )
+        }
+        bundle.putSerializable("groupDiary", monthDiary)
 
         val detailFrag = GroupDetailFragment()
         detailFrag.arguments = bundle
@@ -312,14 +314,6 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun stringToLong(dateTimeString: String): Long {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-        val localDateTime = LocalDateTime.parse(dateTimeString, formatter)
-
-        val instant = localDateTime.atZone(ZoneOffset.UTC).toInstant()
-        return instant.toEpochMilli() // 밀리초 단위로 변환하려면 toEpochMilli()를 사용
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onGetGroupMonthSuccess(response: DiaryResponse.DiaryGetMonthResponse) {
@@ -331,7 +325,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
                 DiaryEvent(
                     it.scheduleIdx,
                     it.title,
-                    stringToLong(it.startDate)/1000,
+                    it.startDate,
                     it.categoryId,
                     it.placeName,
                     it.content,
