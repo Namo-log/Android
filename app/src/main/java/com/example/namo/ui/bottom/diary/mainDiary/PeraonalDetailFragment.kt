@@ -26,11 +26,13 @@ import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryPersonalDetailBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
+import com.example.namo.utils.ConfirmDialog
+import com.example.namo.utils.ConfirmDialogInterface
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import org.joda.time.DateTime
 
-class PeraonalDetailFragment : Fragment() {  // 다이어리 추가 화면
+class PeraonalDetailFragment : Fragment(), ConfirmDialogInterface {  // 다이어리 추가 화면
 
     private var _binding: FragmentDiaryPersonalDetailBinding? = null
     private val binding get() = _binding!!
@@ -133,7 +135,7 @@ class PeraonalDetailFragment : Fragment() {  // 다이어리 추가 화면
             binding.diaryDeleteIv.visibility = View.VISIBLE
 
             binding.diaryDeleteIv.setOnClickListener {
-                deleteDiary()
+                showDialog()
             }
 
             binding.diaryEditTv.setOnClickListener {
@@ -176,10 +178,20 @@ class PeraonalDetailFragment : Fragment() {  // 다이어리 추가 화면
         hideBottomNavigation(false)
     }
 
+    private fun showDialog() {
+        // 삭제 확인 다이얼로그
+        val title = "가록을 정말 삭제하시겠습니까?"
+
+        val dialog = ConfirmDialog(this@PeraonalDetailFragment, title, null, "삭제", 0)
+        dialog.isCancelable = false
+        activity?.let {dialog.show(it.supportFragmentManager, "ConfirmDialog")}
+    }
+
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
 
         repo.deleteDiary(event.eventId, event.serverIdx)
+        Toast.makeText(context, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
         findNavController().popBackStack()
         hideBottomNavigation(false)
     }
@@ -338,6 +350,11 @@ class PeraonalDetailFragment : Fragment() {  // 다이어리 추가 화면
 
         _binding = null
         hideBottomNavigation(false)
+    }
+
+    override fun onClickYesButton(id: Int) {
+        // 삭제 버튼 누르면 삭제 진행
+        deleteDiary()
     }
 
 
