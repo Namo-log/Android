@@ -11,20 +11,19 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
-import com.example.namo.data.remote.diary.DiaryResponse
-import com.example.namo.data.remote.diary.DiaryService
-import com.example.namo.data.remote.diary.GetGroupDiaryView
+import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryGroupDetailBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.joda.time.DateTime
 
-class GroupDetailFragment : Fragment(), GetGroupDiaryView {
+class GroupDetailFragment : Fragment(), GetGroupDiaryView, DiaryBasicView {
 
     private var _binding: FragmentDiaryGroupDetailBinding? = null
     private val binding get() = _binding!!
 
     private var groupScheduleId: Long = 0L
+    private lateinit var diaryService: DiaryService
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,11 +37,14 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView {
 
         groupScheduleId = requireArguments().getLong("groupScheduleId", 0L)
 
-        val diaryService = DiaryService()
+        diaryService = DiaryService()
         diaryService.getGroupDiary(groupScheduleId)
         diaryService.getGroupDiaryView(this)
 
+
         bind()
+        editMemo()
+
         return binding.root
     }
 
@@ -85,7 +87,7 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView {
     }
 
     override fun onGetGroupDiaryFailure(message: String) {
-        Log.d("Error",message)
+        Log.d("Error", message)
     }
 
     private fun bind() {
@@ -104,6 +106,49 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView {
                 bundle
             )
         }
+
+        binding.diaryDeleteIv.setOnClickListener {
+            binding.diaryContentsEt.text.clear()
+
+            diaryService.addGroupAfterDiary(groupScheduleId, "")
+            diaryService.diaryBasicView(this)
+        }
+    }
+
+    private fun editMemo() {
+
+       val  content = binding.diaryContentsEt.text.toString()
+
+        binding.diaryEditTv.setOnClickListener {
+
+            diaryService.addGroupAfterDiary(groupScheduleId, binding.diaryContentsEt.text.toString())
+            diaryService.diaryBasicView(this)
+            findNavController().popBackStack()
+            Log.d("sdfe",content)
+        }
+
+        if (content.isEmpty()) {
+            binding.diaryDeleteIv.visibility = View.GONE
+            binding.diaryEditTv.text = "기록 저장"
+            binding.diaryEditTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.white
+                )
+            )
+            binding.diaryEditTv.setBackgroundResource(R.color.MainOrange)
+
+        } else {
+            binding.diaryDeleteIv.visibility = View.VISIBLE
+            binding.diaryEditTv.text = "기록 수정"
+            binding.diaryEditTv.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.MainOrange
+                )
+            )
+            binding.diaryEditTv.setBackgroundResource(R.color.white)
+        }
     }
 
     private fun hideBottomNavigation(bool: Boolean) {
@@ -121,6 +166,14 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView {
 
         _binding = null
         hideBottomNavigation(false)
+    }
+
+    override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+        Log.e("addGroupDiaryAfter", response.toString())
+    }
+
+    override fun onFailure(message: String) {
+        Log.e("addGroupDiaryAfter", message)
     }
 
 

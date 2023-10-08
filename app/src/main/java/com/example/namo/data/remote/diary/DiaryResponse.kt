@@ -75,7 +75,7 @@ class DiaryResponse {
     data class MonthDiary(
         @SerializedName("scheduleId") val scheduleIdx: Long,
         @SerializedName("name") val title: String,
-        @SerializedName("startDate") var startDate: String,
+        @SerializedName("startDate") var startDate: Long,
         @SerializedName("contents") val content: String?,
         @SerializedName("urls") val imgUrl: List<String>,
         @SerializedName("categoryId") val categoryId: Long,
