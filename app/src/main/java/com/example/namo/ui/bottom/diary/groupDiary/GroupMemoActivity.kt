@@ -63,7 +63,8 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
         repo = DiaryRepository(this)
 
-        moimSchedule = intent.getSerializableExtra("groupEvent") as MoimSchedule
+        if (intent.hasExtra("groupEvent")){
+        moimSchedule = intent?.getSerializableExtra("groupEvent") as MoimSchedule}
 
         val getScheduleIdx = intent.getLongExtra("groupScheduleId", 0L)
         val groupScheduleId =

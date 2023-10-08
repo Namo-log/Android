@@ -173,8 +173,14 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView {
 
                 val bundle=Bundle()
                 bundle.putSerializable("event",event)
-
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
+            }
+
+            override fun onGroupDetailClicked(event: Event) {
+
+//                val bundle=Bundle()
+//                bundle.putSerializable("groupDiaryItem",event)
+//                view?.findNavController()?.navigate(R.id.action_homeFragment_to_groupDetailFragment, bundle)
             }
         })
         /** ----- **/
@@ -214,18 +220,24 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView {
         var todayStart = monthList[idx].withTimeAtStartOfDay().millis
         var todayEnd = monthList[idx].plusDays(1).withTimeAtStartOfDay().millis - 1
 
-        var forPersonalEvent : Thread = Thread {
-            event_personal = db.eventDao.getEventDaily(todayStart / 1000, todayEnd / 1000) as ArrayList<Event>
+        var forEvent : Thread = Thread {
+            val tempEvent = db.eventDao.getEventDaily(todayStart / 1000, todayEnd / 1000) as ArrayList<Event>
+            event_personal = tempEvent.filter { item -> !item.moimSchedule } as ArrayList<Event>
+            event_group = tempEvent.filter { item -> item.moimSchedule } as ArrayList<Event>
+
             personalEventRVAdapter.addPersonal(event_personal)
+            groupEventRVAdapter.addGroup(event_group)
             requireActivity().runOnUiThread {
                 Log.d("CalendarMonth", "Personal Event : $event_personal")
+                Log.d("CalendarMonth", "Group Event : $event_personal")
                 personalEventRVAdapter.notifyDataSetChanged()
+                groupEventRVAdapter.notifyDataSetChanged()
             }
         }
-        forPersonalEvent.start()
+        forEvent.start()
 
         try {
-            forPersonalEvent.join()
+            forEvent.join()
         } catch (e : InterruptedException) {
             e.printStackTrace()
         }

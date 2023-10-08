@@ -3,8 +3,11 @@ package com.example.namo.ui.bottom.home.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.namo.R
 import com.example.namo.data.entity.home.Category
 import com.example.namo.data.entity.home.Event
 import com.example.namo.databinding.ItemCalendarEventGroupBinding
@@ -42,13 +45,16 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
 
     inner class ViewHolder(val binding : ItemCalendarEventGroupBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(group : Event) {
-            val time = DateTime(group.startLong).toString("HH:mm") + " - " + DateTime(group.endLong).toString("HH:mm")
-            val category = categoryList.find { it.categoryIdx == group.categoryIdx }!!
+            val time = DateTime(group.startLong * 1000L).toString("HH:mm") + " - " + DateTime(group.endLong * 1000L).toString("HH:mm")
+            val category = categoryList.find {
+                if (it.serverIdx != 0L) it.serverIdx == group.categoryServerIdx
+                else it.categoryIdx == group.categoryIdx }!!
 
             binding.itemCalendarEventTitle.text = group.title
             binding.itemCalendarEventTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
-            binding.itemCalendarEventColorView.background.setTint(context.resources.getColor(category.color))
+            binding.itemCalendarEventColorView.background.setTint(category.color)
+            binding.itemCalendarUserName.visibility = View.GONE
         }
     }
 }
