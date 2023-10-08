@@ -182,6 +182,7 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView {
 
                 val bundle=Bundle()
                 bundle.putLong("groupScheduleId",event.serverIdx)
+                bundle.putLong("categoryIdx",event.categoryServerIdx)
                 view?.findNavController()?.navigate(R.id.action_homeFragment_to_groupDetailFragment, bundle)
                 }
         })

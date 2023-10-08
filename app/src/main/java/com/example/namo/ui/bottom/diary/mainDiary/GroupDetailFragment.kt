@@ -113,6 +113,13 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView, DiaryBasicView {
             diaryService.addGroupAfterDiary(groupScheduleId, "")
             diaryService.diaryBasicView(this)
         }
+
+        val repo=DiaryRepository(requireContext())
+        val categoryId = requireArguments().getLong("categoryIdx", 0L)
+        val category = repo.getCategory(categoryId,categoryId)
+        context?.resources?.let {
+            binding.itemDiaryCategoryColorIv.background.setTint(category.color)
+        }
     }
 
     private fun editMemo() {

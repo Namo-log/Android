@@ -301,6 +301,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         val bundle = Bundle()
 
         bundle.putLong("groupScheduleId",item.eventId)
+        bundle.putLong("categoryIdx",item.event_category_idx)
 
         val detailFrag = GroupDetailFragment()
         detailFrag.arguments = bundle

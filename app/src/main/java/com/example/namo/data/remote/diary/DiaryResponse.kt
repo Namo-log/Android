@@ -2,7 +2,6 @@ package com.example.namo.data.remote.diary
 
 import com.example.namo.config.BaseResponse
 import com.google.gson.annotations.SerializedName
-import java.time.LocalDateTime
 
 class DiaryResponse {
 
