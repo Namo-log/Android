@@ -24,9 +24,11 @@ import com.example.namo.data.remote.moim.MoimService
 import com.example.namo.data.remote.moim.UpdateMoimNameBody
 import com.example.namo.databinding.ActivityGroupInfoBinding
 import com.example.namo.ui.bottom.group.adapter.GroupInfoMemberRVAdapter
+import com.example.namo.utils.ConfirmDialog
+import com.example.namo.utils.ConfirmDialogInterface
 import java.security.acl.Group
 
-class GroupInfoActivity : AppCompatActivity(), DeleteMoimMemberView {
+class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface, DeleteMoimMemberView {
 
     private lateinit var binding : ActivityGroupInfoBinding
     private lateinit var group : Moim
@@ -54,50 +56,11 @@ class GroupInfoActivity : AppCompatActivity(), DeleteMoimMemberView {
     }
 
     private fun setAdapter() {
-//        addUsers()
 
         binding.groupInfoMemberRv.layoutManager = GridLayoutManager(this, 2)
         groupInfoMemberRVAdapter = GroupInfoMemberRVAdapter(group.moimUsers)
         binding.groupInfoMemberRv.adapter = groupInfoMemberRVAdapter
     }
-
-//    private fun addUsers() {
-//        val userList : ArrayList<MoimUser> = arrayListOf()
-//        userList.apply {
-//            add(
-//                MoimUser(
-//                    0,
-//                    "강어진"
-//                )
-//            )
-//            add(
-//                MoimUser(
-//                    1,
-//                    "김나현"
-//                )
-//            )
-//            add(
-//                MoimUser(
-//                    2,
-//                    "박수빈"
-//                )
-//            )
-//            add(
-//                MoimUser(
-//                    3,
-//                    "서은수"
-//                )
-//            )
-//            add(
-//                MoimUser(
-//                    5,
-//                    "김현재"
-//                )
-//            )
-//        }
-//
-//        group.moimUsers = userList
-//    }
 
     private fun clickListener() {
         binding.groupInfoCloseBtn.setOnClickListener {
@@ -121,11 +84,18 @@ class GroupInfoActivity : AppCompatActivity(), DeleteMoimMemberView {
         }
 
         binding.groupInfoLeaveBtn.setOnClickListener {
-            val moimService = MoimService()
-            moimService.setDeleteMoimMemberView(this)
-
-            moimService.deleteMoimMember(group.groupId)
+            showLeaveDialog()
         }
+    }
+
+    private fun showLeaveDialog() {
+        // 탈퇴 확인 다이얼로그
+        val title = "정말 모임에서 탈퇴하시겠어요?"
+        val content = "탈퇴하더라도\n이전 모임 일정은 사라지지 않습니다."
+
+        val dialog = ConfirmDialog(this@GroupInfoActivity, title, content, "삭제", 0)
+        dialog.isCancelable = false
+        dialog.show(this.supportFragmentManager, "ConfirmDialog")
     }
 
     private fun setGroupInfo() {
@@ -184,5 +154,13 @@ class GroupInfoActivity : AppCompatActivity(), DeleteMoimMemberView {
 
     override fun onDeleteMoimMemberFailure(message: String) {
         Log.d("GroupInfoAct", "onDeleteMoimMemberFailure")
+    }
+
+    override fun onClickYesButton(id: Int) {
+        // 탈퇴 진행
+        val moimService = MoimService()
+        moimService.setDeleteMoimMemberView(this)
+
+        moimService.deleteMoimMember(group.groupId)
     }
 }
