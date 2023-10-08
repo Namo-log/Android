@@ -14,9 +14,11 @@ import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.category.CategoryDeleteService
 import com.example.namo.data.remote.category.CategoryDeleteView
 import com.example.namo.data.remote.category.PostCategoryResponse
+import com.example.namo.utils.ConfirmDialog
+import com.example.namo.utils.ConfirmDialogInterface
 import com.example.namo.utils.NetworkManager
 
-class CategoryEditActivity : AppCompatActivity(), CategoryDeleteView {
+class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, CategoryDeleteView {
 
     lateinit var binding: ActivityCategoryEditBinding
 
@@ -52,7 +54,13 @@ class CategoryEditActivity : AppCompatActivity(), CategoryDeleteView {
         // 카테고리 삭제 진행
         binding.categoryDeleteIv.setOnClickListener {
             Log.d("CategoryEditActivity", "카테고리삭제 클릭")
-            deleteCategory()
+            // 다이얼로그
+            val title = "카테고리를 삭제하시겠어요?"
+            val content = "삭제하더라도 카테고리에\n포함된 일정은 사라지지 않습니다."
+
+            val dialog = ConfirmDialog(this@CategoryEditActivity, title, content, "삭제", 0)
+            dialog.isCancelable = false
+            dialog.show(this.supportFragmentManager, "ConfirmDialog")
         }
     }
 
@@ -155,6 +163,11 @@ class CategoryEditActivity : AppCompatActivity(), CategoryDeleteView {
 
         // 룸디비에 failList 업데이트하기
         updateCategoryAfterUpload(R.string.event_current_deleted.toString())
+    }
+
+    override fun onClickYesButton(id: Int) {
+        // 삭제 버튼 클릭하면 삭제 진행
+        deleteCategory()
     }
 
 }

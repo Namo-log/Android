@@ -42,13 +42,15 @@ import com.example.namo.data.remote.moim.MoimService
 import com.example.namo.databinding.ActivityGroupScheduleBinding
 import com.example.namo.ui.bottom.home.schedule.map.MapActivity
 import com.example.namo.utils.CalendarUtils.Companion.getInterval
+import com.example.namo.utils.ConfirmDialog
+import com.example.namo.utils.ConfirmDialogInterface
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 import org.joda.time.DateTime
 import java.lang.NullPointerException
 
-class GroupScheduleActivity : AppCompatActivity(), MoimScheduleView {
+class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimScheduleView {
 
     private lateinit var binding : ActivityGroupScheduleBinding
     private lateinit var db : NamoDatabase
@@ -218,9 +220,8 @@ class GroupScheduleActivity : AppCompatActivity(), MoimScheduleView {
         // 삭제 클릭
         binding.scheduleDeleteBtn.setOnClickListener {
             if (!isPostOrEdit) {
-                val moimService = MoimService()
-                moimService.setMoimScheduleView(this)
-                moimService.deleteMoimSchedule(editGroupSchedule.moimScheduleId)
+                // 삭제 확인 다이얼로그 띄우기
+                showDialog()
             }
         }
     }
@@ -429,6 +430,16 @@ class GroupScheduleActivity : AppCompatActivity(), MoimScheduleView {
         mapView.addPOIItem(marker)
     }
 
+    private fun showDialog() {
+        // 탈퇴 확인 다이얼로그
+        val title = "모임 일정을 정말 삭제하시겠어요?"
+        val content = "삭제한 모임 일정은\n모든 참여자의 일정에서 삭제됩니다."
+
+        val dialog = ConfirmDialog(this@GroupScheduleActivity, title, content, "삭제", 0)
+        dialog.isCancelable = false
+        dialog.show(this.supportFragmentManager, "ConfirmDialog")
+    }
+
     override fun onAddMoimScheduleSuccess(response: AddMoimScheduleResponse) {
         Log.d("GroupScheduleActivity", "onAddMoimScheduleSuccess : ${response.result}")
         Toast.makeText(this, "모임 일정이 등록되었습니다.", Toast.LENGTH_SHORT).show()
@@ -460,5 +471,12 @@ class GroupScheduleActivity : AppCompatActivity(), MoimScheduleView {
     override fun onDeleteMoimScheduleFailure(message: String) {
         Log.d("GroupScheduleActivity", "onDeleteMoimScheduleFailure")
         return
+    }
+
+    override fun onClickYesButton(id: Int) {
+        // 일정 삭제 진행
+        val moimService = MoimService()
+        moimService.setMoimScheduleView(this)
+        moimService.deleteMoimSchedule(editGroupSchedule.moimScheduleId)
     }
 }
