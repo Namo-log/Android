@@ -9,8 +9,9 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/gallery_img_iv"
         android:layout_width="300dp"
-        android:layout_height="500dp"
-        android:scaleType="fitXY"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
