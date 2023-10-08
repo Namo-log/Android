@@ -173,7 +173,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         //이벤트
         val eventService = EventService()
         eventService.setGetAllEventView(this)
-        eventService.getAllEvent(time)
+        eventService.getAllEvent()
 
         // 다이어리
         val diaryService = DiaryService()
@@ -457,6 +457,9 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
                 }
                 for (event in serverEvent) {
                     db.eventDao.insertEvent(event)
+//                    if (!event.moimSchedule) {
+//                        db.eventDao.insertEvent(event)
+//                    }
                 }
                 Log.d("TEST_CHECK", "Now categories are ${db.categoryDao.getAllCategorySize()}")
             }

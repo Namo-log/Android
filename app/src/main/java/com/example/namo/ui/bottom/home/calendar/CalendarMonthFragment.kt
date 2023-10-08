@@ -174,6 +174,15 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView,GetGroupMonthView {
 
         })
 
+        groupEventRVAdapter.setGorupContentClickListener(object : DailyGroupRVAdapter.GroupContentClickListener {
+            override fun onGroupContentClick(event: Event) {
+                val intent = Intent(context, ScheduleActivity::class.java)
+                intent.putExtra("event", event)
+                requireActivity().startActivity(intent)
+            }
+
+        })
+
         /** 기록 아이템 클릭 리스너 **/
         personalEventRVAdapter.setRecordClickListener(object : DailyPersonalRVAdapter.DiaryInterface{
             override fun onDetailClicked(event: Event) {

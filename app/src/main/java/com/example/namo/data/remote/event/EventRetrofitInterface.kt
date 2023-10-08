@@ -34,8 +34,7 @@ interface EventRetrofitInterface {
         @Path("yearMonth") yearMonth : String,
     ) : Call<GetMonthEventResponse>
 
-    @GET("schedules/{yearMonth}")
+    @GET("schedules/all")
     fun getAllEvent(
-        @Path("yearMonth") yearMonth : String,
     ) : Call<GetMonthEventResponse>
 }

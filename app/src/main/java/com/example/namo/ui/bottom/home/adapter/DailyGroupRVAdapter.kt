@@ -23,6 +23,14 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
     private val groupDiary = ArrayList<DiaryResponse.MonthDiary>()
     private lateinit var context : Context
 
+    interface GroupContentClickListener {
+        fun onGroupContentClick(event: Event)
+    }
+    private lateinit var groupContentClickListener: GroupContentClickListener
+
+    fun setGorupContentClickListener(groupContentClickListener: GroupContentClickListener) {
+        this.groupContentClickListener = groupContentClickListener
+    }
 
     /** 기록 아이템 클릭 리스너 **/
     interface DiaryInterface {
@@ -44,6 +52,10 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
     override fun onBindViewHolder(holder : ViewHolder, position : Int) {
         holder.bind(group[position])
 
+        holder.binding.itemCalendarEventBaseLayout.setOnClickListener {
+            groupContentClickListener.onGroupContentClick(group[position])
+        }
+        
         holder.binding.itemCalendarEventRecord.setOnClickListener {
             val diary=groupDiary.find {
                 it.scheduleIdx==group[position].serverIdx
