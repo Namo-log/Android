@@ -80,6 +80,6 @@ class DiaryResponse {
         @SerializedName("categoryId") val categoryId: Long,
         @SerializedName("color") val categoryColor: Long,
         @SerializedName("placeName") val placeName: String
-    )
+    ):java.io.Serializable
 }
 

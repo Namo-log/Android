@@ -1,6 +1,6 @@
 package com.example.namo.ui.bottom.diary.mainDiary
 
-import android.annotation.SuppressLint
+
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,12 +17,12 @@ import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.joda.time.DateTime
 
-class GroupDetailFragment : Fragment(), GetGroupDiaryView, DiaryBasicView {
+class GroupDetailFragment : Fragment(), DiaryBasicView {
 
     private var _binding: FragmentDiaryGroupDetailBinding? = null
     private val binding get() = _binding!!
 
-    private var groupScheduleId: Long = 0L
+    private lateinit var groupSchedule:DiaryResponse.MonthDiary
     private lateinit var diaryService: DiaryService
 
     override fun onCreateView(
@@ -35,12 +35,8 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView, DiaryBasicView {
 
         hideBottomNavigation(true)
 
-        groupScheduleId = requireArguments().getLong("groupScheduleId", 0L)
-
+        groupSchedule=requireArguments().getSerializable("groupDiary") as DiaryResponse.MonthDiary
         diaryService = DiaryService()
-        diaryService.getGroupDiary(groupScheduleId)
-        diaryService.getGroupDiaryView(this)
-
 
         bind()
         editMemo()
@@ -48,15 +44,41 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView, DiaryBasicView {
         return binding.root
     }
 
-    @SuppressLint("ResourceAsColor")
-    override fun onGetGroupDiarySuccess(response: DiaryResponse.GetGroupDiaryResponse) {
+    private fun bind() {
 
-        val groupData = response.result
+        binding.diaryBackIv.setOnClickListener {
+            findNavController().popBackStack()
+            hideBottomNavigation(false)
+        }
 
-        val date = DateTime(groupData.startDate * 1000).toString("yyyy.MM.dd (EE)")
-        binding.diaryTitleTv.text = groupData.name
+        binding.groupDiaryDetailLy.setOnClickListener {
+
+            val bundle = Bundle()
+            bundle.putLong("groupScheduleId", groupSchedule.scheduleIdx)
+            findNavController().navigate(
+                R.id.action_groupDetailFragment_to_groupMemoActivity,
+                bundle
+            )
+        }
+
+        binding.diaryDeleteIv.setOnClickListener {
+            binding.diaryContentsEt.text.clear()
+
+            diaryService.addGroupAfterDiary(groupSchedule.scheduleIdx, "")
+            diaryService.diaryBasicView(this)
+        }
+
+        val repo=DiaryRepository(requireContext())
+        val categoryId = requireArguments().getLong("categoryIdx", 0L)
+        val category = repo.getCategory(categoryId,categoryId)
+        context?.resources?.let {
+            binding.itemDiaryCategoryColorIv.background.setTint(category.color)
+        }
+
+        val date = DateTime(groupSchedule.startDate * 1000).toString("yyyy.MM.dd (EE)")
+        binding.diaryTitleTv.text = groupSchedule.title
         binding.diaryInputDateTv.text = date
-        binding.diaryInputPlaceTv.text = groupData.locationName
+        binding.diaryInputPlaceTv.text = groupSchedule.placeName
 
         val galleryViewRVAdapter = GalleryListAdapter(requireContext())
         binding.diaryGallerySavedRy.adapter = galleryViewRVAdapter
@@ -70,56 +92,9 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView, DiaryBasicView {
             )
         )
 
-        val groupEvent = groupData.locationDtos
-        galleryViewRVAdapter.addImages(getImagesByLocationId(groupEvent))
+        galleryViewRVAdapter.addImages(groupSchedule.imgUrl)
 
-    }
-
-    private fun getImagesByLocationId(locationDto: List<DiaryResponse.LocationDto>): List<String> {
-        val imagesList = mutableListOf<String>()
-
-        for (locationDtos in locationDto) {
-            val urls = locationDtos.imgs.take(3) // 최대 3개의 이미지 가져오기
-            imagesList.addAll(urls)
-
-        }
-        return imagesList
-    }
-
-    override fun onGetGroupDiaryFailure(message: String) {
-        Log.d("Error", message)
-    }
-
-    private fun bind() {
-
-        binding.diaryBackIv.setOnClickListener {
-            findNavController().popBackStack()
-            hideBottomNavigation(false)
-        }
-
-        binding.groupDiaryDetailLy.setOnClickListener {
-
-            val bundle = Bundle()
-            bundle.putLong("groupScheduleId", groupScheduleId)
-            findNavController().navigate(
-                R.id.action_groupDetailFragment_to_groupMemoActivity,
-                bundle
-            )
-        }
-
-        binding.diaryDeleteIv.setOnClickListener {
-            binding.diaryContentsEt.text.clear()
-
-            diaryService.addGroupAfterDiary(groupScheduleId, "")
-            diaryService.diaryBasicView(this)
-        }
-
-        val repo=DiaryRepository(requireContext())
-        val categoryId = requireArguments().getLong("categoryIdx", 0L)
-        val category = repo.getCategory(categoryId,categoryId)
-        context?.resources?.let {
-            binding.itemDiaryCategoryColorIv.background.setTint(category.color)
-        }
+        binding.diaryContentsEt.setText(groupSchedule.content)
     }
 
     private fun editMemo() {
@@ -128,10 +103,9 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView, DiaryBasicView {
 
         binding.diaryEditTv.setOnClickListener {
 
-            diaryService.addGroupAfterDiary(groupScheduleId, binding.diaryContentsEt.text.toString())
+            diaryService.addGroupAfterDiary(groupSchedule.scheduleIdx, binding.diaryContentsEt.text.toString())
             diaryService.diaryBasicView(this)
             findNavController().popBackStack()
-            Log.d("sdfe",content)
         }
 
         if (content.isEmpty()) {

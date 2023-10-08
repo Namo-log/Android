@@ -299,9 +299,13 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         // 상세보기 버튼 클릭리스너
 
         val bundle = Bundle()
-
-        bundle.putLong("groupScheduleId",item.eventId)
-        bundle.putLong("categoryIdx",item.event_category_idx)
+        val monthDiary = item.images?.let {
+            DiaryResponse.MonthDiary(
+                item.eventId, item.event_title, item.event_start, item.content,
+                it, item.event_category_idx, 0L, item.event_place_name
+            )
+        }
+        bundle.putSerializable("groupDiary", monthDiary)
 
         val detailFrag = GroupDetailFragment()
         detailFrag.arguments = bundle
