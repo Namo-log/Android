@@ -23,12 +23,13 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/ic_back"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/diary_title_tv"
+                style="@style/title_text"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -36,21 +37,19 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="UMC 스터디"
+                app:layout_constraintBottom_toBottomOf="@id/diary_back_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/diary_back_iv"
-                app:layout_constraintBottom_toBottomOf="@id/diary_back_iv"
-                style="@style/title_text"/>
+                app:layout_constraintTop_toTopOf="@id/diary_back_iv" />
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/diary_delete_iv"
                 android:layout_width="40dp"
                 android:layout_height="47dp"
                 android:src="@drawable/ic_delete_schedule"
+                app:layout_constraintBottom_toBottomOf="@id/diary_back_iv"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/diary_back_iv"
-                app:layout_constraintBottom_toBottomOf="@id/diary_back_iv"/>
+                app:layout_constraintTop_toTopOf="@id/diary_back_iv" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -67,8 +66,8 @@
             android:paddingTop="13dp"
             android:paddingEnd="20dp"
             android:paddingBottom="10dp"
-            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintBottom_toBottomOf="@id/diary_place_tv"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintStart_toStartOf="@id/linear_corner"
             app:layout_constraintTop_toTopOf="@id/diary_date_tv">
 
@@ -76,7 +75,6 @@
                 android:id="@+id/diary_today_day_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Feb"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -84,7 +82,6 @@
                 android:id="@+id/diary_today_num_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="11"
                 android:textSize="35sp"
                 android:textStyle="bold" />
 
@@ -98,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
             android:layout_marginTop="35dp"
-            android:text="날짜"
+            android:text="@string/diary_date"
             android:textColor="#555555"
             android:textSize="17sp"
             android:textStyle="bold"
@@ -110,7 +107,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="2022.07.14"
             android:textSize="17sp"
             app:layout_constraintStart_toEndOf="@id/diary_date_tv"
             app:layout_constraintTop_toTopOf="@id/diary_date_tv" />
@@ -120,7 +116,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:text="장소"
+            android:text="@string/diary_place"
             android:textColor="#555555"
             android:textSize="17sp"
             android:textStyle="bold"
@@ -132,7 +128,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="탐앤탐스 건대점"
             android:textSize="17sp"
             app:layout_constraintStart_toEndOf="@id/diary_place_tv"
             app:layout_constraintTop_toTopOf="@id/diary_place_tv" />
@@ -170,7 +165,7 @@
                 android:layout_height="150dp"
                 android:background="@drawable/ic_category_base_corner"
                 android:gravity="start"
-                android:hint="기록 입력"
+                android:hint="@string/diary_put"
                 android:padding="10dp" />
         </LinearLayout>
 
@@ -196,7 +191,7 @@
             android:layout_height="60dp"
             android:background="@color/MainOrange"
             android:padding="15dp"
-            android:text="기록 추가"
+            android:text="@string/diary_add"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="16sp"
@@ -222,15 +217,16 @@
                     android:id="@+id/diary_gallery_saved_ry"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:listitem="@layout/item_gallery_list"
+                    android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    android:orientation="horizontal" />
+                    tools:listitem="@layout/item_gallery_list" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/diary_gallery_click_iv"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_width="105dp"
+                    android:layout_height="105dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="3dp"
                     android:background="@drawable/gallery_background"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_gallery" />

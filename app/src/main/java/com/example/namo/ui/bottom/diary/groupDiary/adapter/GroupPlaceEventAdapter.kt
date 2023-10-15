@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.diary.DiaryGroupEvent
 import com.example.namo.data.remote.diary.DiaryRepository
 import com.example.namo.databinding.ItemDiaryGroupEventBinding
+import java.text.NumberFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class GroupPlaceEventAdapter(
@@ -45,7 +48,7 @@ class GroupPlaceEventAdapter(
         val updatedPosition = holder.bindingAdapterPosition
 
         // 정산 다이얼로그
-        holder.binding.itemPlaceMoneyTv.text = event.pay.toString()
+        holder.binding.itemPlaceMoneyTv.text = NumberFormat.getNumberInstance(Locale.US).format(event.pay)
         holder.binding.clickMoneyLy.setOnClickListener {
             payClickListener(event.pay, updatedPosition, holder.binding.itemPlaceMoneyTv)
         }

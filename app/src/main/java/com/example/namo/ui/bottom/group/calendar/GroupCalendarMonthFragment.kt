@@ -159,6 +159,8 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
             override fun onGroupMemoClicked(groupEvent: MoimSchedule) {
                 Log.d("GROUP_DIARY_CLICK", groupEvent.toString())
                 val intent = Intent(context, GroupMemoActivity::class.java)
+                intent.putExtra("hasGroupPlace",groupEvent.hasDiaryPlace)
+                intent.putExtra("groupScheduleId", groupEvent.moimScheduleId)
                 intent.putExtra("groupEvent", groupEvent)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 requireActivity().startActivity(intent)

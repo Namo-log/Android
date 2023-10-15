@@ -22,7 +22,7 @@ class GroupDetailFragment : Fragment(), DiaryBasicView {
     private var _binding: FragmentDiaryGroupDetailBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var groupSchedule:DiaryResponse.MonthDiary
+    private lateinit var groupSchedule: DiaryResponse.MonthDiary
     private lateinit var diaryService: DiaryService
 
     override fun onCreateView(
@@ -35,7 +35,7 @@ class GroupDetailFragment : Fragment(), DiaryBasicView {
 
         hideBottomNavigation(true)
 
-        groupSchedule=requireArguments().getSerializable("groupDiary") as DiaryResponse.MonthDiary
+        groupSchedule = requireArguments().getSerializable("groupDiary") as DiaryResponse.MonthDiary
         diaryService = DiaryService()
 
         bind()
@@ -51,9 +51,10 @@ class GroupDetailFragment : Fragment(), DiaryBasicView {
             hideBottomNavigation(false)
         }
 
-        binding.groupDiaryDetailLy.setOnClickListener {
+        binding.groupDiaryDetailLy.setOnClickListener {// 그룹 다이어리 장소 아이템 추가 화면으로 이동
 
             val bundle = Bundle()
+            bundle.putBoolean("hasGroupPlace",true)
             bundle.putLong("groupScheduleId", groupSchedule.scheduleIdx)
             findNavController().navigate(
                 R.id.action_groupDetailFragment_to_groupMemoActivity,
@@ -68,9 +69,9 @@ class GroupDetailFragment : Fragment(), DiaryBasicView {
             diaryService.diaryBasicView(this)
         }
 
-        val repo=DiaryRepository(requireContext())
+        val repo = DiaryRepository(requireContext())
         val categoryId = requireArguments().getLong("categoryIdx", 0L)
-        val category = repo.getCategory(categoryId,categoryId)
+        val category = repo.getCategory(categoryId, categoryId)
         context?.resources?.let {
             binding.itemDiaryCategoryColorIv.background.setTint(category.color)
         }
@@ -99,18 +100,19 @@ class GroupDetailFragment : Fragment(), DiaryBasicView {
 
     private fun editMemo() {
 
-       val  content = binding.diaryContentsEt.text.toString()
+        val content = binding.diaryContentsEt.text.toString()
 
         binding.diaryEditTv.setOnClickListener {
 
-            diaryService.addGroupAfterDiary(groupSchedule.scheduleIdx, binding.diaryContentsEt.text.toString())
+            diaryService.addGroupAfterDiary(
+                groupSchedule.scheduleIdx,
+                binding.diaryContentsEt.text.toString()
+            )
             diaryService.diaryBasicView(this)
-            findNavController().popBackStack()
         }
 
-        if (content.isEmpty()) {
-            binding.diaryDeleteIv.visibility = View.GONE
-            binding.diaryEditTv.text = "기록 저장"
+        if (content.isEmpty()) {  // 그룹 기록 내용이 없으면, 기록 저장
+            binding.diaryEditTv.text = resources.getString(R.string.diary_add)
             binding.diaryEditTv.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
@@ -119,9 +121,8 @@ class GroupDetailFragment : Fragment(), DiaryBasicView {
             )
             binding.diaryEditTv.setBackgroundResource(R.color.MainOrange)
 
-        } else {
-            binding.diaryDeleteIv.visibility = View.VISIBLE
-            binding.diaryEditTv.text = "기록 수정"
+        } else {  // 내용이 있으면, 기록 수정
+            binding.diaryEditTv.text = resources.getString(R.string.diary_edit)
             binding.diaryEditTv.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
@@ -150,11 +151,13 @@ class GroupDetailFragment : Fragment(), DiaryBasicView {
     }
 
     override fun onSuccess(response: DiaryResponse.DiaryResponse) {
-        Log.e("addGroupDiaryAfter", response.toString())
+        findNavController().popBackStack()
+        Log.d("addGroupDiaryAfter", "SUCCESS")
     }
 
     override fun onFailure(message: String) {
-        Log.e("addGroupDiaryAfter", message)
+        findNavController().popBackStack()
+        Log.d("addGroupDiaryAfter", message)
     }
 
 

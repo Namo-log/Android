@@ -30,15 +30,21 @@ import com.example.namo.data.remote.moim.MoimSchedule
 import com.example.namo.databinding.ActivityDiaryGroupMemoBinding
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupMemberRVAdapter
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupPlaceEventAdapter
+import com.example.namo.utils.ConfirmDialog
+import com.example.namo.utils.ConfirmDialogInterface
 import org.joda.time.DateTime
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
-class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 다이어리 추가, 수정, 삭제 화면
+class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
+    ConfirmDialogInterface {  // 그룹 다이어리 추가, 수정, 삭제 화면
 
     private lateinit var binding: ActivityDiaryGroupMemoBinding
 
-    private lateinit var memberadapter: GroupMemberRVAdapter
-    private lateinit var placeadapter: GroupPlaceEventAdapter
+    private lateinit var memberadapter: GroupMemberRVAdapter  // 그룹 멤버 리스트 보여주기
+    private lateinit var placeadapter: GroupPlaceEventAdapter // 각 장소 item
 
     private lateinit var groupMembers: List<DiaryResponse.GroupUser>
     private lateinit var groupData: DiaryResponse.GroupDiaryResult
@@ -52,10 +58,11 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
     private var imgList: ArrayList<String?> = ArrayList() // 장소별 이미지
     private var positionForGallery: Int = -1
-    private var groupScheduleId:Long=0L
+    private var groupScheduleId: Long = 0L
 
     private val itemTouchSimpleCallback = ItemTouchHelperCallback()
     private val itemTouchHelper = ItemTouchHelper(itemTouchSimpleCallback)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,17 +71,54 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
         repo = DiaryRepository(this)
 
-        if (intent.hasExtra("groupEvent")){
-        moimSchedule = intent?.getSerializableExtra("groupEvent") as MoimSchedule}
+        groupScheduleId = intent.getLongExtra("groupScheduleId", 0L)  // 그룹 스케줄 아이디
+        val getHasDiaryBoolean = intent.getBooleanExtra("hasGroupPlace", false)
 
-        val getScheduleIdx = intent.getLongExtra("groupScheduleId", 0L)
-        groupScheduleId =
-            if (getScheduleIdx != 0L) getScheduleIdx else moimSchedule.moimScheduleId
+        hasDiaryPlace(getHasDiaryBoolean)
+        onClickListener()
 
-        val diaryService = DiaryService()
-        diaryService.getGroupDiary(groupScheduleId)
-        diaryService.getGroupDiaryView(this)
     }
+
+    private fun hasDiaryPlace(getHasDiaryBoolean: Boolean) {
+        if (!getHasDiaryBoolean) {  // groupPlace가 없을 때, 저장하기
+            moimSchedule = intent?.getSerializableExtra("groupEvent") as MoimSchedule
+            initialize()
+            bind()
+
+            binding.groupSaveTv.text = resources.getString(R.string.diary_add)
+            binding.groupSaveTv.setTextColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.white
+                )
+            )
+            binding.groupSaveTv.setBackgroundResource(R.color.MainOrange)
+            binding.diaryDeleteIv.visibility = View.GONE
+
+            addPlace()
+
+        } else { // groupPlace가 있을 때, 서버에서 데이터 가져오고 수정하기
+
+            val diaryService = DiaryService()
+            diaryService.getGroupDiary(groupScheduleId)
+            diaryService.getGroupDiaryView(this)
+
+            binding.groupSaveTv.text = resources.getString(R.string.diary_edit)
+            binding.groupSaveTv.setTextColor(
+                ContextCompat.getColor(
+                    this,
+                    R.color.MainOrange
+                )
+            )
+            binding.groupSaveTv.setBackgroundResource(R.color.white)
+            binding.diaryDeleteIv.visibility = View.VISIBLE
+
+            editPlace()
+            deletePlace()
+        }
+
+    }
+
 
     @SuppressLint("SimpleDateFormat", "NotifyDataSetChanged")
     override fun onGetGroupDiarySuccess(response: DiaryResponse.GetGroupDiaryResponse) {
@@ -106,37 +150,15 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
         binding.groupAddTitleTv.text = groupData.name
 
         onRecyclerView()
-        onClickListener()
-
-        if (placeEvent.size == 0) {
-            binding.groupSaveTv.text = "기록 저장"
-            binding.groupSaveTv.setTextColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.white
-                )
-            )
-            binding.groupSaveTv.setBackgroundResource(R.color.MainOrange)
-
-            addPlace()
-
-        } else {
-            binding.groupSaveTv.text = "기록 수정"
-            binding.groupSaveTv.setTextColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.MainOrange
-                )
-            )
-            binding.groupSaveTv.setBackgroundResource(R.color.white)
-
-            editPlace()
-        }
     }
 
     override fun onGetGroupDiaryFailure(message: String) {
-        Log.d("GET_GROUP_DIARY", message)
+        Log.e("GET_GROUP_DIARY", message)
+    }
 
+    private fun bind() {
+
+        // 그룹 장소가 없을 떄, 그룹 스케줄에서 가져온 데이터 바인딩
         val formatDate = DateTime(moimSchedule.startDate * 1000).toString("yyyy.MM.dd (EE)")
 
         binding.groupAddInputDateTv.text = formatDate
@@ -161,17 +183,12 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
         memberIntList = groupMembers.map { it.userId }
 
         onRecyclerView()
-        onClickListener()
 
-        addPlace()
     }
-
 
     private fun addPlace() {
 
-        initialize()
-
-        binding.groupSaveTv.setOnClickListener {// 저장하기
+        binding.groupSaveTv.setOnClickListener {// 저장
 
             placeEvent.map {
                 repo.addMoimDiary(
@@ -189,7 +206,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
     private fun editPlace() {
 
-        binding.groupSaveTv.setOnClickListener {
+        binding.groupSaveTv.setOnClickListener {  // 수정
 
             placeEvent.forEach {
                 if (it.placeIdx == 0L) {
@@ -222,6 +239,31 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
     }
 
+    private fun deletePlace() {  // 장소 전체 삭제 버튼
+        binding.diaryDeleteIv.setOnClickListener {
+            showDeleteDialog()
+        }
+    }
+
+    private fun showDeleteDialog() {
+        // 삭제 확인 다이얼로그
+        val title = "모임 기록을 정말 삭제하시겠어요?"
+        val content = "삭제한 모든 모임 기록은\n개인 기록 페이지에서도 삭제됩니다."
+
+        val dialog = ConfirmDialog(this, title, content, "삭제", 0)
+        dialog.isCancelable = false
+        dialog.show(this.supportFragmentManager, "ConfirmDialog")
+    }
+
+    override fun onClickYesButton(id: Int) {
+        // 모임 기록 전체 삭제
+        placeEvent.map {
+            val repo = DiaryRepository(this)
+            repo.deleteGroupPlace(it.placeIdx)
+            finish()
+        }
+    }
+
     private fun initialize() {
         with(placeEvent) {
             add(DiaryGroupEvent("", 0, arrayListOf(), arrayListOf()))
@@ -246,7 +288,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
                 payClickListener = { _, position, payText ->
                     GroupPayDialog(groupMembers, placeEvent[position], {
                         placeEvent[position].pay = it
-                        payText.text = it.toString()
+                        payText.text = NumberFormat.getNumberInstance(Locale.US).format(it)
 
                     }, {
                         placeEvent[position].members = it
@@ -315,7 +357,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
 
     }
 
-    private fun setMember(isVisible: Boolean) {
+    private fun setMember(isVisible: Boolean) {  // 그룹 멤버 리스트 세팅
         if (isVisible) {
             binding.groupAddPeopleRv.visibility = View.GONE
             binding.bottomArrow.visibility = View.VISIBLE
@@ -329,7 +371,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
     }
 
     @SuppressLint("IntentReset")
-    private fun getPermission() {
+    private fun getPermission() { // 갤러리 권한 여부 확인, 권한이 있을 때만 이미지 가져오기
 
         val writePermission = ContextCompat.checkSelfPermission(
             applicationContext,
@@ -422,5 +464,6 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView {  // 그룹 �
         }
         return super.dispatchTouchEvent(ev)
     }
+
 
 }

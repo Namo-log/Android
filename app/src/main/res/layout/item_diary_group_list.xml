@@ -55,21 +55,36 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
 
-                <TextView
-                    android:id="@+id/diary_detail_view_tv"
+                <LinearLayout
+                    android:id="@+id/edit_ly"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="13dp"
-                    android:layout_marginBottom="18dp"
-                    android:text="@string/diary_detail_view"
-                    android:textColor="@color/textGray"
-                    android:textSize="12sp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="15dp"
                     app:layout_constraintBottom_toBottomOf="@id/layout"
-                    app:layout_constraintEnd_toEndOf="@id/item_diary_title_tv"
-                    app:layout_constraintHorizontal_bias="0.166"
                     app:layout_constraintStart_toStartOf="@id/item_diary_title_tv"
                     app:layout_constraintTop_toBottomOf="@id/item_diary_title_tv"
-                    app:layout_constraintVertical_bias="1.0" />
+                    app:layout_constraintVertical_bias="1.0">
+
+                    <ImageView
+                        android:id="@+id/diary_edit_iv"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:background="@drawable/ic_add_record"
+                        android:backgroundTint="@color/textGray"
+                        android:contentDescription="@string/diary_modify" />
+
+                    <TextView
+                        android:id="@+id/diary_edit_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="3dp"
+                        android:text="@string/diary_modify"
+                        android:textColor="@color/textGray"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/item_diary_content_tv"
