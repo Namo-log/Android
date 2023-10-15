@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.namo.databinding.ItemDiaryListGalleryBinding
@@ -37,7 +38,8 @@ class DiaryGalleryRVAdapter(
 
         Glide.with(context)
             .load(uri)
-            .apply(requestOptions.transform(RoundedCorners(50)))
+            .transform(CenterCrop(), RoundedCorners(30)) // centerCrop, 이미지 모서리 설정
+            .apply(requestOptions)
             .into(holder.imageUrl)
 
         holder.imageUrl.setOnClickListener {

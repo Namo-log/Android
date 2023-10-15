@@ -17,6 +17,9 @@ import com.example.namo.data.remote.diary.DiaryResponse
 import com.example.namo.databinding.DialogGroupPayBinding
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupPayMemberRVAdapter
 import java.lang.Boolean.TRUE
+import java.text.NumberFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class GroupPayDialog(
@@ -30,6 +33,8 @@ class GroupPayDialog(
     private lateinit var payMemberRVAdapter: GroupPayMemberRVAdapter
 
     private var memberIsChecked = mutableListOf<Pair<Long, Boolean>>()
+    private var memberCount = 0
+    private var totalPay: Long = 0L
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -40,12 +45,12 @@ class GroupPayDialog(
 
         binding = DialogGroupPayBinding.inflate(inflater, container, false)
 
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))  //배경 투명하게
-        dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)  //dialog 모서리 둥글게
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))  // 배경 투명하게
+        dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)  // dialog 모서리 둥글게
 
-        val memberIntList = placeMember.map { it.userId }
+        val memberIntList = placeMember.map { it.userId }  // 그룹 멤버의 Id만 가져와서 리스트 만들기
 
-        memberIsChecked.addAll(memberIntList.map { userId ->
+        memberIsChecked.addAll(memberIntList.map { userId ->  // 체크된 그룹 멤버 false로 초기화
             userId to false
         })
 
@@ -55,21 +60,32 @@ class GroupPayDialog(
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val originalText = s.toString()
+                if (originalText.isNotEmpty()) {
+                    val cleanNumber = originalText.replace(",", "").toLong()
+                    val formattedNumber = NumberFormat.getNumberInstance(Locale.US).format(cleanNumber)
+                    binding.groupPayTotalEt.removeTextChangedListener(this) // 변경 이벤트 무한 루프 방지
+                    binding.groupPayTotalEt.setText(formattedNumber)
+                    binding.groupPayTotalEt.setSelection(formattedNumber.length) // 커서를 마지막으로 이동
+                    binding.groupPayTotalEt.addTextChangedListener(this)
+                }
                 updateResultText()
             }
+
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        if (placeEvent.pay != 0L) {
-            val memberSize = placeEvent.members.size
-            binding.groupPayCountTv.text = memberSize.toString()
-            binding.groupPayTotalEt.setText(placeEvent.pay.toString())
+        if (placeEvent.pay != 0L) { // 가져온 데이터 할당
+            memberCount = placeEvent.members.size
+            totalPay = placeEvent.pay
+            binding.groupPayCountTv.text = memberCount.toString()
+            binding.groupPayTotalEt.setText(NumberFormat.getNumberInstance(Locale.US).format(totalPay))
             updateResultText()
 
             for (i in placeEvent.members) {
                 val index = memberIsChecked.indexOfFirst { it.first == i }
                 if (index != -1) {
-                    memberIsChecked[index] = i to true
+                    memberIsChecked[index] = i to true // 체크된 그룹 멤버 true로 변경
                 }
             }
         }
@@ -101,8 +117,11 @@ class GroupPayDialog(
 
                 val checkedPeopleCount = memberIsChecked.count {
                     it.second
-                }
-                binding.groupPayCountTv.text = "$checkedPeopleCount"
+                } // 체크된 멤버 수
+
+                memberCount = checkedPeopleCount
+                binding.groupPayCountTv.text = memberCount.toString()
+
                 updateResultText()
             }
         })
@@ -110,15 +129,13 @@ class GroupPayDialog(
 
 
     private fun updateResultText() {
-        val totalText = binding.groupPayTotalEt.text.toString()
 
-        if (totalText.isNotEmpty() && totalText.toIntOrNull() != null) {
-            val totalPay = totalText.toLong()
-            val memberSize = binding.groupPayCountTv.text.toString().toLong()
+        totalPay = binding.groupPayTotalEt.text.toString().replace(",", "").toLong()  // 구분자 빼고 총 정산 금액 가져 오기
+        if (totalPay.toString().isNotEmpty()) {
 
-            if (memberSize != 0L) {
-                val result = totalPay / memberSize
-                binding.groupPayResultTv.text = result.toString()
+            if (memberCount != 0) {
+                val result = totalPay / memberCount
+                binding.groupPayResultTv.text = NumberFormat.getNumberInstance(Locale.US).format(result)
             } else {
                 binding.groupPayResultTv.text = "0"
             }
@@ -138,10 +155,9 @@ class GroupPayDialog(
             }
             groupPaySaveTv.setOnClickListener {
 
-                val totalPay = binding.groupPayTotalEt.text.toString().toLong()
                 pay(totalPay)
 
-                val checkedMemberId = mutableListOf<Long>()
+                val checkedMemberId = mutableListOf<Long>()  // 체크된 멤버 아이디 리스트
 
                 for (i in memberIsChecked.indices) {
                     if (memberIsChecked[i].second) {

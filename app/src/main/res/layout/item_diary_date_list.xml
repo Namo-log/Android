@@ -44,41 +44,48 @@
 
                 <TextView
                     android:id="@+id/item_diary_title_tv"
-                    android:layout_width="80dp"
+                    android:layout_width="75dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:textColor="#555555"
                     android:textSize="16sp"
                     android:textStyle="bold"
+                    android:ellipsize="end"
+                    android:maxLines="2"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
-                    android:id="@+id/diary_edit_iv"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginTop="13dp"
+                <LinearLayout
+                    android:id="@+id/edit_ly"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
                     android:layout_marginBottom="10dp"
-                    android:contentDescription="@string/diary_modify"
-                    android:backgroundTint="@color/textGray"
-                    android:background="@drawable/ic_add_record"
                     app:layout_constraintBottom_toBottomOf="@id/layout"
                     app:layout_constraintStart_toStartOf="@id/item_diary_title_tv"
                     app:layout_constraintTop_toBottomOf="@id/item_diary_title_tv"
-                    app:layout_constraintVertical_bias="1.0" />
+                    app:layout_constraintVertical_bias="1.0">
 
-                <TextView
-                    android:id="@+id/diary_edit_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:text="@string/diary_modify"
-                    android:textColor="@color/textGray"
-                    android:textSize="12sp"
-                    app:layout_constraintBottom_toBottomOf="@id/diary_edit_iv"
-                    app:layout_constraintStart_toEndOf="@id/diary_edit_iv"
-                    app:layout_constraintTop_toTopOf="@id/diary_edit_iv" />
+                    <ImageView
+                        android:id="@+id/diary_edit_iv"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:background="@drawable/ic_add_record"
+                        android:backgroundTint="@color/textGray"
+                        android:contentDescription="@string/diary_modify" />
+
+                    <TextView
+                        android:id="@+id/diary_edit_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="3dp"
+                        android:text="@string/diary_modify"
+                        android:textColor="@color/textGray"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/item_diary_content_tv"
@@ -107,14 +114,13 @@
                     android:id="@+id/diary_gallery_rv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="10dp"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/layout"
-                    app:layout_constraintStart_toEndOf="@id/item_diary_title_tv"
+                    app:layout_constraintStart_toStartOf="@id/item_diary_content_tv"
+                    app:layout_constraintEnd_toEndOf="@id/item_diary_content_tv"
                     app:layout_constraintTop_toBottomOf="@id/view_more"
                     tools:listitem="@layout/item_diary_list_gallery" />
 

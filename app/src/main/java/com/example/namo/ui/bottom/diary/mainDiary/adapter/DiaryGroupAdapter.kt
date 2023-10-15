@@ -100,7 +100,7 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
         private val context: Context,
         private val imageClickListener: (String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        val onclick = binding.diaryDetailViewTv
+        val onclick = binding.editLy
 
         @SuppressLint("ResourceAsColor")
         fun bind(item: DiaryGroupItem.Content) {

@@ -98,7 +98,7 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
         private val context: Context,
         private val imageClickListener: (String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        val onclick = binding.diaryEditTv
+        val onclick = binding.editLy
 
         fun bind(item: DiaryItem.Content) {
             binding.apply {

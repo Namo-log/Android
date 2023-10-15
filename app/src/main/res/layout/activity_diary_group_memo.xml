@@ -30,7 +30,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/group_add_back_iv"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
@@ -50,6 +50,15 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/group_add_back_iv" />
 
+                <ImageView
+                    android:id="@+id/diary_delete_iv"
+                    android:layout_width="40dp"
+                    android:layout_height="47dp"
+                    android:src="@drawable/ic_delete_schedule"
+                    app:layout_constraintBottom_toBottomOf="@id/group_add_back_iv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/group_add_back_iv" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
@@ -58,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="25dp"
-                android:text="날짜"
+                android:text="@string/diary_date"
                 android:textColor="#555555"
                 android:textSize="17sp"
                 android:textStyle="bold"
@@ -80,7 +89,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="10dp"
-                android:text="장소"
+                android:text="@string/diary_place"
                 android:textColor="#555555"
                 android:textSize="17sp"
                 android:textStyle="bold"
@@ -109,7 +118,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/group_add_place_tv" />
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/bottom_arrow"
                 android:layout_width="15dp"
                 android:layout_height="20dp"
@@ -119,7 +128,7 @@
                 app:layout_constraintEnd_toEndOf="@id/group_add_top"
                 app:layout_constraintTop_toTopOf="@+id/group_add_people_tv" />
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/up_arrow"
                 android:layout_width="15dp"
                 android:layout_height="20dp"
@@ -179,7 +188,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center">
 
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/groud_place_add_iv"
                             android:layout_width="150dp"
                             android:layout_height="40dp"

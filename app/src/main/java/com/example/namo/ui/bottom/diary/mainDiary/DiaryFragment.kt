@@ -3,7 +3,6 @@ package com.example.namo.ui.bottom.diary.mainDiary
 
 import DiaryAdapter
 import DiaryItem
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
@@ -29,7 +28,9 @@ import com.example.namo.ui.bottom.diary.mainDiary.adapter.DiaryGroupAdapter
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.DiaryGroupItem
 import com.example.namo.utils.NetworkManager
 import com.example.namo.databinding.FragmentDiaryBinding
+import com.example.namo.ui.bottom.home.calendar.SetMonthDialog
 import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import kotlin.math.roundToInt
 
 
@@ -38,7 +39,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
     private var _binding: FragmentDiaryBinding? = null
     private val binding get() = _binding!!
 
-    private var dateTime = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
+    private var dateTime = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis // 현재 연월 밀리초
     private var currentYearMonth: String = ""
 
     private lateinit var sf: SharedPreferences
@@ -61,7 +62,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         yearMonthTextView = DateTime(dateTime).toString("yyyy.MM")
         sf = requireContext().getSharedPreferences("sf", Context.MODE_PRIVATE)
 
-        val savedYearMonth = sf.getString("yearMonth", yearMonthTextView)
+        val savedYearMonth = sf.getString("yearMonth", yearMonthTextView)  // 다른 화면으로 넘어가도 텍스트 유지
         if (savedYearMonth != null) {
             yearMonthTextView = savedYearMonth
         }
@@ -78,6 +79,35 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         return binding.root
     }
 
+
+    private fun dialogCreate() {
+
+        binding.diaryMonthLl.setOnClickListener {
+
+            dateTime = convertYearMonthToMillis(yearMonthTextView) // 화면에 표시된 텍스트를 밀리초로 받음
+            SetMonthDialog(requireContext(), dateTime) { selectedYearMonth ->
+                yearMonthTextView = DateTime(selectedYearMonth).toString("yyyy.MM")
+                binding.diaryMonth.text = yearMonthTextView
+
+                if (yearMonthTextView != currentYearMonth) {
+                    currentYearMonth = yearMonthTextView
+                }
+                val editor = sf.edit()
+                editor.putString("yearMonth", yearMonthTextView)
+                editor.apply()
+
+                getList()
+            }.show()
+        }
+    }
+
+    private fun convertYearMonthToMillis(yearMonthStr: String, pattern: String = "yyyy.MM"): Long {  // yyyy.MM 타입을 밀리초로 변경
+
+        val formatter = DateTimeFormat.forPattern(pattern)
+        val dateTime = formatter.parseDateTime(yearMonthStr)
+        return dateTime.toDate().time
+
+    }
 
     private fun getList() {
 
@@ -166,29 +196,6 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
     }
 
 
-    private fun dialogCreate() {
-
-        binding.diaryMonthLl.setOnClickListener {
-
-            val year = yearMonthTextView.split(".")[0]
-            val month = yearMonthTextView.split(".")[1]
-
-            YearMonthDialog(year.toInt(), month.toInt()) { selectedYearMonth ->
-                yearMonthTextView = DateTime(selectedYearMonth).toString("yyyy.MM")
-                binding.diaryMonth.text = yearMonthTextView
-                if (yearMonthTextView != currentYearMonth) {
-                    currentYearMonth = yearMonthTextView
-                }
-                val editor = sf.edit()
-                editor.putString("yearMonth", yearMonthTextView)
-                editor.apply()
-
-                getList()
-            }.show(parentFragmentManager, "test")
-        }
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
     private fun getPersonalList() {
 
         binding.diaryPersonalListRv.visibility = View.VISIBLE
@@ -268,9 +275,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
     }
 
-    private fun onEditClickListener(item: DiaryItem.Content) {
-
-        // 수정 버튼 클릭리스너
+    private fun onEditClickListener(item: DiaryItem.Content) {  // 개인 기록 수정 클릭리스너
 
         val bundle = Bundle()
 
@@ -294,9 +299,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
     }
 
-    private fun onDetailClickListener(item: DiaryGroupItem.Content) {
-
-        // 상세보기 버튼 클릭리스너
+    private fun onDetailClickListener(item: DiaryGroupItem.Content) {  // 그룹 기록 수정 클릭리스너
 
         val bundle = Bundle()
         val monthDiary = item.images?.let {
@@ -334,7 +337,6 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
             )
         }
 
-
         // 달 별 메모 없으면 없다고 띄우기
         if (result.isNotEmpty()) {
             binding.diaryGroupListRv.visibility = View.VISIBLE
@@ -347,14 +349,6 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         val diaryItems = list.toListItems()
 
         diaryGroupAdapter.updateData(diaryItems)
-
-        // 달 별 메모 없으면 없다고 띄우기
-        if (diaryItems.isNotEmpty()) {
-            binding.diaryGroupListRv.visibility = View.VISIBLE
-        } else {
-            binding.diaryGroupListRv.visibility = View.GONE
-            binding.diaryListEmptyTv.visibility = View.VISIBLE
-        }
     }
 
     override fun onGetGroupMonthFailure(message: String) {

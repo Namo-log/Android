@@ -105,9 +105,9 @@ class PeraonalDetailFragment : Fragment(), ConfirmDialogInterface {  // 다이�
 
     private fun hasDiary() {
 
-        if (event.hasDiary == 0) {
+        if (event.hasDiary == 0) {  // 기록 없을 때, 추가
 
-            binding.diaryEditTv.text = "기록 저장"
+            binding.diaryEditTv.text = resources.getString(R.string.diary_add)
             binding.diaryEditTv.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
@@ -121,10 +121,10 @@ class PeraonalDetailFragment : Fragment(), ConfirmDialogInterface {  // 다이�
                 insertData()
             }
 
-        } else {
+        } else {  // 기록 있을 떄, 수정
 
             getDiary()
-            binding.diaryEditTv.text = "기록 수정"
+            binding.diaryEditTv.text = resources.getString(R.string.diary_edit)
             binding.diaryEditTv.setTextColor(
                 ContextCompat.getColor(
                     requireContext(),
