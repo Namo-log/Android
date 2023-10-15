@@ -93,8 +93,9 @@ class ScheduleActivity : AppCompatActivity(), DeleteEventView, ConfirmDialogInte
     private fun showDialog() {
         // 삭제 확인 다이얼로그
         val title = "일정을 정말 삭제하시겠습니까?"
+        val content = "일정 삭제 시, 해당 일정에 대한\n" + "기록 또한 삭제됩니다."
 
-        val dialog = ConfirmDialog(this@ScheduleActivity, title, null, "삭제", 0)
+        val dialog = ConfirmDialog(this@ScheduleActivity, title, content, "삭제", 0)
         dialog.isCancelable = false
         dialog.show(this.supportFragmentManager, "ConfirmDialog")
     }
