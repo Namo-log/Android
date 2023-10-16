@@ -12,12 +12,12 @@ import retrofit2.Response
 class CategoryService(val view: CategoryDetailView) {
     val retrofitInterface = ApplicationClass.sRetrofit.create(CategoryRetrofitInterface::class.java)
 
-    fun tryPostCategory(body: CategoryBody) {
+    fun tryPostCategory(body: CategoryBody, id: Long) {
         retrofitInterface.postCategory(body).enqueue(object : Callback<PostCategoryResponse> {
 
             override fun onResponse(call: Call<PostCategoryResponse>, response: Response<PostCategoryResponse>) {
                 when(response.code()) {
-                    200 -> view.onPostCategorySuccess(response.body() as PostCategoryResponse)
+                    200 -> view.onPostCategorySuccess(response.body() as PostCategoryResponse, id)
                 }
             }
 
@@ -28,12 +28,12 @@ class CategoryService(val view: CategoryDetailView) {
         })
     }
 
-    fun tryPatchCategory(categoryId: Long, body: CategoryBody) {
+    fun tryPatchCategory(categoryId: Long, body: CategoryBody, localId : Long) {
         retrofitInterface.patchCategory(categoryId, body).enqueue(object : Callback<PostCategoryResponse> {
 
             override fun onResponse(call: Call<PostCategoryResponse>, response: Response<PostCategoryResponse>) {
                 when(response.code()) {
-                    200 -> view.onPatchCategorySuccess(response.body() as PostCategoryResponse)
+                    200 -> view.onPatchCategorySuccess(response.body() as PostCategoryResponse, localId)
                 }
             }
 
@@ -68,12 +68,12 @@ class CategorySettingService(val view: CategorySettingView) {
 class CategoryDeleteService(val view: CategoryDeleteView) {
     val retrofitInterface = ApplicationClass.sRetrofit.create(CategoryRetrofitInterface::class.java)
 
-    fun tryDeleteCategory(categoryId: Long) {
+    fun tryDeleteCategory(categoryId: Long, localId : Long) {
         retrofitInterface.deleteCategory(categoryId).enqueue(object : Callback<BaseResponse> {
 
             override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
                 when(response.code()) {
-                    200 -> view.onDeleteCategorySuccess(response.body() as BaseResponse)
+                    200 -> view.onDeleteCategorySuccess(response.body() as BaseResponse, localId)
                 }
             }
 

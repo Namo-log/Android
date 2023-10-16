@@ -29,12 +29,19 @@ import com.example.namo.data.remote.event.EventService
 import com.example.namo.data.remote.event.EventView
 import com.example.namo.data.remote.event.PostEventResponse
 import com.example.namo.config.ApplicationClass
+import com.example.namo.config.BaseResponse
 import com.example.namo.data.entity.diary.Diary
 import com.example.namo.data.entity.home.Category
+import com.example.namo.data.remote.category.CategoryBody
+import com.example.namo.data.remote.category.CategoryDeleteService
+import com.example.namo.data.remote.category.CategoryDeleteView
+import com.example.namo.data.remote.category.CategoryDetailView
+import com.example.namo.data.remote.category.CategoryService
 import com.example.namo.data.remote.category.CategorySettingService
 import com.example.namo.data.remote.category.CategorySettingView
 import com.example.namo.data.remote.category.GetCategoryResult
 import com.example.namo.data.remote.category.GetCategoryResponse
+import com.example.namo.data.remote.category.PostCategoryResponse
 import com.example.namo.data.remote.diary.DiaryRepository
 import com.example.namo.data.remote.diary.DiaryResponse
 import com.example.namo.data.remote.diary.DiaryService
@@ -53,11 +60,13 @@ private const val PERMISSION_REQUEST_CODE= 1001
 private const val NOTIFICATION_PERMISSION_REQUEST_CODE= 777
 
 class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEventView,
-    CategorySettingView, GetMonthDiaryView {
+    CategorySettingView, GetMonthDiaryView, CategoryDetailView, CategoryDeleteView {
 
     private lateinit var binding: ActivityMainBinding
     lateinit var db: NamoDatabase
     lateinit var unUploaded: List<Event>
+    lateinit var unUploadedCategory : List<Category>
+    var paletteId : Int = 0
 
     private val serverEvent = ArrayList<Event>()
     private val serverCategory = ArrayList<Category>()
@@ -186,6 +195,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
 
         val thread = Thread{
             unUploaded = db.eventDao.getNotUploadedEvent()
+            unUploadedCategory = db.categoryDao.getNotUploadedCategory()
         }
         thread.start()
         try {
@@ -219,8 +229,37 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
 
             }
         }
+        val paletteDatas = arrayListOf(
+            categoryColorArray[4], categoryColorArray[5], categoryColorArray[6], categoryColorArray[7], categoryColorArray[8],
+            categoryColorArray[9], categoryColorArray[10], categoryColorArray[11], categoryColorArray[12], categoryColorArray[13]
+        )
+
+        for (i in unUploadedCategory) {
+            for (j: Int in paletteDatas.indices) {
+                if (paletteDatas[j] == i.color) {
+                    paletteId = j + 5
+                }
+            }
+            if (i.serverIdx == 0L) {
+                if (i.state == R.string.event_current_deleted.toString()) {
+                    return
+                } else {
+                    //POST
+                    CategoryService(this).tryPostCategory(CategoryBody(i.name, paletteId, i.share), i.categoryIdx)
+                }
+            } else {
+                if (i.state == R.string.event_current_deleted.toString()) {
+                    CategoryDeleteService(this).tryDeleteCategory(i.serverIdx, i.categoryIdx)
+                } else {
+                    CategoryService(this).tryPatchCategory(i.serverIdx, CategoryBody(i.name, paletteId, i.share), i.categoryIdx)
+                }
+
+            }
+        }
         val repo=DiaryRepository(this)
         repo.uploadDiaryToServer()  // 다이어리 서버에 올림
+
+
     }
 
     private fun logToken() {
@@ -448,6 +487,84 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         isDiarySuccess = false
     }
 
+    override fun onPostCategorySuccess(response: PostCategoryResponse, categoryId : Long) {
+        Log.d("MainActivity", "onPostCategorySuccess")
+        Log.d("MAIN_SERVER_UPLOAD", "${categoryId} 번 카테고리 post 완료")
+
+        val result = response.result
+
+        //룸디비에 isUpload, serverId, state 업데이트하기
+        var thread = Thread{
+            db.categoryDao.updateCategoryAfterUpload(
+                categoryId,
+                1,
+                result.categoryId,
+                R.string.event_current_default.toString()
+            )
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onPostCategoryFailure(message: String) {
+        Log.d("MainActivity", "onPostCategoryFailure")
+    }
+
+    override fun onPatchCategorySuccess(response: PostCategoryResponse, categoryId: Long) {
+        Log.d("MainActivity", "onPatchCategorySuccess")
+        Log.d("MAIN_SERVER_UPLOAD", "${categoryId} 번 카테고리 patch 완료")
+
+        val result = response.result
+
+        //룸디비에 isUpload, serverId, state 업데이트하기
+        var thread = Thread{
+            db.categoryDao.updateCategoryAfterUpload(
+                categoryId,
+                1,
+                result.categoryId,
+                R.string.event_current_default.toString()
+            )
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onPatchCategoryFailure(message: String) {
+        Log.d("MainActivity", "onPatchCategoryFailure")
+    }
+
+    override fun onDeleteCategorySuccess(response: BaseResponse, categoryId: Long) {
+        Log.d("MainActivity", "onDeleteCategorySuccess")
+        Log.d("MAIN_SERVER_UPLOAD", "$categoryId 번 일정 삭제 완료")
+
+        val result = response.message
+        Toast.makeText(this, "$categoryId 번 일정의 $result", Toast.LENGTH_SHORT).show()
+
+
+        var deleteDB: Thread = Thread{
+            db.categoryDao.deleteCategoryById(categoryId)
+        }
+        deleteDB.start()
+        try {
+            deleteDB.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onDeleteCategoryFailure(message: String) {
+        Log.d("MainActivity", "onDeleteCategoryFailure")
+    }
+
+
     private fun checkServerDownloadCompleted() {
 
         if (isCategorySuccess && isEventSuccess && isDiarySuccess) {
@@ -577,7 +694,6 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         }
         return super.dispatchTouchEvent(ev)
     }
-
 //    override fun onDestroy() {
 //        super.onDestroy()
 //

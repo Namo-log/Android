@@ -138,11 +138,11 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         when(state) {
             R.string.event_current_added.toString() -> {
                 // 카테고리 생성
-                CategoryService(this@CategoryDetailFragment).tryPostCategory(CategoryBody(name, paletteId, share))
+                CategoryService(this@CategoryDetailFragment).tryPostCategory(CategoryBody(name, paletteId, share), categoryId)
             }
             R.string.event_current_edited.toString() -> {
                 // 카테고리 수정
-                CategoryService(this@CategoryDetailFragment).tryPatchCategory(serverId, CategoryBody(name, paletteId, share))
+                CategoryService(this@CategoryDetailFragment).tryPatchCategory(serverId, CategoryBody(name, paletteId, share), categoryId)
             }
             else -> {
                 Log.d("CategoryDetailFrag", "서버 업로드 중 state 오류")
@@ -387,7 +387,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
 
     // 카테고리 생성
-    override fun onPostCategorySuccess(response: PostCategoryResponse) {
+    override fun onPostCategorySuccess(response: PostCategoryResponse, categoryId : Long) {
         Log.d("CategoryDetailFrag", "onPostCategorySuccess, categoryId = $categoryId")
         // 룸디비에 isUpload, serverId, state 업데이트하기
         updateCategoryAfterUpload(response, R.string.event_current_default.toString())
@@ -400,7 +400,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
     }
 
     // 카테고리 수정
-    override fun onPatchCategorySuccess(response: PostCategoryResponse) {
+    override fun onPatchCategorySuccess(response: PostCategoryResponse, categoryId: Long) {
         Log.d("CategoryDetailFrag", "onPatchCategorySuccess, categoryIdx = $categoryId")
         // 룸디비에 isUpload, serverId, state 업데이트하기
         updateCategoryAfterUpload(response, R.string.event_current_default.toString())
