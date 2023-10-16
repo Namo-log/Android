@@ -111,7 +111,7 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
             return
         }
 
-        CategoryDeleteService(this).tryDeleteCategory(serverId)
+        CategoryDeleteService(this).tryDeleteCategory(serverId, categoryId)
     }
 
     private fun updateCategoryAfterUpload(state: String) {
@@ -152,7 +152,7 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
 //        }
     }
 
-    override fun onDeleteCategorySuccess(response: BaseResponse) {
+    override fun onDeleteCategorySuccess(response: BaseResponse, categoryId : Long) {
         Log.d("CategoryEditAct", "onDeleteCategorySuccess")
         // 룸디비에 isUpload, serverId, state 업데이트하기
         updateCategoryAfterUpload(R.string.event_current_default.toString())
