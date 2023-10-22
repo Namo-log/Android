@@ -43,6 +43,10 @@ import com.example.namo.data.remote.event.EditEventResponse
 import com.example.namo.data.remote.event.EventService
 import com.example.namo.data.remote.event.EventView
 import com.example.namo.data.remote.event.PostEventResponse
+import com.example.namo.data.remote.moim.EditMoimScheduleView
+import com.example.namo.data.remote.moim.MoimScheduleAlarmBody
+import com.example.namo.data.remote.moim.MoimService
+import com.example.namo.data.remote.moim.PatchMoimScheduleCategoryBody
 import com.example.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.example.namo.ui.bottom.home.notify.PushNotificationReceiver
 import com.example.namo.ui.bottom.home.schedule.map.MapActivity
@@ -56,7 +60,7 @@ import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 import org.joda.time.DateTime
 
-class ScheduleDialogBasicFragment : Fragment(), EventView {
+class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView {
 
     private lateinit var binding : FragmentScheduleDialogBasicBinding
     private val args : ScheduleDialogBasicFragmentArgs by navArgs()
@@ -100,6 +104,10 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
     private var alarmText : String = ""
 
     private val failList = ArrayList<Event>()
+
+    private var isMoimScheduleCategorySaved = false
+    private var isMoimScheduleAlarmSaved = false
+    private var isMoimSchedulePrevAlarm = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -292,6 +300,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         }
 
         if (event.moimSchedule) {
+            isMoimSchedulePrevAlarm = !event.alarmList.isNullOrEmpty()
             binding.dialogScheduleTitleEt.inputType = InputType.TYPE_NULL
             binding.dialogScheduleStartDateTv.setOnClickListener { null }
             binding.dialogScheduleEndDateTv.setOnClickListener { null }
@@ -310,50 +319,65 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
         binding.dialogScheduleSaveBtn.setOnClickListener {
             storeContent()
 
-            if (event.eventId == 0L) {
-                // 일정 추가
-                // 현재 일정의 상태가 추가 상태임을 나타냄
-                event.state = R.string.event_current_added.toString()
-                event.isUpload = 0
-                event.serverIdx = 0
-
-                // 새 일정 등록
-                var storeDB = Thread {
-                    scheduleIdx = db.eventDao.insertEvent(event)
+            // 모임일정일 경우
+            if (event.moimSchedule) {
+                // 카테고리와 알람 추가/수정
+                val moimService = MoimService()
+                moimService.setEditMoimScheduleView(this)
+                moimService.patchMoimScheduleCategory(PatchMoimScheduleCategoryBody(event.serverIdx, event.categoryServerIdx))
+                if (isMoimSchedulePrevAlarm) {
+                    moimService.patchMoimScheduleAlarm(MoimScheduleAlarmBody(event.serverIdx, event.alarmList!!))
+                } else {
+                    moimService.postMoimScheduleAlarm(MoimScheduleAlarmBody(event.serverIdx, event.alarmList!!))
                 }
-                storeDB.start()
-                try {
-                    storeDB.join()
-                } catch ( e: InterruptedException) {
-                    e.printStackTrace()
+            }
+            // 개인일정일 경우
+            else {
+                if (event.eventId == 0L) {
+                    // 일정 추가
+                    // 현재 일정의 상태가 추가 상태임을 나타냄
+                    event.state = R.string.event_current_added.toString()
+                    event.isUpload = 0
+                    event.serverIdx = 0
+
+                    // 새 일정 등록
+                    var storeDB = Thread {
+                        scheduleIdx = db.eventDao.insertEvent(event)
+                    }
+                    storeDB.start()
+                    try {
+                        storeDB.join()
+                    } catch ( e: InterruptedException) {
+                        e.printStackTrace()
+                    }
+
+                    setAlarm(event.startLong)
+
+                    uploadToServer(R.string.event_current_added.toString())
+                } else {
+                    // 일정 수정
+                    event.state = R.string.event_current_edited.toString()
+                    event.isUpload = 0
+
+                    var updateDB : Thread = Thread {
+                        db.eventDao.updateEvent(event)
+                    }
+                    updateDB.start()
+                    try {
+                        updateDB.join()
+                    } catch ( e: InterruptedException) {
+                        e.printStackTrace()
+                    }
+                    Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
+
+                    // 이전 알람 삭제 후 변경 알람 저장
+                    for (i in prevAlarmList!!) {
+                        deleteNotification(event.eventId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt())
+                    }
+                    setAlarm(event.startLong)
+
+                    uploadToServer(R.string.event_current_edited.toString())
                 }
-
-                setAlarm(event.startLong)
-
-                uploadToServer(R.string.event_current_added.toString())
-            } else {
-                // 일정 수정
-                event.state = R.string.event_current_edited.toString()
-                event.isUpload = 0
-
-                var updateDB : Thread = Thread {
-                    db.eventDao.updateEvent(event)
-                }
-                updateDB.start()
-                try {
-                    updateDB.join()
-                } catch ( e: InterruptedException) {
-                    e.printStackTrace()
-                }
-                Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
-
-                // 이전 알람 삭제 후 변경 알람 저장
-                for (i in prevAlarmList!!) {
-                    deleteNotification(event.eventId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt())
-                }
-                setAlarm(event.startLong)
-
-                uploadToServer(R.string.event_current_edited.toString())
             }
         }
     }
@@ -863,6 +887,57 @@ class ScheduleDialogBasicFragment : Fragment(), EventView {
                 categoryId = event.categoryServerIdx,
 //                categoryId = 10 // 지금 category 등록이 안되어서 임시방편
             )
+        }
+    }
+
+    override fun onPatchMoimScheduleCategorySuccess(message: String) {
+        isMoimScheduleCategorySaved = true
+        isMoimScheduleSaved()
+    }
+
+    override fun onPatchMoimScheduleCategoryFailure(message: String) {
+        isMoimScheduleCategorySaved = false
+        Log.d("UPDATE_MOIM_SCHEDULE", message)
+        Toast.makeText(context, "카테고리 업데이트에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onPostMoimScheduleAlarmSuccess(message: String) {
+        isMoimScheduleAlarmSaved = true
+        isMoimScheduleSaved()
+    }
+
+    override fun onPostMoimScheduleAlarmFailure(message: String) {
+        isMoimScheduleAlarmSaved = false
+        Log.d("UPDATE_MOIM_SCHEDULE", message)
+        Toast.makeText(context, "알람리스트 등록에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onPatchMoimScheduleAlarmSuccess(message: String) {
+        isMoimScheduleAlarmSaved = true
+        isMoimScheduleSaved()
+    }
+
+    override fun onPatchMoimScheduleAlarmFailure(message: String) {
+        isMoimScheduleAlarmSaved = false
+        Log.d("UPDATE_MOIM_SCHEDULE", message)
+        Toast.makeText(context, "알람리스트 업데이트에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isMoimScheduleSaved() {
+        if (isMoimScheduleCategorySaved && isMoimScheduleAlarmSaved) {
+            val thread = Thread {
+                db.eventDao.updateEvent(event)
+                Log.d("UPDATE_MOIM_SCHEDULE", db.eventDao.getEventById(event.eventId).toString())
+            }
+
+            thread.start()
+            try {
+                thread.join()
+            } catch (e : InterruptedException) {
+                e.printStackTrace()
+            }
+
+            requireActivity().finish()
         }
     }
 }

@@ -13,6 +13,7 @@ class EventService() {
     private lateinit var deleteEventView : DeleteEventView
     private lateinit var getMonthEventView : GetMonthEventView
     private lateinit var getAllEventView : GetAllEventView
+    private lateinit var getAllMoimEventView: GetAllMoimEventView
 
     fun setEventView(eventView : EventView) {
         this.eventView = eventView
@@ -28,6 +29,10 @@ class EventService() {
 
     fun setGetAllEventView(getAllEventView: GetAllEventView) {
         this.getAllEventView = getAllEventView
+    }
+
+    fun setGetAllMoimEventView(getAllMoimEventView: GetAllMoimEventView) {
+        this.getAllMoimEventView = getAllMoimEventView
     }
 
     val eventRetrofitInterface = ApplicationClass.sRetrofit.create(EventRetrofitInterface::class.java)
@@ -135,6 +140,30 @@ class EventService() {
                 override fun onFailure(call: Call<GetMonthEventResponse>, t: Throwable) {
                     Log.d("GetMonthEvent", "OnFailure")
                     getAllEventView.onGetAllEventFailure(t.message ?: "통신 오류")
+                }
+
+            })
+    }
+
+    fun getAllMoimEvent() {
+        eventRetrofitInterface.getAllMoimEvent()
+            .enqueue(object : Callback<GetMonthEventResponse> {
+                override fun onResponse(
+                    call: Call<GetMonthEventResponse>,
+                    response: Response<GetMonthEventResponse>
+                ) {
+                    when (response.code()) {
+                        200 -> getAllMoimEventView.onGetAllMoimEventSuccess(response.body() as GetMonthEventResponse)
+                        else -> {
+                            Log.d("GetAllMoimEvent", "Success but error")
+                            getAllMoimEventView.onGetAllMoimEventFailure("통신 중 200 외 기타 코드")
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<GetMonthEventResponse>, t: Throwable) {
+                    Log.d("GetAllMoimEvent", "OnFailure")
+                    getAllMoimEventView.onGetAllMoimEventFailure(t.message ?: "통신 오류")
                 }
 
             })

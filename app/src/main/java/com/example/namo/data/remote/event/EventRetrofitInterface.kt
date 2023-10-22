@@ -37,4 +37,8 @@ interface EventRetrofitInterface {
     @GET("schedules/all")
     fun getAllEvent(
     ) : Call<GetMonthEventResponse>
+
+    @GET("schedules/moim/all")
+    fun getAllMoimEvent(
+    ) : Call<GetMonthEventResponse>
 }

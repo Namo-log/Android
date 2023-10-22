@@ -65,3 +65,12 @@ data class UpdateMoimNameBody(
 data class AddMoimScheduleResponse(
     @SerializedName("result") val result : Long
 ) : BaseResponse()
+
+data class PatchMoimScheduleCategoryBody(
+    @SerializedName("moimScheduleId") val moimScheduleId: Long,
+    @SerializedName("categoryId") val categoryId : Long
+)
+data class MoimScheduleAlarmBody(
+    @SerializedName("moimScheduleId") val moimScheduleId: Long,
+    @SerializedName("alarmDates") val alarmDates : List<Int>
+)
