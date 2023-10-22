@@ -14,16 +14,20 @@ import com.example.namo.R
 import com.example.namo.data.remote.diary.*
 import com.example.namo.databinding.FragmentDiaryGroupDetailBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
+import com.example.namo.utils.ConfirmDialog
+import com.example.namo.utils.ConfirmDialogInterface
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.joda.time.DateTime
 
-class GroupDetailFragment : Fragment(), DiaryBasicView {
+class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
+    ConfirmDialogInterface {
 
     private var _binding: FragmentDiaryGroupDetailBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var groupSchedule: DiaryResponse.MonthDiary
     private lateinit var diaryService: DiaryService
+    private lateinit var placeIntList: List<Long>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +41,9 @@ class GroupDetailFragment : Fragment(), DiaryBasicView {
 
         groupSchedule = requireArguments().getSerializable("groupDiary") as DiaryResponse.MonthDiary
         diaryService = DiaryService()
+
+        diaryService.getGroupDiary(groupSchedule.scheduleIdx)
+        diaryService.getGroupDiaryView(this)
 
         bind()
         editMemo()
@@ -54,7 +61,7 @@ class GroupDetailFragment : Fragment(), DiaryBasicView {
         binding.groupDiaryDetailLy.setOnClickListener {// 그룹 다이어리 장소 아이템 추가 화면으로 이동
 
             val bundle = Bundle()
-            bundle.putBoolean("hasGroupPlace",true)
+            bundle.putBoolean("hasGroupPlace", true)
             bundle.putLong("groupScheduleId", groupSchedule.scheduleIdx)
             findNavController().navigate(
                 R.id.action_groupDetailFragment_to_groupMemoActivity,
@@ -133,6 +140,55 @@ class GroupDetailFragment : Fragment(), DiaryBasicView {
         }
     }
 
+    override fun onGetGroupDiarySuccess(response: DiaryResponse.GetGroupDiaryResponse) {
+        Log.d("GET_GROUP_DIARY", response.toString())
+
+        val result = response.result
+        placeIntList = result.locationDtos.map {
+            it.moimMemoLocationId // 그룹 스케줄 별 장소 아이디 가져와서 리스트 만들기
+        }
+        deletePlace()
+    }
+
+    override fun onGetGroupDiaryFailure(message: String) {
+        Log.e("GET_GROUP_DIARY", message)
+    }
+
+    private fun deletePlace() {  // 장소 전체 삭제 버튼
+        binding.diaryDeleteIv.setOnClickListener {
+            showDeleteDialog()
+        }
+    }
+
+    private fun showDeleteDialog() {
+        // 삭제 확인 다이얼로그
+        val title = "모임 기록을 정말 삭제하시겠어요?"
+        val content = "삭제한 모든 모임 기록은\n개인 기록 페이지에서도 삭제됩니다."
+
+        val dialog = ConfirmDialog(this, title, content, "삭제", 0)
+        dialog.isCancelable = false
+        dialog.show(parentFragmentManager, "ConfirmDialog")
+    }
+
+    override fun onClickYesButton(id: Int) {
+        // 모임 기록 전체 삭제
+        placeIntList.forEach {
+            val diaryService = DiaryService()
+            diaryService.deleteGroupDiary(it)
+            diaryService.diaryBasicView(this)
+        }
+    }
+
+    override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+        findNavController().popBackStack()
+        Log.d("diary", "SUCCESS")
+    }
+
+    override fun onFailure(message: String) {
+        findNavController().popBackStack()
+        Log.d("diary", message)
+    }
+
     private fun hideBottomNavigation(bool: Boolean) {
         val bottomNavigationView: BottomNavigationView =
             requireActivity().findViewById(R.id.nav_bar)
@@ -149,16 +205,5 @@ class GroupDetailFragment : Fragment(), DiaryBasicView {
         _binding = null
         hideBottomNavigation(false)
     }
-
-    override fun onSuccess(response: DiaryResponse.DiaryResponse) {
-        findNavController().popBackStack()
-        Log.d("addGroupDiaryAfter", "SUCCESS")
-    }
-
-    override fun onFailure(message: String) {
-        findNavController().popBackStack()
-        Log.d("addGroupDiaryAfter", message)
-    }
-
 
 }

@@ -62,12 +62,18 @@ class GroupPayDialog(
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val originalText = s.toString()
                 if (originalText.isNotEmpty()) {
-                    val cleanNumber = originalText.replace(",", "").toLong()
-                    val formattedNumber = NumberFormat.getNumberInstance(Locale.US).format(cleanNumber)
-                    binding.groupPayTotalEt.removeTextChangedListener(this) // 변경 이벤트 무한 루프 방지
-                    binding.groupPayTotalEt.setText(formattedNumber)
-                    binding.groupPayTotalEt.setSelection(formattedNumber.length) // 커서를 마지막으로 이동
-                    binding.groupPayTotalEt.addTextChangedListener(this)
+                    val cleanedText = originalText.replace(",", "")
+
+                    try {
+                        val cleanNumber = cleanedText.toLong()
+                        val formattedNumber = NumberFormat.getNumberInstance(Locale.US).format(cleanNumber)
+                        binding.groupPayTotalEt.removeTextChangedListener(this) // 변경 이벤트 무한 루프 방지
+                        binding.groupPayTotalEt.setText(formattedNumber)
+                        binding.groupPayTotalEt.setSelection(formattedNumber.length) // 커서를 마지막으로 이동
+                        binding.groupPayTotalEt.addTextChangedListener(this)
+                    } catch (e: NumberFormatException) {
+                        // 숫자로 변환할 수 없는 경우
+                    }
                 }
                 updateResultText()
             }
@@ -130,7 +136,9 @@ class GroupPayDialog(
 
     private fun updateResultText() {
 
-        totalPay = binding.groupPayTotalEt.text.toString().replace(",", "").toLong()  // 구분자 빼고 총 정산 금액 가져 오기
+        val inputText = binding.groupPayTotalEt.text.toString().replace(",", "")   // 구분자 빼고 총 정산 금액 가져 오기
+        totalPay = inputText.toLongOrNull() ?: 0L
+
         if (totalPay.toString().isNotEmpty()) {
 
             if (memberCount != 0) {
@@ -155,7 +163,7 @@ class GroupPayDialog(
             }
             groupPaySaveTv.setOnClickListener {
 
-                pay(totalPay)
+                pay(if (memberCount!=0) totalPay else 0)
 
                 val checkedMemberId = mutableListOf<Long>()  // 체크된 멤버 아이디 리스트
 
