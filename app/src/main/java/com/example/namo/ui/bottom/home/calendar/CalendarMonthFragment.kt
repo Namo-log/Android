@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.namo.MainActivity.Companion.IS_MOIM_EVENT_SUCCESS
 import com.example.namo.MainActivity.Companion.setCategoryList
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
@@ -41,6 +42,7 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView,GetGroupMonthView {
     var isShow = false
     private lateinit var monthList : List<DateTime>
     private lateinit var tempEvent : ArrayList<Event>
+    private var tempMoimEvent : ArrayList<Event> = arrayListOf()
     private var monthGroupEvent : ArrayList<Event> = arrayListOf()
 
     private var prevIdx = -1
@@ -125,6 +127,7 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView,GetGroupMonthView {
         getCategoryList()
 
         var forDB : Thread = Thread {
+            Log.d("TEMP_MOIM_EVENT", tempMoimEvent.toString())
             tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis / 1000, monthList[41].plusDays(1).withTimeAtStartOfDay().millis / 1000) as ArrayList<Event>
         }
         forDB.start()
@@ -134,7 +137,6 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView,GetGroupMonthView {
             e.printStackTrace()
         }
         binding.calendarMonthView.setEventList(tempEvent)
-
 
 
 //        onBackPressedCallback.isEnabled = true

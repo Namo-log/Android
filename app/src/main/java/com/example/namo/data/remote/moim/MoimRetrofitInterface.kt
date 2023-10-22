@@ -72,4 +72,19 @@ interface MoimRetrofitInterface {
     fun deleteMoimSchedule(
         @Path("moimScheduleId") moimScheduleId : Long
     ) : Call<BaseResponse>
+
+    @PATCH("moims/schedule/category")
+    fun patchMoimScheduleCategory(
+        @Body body : PatchMoimScheduleCategoryBody
+    ) : Call<BaseResponse>
+
+    @POST("moims/schedule/alarm")
+    fun postMoimScheduleAlarm(
+        @Body body : MoimScheduleAlarmBody
+    ) : Call<BaseResponse>
+
+    @PATCH("moims/schedule/alarm")
+    fun patchMoimScheduleAlarm(
+        @Body body : MoimScheduleAlarmBody
+    ) : Call<BaseResponse>
 }

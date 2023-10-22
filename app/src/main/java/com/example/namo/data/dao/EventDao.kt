@@ -45,4 +45,10 @@ interface EventDao {
 
     @Query("SELECT * FROM calendar_event_table WHERE eventId=:eventId")
     fun getEventById(eventId: Long) : Event
+
+    @Query("DELETE FROM calendar_event_table WHERE event_is_group=:isGroup")
+    fun deleteMoimEvent(isGroup: Boolean)
+
+    @Query("SELECT * FROM calendar_event_table WHERE event_is_group=:isGroup")
+    fun getMoimEvent(isGroup: Boolean) : List<Event>
 }

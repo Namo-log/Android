@@ -22,6 +22,7 @@ class MoimService {
     private lateinit var deleteMoimMemberView : DeleteMoimMemberView
     private lateinit var participateMoimView: ParticipateMoimView
     private lateinit var moimScheduleView : MoimScheduleView
+    private lateinit var editMoimScheduleView : EditMoimScheduleView
 
     fun setAddMoimView(addMoimView: AddMoimView) {
         this.addMoimView = addMoimView
@@ -45,6 +46,10 @@ class MoimService {
 
     fun setMoimScheduleView (moimScheduleView : MoimScheduleView) {
         this.moimScheduleView = moimScheduleView
+    }
+
+    fun setEditMoimScheduleView (editMoimScheduleView: EditMoimScheduleView) {
+        this.editMoimScheduleView = editMoimScheduleView
     }
 
     fun addMoim(
@@ -270,6 +275,72 @@ class MoimService {
             override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
                 Log.d("DeleteMoimSchedule", "onFailure")
                 moimScheduleView.onDeleteMoimScheduleFailure(t.message ?: "통신 오류")
+            }
+        })
+    }
+
+    fun patchMoimScheduleCategory(body : PatchMoimScheduleCategoryBody) {
+        moimRetrofitInterface.patchMoimScheduleCategory(body).enqueue(object : Callback<BaseResponse> {
+            override fun onResponse(
+                call: Call<BaseResponse>,
+                response: Response<BaseResponse>
+            ) {
+                when(response.code()) {
+                    200 -> editMoimScheduleView.onPatchMoimScheduleCategorySuccess(response.message())
+                    else -> {
+                        Log.d("PatchMoimScheduleCategory", "Success but error")
+                        editMoimScheduleView.onPatchMoimScheduleCategoryFailure("통신 중 200 외 기타 코드")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
+                Log.d("PatchMoimScheduleCategory", "onFailure")
+                editMoimScheduleView.onPatchMoimScheduleCategoryFailure(t.message ?: "통신 오류")
+            }
+        })
+    }
+
+    fun postMoimScheduleAlarm(body : MoimScheduleAlarmBody) {
+        moimRetrofitInterface.postMoimScheduleAlarm(body).enqueue(object : Callback<BaseResponse> {
+            override fun onResponse(
+                call: Call<BaseResponse>,
+                response: Response<BaseResponse>
+            ) {
+                when(response.code()) {
+                    200 -> editMoimScheduleView.onPostMoimScheduleAlarmSuccess(response.message())
+                    else -> {
+                        Log.d("PostMoimScheduleAlarm", "Success but error")
+                        editMoimScheduleView.onPostMoimScheduleAlarmFailure("통신 중 200 외 기타 코드")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
+                Log.d("PostMoimScheduleAlarm", "onFailure")
+                editMoimScheduleView.onPostMoimScheduleAlarmFailure(t.message ?: "통신 오류")
+            }
+        })
+    }
+
+    fun patchMoimScheduleAlarm(body : MoimScheduleAlarmBody) {
+        moimRetrofitInterface.patchMoimScheduleAlarm(body).enqueue(object : Callback<BaseResponse> {
+            override fun onResponse(
+                call: Call<BaseResponse>,
+                response: Response<BaseResponse>
+            ) {
+                when(response.code()) {
+                    200 -> editMoimScheduleView.onPatchMoimScheduleAlarmSuccess(response.message())
+                    else -> {
+                        Log.d("PatchMoimScheduleAlarm", "Success but error")
+                        editMoimScheduleView.onPatchMoimScheduleAlarmFailure("통신 중 200 외 기타 코드")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
+                Log.d("PatchMoimScheduleAlarm", "onFailure")
+                editMoimScheduleView.onPatchMoimScheduleAlarmFailure(t.message ?: "통신 오류")
             }
         })
     }

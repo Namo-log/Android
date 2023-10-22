@@ -39,3 +39,12 @@ interface MoimScheduleView {
     fun onDeleteMoimScheduleSuccess(message: String)
     fun onDeleteMoimScheduleFailure(message: String)
 }
+
+interface EditMoimScheduleView {
+    fun onPatchMoimScheduleCategorySuccess(message: String)
+    fun onPatchMoimScheduleCategoryFailure(message: String)
+    fun onPostMoimScheduleAlarmSuccess(message: String)
+    fun onPostMoimScheduleAlarmFailure(message: String)
+    fun onPatchMoimScheduleAlarmSuccess(message: String)
+    fun onPatchMoimScheduleAlarmFailure(message: String)
+}

@@ -18,6 +18,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.example.namo.data.NamoDatabase
@@ -47,10 +50,12 @@ import com.example.namo.data.remote.diary.DiaryResponse
 import com.example.namo.data.remote.diary.DiaryService
 import com.example.namo.data.remote.diary.GetMonthDiaryView
 import com.example.namo.data.remote.event.GetAllEventView
+import com.example.namo.data.remote.event.GetAllMoimEventView
 import com.example.namo.data.remote.event.GetMonthEventResponse
 import com.example.namo.data.remote.event.GetMonthEventResult
 import com.example.namo.data.remote.event.GetMonthEventView
 import com.example.namo.databinding.ActivityMainBinding
+import com.example.namo.ui.bottom.home.HomeFragment
 import com.example.namo.ui.bottom.home.schedule.ScheduleDialogBasicFragment.Companion.eventToEventForUpload
 import com.example.namo.utils.NetworkManager
 import org.joda.time.DateTime
@@ -59,7 +64,7 @@ import org.joda.time.DateTime
 private const val PERMISSION_REQUEST_CODE= 1001
 private const val NOTIFICATION_PERMISSION_REQUEST_CODE= 777
 
-class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEventView,
+class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEventView, GetAllMoimEventView,
     CategorySettingView, GetMonthDiaryView, CategoryDetailView, CategoryDeleteView {
 
     private lateinit var binding: ActivityMainBinding
@@ -69,6 +74,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
     var paletteId : Int = 0
 
     private val serverEvent = ArrayList<Event>()
+    private val moimEvent = ArrayList<Event>()
     private val serverCategory = ArrayList<Category>()
     private val serverDiary = ArrayList<Diary>()
 
@@ -84,6 +90,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         const val PLACE_X_INTENT_KEY: String = "place_x"
         const val PLACE_Y_INTENT_KEY: String = "place_y"
         const val GROUP_MEMBER_INTENT_KEY : String = "group_member"
+        var IS_MOIM_EVENT_SUCCESS : Boolean = false
 
         fun setCategoryList(db: NamoDatabase): List<Category> {
             var categoryList =listOf<Category>()
@@ -125,9 +132,15 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
 
     private fun checkNetworkUpload() {
         if (!NetworkManager.checkNetworkState(this)) {
+            IS_MOIM_EVENT_SUCCESS = true
             Log.d("MAIN_SERVER_UPLOAD", "WIFI ERROR : Fail to upload")
             return
         }
+
+        // 모임일정은 앱이 켜지면 room에 저장 - 앱이 꺼지면 room에서 삭제
+        val eventService = EventService()
+        eventService.setGetAllMoimEventView(this)
+        eventService.getAllMoimEvent()
 
         val size = getAllCategorySize()
         Log.d("MAIN_SERVER_UPLOAD", "RoomDB : $size category")
@@ -449,6 +462,33 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         isEventSuccess = false
     }
 
+    override fun onGetAllMoimEventSuccess(response: GetMonthEventResponse) {
+        Log.d("MAIN_SERVER_UPLOAD", "onGetAllMoimEventSuccess")
+
+        val result = response.result
+        moimEvent.clear()
+        moimEvent.addAll(result.map{serverToEvent(it)})
+        val uploadRoom = Thread{
+            for (event in moimEvent) {
+                db.eventDao.insertEvent(event)
+            }
+            Log.d("TEMP_MOIM_EVENT_MAIN", db.eventDao.getMoimEvent(true).toString())
+        }
+        uploadRoom.start()
+        try {
+            uploadRoom.join()
+        } catch (e : InterruptedException) {
+            e.printStackTrace()
+        }
+
+        IS_MOIM_EVENT_SUCCESS = true
+
+    }
+
+    override fun onGetAllMoimEventFailure(message: String) {
+        Log.d("MAIN_SERVER_UPLOAD", "onGetAllMoimEventFailure")
+    }
+
     override fun onGetAllCategorySuccess(response: GetCategoryResponse) {
         Log.d("MAIN_SERVER_UPLOAD", "onGetAllCategorySuccess")
 
@@ -573,10 +613,10 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
                     db.categoryDao.insertCategory(category)
                 }
                 for (event in serverEvent) {
-                    db.eventDao.insertEvent(event)
-//                    if (!event.moimSchedule) {
-//                        db.eventDao.insertEvent(event)
-//                    }
+//                    db.eventDao.insertEvent(event)
+                    if (!event.moimSchedule) {
+                        db.eventDao.insertEvent(event)
+                    }
                 }
                 Log.d("TEST_CHECK", "Now categories are ${db.categoryDao.getAllCategorySize()}")
             }
@@ -694,12 +734,25 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         }
         return super.dispatchTouchEvent(ev)
     }
-//    override fun onDestroy() {
-//        super.onDestroy()
-//
-//        val sf= this.getSharedPreferences("sf", Context.MODE_PRIVATE)
-//        val editor = sf.edit()
-//        editor.remove("yearMonth")
-//        editor.apply()
-//    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val deleteMoimEventThread = Thread{
+            Log.d("CHECK_MOIM_EVENT", db.eventDao.getMoimEvent(true).toString())
+            db.eventDao.deleteMoimEvent(true)
+            Log.d("CHECK_MOIM_EVENT", db.eventDao.getMoimEvent(true).toString())
+        }
+        deleteMoimEventThread.start()
+        try {
+            deleteMoimEventThread.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun refreshFragment(fragment: Fragment, fragmentManager: FragmentManager) {
+        var ft: FragmentTransaction = fragmentManager.beginTransaction()
+        ft.detach(fragment).attach(fragment).commit()
+    }
+
 }
