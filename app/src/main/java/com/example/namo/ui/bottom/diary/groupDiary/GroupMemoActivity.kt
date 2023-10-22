@@ -22,10 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.R
 import com.example.namo.data.entity.diary.DiaryGroupEvent
-import com.example.namo.data.remote.diary.DiaryRepository
-import com.example.namo.data.remote.diary.DiaryResponse
-import com.example.namo.data.remote.diary.DiaryService
-import com.example.namo.data.remote.diary.GetGroupDiaryView
+import com.example.namo.data.remote.diary.*
 import com.example.namo.data.remote.moim.MoimSchedule
 import com.example.namo.databinding.ActivityDiaryGroupMemoBinding
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupMemberRVAdapter
@@ -38,7 +35,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
+class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView,
     ConfirmDialogInterface {  // 그룹 다이어리 추가, 수정, 삭제 화면
 
     private lateinit var binding: ActivityDiaryGroupMemoBinding
@@ -188,9 +185,9 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
 
     private fun addPlace() {
 
-        binding.groupSaveTv.setOnClickListener {// 저장
+        binding.groupSaveTv.setOnClickListener { // 저장
 
-            placeEvent.map {
+            placeEvent.forEach {
                 repo.addMoimDiary(
                     groupScheduleId,
                     it.place,
@@ -257,10 +254,10 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
 
     override fun onClickYesButton(id: Int) {
         // 모임 기록 전체 삭제
-        placeEvent.map {
-            val repo = DiaryRepository(this)
-            repo.deleteGroupPlace(it.placeIdx)
-            finish()
+        placeEvent.forEach {
+            val diaryService =DiaryService()
+            diaryService.deleteGroupDiary(it.placeIdx)
+            diaryService.diaryBasicView(this)
         }
     }
 
@@ -465,5 +462,14 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
         return super.dispatchTouchEvent(ev)
     }
 
+    override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+        finish()
+        Log.d("delete_group_diary", "SUCCESS")
+    }
+
+    override fun onFailure(message: String) {
+        finish()
+        Log.d("delete_group_diary", message)
+    }
 
 }

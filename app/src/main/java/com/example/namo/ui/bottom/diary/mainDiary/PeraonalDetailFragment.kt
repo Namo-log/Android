@@ -32,7 +32,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import org.joda.time.DateTime
 
-class PeraonalDetailFragment : Fragment(), ConfirmDialogInterface {  // 다이어리 추가 화면
+class PeraonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepository.DiaryCallback {  // 다이어리 추가 화면
 
     private var _binding: FragmentDiaryPersonalDetailBinding? = null
     private val binding get() = _binding!!
@@ -58,6 +58,7 @@ class PeraonalDetailFragment : Fragment(), ConfirmDialogInterface {  // 다이�
         galleryAdapter = GalleryListAdapter(requireContext())
 
         repo = DiaryRepository(requireContext())
+        repo.setCallBack(this)
 
         setEvent()
         charCnt()
@@ -156,7 +157,6 @@ class PeraonalDetailFragment : Fragment(), ConfirmDialogInterface {  // 다이�
             return
         } else {
             repo.addDiary(event.eventId, content, imgList as List<String>?, event.serverIdx)
-            findNavController().popBackStack()
             hideBottomNavigation(false)
         }
 
@@ -174,7 +174,6 @@ class PeraonalDetailFragment : Fragment(), ConfirmDialogInterface {  // 다이�
         )
 
         Toast.makeText(requireContext(), "수정되었습니다", Toast.LENGTH_SHORT).show()
-        findNavController().popBackStack()
         hideBottomNavigation(false)
     }
 
@@ -192,7 +191,6 @@ class PeraonalDetailFragment : Fragment(), ConfirmDialogInterface {  // 다이�
 
         repo.deleteDiary(event.eventId, event.serverIdx)
         Toast.makeText(context, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-        findNavController().popBackStack()
         hideBottomNavigation(false)
     }
 
@@ -355,6 +353,10 @@ class PeraonalDetailFragment : Fragment(), ConfirmDialogInterface {  // 다이�
     override fun onClickYesButton(id: Int) {
         // 삭제 버튼 누르면 삭제 진행
         deleteDiary()
+    }
+
+    override fun onExecute() {
+        findNavController().popBackStack()
     }
 
 

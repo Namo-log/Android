@@ -33,12 +33,20 @@ class DiaryRepository(
     private val categoryDao = db.categoryDao
 
     private lateinit var notUploaded: List<Diary>
+    private var callback: DiaryCallback? = null
 
     private val failList = ArrayList<Diary>()
     private lateinit var imgFile: File
 
     private lateinit var category: Category
     private lateinit var diary: Diary
+
+    fun setCallBack(callback: DiaryCallback) {
+        this.callback = callback
+    }
+    interface DiaryCallback {
+        fun onExecute()
+    }
 
     /** add diary **/
     fun addDiary(
@@ -116,12 +124,15 @@ class DiaryRepository(
             e.printStackTrace()
         }
 
+        callback?.onExecute()
         Log.d("addDiaryServerSuccess", response.result.toString())
+
     }
 
     override fun onAddDiaryFailure(message: String) {
 
         printNotUploaded()
+        callback?.onExecute()
         Log.d("addDiaryServerFailure", message)
     }
 
@@ -212,7 +223,7 @@ class DiaryRepository(
             e.printStackTrace()
         }
 
-
+        callback?.onExecute()
         Log.d("editDiaryServerSuccess", response.result)
     }
 
@@ -220,6 +231,7 @@ class DiaryRepository(
     override fun onEditDiaryFailure(message: String) {
 
         printNotUploaded()
+        callback?.onExecute()
         Log.d("editDiaryServerFailure", message)
 
     }
@@ -266,6 +278,7 @@ class DiaryRepository(
             e.printStackTrace()
         }
 
+        callback?.onExecute()
         Log.d("deleteDiary", response.result)
     }
 
@@ -274,6 +287,7 @@ class DiaryRepository(
     override fun onDeleteDiaryFailure(message: String) {
 
         printNotUploaded()
+        callback?.onExecute()
         Log.d("deleteDiary", message)
     }
 
