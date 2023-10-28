@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.R
+import com.example.namo.data.remote.diary.DiaryRepository
 import com.example.namo.databinding.ItemDiaryGroupListBinding
 import com.example.namo.databinding.ItemDiaryListBinding
 import java.text.SimpleDateFormat
@@ -111,7 +112,14 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
 
                 setViewMore(itemDiaryContentTv, viewMore)
 
-                binding.itemDiaryCategoryColorIv.background.setTint(ContextCompat.getColor(context,R.color.MainOrange))
+                val repo = DiaryRepository(context)
+
+                val category =
+                    repo.getCategory(item.event_category_idx, item.event_category_idx)
+
+                context.resources?.let {
+                    binding.itemDiaryCategoryColorIv.background.setTint(category.color)
+                }
 
                 val adapter =
                     DiaryGalleryRVAdapter(context, item.images, imageClickListener)

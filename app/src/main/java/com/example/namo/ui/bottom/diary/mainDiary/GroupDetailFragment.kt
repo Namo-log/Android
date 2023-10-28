@@ -77,8 +77,8 @@ class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
         }
 
         val repo = DiaryRepository(requireContext())
-        val categoryId = requireArguments().getLong("categoryIdx", 0L)
-        val category = repo.getCategory(categoryId, categoryId)
+        val category = repo.getCategory(groupSchedule.categoryId, groupSchedule.categoryId)
+
         context?.resources?.let {
             binding.itemDiaryCategoryColorIv.background.setTint(category.color)
         }
@@ -92,13 +92,6 @@ class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
         binding.diaryGallerySavedRy.adapter = galleryViewRVAdapter
         binding.diaryGallerySavedRy.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-
-        binding.itemDiaryCategoryColorIv.background.setTint(
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.MainOrange
-            )
-        )
 
         galleryViewRVAdapter.addImages(groupSchedule.imgUrl)
 

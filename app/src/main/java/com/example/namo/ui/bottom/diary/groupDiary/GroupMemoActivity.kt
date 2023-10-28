@@ -50,14 +50,14 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
     private lateinit var repo: DiaryRepository
     private lateinit var moimSchedule: MoimSchedule
 
-    private var groupEvent = listOf<DiaryResponse.LocationDto>()
+    private var groupEvent = emptyList<DiaryResponse.LocationDto>()
     private var placeEvent = ArrayList<DiaryGroupEvent>()
 
     private var imgList: ArrayList<String?> = ArrayList() // 장소별 이미지
     private var positionForGallery: Int = -1
     private var groupScheduleId: Long = 0L
 
-    private val itemTouchSimpleCallback = ItemTouchHelperCallback()
+    private val itemTouchSimpleCallback = ItemTouchHelperCallback()  // 아이템 밀어서 삭제
     private val itemTouchHelper = ItemTouchHelper(itemTouchSimpleCallback)
 
 
@@ -128,18 +128,18 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
 
         memberIntList = groupMembers.map { it.userId }
 
-        placeEvent.clear()
-        groupEvent.forEach {
-            placeEvent.add(
-                DiaryGroupEvent(
-                    it.place,
-                    it.pay,
-                    it.members,
-                    it.imgs as ArrayList<String?>,
-                    it.moimMemoLocationId
-                )
+        placeEvent.addAll(groupEvent.map {
+            val copy = it.copy(
+                imgs = it.imgs.toMutableList()
             )
-        }
+            DiaryGroupEvent(
+                copy.place,
+                copy.pay,
+                copy.members,
+                copy.imgs as ArrayList<String?>,
+                copy.moimMemoLocationId
+            )
+        })
 
         val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(groupData.startDate * 1000)
         binding.groupAddInputDateTv.text = formatDate
@@ -198,38 +198,41 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
             }
             finish()
         }
-
     }
 
     private fun editPlace() {
 
+
         binding.groupSaveTv.setOnClickListener {  // 수정
 
-            placeEvent.forEach {
-                if (it.placeIdx == 0L) {
-                    repo.addMoimDiary(
-                        groupScheduleId,
-                        it.place,
-                        it.pay,
-                        it.members,
-                        it.imgs as List<String>?
-                    )
-
-                } else {
-                    // 바뀐 데이터가 있을 때만 변경하기
-
-                    val hasDiffer = groupEvent.all { group ->
-                        group.place == it.place && group.pay == it.pay && group.imgs == it.imgs
-                    }
-
-                    if (!hasDiffer) repo.editGroupPlace(
-                        it.placeIdx,
-                        it.place,
-                        it.pay,
-                        it.members,
-                        it.imgs as List<String>?
-                    )
+            placeEvent.forEach { diaryGroupEvent ->
+                val hasDiffer = groupEvent.any { group ->
+                    group.place == diaryGroupEvent.place &&
+                            group.pay == diaryGroupEvent.pay &&
+                            group.members == diaryGroupEvent.members &&
+                            group.imgs == diaryGroupEvent.imgs.filterNotNull()
                 }
+
+                if (!hasDiffer) {
+                    if (diaryGroupEvent.placeIdx == 0L) {
+                        repo.addMoimDiary(
+                            groupScheduleId,
+                            diaryGroupEvent.place.ifEmpty { "장소" },
+                            diaryGroupEvent.pay,
+                            diaryGroupEvent.members,
+                            diaryGroupEvent.imgs.filterNotNull()
+                        )
+                    } else {
+                        repo.editGroupPlace(
+                            diaryGroupEvent.placeIdx,
+                            diaryGroupEvent.place,
+                            diaryGroupEvent.pay,
+                            diaryGroupEvent.members,
+                            diaryGroupEvent.imgs.filterNotNull()
+                        )
+                    }
+                }
+
             }
             finish()
         }
@@ -255,7 +258,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
     override fun onClickYesButton(id: Int) {
         // 모임 기록 전체 삭제
         placeEvent.forEach {
-            val diaryService =DiaryService()
+            val diaryService = DiaryService()
             diaryService.deleteGroupDiary(it.placeIdx)
             diaryService.diaryBasicView(this)
         }
@@ -438,9 +441,8 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
         val images = this.imgList
 
 
-        if (this.positionForGallery != RecyclerView.NO_POSITION) {
-            placeEvent[position].imgs = imgList
-
+        if (position != RecyclerView.NO_POSITION) {
+            placeEvent[position].imgs = images
             placeadapter.addImageItem(images)
         }
     }
