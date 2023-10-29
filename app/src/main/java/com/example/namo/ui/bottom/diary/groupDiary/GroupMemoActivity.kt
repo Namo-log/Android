@@ -190,7 +190,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
             placeEvent.forEach {
                 repo.addMoimDiary(
                     groupScheduleId,
-                    it.place,
+                    it.place.ifEmpty { "장소" },
                     it.pay,
                     it.members,
                     it.imgs as List<String>?
@@ -213,6 +213,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
                             group.imgs == diaryGroupEvent.imgs.filterNotNull()
                 }
 
+
                 if (!hasDiffer) {
                     if (diaryGroupEvent.placeIdx == 0L) {
                         repo.addMoimDiary(
@@ -222,19 +223,20 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
                             diaryGroupEvent.members,
                             diaryGroupEvent.imgs.filterNotNull()
                         )
+                        repo.diaryService.diaryBasicView(this)
                     } else {
                         repo.editGroupPlace(
                             diaryGroupEvent.placeIdx,
-                            diaryGroupEvent.place,
+                            diaryGroupEvent.place.ifEmpty { "장소" },
                             diaryGroupEvent.pay,
                             diaryGroupEvent.members,
                             diaryGroupEvent.imgs.filterNotNull()
                         )
+                        repo.diaryService.diaryBasicView(this)
                     }
                 }
 
             }
-            finish()
         }
 
     }

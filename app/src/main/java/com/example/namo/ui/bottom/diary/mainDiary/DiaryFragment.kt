@@ -2,7 +2,6 @@ package com.example.namo.ui.bottom.diary.mainDiary
 
 
 import DiaryAdapter
-import DiaryItem
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
@@ -18,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
+import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.diary.DiaryEvent
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.DiaryRepository
@@ -25,7 +25,6 @@ import com.example.namo.data.remote.diary.DiaryResponse
 import com.example.namo.data.remote.diary.DiaryService
 import com.example.namo.data.remote.diary.GetGroupMonthView
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.DiaryGroupAdapter
-import com.example.namo.ui.bottom.diary.mainDiary.adapter.DiaryGroupItem
 import com.example.namo.utils.NetworkManager
 import com.example.namo.databinding.FragmentDiaryBinding
 import com.example.namo.ui.bottom.home.calendar.SetMonthDialog
@@ -48,6 +47,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
     private var yearMonthTextView: String = ""
     private var checked = false
+    private var service = DiaryService()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -101,7 +101,10 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         }
     }
 
-    private fun convertYearMonthToMillis(yearMonthStr: String, pattern: String = "yyyy.MM"): Long {  // yyyy.MM 타입을 밀리초로 변경
+    private fun convertYearMonthToMillis(
+        yearMonthStr: String,
+        pattern: String = "yyyy.MM"
+    ): Long {  // yyyy.MM 타입을 밀리초로 변경
 
         val formatter = DateTimeFormat.forPattern(pattern)
         val dateTime = formatter.parseDateTime(yearMonthStr)
@@ -195,6 +198,29 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         )
     }
 
+    private fun getDiaryList(yearMonth: String): List<DiaryEvent> {  // 개인 다이어리 roomdb 데이터
+        val db = NamoDatabase.getInstance(requireContext()).diaryDao
+        return db.getDiaryEventList(yearMonth).toListItems()
+    }
+
+    private fun List<DiaryEvent>.toListItems(): List<DiaryEvent> {
+        val result = mutableListOf<DiaryEvent>()
+        var groupHeaderDate: Long = 0
+
+        this.forEach { event ->
+            if (groupHeaderDate * 1000 != event.event_start * 1000) {
+
+                val headerEvent = event.copy(event_start = event.event_start * 1000,isHeader = true)
+                result.add(headerEvent)
+
+                groupHeaderDate = event.event_start
+            }
+            result.add(event)
+        }
+
+        return result
+    }
+
 
     private fun getPersonalList() {
 
@@ -213,7 +239,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         }
 
         val storeDB = Thread {
-            val diaryItems = repo.getDiaryList(yearMonthTextView)  // 월 별 다이어리 조회
+            val diaryItems = getDiaryList(yearMonthTextView)
 
             requireActivity().runOnUiThread {
 
@@ -269,13 +295,13 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         val month = yearMonthSplit[1].removePrefix("0")
         val formatYearMonth = "$year,$month"
 
-        val service = DiaryService()
+
         service.getGroupMonthDiary(formatYearMonth, 0, 7)
         service.getGroupMonthView(this)
 
     }
 
-    private fun onEditClickListener(item: DiaryItem.Content) {  // 개인 기록 수정 클릭리스너
+    private fun onEditClickListener(item: DiaryEvent) {  // 개인 기록 수정 클릭리스너
 
         val bundle = Bundle()
 
@@ -299,7 +325,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
     }
 
-    private fun onDetailClickListener(item: DiaryGroupItem.Content) {  // 그룹 기록 수정 클릭리스너
+    private fun onDetailClickListener(item: DiaryEvent) {  // 그룹 기록 수정 클릭리스너
 
         val bundle = Bundle()
         val monthDiary = item.images?.let {
@@ -323,7 +349,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
         val list = arrayListOf<DiaryEvent>()
         val result = response.result.content
-        result.map {
+        result.forEach {
             list.add(
                 DiaryEvent(
                     it.scheduleIdx,
@@ -355,39 +381,6 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         binding.diaryGroupListRv.visibility = View.GONE
         binding.diaryListEmptyTv.visibility = View.VISIBLE
         binding.diaryListEmptyTv.text = "네크워크 연결 성공, 서버 오류"
-    }
-
-    private fun List<DiaryEvent>.toListItems(): List<DiaryGroupItem> {
-        val result = arrayListOf<DiaryGroupItem>() // 결과를 리턴할 리스트
-
-        var groupHeaderDate: Long = 0 // 그룹날짜
-        this.forEach { task ->
-            // 날짜가 달라지면 그룹 헤더를 추가
-
-            if (groupHeaderDate * 1000 != task.event_start * 1000) {
-                result.add(DiaryGroupItem.Header(task.eventId, task.event_start * 1000))
-            }
-            //  task 추가
-
-            result.add(
-                DiaryGroupItem.Content(
-
-                    task.eventId,
-                    task.event_title,
-                    task.event_start,
-                    task.event_category_idx,
-                    task.event_place_name,
-                    task.content,
-                    task.images,
-                    task.eventId
-                )
-            )
-
-            // 그룹 날짜를 바로 이전 날짜로 설정
-            groupHeaderDate = task.event_start
-        }
-
-        return result
     }
 
 

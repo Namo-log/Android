@@ -1,7 +1,7 @@
 package com.example.namo.data.remote.diary
 
 
-import DiaryItem
+
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
@@ -13,7 +13,6 @@ import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.diary.Diary
-import com.example.namo.data.entity.diary.DiaryEvent
 import com.example.namo.data.entity.home.Category
 import com.example.namo.utils.NetworkManager
 import kotlinx.coroutines.*
@@ -27,7 +26,7 @@ class DiaryRepository(
     val context: Context,
 ) : AddPersonalDiaryView, DiaryDetailView, DiaryBasicView {
 
-    private val diaryService = DiaryService()
+    val diaryService = DiaryService()
     private val db = NamoDatabase.getInstance(context)
     private val diaryDao = db.diaryDao
     private val categoryDao = db.categoryDao
@@ -187,9 +186,6 @@ class DiaryRepository(
         val contentRequestBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
         val scheduleIdRequestBody =
             scheduleId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-
-        Log.d("images", images.toString())
-        Log.d("imgserver", imgList.toString())
 
         diaryService.editDiary(
             localId,
@@ -375,49 +371,6 @@ class DiaryRepository(
         diaryService.addDiaryView(this)
     }
 
-
-    /** 월 별 개인 다이어리 리스트 조회 **/
-    fun getDiaryList(yearMonth: String): List<DiaryItem> {
-        return diaryDao.getDiaryEventList(yearMonth).toListItems()
-    }
-
-
-    fun List<DiaryEvent>.toListItems(): List<DiaryItem> { // 같은 날짜끼리 묶어서 그룹 헤더로 추가
-        val result = arrayListOf<DiaryItem>() // 결과를 리턴할 리스트
-
-        var groupHeaderDate: Long = 0 // 그룹날짜
-        this.forEach { task ->
-            // 날짜가 달라지면 그룹 헤더를 추가
-
-            if (groupHeaderDate * 1000 != task.event_start * 1000) {
-                result.add(DiaryItem.Header(task.eventId, task.event_start * 1000))
-            }
-            //  task 추가
-
-            result.add(
-                DiaryItem.Content(
-
-                    task.eventId,
-                    task.event_title,
-                    task.event_start,
-                    task.event_category_idx,
-                    task.event_place_name,
-                    task.content,
-                    task.images,
-                    task.event_server_idx,
-                    task.event_category_server_idx,
-                    task.eventId
-
-                )
-            )
-
-            // 그룹 날짜를 바로 이전 날짜로 설정
-            groupHeaderDate = task.event_start
-        }
-
-        return result
-    }
-
     /** 카테고리 id로 Category 조회 **/
     fun getCategory(categoryId: Long, categoryServerId: Long): Category {
 
@@ -499,7 +452,6 @@ class DiaryRepository(
             membersRequestBody,
             imgList
         )
-        diaryService.diaryBasicView(this)
     }
 
 
