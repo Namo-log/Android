@@ -26,7 +26,7 @@ class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
     private val binding get() = _binding!!
 
     private lateinit var groupSchedule: DiaryResponse.MonthDiary
-    private lateinit var diaryService: DiaryService
+    private var diaryService = DiaryService()
     private lateinit var placeIntList: List<Long>
 
     override fun onCreateView(
@@ -69,16 +69,9 @@ class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
             )
         }
 
-        binding.diaryDeleteIv.setOnClickListener {
-            binding.diaryContentsEt.text.clear()
-
-            diaryService.addGroupAfterDiary(groupSchedule.scheduleIdx, "")
-            diaryService.diaryBasicView(this)
-        }
-
         val repo = DiaryRepository(requireContext())
-        val categoryId = requireArguments().getLong("categoryIdx", 0L)
-        val category = repo.getCategory(categoryId, categoryId)
+        val category = repo.getCategory(groupSchedule.categoryId, groupSchedule.categoryId)
+
         context?.resources?.let {
             binding.itemDiaryCategoryColorIv.background.setTint(category.color)
         }
@@ -92,13 +85,6 @@ class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
         binding.diaryGallerySavedRy.adapter = galleryViewRVAdapter
         binding.diaryGallerySavedRy.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-
-        binding.itemDiaryCategoryColorIv.background.setTint(
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.MainOrange
-            )
-        )
 
         galleryViewRVAdapter.addImages(groupSchedule.imgUrl)
 
@@ -115,7 +101,6 @@ class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
                 groupSchedule.scheduleIdx,
                 binding.diaryContentsEt.text.toString()
             )
-            diaryService.diaryBasicView(this)
         }
 
         if (content.isEmpty()) {  // 그룹 기록 내용이 없으면, 기록 저장
@@ -172,10 +157,13 @@ class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
 
     override fun onClickYesButton(id: Int) {
         // 모임 기록 전체 삭제
+
+        diaryService.addGroupAfterDiary(groupSchedule.scheduleIdx, "")
+
         placeIntList.forEach {
-            val diaryService = DiaryService()
             diaryService.deleteGroupDiary(it)
             diaryService.diaryBasicView(this)
+
         }
     }
 

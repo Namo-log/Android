@@ -71,6 +71,7 @@ class GroupPlaceEventAdapter(
             imageClickListener(event.imgs, updatedPosition)
         }
 
+
         holder.binding.itemPlaceNameTv.hint = "장소"
         adapter.addItem(event.imgs)
 
@@ -87,7 +88,12 @@ class GroupPlaceEventAdapter(
         @SuppressLint("NotifyDataSetChanged")
         fun bind(item: DiaryGroupEvent) {
 
-            binding.itemPlaceNameTv.setText(item.place)
+            if (item.place == "장소") {
+                binding.itemPlaceNameTv.text = null
+                binding.itemPlaceNameTv.hint = "장소"
+            } else {
+                binding.itemPlaceNameTv.setText(item.place)
+            }
 
             binding.itemPlaceNameTv.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}

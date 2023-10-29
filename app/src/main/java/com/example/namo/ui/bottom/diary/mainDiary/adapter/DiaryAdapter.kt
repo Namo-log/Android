@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.namo.data.entity.diary.DiaryEvent
 import com.example.namo.data.remote.diary.DiaryRepository
 import com.example.namo.databinding.ItemDiaryDateListBinding
 import com.example.namo.databinding.ItemDiaryListBinding
@@ -18,22 +19,22 @@ private const val ITEM_VIEW_TYPE_HEADER = 0
 private const val ITEM_VIEW_TYPE_ITEM = 1
 
 class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
-    val editClickListener: (DiaryItem.Content) -> Unit,
+    val editClickListener: (DiaryEvent) -> Unit,
     val imageClickListener: (String) -> Unit
-) : ListAdapter<DiaryItem, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
+) : ListAdapter<DiaryEvent, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
 
 
-    fun updateData(newData: List<DiaryItem>) {
+    fun updateData(newData: List<DiaryEvent>) {
         submitList(newData)
     }
 
-    class DiaryDiffCallback : DiffUtil.ItemCallback<DiaryItem>() {
-        override fun areItemsTheSame(oldItem: DiaryItem, newItem: DiaryItem): Boolean {
-            return oldItem.id == newItem.id
+    class DiaryDiffCallback : DiffUtil.ItemCallback<DiaryEvent>() {
+        override fun areItemsTheSame(oldItem: DiaryEvent, newItem: DiaryEvent): Boolean {
+            return oldItem.eventId == newItem.eventId
         }
 
         @SuppressLint("DiffUtilEquals")
-        override fun areContentsTheSame(oldItem: DiaryItem, newItem: DiaryItem): Boolean {
+        override fun areContentsTheSame(oldItem: DiaryEvent, newItem: DiaryEvent): Boolean {
             return oldItem == newItem
         }
     }
@@ -42,11 +43,11 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is DiaryHeaderViewHolder -> {
-                val diaryItem = getItem(position) as DiaryItem.Header
+                val diaryItem = getItem(position)
                 holder.bind(diaryItem)
             }
             is DiaryContentViewHolder -> {
-                val diaryItems = getItem(position) as DiaryItem.Content
+                val diaryItems = getItem(position)
                 holder.bind(diaryItems)
                 holder.onclick.setOnClickListener {
                     editClickListener(diaryItems)
@@ -65,21 +66,21 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)) {
-            is DiaryItem.Header -> ITEM_VIEW_TYPE_HEADER
-            is DiaryItem.Content -> ITEM_VIEW_TYPE_ITEM
-            else -> throw ClassCastException("Unknown viewType $position")
+        return when (getItem(position).isHeader) {
+            true -> ITEM_VIEW_TYPE_HEADER
+            else -> ITEM_VIEW_TYPE_ITEM
         }
     }
+
 
     class DiaryHeaderViewHolder
     private constructor(private val binding: ItemDiaryListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SimpleDateFormat")
-        fun bind(item: DiaryItem.Header) {
+        fun bind(item: DiaryEvent) {
             binding.apply {
-                val formattedDate = SimpleDateFormat("yyyy.MM.dd").format(item.date)
+                val formattedDate = SimpleDateFormat("yyyy.MM.dd").format(item.event_start)
                 diaryDayTv.text = formattedDate
             }
         }
@@ -100,7 +101,7 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
     ) : RecyclerView.ViewHolder(binding.root) {
         val onclick = binding.editLy
 
-        fun bind(item: DiaryItem.Content) {
+        fun bind(item: DiaryEvent) {
             binding.apply {
 
                 itemDiaryContentTv.text = item.content
@@ -123,7 +124,8 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
                 diaryGalleryRv.layoutManager =
                     LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-                if (itemDiaryContentTv.text.isNullOrEmpty()) itemDiaryContentTv.visibility = View.GONE
+                if (itemDiaryContentTv.text.isNullOrEmpty()) itemDiaryContentTv.visibility =
+                    View.GONE
             }
         }
 
@@ -159,29 +161,4 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
         }
     }
 
-
 }
-
-sealed class DiaryItem {
-    abstract val id: Long
-
-    data class Header(override val id: Long, val date: Long) : DiaryItem()
-
-    data class Content(
-
-        var eventId: Long = 0L,
-        var event_title: String = "",
-        var event_start: Long = 0L,
-        var event_category_idx: Long = 0L,
-        var event_place_name: String = "없음",
-        var content: String?,
-        var images: List<String>? = null,
-        var event_server_idx: Long = 0L,
-        var event_category_server_idx: Long = 0L,
-        override val id: Long
-
-    ) : DiaryItem(),java.io.Serializable
-
-
-}
-

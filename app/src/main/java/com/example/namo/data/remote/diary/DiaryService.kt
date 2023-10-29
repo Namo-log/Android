@@ -1,6 +1,7 @@
 package com.example.namo.data.remote.diary
 
 import android.annotation.SuppressLint
+import android.util.Log
 import com.example.namo.config.ApplicationClass
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -336,7 +337,6 @@ class DiaryService {
                     val resp: DiaryResponse.DiaryGetMonthResponse? = response.body()
                     when (response.code()) {
                         200 -> if (resp != null) {
-
                             getGroupMonthView.onGetGroupMonthSuccess(resp)
                         }
                         else -> getGroupMonthView.onGetGroupMonthFailure(response.toString())
@@ -368,7 +368,7 @@ class DiaryService {
                     val resp: DiaryResponse.DiaryResponse? = response.body()
                     when (response.code()) {
                         200 -> if (resp != null) {
-                            diaryBasicView.onSuccess(resp)
+                            Log.d("addGroupDiary","SUCCESS")
                         }
                         else -> diaryBasicView.onFailure(response.toString())
                     }

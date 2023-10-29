@@ -57,10 +57,17 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
         }
         
         holder.binding.itemCalendarEventRecord.setOnClickListener {
-            val diary=groupDiary.find {
-                it.scheduleIdx==group[position].serverIdx
+
+            val newCategoryId = group[position].categoryServerIdx
+
+            val diary = groupDiary.find {
+                it.scheduleIdx == group[position].serverIdx
             }
-            diaryRecordClickListener.onGroupDetailClicked(diary)
+
+            if (diary != null) {
+                val updatedDiary = diary.copy(categoryId = newCategoryId)
+                diaryRecordClickListener.onGroupDetailClicked(updatedDiary)
+            }
         }
     }
 
@@ -94,7 +101,6 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
             binding.itemCalendarEventTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
             binding.itemCalendarEventColorView.background.setTint(category.color)
-
             binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
 
             val diary=groupDiary.find {
