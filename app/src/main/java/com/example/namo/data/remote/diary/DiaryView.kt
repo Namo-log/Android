@@ -28,6 +28,11 @@ interface GetGroupMonthView {
     fun onGetGroupMonthFailure(message: String)
 }
 
+interface AddGroupAfterDiaryView{
+    fun onAddGroupAfterDiarySuccess(response: DiaryResponse.DiaryResponse)
+    fun onAddGroupAfterDiaryFailure(message: String)
+}
+
 interface DiaryBasicView{
     fun onSuccess(response: DiaryResponse.DiaryResponse)
     fun onFailure(message: String)

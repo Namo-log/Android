@@ -1,11 +1,15 @@
 package com.example.namo.ui.bottom.diary.mainDiary
 
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -17,9 +21,11 @@ import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.example.namo.utils.ConfirmDialog
 import com.example.namo.utils.ConfirmDialogInterface
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.*
 import org.joda.time.DateTime
 
 class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
+    AddGroupAfterDiaryView,
     ConfirmDialogInterface {
 
     private var _binding: FragmentDiaryGroupDetailBinding? = null
@@ -28,6 +34,8 @@ class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
     private lateinit var groupSchedule: DiaryResponse.MonthDiary
     private var diaryService = DiaryService()
     private lateinit var placeIntList: List<Long>
+    private var placeSize: Int = 0
+    private var isDelete: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,16 +50,20 @@ class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
         groupSchedule = requireArguments().getSerializable("groupDiary") as DiaryResponse.MonthDiary
         diaryService = DiaryService()
 
-        diaryService.getGroupDiary(groupSchedule.scheduleIdx)
-        diaryService.getGroupDiaryView(this)
-
-        bind()
+        charCnt()
         editMemo()
 
         return binding.root
     }
 
-    private fun bind() {
+    override fun onResume() {
+        super.onResume()
+
+        diaryService.getGroupDiary(groupSchedule.scheduleIdx)
+        diaryService.getGroupDiaryView(this)
+    }
+
+    private fun bind(imgList: List<String>) {
 
         binding.diaryBackIv.setOnClickListener {
             findNavController().popBackStack()
@@ -86,13 +98,14 @@ class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
         binding.diaryGallerySavedRy.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        galleryViewRVAdapter.addImages(groupSchedule.imgUrl)
+        galleryViewRVAdapter.addImages(imgList)
 
         binding.diaryContentsEt.setText(groupSchedule.content)
     }
 
     private fun editMemo() {
 
+        binding.diaryContentsEt.setText(groupSchedule.content)
         val content = binding.diaryContentsEt.text.toString()
 
         binding.diaryEditTv.setOnClickListener {
@@ -101,6 +114,7 @@ class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
                 groupSchedule.scheduleIdx,
                 binding.diaryContentsEt.text.toString()
             )
+            diaryService.addGroupAfterDiary(this)
         }
 
         if (content.isEmpty()) {  // 그룹 기록 내용이 없으면, 기록 저장
@@ -132,7 +146,12 @@ class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
         placeIntList = result.locationDtos.map {
             it.moimMemoLocationId // 그룹 스케줄 별 장소 아이디 가져와서 리스트 만들기
         }
+        placeSize = placeIntList.size
+        val imgList = result.locationDtos.flatMap { it.imgs.take(3) }
+
+        bind(imgList)
         deletePlace()
+
     }
 
     override fun onGetGroupDiaryFailure(message: String) {
@@ -156,25 +175,80 @@ class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
     }
 
     override fun onClickYesButton(id: Int) {
-        // 모임 기록 전체 삭제
-
+        isDelete = true
         diaryService.addGroupAfterDiary(groupSchedule.scheduleIdx, "")
-
-        placeIntList.forEach {
-            diaryService.deleteGroupDiary(it)
-            diaryService.diaryBasicView(this)
-
-        }
+        diaryService.addGroupAfterDiary(this)
     }
 
     override fun onSuccess(response: DiaryResponse.DiaryResponse) {
-        findNavController().popBackStack()
-        Log.d("diary", "SUCCESS")
+        placeSize--
+        if (placeSize == 0) {
+            findNavController().popBackStack()
+            isDelete=false
+        }
+
     }
 
     override fun onFailure(message: String) {
         findNavController().popBackStack()
-        Log.d("diary", message)
+    }
+
+    override fun onAddGroupAfterDiarySuccess(response: DiaryResponse.DiaryResponse) {
+
+        if (isDelete) {
+            placeIntList.map { placeIndex ->
+                diaryService.deleteGroupDiary(placeIndex)
+                diaryService.diaryBasicView(this)
+            }
+        } else {
+            findNavController().popBackStack()
+        }
+    }
+
+    override fun onAddGroupAfterDiaryFailure(message: String) {
+        findNavController().popBackStack()
+    }
+
+
+    /** 글자 수 반환 **/
+    @SuppressLint("SetTextI18n")
+    private fun charCnt() {
+        with(binding) {
+            textNumTv.text = "${binding.diaryContentsEt.text.length} / 200"
+            diaryContentsEt.addTextChangedListener(object : TextWatcher {
+                var maxText = ""
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                    maxText = s.toString()
+                }
+
+                @SuppressLint("SetTextI18n")
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if (diaryContentsEt.length() > 200) {
+                        Toast.makeText(
+                            requireContext(), "최대 200자까지 입력 가능합니다",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        diaryContentsEt.setText(maxText)
+                        diaryContentsEt.setSelection(diaryContentsEt.length())
+                        if (s != null) {
+                            textNumTv.text = "${s.length} / 200"
+                        }
+                    } else {
+                        textNumTv.text = "${s.toString().length} / 200"
+                    }
+                }
+
+                override fun afterTextChanged(s: Editable?) {
+                }
+
+            })
+        }
     }
 
     private fun hideBottomNavigation(bool: Boolean) {
@@ -193,5 +267,4 @@ class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
         _binding = null
         hideBottomNavigation(false)
     }
-
 }

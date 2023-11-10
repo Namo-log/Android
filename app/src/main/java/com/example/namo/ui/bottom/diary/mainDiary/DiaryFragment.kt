@@ -319,7 +319,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
         bundle.putSerializable("event", event)
 
-        val detailFrag = PeraonalDetailFragment()
+        val detailFrag = PersonalDetailFragment()
         detailFrag.arguments = bundle
         view?.findNavController()?.navigate(R.id.action_diaryFragment_to_diaryAddFragment, bundle)
 
