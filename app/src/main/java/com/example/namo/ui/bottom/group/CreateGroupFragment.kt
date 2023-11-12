@@ -3,6 +3,7 @@ package com.example.namo.ui.bottom.group
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -33,6 +34,7 @@ import com.example.namo.data.remote.moim.MoimService
 import com.example.namo.databinding.FragmentGroupCreateBinding
 import com.example.namo.utils.NetworkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -72,14 +74,22 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
 
         _binding = FragmentGroupCreateBinding.inflate(inflater, container, false)
 
-        hideBottomNavigation(true)
-
-        // 레이아웃 배경을 투명하게 해줌
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+//        view?.setBackgroundColor(Color.TRANSPARENT)
+        hideBottomNavigation(true)
 
         db = NamoDatabase.getInstance(requireContext())
 
         return binding.root
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        // 배경은 투명하게 하기
+        val dialog = Dialog(requireContext(), R.style.TransparentDialogTheme).apply {
+            setCancelable(true)
+            setCanceledOnTouchOutside(true)
+        }
+        return dialog
     }
 
     override fun onStart() {
