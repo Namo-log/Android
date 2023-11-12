@@ -19,6 +19,7 @@ class DiaryService {
     private lateinit var getMonthDiaryView: GetMonthDiaryView
     private lateinit var getGroupDiaryView: GetGroupDiaryView
     private lateinit var getGroupMonthView: GetGroupMonthView
+    private lateinit var addGroupAfterDiaryView: AddGroupAfterDiaryView
     private lateinit var diaryBasicView: DiaryBasicView
 
     fun addDiaryView(addPersonalDiaryView: AddPersonalDiaryView) {
@@ -37,9 +38,14 @@ class DiaryService {
         this.getGroupDiaryView = getGroupDiaryView
     }
 
+    fun addGroupAfterDiary(addGroupAfterDiaryView: AddGroupAfterDiaryView) {
+        this.addGroupAfterDiaryView = addGroupAfterDiaryView
+    }
+
     fun getGroupMonthView(getGroupMonthView: GetGroupMonthView) {
         this.getGroupMonthView = getGroupMonthView
     }
+
 
     fun diaryBasicView(basicView: DiaryBasicView) {
         this.diaryBasicView = basicView
@@ -368,9 +374,9 @@ class DiaryService {
                     val resp: DiaryResponse.DiaryResponse? = response.body()
                     when (response.code()) {
                         200 -> if (resp != null) {
-                            Log.d("addGroupDiary","SUCCESS")
+                            addGroupAfterDiaryView.onAddGroupAfterDiarySuccess(resp)
                         }
-                        else -> diaryBasicView.onFailure(response.toString())
+                        else -> addGroupAfterDiaryView.onAddGroupAfterDiaryFailure(response.toString())
                     }
 
                 }
@@ -379,7 +385,7 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryResponse>,
                     t: Throwable
                 ) {
-                    diaryBasicView.onFailure(t.message.toString())
+                    addGroupAfterDiaryView.onAddGroupAfterDiaryFailure(t.message.toString())
                 }
             })
     }

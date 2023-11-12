@@ -76,6 +76,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
 
     }
 
+
     private fun hasDiaryPlace(getHasDiaryBoolean: Boolean) {
         if (!getHasDiaryBoolean) {  // groupPlace가 없을 때, 저장하기
             moimSchedule = intent?.getSerializableExtra("groupEvent") as MoimSchedule
@@ -92,7 +93,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
             binding.groupSaveTv.setBackgroundResource(R.color.MainOrange)
             binding.diaryDeleteIv.visibility = View.GONE
 
-            addPlace()
+            addOrUpdatePlaces()
 
         } else { // groupPlace가 있을 때, 서버에서 데이터 가져오고 수정하기
 
@@ -113,6 +114,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
             editPlace()
             deletePlace()
         }
+
 
     }
 
@@ -183,21 +185,59 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
 
     }
 
-    private fun addPlace() {
 
-        binding.groupSaveTv.setOnClickListener { // 저장
+    private fun addOrUpdatePlaces() {
 
-            placeEvent.forEach {
+        binding.groupSaveTv.setOnClickListener {
+            if (placeEvent.size == 1) {
+                // 데이터가 1개인 경우 addMoimDiary로 추가
+                val diaryGroupEvent = placeEvent.first()
                 repo.addMoimDiary(
                     groupScheduleId,
-                    it.place.ifEmpty { "장소" },
-                    it.pay,
-                    it.members,
-                    it.imgs as List<String>?
+                    diaryGroupEvent.place.ifEmpty { "장소" },
+                    diaryGroupEvent.pay,
+                    diaryGroupEvent.members,
+                    diaryGroupEvent.imgs.filterNotNull()
                 )
+            } else if (placeEvent.size > 1) {
+                // 데이터가 2개 이상인 경우 첫 번째 데이터만 addMoimDiary로 추가, 나머지는 editGroupPlace로 수정
+                val firstDiaryGroupEvent = placeEvent.first()
+                repo.addMoimDiary(
+                    groupScheduleId,
+                    firstDiaryGroupEvent.place.ifEmpty { "장소" },
+                    firstDiaryGroupEvent.pay,
+                    firstDiaryGroupEvent.members,
+                    firstDiaryGroupEvent.imgs.filterNotNull()
+                )
+
+                // 나머지 데이터를 처리
+                for (i in 1 until placeEvent.size) {
+                    val diaryGroupEvent = placeEvent[i]
+                    if (diaryGroupEvent.placeIdx == 0L) {
+                        // placeIdx가 0이면 addMoimDiary로 추가
+                        repo.addMoimDiary(
+                            groupScheduleId,
+                            diaryGroupEvent.place.ifEmpty { "장소" },
+                            diaryGroupEvent.pay,
+                            diaryGroupEvent.members,
+                            diaryGroupEvent.imgs.filterNotNull()
+                        )
+                    } else {
+                        // placeIdx가 0이 아니면 editGroupPlace로 수정
+                        repo.editGroupPlace(
+                            diaryGroupEvent.placeIdx,
+                            diaryGroupEvent.place.ifEmpty { "장소" },
+                            diaryGroupEvent.pay,
+                            diaryGroupEvent.members,
+                            diaryGroupEvent.imgs.filterNotNull()
+                        )
+                    }
+                }
             }
+            // 공통적으로 수행되는 finish() 호출
             finish()
         }
+
     }
 
     private fun editPlace() {
@@ -213,9 +253,8 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
                             group.imgs == diaryGroupEvent.imgs.filterNotNull()
                 }
 
-
                 if (!hasDiffer) {
-                    if (diaryGroupEvent.placeIdx == 0L) {
+                    if (diaryGroupEvent.placeIdx == 0L) {  // 새로 추가된 데이터는 add
                         repo.addMoimDiary(
                             groupScheduleId,
                             diaryGroupEvent.place.ifEmpty { "장소" },
@@ -234,7 +273,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
                         )
                         repo.diaryService.diaryBasicView(this)
                     }
-                }
+                } else finish()
 
             }
         }

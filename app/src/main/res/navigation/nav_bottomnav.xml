@@ -38,7 +38,7 @@
     </fragment>
     <fragment
         android:id="@+id/diaryAddFragment"
-        android:name="com.example.namo.ui.bottom.diary.mainDiary.PeraonalDetailFragment"
+        android:name="com.example.namo.ui.bottom.diary.mainDiary.PersonalDetailFragment"
         android:label="DiaryAddFragment"
         tools:layout="@layout/fragment_diary_personal_detail">
     </fragment>

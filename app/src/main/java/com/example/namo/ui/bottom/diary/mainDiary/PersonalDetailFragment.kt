@@ -32,7 +32,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import org.joda.time.DateTime
 
-class PeraonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepository.DiaryCallback {  // 다이어리 추가 화면
+class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepository.DiaryCallback {  // 다이어리 추가 화면
 
     private var _binding: FragmentDiaryPersonalDetailBinding? = null
     private val binding get() = _binding!!
@@ -181,7 +181,7 @@ class PeraonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
         // 삭제 확인 다이얼로그
         val title = "가록을 정말 삭제하시겠습니까?"
 
-        val dialog = ConfirmDialog(this@PeraonalDetailFragment, title, null, "삭제", 0)
+        val dialog = ConfirmDialog(this@PersonalDetailFragment, title, null, "삭제", 0)
         dialog.isCancelable = false
         activity?.let {dialog.show(it.supportFragmentManager, "ConfirmDialog")}
     }
@@ -295,8 +295,10 @@ class PeraonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
     }
 
     /** 글자 수 반환 **/
+    @SuppressLint("SetTextI18n")
     private fun charCnt() {
         with(binding) {
+            textNumTv.text="${binding.diaryContentsEt.text.length} / 200"
             diaryContentsEt.addTextChangedListener(object : TextWatcher {
                 var maxText = ""
                 override fun beforeTextChanged(
