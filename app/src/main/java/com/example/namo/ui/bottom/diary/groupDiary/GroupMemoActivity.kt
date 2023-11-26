@@ -29,11 +29,13 @@ import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupMemberRVAdapter
 import com.example.namo.ui.bottom.diary.groupDiary.adapter.GroupPlaceEventAdapter
 import com.example.namo.utils.ConfirmDialog
 import com.example.namo.utils.ConfirmDialogInterface
+import kotlinx.coroutines.*
 import org.joda.time.DateTime
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.properties.Delegates
 
 class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView,
     ConfirmDialogInterface {  // 그룹 다이어리 추가, 수정, 삭제 화면
@@ -60,6 +62,8 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
     private val itemTouchSimpleCallback = ItemTouchHelperCallback()  // 아이템 밀어서 삭제
     private val itemTouchHelper = ItemTouchHelper(itemTouchSimpleCallback)
 
+    private var isDelete = false
+    private var countEvent by Delegates.notNull<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +97,6 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
             binding.groupSaveTv.setBackgroundResource(R.color.MainOrange)
             binding.diaryDeleteIv.visibility = View.GONE
 
-            addOrUpdatePlaces()
 
         } else { // groupPlace가 있을 때, 서버에서 데이터 가져오고 수정하기
 
@@ -111,10 +114,10 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
             binding.groupSaveTv.setBackgroundResource(R.color.white)
             binding.diaryDeleteIv.visibility = View.VISIBLE
 
-            editPlace()
             deletePlace()
         }
 
+        addAndEditPlace()
 
     }
 
@@ -185,65 +188,8 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
 
     }
 
-
-    private fun addOrUpdatePlaces() {
-
+    private fun addAndEditPlace() {
         binding.groupSaveTv.setOnClickListener {
-            if (placeEvent.size == 1) {
-                // 데이터가 1개인 경우 addMoimDiary로 추가
-                val diaryGroupEvent = placeEvent.first()
-                repo.addMoimDiary(
-                    groupScheduleId,
-                    diaryGroupEvent.place.ifEmpty { "장소" },
-                    diaryGroupEvent.pay,
-                    diaryGroupEvent.members,
-                    diaryGroupEvent.imgs.filterNotNull()
-                )
-            } else if (placeEvent.size > 1) {
-                // 데이터가 2개 이상인 경우 첫 번째 데이터만 addMoimDiary로 추가, 나머지는 editGroupPlace로 수정
-                val firstDiaryGroupEvent = placeEvent.first()
-                repo.addMoimDiary(
-                    groupScheduleId,
-                    firstDiaryGroupEvent.place.ifEmpty { "장소" },
-                    firstDiaryGroupEvent.pay,
-                    firstDiaryGroupEvent.members,
-                    firstDiaryGroupEvent.imgs.filterNotNull()
-                )
-
-                // 나머지 데이터를 처리
-                for (i in 1 until placeEvent.size) {
-                    val diaryGroupEvent = placeEvent[i]
-                    if (diaryGroupEvent.placeIdx == 0L) {
-                        // placeIdx가 0이면 addMoimDiary로 추가
-                        repo.addMoimDiary(
-                            groupScheduleId,
-                            diaryGroupEvent.place.ifEmpty { "장소" },
-                            diaryGroupEvent.pay,
-                            diaryGroupEvent.members,
-                            diaryGroupEvent.imgs.filterNotNull()
-                        )
-                    } else {
-                        // placeIdx가 0이 아니면 editGroupPlace로 수정
-                        repo.editGroupPlace(
-                            diaryGroupEvent.placeIdx,
-                            diaryGroupEvent.place.ifEmpty { "장소" },
-                            diaryGroupEvent.pay,
-                            diaryGroupEvent.members,
-                            diaryGroupEvent.imgs.filterNotNull()
-                        )
-                    }
-                }
-            }
-            // 공통적으로 수행되는 finish() 호출
-            finish()
-        }
-
-    }
-
-    private fun editPlace() {
-
-
-        binding.groupSaveTv.setOnClickListener {  // 수정
 
             placeEvent.forEach { diaryGroupEvent ->
                 val hasDiffer = groupEvent.any { group ->
@@ -254,15 +200,17 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
                 }
 
                 if (!hasDiffer) {
-                    if (diaryGroupEvent.placeIdx == 0L) {  // 새로 추가된 데이터는 add
-                        repo.addMoimDiary(
+                    if (diaryGroupEvent.placeIdx == 0L) {
+                        val repos = DiaryRepository(this)
+                        repos.addMoimDiary(
                             groupScheduleId,
                             diaryGroupEvent.place.ifEmpty { "장소" },
                             diaryGroupEvent.pay,
                             diaryGroupEvent.members,
-                            diaryGroupEvent.imgs.filterNotNull()
+                            diaryGroupEvent.imgs.filterNotNull(),
                         )
-                        repo.diaryService.diaryBasicView(this)
+                        repos.diaryService.diaryBasicView(this)
+
                     } else {
                         repo.editGroupPlace(
                             diaryGroupEvent.placeIdx,
@@ -273,11 +221,10 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
                         )
                         repo.diaryService.diaryBasicView(this)
                     }
-                } else finish()
-
+                }
             }
-        }
 
+        }
     }
 
     private fun deletePlace() {  // 장소 전체 삭제 버튼
@@ -297,6 +244,9 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
     }
 
     override fun onClickYesButton(id: Int) {
+
+        isDelete = true
+        countEvent = placeEvent.size
         // 모임 기록 전체 삭제
         placeEvent.forEach {
             val diaryService = DiaryService()
@@ -506,13 +456,18 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
     }
 
     override fun onSuccess(response: DiaryResponse.DiaryResponse) {
-        finish()
-        Log.d("delete_group_diary", "SUCCESS")
+
+        if (isDelete) {
+            countEvent--
+            if (countEvent == 0) finish()
+        } else finish()
+
+        Log.d("group_diary", "SUCCESS")
     }
 
     override fun onFailure(message: String) {
         finish()
-        Log.d("delete_group_diary", message)
+        Log.d("group_diary", message)
     }
 
 }
