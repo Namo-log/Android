@@ -1,4 +1,4 @@
-package com.example.namo.ui.bottom.home.schedule.map
+package com.example.namo.ui.bottom.group
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
@@ -26,6 +26,7 @@ import com.example.namo.MainActivity.Companion.PLACE_NAME_INTENT_KEY
 import com.example.namo.MainActivity.Companion.PLACE_X_INTENT_KEY
 import com.example.namo.MainActivity.Companion.PLACE_Y_INTENT_KEY
 import com.example.namo.R
+import com.example.namo.databinding.ActivityGroupMapBinding
 import com.example.namo.databinding.ActivityMapBinding
 import com.example.namo.ui.bottom.group.GroupScheduleActivity
 import com.example.namo.ui.bottom.home.schedule.ScheduleActivity
@@ -45,9 +46,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-class MapActivity : AppCompatActivity() {
+class GroupMapActivity : AppCompatActivity() {
 
-    private lateinit var binding : ActivityMapBinding
+    private lateinit var binding : ActivityGroupMapBinding
     private lateinit var mapView : MapView
     private lateinit var mapViewContainer : ViewGroup
 
@@ -70,9 +71,9 @@ class MapActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_map)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_group_map)
         mapView = MapView(this)
-        mapViewContainer = binding.mapView
+        mapViewContainer = binding.groupMapView
         mapViewContainer.addView(mapView)
 
 
@@ -84,8 +85,8 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun setAdapter() {
-        binding.mapRv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        binding.mapRv.adapter = mapRVAdapter
+        binding.groupMapRv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.groupMapRv.adapter = mapRVAdapter
 
         setRVData()
     }
@@ -103,13 +104,13 @@ class MapActivity : AppCompatActivity() {
             else -> ScheduleActivity::class.java
         }
 
-        binding.mapSearchBtn.setOnClickListener {
+        binding.groupMapSearchBtn.setOnClickListener {
 
-            if (binding.mapSearchEt.text.isNullOrBlank()) {
+            if (binding.groupMapSearchEt.text.isNullOrBlank()) {
                 Toast.makeText(this, "검색어를 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
             else {
-                searchPlace(binding.mapSearchEt.text.toString())
+                searchPlace(binding.groupMapSearchEt.text.toString())
             }
         }
 
@@ -124,7 +125,7 @@ class MapActivity : AppCompatActivity() {
                 val mapPoint = MapPoint.mapPointWithGeoCoord(place.y.toDouble(), place.x.toDouble())
                 mapView.setMapCenterPointAndZoomLevel(mapPoint, 1, true)
 
-                binding.mapBtnLayout.visibility = View.VISIBLE
+                binding.groupMapBtnLayout.visibility = View.VISIBLE
             }
         })
 
@@ -143,7 +144,7 @@ class MapActivity : AppCompatActivity() {
     }
 
     override fun finish() {
-        binding.mapView.removeView(mapView)
+        binding.groupMapView.removeView(mapView)
         super.finish()
     }
 
