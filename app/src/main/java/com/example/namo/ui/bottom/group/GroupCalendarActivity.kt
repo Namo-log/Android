@@ -1,7 +1,10 @@
 package com.example.namo.ui.bottom.group
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
@@ -26,6 +29,17 @@ class GroupCalendarActivity : AppCompatActivity() {
 
     private var prevIdx = -1
     private var nowIdx = 0
+
+    private val getResultValue = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val returnLeave = result.data?.getBooleanExtra("leave", false)
+            if (returnLeave == true) { // 사용자가 탈퇴했다면
+                finish() // 그룹 캘린더 화면 나가기
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,15 +66,21 @@ class GroupCalendarActivity : AppCompatActivity() {
                 super.onPageSelected(position)
             }
         })
+    }
+
+    override fun onStart() {
+        super.onStart()
 
         clickListener()
     }
 
     private fun clickListener() {
         binding.groupCalendarInfoIv.setOnClickListener {
+
             val intent = Intent(this, GroupInfoActivity::class.java)
             intent.putExtra("group", group)
-            startActivity(intent)
+            // GropInfoActivity에서 넘겨준 사용자 탈퇴 여부
+            getResultValue.launch(intent)
         }
 
         binding.groupCalendarYearMonthLayout.setOnClickListener {

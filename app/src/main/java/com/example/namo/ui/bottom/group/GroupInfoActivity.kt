@@ -147,7 +147,9 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface, DeleteMoi
         Log.d("GroupInfoAct", "onDeleteMoimMemberSuccess")
         Toast.makeText(this, "${group.groupName} 모임에서 탈퇴하였습니다.", Toast.LENGTH_SHORT).show()
 
-        val resultIntent = Intent()
+        val resultIntent = Intent(this, GroupCalendarActivity::class.java).apply {
+            putExtra("leave", true) // 사용자가 탈퇴했음을 알려줌
+        }
         setResult(Activity.RESULT_OK, resultIntent)
         finish()
     }
