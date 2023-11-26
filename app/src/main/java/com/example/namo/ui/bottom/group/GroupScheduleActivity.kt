@@ -40,7 +40,6 @@ import com.example.namo.data.remote.moim.MoimSchedule
 import com.example.namo.data.remote.moim.MoimScheduleView
 import com.example.namo.data.remote.moim.MoimService
 import com.example.namo.databinding.ActivityGroupScheduleBinding
-import com.example.namo.ui.bottom.home.schedule.map.MapActivity
 import com.example.namo.utils.CalendarUtils.Companion.getInterval
 import com.example.namo.utils.ConfirmDialog
 import com.example.namo.utils.ConfirmDialogInterface
@@ -344,7 +343,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimS
         val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
             try {
-                val intent = Intent(this, MapActivity::class.java)
+                val intent = Intent(this, GroupMapActivity::class.java)
                 intent.putExtra(ORIGIN_ACTIVITY_INTENT_KEY, "GroupSchedule")
                 getLocationResult.launch(intent)
             } catch (e : NullPointerException) {

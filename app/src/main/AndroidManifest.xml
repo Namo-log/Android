@@ -71,9 +71,6 @@
             android:name="com.example.namo.ui.bottom.home.schedule.map.MapActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
         </activity>
         <activity android:name="com.example.namo.ui.bottom.home.category.CategoryActivity"
             android:theme="@style/Theme.Transparent"/>
@@ -97,6 +94,14 @@
         <activity android:name=".ui.bottom.diary.groupDiary.GroupMemoActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".ui.bottom.group.GroupMapActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <meta-data android:name="com.kakao.sdk.AppKey" android:value="${KAKAO_API_KEY}"/>
         <receiver
             android:name=".ui.bottom.home.notify.PushNotificationReceiver"
