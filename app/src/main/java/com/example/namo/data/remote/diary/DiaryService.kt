@@ -3,6 +3,10 @@ package com.example.namo.data.remote.diary
 import android.annotation.SuppressLint
 import android.util.Log
 import com.example.namo.config.ApplicationClass
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -198,8 +202,9 @@ class DiaryService {
         name: RequestBody,
         money: RequestBody,
         members: RequestBody?,
-        imgs: List<MultipartBody.Part>?
-    ) {
+        imgs: List<MultipartBody.Part>?,
+
+        ) {
         diaryRetrofitInterface.addGroupDiary(moimScheduleIdx, name, money, members, imgs)
             .enqueue(object : Callback<DiaryResponse.DiaryResponse> {
 

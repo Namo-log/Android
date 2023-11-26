@@ -401,12 +401,13 @@ class DiaryRepository(
     }
 
     /** 그룹 다이어리 추가 **/
+
     fun addMoimDiary(
         moimSchduleId: Long,
         place: String,
         money: Long,
         members: List<Long>?,
-        images: List<String>?
+        images: List<String>?,
     ) {
 
         val placeRequestBody = place.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -422,9 +423,8 @@ class DiaryRepository(
             placeRequestBody,
             moneyRequestBody,
             membersRequestBody,
-            imgList
+            imgList,
         )
-        diaryService.diaryBasicView(this)
     }
 
 
