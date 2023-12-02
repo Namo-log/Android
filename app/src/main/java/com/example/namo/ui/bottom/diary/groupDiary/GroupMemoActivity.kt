@@ -191,39 +191,65 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
     private fun addAndEditPlace() {
         binding.groupSaveTv.setOnClickListener {
 
-            placeEvent.forEach { diaryGroupEvent ->
-                val hasDiffer = groupEvent.any { group ->
-                    group.place == diaryGroupEvent.place &&
-                            group.pay == diaryGroupEvent.pay &&
-                            group.members == diaryGroupEvent.members &&
-                            group.imgs == diaryGroupEvent.imgs.filterNotNull()
-                }
+            CoroutineScope(Dispatchers.Main).launch {
+                placeEvent.forEach { diaryGroupEvent ->
+                    val hasDiffer = groupEvent.any { group ->
+                        group.place == diaryGroupEvent.place &&
+                                group.pay == diaryGroupEvent.pay &&
+                                group.members == diaryGroupEvent.members &&
+                                group.imgs == diaryGroupEvent.imgs.filterNotNull()
+                    }
 
-                if (!hasDiffer) {
-                    if (diaryGroupEvent.placeIdx == 0L) {
-                        val repos = DiaryRepository(this)
-                        repos.addMoimDiary(
-                            groupScheduleId,
-                            diaryGroupEvent.place.ifEmpty { "장소" },
-                            diaryGroupEvent.pay,
-                            diaryGroupEvent.members,
-                            diaryGroupEvent.imgs.filterNotNull(),
-                        )
-                        repos.diaryService.diaryBasicView(this)
+                    if (!hasDiffer) {
+                        if (diaryGroupEvent.placeIdx == 0L) {
+                            withContext(Dispatchers.IO) {
+                                repo.addMoimDiary(
+                                    groupScheduleId,
+                                    diaryGroupEvent.place.ifEmpty { "장소" },
+                                    diaryGroupEvent.pay,
+                                    diaryGroupEvent.members,
+                                    diaryGroupEvent.imgs.filterNotNull(),
+                                    object : DiaryBasicView {
+                                        override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+                                            Log.d("GROUP_DIARY_ADD", "SUCCESS")
+                                            finish()
+                                        }
 
-                    } else {
-                        repo.editGroupPlace(
-                            diaryGroupEvent.placeIdx,
-                            diaryGroupEvent.place.ifEmpty { "장소" },
-                            diaryGroupEvent.pay,
-                            diaryGroupEvent.members,
-                            diaryGroupEvent.imgs.filterNotNull()
-                        )
-                        repo.diaryService.diaryBasicView(this)
+                                        override fun onFailure(message: String) {
+                                            Log.d("GROUP_DIARY_ADD", message)
+                                            finish()
+                                        }
+
+                                    }
+                                )
+                            }
+                        } else {
+                            withContext(Dispatchers.IO) {
+                                repo.editGroupPlace(
+                                    diaryGroupEvent.placeIdx,
+                                    diaryGroupEvent.place.ifEmpty { "장소" },
+                                    diaryGroupEvent.pay,
+                                    diaryGroupEvent.members,
+                                    diaryGroupEvent.imgs.filterNotNull(),
+                                    object : DiaryBasicView {
+                                        override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+                                            Log.d("GROUP_DIARY_EDIT", "SUCCESS")
+                                            finish()
+                                        }
+
+                                        override fun onFailure(message: String) {
+                                            Log.d("GROUP_DIARY_EDIT", message)
+                                            finish()
+                                        }
+
+                                    }
+                                )
+
+                            }
+                        }
                     }
                 }
             }
-
         }
     }
 
@@ -457,11 +483,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
 
     override fun onSuccess(response: DiaryResponse.DiaryResponse) {
 
-        if (isDelete) {
-            countEvent--
-            if (countEvent == 0) finish()
-        } else finish()
-
+        finish()
         Log.d("group_diary", "SUCCESS")
     }
 
