@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.diary.DiaryGroupEvent
-import com.example.namo.data.remote.diary.DiaryRepository
+import com.example.namo.data.remote.diary.DiaryBasicView
+import com.example.namo.data.remote.diary.DiaryResponse
+import com.example.namo.data.remote.diary.DiaryService
 import com.example.namo.databinding.ItemDiaryGroupEventBinding
 import java.text.NumberFormat
 import java.util.*
@@ -48,7 +51,8 @@ class GroupPlaceEventAdapter(
         val updatedPosition = holder.bindingAdapterPosition
 
         // 정산 다이얼로그
-        holder.binding.itemPlaceMoneyTv.text = NumberFormat.getNumberInstance(Locale.US).format(event.pay)
+        holder.binding.itemPlaceMoneyTv.text =
+            NumberFormat.getNumberInstance(Locale.US).format(event.pay)
         holder.binding.clickMoneyLy.setOnClickListener {
             payClickListener(event.pay, updatedPosition, holder.binding.itemPlaceMoneyTv)
         }
@@ -62,7 +66,7 @@ class GroupPlaceEventAdapter(
         if (event.imgs.isNotEmpty()) {
             holder.binding.img2.visibility = View.GONE
             holder.binding.img3.visibility = View.GONE
-        }else{
+        } else {
             holder.binding.img2.visibility = View.VISIBLE
             holder.binding.img3.visibility = View.VISIBLE
         }
@@ -70,7 +74,6 @@ class GroupPlaceEventAdapter(
         holder.binding.groupGalleryLv.setOnClickListener {
             imageClickListener(event.imgs, updatedPosition)
         }
-
 
         holder.binding.itemPlaceNameTv.hint = "장소"
         adapter.addItem(event.imgs)
@@ -108,8 +111,18 @@ class GroupPlaceEventAdapter(
             binding.removeView.setOnClickListener {
                 val placeIdx = item.placeIdx
                 if (placeIdx != 0L) {
-                    val repo = DiaryRepository(context)
-                    repo.deleteGroupPlace(placeIdx)
+                    val diaryService = DiaryService()
+                    diaryService.deleteGroupDiary(placeIdx,
+                        object : DiaryBasicView {
+                            override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+                                Log.d("DELETE_GROUP_DIARY", "SUCCESS")
+                            }
+
+                            override fun onFailure(message: String) {
+                                Log.d("DELETE_GROUP_DIARY", message)
+                            }
+
+                        })
                 }
                 listData.remove(item)
                 notifyDataSetChanged()

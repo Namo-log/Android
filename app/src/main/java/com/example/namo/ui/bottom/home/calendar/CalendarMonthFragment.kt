@@ -23,6 +23,7 @@ import com.example.namo.data.remote.event.GetMonthEventResponse
 import com.example.namo.data.remote.event.GetMonthEventResult
 import com.example.namo.data.remote.event.GetMonthEventView
 import com.example.namo.databinding.FragmentCalendarMonthBinding
+import com.example.namo.ui.bottom.diary.mainDiary.PersonalDetailActivity
 import com.example.namo.ui.bottom.home.HomeFragment
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
@@ -189,9 +190,9 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView,GetGroupMonthView {
         personalEventRVAdapter.setRecordClickListener(object : DailyPersonalRVAdapter.DiaryInterface{
             override fun onDetailClicked(event: Event) {
 
-                val bundle=Bundle()
-                bundle.putSerializable("event",event)
-                view?.findNavController()?.navigate(R.id.action_homeFragment_to_diaryDetailFragment2, bundle)
+                val intent = Intent(context, PersonalDetailActivity::class.java)
+                intent.putExtra("event", event)
+                requireActivity().startActivity(intent)
             }
         })
 
