@@ -23,29 +23,21 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.*
 
 class DiaryRepository(
-    val context: Context,
-) : AddPersonalDiaryView, DiaryDetailView, DiaryBasicView {
+    val context: Context
+) : DiaryDetailView{
 
-    val diaryService = DiaryService()
+    private val diaryService = DiaryService()
     private val db = NamoDatabase.getInstance(context)
     private val diaryDao = db.diaryDao
     private val categoryDao = db.categoryDao
 
     private lateinit var notUploaded: List<Diary>
-    private var callback: DiaryCallback? = null
 
     private val failList = ArrayList<Diary>()
     private lateinit var imgFile: File
 
     private lateinit var category: Category
     private lateinit var diary: Diary
-
-    fun setCallBack(callback: DiaryCallback) {
-        this.callback = callback
-    }
-    interface DiaryCallback {
-        fun onExecute()
-    }
 
     /** add diary **/
     fun addDiary(
@@ -77,8 +69,6 @@ class DiaryRepository(
 
             // 와이파이 연결 시, 서버에 데이터 추가
             addDiaryToServer(diaryLocalId, serverId, content, images)
-            diaryService.addDiaryView(this)
-
         }
     }
 
@@ -88,7 +78,6 @@ class DiaryRepository(
         content: String,
         images: List<String>?
     ) {
-
         val imgList = imageToMultipart(images)
 
         val contentRequestBody = content.toRequestBody("text/plain".toMediaTypeOrNull())
@@ -99,40 +88,36 @@ class DiaryRepository(
             localId,
             imgList,
             contentRequestBody,
-            scheduleIdRequestBody
+            scheduleIdRequestBody,
+            object :AddPersonalDiaryView{
+                override fun onAddDiarySuccess(
+                    response: DiaryResponse.DiaryAddResponse,
+                    localId: Long
+                ) {
+                    val storeDB = Thread {
+                        diaryDao.updateDiaryAfterUpload(
+                            localId,
+                            response.result.scheduleIdx,
+                            1,
+                            R.string.event_current_default.toString()
+                        )
+                    }
+                    storeDB.start()
+                    try {
+                        storeDB.join()
+                    } catch (e: InterruptedException) {
+                        e.printStackTrace()
+                    }
+
+                    Log.d("addDiaryServerSuccess", response.result.toString())
+                }
+
+                override fun onAddDiaryFailure(message: String) {
+                    printNotUploaded()
+                    Log.d("addDiaryServerFailure", message)
+                }
+            }
         )
-    }
-
-    override fun onAddDiarySuccess(
-        response: DiaryResponse.DiaryAddResponse,
-        localId: Long
-    ) {
-
-        val storeDB = Thread {
-            diaryDao.updateDiaryAfterUpload(
-                localId,
-                response.result.scheduleIdx,
-                1,
-                R.string.event_current_default.toString()
-            )
-        }
-        storeDB.start()
-        try {
-            storeDB.join()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
-
-        callback?.onExecute()
-        Log.d("addDiaryServerSuccess", response.result.toString())
-
-    }
-
-    override fun onAddDiaryFailure(message: String) {
-
-        printNotUploaded()
-        callback?.onExecute()
-        Log.d("addDiaryServerFailure", message)
     }
 
 
@@ -166,9 +151,7 @@ class DiaryRepository(
         }
 
         if (NetworkManager.checkNetworkState(context)) {
-
             editDiaryToServer(diaryLocalId, serverId, content, images)
-            diaryService.setDiaryView(this)
         }
 
     }
@@ -194,7 +177,7 @@ class DiaryRepository(
             contentRequestBody,
             scheduleIdRequestBody
         )
-
+        diaryService.setDiaryView(this)
     }
 
 
@@ -219,7 +202,6 @@ class DiaryRepository(
             e.printStackTrace()
         }
 
-        callback?.onExecute()
         Log.d("editDiaryServerSuccess", response.result)
     }
 
@@ -227,7 +209,6 @@ class DiaryRepository(
     override fun onEditDiaryFailure(message: String) {
 
         printNotUploaded()
-        callback?.onExecute()
         Log.d("editDiaryServerFailure", message)
 
     }
@@ -274,7 +255,6 @@ class DiaryRepository(
             e.printStackTrace()
         }
 
-        callback?.onExecute()
         Log.d("deleteDiary", response.result)
     }
 
@@ -283,7 +263,6 @@ class DiaryRepository(
     override fun onDeleteDiaryFailure(message: String) {
 
         printNotUploaded()
-        callback?.onExecute()
         Log.d("deleteDiary", message)
     }
 
@@ -367,8 +346,6 @@ class DiaryRepository(
                 }
             }
         }
-
-        diaryService.addDiaryView(this)
     }
 
     /** 카테고리 id로 Category 조회 **/
@@ -457,13 +434,6 @@ class DiaryRepository(
         )
     }
 
-
-    /** 그룹 다이어리 별 장소 삭제 **/
-    fun deleteGroupPlace(moimPlaceId: Long) {
-        diaryService.deleteGroupDiary(moimPlaceId)
-        diaryService.diaryBasicView(this)
-    }
-
     private fun imageToMultipart(images: List<String>?): List<MultipartBody.Part>? {
         return images?.map { path ->
 
@@ -545,13 +515,5 @@ class DiaryRepository(
             e.printStackTrace()
         }
         Log.d("diary", "Not uploaded Diary : $failList")
-    }
-
-    override fun onSuccess(response: DiaryResponse.DiaryResponse) {
-        Log.d("SUCCESS", response.message)
-    }
-
-    override fun onFailure(message: String) {
-        Log.d("FAILURE", message)
     }
 }

@@ -3,6 +3,7 @@ package com.example.namo.ui.bottom.diary.mainDiary
 
 import DiaryAdapter
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
@@ -59,6 +60,12 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
         repo = DiaryRepository(requireContext())
 
+        return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+
         yearMonthTextView = DateTime(dateTime).toString("yyyy.MM")
         sf = requireContext().getSharedPreferences("sf", Context.MODE_PRIVATE)
 
@@ -75,8 +82,6 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
         checkSwitchBtn()
         dialogCreate()
-
-        return binding.root
     }
 
 
@@ -303,8 +308,6 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
     private fun onEditClickListener(item: DiaryEvent) {  // 개인 기록 수정 클릭리스너
 
-        val bundle = Bundle()
-
         val event = Event(
             item.eventId,
             item.event_title,
@@ -317,11 +320,9 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
             1
         )
 
-        bundle.putSerializable("event", event)
-
-        val detailFrag = PersonalDetailFragment()
-        detailFrag.arguments = bundle
-        view?.findNavController()?.navigate(R.id.action_diaryFragment_to_diaryAddFragment, bundle)
+        val intent = Intent(context, PersonalDetailActivity::class.java)
+        intent.putExtra("event", event)
+        requireActivity().startActivity(intent)
 
     }
 

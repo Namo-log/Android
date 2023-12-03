@@ -34,10 +34,8 @@ import org.joda.time.DateTime
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.properties.Delegates
 
-class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView,
+class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
     ConfirmDialogInterface {  // 그룹 다이어리 추가, 수정, 삭제 화면
 
     private lateinit var binding: ActivityDiaryGroupMemoBinding
@@ -61,9 +59,6 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
 
     private val itemTouchSimpleCallback = ItemTouchHelperCallback()  // 아이템 밀어서 삭제
     private val itemTouchHelper = ItemTouchHelper(itemTouchSimpleCallback)
-
-    private var isDelete = false
-    private var countEvent by Delegates.notNull<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -219,7 +214,6 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
                                             Log.d("GROUP_DIARY_ADD", message)
                                             finish()
                                         }
-
                                     }
                                 )
                             }
@@ -244,7 +238,6 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
 
                                     }
                                 )
-
                             }
                         }
                     }
@@ -271,13 +264,21 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
 
     override fun onClickYesButton(id: Int) {
 
-        isDelete = true
-        countEvent = placeEvent.size
         // 모임 기록 전체 삭제
         placeEvent.forEach {
             val diaryService = DiaryService()
-            diaryService.deleteGroupDiary(it.placeIdx)
-            diaryService.diaryBasicView(this)
+            diaryService.deleteGroupDiary(it.placeIdx,
+                object : DiaryBasicView {
+                    override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+                        Log.e("DELETE_GROUP_DIARY", "SUCCESS")
+                        finish()
+                    }
+
+                    override fun onFailure(message: String) {
+                        Log.e("DELETE_GROUP_DIARY", message)
+                        finish()
+                    }
+                })
         }
     }
 
@@ -310,14 +311,13 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
                     }, {
                         placeEvent[position].members = it
                     }).show(supportFragmentManager, "show")
-
+                    binding.diaryGroupAddPlaceRv.smoothScrollToPosition(position)
                 },
                 imageClickListener = { imgs, position ->
                     this@GroupMemoActivity.imgList = imgs
                     this@GroupMemoActivity.positionForGallery = position
 
                     getPermission()
-
                 },
                 placeClickListener = { text, position ->
                     placeEvent[position].place = text
@@ -480,16 +480,4 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView, DiaryBasicView
         }
         return super.dispatchTouchEvent(ev)
     }
-
-    override fun onSuccess(response: DiaryResponse.DiaryResponse) {
-
-        finish()
-        Log.d("group_diary", "SUCCESS")
-    }
-
-    override fun onFailure(message: String) {
-        finish()
-        Log.d("group_diary", message)
-    }
-
 }

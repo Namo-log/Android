@@ -2,41 +2,38 @@ package com.example.namo.ui.bottom.diary.mainDiary
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity.RESULT_OK
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.entity.diary.Diary
 import com.example.namo.data.entity.home.Event
-import com.example.namo.data.remote.diary.*
-import com.example.namo.databinding.FragmentDiaryPersonalDetailBinding
+import com.example.namo.data.remote.diary.DiaryRepository
+import com.example.namo.databinding.ActivityPersonalDiaryDetailBinding
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.example.namo.utils.ConfirmDialog
 import com.example.namo.utils.ConfirmDialogInterface
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import org.joda.time.DateTime
 
-class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepository.DiaryCallback {  // 다이어리 추가 화면
+class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface{  // 개인 다이어리 추가,수정,삭제 화면
 
-    private var _binding: FragmentDiaryPersonalDetailBinding? = null
-    private val binding get() = _binding!!
-
+    private lateinit var binding: ActivityPersonalDiaryDetailBinding
     private lateinit var galleryAdapter: GalleryListAdapter
 
     private lateinit var repo: DiaryRepository
@@ -45,26 +42,19 @@ class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
     private lateinit var event: Event
     private lateinit var diary: Diary
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityPersonalDiaryDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        _binding =FragmentDiaryPersonalDetailBinding.inflate(inflater, container, false)
+        galleryAdapter = GalleryListAdapter(this)
 
-        hideBottomNavigation(true)
-
-        galleryAdapter = GalleryListAdapter(requireContext())
-
-        repo = DiaryRepository(requireContext())
-        repo.setCallBack(this)
+        repo = DiaryRepository(this)
 
         setEvent()
         charCnt()
         onClickListener()
 
-        return binding.root
     }
 
     private fun getDiary() {
@@ -80,13 +70,11 @@ class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
 
     private fun setEvent() {
 
-        event = (arguments?.getSerializable("event") as? Event)!!
+        event = (intent.getSerializableExtra("event") as? Event)!!
         hasDiary()
 
         val category = repo.getCategory(event.categoryIdx, event.categoryServerIdx)
-        context?.resources?.let {
-            binding.itemDiaryCategoryColorIv.background.setTint(category.color)
-        }
+        binding.itemDiaryCategoryColorIv.background.setTint(category.color)
 
         binding.apply {
 
@@ -101,7 +89,6 @@ class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
 
             diaryInputDateTv.text = formatDate
         }
-
     }
 
     private fun hasDiary() {
@@ -111,7 +98,7 @@ class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
             binding.diaryEditTv.text = resources.getString(R.string.diary_add)
             binding.diaryEditTv.setTextColor(
                 ContextCompat.getColor(
-                    requireContext(),
+                    this,
                     R.color.white
                 )
             )
@@ -128,7 +115,7 @@ class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
             binding.diaryEditTv.text = resources.getString(R.string.diary_edit)
             binding.diaryEditTv.setTextColor(
                 ContextCompat.getColor(
-                    requireContext(),
+                    this,
                     R.color.MainOrange
                 )
             )
@@ -157,9 +144,8 @@ class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
             return
         } else {
             repo.addDiary(event.eventId, content, imgList as List<String>?, event.serverIdx)
-            hideBottomNavigation(false)
+            finish()
         }
-
     }
 
     /** 다이어리 수정 **/
@@ -173,25 +159,25 @@ class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
             event.serverIdx
         )
 
-        Toast.makeText(requireContext(), "수정되었습니다", Toast.LENGTH_SHORT).show()
-        hideBottomNavigation(false)
+        Toast.makeText(this, "수정되었습니다", Toast.LENGTH_SHORT).show()
+        finish()
     }
 
     private fun showDialog() {
         // 삭제 확인 다이얼로그
         val title = "가록을 정말 삭제하시겠습니까?"
 
-        val dialog = ConfirmDialog(this@PersonalDetailFragment, title, null, "삭제", 0)
+        val dialog = ConfirmDialog(this, title, null, "삭제", 0)
         dialog.isCancelable = false
-        activity?.let {dialog.show(it.supportFragmentManager, "ConfirmDialog")}
+        dialog.show(supportFragmentManager,"")
     }
 
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
 
         repo.deleteDiary(event.eventId, event.serverIdx)
-        Toast.makeText(context, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-        hideBottomNavigation(false)
+        Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+        finish()
     }
 
     private fun onClickListener() {
@@ -199,8 +185,7 @@ class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
         binding.apply {
 
             diaryBackIv.setOnClickListener {
-                findNavController().popBackStack()
-                hideBottomNavigation(false)
+                finish()
             }
 
             diaryGalleryClickIv.setOnClickListener {
@@ -215,16 +200,16 @@ class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
         val galleryViewRVAdapter = galleryAdapter
         binding.diaryGallerySavedRy.adapter = galleryViewRVAdapter
         binding.diaryGallerySavedRy.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
     }
 
     private fun hasImagePermission(): Boolean { // 갤러리 권한 여부
         val writePermission = ContextCompat.checkSelfPermission(
-            requireContext(),
+            this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
         val readPermission = ContextCompat.checkSelfPermission(
-            requireContext(),
+            this,
             Manifest.permission.READ_EXTERNAL_STORAGE
         )
 
@@ -251,14 +236,13 @@ class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
 
         } else {  // 없으면 권한 받기
             ActivityCompat.requestPermissions(
-                requireActivity(),
+                this,
                 arrayOf(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                 ),
                 200
             )
-
         }
     }
 
@@ -267,12 +251,12 @@ class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
 
-        if (result.resultCode == RESULT_OK) {
+        if (result.resultCode == Activity.RESULT_OK) {
             imgList.clear()
             if (result.data?.clipData != null) { // 사진 여러개 선택한 경우
                 val count = result.data?.clipData!!.itemCount
                 if (count > 3) {
-                    Toast.makeText(requireContext(), "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT)
                         .show()
 
                     return@registerForActivityResult
@@ -313,11 +297,7 @@ class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
                 @SuppressLint("SetTextI18n")
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     if (diaryContentsEt.length() > 200) {
-                        Toast.makeText(
-                            requireContext(), "최대 200자까지 입력 가능합니다",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
+                        Toast.makeText(this@PersonalDetailActivity, "최대 200자까지 입력 가능합니다 ", Toast.LENGTH_SHORT).show()
                         diaryContentsEt.setText(maxText)
                         diaryContentsEt.setSelection(diaryContentsEt.length())
                         if (s != null) {
@@ -335,21 +315,21 @@ class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
         }
     }
 
-    private fun hideBottomNavigation(bool: Boolean) {
-        val bottomNavigationView: BottomNavigationView =
-            requireActivity().findViewById(R.id.nav_bar)
-        if (bool) {
-            bottomNavigationView.visibility = View.GONE
-        } else {
-            bottomNavigationView.visibility = View.VISIBLE
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {  // editText 외 터치 시 키보드 내려감
+        val focusView = currentFocus
+        if (focusView != null && ev != null) {
+            val rect = Rect()
+            focusView.getGlobalVisibleRect(rect)
+            val x = ev.x.toInt()
+            val y = ev.y.toInt()
+
+            if (!rect.contains(x, y)) {
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(focusView.windowToken, 0)
+                focusView.clearFocus()
+            }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        _binding = null
-        hideBottomNavigation(false)
+        return super.dispatchTouchEvent(ev)
     }
 
     override fun onClickYesButton(id: Int) {
@@ -357,9 +337,5 @@ class PersonalDetailFragment : Fragment(), ConfirmDialogInterface,DiaryRepositor
         deleteDiary()
     }
 
-    override fun onExecute() {
-        findNavController().popBackStack()
-    }
-
-
 }
+

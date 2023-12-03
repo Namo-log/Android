@@ -15,17 +15,11 @@ class DiaryService {
     private val diaryRetrofitInterface: DiaryInterface =
         ApplicationClass.sRetrofit.create(DiaryInterface::class.java)
 
-    private lateinit var addPersonalDiaryView: AddPersonalDiaryView
     private lateinit var diaryDetailView: DiaryDetailView
     private lateinit var getMonthDiaryView: GetMonthDiaryView
     private lateinit var getGroupDiaryView: GetGroupDiaryView
     private lateinit var getGroupMonthView: GetGroupMonthView
     private lateinit var addGroupAfterDiaryView: AddGroupAfterDiaryView
-    private lateinit var diaryBasicView: DiaryBasicView
-
-    fun addDiaryView(addPersonalDiaryView: AddPersonalDiaryView) {
-        this.addPersonalDiaryView = addPersonalDiaryView
-    }
 
     fun setDiaryView(diaryDetailView: DiaryDetailView) {
         this.diaryDetailView = diaryDetailView
@@ -47,17 +41,13 @@ class DiaryService {
         this.getGroupMonthView = getGroupMonthView
     }
 
-
-    fun diaryBasicView(basicView: DiaryBasicView) {
-        this.diaryBasicView = basicView
-    }
-
     /** 기록 추가 **/
     fun addDiary(
         localId: Long,
         images: List<MultipartBody.Part>?,
         content: RequestBody?,
-        scheduleIdx: RequestBody
+        scheduleIdx: RequestBody,
+        callback : AddPersonalDiaryView
     ) {
         diaryRetrofitInterface.addDiary(scheduleIdx, content, images)
             .enqueue(object : Callback<DiaryResponse.DiaryAddResponse> {
@@ -70,16 +60,16 @@ class DiaryService {
                     when (response.code()) {
 
                         200 -> if (resp != null) {
-                            addPersonalDiaryView.onAddDiarySuccess(
+                            callback.onAddDiarySuccess(
                                 resp, localId
                             )
                         }
-                        else -> addPersonalDiaryView.onAddDiaryFailure(response.toString())
+                        else -> callback.onAddDiaryFailure(response.toString())
                     }
                 }
 
                 override fun onFailure(call: Call<DiaryResponse.DiaryAddResponse>, t: Throwable) {
-                    addPersonalDiaryView.onAddDiaryFailure(t.message.toString())
+                    callback.onAddDiaryFailure(t.message.toString())
                 }
             })
     }
@@ -91,7 +81,7 @@ class DiaryService {
         serverId: Long,
         images: List<MultipartBody.Part>?,
         content: RequestBody?,
-        scheduleIdx: RequestBody
+        scheduleIdx: RequestBody,
     ) {
         diaryRetrofitInterface.editDiary(scheduleIdx, content, images)
             .enqueue(object : Callback<DiaryResponse.DiaryResponse> {
@@ -227,6 +217,7 @@ class DiaryService {
         }
     }
 
+
     /** 그룹 기록 일 별 조회 **/
     fun getGroupDiary(
         moimScheduleIdx: Long
@@ -299,6 +290,7 @@ class DiaryService {
 
     fun deleteGroupDiary(
         moimScheduleIdx: Long,
+        callback: DiaryBasicView
     ) {
         diaryRetrofitInterface.deleteGroupDiaryPlace(moimScheduleIdx)
             .enqueue(object : Callback<DiaryResponse.DiaryResponse> {
@@ -311,9 +303,9 @@ class DiaryService {
                     val resp: DiaryResponse.DiaryResponse? = response.body()
                     when (response.code()) {
                         200 -> if (resp != null) {
-                            diaryBasicView.onSuccess(resp)
+                            callback.onSuccess(resp)
                         }
-                        else -> diaryBasicView.onFailure(response.toString())
+                        else -> callback.onFailure(response.toString())
                     }
 
                 }
@@ -322,7 +314,7 @@ class DiaryService {
                     call: Call<DiaryResponse.DiaryResponse>,
                     t: Throwable
                 ) {
-                    diaryBasicView.onFailure(t.message.toString())
+                    callback.onFailure(t.message.toString())
                 }
             })
     }

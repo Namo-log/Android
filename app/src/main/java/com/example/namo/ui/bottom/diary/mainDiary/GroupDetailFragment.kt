@@ -24,7 +24,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.*
 import org.joda.time.DateTime
 
-class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
+class GroupDetailFragment : Fragment(), GetGroupDiaryView,
     AddGroupAfterDiaryView,
     ConfirmDialogInterface {
 
@@ -180,25 +180,26 @@ class GroupDetailFragment : Fragment(), DiaryBasicView, GetGroupDiaryView,
         diaryService.addGroupAfterDiary(this)
     }
 
-    override fun onSuccess(response: DiaryResponse.DiaryResponse) {
-        placeSize--
-        if (placeSize == 0) {
-            findNavController().popBackStack()
-            isDelete=false
-        }
-
-    }
-
-    override fun onFailure(message: String) {
-        findNavController().popBackStack()
-    }
-
     override fun onAddGroupAfterDiarySuccess(response: DiaryResponse.DiaryResponse) {
 
         if (isDelete) {
-            placeIntList.map { placeIndex ->
-                diaryService.deleteGroupDiary(placeIndex)
-                diaryService.diaryBasicView(this)
+                placeIntList.map { placeIndex ->
+                    diaryService.deleteGroupDiary(placeIndex, object : DiaryBasicView {
+                        override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+                            Log.e("DELETE_GROUP_DIARY", "SUCCESS")
+                            placeSize--
+                            if (placeSize == 0) {
+                                findNavController().popBackStack()
+                                isDelete = false
+                            }
+                        }
+
+                        override fun onFailure(message: String) {
+                            Log.e("DELETE_GROUP_DIARY", message)
+                            findNavController().popBackStack()
+                        }
+
+                    })
             }
         } else {
             findNavController().popBackStack()
