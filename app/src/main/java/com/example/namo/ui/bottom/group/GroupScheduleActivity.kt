@@ -40,6 +40,7 @@ import com.example.namo.data.remote.moim.MoimSchedule
 import com.example.namo.data.remote.moim.MoimScheduleView
 import com.example.namo.data.remote.moim.MoimService
 import com.example.namo.databinding.ActivityGroupScheduleBinding
+import com.example.namo.ui.bottom.home.schedule.map.MapActivity
 import com.example.namo.utils.CalendarUtils.Companion.getInterval
 import com.example.namo.utils.ConfirmDialog
 import com.example.namo.utils.ConfirmDialogInterface
@@ -343,8 +344,21 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimS
         val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
             try {
-                val intent = Intent(this, GroupMapActivity::class.java)
+                val intent = Intent(this, MapActivity::class.java)
                 intent.putExtra(ORIGIN_ACTIVITY_INTENT_KEY, "GroupSchedule")
+                if (isPostOrEdit) {
+                    if (postGroupSchedule.x != 0.0 && postGroupSchedule.y != 0.0) {
+                        intent.putExtra("PREV_PLACE_NAME", postGroupSchedule.locationName)
+                        intent.putExtra("PREV_PLACE_X", postGroupSchedule.x)
+                        intent.putExtra("PREV_PLACE_Y", postGroupSchedule.y)
+                    }
+                } else {
+                    if (editGroupSchedule.x != 0.0 && editGroupSchedule.y != 0.0) {
+                        intent.putExtra("PREV_PLACE_NAME", editGroupSchedule.locationName)
+                        intent.putExtra("PREV_PLACE_X", editGroupSchedule.x)
+                        intent.putExtra("PREV_PLACE_Y", editGroupSchedule.y)
+                    }
+                }
                 getLocationResult.launch(intent)
             } catch (e : NullPointerException) {
                 Log.e("LOCATION_ERROR", e.toString())
@@ -387,6 +401,16 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimS
                 place_name = result.data?.getStringExtra(PLACE_NAME_INTENT_KEY)!!
                 place_x = result.data?.getDoubleExtra(PLACE_X_INTENT_KEY, 0.0)!!
                 place_y = result.data?.getDoubleExtra(PLACE_Y_INTENT_KEY, 0.0)!!
+
+                if (isPostOrEdit) {
+                    postGroupSchedule.locationName = place_name
+                    postGroupSchedule.x = place_x
+                    postGroupSchedule.y = place_y
+                } else {
+                    editGroupSchedule.locationName = place_name
+                    editGroupSchedule.x = place_x
+                    editGroupSchedule.y = place_y
+                }
 
                 if (place_x != 0.0 || place_y != 0.0) {
                     setMapContent()

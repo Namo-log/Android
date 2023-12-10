@@ -10,8 +10,10 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -52,10 +54,13 @@ class MapActivity : AppCompatActivity() {
     private lateinit var mapViewContainer : ViewGroup
 
     private val mapRVAdapter : MapRVAdapter = MapRVAdapter()
+    private var isTherePrev : Boolean = false
 
     private val placeList : ArrayList<Place> = arrayListOf()
+    private val markerList : ArrayList<MapPOIItem> = arrayListOf()
     private val defaultPlace : Place = Place()
     private var selectedPlace : Place = Place()
+    private var prevPlace : Place = Place()
 
     private var originHeight : Int = 0
 
@@ -77,7 +82,14 @@ class MapActivity : AppCompatActivity() {
 
 
         getLocationPermission()
-        setCurrentLocation()
+
+        if (intent.getStringExtra("PREV_PLACE_NAME").isNullOrEmpty()) {
+            isTherePrev = false
+            setCurrentLocation()
+        } else {
+            isTherePrev = true
+            setPrevLocation()
+        }
 
         setAdapter()
         clickListener()
@@ -96,6 +108,18 @@ class MapActivity : AppCompatActivity() {
         mapRVAdapter.notifyDataSetChanged()
     }
 
+    private fun searchEventStart() {
+        val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+
+        if (binding.mapSearchEt.text.isNullOrBlank()) {
+            Toast.makeText(this, "검색어를 입력해주세요.", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            searchPlace(binding.mapSearchEt.text.toString())
+        }
+    }
+
     private fun clickListener() {
         val targetActivityClass = when(intent.getStringExtra(ORIGIN_ACTIVITY_INTENT_KEY)) {
             "GroupSchedule" -> GroupScheduleActivity::class.java
@@ -103,14 +127,17 @@ class MapActivity : AppCompatActivity() {
             else -> ScheduleActivity::class.java
         }
 
-        binding.mapSearchBtn.setOnClickListener {
+        binding.mapSearchEt.setOnKeyListener { _, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                searchEventStart()
+                true
+            } else {
+                false
+            }
+        }
 
-            if (binding.mapSearchEt.text.isNullOrBlank()) {
-                Toast.makeText(this, "검색어를 입력해주세요.", Toast.LENGTH_SHORT).show()
-            }
-            else {
-                searchPlace(binding.mapSearchEt.text.toString())
-            }
+        binding.mapSearchBtn.setOnClickListener {
+            searchEventStart()
         }
 
         mapRVAdapter.setItemClickListener( object :
@@ -124,11 +151,20 @@ class MapActivity : AppCompatActivity() {
                 val mapPoint = MapPoint.mapPointWithGeoCoord(place.y.toDouble(), place.x.toDouble())
                 mapView.setMapCenterPointAndZoomLevel(mapPoint, 1, true)
 
+                mapView.selectPOIItem(markerList[position], true)
+
                 binding.mapBtnLayout.visibility = View.VISIBLE
             }
         })
 
         binding.cancelBtn.setOnClickListener {
+            if (isTherePrev) {
+                val intent = Intent(this, targetActivityClass)
+                intent.putExtra(PLACE_NAME_INTENT_KEY, prevPlace.place_name)
+                intent.putExtra(PLACE_X_INTENT_KEY, prevPlace.x)
+                intent.putExtra(PLACE_Y_INTENT_KEY, prevPlace.y)
+                setResult(RESULT_OK, intent)
+            }
             finish()
         }
 
@@ -178,6 +214,8 @@ class MapActivity : AppCompatActivity() {
 
     private fun addMarkers() {
         mapView.removeAllPOIItems()
+        markerList.clear()
+
         if (placeList.isNullOrEmpty()) {
             Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
         }
@@ -196,8 +234,32 @@ class MapActivity : AppCompatActivity() {
                 }
 
                 mapView.addPOIItem(point)
+                markerList.add(point)
             }
         }
+    }
+
+    private fun setPrevLocation() {
+        prevPlace.x = intent.getDoubleExtra("PREV_PLACE_X", 0.0)
+        prevPlace.y = intent.getDoubleExtra("PREV_PLACE_Y", 0.0)
+        prevPlace.place_name = intent.getStringExtra("PREV_PLACE_NAME").toString()
+
+        val prevPosition = MapPoint.mapPointWithGeoCoord(prevPlace.y, prevPlace.x)
+        mapView.setMapCenterPoint(prevPosition, true)
+
+        val point = MapPOIItem()
+        point.apply {
+            itemName = prevPlace.place_name
+            mapPoint = MapPoint.mapPointWithGeoCoord(prevPlace.y, prevPlace.x)
+            markerType = MapPOIItem.MarkerType.BluePin
+            selectedMarkerType = MapPOIItem.MarkerType.RedPin
+        }
+
+        mapView.addPOIItem(point)
+        mapView.selectPOIItem(point, true)
+
+//        binding.mapSearchEt.setText(name)
+
     }
 
 
