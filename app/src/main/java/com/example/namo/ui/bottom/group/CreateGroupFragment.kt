@@ -61,6 +61,8 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
     // 갤러리에서 이미지를 선택하기 위한 상수
     private val REQUEST_IMAGE_PICK = 100
 
+    private var clickable = true // 중복 생성을 방지하기 위함
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -114,7 +116,10 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
         // 확인
         binding.createGroupSaveTv.setOnClickListener {
             if (binding.createGroupTitleEt.toString().isNotEmpty() && imageUri != null) {
-                insertData()
+                if (clickable) {
+                    insertData()
+                }
+                clickable = false
             } else {
                 Toast.makeText(
                     context,
