@@ -125,10 +125,14 @@
 
         <TextView
             android:id="@+id/diary_input_place_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
+            android:layout_marginEnd="20dp"
             android:textSize="17sp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/diary_place_tv"
             app:layout_constraintTop_toTopOf="@id/diary_place_tv" />
 
@@ -166,6 +170,7 @@
                 android:background="@drawable/ic_category_base_corner"
                 android:gravity="start"
                 android:hint="@string/diary_put"
+                android:inputType="text"
                 android:padding="10dp" />
         </LinearLayout>
 
@@ -174,7 +179,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="0/200"
             android:textColor="@color/notyetGray"
             app:layout_constraintEnd_toEndOf="@id/linear_corner"
             app:layout_constraintTop_toBottomOf="@id/linear_corner" />

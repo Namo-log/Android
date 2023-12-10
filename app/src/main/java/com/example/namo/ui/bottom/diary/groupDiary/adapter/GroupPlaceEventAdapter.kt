@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,13 +11,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.diary.DiaryGroupEvent
-import com.example.namo.data.remote.diary.DiaryBasicView
-import com.example.namo.data.remote.diary.DiaryResponse
-import com.example.namo.data.remote.diary.DiaryService
 import com.example.namo.databinding.ItemDiaryGroupEventBinding
 import java.text.NumberFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class GroupPlaceEventAdapter(
@@ -27,10 +22,12 @@ class GroupPlaceEventAdapter(
     private val listData: MutableList<DiaryGroupEvent>,
     val payClickListener: (pay: Long, position: Int, payText: TextView) -> Unit,
     val imageClickListener: (imgLists: ArrayList<String?>, position: Int) -> Unit,
-    val placeClickListener: (text: String, position: Int) -> Unit
+    val placeClickListener: (text: String, position: Int) -> Unit,
+    val deleteItemList: (deleteItems: MutableList<Long>) -> Unit
 ) : RecyclerView.Adapter<GroupPlaceEventAdapter.Holder>() {
 
     private val items = arrayListOf<ArrayList<String?>>()
+    private var deleteItems = arrayListOf<Long>()
 
     @SuppressLint("NotifyDataSetChanged")
     fun addImageItem(image: ArrayList<String?>) {
@@ -108,26 +105,12 @@ class GroupPlaceEventAdapter(
 
             binding.groupLayout.translationX = 0f
 
-            binding.removeView.setOnClickListener {
-                val placeIdx = item.placeIdx
-                if (placeIdx != 0L) {
-                    val diaryService = DiaryService()
-                    diaryService.deleteGroupDiary(placeIdx,
-                        object : DiaryBasicView {
-                            override fun onSuccess(response: DiaryResponse.DiaryResponse) {
-                                Log.d("DELETE_GROUP_DIARY", "SUCCESS")
-                            }
-
-                            override fun onFailure(message: String) {
-                                Log.d("DELETE_GROUP_DIARY", message)
-                            }
-
-                        })
-                }
+            binding.onclickDeleteItem.setOnClickListener {
+                deleteItems.add(item.placeIdx)
+                deleteItemList(deleteItems)
                 listData.remove(item)
                 notifyDataSetChanged()
             }
-
         }
     }
 }

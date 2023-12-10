@@ -98,10 +98,14 @@
 
             <TextView
                 android:id="@+id/group_add_input_place_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textSize="17sp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/group_add_place_tv"
                 app:layout_constraintTop_toTopOf="@id/group_add_place_tv" />
 
@@ -111,7 +115,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="10dp"
-                android:text="참석자"
+                android:text="@string/diary_attendee"
                 android:textColor="#555555"
                 android:textSize="17sp"
                 android:textStyle="bold"
@@ -232,7 +236,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:padding="15dp"
-                android:text="기록 추가"
+                android:text="@string/diary_add"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="16sp"
