@@ -10,8 +10,10 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -55,8 +57,10 @@ class GroupMapActivity : AppCompatActivity() {
     private val mapRVAdapter : MapRVAdapter = MapRVAdapter()
 
     private val placeList : ArrayList<Place> = arrayListOf()
+    private val markerList : ArrayList<MapPOIItem> = arrayListOf()
     private val defaultPlace : Place = Place()
     private var selectedPlace : Place = Place()
+    private var prevPlace : Place = Place()
 
     private var originHeight : Int = 0
 
@@ -97,6 +101,19 @@ class GroupMapActivity : AppCompatActivity() {
         mapRVAdapter.notifyDataSetChanged()
     }
 
+    private fun searchEventStart() {
+        val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+
+        if (binding.groupMapSearchEt.text.isNullOrBlank()) {
+            Toast.makeText(this, "검색어를 입력해주세요.", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            searchPlace(binding.groupMapSearchEt.text.toString())
+        }
+
+    }
+
     private fun clickListener() {
         val targetActivityClass = when(intent.getStringExtra(ORIGIN_ACTIVITY_INTENT_KEY)) {
             "GroupSchedule" -> GroupScheduleActivity::class.java
@@ -104,14 +121,17 @@ class GroupMapActivity : AppCompatActivity() {
             else -> ScheduleActivity::class.java
         }
 
-        binding.groupMapSearchBtn.setOnClickListener {
+        binding.groupMapSearchEt.setOnKeyListener { _, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                searchEventStart()
+                true
+            } else {
+                false
+            }
+        }
 
-            if (binding.groupMapSearchEt.text.isNullOrBlank()) {
-                Toast.makeText(this, "검색어를 입력해주세요.", Toast.LENGTH_SHORT).show()
-            }
-            else {
-                searchPlace(binding.groupMapSearchEt.text.toString())
-            }
+        binding.groupMapSearchBtn.setOnClickListener {
+            searchEventStart()
         }
 
         mapRVAdapter.setItemClickListener( object :
@@ -124,6 +144,8 @@ class GroupMapActivity : AppCompatActivity() {
 
                 val mapPoint = MapPoint.mapPointWithGeoCoord(place.y.toDouble(), place.x.toDouble())
                 mapView.setMapCenterPointAndZoomLevel(mapPoint, 1, true)
+
+                mapView.selectPOIItem(markerList[position], true)
 
                 binding.groupMapBtnLayout.visibility = View.VISIBLE
             }
@@ -197,6 +219,7 @@ class GroupMapActivity : AppCompatActivity() {
                 }
 
                 mapView.addPOIItem(point)
+                markerList.add(point)
             }
         }
     }

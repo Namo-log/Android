@@ -50,6 +50,7 @@ import com.example.namo.data.remote.moim.PatchMoimScheduleCategoryBody
 import com.example.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.example.namo.ui.bottom.home.notify.PushNotificationReceiver
 import com.example.namo.ui.bottom.home.schedule.map.MapActivity
+import com.example.namo.ui.bottom.home.schedule.map.data.Place
 import com.example.namo.utils.CalendarUtils.Companion.getInterval
 import com.example.namo.utils.NetworkManager
 import com.google.android.material.chip.Chip
@@ -574,6 +575,11 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
 
                 val intent = Intent(requireActivity(), MapActivity::class.java)
                 intent.putExtra(MainActivity.ORIGIN_ACTIVITY_INTENT_KEY, "Schedule")
+                if (event.placeX != 0.0 && event.placeY != 0.0) {
+                    intent.putExtra("PREV_PLACE_NAME", event.placeName)
+                    intent.putExtra("PREV_PLACE_X", event.placeX)
+                    intent.putExtra("PREV_PLACE_Y", event.placeY)
+                }
                 getResult.launch(intent)
 //                startActivity(intent)
 
