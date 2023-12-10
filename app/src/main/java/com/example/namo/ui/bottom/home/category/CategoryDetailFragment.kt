@@ -3,6 +3,8 @@ package com.example.namo.ui.bottom.home.category
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -39,6 +41,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
     private val failList = ArrayList<Category>()
 
     private lateinit var categoryColorArray : IntArray
+    private var clickable = true // 중복 생성을 방지하기 위함
 
     // 카테고리에 들어갈 데이터
     var categoryId : Long = -1
@@ -90,16 +93,19 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                 if (categoryDetailTitleEt.text.toString().isEmpty() || color == 0) {
                     Toast.makeText(requireContext(), "카테고리를 입력해주세요", Toast.LENGTH_SHORT).show()
                 } else {
-                    // 수정 모드 -> 카테고리 update
-                    if (isEditMode) {
-                        updateData()
-                    }
-                    // 생성 모드 -> 카테고리 insert
-                    else {
-                        insertData()
+                    if (clickable) {
+                        // 수정 모드 -> 카테고리 update
+                        if (isEditMode) {
+                            updateData()
+                        }
+                        // 생성 모드 -> 카테고리 insert
+                        else {
+                            insertData()
+                        }
                     }
 //                    // 화면 이동
 //                    moveToSettingFrag(isEditMode)
+                    clickable = false
                 }
             }
         }
