@@ -60,6 +60,8 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
     private val itemTouchSimpleCallback = ItemTouchHelperCallback()  // 아이템 밀어서 삭제
     private val itemTouchHelper = ItemTouchHelper(itemTouchSimpleCallback)
 
+    private var deleteItems = mutableListOf<Long>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDiaryGroupMemoBinding.inflate(layoutInflater)
@@ -155,7 +157,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
 
     private fun bind() {
 
-        // 그룹 장소가 없을 떄, 그룹 스케줄에서 가져온 데이터 바인딩
+        // 그룹 장소가 없을 때, 그룹 스케줄에서 가져온 데이터 바인딩
         val formatDate = DateTime(moimSchedule.startDate * 1000).toString("yyyy.MM.dd (EE)")
 
         binding.groupAddInputDateTv.text = formatDate
@@ -194,7 +196,6 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
                                 group.members == diaryGroupEvent.members &&
                                 group.imgs == diaryGroupEvent.imgs.filterNotNull()
                     }
-
                     if (!hasDiffer) {
                         if (diaryGroupEvent.placeIdx == 0L) {
                             withContext(Dispatchers.IO) {
@@ -243,6 +244,23 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
                     }
                 }
             }
+            // 수정 눌렀을 때 밀어서 삭제한 데이터 삭제
+            deleteItems.forEach {
+                val diaryService = DiaryService()
+                diaryService.deleteGroupDiary(it,
+                    object : DiaryBasicView {
+                        override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+                            Log.e("DELETE_GROUP_DIARY", "SUCCESS")
+                            finish()
+                        }
+
+                        override fun onFailure(message: String) {
+                            Log.e("DELETE_GROUP_DIARY", message)
+                            finish()
+                        }
+                    })
+            }
+
         }
     }
 
@@ -321,7 +339,11 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
                 },
                 placeClickListener = { text, position ->
                     placeEvent[position].place = text
-                })
+                },
+                deleteItemList = { deleteItem ->
+                    deleteItems = deleteItem
+                }
+            )
 
             diaryGroupAddPlaceRv.adapter = placeadapter
             diaryGroupAddPlaceRv.layoutManager =
