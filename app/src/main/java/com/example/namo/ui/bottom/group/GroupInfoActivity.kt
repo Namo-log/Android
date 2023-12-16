@@ -80,7 +80,7 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface, DeleteMoi
 
         binding.groupInfoCodeCopyIv.setOnClickListener {
             copyTextToClipboard(binding.groupInfoCodeTv.text.toString())
-//            Toast.makeText(this, "그룹 코드가 복사되었습니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "그룹 코드가 복사되었습니다.", Toast.LENGTH_SHORT).show()
         }
 
         binding.groupInfoLeaveBtn.setOnClickListener {
