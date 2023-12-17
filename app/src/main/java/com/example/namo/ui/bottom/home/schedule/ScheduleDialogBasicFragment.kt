@@ -843,6 +843,9 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         }
 
         Log.d("ScheduleBasic", "Not uploaded Schedule : ${failList}")
+
+        // 화면 이동
+        requireActivity().finish()
     }
 
     override fun onPostEventSuccess(response: PostEventResponse, eventId : Long) {
