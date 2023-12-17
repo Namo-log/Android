@@ -58,7 +58,8 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
         charCnt()
         editMemo()
 
-        saveEditText(groupSchedule.content.toString())
+        val getText = if (groupSchedule.content.isNullOrEmpty()) "" else groupSchedule.content.toString()
+        saveEditText(getText)
 
         return binding.root
     }
