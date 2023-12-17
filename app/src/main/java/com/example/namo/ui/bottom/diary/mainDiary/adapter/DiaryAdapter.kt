@@ -10,8 +10,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.diary.DiaryEvent
 import com.example.namo.data.remote.diary.DiaryRepository
-import com.example.namo.databinding.ItemDiaryDateListBinding
+import com.example.namo.databinding.ItemDiaryItemListBinding
 import com.example.namo.databinding.ItemDiaryListBinding
+
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.DiaryGalleryRVAdapter
 import java.text.SimpleDateFormat
 
@@ -95,7 +96,7 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
     }
 
     class DiaryContentViewHolder private constructor(
-        private val binding: ItemDiaryDateListBinding,
+        private val binding: ItemDiaryItemListBinding,
         private val context: Context,
         private val imageClickListener: (String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -115,7 +116,7 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
                     repo.getCategory(item.event_category_idx, item.event_category_server_idx)
 
                 context.resources?.let {
-                    binding.itemDiaryCategoryColorIv.background.setTint(category.color)
+                    itemDiaryCategoryColorIv.background.setTint(category.color)
                 }
 
                 val adapter =
@@ -135,7 +136,7 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
                 imageClickListener: (String) -> Unit
             ): RecyclerView.ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = ItemDiaryDateListBinding.inflate(layoutInflater, parent, false)
+                val binding = ItemDiaryItemListBinding.inflate(layoutInflater, parent, false)
                 return DiaryContentViewHolder(binding, parent.context, imageClickListener)
             }
         }

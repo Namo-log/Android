@@ -1,7 +1,6 @@
 package com.example.namo.data.remote.diary
 
 
-
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
@@ -24,7 +23,7 @@ import java.io.*
 
 class DiaryRepository(
     val context: Context
-) : DiaryDetailView{
+) : DiaryDetailView {
 
     private val diaryService = DiaryService()
     private val db = NamoDatabase.getInstance(context)
@@ -89,7 +88,7 @@ class DiaryRepository(
             imgList,
             contentRequestBody,
             scheduleIdRequestBody,
-            object :AddPersonalDiaryView{
+            object : AddPersonalDiaryView {
                 override fun onAddDiarySuccess(
                     response: DiaryResponse.DiaryAddResponse,
                     localId: Long
@@ -379,7 +378,7 @@ class DiaryRepository(
 
     /** 그룹 다이어리 추가 **/
 
-    suspend fun addMoimDiary(
+    fun addMoimDiary(
         moimSchduleId: Long,
         place: String,
         money: Long,

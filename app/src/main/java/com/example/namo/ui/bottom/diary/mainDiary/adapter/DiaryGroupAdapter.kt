@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.diary.DiaryEvent
 import com.example.namo.data.remote.diary.DiaryRepository
-import com.example.namo.databinding.ItemDiaryGroupListBinding
+import com.example.namo.databinding.ItemDiaryItemListBinding
 import com.example.namo.databinding.ItemDiaryListBinding
 import java.text.SimpleDateFormat
 
@@ -96,7 +96,7 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
     }
 
     class DiaryContentViewHolder private constructor(
-        private val binding: ItemDiaryGroupListBinding,
+        private val binding: ItemDiaryItemListBinding,
         private val context: Context,
         private val imageClickListener: (String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -137,7 +137,7 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
                 imageClickListener: (String) -> Unit
             ): RecyclerView.ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = ItemDiaryGroupListBinding.inflate(layoutInflater, parent, false)
+                val binding = ItemDiaryItemListBinding.inflate(layoutInflater, parent, false)
                 return DiaryContentViewHolder(binding, parent.context, imageClickListener)
             }
         }
