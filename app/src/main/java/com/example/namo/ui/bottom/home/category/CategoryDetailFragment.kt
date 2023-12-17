@@ -138,6 +138,9 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
             Log.d("CategoryDetailFrag", "WIFI ERROR : $failList")
 
+            // 화면 이동
+            moveToSettingFrag(isEditMode)
+
             return
         }
 
@@ -186,30 +189,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         }
         // 서버 통신
         uploadToServer(R.string.event_current_edited.toString())
-
-//        updateEventWithCategory()
+        Toast.makeText(requireContext(), "카테고리가 수정되었습니다.", Toast.LENGTH_SHORT).show()
     }
-
-//    private fun updateEventWithCategory() {
-//        val thread = Thread {
-//            val eventList = db.eventDao.getEventWithCategoryIdx(categoryIdx)
-//            Log.d("UPDATE_BEFORE", eventList.toString())
-//            for (i in eventList) {
-//                i.categoryName = name
-//                i.categoryColor = color
-//
-//                db.eventDao.updateEvent(i)
-//            }
-//
-//            Log.d("UPDATE_AFTER", eventList.toString())
-//        }
-//        thread.start()
-//        try {
-//            thread.join()
-//        } catch (e : InterruptedException) {
-//            e.printStackTrace()
-//        }
-//    }
 
     private fun initBasicColor() {
         // 기본 색상 관련 리스트 설정

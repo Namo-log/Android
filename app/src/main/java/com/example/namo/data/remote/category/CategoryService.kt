@@ -18,6 +18,7 @@ class CategoryService(val view: CategoryDetailView) {
             override fun onResponse(call: Call<PostCategoryResponse>, response: Response<PostCategoryResponse>) {
                 when(response.code()) {
                     200 -> view.onPostCategorySuccess(response.body() as PostCategoryResponse, id)
+                    else -> view.onPostCategoryFailure(response.message())
                 }
             }
 
@@ -34,6 +35,7 @@ class CategoryService(val view: CategoryDetailView) {
             override fun onResponse(call: Call<PostCategoryResponse>, response: Response<PostCategoryResponse>) {
                 when(response.code()) {
                     200 -> view.onPatchCategorySuccess(response.body() as PostCategoryResponse, localId)
+                    else -> view.onPatchCategoryFailure(response.message())
                 }
             }
 
