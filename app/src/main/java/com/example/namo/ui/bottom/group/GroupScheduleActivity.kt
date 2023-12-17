@@ -204,6 +204,10 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimS
 
         // 저장 클릭
         binding.dialogGroupScheduleSaveBtn.setOnClickListener {
+            if (binding.dialogGroupScheduleTitleEt.text.toString().isEmpty()) {
+                Toast.makeText(this, "일정 제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             storeContent()
             Log.d("STORE_GROUP_SCHEDULE", "is Post or Edit ? ${isPostOrEdit}")
             Log.d("STORE_GROUP_SCHEDULE", if (isPostOrEdit) postGroupSchedule.toString() else editGroupSchedule.toString())
@@ -303,19 +307,35 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimS
         // picker 리스너
         binding.dialogGroupScheduleStartTimeTp.setOnTimeChangedListener { _, hourOfDay, minute ->
             startDateTime = startDateTime.withTime(hourOfDay, minute, 0, 0)
+            if (startDateTime.millis > endDateTime.millis) {
+                endDateTime = endDateTime.withTime(hourOfDay, minute, 0, 0)
+                binding.dialogGroupScheduleEndTimeTv.text = endDateTime.toString(getString(R.string.timeFormat))
+            }
             binding.dialogGroupScheduleStartTimeTv.text = startDateTime.toString(getString(R.string.timeFormat))
         }
         binding.dialogGroupScheduleEndTimeTp.setOnTimeChangedListener { _, hourOfDay, minute ->
             endDateTime = endDateTime.withTime(hourOfDay, minute, 0, 0)
+            if (endDateTime.millis < startDateTime.millis) {
+                startDateTime = startDateTime.withTime(hourOfDay, minute, 0, 0)
+                binding.dialogGroupScheduleStartTimeTv.text = startDateTime.toString(getString(R.string.timeFormat))
+            }
             binding.dialogGroupScheduleEndTimeTv.text = endDateTime.toString(getString(R.string.timeFormat))
         }
 
         binding.dialogGroupScheduleStartDateDp.init(startDateTime.year, startDateTime.monthOfYear - 1, startDateTime.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
             startDateTime = startDateTime.withDate(year, monthOfYear + 1, dayOfMonth)
+            if (startDateTime.isAfter(endDateTime)) {
+                endDateTime = startDateTime
+                binding.dialogGroupScheduleEndDateTv.text = endDateTime.toString(getString(R.string.dateFormat))
+            }
             binding.dialogGroupScheduleStartDateTv.text = startDateTime.toString(getString(R.string.dateFormat))
         }
         binding.dialogGroupScheduleEndDateDp.init(endDateTime.year, endDateTime.monthOfYear - 1, endDateTime.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
             endDateTime = endDateTime.withDate(year, monthOfYear + 1, dayOfMonth)
+            if (startDateTime.isAfter(endDateTime)) {
+                startDateTime = endDateTime
+                binding.dialogGroupScheduleStartDateTv.text = startDateTime.toString(getString(R.string.dateFormat))
+            }
             binding.dialogGroupScheduleEndDateTv.text = endDateTime.toString(getString(R.string.dateFormat))
         }
     }
