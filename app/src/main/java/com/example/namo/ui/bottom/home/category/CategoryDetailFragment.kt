@@ -189,6 +189,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         }
         // 서버 통신
         uploadToServer(R.string.event_current_edited.toString())
+        Toast.makeText(requireContext(), "카테고리가 수정되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
     private fun initBasicColor() {

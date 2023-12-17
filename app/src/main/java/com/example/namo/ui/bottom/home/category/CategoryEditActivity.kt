@@ -82,6 +82,7 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
 //                db.categoryDao.deleteCategory(category)
                 Log.d("CategoryEditActivity", "deleteCategory: $category")
             }.start()
+            Toast.makeText(this, "카테고리가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
             finish()
 
             // 서버 통신
