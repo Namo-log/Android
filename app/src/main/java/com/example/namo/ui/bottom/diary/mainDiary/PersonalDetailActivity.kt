@@ -31,7 +31,7 @@ import com.example.namo.utils.ConfirmDialogInterface
 import com.google.android.material.snackbar.Snackbar
 import org.joda.time.DateTime
 
-class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface{  // 개인 다이어리 추가,수정,삭제 화면
+class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  // 개인 다이어리 추가,수정,삭제 화면
 
     private lateinit var binding: ActivityPersonalDiaryDetailBinding
     private lateinit var galleryAdapter: GalleryListAdapter
@@ -61,7 +61,8 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface{  // 
         diary = repo.getDiary(event.eventId) // 개별 다이어리 조회
 
         diary.images?.let {
-            galleryAdapter.addImages(it) }
+            galleryAdapter.addImages(it)
+        }
 
         imgList.addAll(diary.images as List<String?>)
 
@@ -169,7 +170,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface{  // 
 
         val dialog = ConfirmDialog(this, title, null, "삭제", 0)
         dialog.isCancelable = false
-        dialog.show(supportFragmentManager,"")
+        dialog.show(supportFragmentManager, "")
     }
 
     /** 다이어리 삭제 **/
@@ -282,7 +283,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface{  // 
     @SuppressLint("SetTextI18n")
     private fun charCnt() {
         with(binding) {
-            textNumTv.text="${binding.diaryContentsEt.text.length} / 200"
+            textNumTv.text = "${binding.diaryContentsEt.text.length} / 200"
             diaryContentsEt.addTextChangedListener(object : TextWatcher {
                 var maxText = ""
                 override fun beforeTextChanged(
@@ -297,7 +298,11 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface{  // 
                 @SuppressLint("SetTextI18n")
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     if (diaryContentsEt.length() > 200) {
-                        Toast.makeText(this@PersonalDetailActivity, "최대 200자까지 입력 가능합니다 ", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@PersonalDetailActivity,
+                            "최대 200자까지 입력 가능합니다 ",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         diaryContentsEt.setText(maxText)
                         diaryContentsEt.setSelection(diaryContentsEt.length())
                         if (s != null) {

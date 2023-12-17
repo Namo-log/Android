@@ -2,8 +2,6 @@ package com.example.namo.data.remote.diary
 
 import android.annotation.SuppressLint
 import com.example.namo.config.ApplicationClass
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -47,7 +45,7 @@ class DiaryService {
         images: List<MultipartBody.Part>?,
         content: RequestBody?,
         scheduleIdx: RequestBody,
-        callback : AddPersonalDiaryView
+        callback: AddPersonalDiaryView
     ) {
         diaryRetrofitInterface.addDiary(scheduleIdx, content, images)
             .enqueue(object : Callback<DiaryResponse.DiaryAddResponse> {
@@ -184,7 +182,8 @@ class DiaryService {
 
 
     /** 그룹 메모 추가 **/
-    suspend fun addGroupDiary(
+
+    fun addGroupDiary(
         moimScheduleIdx: Long,
         name: RequestBody,
         money: RequestBody,
@@ -201,16 +200,14 @@ class DiaryService {
                 imgs
             ).execute()
 
-            withContext(Dispatchers.Main) {
-                if (response.isSuccessful) {
-                    val resp = response.body()
-                    when (response.code()) {
-                        200 -> resp?.let { callback.onSuccess(resp) }
-                        else -> callback.onFailure(response.toString())
-                    }
-                } else {
-                    callback.onFailure(response.toString())
+            if (response.isSuccessful) {
+                val resp = response.body()
+                when (response.code()) {
+                    200 -> resp?.let { callback.onSuccess(resp) }
+                    else -> callback.onFailure(response.toString())
                 }
+            } else {
+                callback.onFailure(response.toString())
             }
         } catch (e: Exception) {
             callback.onFailure(e.message ?: "Unknown error occurred")
@@ -292,32 +289,23 @@ class DiaryService {
         moimScheduleIdx: Long,
         callback: DiaryBasicView
     ) {
-        diaryRetrofitInterface.deleteGroupDiaryPlace(moimScheduleIdx)
-            .enqueue(object : Callback<DiaryResponse.DiaryResponse> {
+        try {
+            val response = diaryRetrofitInterface.deleteGroupDiaryPlace(moimScheduleIdx).execute()
 
-                @SuppressLint("SuspiciousIndentation")
-                override fun onResponse(
-                    call: Call<DiaryResponse.DiaryResponse>,
-                    response: Response<DiaryResponse.DiaryResponse>
-                ) {
-                    val resp: DiaryResponse.DiaryResponse? = response.body()
-                    when (response.code()) {
-                        200 -> if (resp != null) {
-                            callback.onSuccess(resp)
-                        }
-                        else -> callback.onFailure(response.toString())
-                    }
-
+            if (response.isSuccessful) {
+                val resp = response.body()
+                when (response.code()) {
+                    200 -> resp?.let { callback.onSuccess(resp) }
+                    else -> callback.onFailure(response.toString())
                 }
-
-                override fun onFailure(
-                    call: Call<DiaryResponse.DiaryResponse>,
-                    t: Throwable
-                ) {
-                    callback.onFailure(t.message.toString())
-                }
-            })
+            } else {
+                callback.onFailure(response.toString())
+            }
+        } catch (e: Exception) {
+            callback.onFailure(e.message ?: "Unknown error occurred")
+        }
     }
+
 
     fun getGroupMonthDiary(
         month: String,

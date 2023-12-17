@@ -58,7 +58,8 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
         charCnt()
         editMemo()
 
-        val getText = if (groupSchedule.content.isNullOrEmpty()) "" else groupSchedule.content.toString()
+        val getText =
+            if (groupSchedule.content.isNullOrEmpty()) "" else groupSchedule.content.toString()
         saveEditText(getText)
 
         return binding.root
@@ -109,9 +110,12 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
             binding.itemDiaryCategoryColorIv.background.setTint(category.color)
         }
 
-        val date = DateTime(groupSchedule.startDate * 1000).toString("yyyy.MM.dd (EE)")
+        val scheduleDate = groupSchedule.startDate * 1000
+
+        binding.diaryTodayDayTv.text = DateTime(scheduleDate).toString("EE")
+        binding.diaryTodayNumTv.text = DateTime(scheduleDate).toString("dd")
         binding.diaryTitleTv.text = groupSchedule.title
-        binding.diaryInputDateTv.text = date
+        binding.diaryInputDateTv.text = DateTime(scheduleDate).toString("yyyy.MM.dd (EE)")
         binding.diaryInputPlaceTv.text = groupSchedule.placeName
 
         val galleryViewRVAdapter = GalleryListAdapter(requireContext())
@@ -204,23 +208,27 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
     override fun onAddGroupAfterDiarySuccess(response: DiaryResponse.DiaryResponse) {
 
         if (isDelete) {
-            placeIntList.map { placeIndex ->
-                diaryService.deleteGroupDiary(placeIndex, object : DiaryBasicView {
-                    override fun onSuccess(response: DiaryResponse.DiaryResponse) {
-                        Log.e("DELETE_GROUP_DIARY", "SUCCESS")
-                        placeSize--
-                        if (placeSize == 0) {
-                            findNavController().popBackStack()
-                            isDelete = false
-                        }
-                    }
+            CoroutineScope(Dispatchers.Main).launch {
+                placeIntList.map { placeIndex ->
+                    withContext(Dispatchers.IO) {
+                        diaryService.deleteGroupDiary(placeIndex, object : DiaryBasicView {
+                            override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+                                Log.e("DELETE_GROUP_DIARY", "SUCCESS")
+                                placeSize--
+                                if (placeSize == 0) {
+                                    findNavController().popBackStack()
+                                    isDelete = false
+                                }
+                            }
 
-                    override fun onFailure(message: String) {
-                        Log.e("DELETE_GROUP_DIARY", message)
-                        findNavController().popBackStack()
-                    }
+                            override fun onFailure(message: String) {
+                                Log.e("DELETE_GROUP_DIARY", message)
+                                findNavController().popBackStack()
+                            }
 
-                })
+                        })
+                    }
+                }
             }
         } else {
             findNavController().popBackStack()
