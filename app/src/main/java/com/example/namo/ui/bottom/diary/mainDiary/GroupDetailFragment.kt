@@ -2,6 +2,8 @@ package com.example.namo.ui.bottom.diary.mainDiary
 
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -26,14 +28,16 @@ import org.joda.time.DateTime
 
 class GroupDetailFragment : Fragment(), GetGroupDiaryView,
     AddGroupAfterDiaryView,
-    ConfirmDialogInterface {
+    ConfirmDialogInterface {  // 그룹 기록에 대한 텍스트 추가, 삭제
 
     private var _binding: FragmentDiaryGroupDetailBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var groupSchedule: DiaryResponse.MonthDiary
-    private var diaryService = DiaryService()
     private lateinit var placeIntList: List<Long>
+    private lateinit var sf: SharedPreferences
+
+    private var diaryService = DiaryService()
     private var placeSize: Int = 0
     private var isDelete: Boolean = false
 
@@ -49,9 +53,12 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
 
         groupSchedule = requireArguments().getSerializable("groupDiary") as DiaryResponse.MonthDiary
         diaryService = DiaryService()
+        sf = requireContext().getSharedPreferences("sf", Context.MODE_PRIVATE)
 
         charCnt()
         editMemo()
+
+        saveEditText(groupSchedule.content.toString())
 
         return binding.root
     }
@@ -62,6 +69,19 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
         diaryService.getGroupDiary(groupSchedule.scheduleIdx)
         diaryService.getGroupDiaryView(this)
     }
+
+    override fun onPause() {
+        super.onPause()
+
+        saveEditText(binding.diaryContentsEt.text.toString())
+    }
+
+    private fun saveEditText(input: String) {  // 입력한 텍스트 유지
+        val editor = sf.edit()
+        editor.putString("edittext", input)
+        editor.apply()
+    }
+
 
     private fun bind(imgList: List<String>) {
 
@@ -105,9 +125,6 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
 
     private fun editMemo() {
 
-        binding.diaryContentsEt.setText(groupSchedule.content)
-        val content = binding.diaryContentsEt.text.toString()
-
         binding.diaryEditTv.setOnClickListener {
 
             diaryService.addGroupAfterDiary(
@@ -117,7 +134,7 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
             diaryService.addGroupAfterDiary(this)
         }
 
-        if (content.isEmpty()) {  // 그룹 기록 내용이 없으면, 기록 저장
+        if (groupSchedule.content.isNullOrEmpty()) {  // 그룹 기록 내용이 없으면, 기록 저장
             binding.diaryEditTv.text = resources.getString(R.string.diary_add)
             binding.diaryEditTv.setTextColor(
                 ContextCompat.getColor(
@@ -152,6 +169,9 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
         bind(imgList)
         deletePlace()
 
+        val getText = sf.getString("edittext", "")
+        binding.diaryContentsEt.setText(getText.toString())
+
     }
 
     override fun onGetGroupDiaryFailure(message: String) {
@@ -183,23 +203,23 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
     override fun onAddGroupAfterDiarySuccess(response: DiaryResponse.DiaryResponse) {
 
         if (isDelete) {
-                placeIntList.map { placeIndex ->
-                    diaryService.deleteGroupDiary(placeIndex, object : DiaryBasicView {
-                        override fun onSuccess(response: DiaryResponse.DiaryResponse) {
-                            Log.e("DELETE_GROUP_DIARY", "SUCCESS")
-                            placeSize--
-                            if (placeSize == 0) {
-                                findNavController().popBackStack()
-                                isDelete = false
-                            }
-                        }
-
-                        override fun onFailure(message: String) {
-                            Log.e("DELETE_GROUP_DIARY", message)
+            placeIntList.map { placeIndex ->
+                diaryService.deleteGroupDiary(placeIndex, object : DiaryBasicView {
+                    override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+                        Log.e("DELETE_GROUP_DIARY", "SUCCESS")
+                        placeSize--
+                        if (placeSize == 0) {
                             findNavController().popBackStack()
+                            isDelete = false
                         }
+                    }
 
-                    })
+                    override fun onFailure(message: String) {
+                        Log.e("DELETE_GROUP_DIARY", message)
+                        findNavController().popBackStack()
+                    }
+
+                })
             }
         } else {
             findNavController().popBackStack()
@@ -264,6 +284,10 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
 
     override fun onDestroy() {
         super.onDestroy()
+
+        val editor = sf.edit()
+        editor.clear()
+        editor.apply()
 
         _binding = null
         hideBottomNavigation(false)

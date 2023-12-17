@@ -60,12 +60,6 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
         repo = DiaryRepository(requireContext())
 
-        return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-
         yearMonthTextView = DateTime(dateTime).toString("yyyy.MM")
         sf = requireContext().getSharedPreferences("sf", Context.MODE_PRIVATE)
 
@@ -82,6 +76,14 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
         checkSwitchBtn()
         dialogCreate()
+
+        return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        getList()
     }
 
 
@@ -215,7 +217,8 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         this.forEach { event ->
             if (groupHeaderDate * 1000 != event.event_start * 1000) {
 
-                val headerEvent = event.copy(event_start = event.event_start * 1000,isHeader = true)
+                val headerEvent =
+                    event.copy(event_start = event.event_start * 1000, isHeader = true)
                 result.add(headerEvent)
 
                 groupHeaderDate = event.event_start

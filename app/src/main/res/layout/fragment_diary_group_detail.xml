@@ -23,33 +23,33 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/ic_back"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/diary_title_tv"
+                style="@style/title_text"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:gravity="center"
                 android:singleLine="true"
+                app:layout_constraintBottom_toBottomOf="@id/diary_back_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/diary_back_iv"
-                app:layout_constraintBottom_toBottomOf="@id/diary_back_iv"
-                style="@style/title_text"/>
+                app:layout_constraintTop_toTopOf="@id/diary_back_iv" />
 
             <ImageView
                 android:id="@+id/diary_delete_iv"
                 android:layout_width="40dp"
                 android:layout_height="47dp"
+                android:contentDescription="@string/diary_title"
                 android:src="@drawable/ic_delete_schedule"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/diary_back_iv"
                 app:layout_constraintBottom_toBottomOf="@id/diary_back_iv"
-                android:contentDescription="@string/diary_title" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/diary_back_iv" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -57,17 +57,17 @@
             android:id="@+id/date_ly"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:elevation="40dp"
-            android:backgroundTint="@color/whiteGray"
             android:background="@drawable/bg_diary_date"
+            android:backgroundTint="@color/whiteGray"
+            android:elevation="40dp"
             android:gravity="center"
             android:orientation="vertical"
             android:paddingStart="20dp"
             android:paddingTop="13dp"
             android:paddingEnd="20dp"
             android:paddingBottom="10dp"
-            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintBottom_toBottomOf="@id/diary_place_tv"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintStart_toStartOf="@id/linear_corner"
             app:layout_constraintTop_toTopOf="@id/diary_date_tv">
 
@@ -129,9 +129,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="20dp"
-            android:textSize="17sp"
-            android:maxLines="2"
             android:ellipsize="end"
+            android:maxLines="2"
+            android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/diary_place_tv"
             app:layout_constraintTop_toTopOf="@id/diary_place_tv" />
@@ -169,8 +169,8 @@
                 android:layout_height="150dp"
                 android:background="@drawable/ic_category_base_corner"
                 android:gravity="start"
-                android:inputType="text"
                 android:hint="@string/diary_put"
+                android:inputType="text"
                 android:padding="10dp" />
         </LinearLayout>
 
@@ -219,29 +219,29 @@
             android:id="@+id/group_diary_detail_ly"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:paddingEnd="20dp"
-            android:paddingStart="20dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
             android:layout_marginBottom="30dp"
             android:background="@drawable/record_btn_background"
-            app:layout_constraintBottom_toTopOf="@id/diary_edit_tv">
+            android:paddingStart="20dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="5dp"
+            app:layout_constraintBottom_toTopOf="@id/diary_edit_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:backgroundTint="@color/textGray"
-                android:background="@drawable/ic_add_record"/>
+                android:background="@drawable/ic_add_record"
+                android:backgroundTint="@color/textGray" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
                 android:layout_gravity="center"
                 android:layout_marginStart="5dp"
-                android:text="@string/diary_detail_click"/>
+                android:text="@string/diary_detail_click"
+                android:textColor="@color/black" />
 
 
         </LinearLayout>
