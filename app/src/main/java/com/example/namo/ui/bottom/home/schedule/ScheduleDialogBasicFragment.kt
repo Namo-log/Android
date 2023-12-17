@@ -205,6 +205,10 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         binding.dialogScheduleStartTimeTp.currentMinute = startDateTime.minuteOfHour
         binding.dialogScheduleStartTimeTp.setOnTimeChangedListener { view, hourOfDay, minute ->
             startDateTime = startDateTime.withTime(hourOfDay, minute, 0,0)
+            if (startDateTime.millis > endDateTime.millis) {
+                endDateTime = endDateTime.withTime(hourOfDay, minute, 0, 0)
+                binding.dialogScheduleEndTimeTv.text = endDateTime.toString(getString(R.string.timeFormat))
+            }
             binding.dialogScheduleStartTimeTv.text = startDateTime.toString(getString(R.string.timeFormat))
         }
 
@@ -212,6 +216,10 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         binding.dialogScheduleEndTimeTp.currentMinute = endDateTime.minuteOfHour
         binding.dialogScheduleEndTimeTp.setOnTimeChangedListener { view, hourOfDay, minute ->
             endDateTime = endDateTime.withTime(hourOfDay, minute, 0, 0)
+            if (endDateTime.millis < startDateTime.millis) {
+                startDateTime = startDateTime.withTime(hourOfDay, minute, 0, 0)
+                binding.dialogScheduleStartTimeTv.text = startDateTime.toString(getString(R.string.timeFormat))
+            }
             binding.dialogScheduleEndTimeTv.text = endDateTime.toString(getString(R.string.timeFormat))
         }
 
@@ -320,6 +328,10 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
 
         // 저장 클릭
         binding.dialogScheduleSaveBtn.setOnClickListener {
+            if (binding.dialogScheduleTitleEt.text.toString().isEmpty()) {
+                Toast.makeText(context, "일정 제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             storeContent()
 
             if (binding.dialogScheduleTitleEt.text.isEmpty()) {
@@ -692,11 +704,19 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
     // Picker Zone
     private val startDatePickerListener = DatePicker.OnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
         selectedDate = DateTime(year, monthOfYear + 1, dayOfMonth, startDateTime.hourOfDay, startDateTime.minuteOfHour)
+        if (selectedDate.isAfter(endDateTime)) {
+            endDateTime = selectedDate
+            binding.dialogScheduleEndDateTv.text = selectedDate.toString(getString(R.string.dateFormat))
+        }
         binding.dialogScheduleStartDateTv.text = selectedDate.toString(getString(R.string.dateFormat))
         startDateTime = selectedDate
     }
     private val endDatePickerListener = DatePicker.OnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
         selectedDate = DateTime(year, monthOfYear + 1, dayOfMonth, endDateTime.hourOfDay, endDateTime.minuteOfHour)
+        if (startDateTime.isAfter(selectedDate)) {
+            startDateTime = selectedDate
+            binding.dialogScheduleStartDateTv.text = selectedDate.toString(getString(R.string.dateFormat))
+        }
         binding.dialogScheduleEndDateTv.text = selectedDate.toString(getString(R.string.dateFormat))
         endDateTime = selectedDate
     }
