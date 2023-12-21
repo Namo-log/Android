@@ -41,7 +41,7 @@ interface MoimRetrofitInterface {
     @PATCH("moims/name")
     fun updateMoimName(
         @Body body: UpdateMoimNameBody
-    ) : Call<AddMoimResponse>
+    ) : Call<ParticipateMoimResponse>
 
     // 모임 참여하기
     @PATCH("moims/participate/{groupCode}")

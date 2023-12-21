@@ -21,6 +21,7 @@ import com.example.namo.data.remote.moim.AddMoimResponse
 import com.example.namo.data.remote.moim.DeleteMoimMemberView
 import com.example.namo.data.remote.moim.Moim
 import com.example.namo.data.remote.moim.MoimService
+import com.example.namo.data.remote.moim.ParticipateMoimResponse
 import com.example.namo.data.remote.moim.UpdateMoimNameBody
 import com.example.namo.databinding.ActivityGroupInfoBinding
 import com.example.namo.ui.bottom.group.adapter.GroupInfoMemberRVAdapter
@@ -105,8 +106,6 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface, DeleteMoi
 
         binding.groupInfoCodeTv.isSelected = true
         binding.groupInfoCodeTv.text = group.groupCode
-
-
     }
 
     private fun setListenerToEditText() {
@@ -132,14 +131,18 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface, DeleteMoi
         clipboardManager.setPrimaryClip(clipData)
     }
 
-    override fun onUpdateMoimNameSuccess(response: AddMoimResponse) {
+    override fun onUpdateMoimNameSuccess(response: ParticipateMoimResponse) {
         Log.d("GroupInfoAct", "onUpdateMoimNameSuccess")
         Toast.makeText(this, "모임 이름이 변경되었습니다.", Toast.LENGTH_SHORT).show()
+        val resultIntent = Intent(this, GroupCalendarActivity::class.java).apply {
+            putExtra("groupName", binding.groupInfoGroupNameContentEt.text.toString()) // 사용자가 이름을 바꿨음을 알려줌
+        }
+        setResult(Activity.RESULT_OK, resultIntent)
         finish()
     }
 
     override fun onUpdateMoimNameFailure(message: String) {
-        Log.d("GroupInfoAct", "onUpdateMoimNameFailure")
+        Log.d("GroupInfoAct", "onUpdateMoimNameFailure, $message")
         finish()
     }
 

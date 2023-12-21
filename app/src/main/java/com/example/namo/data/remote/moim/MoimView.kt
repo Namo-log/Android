@@ -18,7 +18,7 @@ interface GetMoimScheduleView {
 }
 
 interface DeleteMoimMemberView {
-    fun onUpdateMoimNameSuccess(response: AddMoimResponse)
+    fun onUpdateMoimNameSuccess(response: ParticipateMoimResponse)
     fun onUpdateMoimNameFailure(message: String)
     fun onDeleteMoimMemberSuccess(response: BaseResponse)
     fun onDeleteMoimMemberFailure(message: String)

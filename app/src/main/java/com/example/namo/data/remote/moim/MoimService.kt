@@ -192,13 +192,13 @@ class MoimService {
         body: UpdateMoimNameBody
     ) {
         moimRetrofitInterface.updateMoimName(body)
-            .enqueue(object : Callback<AddMoimResponse> {
+            .enqueue(object : Callback<ParticipateMoimResponse> {
                 override fun onResponse(
-                    call: Call<AddMoimResponse>,
-                    response: Response<AddMoimResponse>
+                    call: Call<ParticipateMoimResponse>,
+                    response: Response<ParticipateMoimResponse>
                 ) {
                     when(response.code()) {
-                        200 -> deleteMoimMemberView.onUpdateMoimNameSuccess(response.body() as AddMoimResponse)
+                        200 -> deleteMoimMemberView.onUpdateMoimNameSuccess(response.body() as ParticipateMoimResponse)
                         else -> {
                             Log.d("UpdateMoimName", "Success but error")
                             deleteMoimMemberView.onDeleteMoimMemberFailure("통신 중 200 외 기타 코드")
@@ -206,7 +206,7 @@ class MoimService {
                     }
                 }
 
-                override fun onFailure(call: Call<AddMoimResponse>, t: Throwable) {
+                override fun onFailure(call: Call<ParticipateMoimResponse>, t: Throwable) {
                     Log.d("UpdateMoimName", "onFailure")
                     deleteMoimMemberView.onUpdateMoimNameFailure(t.message ?: "통신 오류")
                 }

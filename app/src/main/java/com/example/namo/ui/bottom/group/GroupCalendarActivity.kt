@@ -34,9 +34,15 @@ class GroupCalendarActivity : AppCompatActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) {result ->
         if (result.resultCode == Activity.RESULT_OK) {
+            // 사용자 탈퇴 여부
             val returnLeave = result.data?.getBooleanExtra("leave", false)
             if (returnLeave == true) { // 사용자가 탈퇴했다면
                 finish() // 그룹 캘린더 화면 나가기
+            }
+            // 그룹명 변경 여부
+            val groupName = result.data?.getStringExtra("groupName")
+            if (groupName!!.isNotEmpty()) {
+                binding.groupCalendarGroupTitleTv.text = groupName
             }
         }
     }
