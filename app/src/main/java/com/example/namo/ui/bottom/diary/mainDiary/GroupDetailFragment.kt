@@ -223,9 +223,7 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
 
                             override fun onFailure(message: String) {
                                 Log.e("DELETE_GROUP_DIARY", message)
-                                findNavController().popBackStack()
                             }
-
                         })
                     }
                 }

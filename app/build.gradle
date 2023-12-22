@@ -117,5 +117,8 @@ dependencies {
     // swipe
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.4'
 
+    // paging
+    implementation "androidx.paging:paging-runtime:3.0.0"
+
 
 }

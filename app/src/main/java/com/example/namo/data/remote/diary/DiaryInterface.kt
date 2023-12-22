@@ -68,11 +68,19 @@ interface DiaryInterface {
 
 
     @GET("/moims/schedule/memo/month/{month}")
-    fun getGroupMonthDiary(
+    suspend fun getGroupMonthDiary(
+        @Path("month") month: String,
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): DiaryResponse.DiaryGetMonthResponse
+
+    @GET("/moims/schedule/memo/month/{month}")
+    fun getGroupMonthDiary2(
         @Path("month") month: String,
         @Query("page") page: Int,
         @Query("size") size: Int
     ): Call<DiaryResponse.DiaryGetMonthResponse>
+
 
     @PATCH("/moims/schedule/memo/text/{scheduleId}")
     fun addGroupAfterDiary(
