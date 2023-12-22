@@ -127,4 +127,16 @@
         <item name="android:background">@color/transparent</item>
         <item name="android:colorBackground">@color/transparent</item>
     </style>
+    <style name="CustomChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/chip_select</item>
+        <item name="android:textStyle">bold</item>
+        <item name="chipStrokeWidth">2dp</item>
+        <item name="chipBackgroundColor">@color/white</item>
+        <item name="chipStrokeColor">@color/chip_select</item>
+        <item name="chipCornerRadius">100dp</item>
+        <item name="chipStartPadding">30dp</item>
+        <item name="chipEndPadding">30dp</item>
+        <item name="chipMinHeight">35dp</item>
+    </style>
 </resources>

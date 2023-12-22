@@ -64,7 +64,7 @@ import org.joda.time.DateTime
 private const val PERMISSION_REQUEST_CODE= 1001
 private const val NOTIFICATION_PERMISSION_REQUEST_CODE= 777
 
-class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEventView, GetAllMoimEventView,
+class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEventView,
     CategorySettingView, GetMonthDiaryView, CategoryDetailView, CategoryDeleteView {
 
     private lateinit var binding: ActivityMainBinding
@@ -74,7 +74,6 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
     var paletteId : Int = 0
 
     private val serverEvent = ArrayList<Event>()
-    private val moimEvent = ArrayList<Event>()
     private val serverCategory = ArrayList<Category>()
     private val serverDiary = ArrayList<Diary>()
 
@@ -136,11 +135,6 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
             Log.d("MAIN_SERVER_UPLOAD", "WIFI ERROR : Fail to upload")
             return
         }
-
-        // 모임일정은 앱이 켜지면 room에 저장 - 앱이 꺼지면 room에서 삭제
-        val eventService = EventService()
-        eventService.setGetAllMoimEventView(this)
-        eventService.getAllMoimEvent()
 
         val size = getAllCategorySize()
         Log.d("MAIN_SERVER_UPLOAD", "RoomDB : $size category")
@@ -461,34 +455,6 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         Log.d("MAIN_SERVER_UPLOAD", "onGetAllEventFailure")
         isEventSuccess = false
     }
-
-    override fun onGetAllMoimEventSuccess(response: GetMonthEventResponse) {
-        Log.d("MAIN_SERVER_UPLOAD", "onGetAllMoimEventSuccess")
-
-        val result = response.result
-        moimEvent.clear()
-        moimEvent.addAll(result.map{serverToEvent(it)})
-        val uploadRoom = Thread{
-            for (event in moimEvent) {
-                db.eventDao.insertEvent(event)
-            }
-            Log.d("TEMP_MOIM_EVENT_MAIN", db.eventDao.getMoimEvent(true).toString())
-        }
-        uploadRoom.start()
-        try {
-            uploadRoom.join()
-        } catch (e : InterruptedException) {
-            e.printStackTrace()
-        }
-
-        IS_MOIM_EVENT_SUCCESS = true
-
-    }
-
-    override fun onGetAllMoimEventFailure(message: String) {
-        Log.d("MAIN_SERVER_UPLOAD", "onGetAllMoimEventFailure")
-    }
-
     override fun onGetAllCategorySuccess(response: GetCategoryResponse) {
         Log.d("MAIN_SERVER_UPLOAD", "onGetAllCategorySuccess")
 
@@ -733,21 +699,6 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
             }
         }
         return super.dispatchTouchEvent(ev)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        val deleteMoimEventThread = Thread{
-            Log.d("CHECK_MOIM_EVENT", db.eventDao.getMoimEvent(true).toString())
-            db.eventDao.deleteMoimEvent(true)
-            Log.d("CHECK_MOIM_EVENT", db.eventDao.getMoimEvent(true).toString())
-        }
-        deleteMoimEventThread.start()
-        try {
-            deleteMoimEventThread.join()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
     }
 
     fun refreshFragment(fragment: Fragment, fragmentManager: FragmentManager) {
