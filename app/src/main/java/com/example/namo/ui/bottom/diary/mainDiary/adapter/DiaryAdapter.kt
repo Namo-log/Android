@@ -4,9 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.diary.DiaryEvent
 import com.example.namo.data.remote.diary.DiaryRepository
@@ -22,12 +22,8 @@ private const val ITEM_VIEW_TYPE_ITEM = 1
 class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
     val editClickListener: (DiaryEvent) -> Unit,
     val imageClickListener: (String) -> Unit
-) : ListAdapter<DiaryEvent, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
+) : PagingDataAdapter<DiaryEvent, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
 
-
-    fun updateData(newData: List<DiaryEvent>) {
-        submitList(newData)
-    }
 
     class DiaryDiffCallback : DiffUtil.ItemCallback<DiaryEvent>() {
         override fun areItemsTheSame(oldItem: DiaryEvent, newItem: DiaryEvent): Boolean {
@@ -44,11 +40,11 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is DiaryHeaderViewHolder -> {
-                val diaryItem = getItem(position)
+                val diaryItem = getItem(position) as DiaryEvent
                 holder.bind(diaryItem)
             }
             is DiaryContentViewHolder -> {
-                val diaryItems = getItem(position)
+                val diaryItems = getItem(position) as DiaryEvent
                 holder.bind(diaryItems)
                 holder.onclick.setOnClickListener {
                     editClickListener(diaryItems)
@@ -67,7 +63,7 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (getItem(position).isHeader) {
+        return when (getItem(position)!!.isHeader) {
             true -> ITEM_VIEW_TYPE_HEADER
             else -> ITEM_VIEW_TYPE_ITEM
         }

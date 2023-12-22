@@ -306,13 +306,20 @@ class DiaryService {
         }
     }
 
+    suspend fun getGroupMonthDiary(
+        month: String,
+        page: Int,
+        size: Int
+    ): DiaryResponse.DiaryGetMonthResponse {
+        return diaryRetrofitInterface.getGroupMonthDiary(month, page, size)
+    }
 
-    fun getGroupMonthDiary(
+    fun getGroupMonthDiary2(
         month: String,
         page: Int,
         size: Int
     ) {
-        diaryRetrofitInterface.getGroupMonthDiary(month, page, size)
+        diaryRetrofitInterface.getGroupMonthDiary2(month, page, size)
             .enqueue(object : Callback<DiaryResponse.DiaryGetMonthResponse> {
 
                 @SuppressLint("SuspiciousIndentation")

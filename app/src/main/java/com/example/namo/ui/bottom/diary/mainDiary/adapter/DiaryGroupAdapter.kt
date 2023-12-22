@@ -7,9 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.namo.data.entity.diary.DiaryEvent
 import com.example.namo.data.remote.diary.DiaryRepository
@@ -23,12 +23,7 @@ private const val ITEM_VIEW_TYPE_ITEM = 1
 class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
     val detailClickListener: (DiaryEvent) -> Unit,
     val imageClickListener: (String) -> Unit
-) : ListAdapter<DiaryEvent, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
-
-
-    fun updateData(newData: List<DiaryEvent>) {
-        submitList(newData)
-    }
+) : PagingDataAdapter<DiaryEvent, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
 
     class DiaryDiffCallback : DiffUtil.ItemCallback<DiaryEvent>() {
         override fun areItemsTheSame(oldItem: DiaryEvent, newItem: DiaryEvent): Boolean {
@@ -40,7 +35,6 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
             return oldItem == newItem
         }
     }
-
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
@@ -68,7 +62,7 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (getItem(position).isHeader) {
+        return when (getItem(position)!!.isHeader) {
             true -> ITEM_VIEW_TYPE_HEADER
             else -> ITEM_VIEW_TYPE_ITEM
         }

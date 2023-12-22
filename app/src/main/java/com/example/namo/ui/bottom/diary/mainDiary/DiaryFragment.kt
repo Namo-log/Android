@@ -5,37 +5,38 @@ import DiaryAdapter
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
-import com.example.namo.data.NamoDatabase
 import com.example.namo.data.entity.diary.DiaryEvent
 import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.DiaryRepository
 import com.example.namo.data.remote.diary.DiaryResponse
-import com.example.namo.data.remote.diary.DiaryService
-import com.example.namo.data.remote.diary.GetGroupMonthView
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.DiaryGroupAdapter
 import com.example.namo.utils.NetworkManager
 import com.example.namo.databinding.FragmentDiaryBinding
 import com.example.namo.ui.bottom.home.calendar.SetMonthDialog
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import kotlin.math.roundToInt
 
 
-class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트 화면(bottomNavi)
+class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     private var _binding: FragmentDiaryBinding? = null
     private val binding get() = _binding!!
@@ -49,7 +50,7 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
 
     private var yearMonthTextView: String = ""
     private var checked = false
-    private var service = DiaryService()
+    private lateinit var pagingDataFlow: Flow<PagingData<DiaryEvent>>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,6 +86,14 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         super.onResume()
 
         getList()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        val editor = sf.edit()
+        editor.putBoolean("checked", checked)
+        editor.apply()
     }
 
 
@@ -206,31 +215,6 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         )
     }
 
-    private fun getDiaryList(yearMonth: String): List<DiaryEvent> {  // 개인 다이어리 roomdb 데이터
-        val db = NamoDatabase.getInstance(requireContext()).diaryDao
-        return db.getDiaryEventList(yearMonth).toListItems()
-    }
-
-    private fun List<DiaryEvent>.toListItems(): List<DiaryEvent> {
-        val result = mutableListOf<DiaryEvent>()
-        var groupHeaderDate: Long = 0
-
-        this.forEach { event ->
-            if (groupHeaderDate * 1000 != event.event_start * 1000) {
-
-                val headerEvent =
-                    event.copy(event_start = event.event_start * 1000, isHeader = true)
-                result.add(headerEvent)
-
-                groupHeaderDate = event.event_start
-            }
-            result.add(event)
-        }
-
-        return result
-    }
-
-
     private fun getPersonalList() {
 
         binding.diaryPersonalListRv.visibility = View.VISIBLE
@@ -247,30 +231,8 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
 
-        val storeDB = Thread {
-            val diaryItems = getDiaryList(yearMonthTextView)
+        paging(yearMonthTextView, true, diaryPersonalAdapter, null)
 
-            requireActivity().runOnUiThread {
-
-                diaryPersonalAdapter.updateData(diaryItems)
-
-                // 달 별 메모 없으면 없다고 띄우기
-                if (diaryItems.isNotEmpty()) {
-                    binding.diaryPersonalListRv.visibility = View.VISIBLE
-                } else {
-                    binding.diaryPersonalListRv.visibility = View.GONE
-                    binding.diaryListEmptyTv.visibility = View.VISIBLE
-                    binding.diaryListEmptyTv.text = "메모가 없습니다. 메모를 추가해 보세요!"
-                }
-            }
-        }
-
-        storeDB.start()
-        try {
-            storeDB.join()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
     }
 
     private fun getGroupList() {
@@ -278,12 +240,19 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
         binding.diaryPersonalListRv.visibility = View.GONE
         binding.diaryGroupListRv.visibility = View.VISIBLE
 
-        diaryGroupAdapter = DiaryGroupAdapter(detailClickListener = { item ->
+        diaryGroupAdapter = DiaryGroupAdapter(detailClickListener = { item -> // 리사이클러뷰 어댑터 연결
             onDetailClickListener(item)
-
         }, imageClickListener = {
             ImageDialog(it).show(parentFragmentManager, "test")
         })
+
+        val yearMonthSplit = yearMonthTextView.split(".")
+        val year = yearMonthSplit[0]
+        val month = yearMonthSplit[1].removePrefix("0")
+        val formatYearMonth = "$year,$month"
+
+        paging(formatYearMonth, false, null, diaryGroupAdapter)
+
         binding.diaryGroupListRv.apply {
             adapter = diaryGroupAdapter
             layoutManager =
@@ -299,15 +268,46 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
             return
         }
 
-        val yearMonthSplit = yearMonthTextView.split(".")
-        val year = yearMonthSplit[0]
-        val month = yearMonthSplit[1].removePrefix("0")
-        val formatYearMonth = "$year,$month"
+    }
 
+    private fun paging(
+        month: String,
+        isPersonal: Boolean,
+        personalAdapter: DiaryAdapter?,
+        groupAdapter: DiaryGroupAdapter?
+    ) {
+        val diaryPersonalPagingSource = DiaryPersonalPagingSource(month, requireContext(),binding.diaryPersonalListRv,binding.diaryListEmptyTv)
+        val diaryGroupPagingSource = DiaryGroupPagingSource(month,binding.diaryGroupListRv,binding.diaryListEmptyTv)
 
-        service.getGroupMonthDiary(formatYearMonth, 0, 7)
-        service.getGroupMonthView(this)
+        val diaryPagingSource = if (isPersonal) {
+            diaryPersonalPagingSource
+        } else {
+            diaryGroupPagingSource
+        }
 
+        val adapterToSubmit = if (isPersonal) {
+            personalAdapter
+        } else {
+            groupAdapter
+        }
+
+        val pagingConfig = PagingConfig(
+            pageSize = 10,
+            enablePlaceholders = false // placeholders 사용 여부
+        )
+
+        // Pager를 통해 페이징 데이터 생성
+        pagingDataFlow = Pager(
+            config = pagingConfig,
+            pagingSourceFactory = { diaryPagingSource }
+        ).flow
+
+        // 페이징 데이터 플로우를 수집하여 데이터를 어댑터에 제출
+        viewLifecycleOwner.lifecycleScope.launch {
+            pagingDataFlow.collectLatest { pagingData ->
+                adapterToSubmit?.submitData(pagingData)
+            }
+        }
     }
 
     private fun onEditClickListener(item: DiaryEvent) {  // 개인 기록 수정 클릭리스너
@@ -349,52 +349,8 @@ class DiaryFragment : Fragment(), GetGroupMonthView {  // 다이어리 리스트
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onGetGroupMonthSuccess(response: DiaryResponse.DiaryGetMonthResponse) {
-
-        val list = arrayListOf<DiaryEvent>()
-        val result = response.result.content
-        result.forEach {
-            list.add(
-                DiaryEvent(
-                    it.scheduleIdx,
-                    it.title,
-                    it.startDate,
-                    it.categoryId,
-                    it.placeName,
-                    it.content,
-                    it.imgUrl
-                )
-            )
-        }
-
-        // 달 별 메모 없으면 없다고 띄우기
-        if (result.isNotEmpty()) {
-            binding.diaryGroupListRv.visibility = View.VISIBLE
-        } else {
-            binding.diaryGroupListRv.visibility = View.GONE
-            binding.diaryListEmptyTv.visibility = View.VISIBLE
-            binding.diaryListEmptyTv.text = "메모가 없습니다. 메모를 추가해 보세요!"
-        }
-
-        val diaryItems = list.toListItems()
-
-        diaryGroupAdapter.updateData(diaryItems)
-    }
-
-    override fun onGetGroupMonthFailure(message: String) {
-        binding.diaryGroupListRv.visibility = View.GONE
-        binding.diaryListEmptyTv.visibility = View.VISIBLE
-        binding.diaryListEmptyTv.text = "네크워크 연결 성공, 서버 오류"
-    }
-
-
     override fun onDestroyView() {
         super.onDestroyView()
-
-        val editor = sf.edit()
-        editor.putBoolean("checked", checked)
-        editor.apply()
 
         _binding = null
     }

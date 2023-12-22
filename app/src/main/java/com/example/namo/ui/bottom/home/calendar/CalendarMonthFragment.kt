@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.namo.MainActivity.Companion.IS_MOIM_EVENT_SUCCESS
 import com.example.namo.MainActivity.Companion.setCategoryList
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
@@ -28,9 +27,6 @@ import com.example.namo.ui.bottom.home.HomeFragment
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.example.namo.ui.bottom.home.adapter.DailyPersonalRVAdapter
 import com.example.namo.ui.bottom.home.schedule.ScheduleActivity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 
@@ -267,10 +263,14 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView,GetGroupMonthView {
     @SuppressLint("SimpleDateFormat")
     private fun getGroupDiary(){
 
-        val date = SimpleDateFormat("yyyy,MM").format(millis)
-        val service = DiaryService()
-        service.getGroupMonthDiary(date, 0, 20)
-        service.getGroupMonthView(this@CalendarMonthFragment)
+        try {
+            val date = SimpleDateFormat("yyyy,MM").format(millis)
+            val service = DiaryService()
+            service.getGroupMonthDiary2(date, 0, 50)
+            service.getGroupMonthView(this@CalendarMonthFragment)
+        }catch (e:java.lang.Exception){
+            Log.e("Exception", "Exception occurred: ${e.message}")
+        }
     }
     companion object {
         private const val MILLIS = "MILLIS"

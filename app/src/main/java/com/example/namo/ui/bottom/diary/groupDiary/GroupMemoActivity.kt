@@ -256,7 +256,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
             } else {
                 repo.editGroupPlace(
                     diaryGroupEvent.placeIdx,
-                    diaryGroupEvent.place.ifEmpty { "장소" },
+                    diaryGroupEvent.place,
                     diaryGroupEvent.pay,
                     members,
                     diaryGroupEvent.imgs.filterNotNull(),
