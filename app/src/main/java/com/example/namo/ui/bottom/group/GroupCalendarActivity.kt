@@ -41,7 +41,7 @@ class GroupCalendarActivity : AppCompatActivity() {
             }
             // 그룹명 변경 여부
             val groupName = result.data?.getStringExtra("groupName")
-            if (groupName!!.isNotEmpty()) {
+            if (groupName?.isNotEmpty() == true) {
                 binding.groupCalendarGroupTitleTv.text = groupName
             }
         }

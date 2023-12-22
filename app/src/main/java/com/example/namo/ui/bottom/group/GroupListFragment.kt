@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.*
 import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.NamoDatabase
@@ -86,7 +85,11 @@ class GroupListFragment : Fragment(), GetMoimListView {
 
     // 그룹 생성
     private fun showCreateGroupDialog() {
-        view?.findNavController()?.navigate(R.id.action_grouplistFragment_to_groupAddFragment)
+        val dialog = CreateGroupDialog()
+        // 알림창이 띄워져있는 동안 배경 클릭 허용
+        dialog.isCancelable = true
+        dialog.show(this.requireFragmentManager(), "CreateGroupDialog")
+//        view?.findNavController()?.navigate(R.id.action_grouplistFragment_to_groupAddFragment)
         //startActivity(Intent(activity, CreateGroupFragment::class.java))
     }
 

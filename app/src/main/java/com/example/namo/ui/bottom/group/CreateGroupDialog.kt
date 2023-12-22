@@ -3,7 +3,6 @@ package com.example.namo.ui.bottom.group
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
-import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -22,7 +21,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.namo.R
@@ -31,21 +29,18 @@ import com.example.namo.data.entity.group.Group
 import com.example.namo.data.remote.moim.AddMoimResponse
 import com.example.namo.data.remote.moim.AddMoimView
 import com.example.namo.data.remote.moim.MoimService
-import com.example.namo.databinding.FragmentGroupCreateBinding
+import com.example.namo.databinding.DialogGroupCreateBinding
 import com.example.namo.utils.NetworkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
-class CreateGroupFragment : DialogFragment(), AddMoimView {
+class CreateGroupDialog : DialogFragment(), AddMoimView {
 
-    private var _binding: FragmentGroupCreateBinding? = null
+    private var _binding: DialogGroupCreateBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var mContext: Context
@@ -74,24 +69,13 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentGroupCreateBinding.inflate(inflater, container, false)
+        _binding = DialogGroupCreateBinding.inflate(inflater, container, false)
 
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-//        view?.setBackgroundColor(Color.TRANSPARENT)
-        hideBottomNavigation(true)
 
         db = NamoDatabase.getInstance(requireContext())
 
         return binding.root
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        // 배경은 투명하게 하기
-        val dialog = Dialog(requireContext(), R.style.TransparentDialogTheme).apply {
-            setCancelable(true)
-            setCanceledOnTouchOutside(true)
-        }
-        return dialog
     }
 
     override fun onStart() {
@@ -110,8 +94,7 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
     private fun onClickListener() {
         // 닫기
         binding.createGroupBackTv.setOnClickListener {
-            findNavController().popBackStack() // 뒤로가기
-            hideBottomNavigation(false)
+            dismiss()
         }
         // 확인
         binding.createGroupSaveTv.setOnClickListener {
@@ -304,8 +287,8 @@ class CreateGroupFragment : DialogFragment(), AddMoimView {
 
     override fun onAddMoimSuccess(response: AddMoimResponse) {
         Log.d("CreateGroupFrag", "onAddMoimSuccess : Moim Id = ${response.result.moimId}")
-        findNavController().popBackStack() //뒤로가기
-        hideBottomNavigation(false)
+        Toast.makeText(requireContext(), "그룹 생성에 성공하였습니다.", Toast.LENGTH_SHORT).show()
+        dismiss()
     }
 
     override fun onAddMoimFailure(message: String) {
