@@ -335,77 +335,49 @@
             <com.google.android.material.chip.Chip
                 android:id="@+id/alarm_none"
                 android:text="없음"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:textSize="15sp"
+                style="@style/CustomChipStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                app:chipMinHeight="38dp"
-                app:chipStartPadding="20dp"
-                app:chipEndPadding="20dp"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"/>
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/alarm_min_60"
                 android:text="60분 전"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:textSize="15sp"
+                style="@style/CustomChipStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                app:chipMinHeight="38dp"
-                app:chipStartPadding="20dp"
-                app:chipEndPadding="20dp"
-                android:paddingVertical="10dp"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"/>
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/alarm_min_30"
                 android:text="30분 전"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:textSize="15sp"
+                style="@style/CustomChipStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                app:chipMinHeight="38dp"
-                app:chipStartPadding="20dp"
-                app:chipEndPadding="20dp"
-                android:paddingVertical="10dp"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"/>
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/alarm_min_10"
                 android:text="10분 전"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:textSize="15sp"
+                style="@style/CustomChipStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                app:chipMinHeight="38dp"
-                app:chipStartPadding="20dp"
-                app:chipEndPadding="20dp"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"/>
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/alarm_min_5"
                 android:text="5분 전"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:textSize="15sp"
+                style="@style/CustomChipStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                app:chipMinHeight="38dp"
-                app:chipStartPadding="20dp"
-                app:chipEndPadding="20dp"
-                android:paddingVertical="10dp"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"/>
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/alarm_min_0"
                 android:text="정시"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:textSize="15sp"
+                style="@style/CustomChipStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                app:chipMinHeight="38dp"
-                app:chipStartPadding="20dp"
-                app:chipEndPadding="20dp"
-                android:paddingVertical="10dp"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"/>
 
         </com.google.android.material.chip.ChipGroup>

@@ -19,9 +19,11 @@ import com.example.namo.data.entity.home.Event
 import com.example.namo.data.remote.diary.DiaryResponse
 import com.example.namo.data.remote.diary.DiaryService
 import com.example.namo.data.remote.diary.GetGroupMonthView
+import com.example.namo.data.remote.event.EventService
 import com.example.namo.data.remote.event.GetMonthEventResponse
 import com.example.namo.data.remote.event.GetMonthEventResult
 import com.example.namo.data.remote.event.GetMonthEventView
+import com.example.namo.data.remote.event.GetMonthMoimEventView
 import com.example.namo.databinding.FragmentCalendarMonthBinding
 import com.example.namo.ui.bottom.diary.mainDiary.PersonalDetailActivity
 import com.example.namo.ui.bottom.home.HomeFragment
@@ -34,7 +36,7 @@ import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 
-class CalendarMonthFragment : Fragment(), GetMonthEventView,GetGroupMonthView {
+class CalendarMonthFragment : Fragment(),GetGroupMonthView,GetMonthMoimEventView {
     lateinit var db : NamoDatabase
     private lateinit var binding : FragmentCalendarMonthBinding
     private lateinit var categoryList : List<Category>
@@ -43,7 +45,6 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView,GetGroupMonthView {
     var isShow = false
     private lateinit var monthList : List<DateTime>
     private lateinit var tempEvent : ArrayList<Event>
-    private var tempMoimEvent : ArrayList<Event> = arrayListOf()
     private var monthGroupEvent : ArrayList<Event> = arrayListOf()
 
     private var prevIdx = -1
@@ -127,17 +128,12 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView,GetGroupMonthView {
         setAdapter()
         getCategoryList()
 
-        var forDB : Thread = Thread {
-            Log.d("TEMP_MOIM_EVENT", tempMoimEvent.toString())
-            tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis / 1000, monthList[41].plusDays(1).withTimeAtStartOfDay().millis / 1000) as ArrayList<Event>
-        }
-        forDB.start()
-        try {
-            forDB.join()
-        } catch (e : InterruptedException) {
-            e.printStackTrace()
-        }
-        binding.calendarMonthView.setEventList(tempEvent)
+        val date = SimpleDateFormat("yyyy,MM").format(millis)
+
+        //모임 이벤트
+        val eventService = EventService()
+        eventService.setGetMonthMoimEventView(this)
+        eventService.getMonthMoimEvent(date)
 
 
 //        onBackPressedCallback.isEnabled = true
@@ -218,6 +214,7 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView,GetGroupMonthView {
         binding.homeDailyHeaderTv.text = monthList[idx].toString("MM.dd (E)")
         binding.dailyScrollSv.scrollTo(0,0)
         setData(idx)
+        Log.d("CHECK_GROUP_EVENT", monthGroupEvent.toString())
     }
 
     private fun setData(idx : Int) {
@@ -242,9 +239,9 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView,GetGroupMonthView {
         var todayEnd = monthList[idx].plusDays(1).withTimeAtStartOfDay().millis - 1
 
         var forEvent : Thread = Thread {
-            val tempEvent = db.eventDao.getEventDaily(todayStart / 1000, todayEnd / 1000) as ArrayList<Event>
-            event_personal = tempEvent.filter { item -> !item.moimSchedule } as ArrayList<Event>
-            event_group = tempEvent.filter { item -> item.moimSchedule } as ArrayList<Event>
+            val dailyEvent = db.eventDao.getEventDaily(todayStart / 1000, todayEnd / 1000) as ArrayList<Event>
+            event_personal = dailyEvent.filter { item -> !item.moimSchedule } as ArrayList<Event>
+            event_group = monthGroupEvent.filter { item -> item.startLong <= todayEnd / 1000 && item.endLong >= todayStart / 1000 } as ArrayList<Event>
 
             personalEventRVAdapter.addPersonal(event_personal)
             groupEventRVAdapter.addGroup(event_group)
@@ -282,17 +279,6 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView,GetGroupMonthView {
         }
     }
 
-    override fun onGetMonthEventSuccess(response: GetMonthEventResponse) {
-        Log.d("MONTH_CALENDAR", "onGetMonthEventSuccess")
-
-        val result = response.result
-        monthGroupEvent = result.filter { it.moimSchedule == true }.map { serverToEvent(it) } as ArrayList
-    }
-
-    override fun onGetMonthEventFailure(message: String) {
-        TODO("Not yet implemented")
-    }
-
     private fun serverToEvent(schedule: GetMonthEventResult): Event {
         return Event(
             0,
@@ -322,5 +308,31 @@ class CalendarMonthFragment : Fragment(), GetMonthEventView,GetGroupMonthView {
 
     override fun onGetGroupMonthFailure(message: String) {
         Log.d("GET_GROUP_MONTH",message)
+    }
+
+    override fun onGetMonthMoimEventSuccess(response: GetMonthEventResponse) {
+        val result = response.result
+        monthGroupEvent = result.map { serverToEvent(it) } as ArrayList
+        Log.d("SUCCESS_MOIM", monthGroupEvent.toString())
+
+        var forDB : Thread = Thread {
+            tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis / 1000, monthList[41].plusDays(1).withTimeAtStartOfDay().millis / 1000) as ArrayList<Event>
+        }
+        forDB.start()
+        try {
+            forDB.join()
+        } catch (e : InterruptedException) {
+            e.printStackTrace()
+        }
+        tempEvent.addAll(monthGroupEvent)
+        Log.d("SUCCESS_MOIM_TEMP", tempEvent.toString())
+
+
+        binding.calendarMonthView.setEventList(tempEvent)
+
+    }
+
+    override fun onGetMonthMoimEventFailure(message: String) {
+        Log.d("GET_MONTH_EVENT", "Failure -> $message")
     }
 }

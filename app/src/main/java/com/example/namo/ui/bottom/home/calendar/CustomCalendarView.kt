@@ -494,6 +494,8 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
     fun setEventList(events : List<Event>) {
         eventList.clear()
         eventList.addAll(events)
+
+        invalidate()
     }
 
     fun setCategoryList(category : List<Category>) {

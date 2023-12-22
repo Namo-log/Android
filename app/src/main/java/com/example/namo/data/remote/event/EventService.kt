@@ -14,6 +14,7 @@ class EventService() {
     private lateinit var getMonthEventView : GetMonthEventView
     private lateinit var getAllEventView : GetAllEventView
     private lateinit var getAllMoimEventView: GetAllMoimEventView
+    private lateinit var getMonthMoimEventView : GetMonthMoimEventView
 
     fun setEventView(eventView : EventView) {
         this.eventView = eventView
@@ -33,6 +34,10 @@ class EventService() {
 
     fun setGetAllMoimEventView(getAllMoimEventView: GetAllMoimEventView) {
         this.getAllMoimEventView = getAllMoimEventView
+    }
+
+    fun setGetMonthMoimEventView(getMonthMoimEventView: GetMonthMoimEventView) {
+        this.getMonthMoimEventView = getMonthMoimEventView
     }
 
     val eventRetrofitInterface = ApplicationClass.sRetrofit.create(EventRetrofitInterface::class.java)
@@ -164,6 +169,30 @@ class EventService() {
                 override fun onFailure(call: Call<GetMonthEventResponse>, t: Throwable) {
                     Log.d("GetAllMoimEvent", "OnFailure")
                     getAllMoimEventView.onGetAllMoimEventFailure(t.message ?: "통신 오류")
+                }
+
+            })
+    }
+
+    fun getMonthMoimEvent(yearMonth : String) {
+        eventRetrofitInterface.getMonthMoimEvent(yearMonth)
+            .enqueue(object : Callback<GetMonthEventResponse> {
+                override fun onResponse(
+                    call: Call<GetMonthEventResponse>,
+                    response: Response<GetMonthEventResponse>
+                ) {
+                    when (response.code()) {
+                        200 -> getMonthMoimEventView.onGetMonthMoimEventSuccess(response.body() as GetMonthEventResponse)
+                        else -> {
+                            Log.d("GetMonthMoimEvent", "Success but error")
+                            getMonthMoimEventView.onGetMonthMoimEventFailure("통신 중 200 외 기타 코드")
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<GetMonthEventResponse>, t: Throwable) {
+                    Log.d("GetMonthMoimEvent", "OnFailure")
+                    getMonthMoimEventView.onGetMonthMoimEventFailure(t.message ?: "통신 오류")
                 }
 
             })
