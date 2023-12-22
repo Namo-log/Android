@@ -86,7 +86,7 @@
                     android:backgroundTint="@color/editTextGray"
                     android:drawablePadding="10dp"
                     android:textSize="15sp"
-                    android:textColorHint="@color/textGray"
+                    android:textColorHint="@color/editTextGray"
                     android:textColor="@color/black"
                     android:inputType="text"
                     android:maxLines="1"

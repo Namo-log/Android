@@ -61,17 +61,8 @@
         android:label="GroupListFragment"
         tools:layout="@layout/fragment_group_list">
         <action
-            android:id="@+id/action_grouplistFragment_to_groupAddFragment"
-            app:destination="@id/groupAddFragment" />
-        <action
             android:id="@+id/action_groupListFragment_to_groupCalendarFragment"
             app:destination="@id/groupCalendarFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/groupAddFragment"
-        android:name="com.example.namo.ui.bottom.group.CreateGroupFragment"
-        android:label="GroupAddFragment"
-        tools:layout="@layout/fragment_group_create">
     </fragment>
     <fragment
         android:id="@+id/groupCalendarFragment"
