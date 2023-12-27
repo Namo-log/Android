@@ -651,8 +651,10 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         val category = categoryList.find {
             if (it.serverIdx != 0L) it.serverIdx == event.categoryServerIdx
             else it.categoryIdx == event.categoryIdx
-        }!!
-        selectedCategory = category
+        }
+        if (category != null) {
+            selectedCategory = category
+        }
         event.categoryIdx = selectedCategory.categoryIdx
         event.categoryServerIdx = selectedCategory.serverIdx
         setCategory()
