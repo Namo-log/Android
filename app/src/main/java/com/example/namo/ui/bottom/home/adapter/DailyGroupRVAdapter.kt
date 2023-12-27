@@ -95,12 +95,14 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
             val time = DateTime(group.startLong * 1000L).toString("HH:mm") + " - " + DateTime(group.endLong * 1000L).toString("HH:mm")
             val category = categoryList.find {
                 if (it.serverIdx != 0L) it.serverIdx == group.categoryServerIdx
-                else it.categoryIdx == group.categoryIdx }!!
+                else it.categoryIdx == group.categoryIdx }
 
             binding.itemCalendarEventTitle.text = group.title
             binding.itemCalendarEventTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
-            binding.itemCalendarEventColorView.background.setTint(category.color)
+            if (category != null) {
+                binding.itemCalendarEventColorView.background.setTint(category.color)
+            }
             binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
 
             val diary=groupDiary.find {
