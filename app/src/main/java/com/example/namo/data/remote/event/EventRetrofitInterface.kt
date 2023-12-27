@@ -23,9 +23,10 @@ interface EventRetrofitInterface {
         @Body event : EventForUpload
     ) : Call<EditEventResponse>
 
-    @DELETE("schedules/{serverIdx}")
+    @DELETE("schedules/{serverIdx}/{kind}")
     fun deleteEvent(
         @Path("serverIdx") serverIdx : Long,
+        @Path("kind") isMoimSchedule: Int,
 //        @Header("Authorization") token : String,
     ) : Call<DeleteEventResponse>
 
