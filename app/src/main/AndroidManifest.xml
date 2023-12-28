@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.namo">
+    package="com.mongmong.namo">
 
     <!--    카카오맵 API 권한추가-->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -21,6 +21,11 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
+    <!-- 광고 -->
+    <uses-permission
+        android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove" />
+
     <!--    usesCleartextTraffic : android 가 HTTP연결을 막아놨는데 카카오맵은 HTTP통신해서 HTTP도 가능하도록 설정-->
     <application
         android:name=".config.ApplicationClass"
@@ -39,9 +44,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.mongmong.namo.MainActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".ui.splash.SplashActivity"
             android:exported="true"
@@ -69,14 +74,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.namo.ui.bottom.home.schedule.map.MapActivity"
+            android:name="com.mongmong.namo.ui.bottom.home.schedule.map.MapActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan"/>
         <activity
-            android:name="com.example.namo.ui.bottom.home.category.CategoryActivity"
+            android:name="com.mongmong.namo.ui.bottom.home.category.CategoryActivity"
             android:theme="@style/Theme.Transparent" />
         <activity
-            android:name="com.example.namo.ui.bottom.home.category.CategoryEditActivity"
+            android:name="com.mongmong.namo.ui.bottom.home.category.CategoryEditActivity"
             android:theme="@style/Theme.Transparent" />
         <activity
             android:name=".ui.bottom.home.schedule.ScheduleActivity"
@@ -119,13 +124,15 @@
         <activity
             android:name=".ui.bottom.diary.mainDiary.GroupDetailActivity"
             android:exported="false" />
-
+        <meta-data
+            android:name="google_analytics_adid_collection_enabled"
+            android:value="false" />
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="${KAKAO_API_KEY}" />
         <receiver
             android:name=".ui.bottom.home.notify.PushNotificationReceiver"
-            android:exported="true"></receiver>
+            android:exported="true"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"

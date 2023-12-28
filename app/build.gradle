@@ -10,14 +10,14 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 def kakaoApiKey = properties.getProperty('kakao_native_key')
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.namo"
+        applicationId "com.mongmong.namo"
         minSdk 23
-        targetSdk 32
+        targetSdk 33
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
 
         buildConfigField "String", "KAKAO_API_KEY", properties['kakao_api_key']
         buildConfigField "String", "NAVER_CLIENT_ID", properties['naver_client_id']

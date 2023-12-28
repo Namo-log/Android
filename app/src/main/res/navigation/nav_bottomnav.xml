@@ -8,7 +8,7 @@
     <!-- Home -->
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.namo.ui.bottom.home.HomeFragment"
+        android:name="com.mongmong.namo.ui.bottom.home.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/fragment_home">
         <action
@@ -23,7 +23,7 @@
     <!-- Diary -->
     <fragment
         android:id="@+id/diaryFragment"
-        android:name="com.example.namo.ui.bottom.diary.mainDiary.DiaryFragment"
+        android:name="com.mongmong.namo.ui.bottom.diary.mainDiary.DiaryFragment"
         android:label="DiaryFragment"
         tools:layout="@layout/fragment_diary">
         <action
@@ -38,14 +38,14 @@
     </fragment>
     <fragment
         android:id="@+id/diaryAddFragment"
-        android:name="com.example.namo.ui.bottom.diary.mainDiary.PersonalDetailFragment"
+        android:name="com.mongmong.namo.ui.bottom.diary.mainDiary.PersonalDetailFragment"
         android:label="DiaryAddFragment"
         tools:layout="@layout/fragment_diary_personal_detail">
     </fragment>
 
     <fragment
         android:id="@+id/groupDetailFragment"
-        android:name="com.example.namo.ui.bottom.diary.mainDiary.GroupDetailFragment"
+        android:name="com.mongmong.namo.ui.bottom.diary.mainDiary.GroupDetailFragment"
         android:label="GroupDetailFragment"
         tools:layout="@layout/fragment_diary_group_detail">
         <action
@@ -57,7 +57,7 @@
     <!-- Group -->
     <fragment
         android:id="@+id/groupListFragment"
-        android:name="com.example.namo.ui.bottom.group.GroupListFragment"
+        android:name="com.mongmong.namo.ui.bottom.group.GroupListFragment"
         android:label="GroupListFragment"
         tools:layout="@layout/fragment_group_list">
         <action
@@ -66,7 +66,7 @@
     </fragment>
     <fragment
         android:id="@+id/groupCalendarFragment"
-        android:name="com.example.namo.ui.bottom.group.calendar.GroupCalendarFragment"
+        android:name="com.mongmong.namo.ui.bottom.group.calendar.GroupCalendarFragment"
         android:label="GroupCalendarFragment"
         tools:layout="@layout/fragment_group_calendar">
         <action
@@ -76,24 +76,24 @@
             app:popUpToInclusive="true" />
         <argument
             android:name="group"
-            app:argType="com.example.namo.data.remote.moim.Moim" />
+            app:argType="com.mongmong.namo.data.remote.moim.Moim" />
     </fragment>
     <fragment
         android:id="@+id/groupModifyFragment"
         tools:layout="@layout/activity_diary_group_memo"
-        android:name="com.example.namo.ui.bottom.diary.groupDiary.GroupMemoActivity"
+        android:name="com.mongmong.namo.ui.bottom.diary.groupDiary.GroupMemoActivity"
         android:label="GroupModifyFragment" />
 
     <activity
         android:id="@+id/groupMemoActivity"
-        android:name="com.example.namo.ui.bottom.diary.groupDiary.GroupMemoActivity"
+        android:name="com.mongmong.namo.ui.bottom.diary.groupDiary.GroupMemoActivity"
         android:label="GroupMemoActivity"
         tools:layout="@layout/activity_diary_group_memo"/>
 
     <!-- Custom -->
     <fragment
         android:id="@+id/customFragment"
-        android:name="com.example.namo.ui.bottom.custom.CustomFragment"
+        android:name="com.mongmong.namo.ui.bottom.custom.CustomFragment"
         android:label="CustomFragment"
         tools:layout="@layout/fragment_custom">
         <action
@@ -102,7 +102,7 @@
     </fragment>
     <fragment
         android:id="@+id/customSettingFragment"
-        android:name="com.example.namo.ui.bottom.custom.CustomSettingFramgent"
+        android:name="com.mongmong.namo.ui.bottom.custom.CustomSettingFramgent"
         android:label="CustomSettingFragment"
         tools:layout="@layout/fragment_custom_setting"/>
 
