@@ -6,15 +6,17 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/diary_date_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/diary_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
-            android:layout_marginTop="40dp"
             android:layout_marginEnd="25dp"
+            android:layout_marginTop="12dp"
+            android:paddingVertical="16dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -29,7 +31,6 @@
 
             <TextView
                 android:id="@+id/diary_title_tv"
-                style="@style/title_text"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
@@ -39,7 +40,9 @@
                 app:layout_constraintBottom_toBottomOf="@id/diary_back_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/diary_back_iv" />
+                app:layout_constraintTop_toTopOf="@id/diary_back_iv"
+                tools:text="그룹 기록"
+                style="@style/title_text"/>
 
             <ImageView
                 android:id="@+id/diary_delete_iv"

@@ -229,7 +229,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
                 }
             } else {
                 if (i.state == R.string.event_current_deleted.toString()) {
-                    eventService.deleteEvent(i.serverIdx, i.eventId)
+                    eventService.deleteEvent(i.serverIdx, i.eventId, 0)
                 } else {
                     eventService.editEvent(i.serverIdx, eventToEventForUpload(i), i.eventId)
                 }

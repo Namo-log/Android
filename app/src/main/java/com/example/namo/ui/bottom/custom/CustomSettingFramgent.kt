@@ -3,6 +3,7 @@ package com.example.namo.ui.bottom.custom
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,35 +16,26 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.config.ApplicationClass
 import com.example.namo.config.BaseResponse
-import com.example.namo.data.entity.home.Category
-import com.example.namo.data.entity.home.Event
-import com.example.namo.data.remote.diary.DiaryRepository
 import com.example.namo.data.remote.login.LogoutBody
 import com.example.namo.data.remote.login.LogoutService
 import com.example.namo.data.remote.login.LogoutView
-import com.example.namo.databinding.FragmentCustomBinding
 import com.example.namo.databinding.FragmentCustomSettingBinding
 
-import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.example.namo.ui.splash.SplashActivity
 import com.example.namo.utils.ConfirmDialog
 import com.example.namo.utils.ConfirmDialogInterface
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
+import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.NidOAuthLogin
+import com.navercorp.nid.oauth.OAuthLoginCallback
+import com.nhn.android.naverlogin.OAuthLogin
 
 class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
 
@@ -133,6 +125,14 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
         activity?.let { dialog.show(it.supportFragmentManager, "ConfirmDialog") }
     }
 
+    private fun moveToLoginFragment() {
+        // 토큰 비우기
+        ApplicationClass.sSharedPreferences.edit().clear().apply()
+        // 화면 이동
+        activity?.finishAffinity()
+        startActivity(Intent(context, SplashActivity()::class.java))
+    }
+
 
     override fun onClickYesButton(id: Int) { // 다이얼로그 확인 메시지 클릭
         if (id == 0) { // 로그아웃
@@ -141,6 +141,34 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
         }
         else if (id == 1) { // 회원탈퇴
 //            LogoutService(this).tryQuit()
+            // 네이버 연동 해제
+            NidOAuthLogin().callDeleteTokenApi(object : OAuthLoginCallback {
+                override fun onSuccess() {
+                    //서버에서 토큰 삭제에 성공한 상태입니다.
+                }
+                override fun onFailure(httpStatus: Int, message: String) {
+                    // 서버에서 토큰 삭제에 실패했어도 클라이언트에 있는 토큰은 삭제되어 로그아웃된 상태입니다.
+                    // 클라이언트에 토큰 정보가 없기 때문에 추가로 처리할 수 있는 작업은 없습니다.
+                    Log.d(TAG, "errorCode: ${NaverIdLoginSDK.getLastErrorCode().code}")
+                    Log.d(TAG, "errorDesc: ${NaverIdLoginSDK.getLastErrorDescription()}")
+                }
+                override fun onError(errorCode: Int, message: String) {
+                    // 서버에서 토큰 삭제에 실패했어도 클라이언트에 있는 토큰은 삭제되어 로그아웃된 상태입니다.
+                    // 클라이언트에 토큰 정보가 없기 때문에 추가로 처리할 수 있는 작업은 없습니다.
+                    onFailure(errorCode, message)
+                }
+            })
+            // 카카오 연동 해제
+            UserApiClient.instance.unlink { error ->
+                if (error != null) {
+                    Log.e(TAG, "연결 끊기 실패", error)
+                }
+                else {
+                    Log.i(TAG, "연결 끊기 성공. SDK에서 토큰 삭제 됨")
+                }
+            }
+            // 일단 로그인 화면으로 이동
+            moveToLoginFragment()
         }
     }
 
@@ -156,11 +184,7 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
 
     override fun onPostLogoutSuccess(response: BaseResponse) {
         Log.d("CustomSettingFrag", "onPostLogoutSuccess")
-        // 토큰 비우기
-        ApplicationClass.sSharedPreferences.edit().clear().apply()
-        // 화면 이동
-        activity?.finishAffinity()
-        startActivity(Intent(context, SplashActivity()::class.java))
+        moveToLoginFragment()
     }
 
     override fun onPostLogoutFailure(message: String) {
@@ -168,3 +192,11 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
     }
 
 }
+
+private fun NidOAuthLogin.callDeleteTokenApi(context: OAuthLoginCallback) {
+
+}
+
+//private fun NidOAuthLogin.callDeleteTokenApi(context: OAuthLoginCallback) {
+//
+//}

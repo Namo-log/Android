@@ -82,8 +82,8 @@ class EventService() {
         })
     }
 
-    fun deleteEvent(serverIdx: Long, eventId : Long) {
-        eventRetrofitInterface.deleteEvent(serverIdx).enqueue(object : Callback<DeleteEventResponse> {
+    fun deleteEvent(serverIdx: Long, eventId : Long, isMoimSchedule: Int) {
+        eventRetrofitInterface.deleteEvent(serverIdx, isMoimSchedule).enqueue(object : Callback<DeleteEventResponse> {
             override fun onResponse(call: Call<DeleteEventResponse>, response: Response<DeleteEventResponse>) {
                 when (response.code()) {
                     200 -> deleteEventView.onDeleteEventSuccess(response.body() as DeleteEventResponse, eventId)

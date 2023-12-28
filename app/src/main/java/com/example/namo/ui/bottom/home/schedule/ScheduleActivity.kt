@@ -134,9 +134,11 @@ class ScheduleActivity : AppCompatActivity(), DeleteEventView, ConfirmDialogInte
             return
         }
 
+        val isMoim = if (event.moimSchedule) 1 else 0
+
         val eventService = EventService()
         eventService.setDeleteEventView(this)
-        eventService.deleteEvent(event.serverIdx, event.eventId)
+        eventService.deleteEvent(event.serverIdx, event.eventId, isMoim)
     }
 
     private fun printNotUploaded() {
@@ -157,9 +159,8 @@ class ScheduleActivity : AppCompatActivity(), DeleteEventView, ConfirmDialogInte
     override fun onDeleteEventSuccess(response: DeleteEventResponse, eventId : Long) {
         Log.d("ScheduleActivity", "onDeleteEventSuccess")
 
-        val result = response.result
-        Toast.makeText(this, "$eventId 번 일정의 $result", Toast.LENGTH_SHORT).show()
-
+//        val result = response.result
+//        Toast.makeText(this, "$eventId 번 일정의 ${response.result}", Toast.LENGTH_SHORT).show()
 
         var deleteDB = Thread {
             db.eventDao.deleteEventById(eventId)
