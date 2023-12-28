@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         categoryColorArray =resources.getIntArray(R.array.categoryColorArr)
         Log.d("CATEGORY_ARR", categoryColorArray.contentToString())
 
-        logToken()
+//        logToken()
         checkPermissions()
         checkNetworkUpload()
 

@@ -987,7 +987,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         if (isMoimScheduleCategorySaved && isMoimScheduleAlarmSaved) {
             val thread = Thread {
                 db.eventDao.updateEvent(event)
-                Log.d("UPDATE_MOIM_SCHEDULE", db.eventDao.getEventById(event.eventId).toString())
+//                Log.d("UPDATE_MOIM_SCHEDULE", db.eventDao.getEventById(event.eventId).toString())
             }
 
             thread.start()
