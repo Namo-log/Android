@@ -332,19 +332,16 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     private fun onDetailClickListener(item: DiaryEvent) {  // 그룹 기록 수정 클릭리스너
 
-        val bundle = Bundle()
         val monthDiary = item.images?.let {
             DiaryResponse.MonthDiary(
                 item.eventId, item.event_title, item.event_start, item.content,
                 it, item.event_category_idx, 0L, item.event_place_name
             )
         }
-        bundle.putSerializable("groupDiary", monthDiary)
 
-        val detailFrag = GroupDetailFragment()
-        detailFrag.arguments = bundle
-        view?.findNavController()
-            ?.navigate(R.id.action_diaryFragment_to_groupDetailFragment, bundle)
+        val intent = Intent(context, GroupDetailActivity::class.java)
+        intent.putExtra("groupDiary", monthDiary)
+        requireActivity().startActivity(intent)
 
     }
 
