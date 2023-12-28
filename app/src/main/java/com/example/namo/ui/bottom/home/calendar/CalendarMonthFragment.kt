@@ -24,6 +24,7 @@ import com.example.namo.data.remote.event.GetMonthEventResult
 import com.example.namo.data.remote.event.GetMonthEventView
 import com.example.namo.data.remote.event.GetMonthMoimEventView
 import com.example.namo.databinding.FragmentCalendarMonthBinding
+import com.example.namo.ui.bottom.diary.mainDiary.GroupDetailActivity
 import com.example.namo.ui.bottom.diary.mainDiary.PersonalDetailActivity
 import com.example.namo.ui.bottom.home.HomeFragment
 import com.example.namo.ui.bottom.home.adapter.DailyGroupRVAdapter
@@ -32,21 +33,21 @@ import com.example.namo.ui.bottom.home.schedule.ScheduleActivity
 import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 
-class CalendarMonthFragment : Fragment(),GetGroupMonthView,GetMonthMoimEventView {
-    lateinit var db : NamoDatabase
-    private lateinit var binding : FragmentCalendarMonthBinding
-    private lateinit var categoryList : List<Category>
+class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventView {
+    lateinit var db: NamoDatabase
+    private lateinit var binding: FragmentCalendarMonthBinding
+    private lateinit var categoryList: List<Category>
 
-    private var millis : Long = 0L
+    private var millis: Long = 0L
     var isShow = false
-    private lateinit var monthList : List<DateTime>
-    private lateinit var tempEvent : ArrayList<Event>
-    private var monthGroupEvent : ArrayList<Event> = arrayListOf()
+    private lateinit var monthList: List<DateTime>
+    private lateinit var tempEvent: ArrayList<Event>
+    private var monthGroupEvent: ArrayList<Event> = arrayListOf()
 
     private var prevIdx = -1
     private var nowIdx = 0
-    private var event_personal : ArrayList<Event> = arrayListOf()
-    private var event_group : ArrayList<Event> = arrayListOf()
+    private var event_personal: ArrayList<Event> = arrayListOf()
+    private var event_group: ArrayList<Event> = arrayListOf()
     private val personalEventRVAdapter = DailyPersonalRVAdapter()
     private val groupEventRVAdapter = DailyGroupRVAdapter()
 
@@ -74,41 +75,41 @@ class CalendarMonthFragment : Fragment(),GetGroupMonthView,GetMonthMoimEventView
             requireActivity().startActivity(intent)
         }
 
-        binding.calendarMonthView.onDateClickListener = object : CustomCalendarView.OnDateClickListener {
-            override fun onDateClick(date: DateTime?, pos : Int?) {
-                val prevFragment = HomeFragment.currentFragment as CalendarMonthFragment?
-                if (prevFragment != null && prevFragment != this@CalendarMonthFragment) {
-                    prevFragment.binding.calendarMonthView.selectedDate = null
-                    prevFragment.binding.constraintLayout.transitionToStart()
-                }
-
-                HomeFragment.currentFragment = this@CalendarMonthFragment
-                HomeFragment.currentSelectedPos = pos
-                HomeFragment.currentSelectedDate = date
-
-                binding.calendarMonthView.selectedDate = date
-
-                if (date != null && pos != null) {
-                    nowIdx = pos
-                    setDaily(nowIdx)
-
-                    if (isShow && prevIdx == nowIdx) {
-                        binding.constraintLayout.transitionToStart()
-                        binding.calendarMonthView.selectedDate = null
-                        HomeFragment.currentFragment = null
-                        HomeFragment.currentSelectedPos = null
-                        HomeFragment.currentSelectedDate = null
+        binding.calendarMonthView.onDateClickListener =
+            object : CustomCalendarView.OnDateClickListener {
+                override fun onDateClick(date: DateTime?, pos: Int?) {
+                    val prevFragment = HomeFragment.currentFragment as CalendarMonthFragment?
+                    if (prevFragment != null && prevFragment != this@CalendarMonthFragment) {
+                        prevFragment.binding.calendarMonthView.selectedDate = null
+                        prevFragment.binding.constraintLayout.transitionToStart()
                     }
-                    else if (!isShow) {
-                        binding.constraintLayout.transitionToEnd()
+
+                    HomeFragment.currentFragment = this@CalendarMonthFragment
+                    HomeFragment.currentSelectedPos = pos
+                    HomeFragment.currentSelectedDate = date
+
+                    binding.calendarMonthView.selectedDate = date
+
+                    if (date != null && pos != null) {
+                        nowIdx = pos
+                        setDaily(nowIdx)
+
+                        if (isShow && prevIdx == nowIdx) {
+                            binding.constraintLayout.transitionToStart()
+                            binding.calendarMonthView.selectedDate = null
+                            HomeFragment.currentFragment = null
+                            HomeFragment.currentSelectedPos = null
+                            HomeFragment.currentSelectedDate = null
+                        } else if (!isShow) {
+                            binding.constraintLayout.transitionToEnd()
+                        }
+                        isShow = !isShow
+                        prevIdx = nowIdx
                     }
-                    isShow = !isShow
-                    prevIdx = nowIdx
-                }
 
 //                binding.calendarMonthView.invalidate()
+                }
             }
-        }
 
         return binding.root
     }
@@ -133,12 +134,14 @@ class CalendarMonthFragment : Fragment(),GetGroupMonthView,GetMonthMoimEventView
 
 
 //        onBackPressedCallback.isEnabled = true
-        Log.d("CalendarMonth", "Event list : " + binding.calendarMonthView.getEventList().toString())
+        Log.d(
+            "CalendarMonth",
+            "Event list : " + binding.calendarMonthView.getEventList().toString()
+        )
 
         if (HomeFragment.currentFragment == null) {
             return
-        }
-        else if (this@CalendarMonthFragment != HomeFragment.currentFragment) {
+        } else if (this@CalendarMonthFragment != HomeFragment.currentFragment) {
             isShow = false
             prevIdx = -1
         } else {
@@ -153,14 +156,17 @@ class CalendarMonthFragment : Fragment(),GetGroupMonthView,GetMonthMoimEventView
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setAdapter() {
-        binding.homeDailyEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.homeDailyEventRv.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.homeDailyEventRv.adapter = personalEventRVAdapter
 
-        binding.homeDailyGroupEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.homeDailyGroupEventRv.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.homeDailyGroupEventRv.adapter = groupEventRVAdapter
 //        if (nowIdx==0) setToday()
 
-        personalEventRVAdapter.setContentClickListener(object : DailyPersonalRVAdapter.ContentClickListener {
+        personalEventRVAdapter.setContentClickListener(object :
+            DailyPersonalRVAdapter.ContentClickListener {
             override fun onContentClick(event: Event) {
                 val intent = Intent(context, ScheduleActivity::class.java)
                 intent.putExtra("event", event)
@@ -169,7 +175,8 @@ class CalendarMonthFragment : Fragment(),GetGroupMonthView,GetMonthMoimEventView
 
         })
 
-        groupEventRVAdapter.setGorupContentClickListener(object : DailyGroupRVAdapter.GroupContentClickListener {
+        groupEventRVAdapter.setGorupContentClickListener(object :
+            DailyGroupRVAdapter.GroupContentClickListener {
             override fun onGroupContentClick(event: Event) {
                 val intent = Intent(context, ScheduleActivity::class.java)
                 intent.putExtra("event", event)
@@ -179,7 +186,8 @@ class CalendarMonthFragment : Fragment(),GetGroupMonthView,GetMonthMoimEventView
         })
 
         /** 기록 아이템 클릭 리스너 **/
-        personalEventRVAdapter.setRecordClickListener(object : DailyPersonalRVAdapter.DiaryInterface{
+        personalEventRVAdapter.setRecordClickListener(object :
+            DailyPersonalRVAdapter.DiaryInterface {
             override fun onDetailClicked(event: Event) {
 
                 val intent = Intent(context, PersonalDetailActivity::class.java)
@@ -188,13 +196,14 @@ class CalendarMonthFragment : Fragment(),GetGroupMonthView,GetMonthMoimEventView
             }
         })
 
-        groupEventRVAdapter.setRecordClickListener(object : DailyGroupRVAdapter.DiaryInterface{
+        groupEventRVAdapter.setRecordClickListener(object : DailyGroupRVAdapter.DiaryInterface {
             override fun onGroupDetailClicked(monthDiary: DiaryResponse.MonthDiary?) {
 
-                val bundle=Bundle()
-                bundle.putSerializable("groupDiary", monthDiary)
-                view?.findNavController()?.navigate(R.id.action_homeFragment_to_groupDetailFragment, bundle)
-                }
+                val intent = Intent(context, GroupDetailActivity::class.java)
+                intent.putExtra("groupDiary", monthDiary)
+                requireActivity().startActivity(intent)
+            }
+
         })
         /** ----- **/
     }
@@ -206,21 +215,21 @@ class CalendarMonthFragment : Fragment(),GetGroupMonthView,GetMonthMoimEventView
         groupEventRVAdapter.setCategory(categoryList)
     }
 
-    private fun setDaily(idx : Int) {
+    private fun setDaily(idx: Int) {
         binding.homeDailyHeaderTv.text = monthList[idx].toString("MM.dd (E)")
-        binding.dailyScrollSv.scrollTo(0,0)
+        binding.dailyScrollSv.scrollTo(0, 0)
         setData(idx)
         Log.d("CHECK_GROUP_EVENT", monthGroupEvent.toString())
     }
 
-    private fun setData(idx : Int) {
+    private fun setData(idx: Int) {
         getGroupDiary()
         getEvent(idx)
         setEmptyMsg()
     }
 
     private fun setEmptyMsg() {
-        if (event_personal.size == 0 ) binding.homeDailyEventNoneTv.visibility = View.VISIBLE
+        if (event_personal.size == 0) binding.homeDailyEventNoneTv.visibility = View.VISIBLE
         else binding.homeDailyEventNoneTv.visibility = View.GONE
 
         if (event_group.size == 0) binding.homeDailyGroupEventNoneTv.visibility = View.VISIBLE
@@ -228,16 +237,18 @@ class CalendarMonthFragment : Fragment(),GetGroupMonthView,GetMonthMoimEventView
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun getEvent(idx : Int) {
+    private fun getEvent(idx: Int) {
         event_personal.clear()
         event_group.clear()
         var todayStart = monthList[idx].withTimeAtStartOfDay().millis
         var todayEnd = monthList[idx].plusDays(1).withTimeAtStartOfDay().millis - 1
 
-        var forEvent : Thread = Thread {
-            val dailyEvent = db.eventDao.getEventDaily(todayStart / 1000, todayEnd / 1000) as ArrayList<Event>
+        var forEvent: Thread = Thread {
+            val dailyEvent =
+                db.eventDao.getEventDaily(todayStart / 1000, todayEnd / 1000) as ArrayList<Event>
             event_personal = dailyEvent.filter { item -> !item.moimSchedule } as ArrayList<Event>
-            event_group = monthGroupEvent.filter { item -> item.startLong <= todayEnd / 1000 && item.endLong >= todayStart / 1000 } as ArrayList<Event>
+            event_group =
+                monthGroupEvent.filter { item -> item.startLong <= todayEnd / 1000 && item.endLong >= todayStart / 1000 } as ArrayList<Event>
 
             personalEventRVAdapter.addPersonal(event_personal)
             groupEventRVAdapter.addGroup(event_group)
@@ -252,27 +263,28 @@ class CalendarMonthFragment : Fragment(),GetGroupMonthView,GetMonthMoimEventView
 
         try {
             forEvent.join()
-        } catch (e : InterruptedException) {
+        } catch (e: InterruptedException) {
             e.printStackTrace()
         }
     }
 
     @SuppressLint("SimpleDateFormat")
-    private fun getGroupDiary(){
+    private fun getGroupDiary() {
 
         try {
             val date = SimpleDateFormat("yyyy,MM").format(millis)
             val service = DiaryService()
             service.getGroupMonthDiary2(date, 0, 50)
             service.getGroupMonthView(this@CalendarMonthFragment)
-        }catch (e:java.lang.Exception){
+        } catch (e: java.lang.Exception) {
             Log.e("Exception", "Exception occurred: ${e.message}")
         }
     }
+
     companion object {
         private const val MILLIS = "MILLIS"
 
-        fun newInstance(millis : Long) = CalendarMonthFragment().apply {
+        fun newInstance(millis: Long) = CalendarMonthFragment().apply {
             arguments = Bundle().apply {
                 putLong(MILLIS, millis)
             }
@@ -291,7 +303,7 @@ class CalendarMonthFragment : Fragment(),GetGroupMonthView,GetMonthMoimEventView
             schedule.x,
             schedule.y,
             0,
-            schedule.alarmDate ?:listOf(),
+            schedule.alarmDate ?: listOf(),
             1,
             (R.string.event_current_default).toString(),
             schedule.scheduleId,
@@ -302,12 +314,12 @@ class CalendarMonthFragment : Fragment(),GetGroupMonthView,GetMonthMoimEventView
     }
 
     override fun onGetGroupMonthSuccess(response: DiaryResponse.DiaryGetMonthResponse) {
-        val data=response.result
+        val data = response.result
         groupEventRVAdapter.addGroupDiary(data.content as ArrayList<DiaryResponse.MonthDiary>)
     }
 
     override fun onGetGroupMonthFailure(message: String) {
-        Log.d("GET_GROUP_MONTH",message)
+        Log.d("GET_GROUP_MONTH", message)
     }
 
     override fun onGetMonthMoimEventSuccess(response: GetMonthEventResponse) {
@@ -315,13 +327,16 @@ class CalendarMonthFragment : Fragment(),GetGroupMonthView,GetMonthMoimEventView
         monthGroupEvent = result.map { serverToEvent(it) } as ArrayList
         Log.d("SUCCESS_MOIM", monthGroupEvent.toString())
 
-        var forDB : Thread = Thread {
-            tempEvent = db.eventDao.getEventMonth(monthList[0].withTimeAtStartOfDay().millis / 1000, monthList[41].plusDays(1).withTimeAtStartOfDay().millis / 1000) as ArrayList<Event>
+        var forDB: Thread = Thread {
+            tempEvent = db.eventDao.getEventMonth(
+                monthList[0].withTimeAtStartOfDay().millis / 1000,
+                monthList[41].plusDays(1).withTimeAtStartOfDay().millis / 1000
+            ) as ArrayList<Event>
         }
         forDB.start()
         try {
             forDB.join()
-        } catch (e : InterruptedException) {
+        } catch (e: InterruptedException) {
             e.printStackTrace()
         }
         tempEvent.addAll(monthGroupEvent)

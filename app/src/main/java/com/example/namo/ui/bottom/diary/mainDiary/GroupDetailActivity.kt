@@ -1,37 +1,35 @@
 package com.example.namo.ui.bottom.diary.mainDiary
 
-
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.namo.R
 import com.example.namo.data.remote.diary.*
-import com.example.namo.databinding.FragmentDiaryGroupDetailBinding
+import com.example.namo.databinding.ActivityGroupDiaryDetailBinding
+import com.example.namo.ui.bottom.diary.groupDiary.GroupMemoActivity
 import com.example.namo.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.example.namo.utils.ConfirmDialog
 import com.example.namo.utils.ConfirmDialogInterface
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 
-class GroupDetailFragment : Fragment(), GetGroupDiaryView,
+class GroupDetailActivity: AppCompatActivity(), GetGroupDiaryView,
     AddGroupAfterDiaryView,
-    ConfirmDialogInterface {  // 그룹 기록에 대한 텍스트 추가, 삭제
+    ConfirmDialogInterface {   // 그룹 기록에 대한 텍스트 추가, 삭제
 
-    private var _binding: FragmentDiaryGroupDetailBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: ActivityGroupDiaryDetailBinding
 
     private lateinit var groupSchedule: DiaryResponse.MonthDiary
     private lateinit var placeIntList: List<Long>
@@ -41,19 +39,16 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
     private var placeSize: Int = 0
     private var isDelete: Boolean = false
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
 
-        _binding = FragmentDiaryGroupDetailBinding.inflate(inflater, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding =  ActivityGroupDiaryDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        hideBottomNavigation(true)
 
-        groupSchedule = requireArguments().getSerializable("groupDiary") as DiaryResponse.MonthDiary
+        groupSchedule  = (intent.getSerializableExtra("groupDiary") as DiaryResponse.MonthDiary)
         diaryService = DiaryService()
-        sf = requireContext().getSharedPreferences("sf", Context.MODE_PRIVATE)
+        sf = this.getSharedPreferences("sf", Context.MODE_PRIVATE)
 
         charCnt()
         editMemo()
@@ -62,7 +57,8 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
             if (groupSchedule.content.isNullOrEmpty()) "" else groupSchedule.content.toString()
         saveEditText(getText)
 
-        return binding.root
+
+
     }
 
     override fun onResume() {
@@ -88,25 +84,29 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
     private fun bind(imgList: List<String>) {
 
         binding.diaryBackIv.setOnClickListener {
-            findNavController().popBackStack()
-            hideBottomNavigation(false)
+            finish()
         }
 
         binding.groupDiaryDetailLy.setOnClickListener {// 그룹 다이어리 장소 아이템 추가 화면으로 이동
 
-            val bundle = Bundle()
-            bundle.putBoolean("hasGroupPlace", true)
-            bundle.putLong("groupScheduleId", groupSchedule.scheduleIdx)
-            findNavController().navigate(
-                R.id.action_groupDetailFragment_to_groupMemoActivity,
-                bundle
-            )
+//            val bundle = Bundle()
+//            bundle.putBoolean("hasGroupPlace", true)
+//            bundle.putLong("groupScheduleId", groupSchedule.scheduleIdx)
+//            findNavController().navigate(
+//                R.id.action_groupDetailFragment_to_groupMemoActivity,
+//                bundle
+//            )
+
+            val intent = Intent(this, GroupMemoActivity::class.java)
+            intent.putExtra("hasGroupPlace", true)
+            intent.putExtra("groupScheduleId", groupSchedule.scheduleIdx)
+            this.startActivity(intent)
         }
 
-        val repo = DiaryRepository(requireContext())
+        val repo = DiaryRepository(this)
         val category = repo.getCategory(groupSchedule.categoryId, groupSchedule.categoryId)
 
-        context?.resources?.let {
+        applicationContext.resources?.let {
             binding.itemDiaryCategoryColorIv.background.setTint(category.color)
         }
 
@@ -118,10 +118,10 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
         binding.diaryInputDateTv.text = DateTime(scheduleDate).toString("yyyy.MM.dd (EE)")
         binding.diaryInputPlaceTv.text = groupSchedule.placeName
 
-        val galleryViewRVAdapter = GalleryListAdapter(requireContext())
+        val galleryViewRVAdapter = GalleryListAdapter(this)
         binding.diaryGallerySavedRy.adapter = galleryViewRVAdapter
         binding.diaryGallerySavedRy.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         galleryViewRVAdapter.addImages(imgList)
 
@@ -143,7 +143,7 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
             binding.diaryEditTv.text = resources.getString(R.string.diary_add)
             binding.diaryEditTv.setTextColor(
                 ContextCompat.getColor(
-                    requireContext(),
+                    this,
                     R.color.white
                 )
             )
@@ -153,7 +153,7 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
             binding.diaryEditTv.text = resources.getString(R.string.diary_edit)
             binding.diaryEditTv.setTextColor(
                 ContextCompat.getColor(
-                    requireContext(),
+                    this,
                     R.color.MainOrange
                 )
             )
@@ -196,7 +196,7 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
 
         val dialog = ConfirmDialog(this, title, content, "삭제", 0)
         dialog.isCancelable = false
-        dialog.show(parentFragmentManager, "ConfirmDialog")
+        dialog.show(supportFragmentManager, "ConfirmDialog")
     }
 
     override fun onClickYesButton(id: Int) {
@@ -216,7 +216,7 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
                                 Log.e("DELETE_GROUP_DIARY", "SUCCESS")
                                 placeSize--
                                 if (placeSize == 0) {
-                                    findNavController().popBackStack()
+                                    finish()
                                     isDelete = false
                                 }
                             }
@@ -229,12 +229,12 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
                 }
             }
         } else {
-            findNavController().popBackStack()
+            finish()
         }
     }
 
     override fun onAddGroupAfterDiaryFailure(message: String) {
-        findNavController().popBackStack()
+        finish()
     }
 
 
@@ -258,7 +258,7 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     if (diaryContentsEt.length() > 200) {
                         Toast.makeText(
-                            requireContext(), "최대 200자까지 입력 가능합니다",
+                            this@GroupDetailActivity, "최대 200자까지 입력 가능합니다",
                             Toast.LENGTH_SHORT
                         ).show()
 
@@ -279,15 +279,7 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
         }
     }
 
-    private fun hideBottomNavigation(bool: Boolean) {
-        val bottomNavigationView: BottomNavigationView =
-            requireActivity().findViewById(R.id.nav_bar)
-        if (bool) {
-            bottomNavigationView.visibility = View.GONE
-        } else {
-            bottomNavigationView.visibility = View.VISIBLE
-        }
-    }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -296,7 +288,6 @@ class GroupDetailFragment : Fragment(), GetGroupDiaryView,
         editor.clear()
         editor.apply()
 
-        _binding = null
-        hideBottomNavigation(false)
     }
+
 }
