@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true">
+
+    <!-- 이용 약관 -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:theme="@style/Theme.Transparent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:text="@string/for_service"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_marginStart="5dp"
+                android:text="@string/terms"/>
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="45dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- 전체 동의 -->
+            <CheckBox
+                android:id="@+id/terms_agree_all_btn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/terms_checkbox"
+                android:button="@null"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/terms_agree_all_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:text="@string/term_all_agree"
+                app:layout_constraintStart_toEndOf="@id/terms_agree_all_btn"
+                app:layout_constraintTop_toTopOf="@id/terms_agree_all_btn"
+                app:layout_constraintBottom_toBottomOf="@id/terms_agree_all_btn"/>
+
+            <View
+                android:id="@+id/terms_under_bar"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/typeBeforeGray"
+                app:layout_constraintTop_toBottomOf="@id/terms_agree_all_btn"/>
+
+            <!-- 이용 약관 -->
+            <CheckBox
+                android:id="@+id/terms_agree_service_btn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/terms_checkbox"
+                android:button="@null"
+                android:layout_marginTop="20dp"
+                app:layout_constraintTop_toBottomOf="@id/terms_under_bar"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/terms_agree_service_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:paddingVertical="10dp"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:text="@string/term_usage"
+                app:layout_constraintEnd_toStartOf="@id/terms_agree_service_see_iv"
+                app:layout_constraintStart_toEndOf="@id/terms_agree_service_btn"
+                app:layout_constraintTop_toTopOf="@id/terms_agree_service_btn"
+                app:layout_constraintBottom_toBottomOf="@id/terms_agree_service_btn"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/terms_agree_service_see_iv"
+                android:layout_width="15dp"
+                android:layout_height="25dp"
+                android:padding="3dp"
+                android:src="@drawable/ic_arrow_right_gray"
+                app:layout_constraintTop_toTopOf="@id/terms_agree_service_btn"
+                app:layout_constraintBottom_toBottomOf="@id/terms_agree_service_btn"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <!-- 개인 정보 수집 -->
+            <CheckBox
+                android:id="@+id/terms_agree_personal_btn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/terms_checkbox"
+                android:button="@null"
+                android:layout_marginTop="20dp"
+                android:scaleType="fitXY"
+                app:layout_constraintTop_toBottomOf="@id/terms_agree_service_btn"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/terms_agree_personal_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:paddingVertical="10dp"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:text="@string/term_information"
+                app:layout_constraintEnd_toStartOf="@id/terms_agree_service_see_iv"
+                app:layout_constraintStart_toEndOf="@id/terms_agree_personal_btn"
+                app:layout_constraintTop_toTopOf="@id/terms_agree_personal_btn"
+                app:layout_constraintBottom_toBottomOf="@id/terms_agree_personal_btn"/>
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/terms_agree_personal_see_iv"
+                android:layout_width="15dp"
+                android:layout_height="25dp"
+                android:padding="3dp"
+                android:src="@drawable/ic_arrow_right_gray"
+                app:layout_constraintTop_toTopOf="@id/terms_agree_personal_btn"
+                app:layout_constraintBottom_toBottomOf="@id/terms_agree_personal_btn"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <!-- 위치 -->
+            <CheckBox
+                android:id="@+id/terms_agree_gps_btn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/terms_checkbox"
+                android:button="@null"
+                android:layout_marginTop="20dp"
+                app:layout_constraintTop_toBottomOf="@id/terms_agree_personal_btn"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/terms_agree_gps_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:paddingVertical="10dp"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:text="@string/term_location"
+                app:layout_constraintStart_toEndOf="@id/terms_agree_gps_btn"
+                app:layout_constraintTop_toTopOf="@id/terms_agree_gps_btn"
+                app:layout_constraintBottom_toBottomOf="@id/terms_agree_gps_btn"/>
+
+            <!-- 푸쉬 알림 -->
+            <CheckBox
+                android:id="@+id/terms_agree_alert_btn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/terms_checkbox"
+                android:button="@null"
+                android:layout_marginTop="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/terms_agree_gps_btn" />
+
+            <TextView
+                android:id="@+id/terms_agree_alert_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:paddingVertical="10dp"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:text="@string/term_notice"
+                app:layout_constraintStart_toEndOf="@id/terms_agree_alert_btn"
+                app:layout_constraintTop_toTopOf="@id/terms_agree_alert_btn"
+                app:layout_constraintBottom_toBottomOf="@id/terms_agree_alert_btn"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/terms_next_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginBottom="40dp"
+            android:stateListAnimator="@null"
+            android:padding="15dp"
+            android:background="@drawable/login_btn_background"
+            android:backgroundTint="@color/groupCodeGray"
+            android:textColor="@color/beforeOrange"
+            android:text="@string/okay"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
+

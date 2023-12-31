@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="15dp">
+
+    <CheckBox
+        android:id="@+id/group_schedule_member_check_box"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:button="@null"
+        android:background="@drawable/terms_checkbox"/>
+
+    <TextView
+        android:id="@+id/group_schedule_member_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="지니"
+        android:layout_marginStart="20dp"
+        android:textColor="@color/textGray"
+        android:textSize="15sp"/>
+    
+</LinearLayout>

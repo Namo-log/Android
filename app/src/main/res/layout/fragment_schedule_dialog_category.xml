@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/dialog_schedule_category_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/dialog_schedule_category_header_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:text="카테고리"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textAlignment="center"/>
+
+    </LinearLayout>
+    
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dialog_schedule_category_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        tools:listitem="@layout/item_dialog_schedule_category"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dialog_schedule_category_edit_cv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="5dp"
+        android:layout_marginBottom="50dp">
+        
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/dialog_schedule_category_edit_iv"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/ic_category_edit"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="@string/category_edit"
+            android:textSize="15sp"
+            android:textColor="@color/textGray"
+            app:layout_constraintStart_toEndOf="@id/dialog_schedule_category_edit_iv"
+            app:layout_constraintTop_toTopOf="@id/dialog_schedule_category_edit_iv"
+            app:layout_constraintBottom_toBottomOf="@id/dialog_schedule_category_edit_iv"
+            app:layout_constraintEnd_toEndOf="parent" />
+        
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    
+</LinearLayout>

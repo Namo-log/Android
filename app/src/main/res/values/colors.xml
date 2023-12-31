@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00FFFFFF</color>
+    <color name="transGray">#33000000</color>
+    <color name="MainOrange">#DA6022</color>
+    <color name="beforeOrange">#D68359</color>
+    <color name="textGray">#555555</color>
+    <color name="realGray">#737373</color>
+    <color name="notyetGray">#A4A4A4</color>
+    <color name="editTextGray">#BBBBBB</color>
+    <color name="categoryGray">#CCCCCC</color>
+    <color name="typeBeforeGray">#D8D8D8</color>
+    <color name="whiteGray">@color/groupCodeGray</color>
+    <color name="groupCodeGray">#F7F7F7</color>
+    <color name="cardViewGray">#FAFAFA</color>
+
+    <!-- Schedule Category -->
+    <color name="schedule">#DE8989</color> //일정
+    <color name="schedule_plan">#E1B000</color> //약속
+    <color name="schedule_parttime">#5C8596</color> //알바
+    <color name="schedule_special">#AD7FFF</color> //기념일
+    <color name="schedule_group">#DA6022</color> //그룹 일정
+    <color name="test">#29ABE2</color>
+    <!-- Todo Category -->
+    <color name="todo">#DE8989</color>
+    <color name="todo_assignment">#89C5DE</color>
+    <color name="todo_housework">#64D49F</color>
+    <color name="todo_study">#C9C9C9</color>
+
+    <!-- Nomal Palette -->
+    <color name="palette1">#EB5353</color>
+    <color name="palette2">#EC9B3B</color>
+    <color name="palette3">#FBCB0A</color>
+    <color name="palette4">#96BB7C</color>
+    <color name="palette5">#5A8F7B</color>
+    <color name="palette6">#82C4C3</color>
+    <color name="palette7">#187498</color>
+    <color name="palette8">#8571BF</color>
+    <color name="palette9">#E36488</color>
+    <color name="palette10">#858585</color>
+
+    <!--  Color Array  -->
+    <array name="categoryColorArr">
+        <item>@color/schedule</item>
+        <item>@color/schedule_plan</item>
+        <item>@color/schedule_parttime</item>
+        <item>@color/schedule_group</item>
+        <item>@color/palette1</item>
+        <item>@color/palette2</item>
+        <item>@color/palette3</item>
+        <item>@color/palette4</item>
+        <item>@color/palette5</item>
+        <item>@color/palette6</item>
+        <item>@color/palette7</item>
+        <item>@color/palette8</item>
+        <item>@color/palette9</item>
+        <item>@color/palette10</item>
+    </array>
+
+    <array name="palette1ColorArr">
+        <item>@color/palette1</item>
+        <item>@color/palette2</item>
+        <item>@color/palette3</item>
+        <item>@color/palette4</item>
+        <item>@color/palette5</item>
+        <item>@color/palette6</item>
+        <item>@color/palette7</item>
+        <item>@color/palette8</item>
+        <item>@color/palette9</item>
+        <item>@color/palette10</item>
+    </array>
+</resources>

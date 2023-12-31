@@ -1,0 +1,120 @@
+<resources>
+    <string name="app_name">나모</string>
+
+    <!-- 기본적으로 쓰이는 String -->
+    <string name="okay">확인</string>
+
+    <!-- 약관 동의 관련 String -->
+    <string name="for_service">서비스 이용을 위한</string>
+    <string name="terms">약관 동의</string>
+    <string name="term_location">(선택) 위치 서비스 동의</string>
+    <string name="term_information">(필수) 개인정보 수집 및 이용</string>
+    <string name="term_usage">(필수) 이용 약관</string>
+    <string name="term_all_agree">전체 동의</string>
+    <string name="term_notice">(선택) 앱 푸시 알림 수신 동의</string>
+    <string name="onboarding_1_description">소중한 나의 일정과 기록,\n어떻게 관리하시나요?</string>
+    <string name="onboarding_2_description">중요한 일정을 잊지 않도록\n캘린더에 표시</string>
+    <string name="onboarding_3_description">일정을 사진과 글로 기록하고\n한 눈에 모아보세요</string>
+    <string name="onboarding_4_description">그룹 캘린더에서 친구들 일정 확인 후\n손쉽게 모임 일정을 잡고</string>
+    <string name="onboarding_5_description">사진 공유와 금액 정산까지 효율적으로</string>
+    <string name="onboarding_5_namo_description">나의 모임 기록</string>
+    <string name="onboarding_5_namo">나모</string>
+    <string name="onboarding_5_start_description">지금 바로 시작하세요</string>
+    <string name="onboarding_5_start">시작하기</string>
+    <string name="onboarding_next">다음</string>
+    <string name="onboarding_skip">skip</string>
+
+    <!--bottom navigation 관련 String-->
+    <string name="bottom_home">Home</string>
+    <string name="bottom_record">Record</string>
+    <string name="bottom_grouplist">GroupList</string>
+    <string name="bottom_custom">Custom</string>
+
+    <!-- Group 화면 관련 String -->
+    <string name="group_calendar">Group Calendar</string>
+    <string name="add_group_msg">그룹 리스트가 없습니다. 리스트를 추가해 보세요</string>
+    <string name="network_group_msg">그룹 캘린더는 네트워크 연결 시 확인 가능합니다.\n네트워크 연결 후 다시 시도해주세요.</string>
+    <string name="create_group">그룹 생성</string>
+    <string name="input_group_code">그룹 코드 입력</string>
+    <string name="dialog_close">닫기</string>
+    <string name="dialog_done">완료</string>
+    <string name="group_name_input">입력</string>
+    <string name="new_group">새 그룹</string>
+    <string name="group_name">그룹명</string>
+    <string name="group_cover_image">커버 이미지</string>
+    <string name="group_name_uneditable">추후 변경 불가</string>
+    <string name="group_code">그룹 코드</string>
+
+    <!-- Custom 화면 관련 String -->
+    <string name="custom_palette">palette fragment</string>
+    <string name="custom_font">커스텀 폰트는 열심히 준비중이몽몽~!</string>
+    <string name="custom_my">my fragment</string>
+
+    <!--diary 관련 String-->
+    <string name="diary_modify">수정</string>
+    <string name="diary_contents">나모의 새로운 시작</string>
+    <string name="diary_date">날짜</string>
+    <string name="diary_place">장소</string>
+    <string name="diary_title">나몽몽</string>
+    <string name="diary_detail_view">상세보기</string>
+    <string name="diary_add">기록 저장</string>
+    <string name="diary_edit">기록 수정</string>
+    <string name="diary_put">기록 입력</string>
+    <string name="diary_personal">개인</string>
+    <string name="diary_group">모임</string>
+    <string name="diary_attendee">참석자</string>
+    <string name="diary_add_place">장소 추가</string>
+    <string name="diary_detail_click">그룹 기록 보러가기</string>
+
+
+    <!--연월 dialog 관련 String-->
+   <string name="dialog_confirm">확인</string>
+    <string name="dialog_cancel">취소</string>
+    <string name="dialog_save">저장</string>
+
+    <!--  home fragment 관련 string  -->
+    <string name="month_calendar_header_year_month">yyyy년 MM월</string>
+    <string name="month_calendar_header_today">31</string>
+    <string name="sunday">일</string>
+    <string name="monday">월</string>
+    <string name="tuesday">화</string>
+    <string name="wednesday">수</string>
+    <string name="thursday">목</string>
+    <string name="friday">금</string>
+    <string name="saturday">토</string>
+    <string name="home_daily_date">MM.dd (E)</string>
+    <string name="dateFormat">yyyy.MM.dd (E)</string>
+    <string name="timeFormat">hh:mm a</string>
+    <string name="noticeFormat">yyyy.MM.dd (E) hh:mm a</string>
+
+    <!-- setting fragent 관련 string -->
+    <string name="custom_setting">설정</string>
+    <string name="custom_setting_ver">버전 정보</string>
+    <string name="custom_setting_term">이용 약관</string>
+    <string name="custom_setting_individual_policy">개인정보 처리방침</string>
+    <string name="custom_setting_logout">로그아웃</string>
+    <string name="custom_setting_withdrawal">회원탈퇴</string>
+
+    <!-- 카테고리 관련 String -->
+    <string name="category_edit">카테고리 편집</string>
+    <string name="category_setting">카테고리 설정</string>
+    <string name="category_calendar">캘린더</string>
+    <string name="category_palette">팔레트</string>
+    <string name="palette_normal">기본 팔레트</string>
+    <string name="category_new">새 카테고리</string>
+    <string name="category_detail_normal_color">기본 색상</string>
+    <string name="category_detail_isShare">공유 설정</string>
+    <string name="category_detail_setting">카테고리 설정</string>
+    <string name="group_place">장소</string>
+    <string name="group_money">금액 정산</string>
+
+    <!-- event 관련 String   -->
+    <string name="event_current_default">DEFAULT</string>
+    <string name="event_current_added">ADDED</string>
+    <string name="event_current_edited">EDITED</string>
+    <string name="event_current_deleted">DELETED</string>
+    <string name="more_view">더보기</string>
+
+
+
+</resources>

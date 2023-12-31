@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.mongmong.namo">
+
+    <!--    카카오맵 API 권한추가-->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- 갤러리 이미지 가져오기-->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
+    <!--    푸시알림-->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
+    <!-- 광고 -->
+    <uses-permission
+        android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove" />
+
+    <!--    usesCleartextTraffic : android 가 HTTP연결을 막아놨는데 카카오맵은 HTTP통신해서 HTTP도 가능하도록 설정-->
+    <application
+        android:name=".config.ApplicationClass"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:hardwareAccelerated="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.NaMo"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
+        <activity
+            android:name="com.mongmong.namo.MainActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity
+            android:name=".ui.splash.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.App.Starting">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="oauth"
+                    android:scheme="kakao${KAKAO_API_KEY}" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.mongmong.namo.ui.bottom.home.schedule.map.MapActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity
+            android:name="com.mongmong.namo.ui.bottom.home.category.CategoryActivity"
+            android:theme="@style/Theme.Transparent" />
+        <activity
+            android:name="com.mongmong.namo.ui.bottom.home.category.CategoryEditActivity"
+            android:theme="@style/Theme.Transparent" />
+        <activity
+            android:name=".ui.bottom.home.schedule.ScheduleActivity"
+            android:exported="false"
+            android:theme="@style/SlideAnimation" />
+        <activity
+            android:name=".ui.bottom.group.GroupInfoActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialTransparent"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ui.bottom.group.GroupCalendarActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.bottom.group.GroupScheduleActivity"
+            android:exported="false"
+            android:theme="@style/SlideAnimation" />
+        <activity
+            android:name=".ui.bottom.group.GroupScheduleMemberActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialTransparent" />
+        <activity
+            android:name=".ui.bottom.diary.groupDiary.GroupMemoActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".ui.bottom.diary.mainDiary.PersonalDetailActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.bottom.group.GroupMapActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:name=".ui.bottom.diary.mainDiary.GroupDetailActivity"
+            android:exported="false" />
+        <meta-data
+            android:name="google_analytics_adid_collection_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="${KAKAO_API_KEY}" />
+        <receiver
+            android:name=".ui.bottom.home.notify.PushNotificationReceiver"
+            android:exported="true"/>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+    </application>
+
+</manifest>

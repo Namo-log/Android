@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/onboarding_5_description_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="@dimen/onboarding_default_text_size"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:text="@string/onboarding_5_description"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/onboarding_5_lottie_lv"
+            android:layout_width="0dp"
+            android:layout_height="300dp"
+            android:layout_marginBottom="45dp"
+            app:lottie_fileName="onboarding5.json"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:layout_constraintTop_toBottomOf="@id/onboarding_5_description_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <LinearLayout
+            android:id="@+id/onboarding_5_start_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/onboarding_margin_horizontal"
+            android:layout_marginBottom="40dp"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/onboarding_default_text_size"
+                    android:textColor="@color/black"
+                    android:text="@string/onboarding_5_namo_description"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/onboarding_default_text_size"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:text="@string/onboarding_5_namo"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:textAlignment="center"
+                android:textSize="@dimen/onboarding_default_text_size"
+                android:textColor="@color/black"
+                android:text="@string/onboarding_5_start_description"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/onboarding_5_start_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:stateListAnimator="@null"
+                android:padding="@dimen/onboarding_btn_padding"
+                android:background="@drawable/login_btn_background"
+                android:textColor="@color/white"
+                android:text="@string/onboarding_5_start"
+                android:textSize="@dimen/onboarding_default_text_size"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

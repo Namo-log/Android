@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CalendarView">
+        <attr name="calendarViewStyle" format="reference"/>
+        <attr name="itemViewStyle" format="reference"/>
+
+        <attr name="dayHeight" format="dimension"/>
+        <attr name="dayTextSize" format="dimension"/>
+        <attr name="dayTextHeight" format="dimension"/>
+        <attr name="eventTextSize" format="dimension"/>
+        <attr name="eventHeight" format="dimension"/>
+        <attr name="eventTopPadding" format="dimension"/>
+        <attr name="eventBetweenPadding" format="dimension"/>
+        <attr name="eventHorizontalPadding" format="dimension"/>
+        <attr name="eventCornerRadius" format="dimension"/>
+        <attr name="eventMorePadding" format="dimension"/>
+        <attr name="eventLineHeight" format="dimension"/>
+    </declare-styleable>
+</resources>

@@ -1,0 +1,29 @@
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/drawable/checkbox_custom.xml" value="0.136" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/drawable/custom_checkbox.xml" value="0.136" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/drawable/login_btn_background.xml" value="0.136" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/drawable/login_text_background.xml" value="0.136" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/drawable/terms_checkbox.xml" value="0.136" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/layout/activity_login.xml" value="0.2484375" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/layout/activity_login_term.xml" value="0.2" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/layout/activity_main.xml" value="0.11458333333333333" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/layout/activity_term.xml" value="0.2047008547008547" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/layout/activity_terms.xml" value="0.2" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/layout/activityasdf.xml" value="0.2484375" />
+        <entry key="..\:/Users/jjy02/AndroidStudioProjects/Android_New/app/src/main/res/layout/fragment_terms.xml" value="0.2484375" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1109375" />
+        <entry key="app/src/main/res/layout/fragment_group_list.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_schedule_dialog_category.xml" value="0.16210739614994935" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
