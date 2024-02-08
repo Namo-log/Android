@@ -30,45 +30,7 @@ class XAccessTokenInterceptor : Interceptor {
                 // Show Bad Request Error Message
             }
             401 -> {
-                Log.d("Token", "401 액세스 토큰 만료")
-                // 이전 토큰
-                if (accessToken != null) {
-                    Log.d("AccessToken", accessToken)
-                    Log.d("RefreshToken", refreshToken)
-                }
-
-                // 재발급 api 호출
-                // 받은 토큰 다시 넣어서 기존 api 재호출
-                val newTokenResponse = RefreshService().tryTokenRefresh(TokenBody(accessToken.toString(), refreshToken))
-                val responseBody = newTokenResponse.body()
-
-                Log.d("Token", newTokenResponse.toString())
-
-                if (responseBody != null) {
-                    sSharedPreferences.edit()
-                        .putString(X_REFRESH_TOKEN, responseBody.result.refreshToken)
-                        .putString(X_ACCESS_TOKEN, responseBody.result.accessToken)
-                        .apply()
-                    Log.d("onTokenResponse", "토큰 재발급 성공!")
-                    Log.d("onTokenResponse", "${newTokenResponse.code()}\n" + "${newTokenResponse.body()!!.result}")
-
-                    //val newJwtToken: String? = sSharedPreferences.getString(X_ACCESS_TOKEN, null)
-                    val newJwtToken = responseBody.result.accessToken
-
-                    // 새로운 토큰으로 하던 작업 서버 재요청
-                    val finalRequest = chain.request().newBuilder()
-                        .addHeader("Authorization", newJwtToken)
-                        .build()
-
-                    response.close()
-                    return chain.proceed(finalRequest)
-                }
-
-                if (newTokenResponse.body()?.code == 401) { // 리프레시 토큰 만료
-                    Log.d("Token", "401 리프레시 토큰 만료")
-                    // 로그인 다시하기
-
-                }
+                // Show Forbidden Message
             }
             403 -> {
                 // Show Forbidden Message
@@ -92,7 +54,7 @@ class XAccessTokenInterceptor : Interceptor {
                         .putString(X_ACCESS_TOKEN, responseBody.result.accessToken)
                         .apply()
                     Log.d("onTokenResponse", "토큰 재발급 성공!")
-                    Log.d("onTokenResponse", "${newTokenResponse.code()}\n" + "${newTokenResponse.body()!!.result}")
+//                    Log.d("onTokenResponse", "${newTokenResponse.code()}\n" + "${newTokenResponse.body()!!.result}")
 
                     //val newJwtToken: String? = sSharedPreferences.getString(X_ACCESS_TOKEN, null)
                     val newJwtToken = responseBody.result.accessToken
@@ -106,9 +68,9 @@ class XAccessTokenInterceptor : Interceptor {
                     return chain.proceed(finalRequest)
                 }
 
-                if (newTokenResponse.body()?.code == 401) { // 리프레시 토큰 만료
-                    Log.d("Token", "401 리프레시 토큰 만료")
-                    // 로그인 다시하기
+                if (newTokenResponse.body()?.code == 403) { // 리프레시 토큰 만료
+                    Log.d("Token", "403 리프레시 토큰 만료")
+                    //TODO: 로그인 다시하기
 
                 }
             }
