@@ -76,7 +76,7 @@ class LoginFragment: Fragment(), LoginView {
                 }
             } else if (token != null) {
                 Log.i(ContentValues.TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
-                Toast.makeText(requireContext(), "카카오 로그인 성공", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireContext(), "카카오 로그인 성공", Toast.LENGTH_SHORT).show()
 
                 // 서버 통신
                 LoginService(this).tryPostKakaoSDK(TokenBody(token.accessToken, token.refreshToken))
@@ -110,7 +110,7 @@ class LoginFragment: Fragment(), LoginView {
 
         // 네이버 로그인 모듈 초기화
         NaverIdLoginSDK.initialize(
-            requireContext(), com.mongmong.namo.BuildConfig.NAVER_CLIENT_ID, com.mongmong.namo.BuildConfig.NAVER_CLIENT_SECRET, "나모"
+            requireContext(), BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, "나모"
         )
 
         // OAuthLoginCallback을 authenticate() 메서드 호출 시 파라미터로 전달하거나 NidOAuthLoginButton 객체에 등록하면 인증이 종료되는 것을 확인할 수 있습니다.
@@ -129,7 +129,7 @@ class LoginFragment: Fragment(), LoginView {
             override fun onFailure(httpStatus: Int, message: String) {
                 val errorCode = NaverIdLoginSDK.getLastErrorCode().code
                 val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
-                Toast.makeText(requireActivity(), "errorCode: $errorCode, errorDesc: $errorDescription", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(requireActivity(), "errorCode: $errorCode, errorDesc: $errorDescription", Toast.LENGTH_SHORT).show()
             }
 
             override fun onError(errorCode: Int, message: String) {
@@ -140,7 +140,7 @@ class LoginFragment: Fragment(), LoginView {
     }
 
     private fun setLoginFinished(){
-        val intent = Intent(requireContext(), com.mongmong.namo.MainActivity::class.java)
+        val intent = Intent(requireContext(), MainActivity::class.java)
         requireActivity().finish()
         startActivity(intent)
     }
