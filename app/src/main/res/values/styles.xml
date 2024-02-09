@@ -52,6 +52,11 @@
         <item name="android:background">@color/notyetGray</item>
     </style>
 
+    <style name="TabTextStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
     <style name="img_category_check">
         <item name="android:layout_width">13dp</item>
         <item name="android:layout_height">12dp</item>

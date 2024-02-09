@@ -9,16 +9,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
 import com.mongmong.namo.R
 import com.mongmong.namo.data.entity.diary.DiaryEvent
 import com.mongmong.namo.data.entity.home.Event
@@ -33,7 +30,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
-import kotlin.math.roundToInt
 
 
 class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
@@ -49,7 +45,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     private lateinit var diaryGroupAdapter: DiaryGroupAdapter
 
     private var yearMonthTextView: String = ""
-    private var checked = false
+    private var isMoim = false
     private lateinit var pagingDataFlow: Flow<PagingData<DiaryEvent>>
 
     override fun onCreateView(
@@ -70,14 +66,15 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
             yearMonthTextView = savedYearMonth
         }
         val savedChecked = sf.getBoolean("checked", false)
-        checked = savedChecked
+        isMoim = savedChecked
 
         getList()
 
         binding.diaryMonth.text = yearMonthTextView
 
-        checkSwitchBtn()
         dialogCreate()
+
+        initSelectorTabView()
 
         return binding.root
     }
@@ -92,7 +89,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         super.onStop()
 
         val editor = sf.edit()
-        editor.putBoolean("checked", checked)
+        editor.putBoolean("checked", isMoim)
         editor.apply()
     }
 
@@ -129,90 +126,52 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     }
 
+    private fun initSelectorTabView() {
+        val tabLayout = binding.diaryTab
+        val tabTitleList = listOf(R.string.diary_personal, R.string.diary_group)
+
+        for (position in tabTitleList.indices) {
+            val tab = tabLayout.newTab()
+            tab.text = resources.getString(tabTitleList[position])
+            tabLayout.addTab(tab)
+        }
+
+        // 탭 선택 리스너를 설정하십시오 (필요에 따라).
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when (tab?.position) {
+                    0 -> {
+                        // 개인 탭이 선택된 경우
+                        isMoim = false
+                        getList()
+                    }
+                    1 -> {
+                        // 모임 탭이 선택된 경우
+                        isMoim = true
+                        getList()
+                    }
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                // 선택 해제된 탭에 대한 동작을 정의
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                // 이미 선택된 탭을 다시 선택한 경우의 동작을 정의
+            }
+        })
+    }
+
     private fun getList() {
-
-        if (!checked) { // 개인 기록 가져오기
+        // 기록 리스트 가져오기
+        if (!isMoim) {
+            // 개인 기록 가져오기
             getPersonalList()
-
-            binding.personalBtn.setPadding(
-                changeDP(0),
-                binding.personalBtn.paddingTop,
-                changeDP(0),
-                binding.personalBtn.paddingBottom
-            )
-            binding.groupBtn.setPadding(
-                changeDP(0),
-                binding.groupBtn.paddingTop,
-                changeDP(10),
-                binding.groupBtn.paddingBottom
-            )
-
-            setButton(binding.personalBtn, binding.groupBtn)
-
-        } else { // 그룹 기록 가져오기
+        } else {
+            // 모임 기록 가져오기
             getGroupList()
-
-            binding.personalBtn.setPadding(
-                changeDP(10),
-                binding.personalBtn.paddingTop,
-                changeDP(0),
-                binding.personalBtn.paddingBottom
-            )
-            binding.groupBtn.setPadding(
-                changeDP(0),
-                binding.groupBtn.paddingTop,
-                changeDP(0),
-                binding.groupBtn.paddingBottom
-            )
-
-            setButton(binding.groupBtn, binding.personalBtn)
         }
-
-    }
-
-    private fun changeDP(value: Int): Int {
-        val displayMetrics = resources.displayMetrics
-        return (value * displayMetrics.density).roundToInt()
-    }
-
-    private fun checkSwitchBtn() {
-
-        binding.personalBtn.setOnClickListener {
-            checked = false
-            getList()
-        }
-
-        binding.groupBtn.setOnClickListener {
-            checked = true
-            getList()
-        }
-    }
-
-    private fun setButton(group: TextView, personal: TextView) {
-
-        group.setBackgroundResource(R.drawable.switch_thumb)
-        personal.setBackgroundResource(0)
-
-        val layoutParams = personal.layoutParams as LinearLayout.LayoutParams
-        layoutParams.weight = 1f
-        personal.layoutParams = layoutParams
-
-        val groupLayoutParams = group.layoutParams as LinearLayout.LayoutParams
-        groupLayoutParams.weight = 1.5f
-        group.layoutParams = groupLayoutParams
-
-        personal.setTextColor(
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.textGray
-            )
-        )
-        group.setTextColor(
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.white
-            )
-        )
     }
 
     private fun getPersonalList() {
@@ -262,12 +221,11 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         if (!NetworkManager.checkNetworkState(requireContext())) {
             //인터넷 연결 안 됨
             binding.diaryListEmptyTv.visibility = View.VISIBLE
-            binding.diaryListEmptyTv.text = "네트워크 연결 실패"
+            binding.diaryListEmptyTv.text = resources.getString(R.string.diary_network_failure)
             binding.diaryGroupListRv.visibility = View.GONE
 
             return
         }
-
     }
 
     private fun paging(
