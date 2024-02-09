@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.recyclerview.widget.RecyclerView
+import com.mongmong.namo.R
 import com.mongmong.namo.data.NamoDatabase
 import com.mongmong.namo.data.entity.diary.DiaryEvent
 import com.mongmong.namo.data.remote.diary.DiaryService
@@ -34,7 +35,7 @@ class DiaryPersonalPagingSource(
                 withContext(Dispatchers.Main) {
                     recyclerView.visibility = View.GONE
                     textView.visibility = View.VISIBLE
-                    textView.text = "메모가 없습니다. 메모를 추가해 보세요!"
+                    textView.text = context.resources.getString(R.string.diary_empty)
                 }
             }
 
@@ -85,11 +86,12 @@ class DiaryGroupPagingSource(
             }
             val diaryItems = diaryEvents.toListItems()
 
-            if (nextPageNumber == 0 && result.isEmpty()) {    //    달 별 메모 없으면 없다고 띄우기
+            if (nextPageNumber == 0 && result.isEmpty()) {    // 달 별 메모 없으면 없다고 띄우기
                 withContext(Dispatchers.Main) {
+                    val context = recyclerView.context
                     recyclerView.visibility = View.GONE
                     textView.visibility = View.VISIBLE
-                    textView.text = "메모가 없습니다. 메모를 추가해 보세요!"
+                    textView.text = context.resources.getString(R.string.diary_empty)
                 }
             }
 
