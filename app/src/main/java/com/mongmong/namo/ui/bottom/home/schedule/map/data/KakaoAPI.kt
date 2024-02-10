@@ -8,7 +8,7 @@ import retrofit2.http.Query
 interface KakaoAPI {
     @GET("/v2/local/search/keyword.json")
     fun getSearchPlace(
-        @Header("Authorization") key : String,
+        @Header("Authorization") headers : String,
         @Query("query") query : String,
         @Query("x") x : String,
         @Query("y") y : String,

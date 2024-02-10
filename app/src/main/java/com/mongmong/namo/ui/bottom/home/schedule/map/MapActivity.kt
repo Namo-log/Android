@@ -37,6 +37,7 @@ import com.mongmong.namo.ui.bottom.home.schedule.map.data.Place
 import com.mongmong.namo.ui.bottom.home.schedule.map.data.ResultSearchPlace
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import com.mongmong.namo.BuildConfig
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
@@ -69,7 +70,7 @@ class MapActivity : AppCompatActivity() {
 
     companion object {
         const val BASE_URL = "https://dapi.kakao.com"
-        const val API_KEY = "818de08ab952bb5274fa890b790f338d"
+        const val API_KEY = BuildConfig.KAKAO_REST_KEY
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -189,7 +190,7 @@ class MapActivity : AppCompatActivity() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val api = retrofit.create(KakaoAPI::class.java)
-        val call = api.getSearchPlace("KakaoAK $API_KEY", keyword, uLongitude.toString(), uLatitude.toString(), "distance")
+        val call = api.getSearchPlace("KakaoAK ${API_KEY}", keyword, uLongitude.toString(), uLatitude.toString(), "distance")
 
         call.enqueue(object : Callback<ResultSearchPlace> {
             @SuppressLint("NotifyDataSetChanged")
