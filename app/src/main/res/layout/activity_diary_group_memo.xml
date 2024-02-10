@@ -8,7 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".ui.bottom.home.schedule.map.MapActivity">
+        tools:context=".ui.bottom.home.schedule.map.MapActivity"
+        android:background="@color/white">
 
         <RelativeLayout
             android:id="@+id/view"
@@ -68,7 +69,7 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="25dp"
                 android:text="@string/diary_date"
-                android:textColor="#555555"
+                android:textColor="@color/textGray"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -80,6 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:textSize="17sp"
+                android:textColor="@color/textGray"
                 app:layout_constraintStart_toEndOf="@id/group_add_date_tv"
                 app:layout_constraintTop_toTopOf="@id/group_add_date_tv" />
 
@@ -90,7 +92,7 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="10dp"
                 android:text="@string/diary_place"
-                android:textColor="#555555"
+                android:textColor="@color/textGray"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -102,6 +104,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
+                android:textColor="@color/textGray"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textSize="17sp"
@@ -116,7 +119,7 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="10dp"
                 android:text="@string/diary_attendee"
-                android:textColor="#555555"
+                android:textColor="@color/textGray"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -213,6 +216,7 @@
                             android:text="@string/diary_add_place"
                             android:textSize="16sp"
                             android:textStyle="bold"
+                            android:textColor="@color/textGray"
                             app:layout_constraintBottom_toBottomOf="@id/groud_place_add_iv"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"

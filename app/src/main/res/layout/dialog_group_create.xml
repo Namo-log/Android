@@ -75,6 +75,8 @@
             android:layout_height="wrap_content"
             android:background="@color/transparent"
             android:hint="@string/group_name_input"
+            android:textColorHint="@color/editTextGray"
+            android:textColor="@color/textGray"
             android:singleLine="true"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="@id/create_group_code_ll"
@@ -124,7 +126,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_group_coverimg_add" />
+                android:src="@drawable/ic_group_coverimg_add"
+                android:background="@color/white"/>
         </androidx.cardview.widget.CardView>
 
         <LinearLayout

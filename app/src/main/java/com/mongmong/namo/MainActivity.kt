@@ -14,6 +14,7 @@ import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -109,10 +110,10 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, com.mongmong.namo.R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         db = NamoDatabase.getInstance(this)
         initNavigation()
-        categoryColorArray =resources.getIntArray(com.mongmong.namo.R.array.categoryColorArr)
+        categoryColorArray =resources.getIntArray(R.array.categoryColorArr)
         Log.d("CATEGORY_ARR", categoryColorArray.contentToString())
 
 //        logToken()

@@ -33,6 +33,11 @@
         <item name="cornerSize">4dp</item>
     </style>
 
+    <!-- Number Picker 텍스트 색상 -->
+    <style name="AppTheme.Picker" parent="Theme.AppCompat.Light.NoActionBar" >
+        <item name="android:textColorPrimary">@color/textGray</item>
+    </style>
+
     <style name="title_text">
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">@color/black</item>
@@ -103,6 +108,7 @@
     <style name="tabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/textGray</item>
     </style>
     <!-- 다이얼로그 버틎 -->
     <style name="dialog_cancel_button">
