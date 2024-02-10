@@ -32,6 +32,8 @@ import com.mongmong.namo.utils.ConfirmDialog
 import com.mongmong.namo.utils.ConfirmDialogInterface
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kakao.sdk.user.UserApiClient
+import com.mongmong.namo.data.NamoDatabase
+import com.mongmong.namo.data.entity.home.Category
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
@@ -125,6 +127,24 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
         activity?.let { dialog.show(it.supportFragmentManager, "ConfirmDialog") }
     }
 
+    private fun deleteAllRoomDatas() {
+        val db = NamoDatabase.getInstance(requireContext())
+
+        // 모든 데이터 삭제
+        val thread = Thread {
+            db.eventDao.deleteAllEvents()
+            db.diaryDao.deleteAllDiaries()
+            db.categoryDao.deleteAllCategories()
+            db.groupDao.deleteAllGroups()
+        }
+        thread.start()
+        try {
+            thread.join()
+        } catch ( e: InterruptedException) {
+            e.printStackTrace()
+        }
+    }
+
     private fun moveToLoginFragment() {
         // 토큰 비우기
         ApplicationClass.sSharedPreferences.edit().clear().apply()
@@ -136,8 +156,11 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
 
     override fun onClickYesButton(id: Int) { // 다이얼로그 확인 메시지 클릭
         if (id == 0) { // 로그아웃
+            // 토큰 삭제
             val token = ApplicationClass.sSharedPreferences.getString(ApplicationClass.X_ACCESS_TOKEN, null)
             token?.let { LogoutBody(it) }?.let { LogoutService(this).tryPostLogout(it) }
+            // 룸에 있는 모든 데이터 삭제
+            deleteAllRoomDatas()
         }
         else if (id == 1) { // 회원탈퇴
 //            LogoutService(this).tryQuit()

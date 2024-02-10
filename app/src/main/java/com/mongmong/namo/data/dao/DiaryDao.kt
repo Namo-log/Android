@@ -18,6 +18,9 @@ interface DiaryDao {
     @Query("DELETE FROM diaryTable WHERE diaryId=:eventId")
     fun deleteDiary(eventId: Long)
 
+    @Query("DELETE FROM diaryTable")
+    fun deleteAllDiaries()
+
     @Query("UPDATE calendar_event_table SET has_diary= 1 WHERE eventId =:scheduleIdx")
     fun updateHasDiary(scheduleIdx: Long)
 

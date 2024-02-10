@@ -14,6 +14,9 @@ interface GroupDao {
     @Delete
     fun deleteGroup(group: Group)
 
+    @Query("DELETE FROM group_table")
+    fun deleteAllGroups()
+
     @Query("SELECT * FROM group_table")
     fun getGroupList() : List<Group>
 

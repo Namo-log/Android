@@ -19,6 +19,9 @@ interface EventDao {
     @Update
     fun updateEvent(event : Event)
 
+    @Query("DELETE FROM calendar_event_table")
+    fun deleteAllEvents()
+
     @Query("SELECT COUNT(*) FROM calendar_event_table")
     fun getAllEvent() : Int
 
