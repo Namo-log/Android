@@ -44,7 +44,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name="com.mongmong.namo.MainActivity"
+            android:name=".MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
         <activity
@@ -74,14 +74,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.mongmong.namo.ui.bottom.home.schedule.map.MapActivity"
+            android:name=".ui.bottom.home.schedule.map.MapActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
         <activity
-            android:name="com.mongmong.namo.ui.bottom.home.category.CategoryActivity"
+            android:name=".ui.bottom.home.category.CategoryActivity"
             android:theme="@style/Theme.Transparent" />
         <activity
-            android:name="com.mongmong.namo.ui.bottom.home.category.CategoryEditActivity"
+            android:name=".ui.bottom.home.category.CategoryEditActivity"
             android:theme="@style/Theme.Transparent" />
         <activity
             android:name=".ui.bottom.home.schedule.ScheduleActivity"
@@ -106,11 +106,12 @@
         <activity
             android:name=".ui.bottom.diary.groupDiary.GroupMemoActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name=".ui.bottom.diary.mainDiary.PersonalDetailActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
 
         <activity
             android:name=".ui.bottom.group.GroupMapActivity"
@@ -123,7 +124,8 @@
 
         <activity
             android:name=".ui.bottom.diary.mainDiary.GroupDetailActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <meta-data
             android:name="google_analytics_adid_collection_enabled"
             android:value="false" />
