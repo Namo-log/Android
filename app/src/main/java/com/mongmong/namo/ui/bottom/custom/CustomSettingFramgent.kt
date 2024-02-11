@@ -53,6 +53,7 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
         _binding = FragmentCustomSettingBinding.inflate(inflater, container, false)
 
         hideBottomNavigation(true)
+        setVersion()
 
         return binding.root
     }
@@ -68,6 +69,10 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
 
         _binding = null
         hideBottomNavigation(false)
+    }
+
+    private fun setVersion() {
+        binding.customSettingVerInfoTv.text = ApplicationClass.VERSION
     }
 
 
