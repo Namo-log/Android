@@ -1,8 +1,8 @@
 package com.mongmong.namo.data.remote.event
 
 import android.util.Log
-import com.mongmong.namo.config.ApplicationClass
-import com.mongmong.namo.data.entity.home.EventForUpload
+import com.mongmong.namo.presentation.config.ApplicationClass
+import com.mongmong.namo.data.local.entity.home.EventForUpload
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

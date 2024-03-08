@@ -1,6 +1,6 @@
 package com.mongmong.namo.data.remote.diary
 
-import com.mongmong.namo.config.BaseResponse
+import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 
 class DiaryResponse {

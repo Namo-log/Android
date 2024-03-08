@@ -1,9 +1,9 @@
 package com.mongmong.namo.data.remote.login
 
 import android.util.Log
-import com.mongmong.namo.config.ApplicationClass
-import com.mongmong.namo.config.BaseResponse
-import com.mongmong.namo.ui.bottom.custom.CustomSettingFramgent
+import com.mongmong.namo.presentation.config.ApplicationClass
+import com.mongmong.namo.presentation.config.BaseResponse
+import com.mongmong.namo.presentation.ui.bottom.custom.CustomSettingFramgent
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

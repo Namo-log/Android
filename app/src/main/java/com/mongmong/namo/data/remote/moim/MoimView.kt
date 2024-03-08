@@ -1,6 +1,6 @@
 package com.mongmong.namo.data.remote.moim
 
-import com.mongmong.namo.config.BaseResponse
+import com.mongmong.namo.presentation.config.BaseResponse
 
 interface AddMoimView {
     fun onAddMoimSuccess(response: AddMoimResponse)

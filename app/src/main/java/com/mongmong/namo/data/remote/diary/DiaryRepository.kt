@@ -10,10 +10,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.mongmong.namo.R
-import com.mongmong.namo.data.NamoDatabase
-import com.mongmong.namo.data.entity.diary.Diary
-import com.mongmong.namo.data.entity.home.Category
-import com.mongmong.namo.utils.NetworkManager
+import com.mongmong.namo.data.local.NamoDatabase
+import com.mongmong.namo.data.local.entity.diary.Diary
+import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.presentation.utils.NetworkManager
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody

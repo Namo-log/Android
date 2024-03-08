@@ -28,7 +28,7 @@
 
     <!--    usesCleartextTraffic : android 가 HTTP연결을 막아놨는데 카카오맵은 HTTP통신해서 HTTP도 가능하도록 설정-->
     <application
-        android:name=".config.ApplicationClass"
+        android:name=".presentation.config.ApplicationClass"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -44,11 +44,11 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.ui.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
         <activity
-            android:name=".ui.splash.SplashActivity"
+            android:name=".presentation.ui.splash.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.App.Starting">
             <intent-filter>
@@ -74,47 +74,47 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.bottom.home.schedule.map.MapActivity"
+            android:name=".presentation.ui.bottom.home.schedule.map.MapActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
         <activity
-            android:name=".ui.bottom.home.category.CategoryActivity"
+            android:name=".presentation.ui.bottom.home.category.CategoryActivity"
             android:theme="@style/Theme.Transparent" />
         <activity
-            android:name=".ui.bottom.home.category.CategoryEditActivity"
+            android:name=".presentation.ui.bottom.home.category.CategoryEditActivity"
             android:theme="@style/Theme.Transparent" />
         <activity
-            android:name=".ui.bottom.home.schedule.ScheduleActivity"
+            android:name=".presentation.ui.bottom.home.schedule.ScheduleActivity"
             android:exported="false"
             android:theme="@style/SlideAnimation" />
         <activity
-            android:name=".ui.bottom.group.GroupInfoActivity"
+            android:name=".presentation.ui.bottom.group.GroupInfoActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialTransparent"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".ui.bottom.group.GroupCalendarActivity"
+            android:name=".presentation.ui.bottom.group.GroupCalendarActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.bottom.group.GroupScheduleActivity"
+            android:name=".presentation.ui.bottom.group.GroupScheduleActivity"
             android:exported="false"
             android:theme="@style/SlideAnimation" />
         <activity
-            android:name=".ui.bottom.group.GroupScheduleMemberActivity"
+            android:name=".presentation.ui.bottom.group.GroupScheduleMemberActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialTransparent" />
         <activity
-            android:name=".ui.bottom.diary.groupDiary.GroupMemoActivity"
+            android:name=".presentation.ui.bottom.diary.groupDiary.GroupMemoActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name=".ui.bottom.diary.mainDiary.PersonalDetailActivity"
+            android:name=".presentation.ui.bottom.diary.mainDiary.PersonalDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
 
         <activity
-            android:name=".ui.bottom.diary.mainDiary.GroupDetailActivity"
+            android:name=".presentation.ui.bottom.diary.mainDiary.GroupDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
         <meta-data
@@ -124,7 +124,7 @@
             android:name="com.kakao.sdk.AppKey"
             android:value="${KAKAO_API_KEY}" />
         <receiver
-            android:name=".ui.bottom.home.notify.PushNotificationReceiver"
+            android:name=".presentation.ui.bottom.home.notify.PushNotificationReceiver"
             android:exported="true"/>
 
         <provider

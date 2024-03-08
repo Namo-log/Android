@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        tools:context="com.mongmong.namo.MainActivity"
+        tools:context="com.mongmong.namo.presentation.ui.MainActivity"
         android:fitsSystemWindows="true">
 
         <fragment

@@ -1,11 +1,10 @@
 package com.mongmong.namo.data.remote.event
 
-import com.mongmong.namo.data.entity.home.EventForUpload
+import com.mongmong.namo.data.local.entity.home.EventForUpload
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path

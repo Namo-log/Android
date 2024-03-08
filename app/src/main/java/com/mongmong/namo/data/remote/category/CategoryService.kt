@@ -1,10 +1,10 @@
 package com.mongmong.namo.data.remote.category
 
 import android.util.Log
-import com.mongmong.namo.config.ApplicationClass
-import com.mongmong.namo.config.ApplicationClass.Companion.X_ACCESS_TOKEN
-import com.mongmong.namo.config.ApplicationClass.Companion.sSharedPreferences
-import com.mongmong.namo.config.BaseResponse
+import com.mongmong.namo.presentation.config.ApplicationClass
+import com.mongmong.namo.presentation.config.ApplicationClass.Companion.X_ACCESS_TOKEN
+import com.mongmong.namo.presentation.config.ApplicationClass.Companion.sSharedPreferences
+import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

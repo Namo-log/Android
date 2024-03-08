@@ -1,7 +1,7 @@
 package com.mongmong.namo.data.remote.diary
 
 import android.annotation.SuppressLint
-import com.mongmong.namo.config.ApplicationClass
+import com.mongmong.namo.presentation.config.ApplicationClass
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call

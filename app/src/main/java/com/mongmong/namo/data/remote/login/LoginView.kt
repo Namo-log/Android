@@ -1,6 +1,6 @@
 package com.mongmong.namo.data.remote.login
 
-import com.mongmong.namo.config.BaseResponse
+import com.mongmong.namo.presentation.config.BaseResponse
 
 interface LoginView {
     // Kakao

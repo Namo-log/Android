@@ -1,8 +1,8 @@
 package com.mongmong.namo.data.remote.moim
 
-import com.mongmong.namo.config.BaseResponse
-import com.mongmong.namo.data.entity.group.AddMoimSchedule
-import com.mongmong.namo.data.entity.group.EditMoimSchedule
+import com.mongmong.namo.presentation.config.BaseResponse
+import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
+import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
