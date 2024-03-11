@@ -76,7 +76,7 @@
             app:popUpToInclusive="true" />
         <argument
             android:name="group"
-            app:argType="com.mongmong.namo.data.remote.moim.Moim" />
+            app:argType="com.mongmong.namo.domain.model.Moim" />
     </fragment>
     <fragment
         android:id="@+id/groupModifyFragment"

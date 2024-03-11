@@ -3,6 +3,14 @@ package com.mongmong.namo.data.remote.moim
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
 import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
+import com.mongmong.namo.domain.model.AddMoimResponse
+import com.mongmong.namo.domain.model.AddMoimScheduleResponse
+import com.mongmong.namo.domain.model.GetMoimListResponse
+import com.mongmong.namo.domain.model.GetMoimScheduleResponse
+import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
+import com.mongmong.namo.domain.model.ParticipateMoimResponse
+import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
+import com.mongmong.namo.domain.model.UpdateMoimNameBody
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call

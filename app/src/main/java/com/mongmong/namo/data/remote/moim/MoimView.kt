@@ -1,5 +1,10 @@
 package com.mongmong.namo.data.remote.moim
 
+import com.mongmong.namo.domain.model.AddMoimResponse
+import com.mongmong.namo.domain.model.AddMoimScheduleResponse
+import com.mongmong.namo.domain.model.GetMoimListResponse
+import com.mongmong.namo.domain.model.GetMoimScheduleResponse
+import com.mongmong.namo.domain.model.ParticipateMoimResponse
 import com.mongmong.namo.presentation.config.BaseResponse
 
 interface AddMoimView {

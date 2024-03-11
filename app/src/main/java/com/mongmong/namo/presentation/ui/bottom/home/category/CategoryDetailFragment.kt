@@ -18,10 +18,10 @@ import com.mongmong.namo.databinding.FragmentCategoryDetailBinding
 import com.mongmong.namo.presentation.ui.bottom.home.category.CategorySettingFragment.Companion.CATEGORY_KEY_DATA
 import com.mongmong.namo.presentation.ui.bottom.home.category.adapter.CategoryPaletteRVAdapter
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.data.remote.category.CategoryBody
+import com.mongmong.namo.domain.model.CategoryBody
 import com.mongmong.namo.data.remote.category.CategoryDetailView
 import com.mongmong.namo.data.remote.category.CategoryService
-import com.mongmong.namo.data.remote.category.PostCategoryResponse
+import com.mongmong.namo.domain.model.PostCategoryResponse
 import com.mongmong.namo.presentation.utils.NetworkManager
 import com.google.gson.Gson
 import com.google.gson.JsonParseException

@@ -13,7 +13,7 @@ import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.data.local.entity.diary.DiaryGroupEvent
-import com.mongmong.namo.data.remote.diary.DiaryResponse
+import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.databinding.DialogGroupPayBinding
 import com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.adapter.GroupPayMemberRVAdapter
 import java.lang.Boolean.TRUE

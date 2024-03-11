@@ -1,7 +1,6 @@
-package com.mongmong.namo.data.remote.login
+package com.mongmong.namo.domain.model
 
 import com.mongmong.namo.presentation.config.BaseResponse
-import com.google.gson.annotations.SerializedName
 
 // SDK 카카오 로그인
 data class LoginResponse(

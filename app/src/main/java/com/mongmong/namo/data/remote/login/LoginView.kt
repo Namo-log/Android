@@ -1,5 +1,6 @@
 package com.mongmong.namo.data.remote.login
 
+import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.presentation.config.BaseResponse
 
 interface LoginView {

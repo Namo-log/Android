@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.config.BaseResponse
-import com.mongmong.namo.data.remote.login.LogoutBody
+import com.mongmong.namo.domain.model.LogoutBody
 import com.mongmong.namo.data.remote.login.LogoutService
 import com.mongmong.namo.data.remote.login.LogoutView
 import com.mongmong.namo.databinding.FragmentCustomSettingBinding

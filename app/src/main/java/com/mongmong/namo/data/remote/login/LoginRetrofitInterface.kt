@@ -1,5 +1,8 @@
 package com.mongmong.namo.data.remote.login
 
+import com.mongmong.namo.domain.model.LoginResponse
+import com.mongmong.namo.domain.model.LogoutBody
+import com.mongmong.namo.domain.model.TokenBody
 import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.Call
 import retrofit2.http.Body

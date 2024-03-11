@@ -12,10 +12,10 @@ import androidx.navigation.fragment.findNavController
 import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.config.ApplicationClass
-import com.mongmong.namo.data.remote.login.LoginResponse
+import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.data.remote.login.RefreshService
 import com.mongmong.namo.data.remote.login.SplashView
-import com.mongmong.namo.data.remote.login.TokenBody
+import com.mongmong.namo.domain.model.TokenBody
 import com.mongmong.namo.databinding.FragmentSplashBinding
 
 class SplashFragment : Fragment(), SplashView {

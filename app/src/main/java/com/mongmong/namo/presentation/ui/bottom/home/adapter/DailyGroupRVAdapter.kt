@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Event
-import com.mongmong.namo.data.remote.diary.DiaryResponse
+import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.databinding.ItemCalendarEventBinding
 import org.joda.time.DateTime
 

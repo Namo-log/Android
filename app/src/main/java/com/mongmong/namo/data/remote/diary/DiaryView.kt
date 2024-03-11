@@ -1,5 +1,7 @@
 package com.mongmong.namo.data.remote.diary
 
+import com.mongmong.namo.domain.model.DiaryResponse
+
 interface AddPersonalDiaryView {
     fun onAddDiarySuccess(response: DiaryResponse.DiaryAddResponse, localId: Long)
     fun onAddDiaryFailure(message: String)

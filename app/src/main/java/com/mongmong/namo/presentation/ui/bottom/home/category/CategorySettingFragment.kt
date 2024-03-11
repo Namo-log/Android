@@ -15,7 +15,7 @@ import com.mongmong.namo.databinding.FragmentCategorySettingBinding
 import com.mongmong.namo.presentation.ui.bottom.home.category.adapter.SetCategoryRVAdapter
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.remote.category.CategorySettingView
-import com.mongmong.namo.data.remote.category.GetCategoryResponse
+import com.mongmong.namo.domain.model.GetCategoryResponse
 import com.google.gson.Gson
 
 class CategorySettingFragment: Fragment(), CategorySettingView {

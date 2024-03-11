@@ -20,6 +20,8 @@ import com.mongmong.namo.data.remote.login.*
 import com.mongmong.namo.databinding.FragmentLoginBinding
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
+import com.mongmong.namo.domain.model.LoginResponse
+import com.mongmong.namo.domain.model.TokenBody
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.OAuthLoginCallback
 

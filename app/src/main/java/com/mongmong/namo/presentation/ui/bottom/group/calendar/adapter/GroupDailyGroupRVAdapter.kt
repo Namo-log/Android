@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
-import com.mongmong.namo.data.remote.moim.MoimSchedule
+import com.mongmong.namo.domain.model.MoimSchedule
 import com.mongmong.namo.databinding.ItemCalendarEventBinding
 import org.joda.time.DateTime
 
@@ -18,7 +18,7 @@ class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter
     private lateinit var context : Context
 
     interface DiaryInterface {
-        fun onGroupMemoClicked(groupEvent:MoimSchedule)
+        fun onGroupMemoClicked(groupEvent: MoimSchedule)
     }
     private lateinit var diaryGroupMemoClickListener: DiaryInterface
     fun setRecordClickListener(itemClickListener: DiaryInterface){

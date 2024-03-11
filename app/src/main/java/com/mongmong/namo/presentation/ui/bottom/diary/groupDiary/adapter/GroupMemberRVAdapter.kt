@@ -3,7 +3,7 @@ package com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.data.remote.diary.DiaryResponse
+import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.databinding.ItemDiaryGroupMembersBinding
 
 class GroupMemberRVAdapter(  // 그룹 다이어리 화면 멤버 이름

@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.data.remote.moim.MoimUser
+import com.mongmong.namo.domain.model.MoimUser
 import com.mongmong.namo.databinding.ItemGroupScheduleMemberBinding
 
 class GroupScheduleMemberRVAdapter(var context: Context, private val memberList : List<MoimUser>) : RecyclerView.Adapter<GroupScheduleMemberRVAdapter.ViewHolder>() {

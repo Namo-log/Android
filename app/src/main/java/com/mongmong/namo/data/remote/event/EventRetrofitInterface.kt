@@ -1,6 +1,10 @@
 package com.mongmong.namo.data.remote.event
 
 import com.mongmong.namo.data.local.entity.home.EventForUpload
+import com.mongmong.namo.domain.model.DeleteEventResponse
+import com.mongmong.namo.domain.model.EditEventResponse
+import com.mongmong.namo.domain.model.GetMonthEventResponse
+import com.mongmong.namo.domain.model.PostEventResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
