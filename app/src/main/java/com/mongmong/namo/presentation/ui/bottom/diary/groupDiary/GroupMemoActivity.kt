@@ -25,8 +25,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.diary.DiaryGroupEvent
 import com.mongmong.namo.data.remote.diary.*
-import com.mongmong.namo.data.remote.moim.MoimSchedule
+import com.mongmong.namo.domain.model.MoimSchedule
 import com.mongmong.namo.databinding.ActivityDiaryGroupMemoBinding
+import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.adapter.GroupMemberRVAdapter
 import com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.adapter.GroupPlaceEventAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog

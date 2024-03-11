@@ -11,9 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
-import com.mongmong.namo.data.remote.moim.GetMoimListResponse
+import com.mongmong.namo.domain.model.GetMoimListResponse
 import com.mongmong.namo.data.remote.moim.GetMoimListView
-import com.mongmong.namo.data.remote.moim.Moim
+import com.mongmong.namo.domain.model.Moim
 import com.mongmong.namo.data.remote.moim.MoimService
 import com.mongmong.namo.databinding.FragmentGroupListBinding
 import com.mongmong.namo.presentation.ui.bottom.group.adapter.GroupListRVAdapter

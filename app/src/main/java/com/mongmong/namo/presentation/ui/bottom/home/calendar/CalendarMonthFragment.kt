@@ -14,12 +14,12 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Event
-import com.mongmong.namo.data.remote.diary.DiaryResponse
+import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.data.remote.diary.DiaryService
 import com.mongmong.namo.data.remote.diary.GetGroupMonthView
 import com.mongmong.namo.data.remote.event.EventService
-import com.mongmong.namo.data.remote.event.GetMonthEventResponse
-import com.mongmong.namo.data.remote.event.GetMonthEventResult
+import com.mongmong.namo.domain.model.GetMonthEventResponse
+import com.mongmong.namo.domain.model.GetMonthEventResult
 import com.mongmong.namo.data.remote.event.GetMonthMoimEventView
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.GroupDetailActivity

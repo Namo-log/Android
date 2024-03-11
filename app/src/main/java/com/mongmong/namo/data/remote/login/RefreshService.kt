@@ -2,9 +2,8 @@ package com.mongmong.namo.data.remote.login
 
 import android.util.Log
 import com.mongmong.namo.presentation.config.ApplicationClass
-import com.mongmong.namo.presentation.config.BaseResponse
-import com.mongmong.namo.data.remote.event.EventRetrofitInterface
-import com.kakao.sdk.auth.model.AccessTokenResponse
+import com.mongmong.namo.domain.model.LoginResponse
+import com.mongmong.namo.domain.model.TokenBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

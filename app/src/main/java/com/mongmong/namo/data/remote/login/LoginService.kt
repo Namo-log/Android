@@ -1,9 +1,10 @@
 package com.mongmong.namo.data.remote.login
 
 import android.util.Log
+import com.mongmong.namo.domain.model.LoginResponse
+import com.mongmong.namo.domain.model.TokenBody
 import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.ui.login.LoginFragment
-import com.navercorp.nid.oauth.OAuthLoginCallback
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

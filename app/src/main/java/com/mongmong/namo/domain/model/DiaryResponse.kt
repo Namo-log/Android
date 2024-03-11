@@ -1,4 +1,4 @@
-package com.mongmong.namo.data.remote.diary
+package com.mongmong.namo.domain.model
 
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName

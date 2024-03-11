@@ -20,7 +20,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.diary.DiaryEvent
 import com.mongmong.namo.data.local.entity.home.Event
 import com.mongmong.namo.data.remote.diary.DiaryRepository
-import com.mongmong.namo.data.remote.diary.DiaryResponse
+import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.presentation.utils.NetworkManager
 import com.mongmong.namo.databinding.FragmentDiaryBinding
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.adapter.DiaryGroupAdapter

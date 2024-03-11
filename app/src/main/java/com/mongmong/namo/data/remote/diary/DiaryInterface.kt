@@ -1,5 +1,6 @@
 package com.mongmong.namo.data.remote.diary
 
+import com.mongmong.namo.domain.model.DiaryResponse
 import retrofit2.Call
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

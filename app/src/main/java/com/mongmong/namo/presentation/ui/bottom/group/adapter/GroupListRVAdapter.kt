@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mongmong.namo.R
-import com.mongmong.namo.data.remote.moim.Moim
+import com.mongmong.namo.domain.model.Moim
 import com.mongmong.namo.databinding.ItemGroupListBinding
 
 class GroupListRVAdapter(private val moimList: List<Moim>):  RecyclerView.Adapter<GroupListRVAdapter.ViewHolder>() {

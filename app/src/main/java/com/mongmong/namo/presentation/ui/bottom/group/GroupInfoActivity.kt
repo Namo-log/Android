@@ -17,12 +17,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.config.BaseResponse
-import com.mongmong.namo.data.remote.moim.AddMoimResponse
+import com.mongmong.namo.domain.model.AddMoimResponse
 import com.mongmong.namo.data.remote.moim.DeleteMoimMemberView
-import com.mongmong.namo.data.remote.moim.Moim
+import com.mongmong.namo.domain.model.Moim
 import com.mongmong.namo.data.remote.moim.MoimService
-import com.mongmong.namo.data.remote.moim.ParticipateMoimResponse
-import com.mongmong.namo.data.remote.moim.UpdateMoimNameBody
+import com.mongmong.namo.domain.model.ParticipateMoimResponse
+import com.mongmong.namo.domain.model.UpdateMoimNameBody
 import com.mongmong.namo.databinding.ActivityGroupInfoBinding
 import com.mongmong.namo.presentation.ui.bottom.group.adapter.GroupInfoMemberRVAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog

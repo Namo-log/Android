@@ -16,7 +16,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Event
-import com.mongmong.namo.data.remote.event.DeleteEventResponse
+import com.mongmong.namo.domain.model.DeleteEventResponse
 import com.mongmong.namo.data.remote.event.DeleteEventView
 import com.mongmong.namo.data.remote.event.EventService
 import com.mongmong.namo.databinding.ActivityScheduleBinding

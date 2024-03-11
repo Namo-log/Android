@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
-import com.mongmong.namo.data.remote.moim.MoimSchedule
+import com.mongmong.namo.domain.model.MoimSchedule
 import com.mongmong.namo.databinding.ItemCalendarEventGroupBinding
 import org.joda.time.DateTime
 

@@ -3,7 +3,7 @@ package com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.data.remote.diary.DiaryResponse
+import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.databinding.ItemDiaryGroupPayMemberBinding
 
 class GroupPayMemberRVAdapter(  // 그룹 장소별 정산 다이얼로그 멤버

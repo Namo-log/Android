@@ -26,7 +26,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.group.Group
-import com.mongmong.namo.data.remote.moim.AddMoimResponse
+import com.mongmong.namo.domain.model.AddMoimResponse
 import com.mongmong.namo.data.remote.moim.AddMoimView
 import com.mongmong.namo.data.remote.moim.MoimService
 import com.mongmong.namo.databinding.DialogGroupCreateBinding

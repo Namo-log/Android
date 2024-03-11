@@ -29,10 +29,10 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
 import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
-import com.mongmong.namo.data.remote.moim.AddMoimScheduleResponse
-import com.mongmong.namo.data.remote.moim.Moim
-import com.mongmong.namo.data.remote.moim.MoimListUserList
-import com.mongmong.namo.data.remote.moim.MoimSchedule
+import com.mongmong.namo.domain.model.AddMoimScheduleResponse
+import com.mongmong.namo.domain.model.Moim
+import com.mongmong.namo.domain.model.MoimListUserList
+import com.mongmong.namo.domain.model.MoimSchedule
 import com.mongmong.namo.data.remote.moim.MoimScheduleView
 import com.mongmong.namo.data.remote.moim.MoimService
 import com.mongmong.namo.databinding.ActivityGroupScheduleBinding

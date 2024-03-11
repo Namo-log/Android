@@ -13,6 +13,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.presentation.utils.NetworkManager
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull

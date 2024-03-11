@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.data.remote.diary.*
 import com.mongmong.namo.databinding.ActivityGroupDiaryDetailBinding
+import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.GroupMemoActivity
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog

@@ -11,9 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Event
-import com.mongmong.namo.data.remote.moim.GetMoimScheduleResponse
+import com.mongmong.namo.domain.model.GetMoimScheduleResponse
 import com.mongmong.namo.data.remote.moim.GetMoimScheduleView
-import com.mongmong.namo.data.remote.moim.MoimSchedule
+import com.mongmong.namo.domain.model.MoimSchedule
 import com.mongmong.namo.data.remote.moim.MoimService
 import com.mongmong.namo.databinding.FragmentGroupCalendarMonthBinding
 import com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.GroupMemoActivity

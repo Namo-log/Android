@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.GROUP_MEMBER_INTENT_KEY
-import com.mongmong.namo.data.remote.moim.MoimListUserList
+import com.mongmong.namo.domain.model.MoimListUserList
 import com.mongmong.namo.databinding.ActivityGroupScheduleMemberBinding
 import com.mongmong.namo.presentation.ui.bottom.group.adapter.GroupScheduleMemberRVAdapter
 
