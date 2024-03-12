@@ -22,6 +22,8 @@ import com.mongmong.namo.domain.model.GetMonthEventResponse
 import com.mongmong.namo.domain.model.GetMonthEventResult
 import com.mongmong.namo.data.remote.event.GetMonthMoimEventView
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
+import com.mongmong.namo.domain.model.DiaryGetMonthResponse
+import com.mongmong.namo.domain.model.MonthDiary
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.GroupDetailActivity
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.PersonalDetailActivity
 import com.mongmong.namo.presentation.ui.bottom.home.HomeFragment
@@ -195,7 +197,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
         })
 
         groupEventRVAdapter.setRecordClickListener(object : DailyGroupRVAdapter.DiaryInterface {
-            override fun onGroupDetailClicked(monthDiary: DiaryResponse.MonthDiary?) {
+            override fun onGroupDetailClicked(monthDiary: MonthDiary?) {
 
                 val intent = Intent(context, GroupDetailActivity::class.java)
                 intent.putExtra("groupDiary", monthDiary)
@@ -311,9 +313,9 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
         )
     }
 
-    override fun onGetGroupMonthSuccess(response: DiaryResponse.DiaryGetMonthResponse) {
+    override fun onGetGroupMonthSuccess(response: DiaryGetMonthResponse) {
         val data = response.result
-        groupEventRVAdapter.addGroupDiary(data.content as ArrayList<DiaryResponse.MonthDiary>)
+        groupEventRVAdapter.addGroupDiary(data.content as ArrayList<MonthDiary>)
     }
 
     override fun onGetGroupMonthFailure(message: String) {

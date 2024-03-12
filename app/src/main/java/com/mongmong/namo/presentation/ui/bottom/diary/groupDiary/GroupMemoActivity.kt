@@ -28,6 +28,10 @@ import com.mongmong.namo.data.remote.diary.*
 import com.mongmong.namo.domain.model.MoimSchedule
 import com.mongmong.namo.databinding.ActivityDiaryGroupMemoBinding
 import com.mongmong.namo.domain.model.DiaryResponse
+import com.mongmong.namo.domain.model.GetGroupDiaryResponse
+import com.mongmong.namo.domain.model.GroupDiaryResult
+import com.mongmong.namo.domain.model.GroupUser
+import com.mongmong.namo.domain.model.LocationDto
 import com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.adapter.GroupMemberRVAdapter
 import com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.adapter.GroupPlaceEventAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
@@ -46,14 +50,14 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
     private lateinit var memberadapter: GroupMemberRVAdapter  // 그룹 멤버 리스트 보여주기
     private lateinit var placeadapter: GroupPlaceEventAdapter // 각 장소 item
 
-    private lateinit var groupMembers: List<DiaryResponse.GroupUser>
-    private lateinit var groupData: DiaryResponse.GroupDiaryResult
+    private lateinit var groupMembers: List<GroupUser>
+    private lateinit var groupData: GroupDiaryResult
 
     private lateinit var memberIntList: List<Long>
     private lateinit var repo: DiaryRepository
     private lateinit var moimSchedule: MoimSchedule
 
-    private var groupEvent = emptyList<DiaryResponse.LocationDto>()
+    private var groupEvent = emptyList<LocationDto>()
     private var placeEvent = ArrayList<DiaryGroupEvent>()
     private var diaryService = DiaryService()
 
@@ -125,7 +129,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
 
 
     @SuppressLint("SimpleDateFormat", "NotifyDataSetChanged")
-    override fun onGetGroupDiarySuccess(response: DiaryResponse.GetGroupDiaryResponse) {
+    override fun onGetGroupDiarySuccess(response: GetGroupDiaryResponse) {
         Log.d("GET_GROUP_DIARY", response.toString())
 
         val result = response.result
@@ -178,9 +182,9 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
         )
         binding.groupSaveTv.setBackgroundResource(R.color.MainOrange)
 
-        val members = arrayListOf<DiaryResponse.GroupUser>()
+        val members = arrayListOf<GroupUser>()
         moimSchedule.users.map {
-            members.add(DiaryResponse.GroupUser(it.userId, it.userName))
+            members.add(GroupUser(it.userId, it.userName))
         }
 
         groupMembers = members
@@ -237,7 +241,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
                     members,
                     diaryGroupEvent.imgs.filterNotNull(),
                     object : DiaryBasicView {
-                        override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+                        override fun onSuccess(response: DiaryResponse) {
                             Log.d("GROUP_DIARY_ADD", "SUCCESS")
                             finish()
                         }
@@ -262,7 +266,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
                     members,
                     diaryGroupEvent.imgs.filterNotNull(),
                     object : DiaryBasicView {
-                        override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+                        override fun onSuccess(response: DiaryResponse) {
                             Log.d("GROUP_DIARY_EDIT", "SUCCESS")
                             finish()
                         }
@@ -282,7 +286,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
             diaryService.deleteGroupDiary(placeIdx,
                 object : DiaryBasicView {
                     @RequiresApi(Build.VERSION_CODES.N)
-                    override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+                    override fun onSuccess(response: DiaryResponse) {
                         Log.e("DELETE_GROUP_DIARY", "SUCCESS")
 
                         if (allDeleteFrag) deleteCount--

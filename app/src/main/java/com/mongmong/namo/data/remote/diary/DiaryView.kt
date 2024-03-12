@@ -1,41 +1,45 @@
 package com.mongmong.namo.data.remote.diary
 
+import com.mongmong.namo.domain.model.DiaryAddResponse
+import com.mongmong.namo.domain.model.DiaryGetAllResponse
+import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.DiaryResponse
+import com.mongmong.namo.domain.model.GetGroupDiaryResponse
 
 interface AddPersonalDiaryView {
-    fun onAddDiarySuccess(response: DiaryResponse.DiaryAddResponse, localId: Long)
+    fun onAddDiarySuccess(response: DiaryAddResponse, localId: Long)
     fun onAddDiaryFailure(message: String)
 }
 
 interface DiaryDetailView {
-    fun onEditDiarySuccess(response: DiaryResponse.DiaryResponse, localId: Long, serverId: Long)
+    fun onEditDiarySuccess(response: DiaryResponse, localId: Long, serverId: Long)
     fun onEditDiaryFailure(message: String)
-    fun onDeleteDiarySuccess(response: DiaryResponse.DiaryResponse, localId: Long)
+    fun onDeleteDiarySuccess(response: DiaryResponse, localId: Long)
     fun onDeleteDiaryFailure(message: String)
 }
 
 interface GetMonthDiaryView {
-    fun onGetMonthDiarySuccess(response: DiaryResponse.DiaryGetAllResponse)
+    fun onGetMonthDiarySuccess(response: DiaryGetAllResponse)
     fun onGetMonthDiaryFailure(message: String)
 }
 
 interface GetGroupDiaryView {
-    fun onGetGroupDiarySuccess(response: DiaryResponse.GetGroupDiaryResponse)
+    fun onGetGroupDiarySuccess(response: GetGroupDiaryResponse)
     fun onGetGroupDiaryFailure(message: String)
 }
 
 
 interface GetGroupMonthView {
-    fun onGetGroupMonthSuccess(response: DiaryResponse.DiaryGetMonthResponse)
+    fun onGetGroupMonthSuccess(response: DiaryGetMonthResponse)
     fun onGetGroupMonthFailure(message: String)
 }
 
 interface AddGroupAfterDiaryView{
-    fun onAddGroupAfterDiarySuccess(response: DiaryResponse.DiaryResponse)
+    fun onAddGroupAfterDiarySuccess(response: DiaryResponse)
     fun onAddGroupAfterDiaryFailure(message: String)
 }
 
 interface DiaryBasicView{
-    fun onSuccess(response: DiaryResponse.DiaryResponse)
+    fun onSuccess(response: DiaryResponse)
     fun onFailure(message: String)
 }
