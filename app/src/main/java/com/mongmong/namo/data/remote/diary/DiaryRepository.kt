@@ -13,6 +13,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.presentation.utils.NetworkManager
 import kotlinx.coroutines.*
@@ -91,7 +92,7 @@ class DiaryRepository(
             scheduleIdRequestBody,
             object : AddPersonalDiaryView {
                 override fun onAddDiarySuccess(
-                    response: DiaryResponse.DiaryAddResponse,
+                    response: DiaryAddResponse,
                     localId: Long
                 ) {
                     val storeDB = Thread {
@@ -182,7 +183,7 @@ class DiaryRepository(
 
 
     override fun onEditDiarySuccess(
-        response: DiaryResponse.DiaryResponse,
+        response: DiaryResponse,
         localId: Long,
         serverId: Long
     ) {
@@ -243,7 +244,7 @@ class DiaryRepository(
 
     }
 
-    override fun onDeleteDiarySuccess(response: DiaryResponse.DiaryResponse, localId: Long) {
+    override fun onDeleteDiarySuccess(response: DiaryResponse, localId: Long) {
 
         val storeDB = Thread {
             diaryDao.deleteDiary(localId) // roomDB에서 삭제

@@ -54,6 +54,8 @@ import com.mongmong.namo.domain.model.GetMonthEventResponse
 import com.mongmong.namo.domain.model.GetMonthEventResult
 import com.mongmong.namo.domain.model.PostEventResponse
 import com.mongmong.namo.databinding.ActivityMainBinding
+import com.mongmong.namo.domain.model.DiaryGetAllResponse
+import com.mongmong.namo.domain.model.DiaryGetAllResult
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.ScheduleDialogBasicFragment.Companion.eventToEventForUpload
 import com.mongmong.namo.presentation.utils.NetworkManager
 import org.joda.time.DateTime
@@ -471,7 +473,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         isCategorySuccess = false
     }
 
-    override fun onGetMonthDiarySuccess(response: DiaryResponse.DiaryGetAllResponse) {
+    override fun onGetMonthDiarySuccess(response: DiaryGetAllResponse) {
         Log.d("MAIN_SERVER_UPLOAD", "onGetAllDiarySuccess")
 
         val result = response.result
@@ -670,8 +672,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         )
     }
 
-    private fun serverToDiary(diary: DiaryResponse.Result): Diary {
-
+    private fun serverToDiary(diary: DiaryGetAllResult): Diary {
         return Diary(
             0,
             diary.scheduleId,

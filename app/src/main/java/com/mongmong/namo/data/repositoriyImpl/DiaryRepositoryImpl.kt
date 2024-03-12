@@ -1,25 +1,41 @@
 package com.mongmong.namo.data.repositoriyImpl
 
+import com.mongmong.namo.data.datasource.LocalDiaryDataSource
+import com.mongmong.namo.data.datasource.RemoteDiaryDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
+import com.mongmong.namo.data.local.entity.diary.Diary
+import com.mongmong.namo.data.remote.diary.DiaryApiService
+import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.domain.repositories.DiaryRepository
+import com.mongmong.namo.presentation.utils.NetworkManager
+import java.io.File
 
-class DiaryRepositoryImpl(private val diaryDao: DiaryDao): DiaryRepository {
-    override suspend fun addDiary(
-        diaryLocalId: Long,
-        content: String,
-        images: List<String>?,
-        serverId: Long
-    ) {
-        TODO("Not yet implemented")
+class DiaryRepositoryImpl(
+    private val localDiaryDataSource: LocalDiaryDataSource,
+    private val remoteDiaryDataSource: RemoteDiaryDataSource,
+    private val networkChecker: NetworkChecker
+) : DiaryRepository {
+
+    override suspend fun getDiary(localId: Long) {
+        remoteDiaryDataSource
     }
 
-    override suspend fun addDiaryToServer(
-        localId: Long,
-        scheduleId: Long,
+    override suspend fun addDiary(
+        diary: Diary,
+        diaryLocalId: Long,
         content: String,
-        images: List<String>?
+        images: List<File>?,
+        serverId: Long,
     ) {
-        TODO("Not yet implemented")
+        localDiaryDataSource.addDiary(diary)
+        if(networkChecker.isOnline()){
+            val diaryAddResponse = remoteDiaryDataSource.addDiaryToServer(content, images, serverId)
+            if(diaryAddResponse.code == SUCCESS_CODE) {
+                localDiaryDataSource.updateDiaryAfterUpload(localId = diaryLocalId, response = diaryAddResponse)
+            } else {
+                // 서버 업로드 실패 시 로직
+            }
+        }
     }
 
     override suspend fun editDiary(
@@ -31,24 +47,15 @@ class DiaryRepositoryImpl(private val diaryDao: DiaryDao): DiaryRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun editDiaryToServer(
-        localId: Long,
-        scheduleId: Long,
-        content: String,
-        images: List<String>?
-    ) {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getDiary(localId: Long) {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun uploadDiaryToServer() {
         TODO("Not yet implemented")
     }
 
     override suspend fun postDiaryToServer(eventServerId: Long, eventId: Long) {
         TODO("Not yet implemented")
+    }
+
+    companion object {
+        const val SUCCESS_CODE = 200
     }
 }
