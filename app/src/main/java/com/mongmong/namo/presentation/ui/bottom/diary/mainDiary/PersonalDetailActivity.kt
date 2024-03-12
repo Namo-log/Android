@@ -16,9 +16,12 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.diary.Diary
@@ -29,6 +32,8 @@ import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.adapter.GalleryL
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.snackbar.Snackbar
+import com.mongmong.namo.presentation.utils.ImageConverter.imageToFile
+import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 
 class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  // 개인 다이어리 추가,수정,삭제 화면
@@ -41,6 +46,8 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     private lateinit var event: Event
     private lateinit var diary: Diary
+
+    private val viewModel : DiaryViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,22 +62,10 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         charCnt()
         onClickListener()
 
-    }
-
-    private fun getDiary() {
-        diary = repo.getDiary(event.eventId) // 개별 다이어리 조회
-
-        diary.images?.let {
-            galleryAdapter.addImages(it)
-        }
-
-        imgList.addAll(diary.images as List<String?>)
-
-        binding.diaryContentsEt.setText(diary.content)
+        initObservers()
     }
 
     private fun setEvent() {
-
         event = (intent.getSerializableExtra("event") as? Event)!!
         hasDiary()
 
@@ -92,8 +87,19 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         }
     }
 
-    private fun hasDiary() {
+    private fun getDiary() {
+        diary = repo.getDiary(event.eventId) // 개별 다이어리 조회
 
+        diary.images?.let {
+            galleryAdapter.addImages(it)
+        }
+
+        imgList.addAll(diary.images as List<String?>)
+
+        binding.diaryContentsEt.setText(diary.content)
+    }
+
+    private fun hasDiary() {
         if (event.hasDiary == 0) {  // 기록 없을 때, 추가
 
             binding.diaryEditTv.text = resources.getString(R.string.diary_add)
@@ -107,7 +113,9 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
             binding.diaryDeleteIv.visibility = View.GONE
 
             binding.diaryEditTv.setOnClickListener {
-                insertData()
+                lifecycleScope.launch {
+                    insertData()
+                }
             }
 
         } else {  // 기록 있을 떄, 수정
@@ -136,15 +144,14 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
 
     /** 다이어리 추가 **/
-    private fun insertData() {
-
+    private suspend fun insertData() {
         val content = binding.diaryContentsEt.text.toString()
-
         if (content.isEmpty() && imgList.isEmpty()) {
             Snackbar.make(binding.root, "내용이나 이미지를 추가해주세요!", Snackbar.LENGTH_SHORT).show()
             return
         } else {
-            repo.addDiary(event.eventId, content, imgList as List<String>?, event.serverIdx)
+            //repo.addDiary(event.eventId, content, imgList as List<String>?, event.serverIdx)
+            viewModel.addDiary(diary, imageToFile(imgList as List<String>?, this@PersonalDetailActivity))
             finish()
         }
     }
@@ -179,6 +186,17 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         repo.deleteDiary(event.eventId, event.serverIdx)
         Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
         finish()
+    }
+
+    private fun initObservers() {
+        // 다이어리 추가
+        viewModel.diaryAddedStatus.observe(this) { isSuccess ->
+            if (isSuccess) {
+                // 성공 처리
+            } else {
+                // 실패 처리
+            }
+        }
     }
 
     private fun onClickListener() {
