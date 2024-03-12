@@ -16,6 +16,8 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.remote.diary.*
 import com.mongmong.namo.databinding.ActivityGroupDiaryDetailBinding
 import com.mongmong.namo.domain.model.DiaryResponse
+import com.mongmong.namo.domain.model.GetGroupDiaryResponse
+import com.mongmong.namo.domain.model.MonthDiary
 import com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.GroupMemoActivity
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
@@ -32,7 +34,7 @@ class GroupDetailActivity: AppCompatActivity(), GetGroupDiaryView,
 
     private lateinit var binding: ActivityGroupDiaryDetailBinding
 
-    private lateinit var groupSchedule: DiaryResponse.MonthDiary
+    private lateinit var groupSchedule: MonthDiary
     private lateinit var placeIntList: List<Long>
     private lateinit var sf: SharedPreferences
 
@@ -47,7 +49,7 @@ class GroupDetailActivity: AppCompatActivity(), GetGroupDiaryView,
         setContentView(binding.root)
 
 
-        groupSchedule  = (intent.getSerializableExtra("groupDiary") as DiaryResponse.MonthDiary)
+        groupSchedule  = (intent.getSerializableExtra("groupDiary") as MonthDiary)
         diaryService = DiaryService()
         sf = this.getSharedPreferences("sf", Context.MODE_PRIVATE)
 
@@ -162,7 +164,7 @@ class GroupDetailActivity: AppCompatActivity(), GetGroupDiaryView,
         }
     }
 
-    override fun onGetGroupDiarySuccess(response: DiaryResponse.GetGroupDiaryResponse) {
+    override fun onGetGroupDiarySuccess(response: GetGroupDiaryResponse) {
         Log.d("GET_GROUP_DIARY", response.toString())
 
         val result = response.result
@@ -206,14 +208,14 @@ class GroupDetailActivity: AppCompatActivity(), GetGroupDiaryView,
         diaryService.addGroupAfterDiary(this)
     }
 
-    override fun onAddGroupAfterDiarySuccess(response: DiaryResponse.DiaryResponse) {
+    override fun onAddGroupAfterDiarySuccess(response: DiaryResponse) {
 
         if (isDelete) {
             CoroutineScope(Dispatchers.Main).launch {
                 placeIntList.map { placeIndex ->
                     withContext(Dispatchers.IO) {
                         diaryService.deleteGroupDiary(placeIndex, object : DiaryBasicView {
-                            override fun onSuccess(response: DiaryResponse.DiaryResponse) {
+                            override fun onSuccess(response: DiaryResponse) {
                                 Log.e("DELETE_GROUP_DIARY", "SUCCESS")
                                 placeSize--
                                 if (placeSize == 0) {

@@ -5,9 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.databinding.ItemDiaryGroupPayMemberBinding
+import com.mongmong.namo.domain.model.GroupUser
 
 class GroupPayMemberRVAdapter(  // 그룹 장소별 정산 다이얼로그 멤버
-    private var members: List<DiaryResponse.GroupUser>,
+    private var members: List<GroupUser>,
     private var memberIsChecked: MutableList<Pair<Long, Boolean>>
 ) :
     RecyclerView.Adapter<GroupPayMemberRVAdapter.ViewHolder>() {
@@ -50,7 +51,7 @@ class GroupPayMemberRVAdapter(  // 그룹 장소별 정산 다이얼로그 멤�
 
     inner class ViewHolder(val binding: ItemDiaryGroupPayMemberBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(member: DiaryResponse.GroupUser, isChecked: Boolean) {
+        fun bind(member: GroupUser, isChecked: Boolean) {
             binding.itemGroupMemberName.text = member.userName
             binding.itemGroupPayMemberCheckBox.isChecked = isChecked
         }

@@ -5,9 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.databinding.ItemDiaryGroupMembersBinding
+import com.mongmong.namo.domain.model.GroupUser
 
 class GroupMemberRVAdapter(  // 그룹 다이어리 화면 멤버 이름
-    private val members: List<DiaryResponse.GroupUser>
+    private val members: List<GroupUser>
 ) :
     RecyclerView.Adapter<GroupMemberRVAdapter.ViewHolder>() {
 
@@ -27,7 +28,7 @@ class GroupMemberRVAdapter(  // 그룹 다이어리 화면 멤버 이름
 
     inner class ViewHolder(val binding: ItemDiaryGroupMembersBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(member: DiaryResponse.GroupUser) {
+        fun bind(member: GroupUser) {
             binding.peopleNameTv.text = member.userName
         }
     }

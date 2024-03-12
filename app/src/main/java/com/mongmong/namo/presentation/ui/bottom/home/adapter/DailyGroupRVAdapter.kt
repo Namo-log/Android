@@ -12,13 +12,14 @@ import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Event
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.databinding.ItemCalendarEventBinding
+import com.mongmong.namo.domain.model.MonthDiary
 import org.joda.time.DateTime
 
 class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>() {
 
     private val group = ArrayList<Event>()
     private val categoryList = ArrayList<Category>()
-    private val groupDiary = ArrayList<DiaryResponse.MonthDiary>()
+    private val groupDiary = ArrayList<MonthDiary>()
     private lateinit var context : Context
 
     interface GroupContentClickListener {
@@ -32,7 +33,7 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
 
     /** 기록 아이템 클릭 리스너 **/
     interface DiaryInterface {
-        fun onGroupDetailClicked(monthDiary: DiaryResponse.MonthDiary?)
+        fun onGroupDetailClicked(monthDiary: MonthDiary?)
     }
     private lateinit var diaryRecordClickListener: DiaryInterface
     fun setRecordClickListener(itemClickListener: DiaryInterface){
@@ -83,7 +84,7 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addGroupDiary(diaryGroup: ArrayList<DiaryResponse.MonthDiary>){
+    fun addGroupDiary(diaryGroup: ArrayList<MonthDiary>){
         this.groupDiary.addAll(diaryGroup)
         notifyDataSetChanged()
     }
