@@ -5,13 +5,14 @@ import android.content.SharedPreferences
 import com.mongmong.namo.BuildConfig
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.data.KakaoAPI
 import com.kakao.sdk.common.KakaoSdk
+import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-
+@HiltAndroidApp
 class ApplicationClass: Application() {
     // 테스트 서버 주소
     val API_URL = "https://www.namoserver.shop"
