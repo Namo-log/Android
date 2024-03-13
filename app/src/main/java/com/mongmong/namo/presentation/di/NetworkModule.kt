@@ -1,11 +1,15 @@
 package com.mongmong.namo.presentation.di
 
+import android.content.Context
+import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.config.XAccessTokenInterceptor
+import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
 import com.mongmong.namo.presentation.utils.Utils.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -58,8 +62,7 @@ object NetworkModule {
     @Provides
     @Singleton
     @InterceptorRetrofit
-    fun provideAuthInterceptor(authInterceptor: XAccessTokenInterceptor): Interceptor =
-        authInterceptor
+    fun provideAuthInterceptor(): XAccessTokenInterceptor = XAccessTokenInterceptor()
 
     @Provides
     @Singleton
@@ -94,4 +97,8 @@ object NetworkModule {
     @Singleton
     fun provideConverterFactory(): GsonConverterFactory =
         GsonConverterFactory.create()
+
+    @Provides
+    @Singleton
+    fun provideNetworkChecker(@ApplicationContext context: Context): NetworkChecker = NetworkCheckerImpl(context)
 }

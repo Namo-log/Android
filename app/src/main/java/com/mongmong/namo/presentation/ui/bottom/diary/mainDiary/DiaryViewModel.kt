@@ -7,10 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.usecase.AddDiaryUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.io.File
+import javax.inject.Inject
 
-class DiaryViewModel(
+@HiltViewModel
+class DiaryViewModel @Inject constructor(
     private val addDiaryUseCase: AddDiaryUseCase
 ) : ViewModel() {
     private val _diaryAddedStatus = MutableLiveData<Boolean>()

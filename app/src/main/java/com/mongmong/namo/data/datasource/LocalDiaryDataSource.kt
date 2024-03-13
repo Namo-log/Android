@@ -4,8 +4,9 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.domain.model.DiaryAddResponse
+import javax.inject.Inject
 
-class LocalDiaryDataSource(private val diaryDao: DiaryDao) {
+class LocalDiaryDataSource @Inject constructor(private val diaryDao: DiaryDao) {
     suspend fun addDiary(diary: Diary) {
         diaryDao.insertDiary(diary)
     }

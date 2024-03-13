@@ -13,8 +13,9 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import javax.inject.Inject
 
-class RemoteDiaryDataSource(private val apiService: DiaryApiService) {
+class RemoteDiaryDataSource @Inject constructor(private val apiService: DiaryApiService) {
     suspend fun addDiaryToServer(
         content: String,
         images: List<File>?,

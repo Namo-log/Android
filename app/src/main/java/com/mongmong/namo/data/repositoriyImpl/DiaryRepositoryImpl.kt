@@ -2,20 +2,17 @@ package com.mongmong.namo.data.repositoriyImpl
 
 import com.mongmong.namo.data.datasource.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.RemoteDiaryDataSource
-import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.remote.diary.DiaryApiService
 import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.domain.repositories.DiaryRepository
-import com.mongmong.namo.presentation.utils.NetworkManager
 import java.io.File
+import javax.inject.Inject
 
-class DiaryRepositoryImpl(
+class DiaryRepositoryImpl @Inject constructor(
     private val localDiaryDataSource: LocalDiaryDataSource,
     private val remoteDiaryDataSource: RemoteDiaryDataSource,
     private val networkChecker: NetworkChecker
 ) : DiaryRepository {
-
     override suspend fun getDiary(localId: Long) {
         remoteDiaryDataSource
     }
