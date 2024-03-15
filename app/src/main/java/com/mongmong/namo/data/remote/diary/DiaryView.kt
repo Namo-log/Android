@@ -7,13 +7,13 @@ import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.GetGroupDiaryResponse
 
 interface AddPersonalDiaryView {
-    fun onAddDiarySuccess(response: DiaryAddResponse, localId: Long)
+    suspend fun onAddDiarySuccess(response: DiaryAddResponse, localId: Long)
     fun onAddDiaryFailure(message: String)
 }
 
 interface DiaryDetailView {
-    fun onEditDiarySuccess(response: DiaryResponse, localId: Long, serverId: Long)
-    fun onEditDiaryFailure(message: String)
+    suspend fun onEditDiarySuccess(response: DiaryResponse, localId: Long, serverId: Long)
+    suspend fun onEditDiaryFailure(message: String)
     fun onDeleteDiarySuccess(response: DiaryResponse, localId: Long)
     fun onDeleteDiaryFailure(message: String)
 }

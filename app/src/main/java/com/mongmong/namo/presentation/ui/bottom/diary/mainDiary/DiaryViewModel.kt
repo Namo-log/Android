@@ -1,5 +1,6 @@
 package com.mongmong.namo.presentation.ui.bottom.diary.mainDiary
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,24 +21,14 @@ class DiaryViewModel @Inject constructor(
     val diaryAddedStatus: LiveData<Boolean> = _diaryAddedStatus
     fun addDiary(diary: Diary, images: List<File>?) {
         viewModelScope.launch {
-            if (diary.content == null) {
-                addDiaryUseCase(
-                    diary = diary,
-                    diaryLocalId = diary.diaryId,
-                    content = "",
-                    images = images,
-                    serverId = diary.serverId
-                )
-
-            } else {
-                addDiaryUseCase(
-                    diary = diary,
-                    diaryLocalId = diary.diaryId,
-                    content = diary.content!!,
-                    images = images,
-                    serverId = diary.serverId
-                )
-            }
+            Log.d("DiaryViewModel addDiary", "$diary")
+            addDiaryUseCase(
+                diary = diary,
+                diaryLocalId = diary.diaryId,
+                content = diary.content ?: "",
+                images = images,
+                serverId = diary.serverId
+            )
         }
     }
 }

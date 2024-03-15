@@ -10,7 +10,7 @@ import com.mongmong.namo.data.local.entity.home.Event
 interface DiaryDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertDiary(diary: Diary)
+    suspend fun insertDiary(diary: Diary)
 
     @Update
     fun updateDiary(diary: Diary)
@@ -38,7 +38,7 @@ interface DiaryDao {
     fun getDiaryEventList(yearMonth: String, page: Int, size: Int): List<DiaryEvent>
 
     @Query("UPDATE diaryTable SET diary_upload=:isUpload, serverId=:serverId, diary_state=:state WHERE diaryId=:localId")
-    fun updateDiaryAfterUpload(localId: Long, serverId: Long, isUpload: Int, state: String)
+    suspend fun updateDiaryAfterUpload(localId: Long, serverId: Long, isUpload: Int, state: String)
 
     @Query("SELECT * FROM diaryTable WHERE diary_upload = 0")
     fun getNotUploadedDiary(): List<Diary>

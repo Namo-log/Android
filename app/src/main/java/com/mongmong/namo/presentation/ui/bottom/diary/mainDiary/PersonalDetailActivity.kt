@@ -34,7 +34,9 @@ import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.snackbar.Snackbar
 import com.mongmong.namo.presentation.utils.ImageConverter.imageToFile
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 
 @AndroidEntryPoint
@@ -152,8 +154,22 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
             Snackbar.make(binding.root, "내용이나 이미지를 추가해주세요!", Snackbar.LENGTH_SHORT).show()
             return
         } else {
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    diary = Diary(
+                        event.eventId,
+                        event.serverIdx,
+                        content,
+                        imgList as List<String>,
+                        R.string.event_current_added.toString()
+                    )
+                    viewModel.addDiary(diary, imageToFile(imgList as List<String>?, this@PersonalDetailActivity))
+                }
+            }
+
+
+
             //repo.addDiary(event.eventId, content, imgList as List<String>?, event.serverIdx)
-            viewModel.addDiary(diary, imageToFile(imgList as List<String>?, this@PersonalDetailActivity))
             finish()
         }
     }
@@ -184,8 +200,10 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
+        lifecycleScope.launch {
+            repo.deleteDiary(event.eventId, event.serverIdx)
+        }
 
-        repo.deleteDiary(event.eventId, event.serverIdx)
         Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
         finish()
     }

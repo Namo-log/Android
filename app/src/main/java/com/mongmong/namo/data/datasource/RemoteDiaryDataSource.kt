@@ -29,9 +29,10 @@ class RemoteDiaryDataSource @Inject constructor(private val apiService: DiaryApi
             runCatching {
                 apiService.addDiary(contentRequestBody, scheduleIdRequestBody, imageToMultipart(images))
             }.onSuccess {
+                Log.d("RemoteDiaryDataSource addDiaryToServer Success", "$it")
                 diaryResponse = it
             }.onFailure {
-                Log.e("RemoteDiaryDataSource.addDiaryToServer", "$it")
+                Log.d("RemoteDiaryDataSource addDiaryToServer Failure", "$it")
             }
         }
 

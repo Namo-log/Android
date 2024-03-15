@@ -1,5 +1,6 @@
 package com.mongmong.namo.data.repositoriyImpl
 
+import android.util.Log
 import com.mongmong.namo.data.datasource.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.RemoteDiaryDataSource
 import com.mongmong.namo.data.local.entity.diary.Diary
@@ -14,7 +15,6 @@ class DiaryRepositoryImpl @Inject constructor(
     private val networkChecker: NetworkChecker
 ) : DiaryRepository {
     override suspend fun getDiary(localId: Long) {
-        remoteDiaryDataSource
     }
 
     override suspend fun addDiary(
@@ -24,6 +24,7 @@ class DiaryRepositoryImpl @Inject constructor(
         images: List<File>?,
         serverId: Long,
     ) {
+        Log.d("DiaryViewModel addDiary", "$diary")
         localDiaryDataSource.addDiary(diary)
         if(networkChecker.isOnline()){
             val diaryAddResponse = remoteDiaryDataSource.addDiaryToServer(content, images, serverId)

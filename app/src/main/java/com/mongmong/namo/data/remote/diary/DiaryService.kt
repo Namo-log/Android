@@ -86,7 +86,7 @@ class DiaryService {
         content: RequestBody?,
         scheduleIdx: RequestBody,
     ) {
-        diaryRetrofitInterface.editDiary(scheduleIdx, content, images)
+        /*diaryRetrofitInterface.editDiary(scheduleIdx, content, images)
             .enqueue(object : Callback<DiaryResponse> {
 
                 @SuppressLint("SuspiciousIndentation")
@@ -110,7 +110,7 @@ class DiaryService {
                 override fun onFailure(call: Call<DiaryResponse>, t: Throwable) {
                     diaryDetailView.onEditDiaryFailure(t.message.toString())
                 }
-            })
+            })*/
     }
 
 
