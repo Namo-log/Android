@@ -13,6 +13,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.presentation.utils.NetworkManager
 import kotlinx.coroutines.*
@@ -40,36 +41,21 @@ class DiaryRepository(
     private lateinit var diary: Diary
 
     /** add diary **/
-    fun addDiary(
-        diaryLocalId: Long, // eventId
+    suspend fun addDiary(
+        diaryLocalId: Long,
         content: String,
         images: List<String>?,
-        serverId: Long // eventServerId
+        serverId: Long
     ) {
-
-        val storeDB = Thread {
-            val diary = Diary(
-                diaryLocalId,
-                serverId,
-                content,
-                images,
-                R.string.event_current_added.toString()
-            )
-            diaryDao.insertDiary(diary)
-            updateHasDiary(diaryLocalId)
-        }
-        storeDB.start()
-        try {
-            storeDB.join()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }  // 일단 roomdb에 다이어리 데이터 추가함
-
-        if (NetworkManager.checkNetworkState(context)) {
-
-            // 와이파이 연결 시, 서버에 데이터 추가
-            addDiaryToServer(diaryLocalId, serverId, content, images)
-        }
+        val diary = Diary(
+            diaryLocalId,
+            serverId,
+            content,
+            images,
+            R.string.event_current_added.toString()
+        )
+        diaryDao.insertDiary(diary) // 비동기적으로 실행됨
+        updateHasDiary(diaryLocalId) // 이 함수도 suspend 함수로 변경해야 함
     }
 
     private fun addDiaryToServer(
@@ -90,24 +76,16 @@ class DiaryRepository(
             contentRequestBody,
             scheduleIdRequestBody,
             object : AddPersonalDiaryView {
-                override fun onAddDiarySuccess(
-                    response: DiaryResponse.DiaryAddResponse,
+                override suspend fun onAddDiarySuccess(
+                    response: DiaryAddResponse,
                     localId: Long
                 ) {
-                    val storeDB = Thread {
-                        diaryDao.updateDiaryAfterUpload(
-                            localId,
-                            response.result.scheduleIdx,
-                            1,
-                            R.string.event_current_default.toString()
-                        )
-                    }
-                    storeDB.start()
-                    try {
-                        storeDB.join()
-                    } catch (e: InterruptedException) {
-                        e.printStackTrace()
-                    }
+                    diaryDao.updateDiaryAfterUpload(
+                        localId,
+                        response.result.scheduleIdx,
+                        1,
+                        R.string.event_current_default.toString()
+                    )
 
                     Log.d("addDiaryServerSuccess", response.result.toString())
                 }
@@ -181,56 +159,36 @@ class DiaryRepository(
     }
 
 
-    override fun onEditDiarySuccess(
-        response: DiaryResponse.DiaryResponse,
+    override suspend fun onEditDiarySuccess(
+        response: DiaryResponse,
         localId: Long,
         serverId: Long
     ) {
-
-        val storeDB = Thread {
-            diaryDao.updateDiaryAfterUpload(
-                localId,
-                serverId,
-                1,
-                R.string.event_current_default.toString()
-            )
-        }
-        storeDB.start()
-        try {
-            storeDB.join()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
+        diaryDao.updateDiaryAfterUpload(
+            localId,
+            serverId,
+            1,
+            R.string.event_current_default.toString()
+        )
 
         Log.d("editDiaryServerSuccess", response.result)
     }
 
 
-    override fun onEditDiaryFailure(message: String) {
-
+    override suspend fun onEditDiaryFailure(message: String) {
         printNotUploaded()
         Log.d("editDiaryServerFailure", message)
 
     }
 
     /** delete diary **/
-    fun deleteDiary(localId: Long, serverId: Long) {
-
-        val storeDB = Thread {
-            diaryDao.updateDiaryAfterUpload(
-                localId,
-                serverId,
-                0,
-                R.string.event_current_deleted.toString()
-            )
-            deleteHasDiary(localId) // roomdb hasDiary 0으로 변경
-        }
-        storeDB.start()
-        try {
-            storeDB.join()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        } // 일단 delete 상태로 업로드
+    suspend fun deleteDiary(localId: Long, serverId: Long) {
+        diaryDao.updateDiaryAfterUpload(
+            localId,
+            serverId,
+            0,
+            R.string.event_current_deleted.toString()
+        )
 
         if (!NetworkManager.checkNetworkState(context)) {
             //인터넷 연결 안 됨
@@ -243,7 +201,7 @@ class DiaryRepository(
 
     }
 
-    override fun onDeleteDiarySuccess(response: DiaryResponse.DiaryResponse, localId: Long) {
+    override fun onDeleteDiarySuccess(response: DiaryResponse, localId: Long) {
 
         val storeDB = Thread {
             diaryDao.deleteDiary(localId) // roomDB에서 삭제
@@ -281,7 +239,7 @@ class DiaryRepository(
 
 
     /** 서버에 있던 것 룸디비에 업데이트 **/
-    fun uploadDiaryToServer() {
+    suspend fun uploadDiaryToServer() {
 
         val storeDB = Thread {
             notUploaded = diaryDao.getNotUploadedDiary()

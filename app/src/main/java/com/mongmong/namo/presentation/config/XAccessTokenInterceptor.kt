@@ -9,8 +9,9 @@ import com.mongmong.namo.domain.model.TokenBody
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
+import javax.inject.Inject
 
-class XAccessTokenInterceptor : Interceptor {
+class XAccessTokenInterceptor @Inject constructor() : Interceptor {
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()

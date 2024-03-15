@@ -23,6 +23,7 @@ import com.mongmong.namo.data.remote.diary.DiaryRepository
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.presentation.utils.NetworkManager
 import com.mongmong.namo.databinding.FragmentDiaryBinding
+import com.mongmong.namo.domain.model.MonthDiary
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.adapter.DiaryGroupAdapter
 import com.mongmong.namo.presentation.ui.bottom.home.calendar.SetMonthDialog
 import kotlinx.coroutines.flow.Flow
@@ -291,7 +292,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     private fun onDetailClickListener(item: DiaryEvent) {  // 그룹 기록 수정 클릭리스너
 
         val monthDiary = item.images?.let {
-            DiaryResponse.MonthDiary(
+            MonthDiary(
                 item.eventId, item.event_title, item.event_start, item.content,
                 it, item.event_category_idx, 0L, item.event_place_name
             )

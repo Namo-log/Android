@@ -21,6 +21,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.mongmong.namo.R
@@ -54,8 +55,11 @@ import com.mongmong.namo.domain.model.GetMonthEventResponse
 import com.mongmong.namo.domain.model.GetMonthEventResult
 import com.mongmong.namo.domain.model.PostEventResponse
 import com.mongmong.namo.databinding.ActivityMainBinding
+import com.mongmong.namo.domain.model.DiaryGetAllResponse
+import com.mongmong.namo.domain.model.DiaryGetAllResult
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.ScheduleDialogBasicFragment.Companion.eventToEventForUpload
 import com.mongmong.namo.presentation.utils.NetworkManager
+import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 
 
@@ -262,7 +266,10 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
             }
         }
         val repo= DiaryRepository(this)
-        repo.uploadDiaryToServer()  // 다이어리 서버에 올림
+        lifecycleScope.launch {
+            repo.uploadDiaryToServer()  // 다이어리 서버에 올림
+        }
+
 
 
     }
@@ -471,7 +478,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         isCategorySuccess = false
     }
 
-    override fun onGetMonthDiarySuccess(response: DiaryResponse.DiaryGetAllResponse) {
+    override fun onGetMonthDiarySuccess(response: DiaryGetAllResponse) {
         Log.d("MAIN_SERVER_UPLOAD", "onGetAllDiarySuccess")
 
         val result = response.result
@@ -607,7 +614,9 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
                                     R.string.event_current_default.toString(),
                                     1
                                 )
-                                db.diaryDao.insertDiary(diaryData)
+                                lifecycleScope.launch {
+                                    db.diaryDao.insertDiary(diaryData)
+                                }
                             }
                         }
                     }
@@ -670,8 +679,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         )
     }
 
-    private fun serverToDiary(diary: DiaryResponse.Result): Diary {
-
+    private fun serverToDiary(diary: DiaryGetAllResult): Diary {
         return Diary(
             0,
             diary.scheduleId,
