@@ -1,6 +1,7 @@
 package com.mongmong.namo.presentation.ui.bottom.home.schedule
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -490,6 +491,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         }
     }
 
+    @SuppressLint("ScheduleExactAlarm")
     private fun schedulePushNotification(desiredTimestamp : Long, id : Int) {
         val context = requireContext()
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -809,7 +811,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         val thread = Thread {
             if (db.categoryDao.getCategoryList().isEmpty()) {
                 db.categoryDao.insertCategory(Category(0, "일정", R.color.schedule, true))
-                db.categoryDao.insertCategory(Category(0, "그룹", R.color.schedule_group, true))
+                db.categoryDao.insertCategory(Category(0, "모임", R.color.schedule_group, true))
             }
         }
         thread.start()
@@ -840,10 +842,10 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
 
         when(state) {
             R.string.event_current_added.toString() -> {
-                eventService.postEvent(eventToEventForUpload(event), scheduleIdx)
+                eventService.postEvent(event.eventToEventForUpload(event), scheduleIdx)
             }
             R.string.event_current_edited.toString() -> {
-                eventService.editEvent(event.serverIdx, eventToEventForUpload(event), scheduleIdx)
+                eventService.editEvent(event.serverIdx, event.eventToEventForUpload(event), scheduleIdx)
             }
             else -> {
                 Log.d("ScheduleBasic", "서버 업로드 중 state 오류")
@@ -930,23 +932,6 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         printNotUploaded()
 
         return
-    }
-
-    companion object {
-        fun eventToEventForUpload(event : Event) : EventForUpload {
-            return EventForUpload(
-                name = event.title,
-                startDate = event.startLong,
-                endDate = event.endLong,
-                interval = event.dayInterval,
-                alarmDate = event.alarmList,
-                x = event.placeX,
-                y = event.placeY,
-                locationName = event.placeName,
-                categoryId = event.categoryServerIdx,
-//                categoryId = 10 // 지금 category 등록이 안되어서 임시방편
-            )
-        }
     }
 
     override fun onPatchMoimScheduleCategorySuccess(message: String) {

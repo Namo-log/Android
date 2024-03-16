@@ -57,7 +57,6 @@ import com.mongmong.namo.domain.model.PostEventResponse
 import com.mongmong.namo.databinding.ActivityMainBinding
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResult
-import com.mongmong.namo.presentation.ui.bottom.home.schedule.ScheduleDialogBasicFragment.Companion.eventToEventForUpload
 import com.mongmong.namo.presentation.utils.NetworkManager
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
@@ -119,7 +118,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         categoryColorArray =resources.getIntArray(R.array.categoryColorArr)
         Log.d("CATEGORY_ARR", categoryColorArray.contentToString())
 
-        logToken()
+//        logToken()
         checkPermissions()
         checkNetworkUpload()
 
@@ -227,13 +226,13 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
                     return
                 } else {
                     //POST
-                    eventService.postEvent(eventToEventForUpload(i), i.eventId)
+                    eventService.postEvent(i.eventToEventForUpload(i), i.eventId)
                 }
             } else {
                 if (i.state == R.string.event_current_deleted.toString()) {
                     eventService.deleteEvent(i.serverIdx, i.eventId, 0)
                 } else {
-                    eventService.editEvent(i.serverIdx, eventToEventForUpload(i), i.eventId)
+                    eventService.editEvent(i.serverIdx, i.eventToEventForUpload(i), i.eventId)
                 }
 
             }
