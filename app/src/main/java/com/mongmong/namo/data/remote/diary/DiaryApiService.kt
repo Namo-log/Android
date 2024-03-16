@@ -27,7 +27,7 @@ interface DiaryApiService {
         @Part("scheduleId") scheduleIdx: RequestBody,
         @Part("content") content: RequestBody?,
         @Part imgs: List<MultipartBody.Part>?
-    ): Call<DiaryResponse>
+    ): DiaryResponse
 
 
     @DELETE("/schedules/diary/{scheduleId}")

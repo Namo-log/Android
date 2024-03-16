@@ -65,8 +65,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         setEvent()
         charCnt()
         onClickListener()
-
-        initObservers()
+        initObserve()
     }
 
     private fun setEvent() {
@@ -77,7 +76,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         binding.itemDiaryCategoryColorIv.background.setTint(category.color)
 
         binding.apply {
-
             val formatDate = DateTime(event.startLong * 1000).toString("yyyy.MM.dd (EE)")
             diaryTodayDayTv.text = DateTime(event.startLong * 1000).toString("EE")
             diaryTodayNumTv.text = DateTime(event.startLong * 1000).toString("dd")
@@ -92,15 +90,8 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
     }
 
     private fun getDiary() {
-        diary = repo.getDiary(event.eventId) // 개별 다이어리 조회
-
-        diary.images?.let {
-            galleryAdapter.addImages(it)
-        }
-
-        imgList.addAll(diary.images as List<String?>)
-
-        binding.diaryContentsEt.setText(diary.content)
+        //diary = repo.getDiary(event.eventId) // 개별 다이어리 조회
+        viewModel.getDiary(event.eventId)
     }
 
     private fun hasDiary() {
@@ -127,10 +118,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
             getDiary()
             binding.diaryEditTv.text = resources.getString(R.string.diary_edit)
             binding.diaryEditTv.setTextColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.MainOrange
-                )
+                ContextCompat.getColor(this, R.color.MainOrange)
             )
             binding.diaryEditTv.setBackgroundResource(R.color.white)
             binding.diaryDeleteIv.visibility = View.VISIBLE
@@ -140,7 +128,9 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
             }
 
             binding.diaryEditTv.setOnClickListener {
-                updateDiary()
+                lifecycleScope.launch {
+                    updateDiary()
+                }
             }
         }
 
@@ -154,20 +144,14 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
             Snackbar.make(binding.root, "내용이나 이미지를 추가해주세요!", Snackbar.LENGTH_SHORT).show()
             return
         } else {
-            lifecycleScope.launch {
-                withContext(Dispatchers.IO) {
-                    diary = Diary(
-                        event.eventId,
-                        event.serverIdx,
-                        content,
-                        imgList as List<String>,
-                        R.string.event_current_added.toString()
-                    )
-                    viewModel.addDiary(diary, imageToFile(imgList as List<String>?, this@PersonalDetailActivity))
-                }
-            }
-
-
+            diary = Diary(
+                event.eventId,
+                event.serverIdx,
+                content,
+                imgList as List<String>,
+                R.string.event_current_added.toString()
+            )
+            viewModel.addDiary(diary, imageToFile(imgList as List<String>?, this@PersonalDetailActivity))
 
             //repo.addDiary(event.eventId, content, imgList as List<String>?, event.serverIdx)
             finish()
@@ -175,20 +159,39 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
     }
 
     /** 다이어리 수정 **/
-    private fun updateDiary() {
-        diary.content = binding.diaryContentsEt.text.toString()
+    private suspend fun updateDiary() {
+        diary.apply {
+            content = binding.diaryContentsEt.text.toString()
+            images = imgList as List<String>?
+            state = R.string.event_current_edited.toString()
+        }
+        viewModel.editDiary(diary, imageToFile(imgList as List<String>?, this@PersonalDetailActivity))
 
-        repo.editDiary(
+        /*repo.editDiary(
             event.eventId,
             binding.diaryContentsEt.text.toString(),
             imgList as List<String>?,
             event.serverIdx
-        )
+        )*/
+
 
         Toast.makeText(this, "수정되었습니다", Toast.LENGTH_SHORT).show()
         finish()
     }
 
+    private fun initObserve() {
+        viewModel.getDiaryResult.observe(this) { diaryResult ->
+            diary = diaryResult
+
+            diary.images?.let {
+                galleryAdapter.addImages(it)
+            }
+
+            imgList.addAll(diary.images as List<String?>)
+
+            binding.diaryContentsEt.setText(diary.content)
+        }
+    }
     private fun showDialog() {
         // 삭제 확인 다이얼로그
         val title = "가록을 정말 삭제하시겠습니까?"
@@ -206,17 +209,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
         Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
         finish()
-    }
-
-    private fun initObservers() {
-        // 다이어리 추가
-        viewModel.diaryAddedStatus.observe(this) { isSuccess ->
-            if (isSuccess) {
-                // 성공 처리
-            } else {
-                // 실패 처리
-            }
-        }
     }
 
     private fun onClickListener() {

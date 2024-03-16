@@ -1,4 +1,4 @@
-package com.mongmong.namo.domain.usecase
+package com.mongmong.namo.domain.usecase.diary
 
 import android.util.Log
 import com.mongmong.namo.data.local.entity.diary.Diary
@@ -9,12 +9,9 @@ import javax.inject.Inject
 class AddDiaryUseCase @Inject constructor(private val diaryRepository: DiaryRepository) {
     suspend operator fun invoke(
         diary: Diary,
-        diaryLocalId: Long,
-        content: String,
-        images: List<File>?,
-        serverId: Long
+        images: List<File>?
     ) {
         Log.d("AddDiaryUseCase", "$diary")
-        diaryRepository.addDiary(diary, diaryLocalId, content, images, serverId)
+        diaryRepository.addDiary(diary, images)
     }
 }

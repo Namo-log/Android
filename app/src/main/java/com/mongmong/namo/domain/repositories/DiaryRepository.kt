@@ -5,21 +5,16 @@ import java.io.File
 
 
 interface DiaryRepository {
-    suspend fun getDiary(localId: Long)
+    suspend fun getDiary(localId: Long): Diary
 
     suspend fun addDiary(
         diary: Diary,
-        diaryLocalId: Long,
-        content: String,
-        images: List<File>?,
-        serverId: Long
+        images: List<File>?
     )
 
     suspend fun editDiary(
-        diaryLocalId: Long,
-        content: String,
-        images: List<String>?,
-        serverId: Long
+        diary: Diary,
+        images: List<File>?
     )
 
     suspend fun uploadDiaryToServer()

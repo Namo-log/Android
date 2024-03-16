@@ -1,8 +1,8 @@
 package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
-import com.mongmong.namo.data.datasource.LocalDiaryDataSource
-import com.mongmong.namo.data.datasource.RemoteDiaryDataSource
+import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
+import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.domain.repositories.DiaryRepository
@@ -14,35 +14,41 @@ class DiaryRepositoryImpl @Inject constructor(
     private val remoteDiaryDataSource: RemoteDiaryDataSource,
     private val networkChecker: NetworkChecker
 ) : DiaryRepository {
-    override suspend fun getDiary(localId: Long) {
+    override suspend fun getDiary(localId: Long): Diary {
+        Log.d("DiaryRepositoryImpl addDiary", "$localId")
+        return localDiaryDataSource.getDiary(diaryId = localId)
     }
 
     override suspend fun addDiary(
         diary: Diary,
-        diaryLocalId: Long,
-        content: String,
-        images: List<File>?,
-        serverId: Long,
+        images: List<File>?
     ) {
-        Log.d("DiaryViewModel addDiary", "$diary")
+        Log.d("DiaryRepositoryImpl addDiary", "$diary")
         localDiaryDataSource.addDiary(diary)
         if(networkChecker.isOnline()){
-            val diaryAddResponse = remoteDiaryDataSource.addDiaryToServer(content, images, serverId)
+            val diaryAddResponse = remoteDiaryDataSource.addDiaryToServer(diary, images)
             if(diaryAddResponse.code == SUCCESS_CODE) {
-                localDiaryDataSource.updateDiaryAfterUpload(localId = diaryLocalId, response = diaryAddResponse)
+                localDiaryDataSource.updateDiaryAfterUpload(localId = diary.diaryId, serverId = diaryAddResponse.result.scheduleIdx)
             } else {
-                // 서버 업로드 실패 시 로직
+                Log.d("DiaryRepositoryImpl addDiary Fail", "$diary")
             }
         }
     }
 
     override suspend fun editDiary(
-        diaryLocalId: Long,
-        content: String,
-        images: List<String>?,
-        serverId: Long
+        diary: Diary,
+        images: List<File>?
     ) {
-        TODO("Not yet implemented")
+        Log.d("DiaryRepositoryImpl editDiary", "$diary")
+        localDiaryDataSource.editDiary(diary)
+        if(networkChecker.isOnline()){
+            val diaryResponse = remoteDiaryDataSource.editDiaryToServer(diary, images)
+            if(diaryResponse.code == SUCCESS_CODE) {
+                localDiaryDataSource.updateDiaryAfterUpload(localId = diary.diaryId, serverId = diary.serverId)
+            } else {
+                // 서버 업로드 실패 시 로직
+            }
+        }
     }
 
     override suspend fun uploadDiaryToServer() {

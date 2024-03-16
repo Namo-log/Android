@@ -1,7 +1,8 @@
 package com.mongmong.namo.presentation.di
 
 import com.mongmong.namo.domain.repositories.DiaryRepository
-import com.mongmong.namo.domain.usecase.AddDiaryUseCase
+import com.mongmong.namo.domain.usecase.diary.AddDiaryUseCase
+import com.mongmong.namo.domain.usecase.diary.EditDiaryUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,4 +14,8 @@ object UseCaseModule {
     @Provides
     fun provideAddDiaryUseCase(diaryRepository: DiaryRepository): AddDiaryUseCase =
         AddDiaryUseCase(diaryRepository)
+
+    @Provides
+    fun provideEditDiaryUseCase(diaryRepository: DiaryRepository): EditDiaryUseCase =
+        EditDiaryUseCase(diaryRepository)
 }
