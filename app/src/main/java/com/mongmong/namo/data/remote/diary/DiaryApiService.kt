@@ -33,7 +33,7 @@ interface DiaryApiService {
     @DELETE("/schedules/diary/{scheduleId}")
     fun deleteDiary(
         @Path("scheduleId") scheduleId: Long
-    ): Call<DiaryResponse>
+    ): DiaryResponse
 
 
     @GET("/schedules/diary/all")

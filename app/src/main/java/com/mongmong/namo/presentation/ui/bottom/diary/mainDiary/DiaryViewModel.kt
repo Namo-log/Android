@@ -6,7 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.data.local.entity.diary.Diary
+import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.usecase.diary.AddDiaryUseCase
 import com.mongmong.namo.domain.usecase.diary.EditDiaryUseCase
 import com.mongmong.namo.domain.usecase.diary.GetDiaryUseCase
@@ -19,10 +21,14 @@ import javax.inject.Inject
 class DiaryViewModel @Inject constructor(
     private val addDiaryUseCase: AddDiaryUseCase,
     private val editDiaryUseCase: EditDiaryUseCase,
-    private val getDiaryUseCase: GetDiaryUseCase
+    private val getDiaryUseCase: GetDiaryUseCase,
+    private val repository: DiaryRepository
 ) : ViewModel() {
     private val _getDiaryResult = MutableLiveData<Diary>()
     val getDiaryResult: LiveData<Diary> = _getDiaryResult
+
+    private val _getCategoryResult = MutableLiveData<Category>()
+    val getCategoryResult: LiveData<Category> = _getCategoryResult
 
     private val _event = MutableLiveData<Event>()
     val event: LiveData<Event> = _event
@@ -51,6 +57,12 @@ class DiaryViewModel @Inject constructor(
                 diary = diary,
                 images = images
             )
+        }
+    }
+
+    fun deleteDiary(localId: Long, scheduleServerId: Long) {
+        viewModelScope.launch {
+            repository.deleteDiary(localId, scheduleServerId)
         }
     }
 }

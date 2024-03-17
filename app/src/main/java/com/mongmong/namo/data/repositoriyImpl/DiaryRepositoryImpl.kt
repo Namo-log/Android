@@ -25,10 +25,15 @@ class DiaryRepositoryImpl @Inject constructor(
     ) {
         Log.d("DiaryRepositoryImpl addDiary", "$diary")
         localDiaryDataSource.addDiary(diary)
-        if(networkChecker.isOnline()){
-            val diaryAddResponse = remoteDiaryDataSource.addDiaryToServer(diary, images)
-            if(diaryAddResponse.code == SUCCESS_CODE) {
-                localDiaryDataSource.updateDiaryAfterUpload(localId = diary.diaryId, serverId = diaryAddResponse.result.scheduleIdx)
+        if (networkChecker.isOnline()) {
+            val addResponse = remoteDiaryDataSource.addDiaryToServer(diary, images)
+            if (addResponse.code == SUCCESS_CODE) {
+                localDiaryDataSource.updateDiaryAfterUpload(
+                    localId = diary.diaryId,
+                    serverId = addResponse.result.scheduleIdx,
+                    IS_UPLOAD,
+                    EVENT_CURRENT_DEFAULT
+                )
             } else {
                 Log.d("DiaryRepositoryImpl addDiary Fail", "$diary")
             }
@@ -41,10 +46,32 @@ class DiaryRepositoryImpl @Inject constructor(
     ) {
         Log.d("DiaryRepositoryImpl editDiary", "$diary")
         localDiaryDataSource.editDiary(diary)
-        if(networkChecker.isOnline()){
-            val diaryResponse = remoteDiaryDataSource.editDiaryToServer(diary, images)
-            if(diaryResponse.code == SUCCESS_CODE) {
-                localDiaryDataSource.updateDiaryAfterUpload(localId = diary.diaryId, serverId = diary.serverId)
+        if (networkChecker.isOnline()) {
+            val editResponse = remoteDiaryDataSource.editDiaryToServer(diary, images)
+            if (editResponse.code == SUCCESS_CODE) {
+                localDiaryDataSource.updateDiaryAfterUpload(
+                    localId = diary.diaryId,
+                    serverId = diary.serverId,
+                    IS_UPLOAD,
+                    EVENT_CURRENT_DEFAULT
+                )
+            } else {
+                // 서버 업로드 실패 시 로직
+            }
+        }
+    }
+
+    override suspend fun deleteDiary(localId: Long, scheduleServerId: Long) {
+        localDiaryDataSource.updateDiaryAfterUpload(
+            localId,
+            scheduleServerId,
+            IS_NOT_UPLOAD,
+            EVENT_CURRENT_DELETED
+        )
+        if (networkChecker.isOnline()) {
+            val deleteResponse = remoteDiaryDataSource.deleteDiary(scheduleServerId)
+            if(deleteResponse.code == SUCCESS_CODE) {
+                localDiaryDataSource.deleteDiary(localId)
             } else {
                 // 서버 업로드 실패 시 로직
             }
@@ -60,6 +87,10 @@ class DiaryRepositoryImpl @Inject constructor(
     }
 
     companion object {
+        const val EVENT_CURRENT_DELETED = "DELETE"
+        const val EVENT_CURRENT_DEFAULT = "DEFAULT"
+        const val IS_NOT_UPLOAD = 0
+        const val IS_UPLOAD = 1
         const val SUCCESS_CODE = 200
     }
 }

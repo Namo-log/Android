@@ -60,6 +60,21 @@ class RemoteDiaryDataSource @Inject constructor(private val apiService: DiaryApi
         return diaryResponse
     }
 
+    suspend fun deleteDiary(scheduleServerId: Long): DiaryResponse {
+        var diaryResponse = DiaryResponse("")
+        withContext(Dispatchers.IO) {
+            runCatching {
+                apiService.deleteDiary(scheduleServerId)
+            }.onSuccess {
+                Log.d("RemoteDiaryDataSource deleteDiary Success", "$it")
+                diaryResponse = it
+            }.onFailure {
+                Log.d("RemoteDiaryDataSource deleteDiary Failure", "$it")
+            }
+        }
+        return diaryResponse
+    }
+
     private fun imageToMultipart(imageFiles: List<File>?): List<MultipartBody.Part>? {
         return imageFiles?.map { file ->
             val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())

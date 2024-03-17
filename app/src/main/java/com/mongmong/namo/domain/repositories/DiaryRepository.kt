@@ -16,7 +16,10 @@ interface DiaryRepository {
         diary: Diary,
         images: List<File>?
     )
-
+    suspend fun deleteDiary(
+        localId: Long,
+        scheduleServerId: Long
+    )
     suspend fun uploadDiaryToServer()
 
     suspend fun postDiaryToServer(eventServerId: Long, eventId: Long)

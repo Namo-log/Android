@@ -203,9 +203,10 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
-        lifecycleScope.launch {
+        /*lifecycleScope.launch {
             repo.deleteDiary(event.eventId, event.serverIdx)
-        }
+        }*/
+        viewModel.deleteDiary(event.eventId, event.serverIdx)
 
         Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
         finish()
