@@ -119,7 +119,7 @@ class DiaryService {
         localId: Long,
         scheduleIdx: Long
     ) {
-        diaryRetrofitInterface.deleteDiary(scheduleIdx)
+        /*diaryRetrofitInterface.deleteDiary(scheduleIdx)
             .enqueue(object : Callback<DiaryResponse> {
 
                 @SuppressLint("SuspiciousIndentation")
@@ -146,7 +146,7 @@ class DiaryService {
                 ) {
                     diaryDetailView.onDeleteDiaryFailure(t.message.toString())
                 }
-            })
+            })*/
     }
 
 

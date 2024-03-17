@@ -1,6 +1,7 @@
 package com.mongmong.namo.data.datasource.diary
 
 import android.util.Log
+import com.mongmong.namo.R
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.domain.model.DiaryAddResponse
@@ -16,7 +17,7 @@ class LocalDiaryDataSource @Inject constructor(private val diaryDao: DiaryDao) {
             serverId = 0L,
             content = "",
             images = listOf(""),
-            state = EVENT_CURRENT_DEFAULT,
+            state = R.string.event_current_default.toString(),
             isUpload = 0,
             isHeader = false
         )

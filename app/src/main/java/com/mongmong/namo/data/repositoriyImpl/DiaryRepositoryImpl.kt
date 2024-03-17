@@ -1,6 +1,7 @@
 package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
+import com.mongmong.namo.R
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.local.entity.diary.Diary
@@ -32,7 +33,7 @@ class DiaryRepositoryImpl @Inject constructor(
                     localId = diary.diaryId,
                     serverId = addResponse.result.scheduleIdx,
                     IS_UPLOAD,
-                    EVENT_CURRENT_DEFAULT
+                    R.string.event_current_default.toString()
                 )
             } else {
                 Log.d("DiaryRepositoryImpl addDiary Fail", "$diary")
@@ -53,7 +54,7 @@ class DiaryRepositoryImpl @Inject constructor(
                     localId = diary.diaryId,
                     serverId = diary.serverId,
                     IS_UPLOAD,
-                    EVENT_CURRENT_DEFAULT
+                    R.string.event_current_default.toString()
                 )
             } else {
                 // 서버 업로드 실패 시 로직
@@ -66,7 +67,7 @@ class DiaryRepositoryImpl @Inject constructor(
             localId,
             scheduleServerId,
             IS_NOT_UPLOAD,
-            EVENT_CURRENT_DELETED
+            R.string.event_current_deleted.toString()
         )
         if (networkChecker.isOnline()) {
             val deleteResponse = remoteDiaryDataSource.deleteDiary(scheduleServerId)
@@ -87,7 +88,7 @@ class DiaryRepositoryImpl @Inject constructor(
     }
 
     companion object {
-        const val EVENT_CURRENT_DELETED = "DELETE"
+        const val EVENT_CURRENT_DELETED = "DELETED"
         const val EVENT_CURRENT_DEFAULT = "DEFAULT"
         const val IS_NOT_UPLOAD = 0
         const val IS_UPLOAD = 1

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Event
@@ -24,39 +25,55 @@ class DiaryViewModel @Inject constructor(
     private val getDiaryUseCase: GetDiaryUseCase,
     private val repository: DiaryRepository
 ) : ViewModel() {
-    private val _getDiaryResult = MutableLiveData<Diary>()
-    val getDiaryResult: LiveData<Diary> = _getDiaryResult
+    private val _diary = MutableLiveData<Diary>()
+    val diary: LiveData<Diary> = _diary
 
     private val _getCategoryResult = MutableLiveData<Category>()
     val getCategoryResult: LiveData<Category> = _getCategoryResult
 
-    private val _event = MutableLiveData<Event>()
-    val event: LiveData<Event> = _event
-
-    fun getDiary(diaryId: Long) {
+    private val _imgList = MutableLiveData<List<String>>(emptyList())
+    val imgList: LiveData<List<String>> = _imgList
+    fun setNewDiary(event: Event, content: String) {
+        _diary.value = Diary(
+            diaryId = event.eventId,
+            serverId = event.serverIdx,
+            content = content,
+            images = _imgList.value,
+            state = R.string.event_current_added.toString()
+        )
+    }
+    fun getExistingDiary(diaryId: Long) {
         viewModelScope.launch {
             Log.d("DiaryViewModel getDiary", "$diaryId")
-            _getDiaryResult.postValue(getDiaryUseCase.invoke(diaryId))
+            _diary.postValue(getDiaryUseCase.invoke(diaryId))
         }
     }
 
-    fun addDiary(diary: Diary, images: List<File>?) {
+    fun addDiary(images: List<File>?) {
         viewModelScope.launch {
             Log.d("DiaryViewModel addDiary", "$diary")
-            addDiaryUseCase(
-                diary = diary,
-                images = images
-            )
+            _diary.value?.let {
+                addDiaryUseCase(
+                    diary = it,
+                    images = images
+                )
+            }
         }
     }
 
-    fun editDiary(diary: Diary, images: List<File>?) {
+    fun editDiary(content: String, images: List<File>?) {
         viewModelScope.launch {
-            Log.d("DiaryViewModel editDiary", "$diary")
-            editDiaryUseCase(
-                diary = diary,
-                images = images
-            )
+            _diary.value?.let {
+                it.content = content
+                it.state = R.string.event_current_edited.toString()
+            }
+            Log.d("DiaryViewModel editDiary", "${_diary.value}")
+            _diary.value?.let {
+                editDiaryUseCase(
+                    diary = it,
+                    images = images
+                )
+            }
         }
     }
 
@@ -64,5 +81,16 @@ class DiaryViewModel @Inject constructor(
         viewModelScope.launch {
             repository.deleteDiary(localId, scheduleServerId)
         }
+    }
+
+    fun getImgList() = _imgList.value
+    fun updateImgList(newImgList: List<String>) {
+        _imgList.value = newImgList
+        _diary.value?.images = _imgList.value
+    }
+
+    companion object {
+        const val EVENT_CURRENT_ADDED = "ADDED"
+        const val EVENT_CURRENT_EDITED = "EDITED"
     }
 }
