@@ -10,9 +10,6 @@ import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Event
 import com.mongmong.namo.domain.repositories.DiaryRepository
-import com.mongmong.namo.domain.usecase.diary.AddDiaryUseCase
-import com.mongmong.namo.domain.usecase.diary.EditDiaryUseCase
-import com.mongmong.namo.domain.usecase.diary.GetDiaryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.io.File
@@ -20,16 +17,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DiaryViewModel @Inject constructor(
-    private val addDiaryUseCase: AddDiaryUseCase,
-    private val editDiaryUseCase: EditDiaryUseCase,
-    private val getDiaryUseCase: GetDiaryUseCase,
     private val repository: DiaryRepository
 ) : ViewModel() {
     private val _diary = MutableLiveData<Diary>()
     val diary: LiveData<Diary> = _diary
-
-    private val _getCategoryResult = MutableLiveData<Category>()
-    val getCategoryResult: LiveData<Category> = _getCategoryResult
 
     private val _imgList = MutableLiveData<List<String>>(emptyList())
     val imgList: LiveData<List<String>> = _imgList
@@ -45,7 +36,7 @@ class DiaryViewModel @Inject constructor(
     fun getExistingDiary(diaryId: Long) {
         viewModelScope.launch {
             Log.d("DiaryViewModel getDiary", "$diaryId")
-            _diary.postValue(getDiaryUseCase.invoke(diaryId))
+            _diary.postValue(repository.getDiary(diaryId))
         }
     }
 
@@ -53,7 +44,7 @@ class DiaryViewModel @Inject constructor(
         viewModelScope.launch {
             Log.d("DiaryViewModel addDiary", "$diary")
             _diary.value?.let {
-                addDiaryUseCase(
+                repository.addDiary(
                     diary = it,
                     images = images
                 )
@@ -69,7 +60,7 @@ class DiaryViewModel @Inject constructor(
             }
             Log.d("DiaryViewModel editDiary", "${_diary.value}")
             _diary.value?.let {
-                editDiaryUseCase(
+                repository.editDiary(
                     diary = it,
                     images = images
                 )
