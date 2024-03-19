@@ -283,9 +283,8 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
             1
         )
 
-        val intent = Intent(context, PersonalDetailActivity::class.java)
-        intent.putExtra("event", event)
-        requireActivity().startActivity(intent)
+        startActivity(Intent(context, PersonalDetailActivity::class.java)
+            .putExtra("event", event))
 
     }
 
