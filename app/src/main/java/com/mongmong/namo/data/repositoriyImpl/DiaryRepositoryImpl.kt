@@ -1,10 +1,13 @@
 package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
+import androidx.paging.PagingSource
 import com.mongmong.namo.R
+import com.mongmong.namo.data.datasource.diary.DiaryPersonalPagingSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.local.entity.diary.Diary
+import com.mongmong.namo.data.local.entity.diary.DiaryEvent
 import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import java.io.File
@@ -13,6 +16,7 @@ import javax.inject.Inject
 class DiaryRepositoryImpl @Inject constructor(
     private val localDiaryDataSource: LocalDiaryDataSource,
     private val remoteDiaryDataSource: RemoteDiaryDataSource,
+    private val personalPagingSource: DiaryPersonalPagingSource,
     private val networkChecker: NetworkChecker
 ) : DiaryRepository {
     override suspend fun getDiary(localId: Long): Diary {
@@ -77,6 +81,14 @@ class DiaryRepositoryImpl @Inject constructor(
                 // 서버 업로드 실패 시 로직
             }
         }
+    }
+
+    override suspend fun getPersonalDiaryEvents(
+        month: String,
+        page: Int,
+        pageSize: Int
+    ): PagingSource<Int, DiaryEvent> {
+        return personalPagingSource
     }
 
     override suspend fun uploadDiaryToServer() {

@@ -7,13 +7,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Event
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
+import org.joda.time.DateTime
+import org.joda.time.YearMonth
 
 @HiltViewModel
 class DiaryViewModel @Inject constructor(
@@ -24,6 +25,21 @@ class DiaryViewModel @Inject constructor(
 
     private val _imgList = MutableLiveData<List<String>>(emptyList())
     val imgList: LiveData<List<String>> = _imgList
+
+    private val _currentDate = MutableLiveData<String>(DateTime().toString("yyyy.MM"))
+    val currentDate : LiveData<String> = _currentDate
+
+    private val _isGroup = MutableLiveData<Int>(0)
+    val isGroup : LiveData<Int> = _isGroup
+
+    /** 개인 기록 개별 조회 **/
+    fun getExistingDiary(diaryId: Long) {
+        viewModelScope.launch {
+            Log.d("DiaryViewModel getDiary", "$diaryId")
+            _diary.postValue(repository.getDiary(diaryId))
+        }
+    }
+    /** 개인 기록 추가시 데이터 초기화 **/
     fun setNewDiary(event: Event, content: String) {
         _diary.value = Diary(
             diaryId = event.eventId,
@@ -33,13 +49,8 @@ class DiaryViewModel @Inject constructor(
             state = R.string.event_current_added.toString()
         )
     }
-    fun getExistingDiary(diaryId: Long) {
-        viewModelScope.launch {
-            Log.d("DiaryViewModel getDiary", "$diaryId")
-            _diary.postValue(repository.getDiary(diaryId))
-        }
-    }
 
+    /** 개인 기록 추가 **/
     fun addDiary(images: List<File>?) {
         viewModelScope.launch {
             Log.d("DiaryViewModel addDiary", "$diary")
@@ -51,7 +62,7 @@ class DiaryViewModel @Inject constructor(
             }
         }
     }
-
+    /** 개인 기록 수정 **/
     fun editDiary(content: String, images: List<File>?) {
         viewModelScope.launch {
             _diary.value?.let {
@@ -67,7 +78,7 @@ class DiaryViewModel @Inject constructor(
             }
         }
     }
-
+    /** 개인 기록 삭제 **/
     fun deleteDiary(localId: Long, scheduleServerId: Long) {
         viewModelScope.launch {
             repository.deleteDiary(localId, scheduleServerId)
@@ -80,8 +91,16 @@ class DiaryViewModel @Inject constructor(
         _diary.value?.images = _imgList.value
     }
 
+    /** 선택 날짜 **/
+    fun getCurrentDate(): String = _currentDate.value ?: DateTime().toString("yyyy.MM")
+    fun setCurrentDate(yearMonth: String) { _currentDate.value = yearMonth }
+    /** 개인/그룹 여부 토글  **/
+    fun getIsGroup(): Int = _isGroup.value ?: 0
+    fun setIsGroup(isGroup: Boolean) { _isGroup.value = if(isGroup) IS_GROUP else IS_NOT_GROUP }
     companion object {
         const val EVENT_CURRENT_ADDED = "ADDED"
         const val EVENT_CURRENT_EDITED = "EDITED"
+        const val IS_GROUP = 1
+        const val IS_NOT_GROUP = 0
     }
 }
