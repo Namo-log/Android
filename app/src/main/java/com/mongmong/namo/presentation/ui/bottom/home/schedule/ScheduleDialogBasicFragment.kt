@@ -41,10 +41,6 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Event
-import com.mongmong.namo.domain.model.EditEventResponse
-import com.mongmong.namo.data.remote.event.EventService
-import com.mongmong.namo.data.remote.event.EventView
-import com.mongmong.namo.domain.model.PostEventResponse
 import com.mongmong.namo.data.remote.moim.EditMoimScheduleView
 import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
 import com.mongmong.namo.data.remote.moim.MoimService
@@ -53,7 +49,6 @@ import com.mongmong.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.mongmong.namo.presentation.ui.bottom.home.notify.PushNotificationReceiver
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.getInterval
-import com.mongmong.namo.presentation.utils.NetworkManager
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -63,15 +58,14 @@ import net.daum.mf.map.api.MapView
 import org.joda.time.DateTime
 
 @AndroidEntryPoint
-class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView {
+class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
     private lateinit var binding : FragmentScheduleDialogBasicBinding
     private val args : ScheduleDialogBasicFragmentArgs by navArgs()
 
-    var isEdit : Boolean = false
     private var event : Event = Event()
 
-    var isAlarm : Boolean = false
+    private var isAlarm : Boolean = false
 
     private var categoryList : List<Category> = arrayListOf()
     private lateinit var selectedCategory : Category
@@ -333,49 +327,43 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
             }
             storeContent()
 
-            if (binding.dialogScheduleTitleEt.text.isEmpty()) {
-                Toast.makeText(requireContext(), "일정의 제목을 입력해 주세요.", Toast.LENGTH_SHORT).show()
-            } else {
-                // 모임일정일 경우
-                if (event.moimSchedule) {
-                    // 카테고리와 알람 추가/수정
-                    val moimService = MoimService()
-                    moimService.setEditMoimScheduleView(this)
-                    moimService.patchMoimScheduleCategory(
-                        PatchMoimScheduleCategoryBody(
+            // 모임 일정일 경우
+            if (event.moimSchedule) {
+                // 카테고리와 알람 추가/수정
+                val moimService = MoimService()
+                moimService.setEditMoimScheduleView(this)
+                moimService.patchMoimScheduleCategory(
+                    PatchMoimScheduleCategoryBody(
+                        event.serverIdx,
+                        event.categoryServerIdx
+                    )
+                )
+                if (isMoimSchedulePrevAlarm) {
+                    moimService.patchMoimScheduleAlarm(
+                        MoimScheduleAlarmBody(
                             event.serverIdx,
-                            event.categoryServerIdx
+                            event.alarmList!!
                         )
                     )
-                    if (isMoimSchedulePrevAlarm) {
-                        moimService.patchMoimScheduleAlarm(
-                            MoimScheduleAlarmBody(
-                                event.serverIdx,
-                                event.alarmList!!
-                            )
+                } else {
+                    moimService.postMoimScheduleAlarm(
+                        MoimScheduleAlarmBody(
+                            event.serverIdx,
+                            event.alarmList!!
                         )
-                    } else {
-                        moimService.postMoimScheduleAlarm(
-                            MoimScheduleAlarmBody(
-                                event.serverIdx,
-                                event.alarmList!!
-                            )
-                        )
-                    }
+                    )
                 }
-                // 개인일정일 경우
-                else {
-                    if (event.eventId == 0L) {
-                        lifecycleScope.launch {
-                            insertData()
-                            uploadToServer(R.string.event_current_added.toString())
-                        }
-                    } else {
-                        // 일정 수정
-                        lifecycleScope.launch {
-                            updateData()
-                            uploadToServer(R.string.event_current_edited.toString())
-                        }
+            }
+            // 개인일정일 경우
+            else {
+                if (event.eventId == 0L) {
+                    lifecycleScope.launch {
+                        insertData()
+                    }
+                } else {
+                    // 일정 수정
+                    lifecycleScope.launch {
+                        updateData()
                     }
                 }
             }
@@ -828,31 +816,6 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         binding.dialogScheduleCategoryColorIv.background.setTint(selectedCategory.color)
     }
 
-
-//    서버 연결
-    private fun uploadToServer(state : String) {
-        if (!NetworkManager.checkNetworkState(requireContext())) {
-            //인터넷 연결 안 됨
-            printNotUploaded()
-            return
-        }
-
-        val eventService = EventService()
-        eventService.setEventView(this)
-
-        when(state) {
-            R.string.event_current_added.toString() -> {
-                eventService.postEvent(event.eventToEventForUpload(), scheduleIdx)
-            }
-            R.string.event_current_edited.toString() -> {
-                eventService.editEvent(event.serverIdx, event.eventToEventForUpload(), scheduleIdx)
-            }
-            else -> {
-                Log.d("ScheduleBasic", "서버 업로드 중 state 오류")
-            }
-        }
-    }
-
     private fun printNotUploaded() {
         val thread = Thread {
             failList.clear()
@@ -869,48 +832,6 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
 
         // 화면 이동
         requireActivity().finish()
-    }
-
-    override fun onPostEventSuccess(response: PostEventResponse, eventId : Long) {
-        Log.d("ScheduleBasic", "onPostEventSuccess : ${response.result.eventIdx} eventId : ${eventId}")
-
-        val result = response.result
-
-        //룸디비에 isUpload, serverId, state 업데이트하기
-        lifecycleScope.launch {
-            db.eventDao.updateEventAfterUpload(eventId, 1, result.eventIdx, R.string.event_current_default.toString())
-            Log.d("UPDATE_AFTER",db.eventDao.getEventById(eventId).toString())
-        }
-        Log.d("UPDATE_AFTER", "Update after Post finish")
-
-        requireActivity().finish()
-    }
-
-    override fun onPostEventFailure(message: String) {
-        Log.d("ScheduleBasic", "onPostEventFailure")
-        printNotUploaded()
-
-        return
-    }
-
-    override fun onEditEventSuccess(response: EditEventResponse, eventId : Long) {
-        Log.d("ScheduleBasic", "onEditEventSuccess")
-
-        val result = response.result
-
-        //룸디비에 isUpload, serverId, state 업데이트하기
-        lifecycleScope.launch {
-            db.eventDao.updateEventAfterUpload(eventId, 1, result.eventIdx, R.string.event_current_default.toString())
-        }
-
-        requireActivity().finish()
-    }
-
-    override fun onEditEventFailure(message: String) {
-        Log.d("ScheduleBasic", "onEditEventFailure")
-        printNotUploaded()
-
-        return
     }
 
     override fun onPatchMoimScheduleCategorySuccess(message: String) {

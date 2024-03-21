@@ -1,8 +1,6 @@
 package com.mongmong.namo.data.datasource.schedule
 
 import android.util.Log
-import com.mongmong.namo.R
-import com.mongmong.namo.data.datasource.LocalDiaryDataSource
 import com.mongmong.namo.data.local.dao.EventDao
 import com.mongmong.namo.data.local.entity.home.Event
 import kotlinx.coroutines.Dispatchers
