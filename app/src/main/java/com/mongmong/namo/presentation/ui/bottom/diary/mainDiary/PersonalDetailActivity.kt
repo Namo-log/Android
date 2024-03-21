@@ -135,7 +135,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
             viewModel.setNewDiary(event, content)
             viewModel.addDiary(imageToFile(viewModel.getImgList(), this@PersonalDetailActivity))
 
-            //repo.addDiary(event.eventId, content, imgList as List<String>?, event.serverIdx)
             finish()
         }
     }
@@ -160,16 +159,13 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
-        /*lifecycleScope.launch {
-            repo.deleteDiary(event.eventId, event.serverIdx)
-        }*/
         viewModel.deleteDiary(event.eventId, event.serverIdx)
-
         Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
         finish()
     }
     private fun initObserve() {
         viewModel.diary.observe(this) { diary ->
+            viewModel.updateImgList(diary.images?: emptyList())
             binding.diaryContentsEt.setText(diary.content)
         }
         viewModel.imgList.observe(this) {
@@ -217,6 +213,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         val imageUris = getImageUrisFromResult(result)
+        if(imageUris.isNullOrEmpty()) return@registerForActivityResult
         if (imageUris.size > 3) { // 사진 3장 이상 선택 시
             Toast.makeText(this, "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT)
                 .show()
