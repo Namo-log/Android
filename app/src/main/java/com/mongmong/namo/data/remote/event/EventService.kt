@@ -67,6 +67,7 @@ class EventService {
     }
 
     fun editEvent(serverIdx : Long, body: EventForUpload, eventId : Long) {
+        /*
         Log.d("EditEvent", "serverIdx : $serverIdx")
         eventRetrofitInterface.editEvent(serverIdx, body).enqueue(object : Callback<EditEventResponse> {
             override fun onResponse(call: Call<EditEventResponse>, response: Response<EditEventResponse>) {
@@ -85,6 +86,7 @@ class EventService {
                 eventView.onEditEventFailure(t.message ?: "통신 오류")
             }
         })
+         */
     }
 
     fun deleteEvent(serverIdx: Long, eventId : Long, isMoimSchedule: Int) {

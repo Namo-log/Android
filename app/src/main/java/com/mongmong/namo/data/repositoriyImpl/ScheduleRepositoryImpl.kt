@@ -19,17 +19,35 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addSchedule(schedule: Event) {
-        Log.d("ScheduleRepositoryImpl addSchedule", "$schedule")
+        Log.d("ScheduleRepositoryImpl", "addSchedule $schedule")
         localScheduleDataSource.addSchedule(schedule)
         if (networkChecker.isOnline()) {
             val addResponse = remoteScheduleDataSource.addScheduleToServer(schedule.eventToEventForUpload())
             if (addResponse.code == SUCCESS_CODE) {
+                Log.d("ScheduleRepositoryImpl", "addSchedule Success")
                 localScheduleDataSource.updateScheduleAfterUpload(
                     localId = schedule.eventId,
-                    response = addResponse
+                    serverId = addResponse.result.eventIdx
                 )
             } else {
-                Log.d("ScheduleRepositoryImpl addSchedule Fail", "$schedule")
+                Log.d("ScheduleRepositoryImpl", "addSchedule Fail, code = ${addResponse.code}, message = ${addResponse.message}")
+            }
+        }
+    }
+
+    override suspend fun editSchedule(schedule: Event) {
+        Log.d("ScheduleRepositoryImpl", "editSchedule $schedule")
+        localScheduleDataSource.editSchedule(schedule)
+        if (networkChecker.isOnline()) {
+            val editResponse = remoteScheduleDataSource.editScheduleToServer(schedule.eventId, schedule.eventToEventForUpload())
+            if (editResponse.code == SUCCESS_CODE) {
+                Log.d("ScheduleRepositoryImpl", "editSchedule Success")
+                localScheduleDataSource.updateScheduleAfterUpload(
+                    localId = schedule.eventId,
+                    serverId = editResponse.result.eventIdx
+                )
+            } else {
+                Log.d("ScheduleRepositoryImpl", "editSchedule Fail, code = ${editResponse.code}, message = ${editResponse.message}")
             }
         }
     }

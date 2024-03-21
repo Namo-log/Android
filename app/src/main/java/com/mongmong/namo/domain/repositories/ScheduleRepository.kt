@@ -9,6 +9,10 @@ interface ScheduleRepository {
         schedule: Event
     )
 
+    suspend fun editSchedule(
+        schedule: Event
+    )
+
     suspend fun uploadScheduleToServer()
 
     suspend fun postScheduleToServer(scheduleServerId: Long, scheduleId: Long)

@@ -3,6 +3,8 @@ package com.mongmong.namo.data.datasource.schedule
 import android.util.Log
 import com.mongmong.namo.data.local.entity.home.EventForUpload
 import com.mongmong.namo.data.remote.event.EventRetrofitInterface
+import com.mongmong.namo.domain.model.EditEventResponse
+import com.mongmong.namo.domain.model.EditEventResult
 import com.mongmong.namo.domain.model.PostEventResponse
 import com.mongmong.namo.domain.model.PostEventResult
 import kotlinx.coroutines.Dispatchers
@@ -21,10 +23,29 @@ class RemoteScheduleDataSource @Inject constructor(
             runCatching {
                 apiService.postEvent(schedule)
             }.onSuccess {
-                Log.d("RemoteScheduleDataSource addScheduleToServer Success", "$it")
+                Log.d("RemoteScheduleDataSource", "addScheduleToServer Success $it")
                 scheduleResponse = it
             }.onFailure {
-                Log.d("RemoteScheduleDataSource addScheduleToServer Failure", "$it")
+                Log.d("RemoteScheduleDataSource", "addScheduleToServer Failure $it")
+            }
+        }
+        return scheduleResponse
+    }
+
+    suspend fun editScheduleToServer(
+        scheduleId: Long,
+        schedule: EventForUpload
+    ) : EditEventResponse {
+        var scheduleResponse = EditEventResponse(result = EditEventResult(-1))
+
+        withContext(Dispatchers.IO) {
+            runCatching {
+                apiService.editEvent(scheduleId, schedule)
+            }.onSuccess {
+                Log.d("RemoteScheduleDataSource", "editScheduleToServer Success, $it")
+                scheduleResponse = it
+            }.onFailure {
+                Log.d("RemoteScheduleDataSource", "editScheduleToServer Fail, $it")
             }
         }
         return scheduleResponse

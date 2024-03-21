@@ -368,35 +368,14 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
                     if (event.eventId == 0L) {
                         lifecycleScope.launch {
                             insertData()
+                            uploadToServer(R.string.event_current_added.toString())
                         }
                     } else {
                         // 일정 수정
-                        event.state = R.string.event_current_edited.toString()
-                        event.isUpload = 0
-
-                        val updateDB: Thread = Thread {
-                            db.eventDao.updateEvent(event)
+                        lifecycleScope.launch {
+                            updateData()
+                            uploadToServer(R.string.event_current_edited.toString())
                         }
-                        updateDB.start()
-                        try {
-                            updateDB.join()
-                        } catch (e: InterruptedException) {
-                            e.printStackTrace()
-                        }
-                        Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT)
-                            .show()
-
-                        // 이전 알람 삭제 후 변경 알람 저장
-                        for (i in prevAlarmList!!) {
-                            deleteNotification(
-                                event.eventId.toInt() + DateTime(event.startLong).minusMinutes(
-                                    i
-                                ).millis.toInt()
-                            )
-                        }
-                        setAlarm(event.startLong)
-
-                        uploadToServer(R.string.event_current_edited.toString())
                     }
                 }
             }
@@ -412,6 +391,29 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
 
         // 새 일정 등록
         viewModel.addSchedule(event)
+        // 뒤로가기
+        requireActivity().finish()
+    }
+
+    /** 일정 수정 **/
+    private fun updateData() {
+        // 현재 일정의 상태가 수정 상태임을 나타냄
+        event.state = R.string.event_current_edited.toString()
+        event.isUpload = 0
+
+        // 이전 알람 삭제 후 변경 알람 저장
+        for (i in prevAlarmList!!) {
+            deleteNotification(
+                event.eventId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt()
+            )
+        }
+        setAlarm(event.startLong)
+
+        // 일정 편집
+        viewModel.editSchedule(event)
+
+        Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
+        // 뒤로가기
         requireActivity().finish()
     }
 

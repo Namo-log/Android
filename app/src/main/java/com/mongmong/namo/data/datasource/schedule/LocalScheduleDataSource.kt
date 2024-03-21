@@ -14,24 +14,35 @@ class LocalScheduleDataSource @Inject constructor(
     private val scheduleDao: EventDao
 ) {
     suspend fun addSchedule(schedule: Event) {
-        Log.d("LocalScheduleDataSource addSchedule", "$schedule")
         withContext(Dispatchers.IO) {
             runCatching {
                 scheduleDao.insertEvent(schedule)
             }.onSuccess {
-                Log.d("LocalScheduleDataSource addSchedule Success", "$schedule")
+                Log.d("LocalScheduleDataSource", "addSchedule Success")
             }.onFailure {
-                Log.d("LocalScheduleDataSource addSchedule Fail", "$schedule")
+                Log.d("LocalScheduleDataSource", "addSchedule Fail")
             }
         }
     }
 
-    suspend fun updateScheduleAfterUpload(localId: Long, response: PostEventResponse) {
-        Log.d("LocalScheduleDataSource updateScheduleAfterUpload", "$localId, $response")
+    suspend fun editSchedule(schedule: Event) {
+        withContext(Dispatchers.IO) {
+            runCatching {
+                scheduleDao.updateEvent(schedule)
+            }.onSuccess {
+                Log.d("LocalScheduleDataSource", "editSchedule Success")
+            }.onFailure {
+                Log.d("LocalScheduleDataSource", "editSchedule Fail")
+            }
+        }
+    }
+
+    suspend fun updateScheduleAfterUpload(localId: Long, serverId: Long) {
+        Log.d("LocalScheduleDataSource updateScheduleAfterUpload", "$localId, $serverId")
         scheduleDao.updateEventAfterUpload(
             localId,
             LocalDiaryDataSource.UPLOAD_SUCCESS,
-            response.result.eventIdx,
+            serverId,
             R.string.event_current_default.toString()
         )
     }

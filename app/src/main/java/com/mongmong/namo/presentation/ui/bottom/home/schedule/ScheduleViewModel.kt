@@ -20,8 +20,17 @@ class ScheduleViewModel @Inject constructor(
 
     fun addSchedule(schedule: Event) {
         viewModelScope.launch {
-            Log.d("ScheduleViewModel addSchedule", "$schedule")
+            Log.d("ScheduleViewModel", "addSchedule $schedule")
             repository.addSchedule(
+                schedule = schedule
+            )
+        }
+    }
+
+    fun editSchedule(schedule: Event) {
+        viewModelScope.launch {
+            Log.d("ScheduleViewModel", "editSchedule $schedule")
+            repository.editSchedule(
                 schedule = schedule
             )
         }
