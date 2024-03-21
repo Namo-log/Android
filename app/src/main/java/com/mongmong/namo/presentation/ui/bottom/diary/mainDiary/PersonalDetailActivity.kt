@@ -37,12 +37,10 @@ import org.joda.time.DateTime
 
 @AndroidEntryPoint
 class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  // 개인 다이어리 추가,수정,삭제 화면
-
     private lateinit var binding: ActivityPersonalDiaryDetailBinding
     private lateinit var galleryAdapter: GalleryListAdapter
 
     private lateinit var repo: DiaryRepository
-    private var imgList: ArrayList<String?> = arrayListOf()
 
     private lateinit var event: Event
 
@@ -104,67 +102,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         }
     }
 
-    /** 다이어리 추가 **/
-    private suspend fun insertData() {
-        val content = binding.diaryContentsEt.text.toString()
-        if (content.isEmpty() && viewModel.getImgList().isNullOrEmpty()) {
-            Snackbar.make(binding.root, "내용이나 이미지를 추가해주세요!", Snackbar.LENGTH_SHORT).show()
-            return
-        } else {
-            viewModel.setNewDiary(event, content)
-            viewModel.addDiary(imageToFile(viewModel.getImgList(), this@PersonalDetailActivity))
-
-            //repo.addDiary(event.eventId, content, imgList as List<String>?, event.serverIdx)
-            finish()
-        }
-    }
-
-    /** 다이어리 수정 **/
-    private suspend fun updateDiary() {
-        viewModel.editDiary(
-            binding.diaryContentsEt.text.toString(),
-            imageToFile(viewModel.getImgList(), this@PersonalDetailActivity)
-        )
-
-        /*repo.editDiary(
-            event.eventId,
-            binding.diaryContentsEt.text.toString(),
-            imgList as List<String>?,
-            event.serverIdx
-        )*/
-
-        Toast.makeText(this, "수정되었습니다", Toast.LENGTH_SHORT).show()
-        finish()
-    }
-
-    private fun initObserve() {
-        viewModel.diary.observe(this) { diary ->
-            binding.diaryContentsEt.setText(diary.content)
-        }
-        viewModel.imgList.observe(this) {
-            galleryAdapter.addImages(it)
-        }
-    }
-    private fun showDialog() {
-        // 삭제 확인 다이얼로그
-        val title = "가록을 정말 삭제하시겠습니까?"
-
-        val dialog = ConfirmDialog(this, title, null, "삭제", 0)
-        dialog.isCancelable = false
-        dialog.show(supportFragmentManager, "")
-    }
-
-    /** 다이어리 삭제 **/
-    private fun deleteDiary() {
-        /*lifecycleScope.launch {
-            repo.deleteDiary(event.eventId, event.serverIdx)
-        }*/
-        viewModel.deleteDiary(event.eventId, event.serverIdx)
-
-        Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-        finish()
-    }
-
     private fun onClickListener() {
         binding.apply {
             diaryBackIv.setOnClickListener { finish() }
@@ -188,7 +125,62 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
     }
 
+    /** 다이어리 추가 **/
+    private suspend fun insertData() {
+        val content = binding.diaryContentsEt.text.toString()
+        if (content.isEmpty() && viewModel.getImgList().isNullOrEmpty()) {
+            Snackbar.make(binding.root, "내용이나 이미지를 추가해주세요!", Snackbar.LENGTH_SHORT).show()
+            return
+        } else {
+            viewModel.setNewDiary(event, content)
+            viewModel.addDiary(imageToFile(viewModel.getImgList(), this@PersonalDetailActivity))
 
+            finish()
+        }
+    }
+
+    /** 다이어리 수정 **/
+    private suspend fun updateDiary() {
+        viewModel.editDiary(
+            binding.diaryContentsEt.text.toString(),
+            imageToFile(viewModel.getImgList(), this@PersonalDetailActivity)
+        )
+
+        /*repo.editDiary(
+            event.eventId,
+            binding.diaryContentsEt.text.toString(),
+            imgList as List<String>?,
+            event.serverIdx
+        )*/
+
+        Toast.makeText(this, "수정되었습니다", Toast.LENGTH_SHORT).show()
+        finish()
+    }
+
+    /** 다이어리 삭제 **/
+    private fun deleteDiary() {
+        viewModel.deleteDiary(event.eventId, event.serverIdx)
+        Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+        finish()
+    }
+    private fun initObserve() {
+        viewModel.diary.observe(this) { diary ->
+            viewModel.updateImgList(diary.images?: emptyList())
+            binding.diaryContentsEt.setText(diary.content)
+        }
+        viewModel.imgList.observe(this) {
+            galleryAdapter.addImages(it)
+        }
+    }
+
+    private fun showDialog() {
+        // 삭제 확인 다이얼로그
+        val title = "가록을 정말 삭제하시겠습니까?"
+
+        val dialog = ConfirmDialog(this, title, null, "삭제", 0)
+        dialog.isCancelable = false
+        dialog.show(supportFragmentManager, "")
+    }
 
     /** 갤러리에서 이미지 가져오기 **/
     @SuppressLint("IntentReset")
@@ -221,6 +213,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         val imageUris = getImageUrisFromResult(result)
+        if(imageUris.isNullOrEmpty()) return@registerForActivityResult
         if (imageUris.size > 3) { // 사진 3장 이상 선택 시
             Toast.makeText(this, "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT)
                 .show()

@@ -1,7 +1,9 @@
 package com.mongmong.namo.presentation.di
 
+import com.mongmong.namo.data.datasource.diary.DiaryPersonalPagingSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
+import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.data.repositoriyImpl.DiaryRepositoryImpl
 import com.mongmong.namo.domain.repositories.DiaryRepository
@@ -18,6 +20,12 @@ object RepositoryModule {
     fun provideDiaryRepository(
         localDiaryDataSource: LocalDiaryDataSource,
         remoteDiaryDataSource: RemoteDiaryDataSource,
+        diaryDao: DiaryDao,
         networkChecker: NetworkChecker
-    ): DiaryRepository = DiaryRepositoryImpl(localDiaryDataSource, remoteDiaryDataSource, networkChecker)
+    ): DiaryRepository = DiaryRepositoryImpl(
+        localDiaryDataSource,
+        remoteDiaryDataSource,
+        diaryDao,
+        networkChecker
+    )
 }

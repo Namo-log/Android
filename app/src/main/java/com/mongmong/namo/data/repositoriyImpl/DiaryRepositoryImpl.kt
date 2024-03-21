@@ -1,10 +1,14 @@
 package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
+import androidx.paging.PagingSource
 import com.mongmong.namo.R
+import com.mongmong.namo.data.datasource.diary.DiaryPersonalPagingSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
+import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.entity.diary.Diary
+import com.mongmong.namo.data.local.entity.diary.DiaryEvent
 import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import java.io.File
@@ -13,13 +17,16 @@ import javax.inject.Inject
 class DiaryRepositoryImpl @Inject constructor(
     private val localDiaryDataSource: LocalDiaryDataSource,
     private val remoteDiaryDataSource: RemoteDiaryDataSource,
+    private val diaryDao: DiaryDao,
     private val networkChecker: NetworkChecker
 ) : DiaryRepository {
+    /** 개인 기록 개별 조회 **/
     override suspend fun getDiary(localId: Long): Diary {
         Log.d("DiaryRepositoryImpl addDiary", "$localId")
         return localDiaryDataSource.getDiary(diaryId = localId)
     }
 
+    /** 개인 기록 추가 **/
     override suspend fun addDiary(
         diary: Diary,
         images: List<File>?
@@ -41,6 +48,7 @@ class DiaryRepositoryImpl @Inject constructor(
         }
     }
 
+    /** 개인 기록 수정 **/
     override suspend fun editDiary(
         diary: Diary,
         images: List<File>?
@@ -62,7 +70,9 @@ class DiaryRepositoryImpl @Inject constructor(
         }
     }
 
+    /** 개인 기록 삭제 **/
     override suspend fun deleteDiary(localId: Long, scheduleServerId: Long) {
+        // room db에 삭제 상태로 변경
         localDiaryDataSource.updateDiaryAfterUpload(
             localId,
             scheduleServerId,
@@ -70,13 +80,20 @@ class DiaryRepositoryImpl @Inject constructor(
             R.string.event_current_deleted.toString()
         )
         if (networkChecker.isOnline()) {
+            // 서버 db에서 삭제
             val deleteResponse = remoteDiaryDataSource.deleteDiary(scheduleServerId)
             if(deleteResponse.code == SUCCESS_CODE) {
+                // room db에서 삭제
                 localDiaryDataSource.deleteDiary(localId)
             } else {
                 // 서버 업로드 실패 시 로직
             }
         }
+    }
+
+    /** 개인 기록 리스트 조회 **/
+    override fun getPersonalDiaryPagingSource(date: String): PagingSource<Int, DiaryEvent> {
+        return DiaryPersonalPagingSource(diaryDao, date)
     }
 
     override suspend fun uploadDiaryToServer() {
