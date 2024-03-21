@@ -5,7 +5,6 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.datasource.LocalDiaryDataSource
 import com.mongmong.namo.data.local.dao.EventDao
 import com.mongmong.namo.data.local.entity.home.Event
-import com.mongmong.namo.domain.model.PostEventResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -37,13 +36,30 @@ class LocalScheduleDataSource @Inject constructor(
         }
     }
 
-    suspend fun updateScheduleAfterUpload(localId: Long, serverId: Long) {
+    suspend fun deleteSchedule(localId: Long) {
+        withContext(Dispatchers.IO) {
+            runCatching {
+                scheduleDao.deleteEventById(localId)
+            }.onSuccess {
+                Log.d("LocalScheduleDataSource", "deleteSchedule Success")
+            }.onFailure {
+                Log.d("LocalScheduleDataSource", "deleteSchedule Fail")
+            }
+        }
+    }
+
+    suspend fun updateScheduleAfterUpload(
+        localId: Long,
+        serverId: Long,
+        isUpload: Int,
+        status: String
+    ) {
         Log.d("LocalScheduleDataSource updateScheduleAfterUpload", "$localId, $serverId")
         scheduleDao.updateEventAfterUpload(
             localId,
-            LocalDiaryDataSource.UPLOAD_SUCCESS,
+            isUpload,
             serverId,
-            R.string.event_current_default.toString()
+            status
         )
     }
 }

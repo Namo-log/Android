@@ -29,8 +29,7 @@ interface EventRetrofitInterface {
     fun deleteEvent(
         @Path("serverIdx") serverIdx : Long,
         @Path("kind") isMoimSchedule: Int,
-//        @Header("Authorization") token : String,
-    ) : Call<DeleteEventResponse>
+    ) : DeleteEventResponse
 
     @GET("schedules/{yearMonth}")
     fun getMonthEvent(

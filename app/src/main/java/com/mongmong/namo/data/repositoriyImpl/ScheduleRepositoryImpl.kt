@@ -1,6 +1,8 @@
 package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
+import com.mongmong.namo.R
+import com.mongmong.namo.data.datasource.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.local.entity.home.Event
@@ -27,7 +29,9 @@ class ScheduleRepositoryImpl @Inject constructor(
                 Log.d("ScheduleRepositoryImpl", "addSchedule Success")
                 localScheduleDataSource.updateScheduleAfterUpload(
                     localId = schedule.eventId,
-                    serverId = addResponse.result.eventIdx
+                    serverId = addResponse.result.eventIdx,
+                    isUpload = LocalDiaryDataSource.UPLOAD_SUCCESS,
+                    status = R.string.event_current_default.toString(),
                 )
             } else {
                 Log.d("ScheduleRepositoryImpl", "addSchedule Fail, code = ${addResponse.code}, message = ${addResponse.message}")
@@ -44,10 +48,32 @@ class ScheduleRepositoryImpl @Inject constructor(
                 Log.d("ScheduleRepositoryImpl", "editSchedule Success")
                 localScheduleDataSource.updateScheduleAfterUpload(
                     localId = schedule.eventId,
-                    serverId = editResponse.result.eventIdx
+                    serverId = editResponse.result.eventIdx,
+                    isUpload = LocalDiaryDataSource.UPLOAD_SUCCESS,
+                    status = R.string.event_current_default.toString(),
                 )
             } else {
                 Log.d("ScheduleRepositoryImpl", "editSchedule Fail, code = ${editResponse.code}, message = ${editResponse.message}")
+            }
+        }
+    }
+
+    override suspend fun deleteSchedule(localId: Long, serverId: Long) {
+        // room db에 삭제 상태로 변경
+        localScheduleDataSource.updateScheduleAfterUpload(
+            localId = localId,
+            serverId = serverId,
+            isUpload = 0,
+            status = R.string.event_current_deleted.toString(),
+        )
+        if (networkChecker.isOnline()) {
+            // 서버 db에서 삭제
+            val deleteResponse = remoteScheduleDataSource.deleteScheduleToServer(serverId)
+            if (deleteResponse.code == DiaryRepositoryImpl.SUCCESS_CODE) {
+                // room db에서 삭제
+                localScheduleDataSource.deleteSchedule(localId)
+            } else {
+                Log.d("ScheduleRepositoryImpl", "deleteSchedule Fail, code = ${deleteResponse.code}, message = ${deleteResponse.message}")
             }
         }
     }

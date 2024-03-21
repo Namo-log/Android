@@ -3,6 +3,7 @@ package com.mongmong.namo.data.datasource.schedule
 import android.util.Log
 import com.mongmong.namo.data.local.entity.home.EventForUpload
 import com.mongmong.namo.data.remote.event.EventRetrofitInterface
+import com.mongmong.namo.domain.model.DeleteEventResponse
 import com.mongmong.namo.domain.model.EditEventResponse
 import com.mongmong.namo.domain.model.EditEventResult
 import com.mongmong.namo.domain.model.PostEventResponse
@@ -49,5 +50,28 @@ class RemoteScheduleDataSource @Inject constructor(
             }
         }
         return scheduleResponse
+    }
+
+    suspend fun deleteScheduleToServer(
+        scheduleId: Long
+    ) : DeleteEventResponse {
+        var scheduleResponse = DeleteEventResponse("")
+
+        withContext(Dispatchers.IO) {
+            runCatching {
+                apiService.deleteEvent(scheduleId, IS_NOT_GROUP) // 개인
+            }.onSuccess {
+                Log.d("RemoteScheduleDataSource", "deleteScheduleToServer Success, $it")
+                scheduleResponse = it
+            }.onFailure {
+                Log.d("RemoteScheduleDataSource", "deleteScheduleToServer Fail, $it")
+            }
+        }
+        return scheduleResponse
+    }
+
+    companion object {
+        const val IS_GROUP = 1
+        const val IS_NOT_GROUP = 0
     }
 }

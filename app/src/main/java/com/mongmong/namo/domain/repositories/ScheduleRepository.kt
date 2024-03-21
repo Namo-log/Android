@@ -13,6 +13,11 @@ interface ScheduleRepository {
         schedule: Event
     )
 
+    suspend fun deleteSchedule(
+        localId: Long,
+        serverId: Long
+    )
+
     suspend fun uploadScheduleToServer()
 
     suspend fun postScheduleToServer(scheduleServerId: Long, scheduleId: Long)

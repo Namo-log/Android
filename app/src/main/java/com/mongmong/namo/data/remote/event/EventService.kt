@@ -90,6 +90,7 @@ class EventService {
     }
 
     fun deleteEvent(serverIdx: Long, eventId : Long, isMoimSchedule: Int) {
+        /*
         eventRetrofitInterface.deleteEvent(serverIdx, isMoimSchedule).enqueue(object : Callback<DeleteEventResponse> {
             override fun onResponse(call: Call<DeleteEventResponse>, response: Response<DeleteEventResponse>) {
                 when (response.code()) {
@@ -107,6 +108,7 @@ class EventService {
                 deleteEventView.onDeleteEventFailure(t.message ?: "통신 오류")
             }
         })
+         */
     }
 
     fun getMonthEvent(yearMonth : String) {

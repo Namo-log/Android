@@ -35,4 +35,14 @@ class ScheduleViewModel @Inject constructor(
             )
         }
     }
+
+    fun deleteSchedule(localId: Long, serverId: Long) {
+        viewModelScope.launch {
+            Log.d("ScheduleViewModel", "deleteSchedule $schedule")
+            repository.deleteSchedule(
+                localId = localId,
+                serverId = serverId
+            )
+        }
+    }
 }
