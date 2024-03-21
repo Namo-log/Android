@@ -22,7 +22,7 @@ class DiaryRepositoryImpl @Inject constructor(
 ) : DiaryRepository {
     /** 개인 기록 개별 조회 **/
     override suspend fun getDiary(localId: Long): Diary {
-        Log.d("DiaryRepositoryImpl addDiary", "$localId")
+        Log.d("DiaryRepositoryImpl getDiary", "$localId")
         return localDiaryDataSource.getDiary(diaryId = localId)
     }
 

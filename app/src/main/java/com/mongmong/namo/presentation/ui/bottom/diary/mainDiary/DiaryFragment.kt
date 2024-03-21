@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.Pager
@@ -56,9 +57,42 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         setDiaryList()
         setTabLayout()
         setMonthSelector()
-        initObserve()
 
         return binding.root
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        initObserve() // 화면이 다시 보일 때 관찰 시작
+        getList() // onResume에서 getList 호출
+    }
+
+    override fun onPause() {
+        super.onPause()
+        removeObserve() // 화면이 사라질 때 관찰 중지
+    }
+
+    private fun initObserve() {
+        viewModel.isGroup.observe(viewLifecycleOwner, isGroupObserver)
+        viewModel.currentDate.observe(viewLifecycleOwner, currentDateObserver)
+    }
+
+    private fun removeObserve() {
+        // LiveData 관찰 중지
+        viewModel.isGroup.removeObserver(isGroupObserver)
+        viewModel.currentDate.removeObserver(currentDateObserver)
+    }
+
+    // 관찰자를 클래스 변수로 선언하여 재사용
+    private val isGroupObserver = Observer<Int> { isGroup ->
+        binding.diaryTab.apply {
+            if(selectedTabPosition != isGroup) { getTabAt(isGroup)?.select() }
+        }
+    }
+
+    private val currentDateObserver = Observer<String> { date ->
+        binding.diaryMonth.text = date
+        getList()
     }
 
 
@@ -89,17 +123,6 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         }
     }
 
-    private fun initObserve() {
-        viewModel.isGroup.observe(viewLifecycleOwner) { isGroup ->
-            binding.diaryTab.apply {
-                if(selectedTabPosition != isGroup) { getTabAt(isGroup)?.select() }
-            }
-        }
-        viewModel.currentDate.observe(viewLifecycleOwner) { date ->
-            binding.diaryMonth.text = date
-            getList()
-        }
-    }
     private fun getList() {
         Log.d("DiaryFragment", "getList")
         if (viewModel.getIsGroup() == IS_NOT_GROUP) {
