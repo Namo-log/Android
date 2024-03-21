@@ -92,10 +92,6 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
 
     lateinit var db : NamoDatabase
 
-    private val PERMISSIONS_REQUEST_CODE = 100
-    private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-    private val NOTIFICATION_PERMISSION_REQUEST_CODE = 777
-
     private lateinit var getResult : ActivityResultLauncher<Intent>
 
     private var scheduleIdx : Long = 0
@@ -110,8 +106,6 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
     private var isMoimScheduleCategorySaved = false
     private var isMoimScheduleAlarmSaved = false
     private var isMoimSchedulePrevAlarm = false
-
-    private var clickable = true // 중복 생성을 방지하기 위함
 
     private val viewModel : ScheduleViewModel by viewModels()
 
@@ -342,72 +336,69 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
             if (binding.dialogScheduleTitleEt.text.isEmpty()) {
                 Toast.makeText(requireContext(), "일정의 제목을 입력해 주세요.", Toast.LENGTH_SHORT).show()
             } else {
-                if (clickable) { // 더블클릭 방지
-                    // 모임일정일 경우
-                    if (event.moimSchedule) {
-                        // 카테고리와 알람 추가/수정
-                        val moimService = MoimService()
-                        moimService.setEditMoimScheduleView(this)
-                        moimService.patchMoimScheduleCategory(
-                            PatchMoimScheduleCategoryBody(
+                // 모임일정일 경우
+                if (event.moimSchedule) {
+                    // 카테고리와 알람 추가/수정
+                    val moimService = MoimService()
+                    moimService.setEditMoimScheduleView(this)
+                    moimService.patchMoimScheduleCategory(
+                        PatchMoimScheduleCategoryBody(
+                            event.serverIdx,
+                            event.categoryServerIdx
+                        )
+                    )
+                    if (isMoimSchedulePrevAlarm) {
+                        moimService.patchMoimScheduleAlarm(
+                            MoimScheduleAlarmBody(
                                 event.serverIdx,
-                                event.categoryServerIdx
+                                event.alarmList!!
                             )
                         )
-                        if (isMoimSchedulePrevAlarm) {
-                            moimService.patchMoimScheduleAlarm(
-                                MoimScheduleAlarmBody(
-                                    event.serverIdx,
-                                    event.alarmList!!
-                                )
+                    } else {
+                        moimService.postMoimScheduleAlarm(
+                            MoimScheduleAlarmBody(
+                                event.serverIdx,
+                                event.alarmList!!
                             )
-                        } else {
-                            moimService.postMoimScheduleAlarm(
-                                MoimScheduleAlarmBody(
-                                    event.serverIdx,
-                                    event.alarmList!!
-                                )
-                            )
-                        }
-                    }
-                    // 개인일정일 경우
-                    else {
-                        if (event.eventId == 0L) {
-                            lifecycleScope.launch {
-                                insertData()
-                            }
-                        } else {
-                            // 일정 수정
-                            event.state = R.string.event_current_edited.toString()
-                            event.isUpload = 0
-
-                            val updateDB: Thread = Thread {
-                                db.eventDao.updateEvent(event)
-                            }
-                            updateDB.start()
-                            try {
-                                updateDB.join()
-                            } catch (e: InterruptedException) {
-                                e.printStackTrace()
-                            }
-                            Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT)
-                                .show()
-
-                            // 이전 알람 삭제 후 변경 알람 저장
-                            for (i in prevAlarmList!!) {
-                                deleteNotification(
-                                    event.eventId.toInt() + DateTime(event.startLong).minusMinutes(
-                                        i
-                                    ).millis.toInt()
-                                )
-                            }
-                            setAlarm(event.startLong)
-
-                            uploadToServer(R.string.event_current_edited.toString())
-                        }
+                        )
                     }
                 }
-                clickable = false
+                // 개인일정일 경우
+                else {
+                    if (event.eventId == 0L) {
+                        lifecycleScope.launch {
+                            insertData()
+                        }
+                    } else {
+                        // 일정 수정
+                        event.state = R.string.event_current_edited.toString()
+                        event.isUpload = 0
+
+                        val updateDB: Thread = Thread {
+                            db.eventDao.updateEvent(event)
+                        }
+                        updateDB.start()
+                        try {
+                            updateDB.join()
+                        } catch (e: InterruptedException) {
+                            e.printStackTrace()
+                        }
+                        Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT)
+                            .show()
+
+                        // 이전 알람 삭제 후 변경 알람 저장
+                        for (i in prevAlarmList!!) {
+                            deleteNotification(
+                                event.eventId.toInt() + DateTime(event.startLong).minusMinutes(
+                                    i
+                                ).millis.toInt()
+                            )
+                        }
+                        setAlarm(event.startLong)
+
+                        uploadToServer(R.string.event_current_edited.toString())
+                    }
+                }
             }
         }
     }
@@ -969,5 +960,11 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
 
             requireActivity().finish()
         }
+    }
+
+    companion object {
+        private const val PERMISSIONS_REQUEST_CODE = 100
+        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 777
     }
 }
