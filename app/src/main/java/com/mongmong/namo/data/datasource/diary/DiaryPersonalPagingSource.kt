@@ -1,6 +1,7 @@
 package com.mongmong.namo.data.datasource.diary
 
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.mongmong.namo.data.local.dao.DiaryDao
@@ -10,29 +11,23 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
-class DiaryPersonalPagingSource @Inject constructor(
+class DiaryPersonalPagingSource (
     private val diaryDao: DiaryDao,
-    private val month: String
+    private val date: String
 ) : PagingSource<Int, DiaryEvent>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DiaryEvent> {
         return try {
+            Log.d("pagingSource load", "${params.key}")
+            val page = params.key ?: 0
             val result = withContext(Dispatchers.IO) {
-                diaryDao.getDiaryEventList(month, params.key ?: 0, PAGE_SIZE).toListItems()
+                diaryDao.getDiaryEventList(date, page, PAGE_SIZE).toListItems()
             }
-
-            /*if (nextPageNumber == 0 && result.isEmpty()) {    //    달 별 메모 없으면 없다고 띄우기
-                withContext(Dispatchers.Main) {
-                    recyclerView.visibility = View.GONE
-                    textView.visibility = View.VISIBLE
-                    textView.text = context.resources.getString(R.string.diary_empty)
-                }
-            }*/
 
             LoadResult.Page(
                 data = result,
-                prevKey = if (params.key == 0) null else params.key?.minus(1),
-                nextKey = if (result.isEmpty()) null else params.key?.plus(1)
+                prevKey = if (page == 0) null else page.minus(1),
+                nextKey = if (result.isEmpty()) null else page.plus(1)
             )
         } catch (e: Exception) {
             LoadResult.Error(e)

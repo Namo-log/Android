@@ -5,11 +5,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
+import androidx.paging.cachedIn
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.diary.Diary
+import com.mongmong.namo.data.local.entity.diary.DiaryEvent
 import com.mongmong.namo.data.local.entity.home.Event
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -32,6 +39,17 @@ class DiaryViewModel @Inject constructor(
     private val _isGroup = MutableLiveData<Int>(0)
     val isGroup : LiveData<Int> = _isGroup
 
+    /** 개인 기록 리스트 조회 **/
+    fun getPersonalPaging(date: String): Flow<PagingData<DiaryEvent>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                initialLoadSize = PAGE_SIZE * 2,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { repository.getPersonalDiaryPagingSource(date) }
+        ).flow.cachedIn(viewModelScope)
+    }
     /** 개인 기록 개별 조회 **/
     fun getExistingDiary(diaryId: Long) {
         viewModelScope.launch {
@@ -102,5 +120,6 @@ class DiaryViewModel @Inject constructor(
         const val EVENT_CURRENT_EDITED = "EDITED"
         const val IS_GROUP = 1
         const val IS_NOT_GROUP = 0
+        const val PAGE_SIZE = 10
     }
 }

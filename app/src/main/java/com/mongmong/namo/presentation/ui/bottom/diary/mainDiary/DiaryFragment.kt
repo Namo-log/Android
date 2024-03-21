@@ -11,10 +11,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.mongmong.namo.R
 import com.mongmong.namo.data.datasource.diary.DiaryGroupPagingSource
@@ -40,8 +43,6 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     private val binding get() = _binding!!
 
     private val viewModel : DiaryViewModel by viewModels()
-
-    private lateinit var diaryGroupAdapter: DiaryGroupAdapter
 
     private lateinit var pagingDataFlow: Flow<PagingData<DiaryEvent>>
 
@@ -111,20 +112,39 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     }
 
     private fun getPersonalList() {
+        // 리사이클러뷰 어댑터 연결
+        val diaryPersonalAdapter = DiaryAdapter(
+            editClickListener = { onEditClickListener(it) }
+            , imageClickListener = { ImageDialog(it).show(parentFragmentManager, "test") })
 
         binding.diaryPersonalListRv.visibility = View.VISIBLE
         binding.diaryGroupListRv.visibility = View.GONE
 
-        val diaryPersonalAdapter = DiaryAdapter(
-            editClickListener = { onEditClickListener(it) }
-            , imageClickListener = { ImageDialog(it).show(parentFragmentManager, "test") })
         binding.diaryPersonalListRv.apply {
             adapter = diaryPersonalAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            addItemDecoration(DiaryItemDecoration(context))
         }
 
-        paging(viewModel.getCurrentDate(), true, diaryPersonalAdapter, null)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getPersonalPaging(viewModel.getCurrentDate()).collectLatest { pagingData ->
+                diaryPersonalAdapter?.submitData(pagingData)
+            }
+        }
 
+        diaryPersonalAdapter.addLoadStateListener { loadState ->
+            if (loadState.refresh is LoadState.NotLoading && diaryPersonalAdapter.itemCount == 0) {
+                // 첫 페이지 로드가 완료되었으나 아이템이 없을 경우
+                binding.diaryPersonalListRv.visibility = View.GONE
+                binding.diaryListEmptyTv.apply {
+                    visibility = View.VISIBLE
+                    text = getString(R.string.diary_empty)
+                }
+            } else {
+                // 데이터가 있는 경우나 로딩 중인 경우
+                binding.diaryPersonalListRv.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun getGroupList() {
@@ -132,24 +152,6 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         binding.diaryPersonalListRv.visibility = View.GONE
         binding.diaryGroupListRv.visibility = View.VISIBLE
 
-        diaryGroupAdapter = DiaryGroupAdapter(detailClickListener = { item -> // 리사이클러뷰 어댑터 연결
-            onDetailClickListener(item)
-        }, imageClickListener = {
-            ImageDialog(it).show(parentFragmentManager, "test")
-        })
-
-        val yearMonthSplit = viewModel.getCurrentDate().split(".")
-        val year = yearMonthSplit[0]
-        val month = yearMonthSplit[1].removePrefix("0")
-        val formatYearMonth = "$year,$month"
-
-        paging(formatYearMonth, false, null, diaryGroupAdapter)
-
-        binding.diaryGroupListRv.apply {
-            adapter = diaryGroupAdapter
-            layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        }
         if (!NetworkManager.checkNetworkState(requireContext())) {
             //인터넷 연결 안 됨
             binding.diaryListEmptyTv.visibility = View.VISIBLE
@@ -159,44 +161,39 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
             return
         }
 
+        // 리사이클러뷰 어댑터 연결
+        val diaryGroupAdapter = DiaryGroupAdapter(
+            detailClickListener = { onDetailClickListener(it) }
+            , imageClickListener = { ImageDialog(it).show(parentFragmentManager, "test") })
+
+        val yearMonthSplit = viewModel.getCurrentDate().split(".")
+        val year = yearMonthSplit[0]
+        val month = yearMonthSplit[1].removePrefix("0")
+        val formatYearMonth = "$year,$month"
+
+        binding.diaryGroupListRv.apply {
+            adapter = diaryGroupAdapter
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            addItemDecoration(DiaryItemDecoration(context))
+        }
+
+        groupPaging(formatYearMonth, diaryGroupAdapter)
     }
 
-    private fun paging(
-        month: String,
-        isPersonal: Boolean,
-        personalAdapter: DiaryAdapter?,
-        groupAdapter: DiaryGroupAdapter?
+    private fun groupPaging(
+        date: String,
+        adapter: PagingDataAdapter<DiaryEvent, RecyclerView.ViewHolder>?
     ) {
-        val diaryPersonalPagingSource = DiaryPersonalPagingSource(month)
-        val diaryGroupPagingSource = DiaryGroupPagingSource(month,binding.diaryGroupListRv,binding.diaryListEmptyTv)
-
-        val diaryPagingSource = if (isPersonal) {
-            diaryPersonalPagingSource
-        } else {
-            diaryGroupPagingSource
-        }
-
-        val adapterToSubmit = if (isPersonal) {
-            personalAdapter
-        } else {
-            groupAdapter
-        }
-
-        val pagingConfig = PagingConfig(
-            pageSize = 10,
-            enablePlaceholders = false // placeholders 사용 여부
-        )
-
         // Pager를 통해 페이징 데이터 생성
         pagingDataFlow = Pager(
-            config = pagingConfig,
-            pagingSourceFactory = { diaryPagingSource }
+            config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+            pagingSourceFactory = { DiaryGroupPagingSource(date,binding.diaryGroupListRv,binding.diaryListEmptyTv) }
         ).flow
 
         // 페이징 데이터 플로우를 수집하여 데이터를 어댑터에 제출
         lifecycleScope.launch {
             pagingDataFlow.collectLatest { pagingData ->
-                adapterToSubmit?.submitData(pagingData)
+                adapter?.submitData(pagingData)
             }
         }
     }
