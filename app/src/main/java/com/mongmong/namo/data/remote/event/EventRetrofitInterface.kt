@@ -16,9 +16,8 @@ import retrofit2.http.Path
 interface EventRetrofitInterface {
     @POST("schedules")
     fun postEvent(
-//        @Header("Authorization") token : String,
         @Body event : EventForUpload
-    ) : Call<PostEventResponse>
+    ) : PostEventResponse
 
     @PATCH("schedules/{serverIdx}")
     fun editEvent(

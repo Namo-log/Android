@@ -6,13 +6,12 @@ import com.mongmong.namo.data.local.entity.home.EventForUpload
 import com.mongmong.namo.domain.model.DeleteEventResponse
 import com.mongmong.namo.domain.model.EditEventResponse
 import com.mongmong.namo.domain.model.GetMonthEventResponse
-import com.mongmong.namo.domain.model.PostEventResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 
-class EventService() {
+class EventService {
     private lateinit var eventView : EventView
     private lateinit var deleteEventView : DeleteEventView
     private lateinit var getMonthEventView : GetMonthEventView
@@ -47,6 +46,7 @@ class EventService() {
     val eventRetrofitInterface = ApplicationClass.sRetrofit.create(EventRetrofitInterface::class.java)
 
     fun postEvent(body : EventForUpload, eventId : Long) {
+        /*
         eventRetrofitInterface.postEvent(body).enqueue(object : Callback<PostEventResponse> {
             override fun onResponse(call: Call<PostEventResponse>, response: Response<PostEventResponse>) {
                 when (response.code()) {
@@ -63,6 +63,7 @@ class EventService() {
                 eventView.onPostEventFailure(t.message ?: "통신 오류")
             }
         })
+        */
     }
 
     fun editEvent(serverIdx : Long, body: EventForUpload, eventId : Long) {

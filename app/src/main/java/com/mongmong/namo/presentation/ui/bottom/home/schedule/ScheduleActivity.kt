@@ -11,6 +11,7 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.mongmong.namo.R
@@ -24,8 +25,11 @@ import com.mongmong.namo.presentation.ui.bottom.home.notify.PushNotificationRece
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.NetworkManager
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 
+@AndroidEntryPoint
 class ScheduleActivity : AppCompatActivity(), DeleteEventView, ConfirmDialogInterface {
 
     private lateinit var binding : ActivityScheduleBinding
@@ -114,14 +118,8 @@ class ScheduleActivity : AppCompatActivity(), DeleteEventView, ConfirmDialogInte
 
     private fun uploadToServer(event: Event) {
         //룸디비에 isUpload, serverId, state 업데이트하기
-        var thread = Thread {
+        lifecycleScope.launch {
             db.eventDao.updateEventAfterUpload(event.eventId, 0, event.serverIdx, R.string.event_current_deleted.toString())
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch ( e: InterruptedException) {
-            e.printStackTrace()
         }
 
         if (!NetworkManager.checkNetworkState(this)) {

@@ -31,6 +31,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.mongmong.namo.presentation.ui.MainActivity
@@ -39,7 +41,6 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Event
-import com.mongmong.namo.data.local.entity.home.EventForUpload
 import com.mongmong.namo.domain.model.EditEventResponse
 import com.mongmong.namo.data.remote.event.EventService
 import com.mongmong.namo.data.remote.event.EventView
@@ -54,18 +55,18 @@ import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.getInterval
 import com.mongmong.namo.presentation.utils.NetworkManager
 import com.google.android.material.chip.Chip
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 import org.joda.time.DateTime
 
+@AndroidEntryPoint
 class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView {
 
     private lateinit var binding : FragmentScheduleDialogBasicBinding
     private val args : ScheduleDialogBasicFragmentArgs by navArgs()
-    private val scope = CoroutineScope(IO)
 
     var isEdit : Boolean = false
     private var event : Event = Event()
@@ -112,6 +113,8 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
 
     private var clickable = true // 중복 생성을 방지하기 위함
 
+    private val viewModel : ScheduleViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -124,6 +127,8 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         binding.dialogSchedulePlaceKakaoBtn.visibility = View.GONE
         binding.dialogSchedulePlaceContainer.visibility = View.GONE
         mapViewContainer?.visibility = View.GONE
+
+        initObservers()
 
         if (args.event != null) {
             event = args.event!!
@@ -368,26 +373,9 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
                     // 개인일정일 경우
                     else {
                         if (event.eventId == 0L) {
-                            // 일정 추가
-                            // 현재 일정의 상태가 추가 상태임을 나타냄
-                            event.state = R.string.event_current_added.toString()
-                            event.isUpload = 0
-                            event.serverIdx = 0
-
-                            // 새 일정 등록
-                            var storeDB = Thread {
-                                scheduleIdx = db.eventDao.insertEvent(event)
+                            lifecycleScope.launch {
+                                insertData()
                             }
-                            storeDB.start()
-                            try {
-                                storeDB.join()
-                            } catch (e: InterruptedException) {
-                                e.printStackTrace()
-                            }
-
-                            setAlarm(event.startLong)
-
-                            uploadToServer(R.string.event_current_added.toString())
                         } else {
                             // 일정 수정
                             event.state = R.string.event_current_edited.toString()
@@ -422,6 +410,18 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
                 clickable = false
             }
         }
+    }
+
+    /** 일정 추가 **/
+    private fun insertData() {
+        // 현재 일정의 상태가 추가 상태임을 나타냄
+        event.state = R.string.event_current_added.toString()
+        event.isUpload = 0
+        event.serverIdx = 0
+
+        // 새 일정 등록
+        viewModel.addSchedule(event)
+        requireActivity().finish()
     }
 
     private fun hidekeyboard() {
@@ -606,6 +606,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
 
         mapView.addPOIItem(marker)
     }
+
     private fun getLocationPermission() {
         val permissionCheck = ContextCompat.checkSelfPermission(requireActivity(),
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -792,6 +793,12 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         }
     }
 
+    private fun initObservers() {
+        viewModel.schedule.observe(requireActivity()) { schedule ->
+            binding.dialogScheduleTitleEt.setText(schedule.title)
+        }
+    }
+
 
     // Category Zone
     private fun initCategory() {
@@ -842,10 +849,10 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
 
         when(state) {
             R.string.event_current_added.toString() -> {
-                eventService.postEvent(event.eventToEventForUpload(event), scheduleIdx)
+                eventService.postEvent(event.eventToEventForUpload(), scheduleIdx)
             }
             R.string.event_current_edited.toString() -> {
-                eventService.editEvent(event.serverIdx, event.eventToEventForUpload(event), scheduleIdx)
+                eventService.editEvent(event.serverIdx, event.eventToEventForUpload(), scheduleIdx)
             }
             else -> {
                 Log.d("ScheduleBasic", "서버 업로드 중 state 오류")
@@ -874,27 +881,12 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
     override fun onPostEventSuccess(response: PostEventResponse, eventId : Long) {
         Log.d("ScheduleBasic", "onPostEventSuccess : ${response.result.eventIdx} eventId : ${eventId}")
 
-        var result = response.result
-
-//        scope.launch {
-//            db.eventDao.updateEventAfterUpload(
-//                eventId,
-//                1,
-//                result.eventIdx,
-//                R.string.event_current_default.toString()
-//            )
-//        }
+        val result = response.result
 
         //룸디비에 isUpload, serverId, state 업데이트하기
-        val thread = Thread {
+        lifecycleScope.launch {
             db.eventDao.updateEventAfterUpload(eventId, 1, result.eventIdx, R.string.event_current_default.toString())
             Log.d("UPDATE_AFTER",db.eventDao.getEventById(eventId).toString())
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch ( e: InterruptedException) {
-            e.printStackTrace()
         }
         Log.d("UPDATE_AFTER", "Update after Post finish")
 
@@ -914,14 +906,8 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         val result = response.result
 
         //룸디비에 isUpload, serverId, state 업데이트하기
-        var thread = Thread {
+        lifecycleScope.launch {
             db.eventDao.updateEventAfterUpload(eventId, 1, result.eventIdx, R.string.event_current_default.toString())
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch ( e: InterruptedException) {
-            e.printStackTrace()
         }
 
         requireActivity().finish()

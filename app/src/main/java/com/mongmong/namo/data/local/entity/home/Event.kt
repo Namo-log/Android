@@ -60,17 +60,17 @@ data class Event(
     var moimSchedule: Boolean = false
 
 ) : Serializable {
-    fun eventToEventForUpload(event : Event) : EventForUpload {
+    fun eventToEventForUpload() : EventForUpload {
         return EventForUpload(
-            name = event.title,
-            startDate = event.startLong,
-            endDate = event.endLong,
-            interval = event.dayInterval,
-            alarmDate = event.alarmList,
-            x = event.placeX,
-            y = event.placeY,
-            locationName = event.placeName,
-            categoryId = event.categoryServerIdx,
+            name = this.title,
+            startDate = this.startLong,
+            endDate = this.endLong,
+            interval = this.dayInterval,
+            alarmDate = this.alarmList,
+            x = this.placeX,
+            y = this.placeY,
+            locationName = this.placeName,
+            categoryId = this.categoryServerIdx,
         )
     }
 }

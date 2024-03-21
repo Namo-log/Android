@@ -4,7 +4,7 @@ import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 
 data class PostEventResponse (
-    @SerializedName("result") val result : PostEventResult
+    val result : PostEventResult
 ) : BaseResponse()
 
 data class PostEventResult (
