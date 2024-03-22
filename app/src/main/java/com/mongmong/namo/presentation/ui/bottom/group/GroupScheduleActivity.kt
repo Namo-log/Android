@@ -113,9 +113,9 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimS
         val slideAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up)
         binding.scheduleContainerLayout.startAnimation(slideAnimation)
 
-//        if (this.event.eventId != 0L) {
+//        if (this.event.scheduleId != 0L) {
 //            binding.dialogGroupScheduleHeaderTv.text = "일정 편집"
-//            scheduleIdx = this.event.eventId
+//            scheduleIdx = this.event.scheduleId
 //        } else {
 //            binding.dialogGroupScheduleHeaderTv.text = "새 일정"
 //        }

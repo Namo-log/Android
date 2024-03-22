@@ -43,7 +43,7 @@ class ScheduleDialogCategoryFragment : Fragment() {
         db = NamoDatabase.getInstance(requireContext())
         event = args.event
 
-        selectedCategory = event.categoryIdx
+        selectedCategory = event.categoryId
 
         onClickCategoryEdit()
 
@@ -71,10 +71,10 @@ class ScheduleDialogCategoryFragment : Fragment() {
                     // 아이템 클릭
                     override fun onSendIdx(category: Category) {
                         // 카테고리 세팅
-                        event.categoryIdx = category.categoryIdx
-                        event.categoryServerIdx = category.serverIdx
-                        Log.d("TEST_CATEGORY", "In category : ${event.categoryIdx}")
-                        Log.d("TEST_CATEGORY", "In category Server: ${event.categoryServerIdx}")
+                        event.categoryId = category.categoryId
+                        event.categoryServerId = category.serverId
+                        Log.d("TEST_CATEGORY", "In category : ${event.categoryId}")
+                        Log.d("TEST_CATEGORY", "In category Server: ${event.categoryServerId}")
                         Log.d("TEST_CATEGORY", "In category Result: ${event}")
                         val action = ScheduleDialogCategoryFragmentDirections.actionScheduleDialogCategoryFragmentToScheduleDialogBasicFragment(event)
                         findNavController().navigate(action)

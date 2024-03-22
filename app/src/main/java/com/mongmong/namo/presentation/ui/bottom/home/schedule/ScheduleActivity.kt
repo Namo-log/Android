@@ -103,11 +103,11 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
             // 알림 리스트 삭제
             alarmList = event.alarmList!!.toMutableList()
             for (i in alarmList) {
-                deleteNotification(event.eventId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt(), event!!)
+                deleteNotification(event.scheduleId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt(), event!!)
             }
 
             // 일정 삭제
-            viewModel.deleteSchedule(event.eventId, event.serverIdx)
+            viewModel.deleteSchedule(event.scheduleId, event.serverId)
 
             Toast.makeText(this, "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
 

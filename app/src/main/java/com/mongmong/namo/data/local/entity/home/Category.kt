@@ -7,14 +7,14 @@ import java.io.Serializable
 
 @Entity(tableName="category_table")
 data class Category(
-    @PrimaryKey(autoGenerate = true) val categoryIdx: Long = 0,
+    @PrimaryKey(autoGenerate = true) val categoryId: Long = 0,
     var name : String = "",
     var color : Int = 0,
     var share : Boolean = false,
     var active : Boolean = true,
     var isUpload : Int = 0,
     var state : String = R.string.event_current_default.toString(),
-    var serverIdx : Long = 0L
+    var serverId : Long = 0L
 ) : Serializable
 
 data class CategoryForUpload(

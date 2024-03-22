@@ -6,10 +6,10 @@ import androidx.room.PrimaryKey
 import com.mongmong.namo.R
 import java.io.Serializable
 
-@Entity(tableName = "calendar_event_table")
+@Entity(tableName = "schedule_table")
 data class Event(
     @PrimaryKey(autoGenerate = true)
-    var eventId: Long = 0L,
+    var scheduleId: Long = 0L,
 
     @ColumnInfo(name = "title")
     var title: String = "",
@@ -24,13 +24,13 @@ data class Event(
     var endDate: Int = 0,
 
     @ColumnInfo(name = "categoryId")
-    var categoryIdx: Long = 0L,
+    var categoryId: Long = 0L,
 
     @ColumnInfo(name = "place")
     var placeName: String = "없음",
 
     @ColumnInfo(name = "placeX")
-    var place: Double = 0.0,
+    var placeX: Double = 0.0,
 
     @ColumnInfo(name = "placeY")
     var placeY: Double = 0.0,
@@ -48,10 +48,10 @@ data class Event(
     var state: String = R.string.event_current_default.toString(),
 
     @ColumnInfo(name = "serverId")
-    var serverIdx: Long = 0L,
+    var serverId: Long = 0L,
 
     @ColumnInfo(name = "categoryServerId")
-    var categoryServerIdx: Long = 0L,
+    var categoryServerId: Long = 0L,
 
     @ColumnInfo(name = "hasDiary")
     var hasDiary: Int = 0,
@@ -67,10 +67,10 @@ data class Event(
             endDate = this.endLong,
             interval = this.endDate,
             alarmDate = this.alarmList,
-            x = this.place,
+            x = this.placeX,
             y = this.placeY,
             locationName = this.placeName,
-            categoryId = this.categoryServerIdx,
+            categoryId = this.categoryServerId,
         )
     }
 }

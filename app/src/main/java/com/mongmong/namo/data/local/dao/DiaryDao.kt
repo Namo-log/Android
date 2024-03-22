@@ -15,24 +15,24 @@ interface DiaryDao {
     @Update
     fun updateDiary(diary: Diary)
 
-    @Query("DELETE FROM diary_table WHERE diaryId=:eventId")
-    fun deleteDiary(eventId: Long)
+    @Query("DELETE FROM diary_table WHERE diaryId=:scheduleId")
+    fun deleteDiary(scheduleId: Long)
 
     @Query("DELETE FROM diary_table")
     fun deleteAllDiaries()
 
-    @Query("UPDATE calendar_event_table SET hasDiary= 1 WHERE eventId =:scheduleIdx")
+    @Query("UPDATE schedule_table SET hasDiary= 1 WHERE scheduleId =:scheduleIdx")
     fun updateHasDiary(scheduleIdx: Long)
 
-    @Query("UPDATE calendar_event_table SET hasDiary= 0 WHERE eventId =:scheduleIdx")
+    @Query("UPDATE schedule_table SET hasDiary= 0 WHERE scheduleId =:scheduleIdx")
     fun deleteHasDiary(scheduleIdx: Long)
 
     @Query("SELECT * FROM diary_table WHERE diaryId=:scheduleId")
     fun getDiaryDaily(scheduleId: Long): Diary
 
     @Query(
-        "SELECT * FROM calendar_event_table e JOIN diary_table d ON diaryId = eventId " +
-                "WHERE strftime('%Y.%m', e.title, 'unixepoch') = :yearMonth AND d.state != ${R.string.event_current_deleted} " +
+        "SELECT * FROM schedule_table e JOIN diary_table d ON diaryId = scheduleId " +
+                "WHERE strftime('%Y.%m', e.startDate, 'unixepoch') = :yearMonth AND d.state != ${R.string.event_current_deleted} " +
                 "AND e.isMoim = 0 ORDER BY e.startDate DESC LIMIT :size OFFSET :page * :size"
     )
     fun getDiaryEventList(yearMonth: String, page: Int, size: Int): List<DiaryEvent>
@@ -43,7 +43,7 @@ interface DiaryDao {
     @Query("SELECT * FROM diary_table WHERE isUpload = 0")
     fun getNotUploadedDiary(): List<Diary>
 
-    @Query("SELECT * FROM calendar_event_table")
+    @Query("SELECT * FROM schedule_table")
     fun getAllEvent(): List<Event>
 
 }

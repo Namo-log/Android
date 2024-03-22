@@ -27,7 +27,7 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
 
     class DiaryDiffCallback : DiffUtil.ItemCallback<DiaryEvent>() {
         override fun areItemsTheSame(oldItem: DiaryEvent, newItem: DiaryEvent): Boolean {
-            return oldItem.eventId == newItem.eventId
+            return oldItem.scheduleId == newItem.scheduleId
         }
 
         @SuppressLint("DiffUtilEquals")

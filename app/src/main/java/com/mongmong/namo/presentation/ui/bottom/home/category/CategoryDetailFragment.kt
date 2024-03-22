@@ -123,7 +123,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             // 룸디비에 isUpload, serverId, state 업데이트하기
             val thread = Thread {
                 category = db.categoryDao.getCategoryWithId(categoryId)
-                db.categoryDao.updateCategoryAfterUpload(categoryId, 0, category.serverIdx, state)
+                db.categoryDao.updateCategoryAfterUpload(categoryId, 0, category.serverId, state)
                 failList.clear()
                 failList.addAll(db.categoryDao.getNotUploadedCategory() as ArrayList<Category>)
             }
@@ -291,8 +291,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                 // 데이터 값 넣어주기
                 with(binding) {
                     //카테고리 ID로 넘겨받은 카테고리 세팅
-                    categoryId = data.categoryIdx
-                    serverId = data.serverIdx
+                    categoryId = data.categoryId
+                    serverId = data.serverId
                     // 카테고리 이름
                     categoryDetailTitleEt.setText(data.name)
                     // 카테고리 색
@@ -339,7 +339,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             R.string.event_current_default.toString() -> {
                 val thread = Thread {
                     db.categoryDao.updateCategoryAfterUpload(categoryId, 1, result!!.categoryId, state)
-                    db.categoryDao.updateCategory(category.copy(serverIdx = result.categoryId))
+                    db.categoryDao.updateCategory(category.copy(serverId = result.categoryId))
                 }
                 thread.start()
                 try {
@@ -347,7 +347,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                 } catch ( e: InterruptedException) {
                     e.printStackTrace()
                 }
-//                Log.e("CategoryDetailFrag", "serverId 업데이트 성공, 업데이트 serverId: ${category.serverIdx}, 실제: ${result!!.categoryId}")
+//                Log.e("CategoryDetailFrag", "serverId 업데이트 성공, 업데이트 serverId: ${category.serverId}, 실제: ${result!!.categoryId}")
             }
             // 서버 업로드 실패
             else -> {
@@ -386,7 +386,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
     // 카테고리 수정
     override fun onPatchCategorySuccess(response: PostCategoryResponse, categoryId: Long) {
-        Log.d("CategoryDetailFrag", "onPatchCategorySuccess, categoryIdx = $categoryId")
+        Log.d("CategoryDetailFrag", "onPatchCategorySuccess, categoryId = $categoryId")
         // 룸디비에 isUpload, serverId, state 업데이트하기
         updateCategoryAfterUpload(response, R.string.event_current_default.toString())
     }

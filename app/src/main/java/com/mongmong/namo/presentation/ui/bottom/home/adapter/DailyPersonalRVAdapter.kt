@@ -78,8 +78,8 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
         fun bind(personal : Event) {
             val time = DateTime(personal.startLong * 1000L).toString("HH:mm") + " - " + DateTime(personal.endLong * 1000L).toString("HH:mm")
             val category = categoryList.find {
-                if (it.serverIdx != 0L) it.serverIdx == personal.categoryServerIdx
-                else it.categoryIdx == personal.categoryIdx }!!
+                if (it.serverId != 0L) it.serverId == personal.categoryServerId
+                else it.categoryId == personal.categoryId }!!
 
             binding.itemCalendarTitle.text = personal.title
             binding.itemCalendarTitle.isSelected = true

@@ -19,7 +19,7 @@ class ScheduleRepositoryImpl @Inject constructor(
         val list = localScheduleDataSource.getDailySchedules(startDate, endDate)
         Log.d("ScheduleRepositoryImpl", "getDailySchedules")
         list.forEach { event ->
-            Log.d("getDailySchedules", "${event.eventId}, ${event.title}")
+            Log.d("getDailySchedules", "${event.scheduleId}, ${event.title}")
         }
         return list
     }
@@ -32,8 +32,8 @@ class ScheduleRepositoryImpl @Inject constructor(
             if (addResponse.code == SUCCESS_CODE) {
                 Log.d("ScheduleRepositoryImpl", "addSchedule Success")
                 localScheduleDataSource.updateScheduleAfterUpload(
-                    localId = schedule.eventId,
-                    serverId = addResponse.result.eventIdx,
+                    localId = schedule.scheduleId,
+                    serverId = addResponse.result.scheduleIdx,
                     isUpload = 1,
                     status = R.string.event_current_default.toString(),
                 )
@@ -47,12 +47,12 @@ class ScheduleRepositoryImpl @Inject constructor(
         Log.d("ScheduleRepositoryImpl", "editSchedule $schedule")
         localScheduleDataSource.editSchedule(schedule)
         if (networkChecker.isOnline()) {
-            val editResponse = remoteScheduleDataSource.editScheduleToServer(schedule.eventId, schedule.eventToEventForUpload())
+            val editResponse = remoteScheduleDataSource.editScheduleToServer(schedule.scheduleId, schedule.eventToEventForUpload())
             if (editResponse.code == SUCCESS_CODE) {
                 Log.d("ScheduleRepositoryImpl", "editSchedule Success")
                 localScheduleDataSource.updateScheduleAfterUpload(
-                    localId = schedule.eventId,
-                    serverId = editResponse.result.eventIdx,
+                    localId = schedule.scheduleId,
+                    serverId = editResponse.result.scheduleIdx,
                     isUpload = 1,
                     status = R.string.event_current_default.toString(),
                 )

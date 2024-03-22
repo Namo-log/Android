@@ -223,7 +223,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     private fun onEditClickListener(item: DiaryEvent) {  // 개인 기록 수정 클릭리스너
 
         val event = Event(
-            item.eventId,
+            item.scheduleId,
             item.title,
             item.startDate, 0L, 0,
             item.categoryId, item.place,
@@ -242,7 +242,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     private fun onDetailClickListener(item: DiaryEvent) {  // 그룹 기록 수정 클릭리스너
 
         val monthDiary = MonthDiary(
-            item.eventId, item.title, item.startDate, item.content,
+            item.scheduleId, item.title, item.startDate, item.content,
             item.images ?: emptyList(), item.categoryId, 0L, item.place
         )
 

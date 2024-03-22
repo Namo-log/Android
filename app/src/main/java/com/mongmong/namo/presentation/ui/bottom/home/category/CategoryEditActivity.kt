@@ -93,7 +93,7 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
         // 룸디비에 isUpload, serverId, state 업데이트하기
         val thread = Thread {
             category = db.categoryDao.getCategoryWithId(categoryId)
-            db.categoryDao.updateCategoryAfterUpload(categoryId, 0, category.serverIdx, state)
+            db.categoryDao.updateCategoryAfterUpload(categoryId, 0, category.serverId, state)
             failList.clear()
             failList.addAll(db.categoryDao.getNotUploadedCategory() as ArrayList<Category>)
         }
@@ -127,7 +127,7 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
                 } catch ( e: InterruptedException) {
                     e.printStackTrace()
                 }
-                Log.e("CategoryEditAct", "serverId 업데이트 성공, serverId: ${category.serverIdx}, categoryId: ${categoryId}")
+                Log.e("CategoryEditAct", "serverId 업데이트 성공, serverId: ${category.serverId}, categoryId: ${categoryId}")
             }
             // 서버 업로드 실패
             else -> {

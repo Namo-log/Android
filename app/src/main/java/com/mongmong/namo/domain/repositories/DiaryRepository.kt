@@ -24,7 +24,7 @@ interface DiaryRepository {
     )
     suspend fun uploadDiaryToServer()
 
-    suspend fun postDiaryToServer(serverId: Long, eventId: Long)
+    suspend fun postDiaryToServer(serverId: Long, scheduleId: Long)
 
     fun getPersonalDiaryPagingSource(month: String): PagingSource<Int, DiaryEvent>
 }

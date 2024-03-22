@@ -60,8 +60,8 @@ class DiaryViewModel @Inject constructor(
     /** 개인 기록 추가시 데이터 초기화 **/
     fun setNewDiary(event: Event, content: String) {
         _diary.value = Diary(
-            diaryId = event.eventId,
-            serverId = event.serverIdx,
+            diaryId = event.scheduleId,
+            serverId = event.serverId,
             content = content,
             images = _imgList.value,
             state = R.string.event_current_added.toString()

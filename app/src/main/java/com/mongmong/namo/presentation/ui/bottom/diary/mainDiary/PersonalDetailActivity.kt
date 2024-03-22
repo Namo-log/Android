@@ -66,7 +66,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         event = (intent.getSerializableExtra("event") as? Event)!!
         hasDiary()
 
-        val category = repo.getCategory(event.categoryIdx, event.categoryServerIdx)
+        val category = repo.getCategory(event.categoryId, event.categoryServerId)
         binding.itemDiaryCategoryColorIv.background.setTint(category.color)
 
         binding.apply {
@@ -92,8 +92,8 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
                 diaryEditTv.setBackgroundResource(R.color.MainOrange)
                 diaryDeleteIv.visibility = View.GONE
             } else {  // 기록 있을 때, 수정
-                //diary = repo.getDiary(event.eventId) // 개별 다이어리 조회
-                viewModel.getExistingDiary(event.eventId)
+                //diary = repo.getDiary(event.scheduleId) // 개별 다이어리 조회
+                viewModel.getExistingDiary(event.scheduleId)
                 diaryEditTv.text = resources.getString(R.string.diary_edit)
                 diaryEditTv.setTextColor(getColor(R.color.MainOrange))
                 diaryEditTv.setBackgroundResource(R.color.white)
@@ -147,10 +147,10 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         )
 
         /*repo.editDiary(
-            event.eventId,
+            event.scheduleId,
             binding.diaryContentsEt.text.toString(),
             imgList as List<String>?,
-            event.serverIdx
+            event.serverId
         )*/
 
         Toast.makeText(this, "수정되었습니다", Toast.LENGTH_SHORT).show()
@@ -159,7 +159,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
-        viewModel.deleteDiary(event.eventId, event.serverIdx)
+        viewModel.deleteDiary(event.scheduleId, event.serverId)
         Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
         finish()
     }

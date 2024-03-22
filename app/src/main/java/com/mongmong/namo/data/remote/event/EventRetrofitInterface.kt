@@ -21,13 +21,13 @@ interface EventRetrofitInterface {
 
     @PATCH("schedules/{serverIdx}")
     fun editEvent(
-        @Path("serverIdx") serverIdx : Long,
+        @Path("serverIdx") serverId : Long,
         @Body event : EventForUpload
     ) : EditEventResponse
 
     @DELETE("schedules/{serverIdx}/{kind}")
     fun deleteEvent(
-        @Path("serverIdx") serverIdx : Long,
+        @Path("serverIdx") serverId : Long,
         @Path("kind") isMoimSchedule: Int,
     ) : DeleteEventResponse
 

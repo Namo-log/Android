@@ -132,9 +132,9 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
             initCategory()
         }
 
-        if (event.eventId != 0L) {
+        if (event.scheduleId != 0L) {
             binding.dialogScheduleHeaderTv.text = "일정 편집"
-            scheduleIdx = event.eventId
+            scheduleIdx = event.scheduleId
         } else {
             binding.dialogScheduleHeaderTv.text = "새 일정"
         }
@@ -154,7 +154,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
                 Log.d("PLACE_INFO", "name : $place_name , x : $place_x , y : $place_y")
 
                 event.placeName = place_name
-                event.place = place_x
+                event.placeX = place_x
                 event.placeY = place_y
 
                 initMapView()
@@ -334,21 +334,21 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
                 moimService.setEditMoimScheduleView(this)
                 moimService.patchMoimScheduleCategory(
                     PatchMoimScheduleCategoryBody(
-                        event.serverIdx,
-                        event.categoryServerIdx
+                        event.serverId,
+                        event.categoryServerId
                     )
                 )
                 if (isMoimSchedulePrevAlarm) {
                     moimService.patchMoimScheduleAlarm(
                         MoimScheduleAlarmBody(
-                            event.serverIdx,
+                            event.serverId,
                             event.alarmList!!
                         )
                     )
                 } else {
                     moimService.postMoimScheduleAlarm(
                         MoimScheduleAlarmBody(
-                            event.serverIdx,
+                            event.serverId,
                             event.alarmList!!
                         )
                     )
@@ -356,7 +356,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
             }
             // 개인일정일 경우
             else {
-                if (event.eventId == 0L) {
+                if (event.scheduleId == 0L) {
                     lifecycleScope.launch {
                         insertData()
                     }
@@ -375,7 +375,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         // 현재 일정의 상태가 추가 상태임을 나타냄
         event.state = R.string.event_current_added.toString()
         event.isUpload = 0
-        event.serverIdx = 0
+        event.serverId = 0
 
         // 새 일정 등록
         viewModel.addSchedule(event)
@@ -392,7 +392,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         // 이전 알람 삭제 후 변경 알람 저장
         for (i in prevAlarmList!!) {
             deleteNotification(
-                event.eventId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt()
+                event.scheduleId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt()
             )
         }
         setAlarm(event.startLong)
@@ -599,9 +599,9 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
                 val intent = Intent(requireActivity(), MapActivity::class.java)
                 intent.putExtra(MainActivity.ORIGIN_ACTIVITY_INTENT_KEY, "Schedule")
-                if (event.place != 0.0 && event.placeY != 0.0) {
+                if (event.placeX != 0.0 && event.placeY != 0.0) {
                     intent.putExtra("PREV_PLACE_NAME", event.placeName)
-                    intent.putExtra("PREV_PLACE_X", event.place)
+                    intent.putExtra("PREV_PLACE_X", event.placeX)
                     intent.putExtra("PREV_PLACE_Y", event.placeY)
                 }
                 getResult.launch(intent)
@@ -632,14 +632,14 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         Log.d("TEST_CATEGORY", categoryList.toString())
         Log.d("TEST_CATEGORY", event.toString())
         val category = categoryList.find {
-            if (it.serverIdx != 0L) it.serverIdx == event.categoryServerIdx
-            else it.categoryIdx == event.categoryIdx
+            if (it.serverId != 0L) it.serverId == event.categoryServerId
+            else it.categoryId == event.categoryId
         }
         if (category != null) {
             selectedCategory = category
         }
-        event.categoryIdx = selectedCategory.categoryIdx
-        event.categoryServerIdx = selectedCategory.serverIdx
+        event.categoryId = selectedCategory.categoryId
+        event.categoryServerId = selectedCategory.serverId
         setCategory()
 
         //시작일, 종료일
@@ -664,10 +664,10 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
         //장소
         place_name = event.placeName
-        place_x = event.place
+        place_x = event.placeX
         place_y = event.placeY
 
-        if (event.place != 0.0 || event.placeY != 0.0) {
+        if (event.placeX != 0.0 || event.placeY != 0.0) {
             initMapView()
             setMapContent()
         }
@@ -788,8 +788,8 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
         categoryList = setCategoryList(db)
         selectedCategory = categoryList[0]
-        event.categoryIdx = selectedCategory.categoryIdx
-        event.categoryServerIdx = selectedCategory.serverIdx
+        event.categoryId = selectedCategory.categoryId
+        event.categoryServerId = selectedCategory.serverId
 
         setCategory()
     }
@@ -811,7 +811,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     }
 
     private fun setCategory() {
-        event.categoryServerIdx = selectedCategory.serverIdx
+        event.categoryServerId = selectedCategory.serverId
         binding.dialogScheduleCategoryNameTv.text = selectedCategory.name
         binding.dialogScheduleCategoryColorIv.background.setTint(selectedCategory.color)
     }
@@ -871,7 +871,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         if (isMoimScheduleCategorySaved && isMoimScheduleAlarmSaved) {
             val thread = Thread {
                 db.eventDao.updateEvent(event)
-//                Log.d("UPDATE_MOIM_SCHEDULE", db.eventDao.getEventById(event.eventId).toString())
+//                Log.d("UPDATE_MOIM_SCHEDULE", db.eventDao.getEventById(event.scheduleId).toString())
             }
 
             thread.start()

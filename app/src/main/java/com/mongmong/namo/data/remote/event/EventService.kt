@@ -45,12 +45,12 @@ class EventService {
 
     val eventRetrofitInterface = ApplicationClass.sRetrofit.create(EventRetrofitInterface::class.java)
 
-    fun postEvent(body : EventForUpload, eventId : Long) {
+    fun postEvent(body : EventForUpload, scheduleId : Long) {
         /*
         eventRetrofitInterface.postEvent(body).enqueue(object : Callback<PostEventResponse> {
             override fun onResponse(call: Call<PostEventResponse>, response: Response<PostEventResponse>) {
                 when (response.code()) {
-                    200 -> eventView.onPostEventSuccess(response.body() as PostEventResponse, eventId)
+                    200 -> eventView.onPostEventSuccess(response.body() as PostEventResponse, scheduleId)
                     else -> {
                         Log.d("PostEvent", "Success but error")
                         eventView.onPostEventFailure("통신 중 200 외 기타 코드")
@@ -66,13 +66,13 @@ class EventService {
         */
     }
 
-    fun editEvent(serverIdx : Long, body: EventForUpload, eventId : Long) {
+    fun editEvent(serverId : Long, body: EventForUpload, scheduleId : Long) {
         /*
-        Log.d("EditEvent", "serverIdx : $serverIdx")
-        eventRetrofitInterface.editEvent(serverIdx, body).enqueue(object : Callback<EditEventResponse> {
+        Log.d("EditEvent", "serverId : $serverId")
+        eventRetrofitInterface.editEvent(serverId, body).enqueue(object : Callback<EditEventResponse> {
             override fun onResponse(call: Call<EditEventResponse>, response: Response<EditEventResponse>) {
                 when (response.code()) {
-                    200 -> eventView.onEditEventSuccess(response.body() as EditEventResponse, eventId)
+                    200 -> eventView.onEditEventSuccess(response.body() as EditEventResponse, scheduleId)
                     else -> {
                         Log.d("EditEvent", "Success but error")
                         eventView.onEditEventFailure("통신 중 200 외 기타 코드")
@@ -89,12 +89,12 @@ class EventService {
          */
     }
 
-    fun deleteEvent(serverIdx: Long, eventId : Long, isMoimSchedule: Int) {
+    fun deleteEvent(serverId: Long, scheduleId : Long, isMoimSchedule: Int) {
         /*
-        eventRetrofitInterface.deleteEvent(serverIdx, isMoimSchedule).enqueue(object : Callback<DeleteEventResponse> {
+        eventRetrofitInterface.deleteEvent(serverId, isMoimSchedule).enqueue(object : Callback<DeleteEventResponse> {
             override fun onResponse(call: Call<DeleteEventResponse>, response: Response<DeleteEventResponse>) {
                 when (response.code()) {
-                    200 -> deleteEventView.onDeleteEventSuccess(response.body() as DeleteEventResponse, eventId)
+                    200 -> deleteEventView.onDeleteEventSuccess(response.body() as DeleteEventResponse, scheduleId)
                     else -> {
                         Log.d("DeleteEvent", "Success but error")
                         deleteEventView.onDeleteEventFailure("통신 중 200 외 기타 코드")

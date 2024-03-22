@@ -4,7 +4,7 @@ package com.mongmong.namo.data.local.entity.diary
 
 
 data class DiaryEvent(
-    var eventId: Long = 0L,
+    var scheduleId: Long = 0L,
     var title: String = "",
     var startDate: Long = 0,
     var categoryId: Long = 0L,

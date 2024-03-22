@@ -19,39 +19,39 @@ interface EventDao {
     @Update
     fun updateEvent(event : Event)
 
-    @Query("DELETE FROM calendar_event_table")
+    @Query("DELETE FROM schedule_table")
     fun deleteAllEvents()
 
-    @Query("SELECT COUNT(*) FROM calendar_event_table")
+    @Query("SELECT COUNT(*) FROM schedule_table")
     fun getAllEvent() : Int
 
-    @Query("SELECT * FROM calendar_event_table WHERE startDate <= :todayEnd AND endDate >= :todayStart AND state != ${R.string.event_current_deleted} ORDER BY dayInterval DESC")
+    @Query("SELECT * FROM schedule_table WHERE startDate <= :todayEnd AND endDate >= :todayStart AND state != ${R.string.event_current_deleted} ORDER BY dayInterval DESC")
     fun getEventDaily(todayStart : Long, todayEnd : Long) : List<Event>
 
-    @Query("SELECT * FROM calendar_event_table WHERE startDate <= :monthEnd AND endDate >= :monthStart AND state != ${R.string.event_current_deleted} ORDER BY dayInterval DESC")
+    @Query("SELECT * FROM schedule_table WHERE startDate <= :monthEnd AND endDate >= :monthStart AND state != ${R.string.event_current_deleted} ORDER BY dayInterval DESC")
     fun getEventMonth(monthStart : Long, monthEnd : Long) : List<Event>
 
-    @Query("SELECT * FROM calendar_event_table WHERE startDate <= :calendarEnd AND endDate >= :calendarStart AND state != ${R.string.event_current_deleted} ORDER BY dayInterval DESC")
+    @Query("SELECT * FROM schedule_table WHERE startDate <= :calendarEnd AND endDate >= :calendarStart AND state != ${R.string.event_current_deleted} ORDER BY dayInterval DESC")
     fun getEventCalendar(calendarStart : Long, calendarEnd : Long) : List<Event>
 
-    @Query("SELECT * FROM calendar_event_table WHERE categoryId == :categoryIdx")
-    fun getEventWithCategoryIdx(categoryIdx : Int) : List<Event>
+    @Query("SELECT * FROM schedule_table WHERE categoryId == :categoryId")
+    fun getEventWithcategoryId(categoryId : Int) : List<Event>
 
-    @Query("SELECT * FROM calendar_event_table WHERE isUpload = 0")
+    @Query("SELECT * FROM schedule_table WHERE isUpload = 0")
     fun getNotUploadedEvent() : List<Event>
 
-    @Query("UPDATE calendar_event_table SET isUpload=:isUpload, serverId=:serverIdx, state=:state WHERE eventId=:eventId")
-    suspend fun updateEventAfterUpload(eventId : Long, isUpload : Int, serverIdx : Long, state : String)
+    @Query("UPDATE schedule_table SET isUpload=:isUpload, serverId=:serverId, state=:state WHERE scheduleId=:scheduleId")
+    suspend fun updateEventAfterUpload(scheduleId : Long, isUpload : Int, serverId : Long, state : String)
 
-    @Query("DELETE FROM calendar_event_table WHERE eventId=:eventId")
-    fun deleteEventById(eventId : Long)
+    @Query("DELETE FROM schedule_table WHERE scheduleId=:scheduleId")
+    fun deleteEventById(scheduleId : Long)
 
-    @Query("SELECT * FROM calendar_event_table WHERE eventId=:eventId")
-    fun getEventById(eventId: Long) : Event
+    @Query("SELECT * FROM schedule_table WHERE scheduleId=:scheduleId")
+    fun getEventById(scheduleId: Long) : Event
 
-    @Query("DELETE FROM calendar_event_table WHERE isMoim=:isGroup")
+    @Query("DELETE FROM schedule_table WHERE isMoim=:isGroup")
     fun deleteMoimEvent(isGroup: Boolean)
 
-    @Query("SELECT * FROM calendar_event_table WHERE isMoim=:isGroup")
+    @Query("SELECT * FROM schedule_table WHERE isMoim=:isGroup")
     fun getMoimEvent(isGroup: Boolean) : List<Event>
 }

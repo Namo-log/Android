@@ -223,18 +223,18 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         eventService.setDeleteEventView(this)
 
         for (i in unUploaded) {
-            if (i.serverIdx == 0L) {
+            if (i.serverId == 0L) {
                 if (i.state == R.string.event_current_deleted.toString()) {
                     return
                 } else {
                     //POST
-                    eventService.postEvent(i.eventToEventForUpload(), i.eventId)
+                    eventService.postEvent(i.eventToEventForUpload(), i.scheduleId)
                 }
             } else {
                 if (i.state == R.string.event_current_deleted.toString()) {
-                    eventService.deleteEvent(i.serverIdx, i.eventId, 0)
+                    eventService.deleteEvent(i.serverId, i.scheduleId, 0)
                 } else {
-                    eventService.editEvent(i.serverIdx, i.eventToEventForUpload(), i.eventId)
+                    eventService.editEvent(i.serverId, i.eventToEventForUpload(), i.scheduleId)
                 }
             }
         }
@@ -249,18 +249,18 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
                     paletteId = j + 5
                 }
             }
-            if (i.serverIdx == 0L) {
+            if (i.serverId == 0L) {
                 if (i.state == R.string.event_current_deleted.toString()) {
                     return
                 } else {
                     //POST
-                    CategoryService(this).tryPostCategory(CategoryBody(i.name, paletteId, i.share), i.categoryIdx)
+                    CategoryService(this).tryPostCategory(CategoryBody(i.name, paletteId, i.share), i.categoryId)
                 }
             } else {
                 if (i.state == R.string.event_current_deleted.toString()) {
-                    CategoryDeleteService(this).tryDeleteCategory(i.serverIdx, i.categoryIdx)
+                    CategoryDeleteService(this).tryDeleteCategory(i.serverId, i.categoryId)
                 } else {
-                    CategoryService(this).tryPatchCategory(i.serverIdx, CategoryBody(i.name, paletteId, i.share), i.categoryIdx)
+                    CategoryService(this).tryPatchCategory(i.serverId, CategoryBody(i.name, paletteId, i.share), i.categoryId)
                 }
 
             }
@@ -361,41 +361,41 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         //바텀내비 백스택 수정 필요
     }
 
-    override fun onPostEventSuccess(response: PostEventResponse, eventId: Long) {
+    override fun onPostEventSuccess(response: PostEventResponse, scheduleId: Long) {
         Log.d("MainActivity", "onPostEventSuccess")
-        Log.d("MAIN_SERVER_UPLOAD", "$eventId 번 일정 post 완료")
+        Log.d("MAIN_SERVER_UPLOAD", "$scheduleId 번 일정 post 완료")
 
         val result = response.result
 
         //룸디비에 isUpload, serverId, state 업데이트하기
         lifecycleScope.launch {
             db.eventDao.updateEventAfterUpload(
-                eventId,
+                scheduleId,
                 1,
-                result.eventIdx,
+                result.scheduleIdx,
                 R.string.event_current_default.toString()
             )
         }
         val repo=DiaryRepository(this)
-        repo.postDiaryToServer(result.eventIdx , eventId)
+        repo.postDiaryToServer(result.scheduleIdx , scheduleId)
     }
 
     override fun onPostEventFailure(message: String) {
         Log.d("MainActivity", "onPostEventFailure")
     }
 
-    override fun onEditEventSuccess(response: EditEventResponse, eventId: Long) {
+    override fun onEditEventSuccess(response: EditEventResponse, scheduleId: Long) {
         Log.d("MainActivity", "onEditEventSuccess")
-        Log.d("MAIN_SERVER_UPLOAD", "$eventId 번 일정 edit 완료")
+        Log.d("MAIN_SERVER_UPLOAD", "$scheduleId 번 일정 edit 완료")
 
         val result = response.result
 
         //룸디비에 isUpload, serverId, state 업데이트하기
         lifecycleScope.launch {
             db.eventDao.updateEventAfterUpload(
-                eventId,
+                scheduleId,
                 1,
-                result.eventIdx,
+                result.scheduleIdx,
                 R.string.event_current_default.toString()
             )
         }
@@ -405,16 +405,16 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         Log.d("MainActivity", "onEditEventFailure")
     }
 
-    override fun onDeleteEventSuccess(response: DeleteEventResponse, eventId: Long) {
+    override fun onDeleteEventSuccess(response: DeleteEventResponse, scheduleId: Long) {
         Log.d("MainActivity", "onDeleteEventSuccess")
-        Log.d("MAIN_SERVER_UPLOAD", "$eventId 번 일정 삭제 완료")
+        Log.d("MAIN_SERVER_UPLOAD", "$scheduleId 번 일정 삭제 완료")
 
         val result = response.result
-        Toast.makeText(this, "$eventId 번 일정의 $result", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "$scheduleId 번 일정의 $result", Toast.LENGTH_SHORT).show()
 
 
         var deleteDB: Thread = Thread{
-            db.eventDao.deleteEventById(eventId)
+            db.eventDao.deleteEventById(scheduleId)
         }
         deleteDB.start()
         try {
@@ -591,9 +591,9 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
                 for (diary in serverDiary) {
                     for (event in allEvent){
                         if (event.hasDiary == 1){
-                            if(event.serverIdx == diary.serverId) {
+                            if(event.serverId == diary.serverId) {
                                 val diaryData = Diary(
-                                    event.eventId,
+                                    event.scheduleId,
                                     diary.serverId,
                                     diary.content,
                                     diary.images,

@@ -100,7 +100,7 @@ class DiaryRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun postDiaryToServer(serverId: Long, eventId: Long) {
+    override suspend fun postDiaryToServer(serverId: Long, scheduleId: Long) {
         TODO("Not yet implemented")
     }
 
