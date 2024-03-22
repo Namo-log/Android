@@ -56,6 +56,8 @@ import com.mongmong.namo.domain.model.PostScheduleResponse
 import com.mongmong.namo.databinding.ActivityMainBinding
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResult
+import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.config.UploadState
 import com.mongmong.namo.presentation.utils.NetworkManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -92,6 +94,10 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
         const val PLACE_Y_INTENT_KEY: String = "place_y"
         const val GROUP_MEMBER_INTENT_KEY : String = "group_member"
         var IS_MOIM_EVENT_SUCCESS : Boolean = false
+
+
+        const val IS_UPLOAD = true
+        const val IS_NOT_UPLOAD = false
 
         fun setCategoryList(db: NamoDatabase): List<Category> {
             var categoryList =listOf<Category>()
@@ -223,14 +229,14 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
 
         for (i in unUploaded) {
             if (i.serverId == 0L) {
-                if (i.state == R.string.event_current_deleted.toString()) {
+                if (i.state == RoomState.DELETED.state) {
                     return
                 } else {
                     //POST
                     eventService.postSchedule(i.eventToScheduleForUpload(), i.scheduleId)
                 }
             } else {
-                if (i.state == R.string.event_current_deleted.toString()) {
+                if (i.state == RoomState.DELETED.state) {
                     eventService.deleteSchedule(i.serverId, i.scheduleId, 0)
                 } else {
                     eventService.editSchedule(i.serverId, i.eventToScheduleForUpload(), i.scheduleId)
@@ -249,14 +255,14 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                 }
             }
             if (i.serverId == 0L) {
-                if (i.state == R.string.event_current_deleted.toString()) {
+                if (i.state == RoomState.DELETED.state) {
                     return
                 } else {
                     //POST
                     CategoryService(this).tryPostCategory(CategoryBody(i.name, paletteId, i.share), i.categoryId)
                 }
             } else {
-                if (i.state == R.string.event_current_deleted.toString()) {
+                if (i.state == RoomState.DELETED.state) {
                     CategoryDeleteService(this).tryDeleteCategory(i.serverId, i.categoryId)
                 } else {
                     CategoryService(this).tryPatchCategory(i.serverId, CategoryBody(i.name, paletteId, i.share), i.categoryId)
@@ -370,9 +376,9 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
         lifecycleScope.launch {
             db.scheduleDao.updateScheduleAfterUpload(
                 scheduleId,
-                1,
+                UploadState.IS_UPLOAD.state,
                 result.scheduleIdx,
-                R.string.event_current_default.toString()
+                RoomState.DEFAULT.state
             )
         }
         val repo=DiaryRepository(this)
@@ -393,9 +399,9 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
         lifecycleScope.launch {
             db.scheduleDao.updateScheduleAfterUpload(
                 scheduleId,
-                1,
+                UploadState.IS_UPLOAD.state,
                 result.scheduleIdx,
-                R.string.event_current_default.toString()
+                RoomState.DEFAULT.state
             )
         }
     }
@@ -494,7 +500,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                 categoryId,
                 1,
                 result.categoryId,
-                R.string.event_current_default.toString()
+                RoomState.DEFAULT.state
             )
         }
         thread.start()
@@ -521,7 +527,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                 categoryId,
                 1,
                 result.categoryId,
-                R.string.event_current_default.toString()
+                RoomState.DEFAULT.state
             )
         }
         thread.start()
@@ -596,8 +602,8 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                                     diary.serverId,
                                     diary.content,
                                     diary.images,
-                                    R.string.event_current_default.toString(),
-                                    1
+                                    RoomState.DEFAULT.state,
+                                    IS_UPLOAD
                                 )
                                 lifecycleScope.launch {
                                     db.diaryDao.insertDiary(diaryData)
@@ -638,7 +644,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
             schedule.y,
             0,
             schedule.alarmDate ?:listOf(),
-            1,
+            IS_UPLOAD,
             (R.string.event_current_default).toString(),
             schedule.scheduleId,
             schedule.categoryId,
@@ -658,8 +664,8 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
             categoryColorArray[category.paletteId - 1],
             category.isShare,
             true,
-            1,
-            R.string.event_current_default.toString(),
+            IS_UPLOAD,
+            RoomState.DEFAULT.state,
             category.categoryId
         )
     }
@@ -670,8 +676,8 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
             diary.scheduleId,
             diary.contents,
             diary.urls,
-            R.string.event_current_default.toString(),
-            1
+            RoomState.DEFAULT.state,
+            IS_UPLOAD
         )
     }
 
@@ -696,5 +702,6 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
         var ft: FragmentTransaction = fragmentManager.beginTransaction()
         ft.detach(fragment).attach(fragment).commit()
     }
+
 
 }

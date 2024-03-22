@@ -64,7 +64,7 @@ class LocalScheduleDataSource @Inject constructor(
     suspend fun updateScheduleAfterUpload(
         localId: Long,
         serverId: Long,
-        isUpload: Int,
+        isUpload: Boolean,
         status: String
     ) {
         Log.d("LocalScheduleDataSource updateScheduleAfterUpload", "$localId, $serverId")

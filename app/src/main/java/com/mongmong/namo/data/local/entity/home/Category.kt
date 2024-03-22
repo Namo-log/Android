@@ -3,6 +3,7 @@ package com.mongmong.namo.data.local.entity.home
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.mongmong.namo.R
+import com.mongmong.namo.presentation.config.RoomState
 import java.io.Serializable
 
 @Entity(tableName="category_table")
@@ -12,8 +13,8 @@ data class Category(
     var color : Int = 0,
     var share : Boolean = false,
     var active : Boolean = true,
-    var isUpload : Int = 0,
-    var state : String = R.string.event_current_default.toString(),
+    var isUpload : Boolean = false,
+    var state : String = RoomState.DEFAULT.state,
     var serverId : Long = 0L
 ) : Serializable
 

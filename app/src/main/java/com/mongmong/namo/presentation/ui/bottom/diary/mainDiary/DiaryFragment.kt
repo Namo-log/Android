@@ -27,6 +27,8 @@ import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.presentation.utils.NetworkManager
 import com.mongmong.namo.databinding.FragmentDiaryBinding
 import com.mongmong.namo.domain.model.MonthDiary
+import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.config.UploadState
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.adapter.DiaryGroupAdapter
 import com.mongmong.namo.presentation.ui.bottom.home.calendar.SetMonthDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -221,14 +223,13 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     }
 
     private fun onEditClickListener(item: DiarySchedule) {  // 개인 기록 수정 클릭리스너
-
         val event = Schedule(
             item.scheduleId,
             item.title,
             item.startDate, 0L, 0,
             item.categoryId, item.place,
-            0.0, 0.0, 0, null, 1,
-            R.string.event_current_default.toString(),
+            0.0, 0.0, 0, null, UploadState.IS_UPLOAD.state,
+            RoomState.DEFAULT.state,
             item.serverId,
             item.categoryServerId,
             1
@@ -267,6 +268,9 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     companion object {
         const val IS_GROUP = 1
         const val IS_NOT_GROUP = 0
+        const val IS_UPLOAD = true
+        const val IS_NOT_UPLOAD = false
+
     }
 }
 

@@ -32,13 +32,13 @@ interface DiaryDao {
 
     @Query(
         "SELECT * FROM schedule_table e JOIN diary_table d ON diaryId = scheduleId " +
-                "WHERE strftime('%Y.%m', e.startDate, 'unixepoch') = :yearMonth AND d.state != ${R.string.event_current_deleted} " +
+                "WHERE strftime('%Y.%m', e.startDate, 'unixepoch') = :yearMonth AND d.state != 'DELETED' " +
                 "AND e.isMoim = 0 ORDER BY e.startDate DESC LIMIT :size OFFSET :page * :size"
     )
     fun getDiaryScheduleList(yearMonth: String, page: Int, size: Int): List<DiarySchedule>
 
     @Query("UPDATE diary_table SET isUpload=:isUpload, serverId=:serverId, state=:state WHERE diaryId=:localId")
-    suspend fun updateDiaryAfterUpload(localId: Long, serverId: Long, isUpload: Int, state: String)
+    suspend fun updateDiaryAfterUpload(localId: Long, serverId: Long, isUpload: Boolean, state: String)
 
     @Query("SELECT * FROM diary_table WHERE isUpload = 0")
     fun getNotUploadedDiary(): List<Diary>

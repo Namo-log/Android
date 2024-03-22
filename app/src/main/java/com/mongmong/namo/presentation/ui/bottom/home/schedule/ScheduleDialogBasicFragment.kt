@@ -50,6 +50,8 @@ import com.mongmong.namo.presentation.ui.bottom.home.notify.PushNotificationRece
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.getInterval
 import com.google.android.material.chip.Chip
+import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.config.UploadState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.daum.mf.map.api.MapPOIItem
@@ -373,8 +375,8 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     /** 일정 추가 **/
     private fun insertData() {
         // 현재 일정의 상태가 추가 상태임을 나타냄
-        event.state = R.string.event_current_added.toString()
-        event.isUpload = 0
+        event.state = RoomState.ADDED.state
+        event.isUpload = UploadState.IS_NOT_UPLOAD.state
         event.serverId = 0
 
         // 새 일정 등록
@@ -386,8 +388,8 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     /** 일정 수정 **/
     private fun updateData() {
         // 현재 일정의 상태가 수정 상태임을 나타냄
-        event.state = R.string.event_current_edited.toString()
-        event.isUpload = 0
+        event.state = RoomState.EDITED.state
+        event.isUpload = UploadState.IS_NOT_UPLOAD.state
 
         // 이전 알람 삭제 후 변경 알람 저장
         for (i in prevAlarmList!!) {

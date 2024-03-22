@@ -7,6 +7,7 @@ import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.domain.repositories.ScheduleRepository
+import com.mongmong.namo.presentation.config.RoomState
 import javax.inject.Inject
 
 class ScheduleRepositoryImpl @Inject constructor(
@@ -28,17 +29,21 @@ class ScheduleRepositoryImpl @Inject constructor(
         Log.d("ScheduleRepositoryImpl", "addSchedule $schedule")
         localScheduleDataSource.addSchedule(schedule)
         if (networkChecker.isOnline()) {
-            val addResponse = remoteScheduleDataSource.addScheduleToServer(schedule.eventToScheduleForUpload())
+            val addResponse =
+                remoteScheduleDataSource.addScheduleToServer(schedule.eventToScheduleForUpload())
             if (addResponse.code == SUCCESS_CODE) {
                 Log.d("ScheduleRepositoryImpl", "addSchedule Success")
                 localScheduleDataSource.updateScheduleAfterUpload(
                     localId = schedule.scheduleId,
                     serverId = addResponse.result.scheduleIdx,
-                    isUpload = 1,
-                    status = R.string.event_current_default.toString(),
+                    isUpload = IS_UPLOAD,
+                    status = RoomState.DEFAULT.state,
                 )
             } else {
-                Log.d("ScheduleRepositoryImpl", "addSchedule Fail, code = ${addResponse.code}, message = ${addResponse.message}")
+                Log.d(
+                    "ScheduleRepositoryImpl",
+                    "addSchedule Fail, code = ${addResponse.code}, message = ${addResponse.message}"
+                )
             }
         }
     }
@@ -47,17 +52,23 @@ class ScheduleRepositoryImpl @Inject constructor(
         Log.d("ScheduleRepositoryImpl", "editSchedule $schedule")
         localScheduleDataSource.editSchedule(schedule)
         if (networkChecker.isOnline()) {
-            val editResponse = remoteScheduleDataSource.editScheduleToServer(schedule.scheduleId, schedule.eventToScheduleForUpload())
+            val editResponse = remoteScheduleDataSource.editScheduleToServer(
+                schedule.scheduleId,
+                schedule.eventToScheduleForUpload()
+            )
             if (editResponse.code == SUCCESS_CODE) {
                 Log.d("ScheduleRepositoryImpl", "editSchedule Success")
                 localScheduleDataSource.updateScheduleAfterUpload(
                     localId = schedule.scheduleId,
                     serverId = editResponse.result.scheduleIdx,
-                    isUpload = 1,
-                    status = R.string.event_current_default.toString(),
+                    isUpload = IS_UPLOAD,
+                    status = RoomState.DEFAULT.state,
                 )
             } else {
-                Log.d("ScheduleRepositoryImpl", "editSchedule Fail, code = ${editResponse.code}, message = ${editResponse.message}")
+                Log.d(
+                    "ScheduleRepositoryImpl",
+                    "editSchedule Fail, code = ${editResponse.code}, message = ${editResponse.message}"
+                )
             }
         }
     }
@@ -67,8 +78,8 @@ class ScheduleRepositoryImpl @Inject constructor(
         localScheduleDataSource.updateScheduleAfterUpload(
             localId = localId,
             serverId = serverId,
-            isUpload = 0,
-            status = R.string.event_current_deleted.toString(),
+            isUpload = IS_NOT_UPLOAD,
+            status = RoomState.DELETED.state,
         )
         if (networkChecker.isOnline()) {
             // 서버 db에서 삭제
@@ -77,7 +88,10 @@ class ScheduleRepositoryImpl @Inject constructor(
                 // room db에서 삭제
                 localScheduleDataSource.deleteSchedule(localId)
             } else {
-                Log.d("ScheduleRepositoryImpl", "deleteSchedule Fail, code = ${deleteResponse.code}, message = ${deleteResponse.message}")
+                Log.d(
+                    "ScheduleRepositoryImpl",
+                    "deleteSchedule Fail, code = ${deleteResponse.code}, message = ${deleteResponse.message}"
+                )
             }
         }
     }
@@ -92,6 +106,8 @@ class ScheduleRepositoryImpl @Inject constructor(
 
     companion object {
         const val SUCCESS_CODE = 200
+        const val IS_UPLOAD = true
+        const val IS_NOT_UPLOAD = false
     }
 
 }

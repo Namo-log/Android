@@ -15,6 +15,7 @@ import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryResponse
+import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.utils.NetworkManager
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -52,7 +53,7 @@ class DiaryRepository(
             serverId,
             content,
             images,
-            R.string.event_current_added.toString()
+            RoomState.ADDED.state
         )
         diaryDao.insertDiary(diary) // 비동기적으로 실행됨
         updateHasDiary(diaryLocalId) // 이 함수도 suspend 함수로 변경해야 함
@@ -83,8 +84,8 @@ class DiaryRepository(
                     diaryDao.updateDiaryAfterUpload(
                         localId,
                         response.result.scheduleIdx,
-                        1,
-                        R.string.event_current_default.toString()
+                        true,
+                        RoomState.DEFAULT.state
                     )
 
                     Log.d("addDiaryServerSuccess", response.result.toString())
@@ -114,7 +115,7 @@ class DiaryRepository(
                     serverId,
                     content,
                     it,
-                    R.string.event_current_edited.toString()
+                    RoomState.EDITED.state
                 )
             }
             if (diary != null) {
@@ -167,8 +168,8 @@ class DiaryRepository(
         diaryDao.updateDiaryAfterUpload(
             localId,
             serverId,
-            1,
-            R.string.event_current_default.toString()
+            true,
+            RoomState.DEFAULT.state
         )
 
         Log.d("editDiaryServerSuccess", response.result)
@@ -186,8 +187,8 @@ class DiaryRepository(
         diaryDao.updateDiaryAfterUpload(
             localId,
             serverId,
-            0,
-            R.string.event_current_deleted.toString()
+            false,
+            RoomState.DELETED.state
         )
 
         if (!NetworkManager.checkNetworkState(context)) {
@@ -254,11 +255,11 @@ class DiaryRepository(
         for (diary in notUploaded) {
 
             if (diary.serverId == 0L) { // 서버 아이디 없는 것들
-                if (diary.state == R.string.event_current_deleted.toString()) {
+                if (diary.state == RoomState.DELETED.state) {
                     return
                 }
             } else {
-                if (diary.state == R.string.event_current_deleted.toString()) {
+                if (diary.state == RoomState.DELETED.state) {
                     deleteDiary(diary.diaryId, diary.serverId)
                 } else {
                     diary.content?.let {
@@ -292,7 +293,7 @@ class DiaryRepository(
         for (diary in notUploaded) {
 
             if (diary.serverId == 0L) { // 서버 아이디 없는 것들
-                if (diary.state !== R.string.event_current_deleted.toString() && scheduleId == diary.diaryId) {
+                if (diary.state !== RoomState.DELETED.state && scheduleId == diary.diaryId) {
                     diary.content?.let {
                         addDiaryToServer(
                             diary.diaryId,

@@ -12,6 +12,7 @@ import com.mongmong.namo.databinding.ActivityCategoryEditBinding
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.remote.category.CategoryDeleteService
 import com.mongmong.namo.data.remote.category.CategoryDeleteView
+import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.NetworkManager
@@ -72,7 +73,7 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
             Toast.makeText(this, "기본 카테고리는 삭제할 수 없습니다", Toast.LENGTH_SHORT).show()
         } else {
             // 서버 통신
-            uploadToServer(R.string.event_current_deleted.toString())
+            uploadToServer(RoomState.DELETED.state)
             Thread{
                 category = db.categoryDao.getCategoryWithId(categoryId)
                 // 삭제 대신 비활성화 처리
@@ -84,7 +85,7 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
             finish()
 
             // 서버 통신
-            uploadToServer(R.string.event_current_deleted.toString())
+            uploadToServer(RoomState.DELETED.state)
         }
 //        CategoryDeleteService(this).tryDeleteCategory(7)
     }
@@ -117,7 +118,7 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
 
         when (state) {
             // 서버 통신 성공
-            R.string.event_current_default.toString() -> {
+            RoomState.DEFAULT.state -> {
                 val thread = Thread {
                     db.categoryDao.updateCategoryAfterUpload(categoryId, 1, serverId, state)
                 }
@@ -154,14 +155,14 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
     override fun onDeleteCategorySuccess(response: BaseResponse, categoryId : Long) {
         Log.d("CategoryEditAct", "onDeleteCategorySuccess")
         // 룸디비에 isUpload, serverId, state 업데이트하기
-        updateCategoryAfterUpload(R.string.event_current_default.toString())
+        updateCategoryAfterUpload(RoomState.DEFAULT.state)
     }
 
     override fun onDeleteCategoryFailure(message: String) {
         Log.d("CategoryEditAct", "onDeleteCategoryFailure")
 
         // 룸디비에 failList 업데이트하기
-        updateCategoryAfterUpload(R.string.event_current_deleted.toString())
+        updateCategoryAfterUpload(RoomState.DELETED.state)
     }
 
     override fun onClickYesButton(id: Int) {

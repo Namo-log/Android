@@ -26,6 +26,7 @@ import com.mongmong.namo.presentation.utils.NetworkManager
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
+import com.mongmong.namo.presentation.config.RoomState
 
 class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), CategoryDetailView {
     private var _binding: FragmentCategoryDetailBinding? = null
@@ -143,11 +144,11 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         }
 
         when(state) {
-            R.string.event_current_added.toString() -> {
+            RoomState.ADDED.state -> {
                 // 카테고리 생성
                 CategoryService(this@CategoryDetailFragment).tryPostCategory(CategoryBody(name, paletteId, share), categoryId)
             }
-            R.string.event_current_edited.toString() -> {
+            RoomState.EDITED.state -> {
                 // 카테고리 수정
                 CategoryService(this@CategoryDetailFragment).tryPatchCategory(serverId, CategoryBody(name, paletteId, share), categoryId)
             }
@@ -167,7 +168,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             Log.d("CategoryDetailFrag", "Insert roomCategory : $categoryId")
         }.start()
         // 서버 통신
-        uploadToServer(R.string.event_current_added.toString())
+        uploadToServer(RoomState.ADDED.state)
 //        CategoryService(this@CategoryDetailFragment).tryPostCategory(CategoryBody(name, paletteId, share))
     }
 
@@ -186,7 +187,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             e.printStackTrace()
         }
         // 서버 통신
-        uploadToServer(R.string.event_current_edited.toString())
+        uploadToServer(RoomState.EDITED.state)
         Toast.makeText(requireContext(), "카테고리가 수정되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
@@ -336,7 +337,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
         when (state) {
             // 서버 통신 성공
-            R.string.event_current_default.toString() -> {
+            RoomState.DEFAULT.state -> {
                 val thread = Thread {
                     db.categoryDao.updateCategoryAfterUpload(categoryId, 1, result!!.categoryId, state)
                     db.categoryDao.updateCategory(category.copy(serverId = result.categoryId))
@@ -375,25 +376,25 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
     override fun onPostCategorySuccess(response: PostCategoryResponse, categoryId : Long) {
         Log.d("CategoryDetailFrag", "onPostCategorySuccess, categoryId = $categoryId")
         // 룸디비에 isUpload, serverId, state 업데이트하기
-        updateCategoryAfterUpload(response, R.string.event_current_default.toString())
+        updateCategoryAfterUpload(response, RoomState.DEFAULT.state)
     }
 
     override fun onPostCategoryFailure(message: String) {
         Log.d("CategoryDetailFrag", "onPostCategoryFailure")
         // 룸디비에 failList 업데이트하기
-        updateCategoryAfterUpload(null, R.string.event_current_added.toString())
+        updateCategoryAfterUpload(null, RoomState.ADDED.state)
     }
 
     // 카테고리 수정
     override fun onPatchCategorySuccess(response: PostCategoryResponse, categoryId: Long) {
         Log.d("CategoryDetailFrag", "onPatchCategorySuccess, categoryId = $categoryId")
         // 룸디비에 isUpload, serverId, state 업데이트하기
-        updateCategoryAfterUpload(response, R.string.event_current_default.toString())
+        updateCategoryAfterUpload(response, RoomState.DEFAULT.state)
     }
 
     override fun onPatchCategoryFailure(message: String) {
         Log.d("CategoryDetailFrag", "onPatchCategoryFailure")
         // 룸디비에 failList 업데이트하기
-        updateCategoryAfterUpload(null, R.string.event_current_edited.toString())
+        updateCategoryAfterUpload(null, RoomState.EDITED.state)
     }
 }

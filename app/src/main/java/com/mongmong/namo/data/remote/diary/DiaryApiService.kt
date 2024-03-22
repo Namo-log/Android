@@ -14,7 +14,7 @@ interface DiaryApiService {
 
     @Multipart
     @POST("/schedules/diary")
-    fun addDiary(
+    suspend fun addDiary(
         @Part("scheduleId") scheduleIdx: RequestBody,
         @Part("content") content: RequestBody?,
         @Part imgs: List<MultipartBody.Part>?
@@ -23,7 +23,7 @@ interface DiaryApiService {
 
     @Multipart
     @PATCH("/schedules/diary")
-    fun editDiary(
+    suspend fun editDiary(
         @Part("scheduleId") scheduleIdx: RequestBody,
         @Part("content") content: RequestBody?,
         @Part imgs: List<MultipartBody.Part>?
@@ -31,7 +31,7 @@ interface DiaryApiService {
 
 
     @DELETE("/schedules/diary/{scheduleId}")
-    fun deleteDiary(
+    suspend fun deleteDiary(
         @Path("scheduleId") scheduleId: Long
     ): DiaryResponse
 

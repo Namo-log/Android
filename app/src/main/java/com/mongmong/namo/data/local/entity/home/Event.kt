@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.mongmong.namo.R
+import com.mongmong.namo.presentation.config.RoomState
 import java.io.Serializable
 
 @Entity(tableName = "schedule_table")
@@ -42,10 +43,10 @@ data class Schedule(
     var alarmList: List<Int>? = listOf(),
 
     @ColumnInfo(name = "isUpload")
-    var isUpload: Int = 0,
+    var isUpload: Boolean = false,
 
     @ColumnInfo(name = "state")
-    var state: String = R.string.event_current_default.toString(),
+    var state: String = RoomState.DEFAULT.state,
 
     @ColumnInfo(name = "serverId")
     var serverId: Long = 0L,
