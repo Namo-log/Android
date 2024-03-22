@@ -2,7 +2,6 @@ package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
 import com.mongmong.namo.R
-import com.mongmong.namo.data.datasource.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.local.entity.home.Event
@@ -35,7 +34,7 @@ class ScheduleRepositoryImpl @Inject constructor(
                 localScheduleDataSource.updateScheduleAfterUpload(
                     localId = schedule.eventId,
                     serverId = addResponse.result.eventIdx,
-                    isUpload = LocalDiaryDataSource.UPLOAD_SUCCESS,
+                    isUpload = 1,
                     status = R.string.event_current_default.toString(),
                 )
             } else {
@@ -54,7 +53,7 @@ class ScheduleRepositoryImpl @Inject constructor(
                 localScheduleDataSource.updateScheduleAfterUpload(
                     localId = schedule.eventId,
                     serverId = editResponse.result.eventIdx,
-                    isUpload = LocalDiaryDataSource.UPLOAD_SUCCESS,
+                    isUpload = 1,
                     status = R.string.event_current_default.toString(),
                 )
             } else {

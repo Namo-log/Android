@@ -277,7 +277,7 @@ class DiaryRepository(
     }
 
     /** 서버 아이디 없던 것 post로 올리기 **/
-    fun postDiaryToServer(eventServerId: Long, eventId: Long) {
+    fun postDiaryToServer(serverId: Long, eventId: Long) {
 
         val storeDB = Thread {
             notUploaded = diaryDao.getNotUploadedDiary()
@@ -296,7 +296,7 @@ class DiaryRepository(
                     diary.content?.let {
                         addDiaryToServer(
                             diary.diaryId,
-                            eventServerId,
+                            serverId,
                             it,
                             diary.images
                         )

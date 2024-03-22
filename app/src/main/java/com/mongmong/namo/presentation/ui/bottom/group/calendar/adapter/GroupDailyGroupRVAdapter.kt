@@ -77,8 +77,8 @@ class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter
                         else if (groupSchedule.users.size < 2 && groupSchedule.users[0].color != 0) groupSchedule.users[0].color
                         else 3
 
-            binding.itemCalendarEventTitle.text = groupSchedule.name
-            binding.itemCalendarEventTitle.isSelected = true
+            binding.itemCalendarTitle.text = groupSchedule.name
+            binding.itemCalendarTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
             binding.itemCalendarEventColorView.background.setTint(colorArray[paletteId - 1])
 

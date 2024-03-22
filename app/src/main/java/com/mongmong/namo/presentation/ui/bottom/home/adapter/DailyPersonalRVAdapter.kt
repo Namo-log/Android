@@ -37,7 +37,7 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
-        val binding : com.mongmong.namo.databinding.ItemCalendarEventBinding = ItemCalendarEventBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
+        val binding : ItemCalendarEventBinding = ItemCalendarEventBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
         context = viewGroup.context
 
         return ViewHolder(binding)
@@ -81,8 +81,8 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
                 if (it.serverIdx != 0L) it.serverIdx == personal.categoryServerIdx
                 else it.categoryIdx == personal.categoryIdx }!!
 
-            binding.itemCalendarEventTitle.text = personal.title
-            binding.itemCalendarEventTitle.isSelected = true
+            binding.itemCalendarTitle.text = personal.title
+            binding.itemCalendarTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
             binding.itemCalendarEventColorView.background.setTint(category.color)
             binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))

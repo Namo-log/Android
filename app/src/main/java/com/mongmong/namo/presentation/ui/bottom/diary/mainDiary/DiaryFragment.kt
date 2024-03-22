@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.mongmong.namo.R
 import com.mongmong.namo.data.datasource.diary.DiaryGroupPagingSource
-import com.mongmong.namo.data.datasource.diary.DiaryPersonalPagingSource
 import com.mongmong.namo.data.local.entity.diary.DiaryEvent
 import com.mongmong.namo.data.local.entity.home.Event
 import com.mongmong.namo.presentation.utils.NetworkManager
@@ -225,13 +224,13 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
         val event = Event(
             item.eventId,
-            item.event_title,
-            item.event_start, 0L, 0,
-            item.event_category_idx, item.event_place_name,
+            item.title,
+            item.startDate, 0L, 0,
+            item.categoryId, item.place,
             0.0, 0.0, 0, null, 1,
             R.string.event_current_default.toString(),
-            item.event_server_idx,
-            item.event_category_server_idx,
+            item.serverId,
+            item.categoryServerId,
             1
         )
 
@@ -243,8 +242,8 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     private fun onDetailClickListener(item: DiaryEvent) {  // 그룹 기록 수정 클릭리스너
 
         val monthDiary = MonthDiary(
-            item.eventId, item.event_title, item.event_start, item.content,
-            item.images ?: emptyList(), item.event_category_idx, 0L, item.event_place_name
+            item.eventId, item.title, item.startDate, item.content,
+            item.images ?: emptyList(), item.categoryId, 0L, item.place
         )
 
         requireActivity().startActivity(Intent(context, GroupDetailActivity::class.java)

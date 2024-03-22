@@ -5,14 +5,14 @@ package com.mongmong.namo.data.local.entity.diary
 
 data class DiaryEvent(
     var eventId: Long = 0L,
-    var event_title: String = "",
-    var event_start: Long = 0,
-    var event_category_idx: Long = 0L,
-    var event_place_name: String = "없음",
+    var title: String = "",
+    var startDate: Long = 0,
+    var categoryId: Long = 0L,
+    var place: String = "없음",
     var content: String?,
     var images: List<String>? = null,
-    var event_server_idx: Long = 0L,
-    var event_category_server_idx : Long = 0L,
+    var serverId: Long = 0L, // eventServerId
+    var categoryServerId : Long = 0L,
     var isHeader: Boolean = false
 )
 

@@ -74,13 +74,13 @@ private fun List<DiaryEvent>.toListItems(): List<DiaryEvent> {
     var groupHeaderDate: Long = 0
 
     this.forEach { event ->
-        if (groupHeaderDate * 1000 != event.event_start * 1000) {
+        if (groupHeaderDate * 1000 != event.startDate * 1000) {
 
             val headerEvent =
-                event.copy(event_start = event.event_start * 1000, isHeader = true)
+                event.copy(startDate = event.startDate * 1000, isHeader = true)
             result.add(headerEvent)
 
-            groupHeaderDate = event.event_start
+            groupHeaderDate = event.startDate
         }
         result.add(event)
     }

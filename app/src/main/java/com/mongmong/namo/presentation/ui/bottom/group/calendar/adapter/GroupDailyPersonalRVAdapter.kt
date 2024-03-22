@@ -56,8 +56,8 @@ class GroupDailyPersonalRVAdapter() : RecyclerView.Adapter<GroupDailyPersonalRVA
 //                else personal.users.map { it -> it.userName }.joinToString("\n")
                 else personal.users.size.toString() + "명"
 
-            binding.itemCalendarEventTitle.text = personal.name
-            binding.itemCalendarEventTitle.isSelected = true
+            binding.itemCalendarTitle.text = personal.name
+            binding.itemCalendarTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
             binding.itemCalendarEventColorView.background.setTint(colorArray[paletteId - 1])
             binding.itemCalendarUserName.text = userName

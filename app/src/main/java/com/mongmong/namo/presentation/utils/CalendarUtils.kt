@@ -77,7 +77,7 @@ class CalendarUtils {
         fun getOrder(event : Event, eventList : ArrayList<Event>) : Int {
             var maxIdx = 0
             var idx = 0
-            for (i in 0 until event.dayInterval + 1) {
+            for (i in 0 until event.endDate + 1) {
                 var temp = getTodayEvent(eventList, DateTime(event.startLong).withTimeAtStartOfDay().plusDays(i))
                 idx = temp.indexOf(event)
                 if (maxIdx < idx) {

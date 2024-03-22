@@ -154,7 +154,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
                 Log.d("PLACE_INFO", "name : $place_name , x : $place_x , y : $place_y")
 
                 event.placeName = place_name
-                event.placeX = place_x
+                event.place = place_x
                 event.placeY = place_y
 
                 initMapView()
@@ -599,9 +599,9 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
                 val intent = Intent(requireActivity(), MapActivity::class.java)
                 intent.putExtra(MainActivity.ORIGIN_ACTIVITY_INTENT_KEY, "Schedule")
-                if (event.placeX != 0.0 && event.placeY != 0.0) {
+                if (event.place != 0.0 && event.placeY != 0.0) {
                     intent.putExtra("PREV_PLACE_NAME", event.placeName)
-                    intent.putExtra("PREV_PLACE_X", event.placeX)
+                    intent.putExtra("PREV_PLACE_X", event.place)
                     intent.putExtra("PREV_PLACE_Y", event.placeY)
                 }
                 getResult.launch(intent)
@@ -664,10 +664,10 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
         //장소
         place_name = event.placeName
-        place_x = event.placeX
+        place_x = event.place
         place_y = event.placeY
 
-        if (event.placeX != 0.0 || event.placeY != 0.0) {
+        if (event.place != 0.0 || event.placeY != 0.0) {
             initMapView()
             setMapContent()
         }
@@ -677,7 +677,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         event.title = binding.dialogScheduleTitleEt.text.toString()
         event.startLong = startDateTime.millis / 1000
         event.endLong = endDateTime.millis / 1000
-        event.dayInterval = getInterval(event.startLong, event.endLong)
+        event.endDate = getInterval(event.startLong, event.endLong)
 
         setAlarmList()
         event.alarmList = alarmList

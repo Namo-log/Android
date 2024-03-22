@@ -11,52 +11,52 @@ data class Event(
     @PrimaryKey(autoGenerate = true)
     var eventId: Long = 0L,
 
-    @ColumnInfo(name = "event_title")
+    @ColumnInfo(name = "title")
     var title: String = "",
 
-    @ColumnInfo(name = "event_start")
+    @ColumnInfo(name = "startDate")
     var startLong: Long = 0,
 
-    @ColumnInfo(name = "event_end")
+    @ColumnInfo(name = "endDate")
     var endLong: Long = 0,
 
-    @ColumnInfo(name = "event_day_interval")
-    var dayInterval: Int = 0,
+    @ColumnInfo(name = "dayInterval")
+    var endDate: Int = 0,
 
-    @ColumnInfo(name = "event_category_idx")
+    @ColumnInfo(name = "categoryId")
     var categoryIdx: Long = 0L,
 
-    @ColumnInfo(name = "event_place_name")
+    @ColumnInfo(name = "place")
     var placeName: String = "없음",
 
-    @ColumnInfo(name = "event_place_x")
-    var placeX: Double = 0.0,
+    @ColumnInfo(name = "placeX")
+    var place: Double = 0.0,
 
-    @ColumnInfo(name = "event_place_y")
+    @ColumnInfo(name = "placeY")
     var placeY: Double = 0.0,
 
-    @ColumnInfo(name = "event_order")
+    @ColumnInfo(name = "order")
     var order: Int = 0,
 
-    @ColumnInfo(name = "alarm_list")
+    @ColumnInfo(name = "alarmList")
     var alarmList: List<Int>? = listOf(),
 
-    @ColumnInfo(name = "event_upload")
+    @ColumnInfo(name = "isUpload")
     var isUpload: Int = 0,
 
-    @ColumnInfo(name = "event_state")
+    @ColumnInfo(name = "state")
     var state: String = R.string.event_current_default.toString(),
 
-    @ColumnInfo(name = "event_server_idx")
+    @ColumnInfo(name = "serverId")
     var serverIdx: Long = 0L,
 
-    @ColumnInfo(name = "event_category_server_idx")
+    @ColumnInfo(name = "categoryServerId")
     var categoryServerIdx: Long = 0L,
 
-    @ColumnInfo(name = "has_diary")
+    @ColumnInfo(name = "hasDiary")
     var hasDiary: Int = 0,
 
-    @ColumnInfo(name = "event_is_group")
+    @ColumnInfo(name = "isMoim")
     var moimSchedule: Boolean = false
 
 ) : Serializable {
@@ -65,9 +65,9 @@ data class Event(
             name = this.title,
             startDate = this.startLong,
             endDate = this.endLong,
-            interval = this.dayInterval,
+            interval = this.endDate,
             alarmDate = this.alarmList,
-            x = this.placeX,
+            x = this.place,
             y = this.placeY,
             locationName = this.placeName,
             categoryId = this.categoryServerIdx,

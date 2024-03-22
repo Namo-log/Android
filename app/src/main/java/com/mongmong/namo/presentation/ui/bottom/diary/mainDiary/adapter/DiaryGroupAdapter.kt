@@ -75,7 +75,7 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
         @SuppressLint("SimpleDateFormat")
         fun bind(item: DiaryEvent) {
             binding.apply {
-                val formattedDate = SimpleDateFormat("yyyy.MM.dd").format(item.event_start)
+                val formattedDate = SimpleDateFormat("yyyy.MM.dd").format(item.startDate)
                 diaryDayTv.text = formattedDate
             }
         }
@@ -101,14 +101,14 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
             binding.apply {
 
                 itemDiaryContentTv.text = item.content
-                itemDiaryTitleTv.text = item.event_title
+                itemDiaryTitleTv.text = item.title
 
                 setViewMore(itemDiaryContentTv, viewMore)
 
                 val repo = DiaryRepository(context)
 
                 val category =
-                    repo.getCategory(item.event_category_idx, item.event_category_idx)
+                    repo.getCategory(item.categoryId, item.categoryId)
 
                 context.resources?.let {
                     binding.itemDiaryCategoryColorIv.background.setTint(category.color)

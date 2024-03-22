@@ -96,8 +96,8 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
                 if (it.serverIdx != 0L) it.serverIdx == group.categoryServerIdx
                 else it.categoryIdx == group.categoryIdx }
 
-            binding.itemCalendarEventTitle.text = group.title
-            binding.itemCalendarEventTitle.isSelected = true
+            binding.itemCalendarTitle.text = group.title
+            binding.itemCalendarTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
             if (category != null) {
                 binding.itemCalendarEventColorView.background.setTint(category.color)
