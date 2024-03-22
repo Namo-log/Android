@@ -126,7 +126,7 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
 
         // 모든 데이터 삭제
         val thread = Thread {
-            db.eventDao.deleteAllEvents()
+            db.scheduleDao.deleteAllSchedules()
             db.diaryDao.deleteAllDiaries()
             db.categoryDao.deleteAllCategories()
         }

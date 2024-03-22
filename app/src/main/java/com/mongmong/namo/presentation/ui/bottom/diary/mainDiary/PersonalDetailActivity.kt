@@ -22,7 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.diary.DiaryRepository
 import com.mongmong.namo.databinding.ActivityPersonalDiaryDetailBinding
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
@@ -42,7 +42,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     private lateinit var repo: DiaryRepository
 
-    private lateinit var event: Event
+    private lateinit var event: Schedule
 
     private val viewModel : DiaryViewModel by viewModels()
 
@@ -55,15 +55,15 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
         repo = DiaryRepository(this)
 
-        setEvent()
+        setSchedule()
         charCnt()
         onClickListener()
         initRecyclerView()
         initObserve()
     }
 
-    private fun setEvent() {
-        event = (intent.getSerializableExtra("event") as? Event)!!
+    private fun setSchedule() {
+        event = (intent.getSerializableExtra("event") as? Schedule)!!
         hasDiary()
 
         val category = repo.getCategory(event.categoryId, event.categoryServerId)

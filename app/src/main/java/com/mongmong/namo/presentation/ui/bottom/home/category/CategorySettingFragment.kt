@@ -44,7 +44,7 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
         // 카테고리가 아무것도 없으면 기본 카테고리 2개 생성 (일정, 모임)
         setInitialCategory()
 
-        onClickEvent()
+        onClickSchedule()
 
         return binding.root
     }
@@ -56,7 +56,7 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
         getCategoryList()
     }
 
-    private fun onClickEvent() {
+    private fun onClickSchedule() {
         // 닫힘 버튼 누르면 종료
         binding.categoryCloseTv.setOnClickListener {
             activity?.finish()

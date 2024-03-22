@@ -22,8 +22,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.mongmong.namo.R
 import com.mongmong.namo.data.datasource.diary.DiaryGroupPagingSource
-import com.mongmong.namo.data.local.entity.diary.DiaryEvent
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.diary.DiarySchedule
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.presentation.utils.NetworkManager
 import com.mongmong.namo.databinding.FragmentDiaryBinding
 import com.mongmong.namo.domain.model.MonthDiary
@@ -44,7 +44,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     private val viewModel : DiaryViewModel by viewModels()
 
-    private lateinit var pagingDataFlow: Flow<PagingData<DiaryEvent>>
+    private lateinit var pagingDataFlow: Flow<PagingData<DiarySchedule>>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -204,7 +204,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     private fun groupPaging(
         date: String,
-        adapter: PagingDataAdapter<DiaryEvent, RecyclerView.ViewHolder>?
+        adapter: PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>?
     ) {
         // Pager를 통해 페이징 데이터 생성
         pagingDataFlow = Pager(
@@ -220,9 +220,9 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         }
     }
 
-    private fun onEditClickListener(item: DiaryEvent) {  // 개인 기록 수정 클릭리스너
+    private fun onEditClickListener(item: DiarySchedule) {  // 개인 기록 수정 클릭리스너
 
-        val event = Event(
+        val event = Schedule(
             item.scheduleId,
             item.title,
             item.startDate, 0L, 0,
@@ -239,7 +239,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     }
 
-    private fun onDetailClickListener(item: DiaryEvent) {  // 그룹 기록 수정 클릭리스너
+    private fun onDetailClickListener(item: DiarySchedule) {  // 그룹 기록 수정 클릭리스너
 
         val monthDiary = MonthDiary(
             item.scheduleId, item.title, item.startDate, item.content,

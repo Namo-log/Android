@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.data.local.NamoDatabase
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.GetMoimScheduleResponse
 import com.mongmong.namo.data.remote.moim.GetMoimScheduleView
 import com.mongmong.namo.domain.model.MoimSchedule
@@ -35,17 +35,17 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
     private var millis : Long = 0L
     private var isShow = false
     private val eventList : ArrayList<MoimSchedule> = arrayListOf()
-    private val dailyEvents : ArrayList<MoimSchedule> = arrayListOf()
-    private val dailyGroupEvents : ArrayList<MoimSchedule> = arrayListOf()
+    private val dailySchedules : ArrayList<MoimSchedule> = arrayListOf()
+    private val dailyGroupSchedules : ArrayList<MoimSchedule> = arrayListOf()
     private lateinit var monthList : List<DateTime>
-    private var tempEvent : ArrayList<MoimSchedule> = arrayListOf()
+    private var tempSchedule : ArrayList<MoimSchedule> = arrayListOf()
 
     private var prevIdx = -1
     private var nowIdx = 0
-    private var event_personal : ArrayList<Event> = arrayListOf()
-    private var event_group : ArrayList<Event> = arrayListOf()
-    private val personalEventRVAdapter = GroupDailyPersonalRVAdapter()
-    private val groupEventRVAdapter = GroupDailyGroupRVAdapter()
+    private var event_personal : ArrayList<Schedule> = arrayListOf()
+    private var event_group : ArrayList<Schedule> = arrayListOf()
+    private val personalScheduleRVAdapter = GroupDailyPersonalRVAdapter()
+    private val groupScheduleRVAdapter = GroupDailyGroupRVAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -141,12 +141,12 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
 
     private fun setAdapter() {
         binding.groupDailyEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.groupDailyEventRv.adapter = personalEventRVAdapter
+        binding.groupDailyEventRv.adapter = personalScheduleRVAdapter
 
         binding.groupDailyGroupEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.groupDailyGroupEventRv.adapter = groupEventRVAdapter
+        binding.groupDailyGroupEventRv.adapter = groupScheduleRVAdapter
 
-        groupEventRVAdapter.setContentClickListener(object : GroupDailyGroupRVAdapter.ContentClickListener {
+        groupScheduleRVAdapter.setContentClickListener(object : GroupDailyGroupRVAdapter.ContentClickListener {
             override fun onContentClick(groupSchedule: MoimSchedule) {
                 val intent = Intent(context, GroupScheduleActivity::class.java)
                 intent.putExtra("group", (activity as GroupCalendarActivity).getGroup())
@@ -155,13 +155,13 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
             }
         })
 
-        groupEventRVAdapter.setRecordClickListener(object :GroupDailyGroupRVAdapter.DiaryInterface{
-            override fun onGroupMemoClicked(groupEvent: MoimSchedule) {
-                Log.d("GROUP_DIARY_CLICK", groupEvent.toString())
+        groupScheduleRVAdapter.setRecordClickListener(object :GroupDailyGroupRVAdapter.DiaryInterface{
+            override fun onGroupMemoClicked(groupSchedule: MoimSchedule) {
+                Log.d("GROUP_DIARY_CLICK", groupSchedule.toString())
                 val intent = Intent(context, GroupMemoActivity::class.java)
-                intent.putExtra("hasGroupPlace",groupEvent.hasDiaryPlace)
-                intent.putExtra("groupScheduleId", groupEvent.moimScheduleId)
-                intent.putExtra("groupEvent", groupEvent)
+                intent.putExtra("hasGroupPlace",groupSchedule.hasDiaryPlace)
+                intent.putExtra("groupScheduleId", groupSchedule.moimScheduleId)
+                intent.putExtra("groupSchedule", groupSchedule)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 requireActivity().startActivity(intent)
 
@@ -176,41 +176,41 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
     }
 
     private fun setData(idx : Int) {
-        getEvent(idx)
+        getSchedule(idx)
         setEmptyMsg()
     }
 
     private fun setEmptyMsg() {
-        if (dailyEvents.size == 0 ) binding.groupDailyEventNoneTv.visibility = View.VISIBLE
+        if (dailySchedules.size == 0 ) binding.groupDailyEventNoneTv.visibility = View.VISIBLE
         else binding.groupDailyEventNoneTv.visibility = View.GONE
     }
 
-    private fun getEvent(idx : Int) {
+    private fun getSchedule(idx : Int) {
         var todayStart = monthList[idx].withTimeAtStartOfDay().millis
         var todayEnd = monthList[idx].plusDays(1).withTimeAtStartOfDay().millis - 1
 
-        tempEvent.clear()
-        tempEvent.addAll(eventList.filter { event ->
+        tempSchedule.clear()
+        tempSchedule.addAll(eventList.filter { event ->
             event.startDate <= todayEnd / 1000 && event.endDate >= todayStart / 1000
         })
 
-        dailyEvents.clear()
-        dailyGroupEvents.clear()
-        dailyEvents.addAll(
-            tempEvent.filter { event ->
+        dailySchedules.clear()
+        dailyGroupSchedules.clear()
+        dailySchedules.addAll(
+            tempSchedule.filter { event ->
                 !event.curMoimSchedule
             }
         )
-        dailyGroupEvents.addAll(
-            tempEvent.filter { event ->
+        dailyGroupSchedules.addAll(
+            tempSchedule.filter { event ->
                 event.curMoimSchedule
             }
         )
-        Log.d("GroupCalMonFrag", dailyEvents.toString())
-        Log.d("GroupCalMonFrag", "Group Schedule : " + dailyGroupEvents.toString())
+        Log.d("GroupCalMonFrag", dailySchedules.toString())
+        Log.d("GroupCalMonFrag", "Group Schedule : " + dailyGroupSchedules.toString())
 
-        personalEventRVAdapter.addPersonal(dailyEvents)
-        groupEventRVAdapter.addGroupSchedule(dailyGroupEvents)
+        personalScheduleRVAdapter.addPersonal(dailySchedules)
+        groupScheduleRVAdapter.addGroupSchedule(dailyGroupSchedules)
 
 
     }
@@ -244,7 +244,7 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
         Log.d("GroupCalMonFrag", response.result.toString())
         eventList.clear()
         eventList.addAll(response.result)
-        binding.groupCalendarMonthView.setEventList(eventList)
+        binding.groupCalendarMonthView.setScheduleList(eventList)
         binding.groupCalendarMonthView.invalidate()
 
 

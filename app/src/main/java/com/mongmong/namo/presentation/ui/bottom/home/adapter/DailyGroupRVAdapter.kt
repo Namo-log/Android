@@ -9,21 +9,20 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.data.local.entity.home.Event
-import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.databinding.ItemCalendarEventBinding
+import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
 import com.mongmong.namo.domain.model.MonthDiary
 import org.joda.time.DateTime
 
 class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>() {
 
-    private val group = ArrayList<Event>()
+    private val group = ArrayList<Schedule>()
     private val categoryList = ArrayList<Category>()
     private val groupDiary = ArrayList<MonthDiary>()
     private lateinit var context : Context
 
     interface GroupContentClickListener {
-        fun onGroupContentClick(event: Event)
+        fun onGroupContentClick(event: Schedule)
     }
     private lateinit var groupContentClickListener: GroupContentClickListener
 
@@ -42,7 +41,7 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
     /** ----- **/
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
-        val binding : ItemCalendarEventBinding = ItemCalendarEventBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
+        val binding : ItemSchedulePreviewBinding = ItemSchedulePreviewBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
         context = viewGroup.context
 
         return ViewHolder(binding)
@@ -73,7 +72,7 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
     override fun getItemCount(): Int = group.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addGroup(group : ArrayList<Event>) {
+    fun addGroup(group : ArrayList<Schedule>) {
         this.group.clear()
         this.group.addAll(group)
     }
@@ -89,8 +88,8 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(val binding : ItemCalendarEventBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(group : Event) {
+    inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(group : Schedule) {
             val time = DateTime(group.startLong * 1000L).toString("HH:mm") + " - " + DateTime(group.endLong * 1000L).toString("HH:mm")
             val category = categoryList.find {
                 if (it.serverId != 0L) it.serverId == group.categoryServerId

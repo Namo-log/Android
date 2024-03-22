@@ -16,7 +16,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.ActivityScheduleBinding
 import com.mongmong.namo.presentation.ui.bottom.home.notify.PushNotificationReceiver
 import com.mongmong.namo.presentation.utils.ConfirmDialog
@@ -36,9 +36,9 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private var alarmList : MutableList<Int> = mutableListOf()
-    private val failList = ArrayList<Event>()
+    private val failList = ArrayList<Schedule>()
 
-    private var event : Event? = null
+    private var event : Schedule? = null
 
     private val viewModel : ScheduleViewModel by viewModels()
 
@@ -49,7 +49,7 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         db = NamoDatabase.getInstance(this)
         setContentView(binding.root)
 
-        val event = intent.getSerializableExtra("event") as? Event
+        val event = intent.getSerializableExtra("event") as? Schedule
         val nowDay = intent.getLongExtra("nowDay", 0)
 
         if (event != null) {
@@ -116,7 +116,7 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
     }
 
-    private fun deleteNotification(id : Int, event : Event) {
+    private fun deleteNotification(id : Int, event : Schedule) {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(this, PushNotificationReceiver::class.java)
@@ -135,7 +135,7 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
     private fun printNotUploaded() {
         val thread = Thread {
             failList.clear()
-            failList.addAll(db.eventDao.getNotUploadedEvent() as ArrayList<Event>)
+            failList.addAll(db.scheduleDao.getNotUploadedSchedule() as ArrayList<Schedule>)
         }
         thread.start()
         try {

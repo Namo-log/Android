@@ -8,7 +8,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.data.local.entity.diary.DiaryEvent
+import com.mongmong.namo.data.local.entity.diary.DiarySchedule
 import com.mongmong.namo.data.remote.diary.DiaryRepository
 import com.mongmong.namo.databinding.ItemDiaryItemListBinding
 import com.mongmong.namo.databinding.ItemDiaryListBinding
@@ -19,18 +19,18 @@ import java.text.SimpleDateFormat
 
 
 class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
-    val editClickListener: (DiaryEvent) -> Unit,
+    val editClickListener: (DiarySchedule) -> Unit,
     val imageClickListener: (String) -> Unit
-) : PagingDataAdapter<DiaryEvent, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
+) : PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
 
 
-    class DiaryDiffCallback : DiffUtil.ItemCallback<DiaryEvent>() {
-        override fun areItemsTheSame(oldItem: DiaryEvent, newItem: DiaryEvent): Boolean {
+    class DiaryDiffCallback : DiffUtil.ItemCallback<DiarySchedule>() {
+        override fun areItemsTheSame(oldItem: DiarySchedule, newItem: DiarySchedule): Boolean {
             return oldItem.scheduleId == newItem.scheduleId
         }
 
         @SuppressLint("DiffUtilEquals")
-        override fun areContentsTheSame(oldItem: DiaryEvent, newItem: DiaryEvent): Boolean {
+        override fun areContentsTheSame(oldItem: DiarySchedule, newItem: DiarySchedule): Boolean {
             return oldItem == newItem
         }
     }
@@ -39,11 +39,11 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is DiaryHeaderViewHolder -> {
-                val diaryItem = getItem(position) as DiaryEvent
+                val diaryItem = getItem(position) as DiarySchedule
                 holder.bind(diaryItem)
             }
             is DiaryContentViewHolder -> {
-                val diaryItems = getItem(position) as DiaryEvent
+                val diaryItems = getItem(position) as DiarySchedule
                 holder.bind(diaryItems)
                 holder.onclick.setOnClickListener {
                     editClickListener(diaryItems)
@@ -74,7 +74,7 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
         RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SimpleDateFormat")
-        fun bind(item: DiaryEvent) {
+        fun bind(item: DiarySchedule) {
             binding.apply {
                 val formattedDate = SimpleDateFormat("yyyy.MM.dd").format(item.startDate)
                 diaryDayTv.text = formattedDate
@@ -97,7 +97,7 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
     ) : RecyclerView.ViewHolder(binding.root) {
         val onclick = binding.editLy
 
-        fun bind(item: DiaryEvent) {
+        fun bind(item: DiarySchedule) {
             binding.apply {
 
                 itemDiaryContentTv.text = item.content

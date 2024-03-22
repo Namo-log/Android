@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.MoimSchedule
-import com.mongmong.namo.databinding.ItemCalendarEventGroupBinding
+import com.mongmong.namo.databinding.ItemSchedulePreviewMoimBinding
 import org.joda.time.DateTime
 
 class GroupDailyPersonalRVAdapter() : RecyclerView.Adapter<GroupDailyPersonalRVAdapter.ViewHolder>() {
@@ -17,7 +17,7 @@ class GroupDailyPersonalRVAdapter() : RecyclerView.Adapter<GroupDailyPersonalRVA
     private lateinit var context : Context
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
-        val binding : ItemCalendarEventGroupBinding = ItemCalendarEventGroupBinding.inflate(
+        val binding : ItemSchedulePreviewMoimBinding = ItemSchedulePreviewMoimBinding.inflate(
             LayoutInflater.from(viewGroup.context), viewGroup, false)
         context = viewGroup.context
         colorArray = context.resources.getIntArray(R.array.categoryColorArr)
@@ -38,7 +38,7 @@ class GroupDailyPersonalRVAdapter() : RecyclerView.Adapter<GroupDailyPersonalRVA
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(val binding : ItemCalendarEventGroupBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding : ItemSchedulePreviewMoimBinding) : RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("ResourceType")
         fun bind(personal: MoimSchedule) {

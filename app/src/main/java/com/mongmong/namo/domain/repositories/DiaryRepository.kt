@@ -2,7 +2,7 @@ package com.mongmong.namo.domain.repositories
 
 import androidx.paging.PagingSource
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.local.entity.diary.DiaryEvent
+import com.mongmong.namo.data.local.entity.diary.DiarySchedule
 import java.io.File
 
 
@@ -26,5 +26,5 @@ interface DiaryRepository {
 
     suspend fun postDiaryToServer(serverId: Long, scheduleId: Long)
 
-    fun getPersonalDiaryPagingSource(month: String): PagingSource<Int, DiaryEvent>
+    fun getPersonalDiaryPagingSource(month: String): PagingSource<Int, DiarySchedule>
 }

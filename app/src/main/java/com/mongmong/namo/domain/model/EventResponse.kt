@@ -3,31 +3,31 @@ package com.mongmong.namo.domain.model
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 
-data class PostEventResponse (
-    val result : PostEventResult
+data class PostScheduleResponse (
+    val result : PostScheduleResult
 ) : BaseResponse()
 
-data class PostEventResult (
+data class PostScheduleResult (
     @SerializedName("scheduleIdx")  val scheduleIdx : Long
 )
 
-data class EditEventResponse (
-    @SerializedName("result") val result : EditEventResult
+data class EditScheduleResponse (
+    @SerializedName("result") val result : EditScheduleResult
 ) : BaseResponse()
 
-data class EditEventResult (
+data class EditScheduleResult (
     @SerializedName("scheduleIdx")  val scheduleIdx : Long
 )
 
-data class DeleteEventResponse (
+data class DeleteScheduleResponse (
     @SerializedName("result") val result : String
 ) : BaseResponse()
 
-data class GetMonthEventResponse (
-    @SerializedName("result") val result : List<GetMonthEventResult>
+data class GetMonthScheduleResponse (
+    @SerializedName("result") val result : List<GetMonthScheduleResult>
 ) : BaseResponse()
 
-data class GetMonthEventResult (
+data class GetMonthScheduleResult (
     @SerializedName("scheduleId") val scheduleId : Long,
     @SerializedName("name") val name : String,
     @SerializedName("startDate") val startDate : Long,

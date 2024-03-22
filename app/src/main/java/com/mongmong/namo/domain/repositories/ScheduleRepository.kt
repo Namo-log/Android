@@ -1,19 +1,19 @@
 package com.mongmong.namo.domain.repositories
 
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.home.Schedule
 
 interface ScheduleRepository {
     suspend fun getDailySchedules(
         startDate: Long,
         endDate: Long
-    ): List<Event>
+    ): List<Schedule>
 
     suspend fun addSchedule(
-        schedule: Event
+        schedule: Schedule
     )
 
     suspend fun editSchedule(
-        schedule: Event
+        schedule: Schedule
     )
 
     suspend fun deleteSchedule(

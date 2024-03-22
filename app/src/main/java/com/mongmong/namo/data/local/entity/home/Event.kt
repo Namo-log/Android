@@ -7,7 +7,7 @@ import com.mongmong.namo.R
 import java.io.Serializable
 
 @Entity(tableName = "schedule_table")
-data class Event(
+data class Schedule(
     @PrimaryKey(autoGenerate = true)
     var scheduleId: Long = 0L,
 
@@ -60,8 +60,8 @@ data class Event(
     var moimSchedule: Boolean = false
 
 ) : Serializable {
-    fun eventToEventForUpload() : EventForUpload {
-        return EventForUpload(
+    fun eventToScheduleForUpload() : ScheduleForUpload {
+        return ScheduleForUpload(
             name = this.title,
             startDate = this.startLong,
             endDate = this.endLong,
@@ -76,7 +76,7 @@ data class Event(
 }
 
 
-data class EventForUpload(
+data class ScheduleForUpload(
     var name: String = "",
     var startDate: Long = 0L,
     var endDate: Long = 0L,

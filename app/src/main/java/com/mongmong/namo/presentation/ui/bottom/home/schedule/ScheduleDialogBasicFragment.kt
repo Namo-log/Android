@@ -40,7 +40,7 @@ import com.mongmong.namo.presentation.ui.MainActivity.Companion.setCategoryList
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.moim.EditMoimScheduleView
 import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
 import com.mongmong.namo.data.remote.moim.MoimService
@@ -63,7 +63,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     private lateinit var binding : FragmentScheduleDialogBasicBinding
     private val args : ScheduleDialogBasicFragmentArgs by navArgs()
 
-    private var event : Event = Event()
+    private var event : Schedule = Schedule()
 
     private var isAlarm : Boolean = false
 
@@ -95,7 +95,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     private var prevAlarmList : List<Int>? = null
     private var alarmText : String = ""
 
-    private val failList = ArrayList<Event>()
+    private val failList = ArrayList<Schedule>()
 
     private var isMoimScheduleCategorySaved = false
     private var isMoimScheduleAlarmSaved = false
@@ -819,7 +819,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     private fun printNotUploaded() {
         val thread = Thread {
             failList.clear()
-            failList.addAll(db.eventDao.getNotUploadedEvent() as ArrayList<Event>)
+            failList.addAll(db.scheduleDao.getNotUploadedSchedule() as ArrayList<Schedule>)
         }
         thread.start()
         try {
@@ -870,8 +870,8 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     private fun isMoimScheduleSaved() {
         if (isMoimScheduleCategorySaved && isMoimScheduleAlarmSaved) {
             val thread = Thread {
-                db.eventDao.updateEvent(event)
-//                Log.d("UPDATE_MOIM_SCHEDULE", db.eventDao.getEventById(event.scheduleId).toString())
+                db.scheduleDao.updateSchedule(event)
+//                Log.d("UPDATE_MOIM_SCHEDULE", db.eventDao.getScheduleById(event.scheduleId).toString())
             }
 
             thread.start()

@@ -14,7 +14,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.adapter.DialogCategoryRVAdapter
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.FragmentScheduleDialogCategoryBinding
 import com.mongmong.namo.presentation.ui.bottom.home.category.CategoryActivity
 
@@ -24,7 +24,7 @@ class ScheduleDialogCategoryFragment : Fragment() {
     private lateinit var db: NamoDatabase
     private val args : ScheduleDialogCategoryFragmentArgs by navArgs()
 
-    private var event : Event = Event()
+    private var event : Schedule = Schedule()
 
     private lateinit var categoryRVAdapter : DialogCategoryRVAdapter
     private var categoryList : List<Category> = arrayListOf()

@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.util.TypedValue
 import androidx.annotation.ColorInt
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.home.Schedule
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
 
@@ -74,11 +74,11 @@ class CalendarUtils {
             return ((end - start) / (24*60*60*1000)).toInt()
         }
 
-        fun getOrder(event : Event, eventList : ArrayList<Event>) : Int {
+        fun getOrder(event : Schedule, eventList : ArrayList<Schedule>) : Int {
             var maxIdx = 0
             var idx = 0
             for (i in 0 until event.endDate + 1) {
-                var temp = getTodayEvent(eventList, DateTime(event.startLong).withTimeAtStartOfDay().plusDays(i))
+                var temp = getTodaySchedule(eventList, DateTime(event.startLong).withTimeAtStartOfDay().plusDays(i))
                 idx = temp.indexOf(event)
                 if (maxIdx < idx) {
                     maxIdx = idx
@@ -88,11 +88,11 @@ class CalendarUtils {
             return maxIdx
         }
 
-        fun getTodayEvent(eventList : ArrayList<Event>, today : DateTime) : ArrayList<Event> {
-            var contains = ArrayList<Event>()
+        fun getTodaySchedule(eventList : ArrayList<Schedule>, today : DateTime) : ArrayList<Schedule> {
+            var contains = ArrayList<Schedule>()
 
             eventList.forEach {
-                if (isEventHaveToday(it, today)) {
+                if (isScheduleHaveToday(it, today)) {
                     contains.add(it)
                 }
             }
@@ -104,7 +104,7 @@ class CalendarUtils {
             return contains
         }
 
-        fun isEventHaveToday(event : Event, today : DateTime) : Boolean {
+        fun isScheduleHaveToday(event : Schedule, today : DateTime) : Boolean {
             val start = DateTime(event.startLong).withTimeAtStartOfDay()
             val end = DateTime(event.endLong).withTimeAtStartOfDay()
             val now = today.withTimeAtStartOfDay()

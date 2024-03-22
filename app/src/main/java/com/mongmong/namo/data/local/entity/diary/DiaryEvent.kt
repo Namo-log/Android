@@ -3,7 +3,7 @@ package com.mongmong.namo.data.local.entity.diary
 
 
 
-data class DiaryEvent(
+data class DiarySchedule(
     var scheduleId: Long = 0L,
     var title: String = "",
     var startDate: Long = 0,

@@ -3,8 +3,8 @@ package com.mongmong.namo.data.local.dao
 import androidx.room.*
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.local.entity.diary.DiaryEvent
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.diary.DiarySchedule
+import com.mongmong.namo.data.local.entity.home.Schedule
 
 @Dao
 interface DiaryDao {
@@ -35,7 +35,7 @@ interface DiaryDao {
                 "WHERE strftime('%Y.%m', e.startDate, 'unixepoch') = :yearMonth AND d.state != ${R.string.event_current_deleted} " +
                 "AND e.isMoim = 0 ORDER BY e.startDate DESC LIMIT :size OFFSET :page * :size"
     )
-    fun getDiaryEventList(yearMonth: String, page: Int, size: Int): List<DiaryEvent>
+    fun getDiaryScheduleList(yearMonth: String, page: Int, size: Int): List<DiarySchedule>
 
     @Query("UPDATE diary_table SET isUpload=:isUpload, serverId=:serverId, state=:state WHERE diaryId=:localId")
     suspend fun updateDiaryAfterUpload(localId: Long, serverId: Long, isUpload: Int, state: String)
@@ -44,6 +44,6 @@ interface DiaryDao {
     fun getNotUploadedDiary(): List<Diary>
 
     @Query("SELECT * FROM schedule_table")
-    fun getAllEvent(): List<Event>
+    fun getAllSchedule(): List<Schedule>
 
 }
