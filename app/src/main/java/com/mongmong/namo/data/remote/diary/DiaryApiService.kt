@@ -27,13 +27,13 @@ interface DiaryApiService {
         @Part("scheduleId") scheduleIdx: RequestBody,
         @Part("content") content: RequestBody?,
         @Part imgs: List<MultipartBody.Part>?
-    ): Call<DiaryResponse>
+    ): DiaryResponse
 
 
     @DELETE("/schedules/diary/{scheduleId}")
     fun deleteDiary(
         @Path("scheduleId") scheduleId: Long
-    ): Call<DiaryResponse>
+    ): DiaryResponse
 
 
     @GET("/schedules/diary/all")

@@ -1,9 +1,9 @@
 package com.mongmong.namo.presentation.di
 
-import com.mongmong.namo.data.datasource.LocalDiaryDataSource
-import com.mongmong.namo.data.datasource.RemoteDiaryDataSource
 import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
+import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
+import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.dao.EventDao
 import com.mongmong.namo.data.remote.diary.DiaryApiService
