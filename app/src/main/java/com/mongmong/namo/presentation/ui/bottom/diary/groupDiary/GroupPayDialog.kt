@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.mongmong.namo.data.local.entity.diary.DiaryGroupEvent
+import com.mongmong.namo.data.local.entity.diary.DiaryGroupSchedule
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.databinding.DialogGroupPayBinding
 import com.mongmong.namo.domain.model.GroupUser
@@ -25,7 +25,7 @@ import kotlin.collections.ArrayList
 
 class GroupPayDialog(
     private var placeMember: List<GroupUser>,
-    private var placeEvent: DiaryGroupEvent,
+    private var placeSchedule: DiaryGroupSchedule,
     private val pay: (Long) -> Unit,
     private val checkedMember: (List<Long>) -> Unit
 ) : DialogFragment(), View.OnClickListener {  // 그룹 다이어리 장소별 정산 다이얼로그
@@ -82,14 +82,14 @@ class GroupPayDialog(
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        if (placeEvent.pay != 0L) { // 가져온 데이터 할당
-            memberCount = placeEvent.members.size
-            totalPay = placeEvent.pay
+        if (placeSchedule.pay != 0L) { // 가져온 데이터 할당
+            memberCount = placeSchedule.members.size
+            totalPay = placeSchedule.pay
             binding.groupPayCountTv.text = memberCount.toString()
             binding.groupPayTotalEt.setText(NumberFormat.getNumberInstance(Locale.US).format(totalPay))
             updateResultText()
 
-            for (i in placeEvent.members) {
+            for (i in placeSchedule.members) {
                 val index = memberIsChecked.indexOfFirst { it.first == i }
                 if (index != -1) {
                     memberIsChecked[index] = i to true // 체크된 그룹 멤버 true로 변경

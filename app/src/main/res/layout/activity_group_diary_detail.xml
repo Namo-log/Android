@@ -164,7 +164,7 @@
                     android:id="@+id/item_diary_category_color_iv"
                     android:layout_width="15dp"
                     android:layout_height="0dp"
-                    android:background="@drawable/ic_category_color_corner"
+                    android:background="@drawable/bg_diary_preview_category_color_corner"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -175,7 +175,7 @@
                 android:id="@+id/diary_contents_et"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:background="@drawable/ic_category_base_corner"
+                android:background="@drawable/bg_diary_preview_base_corner"
                 android:gravity="start"
                 android:hint="@string/diary_put"
                 android:inputType="text"

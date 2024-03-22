@@ -8,7 +8,7 @@ import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.local.entity.diary.DiaryEvent
+import com.mongmong.namo.data.local.entity.diary.DiarySchedule
 import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.presentation.config.RoomState
@@ -93,7 +93,7 @@ class DiaryRepositoryImpl @Inject constructor(
     }
 
     /** 개인 기록 리스트 조회 **/
-    override fun getPersonalDiaryPagingSource(date: String): PagingSource<Int, DiaryEvent> {
+    override fun getPersonalDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
         return DiaryPersonalPagingSource(diaryDao, date)
     }
 
@@ -101,7 +101,7 @@ class DiaryRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun postDiaryToServer(eventServerId: Long, eventId: Long) {
+    override suspend fun postDiaryToServer(serverId: Long, scheduleId: Long) {
         TODO("Not yet implemented")
     }
 

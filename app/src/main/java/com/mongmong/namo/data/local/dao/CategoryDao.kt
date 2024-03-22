@@ -18,7 +18,7 @@ interface CategoryDao {
     @Query("DELETE FROM category_table")
     fun deleteAllCategories()
 
-    @Query("DELETE FROM category_table WHERE categoryIdx=:categoryId")
+    @Query("DELETE FROM category_table WHERE categoryId=:categoryId")
     fun deleteCategoryById(categoryId : Long)
 
 
@@ -31,13 +31,13 @@ interface CategoryDao {
     @Query("SELECT * FROM category_table WHERE active=:isActive")
     fun getActiveCategoryList(isActive: Boolean): List<Category>
 
-    @Query("SELECT * FROM category_table WHERE categoryIdx=:categoryIdx UNION ALL SELECT * FROM category_table WHERE categoryIdx <> :categoryIdx LIMIT 1")
-    fun getCategoryWithId(categoryIdx: Long): Category
+    @Query("SELECT * FROM category_table WHERE categoryId=:categoryId UNION ALL SELECT * FROM category_table WHERE categoryId <> :categoryId LIMIT 1")
+    fun getCategoryWithId(categoryId: Long): Category
 
     @Query("SELECT * FROM category_table WHERE isUpload = 0")
     fun getNotUploadedCategory() : List<Category>
 
-    @Query("UPDATE category_table SET isUpload=:isUpload, serverIdx=:serverIdx, state=:state WHERE categoryIdx=:categoryIdx")
-    fun updateCategoryAfterUpload(categoryIdx : Long, isUpload : Int, serverIdx : Long, state : String)
+    @Query("UPDATE category_table SET isUpload=:isUpload, serverId=:serverId, state=:state WHERE categoryId=:categoryId")
+    fun updateCategoryAfterUpload(categoryId : Long, isUpload : Int, serverId : Long, state : String)
 
 }

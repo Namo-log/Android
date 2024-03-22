@@ -213,18 +213,18 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
                 val startIdx = dayList.indexOf(DateTime(eventList[i].startDate * 1000L).withTimeAtStartOfDay())
                 val endIdx = dayList.indexOf(DateTime(eventList[i].endDate * 1000L).withTimeAtStartOfDay())
 
-                for (splitEvent in splitWeek(startIdx, endIdx)) {
-                    val order = findMaxOrderInEvent(splitEvent.startIdx, splitEvent.endIdx)
-                    setOrder(order, splitEvent.startIdx, splitEvent.endIdx)
+                for (splitSchedule in splitWeek(startIdx, endIdx)) {
+                    val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
+                    setOrder(order, splitSchedule.startIdx, splitSchedule.endIdx)
 
-                    if (cellHeight - getEventBottom(order) < _eventHeight) {
-                        for (idx in splitEvent.startIdx .. splitEvent.endIdx) {
+                    if (cellHeight - getScheduleBottom(order) < _eventHeight) {
+                        for (idx in splitSchedule.startIdx .. splitSchedule.endIdx) {
                             moreList[idx] = moreList[idx] + 1
                         }
                         continue
                     }
 
-                    rect = setRect(order, splitEvent.startIdx, splitEvent.endIdx)
+                    rect = setRect(order, splitSchedule.startIdx, splitSchedule.endIdx)
                     val path = Path()
                     path.addRoundRect(rect, corners, Path.Direction.CW)
                     setBgPaintColor(eventList[i])
@@ -240,8 +240,8 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
 
                         canvas.drawText(
                             ellipsizedText.toString(),
-                            getEventTextStart(ellipsizedText.toString(), splitEvent.startIdx, splitEvent.endIdx),
-                            getEventTextBottom(ellipsizedText.toString(), splitEvent.startIdx, splitEvent.endIdx, order),
+                            getScheduleTextStart(ellipsizedText.toString(), splitSchedule.startIdx, splitSchedule.endIdx),
+                            getScheduleTextBottom(ellipsizedText.toString(), splitSchedule.startIdx, splitSchedule.endIdx, order),
                             eventPaint
                         )
 
@@ -250,8 +250,8 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
 
                         canvas.drawText(
                             eventList[i].name,
-                            getEventTextStart(eventList[i].name, splitEvent.startIdx, splitEvent.endIdx),
-                            getEventTextBottom(eventList[i].name, splitEvent.startIdx, splitEvent.endIdx, order),
+                            getScheduleTextStart(eventList[i].name, splitSchedule.startIdx, splitSchedule.endIdx),
+                            getScheduleTextBottom(eventList[i].name, splitSchedule.startIdx, splitSchedule.endIdx, order),
                             eventPaint
                         )
                     }
@@ -276,15 +276,15 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
                 val startIdx = dayList.indexOf(DateTime(eventList[i].startDate * 1000L).withTimeAtStartOfDay())
                 val endIdx = dayList.indexOf(DateTime(eventList[i].endDate * 1000L).withTimeAtStartOfDay())
 
-                for (splitEvent in splitWeek(startIdx, endIdx)) {
-                    val order = findMaxOrderInEvent(splitEvent.startIdx, splitEvent.endIdx)
-                    setOrder(order, splitEvent.startIdx, splitEvent.endIdx)
+                for (splitSchedule in splitWeek(startIdx, endIdx)) {
+                    val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
+                    setOrder(order, splitSchedule.startIdx, splitSchedule.endIdx)
 
-                    if (getEventLineBottom(order) >= cellHeight) {
+                    if (getScheduleLineBottom(order) >= cellHeight) {
                         continue
                     }
 
-                    rect = setLineRect(order, splitEvent.startIdx, splitEvent.endIdx)
+                    rect = setLineRect(order, splitSchedule.startIdx, splitSchedule.endIdx)
                     val path = Path()
                     path.addRoundRect(rect, corners, Path.Direction.CW)
                     setBgPaintColor(eventList[i])
@@ -349,7 +349,7 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
         return result
     }
 
-    private fun findMaxOrderInEvent(startIdx: Int, endIdx: Int) : Int {
+    private fun findMaxOrderInSchedule(startIdx: Int, endIdx: Int) : Int {
         var maxOrder : Int = 0
         for (i in startIdx ..endIdx) {
             if (orderList[i] > maxOrder) maxOrder = orderList[i]
@@ -364,11 +364,11 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
         }
     }
 
-    private fun getEventBottom(idx : Int) : Float {
+    private fun getScheduleBottom(idx : Int) : Float {
         return (eventTop + (_eventBetweenPadding * idx) + (_eventHeight * (idx + 1)))
     }
 
-    private fun getEventLineBottom(idx : Int) : Float {
+    private fun getScheduleLineBottom(idx : Int) : Float {
         return (eventTop + (_eventBetweenPadding * idx) + (_eventLineHeight * (idx + 1)))
     }
 
@@ -470,11 +470,11 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
         bgPaint.color = colorArray[paletteId - 1]
     }
 
-    private fun getEventTextStart(title : String, startIdx : Int, endIdx : Int) : Float {
+    private fun getScheduleTextStart(title : String, startIdx : Int, endIdx : Int) : Float {
         return (((startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding) + ((endIdx % DAYS_PER_WEEK) * cellWidth + cellWidth - _eventHorizontalPadding)) / 2 - eventBounds.width() / 2
     }
 
-    private fun getEventTextBottom(title : String, startIdx : Int, endIdx : Int, order : Int) : Float {
+    private fun getScheduleTextBottom(title : String, startIdx : Int, endIdx : Int, order : Int) : Float {
         return (((startIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding + _eventHeight) * order) + ((endIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding * order) + (_eventHeight * (order + 1)))) / 2 + eventBounds.height() / 2
     }
 
@@ -491,7 +491,7 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
         dayList.addAll(getMonthList(DateTime(millis)))
     }
 
-    fun setEventList(events : List<MoimSchedule>) {
+    fun setScheduleList(events : List<MoimSchedule>) {
         eventList.clear()
         eventList.addAll(events)
     }
@@ -500,7 +500,7 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
         return dayList
     }
 
-    fun getEventList() : MutableList<MoimSchedule> {
+    fun getScheduleList() : MutableList<MoimSchedule> {
         return eventList
     }
 }

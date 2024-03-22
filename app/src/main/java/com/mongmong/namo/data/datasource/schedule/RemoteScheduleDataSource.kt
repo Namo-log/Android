@@ -1,28 +1,28 @@
 package com.mongmong.namo.data.datasource.schedule
 
 import android.util.Log
-import com.mongmong.namo.data.local.entity.home.EventForUpload
-import com.mongmong.namo.data.remote.event.EventRetrofitInterface
-import com.mongmong.namo.domain.model.DeleteEventResponse
-import com.mongmong.namo.domain.model.EditEventResponse
-import com.mongmong.namo.domain.model.EditEventResult
-import com.mongmong.namo.domain.model.PostEventResponse
-import com.mongmong.namo.domain.model.PostEventResult
+import com.mongmong.namo.data.local.entity.home.ScheduleForUpload
+import com.mongmong.namo.data.remote.schedule.ScheduleRetrofitInterface
+import com.mongmong.namo.domain.model.DeleteScheduleResponse
+import com.mongmong.namo.domain.model.EditScheduleResponse
+import com.mongmong.namo.domain.model.EditScheduleResult
+import com.mongmong.namo.domain.model.PostScheduleResponse
+import com.mongmong.namo.domain.model.PostScheduleResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class RemoteScheduleDataSource @Inject constructor(
-    private val apiService: EventRetrofitInterface
+    private val apiService: ScheduleRetrofitInterface
 ) {
     suspend fun addScheduleToServer(
-        schedule: EventForUpload,
-    ): PostEventResponse {
-        var scheduleResponse = PostEventResponse(result = PostEventResult(-1))
+        schedule: ScheduleForUpload,
+    ): PostScheduleResponse {
+        var scheduleResponse = PostScheduleResponse(result = PostScheduleResult(-1))
 
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.postEvent(schedule)
+                apiService.postSchedule(schedule)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "addScheduleToServer Success $it")
                 scheduleResponse = it
@@ -35,13 +35,13 @@ class RemoteScheduleDataSource @Inject constructor(
 
     suspend fun editScheduleToServer(
         scheduleId: Long,
-        schedule: EventForUpload
-    ) : EditEventResponse {
-        var scheduleResponse = EditEventResponse(result = EditEventResult(-1))
+        schedule: ScheduleForUpload
+    ) : EditScheduleResponse {
+        var scheduleResponse = EditScheduleResponse(result = EditScheduleResult(-1))
 
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.editEvent(scheduleId, schedule)
+                apiService.editSchedule(scheduleId, schedule)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "editScheduleToServer Success, $it")
                 scheduleResponse = it
@@ -54,12 +54,12 @@ class RemoteScheduleDataSource @Inject constructor(
 
     suspend fun deleteScheduleToServer(
         scheduleId: Long
-    ) : DeleteEventResponse {
-        var scheduleResponse = DeleteEventResponse("")
+    ) : DeleteScheduleResponse {
+        var scheduleResponse = DeleteScheduleResponse("")
 
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.deleteEvent(scheduleId, IS_NOT_GROUP) // 개인
+                apiService.deleteSchedule(scheduleId, IS_NOT_GROUP) // 개인
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "deleteScheduleToServer Success, $it")
                 scheduleResponse = it

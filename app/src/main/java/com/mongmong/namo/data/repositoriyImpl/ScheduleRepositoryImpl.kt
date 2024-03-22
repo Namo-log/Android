@@ -4,7 +4,7 @@ import android.util.Log
 import com.mongmong.namo.R
 import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.presentation.config.RoomState
@@ -16,49 +16,59 @@ class ScheduleRepositoryImpl @Inject constructor(
     private val networkChecker: NetworkChecker
 ) : ScheduleRepository {
 
-    override suspend fun getDailySchedules(startDate: Long, endDate: Long): List<Event> {
+    override suspend fun getDailySchedules(startDate: Long, endDate: Long): List<Schedule> {
         val list = localScheduleDataSource.getDailySchedules(startDate, endDate)
         Log.d("ScheduleRepositoryImpl", "getDailySchedules")
         list.forEach { event ->
-            Log.d("getDailySchedules", "${event.eventId}, ${event.title}")
+            Log.d("getDailySchedules", "${event.scheduleId}, ${event.title}")
         }
         return list
     }
 
-    override suspend fun addSchedule(schedule: Event) {
+    override suspend fun addSchedule(schedule: Schedule) {
         Log.d("ScheduleRepositoryImpl", "addSchedule $schedule")
         localScheduleDataSource.addSchedule(schedule)
         if (networkChecker.isOnline()) {
-            val addResponse = remoteScheduleDataSource.addScheduleToServer(schedule.eventToEventForUpload())
+            val addResponse =
+                remoteScheduleDataSource.addScheduleToServer(schedule.eventToScheduleForUpload())
             if (addResponse.code == SUCCESS_CODE) {
                 Log.d("ScheduleRepositoryImpl", "addSchedule Success")
                 localScheduleDataSource.updateScheduleAfterUpload(
-                    localId = schedule.eventId,
-                    serverId = addResponse.result.eventIdx,
+                    localId = schedule.scheduleId,
+                    serverId = addResponse.result.scheduleIdx,
                     isUpload = IS_UPLOAD,
                     status = RoomState.DEFAULT.state,
                 )
             } else {
-                Log.d("ScheduleRepositoryImpl", "addSchedule Fail, code = ${addResponse.code}, message = ${addResponse.message}")
+                Log.d(
+                    "ScheduleRepositoryImpl",
+                    "addSchedule Fail, code = ${addResponse.code}, message = ${addResponse.message}"
+                )
             }
         }
     }
 
-    override suspend fun editSchedule(schedule: Event) {
+    override suspend fun editSchedule(schedule: Schedule) {
         Log.d("ScheduleRepositoryImpl", "editSchedule $schedule")
         localScheduleDataSource.editSchedule(schedule)
         if (networkChecker.isOnline()) {
-            val editResponse = remoteScheduleDataSource.editScheduleToServer(schedule.eventId, schedule.eventToEventForUpload())
+            val editResponse = remoteScheduleDataSource.editScheduleToServer(
+                schedule.scheduleId,
+                schedule.eventToScheduleForUpload()
+            )
             if (editResponse.code == SUCCESS_CODE) {
                 Log.d("ScheduleRepositoryImpl", "editSchedule Success")
                 localScheduleDataSource.updateScheduleAfterUpload(
-                    localId = schedule.eventId,
-                    serverId = editResponse.result.eventIdx,
+                    localId = schedule.scheduleId,
+                    serverId = editResponse.result.scheduleIdx,
                     isUpload = IS_UPLOAD,
                     status = RoomState.DEFAULT.state,
                 )
             } else {
-                Log.d("ScheduleRepositoryImpl", "editSchedule Fail, code = ${editResponse.code}, message = ${editResponse.message}")
+                Log.d(
+                    "ScheduleRepositoryImpl",
+                    "editSchedule Fail, code = ${editResponse.code}, message = ${editResponse.message}"
+                )
             }
         }
     }
@@ -78,7 +88,10 @@ class ScheduleRepositoryImpl @Inject constructor(
                 // room db에서 삭제
                 localScheduleDataSource.deleteSchedule(localId)
             } else {
-                Log.d("ScheduleRepositoryImpl", "deleteSchedule Fail, code = ${deleteResponse.code}, message = ${deleteResponse.message}")
+                Log.d(
+                    "ScheduleRepositoryImpl",
+                    "deleteSchedule Fail, code = ${deleteResponse.code}, message = ${deleteResponse.message}"
+                )
             }
         }
     }

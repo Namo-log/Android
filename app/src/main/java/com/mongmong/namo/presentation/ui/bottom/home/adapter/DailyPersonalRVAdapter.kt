@@ -6,21 +6,21 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.databinding.ItemCalendarEventBinding
+import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
 import org.joda.time.DateTime
 
 class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewHolder>() {
 
-    private val personal = ArrayList<Event>()
+    private val personal = ArrayList<Schedule>()
     private val categoryList = ArrayList<Category>()
     private lateinit var context : Context
 
     /** 기록 아이템 클릭 리스너 **/
     interface DiaryInterface {
-        fun onDetailClicked(event: Event)
+        fun onDetailClicked(event: Schedule)
     }
     private lateinit var diaryRecordClickListener: DiaryInterface
     fun setRecordClickListener(itemClickListener: DiaryInterface){
@@ -29,7 +29,7 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
     /** ----- **/
 
     interface ContentClickListener {
-        fun onContentClick(event : Event)
+        fun onContentClick(event : Schedule)
     }
     private lateinit var contentClickListener : ContentClickListener
     fun setContentClickListener(contentClickListener : ContentClickListener) {
@@ -37,7 +37,7 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
-        val binding : com.mongmong.namo.databinding.ItemCalendarEventBinding = ItemCalendarEventBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
+        val binding : ItemSchedulePreviewBinding = ItemSchedulePreviewBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
         context = viewGroup.context
 
         return ViewHolder(binding)
@@ -62,7 +62,7 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
     override fun getItemCount(): Int = personal.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addPersonal(personal : ArrayList<Event>) {
+    fun addPersonal(personal : ArrayList<Schedule>) {
         this.personal.clear()
         this.personal.addAll(personal)
     }
@@ -72,17 +72,17 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
         this.categoryList.addAll(categoryList)
     }
 
-    inner class ViewHolder(val binding : ItemCalendarEventBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("ResourceType")
-        fun bind(personal : Event) {
+        fun bind(personal : Schedule) {
             val time = DateTime(personal.startLong * 1000L).toString("HH:mm") + " - " + DateTime(personal.endLong * 1000L).toString("HH:mm")
             val category = categoryList.find {
-                if (it.serverIdx != 0L) it.serverIdx == personal.categoryServerIdx
-                else it.categoryIdx == personal.categoryIdx }!!
+                if (it.serverId != 0L) it.serverId == personal.categoryServerId
+                else it.categoryId == personal.categoryId }!!
 
-            binding.itemCalendarEventTitle.text = personal.title
-            binding.itemCalendarEventTitle.isSelected = true
+            binding.itemCalendarTitle.text = personal.title
+            binding.itemCalendarTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
             binding.itemCalendarEventColorView.background.setTint(category.color)
             binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))

@@ -278,7 +278,7 @@ class DiaryRepository(
     }
 
     /** 서버 아이디 없던 것 post로 올리기 **/
-    fun postDiaryToServer(eventServerId: Long, eventId: Long) {
+    fun postDiaryToServer(serverId: Long, scheduleId: Long) {
 
         val storeDB = Thread {
             notUploaded = diaryDao.getNotUploadedDiary()
@@ -293,11 +293,11 @@ class DiaryRepository(
         for (diary in notUploaded) {
 
             if (diary.serverId == 0L) { // 서버 아이디 없는 것들
-                if (diary.state !== RoomState.DELETED.state && eventId == diary.diaryId) {
+                if (diary.state !== RoomState.DELETED.state && scheduleId == diary.diaryId) {
                     diary.content?.let {
                         addDiaryToServer(
                             diary.diaryId,
-                            eventServerId,
+                            serverId,
                             it,
                             diary.images
                         )
@@ -313,8 +313,8 @@ class DiaryRepository(
         val db = Thread {
             val categoryList = categoryDao.getCategoryList()
             category = categoryList.find {
-                if (it.serverIdx != 0L) it.serverIdx == categoryServerId
-                else it.categoryIdx == categoryId
+                if (it.serverId != 0L) it.serverId == categoryServerId
+                else it.categoryId == categoryId
             } ?: Category()
         }
 

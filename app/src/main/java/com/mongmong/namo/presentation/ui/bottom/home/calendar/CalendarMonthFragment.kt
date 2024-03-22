@@ -15,14 +15,13 @@ import com.mongmong.namo.presentation.ui.MainActivity.Companion.setCategoryList
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.data.local.entity.home.Event
-import com.mongmong.namo.domain.model.DiaryResponse
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.diary.DiaryService
 import com.mongmong.namo.data.remote.diary.GetGroupMonthView
-import com.mongmong.namo.data.remote.event.EventService
-import com.mongmong.namo.domain.model.GetMonthEventResponse
-import com.mongmong.namo.domain.model.GetMonthEventResult
-import com.mongmong.namo.data.remote.event.GetMonthMoimEventView
+import com.mongmong.namo.data.remote.schedule.ScheduleService
+import com.mongmong.namo.domain.model.GetMonthScheduleResponse
+import com.mongmong.namo.domain.model.GetMonthScheduleResult
+import com.mongmong.namo.data.remote.schedule.GetMonthMoimScheduleView
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.MonthDiary
@@ -40,7 +39,7 @@ import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 
 @AndroidEntryPoint
-class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventView {
+class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimScheduleView {
 
     lateinit var db: NamoDatabase
     private lateinit var binding: FragmentCalendarMonthBinding
@@ -49,15 +48,15 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
     private var millis: Long = 0L
     var isShow = false
     private lateinit var monthList: List<DateTime>
-    private lateinit var tempEvent: ArrayList<Event>
-    private var monthGroupEvent: ArrayList<Event> = arrayListOf()
+    private lateinit var tempSchedule: ArrayList<Schedule>
+    private var monthGroupSchedule: ArrayList<Schedule> = arrayListOf()
 
     private var prevIdx = -1
     private var nowIdx = 0
-    private var event_personal: ArrayList<Event> = arrayListOf()
-    private var event_group: ArrayList<Event> = arrayListOf()
-    private val personalEventRVAdapter = DailyPersonalRVAdapter()
-    private val groupEventRVAdapter = DailyGroupRVAdapter()
+    private var event_personal: ArrayList<Schedule> = arrayListOf()
+    private var event_group: ArrayList<Schedule> = arrayListOf()
+    private val personalScheduleRVAdapter = DailyPersonalRVAdapter()
+    private val groupScheduleRVAdapter = DailyGroupRVAdapter()
 
     private val viewModel : ScheduleViewModel by viewModels()
 
@@ -139,14 +138,14 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
         val date = SimpleDateFormat("yyyy,MM").format(millis)
 
         //모임 이벤트
-        val eventService = EventService()
-        eventService.setGetMonthMoimEventView(this)
-        eventService.getMonthMoimEvent(date)
+        val eventService = ScheduleService()
+        eventService.setGetMonthMoimScheduleView(this)
+        eventService.getMonthMoimSchedule(date)
 
 //        onBackPressedCallback.isEnabled = true
         Log.d(
             "CalendarMonth",
-            "Event list : " + binding.calendarMonthView.getEventList().toString()
+            "Schedule list : " + binding.calendarMonthView.getScheduleList().toString()
         )
 
         if (HomeFragment.currentFragment == null) {
@@ -168,25 +167,25 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
     private fun setAdapter() {
         binding.homeDailyEventRv.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.homeDailyEventRv.adapter = personalEventRVAdapter
+        binding.homeDailyEventRv.adapter = personalScheduleRVAdapter
 
         binding.homeDailyGroupEventRv.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.homeDailyGroupEventRv.adapter = groupEventRVAdapter
+        binding.homeDailyGroupEventRv.adapter = groupScheduleRVAdapter
 //        if (nowIdx==0) setToday()
 
-        personalEventRVAdapter.setContentClickListener(object :
+        personalScheduleRVAdapter.setContentClickListener(object :
             DailyPersonalRVAdapter.ContentClickListener {
-            override fun onContentClick(event: Event) {
+            override fun onContentClick(event: Schedule) {
                 val intent = Intent(context, ScheduleActivity::class.java)
                 intent.putExtra("event", event)
                 requireActivity().startActivity(intent)
             }
         })
 
-        groupEventRVAdapter.setGorupContentClickListener(object :
+        groupScheduleRVAdapter.setGorupContentClickListener(object :
             DailyGroupRVAdapter.GroupContentClickListener {
-            override fun onGroupContentClick(event: Event) {
+            override fun onGroupContentClick(event: Schedule) {
                 val intent = Intent(context, ScheduleActivity::class.java)
                 intent.putExtra("event", event)
                 requireActivity().startActivity(intent)
@@ -194,9 +193,9 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
         })
 
         /** 기록 아이템 클릭 리스너 **/
-        personalEventRVAdapter.setRecordClickListener(object :
+        personalScheduleRVAdapter.setRecordClickListener(object :
             DailyPersonalRVAdapter.DiaryInterface {
-            override fun onDetailClicked(event: Event) {
+            override fun onDetailClicked(event: Schedule) {
 
                 val intent = Intent(context, PersonalDetailActivity::class.java)
                 intent.putExtra("event", event)
@@ -204,7 +203,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
             }
         })
 
-        groupEventRVAdapter.setRecordClickListener(object : DailyGroupRVAdapter.DiaryInterface {
+        groupScheduleRVAdapter.setRecordClickListener(object : DailyGroupRVAdapter.DiaryInterface {
             override fun onGroupDetailClicked(monthDiary: MonthDiary?) {
 
                 val intent = Intent(context, GroupDetailActivity::class.java)
@@ -219,20 +218,20 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
     private fun getCategoryList() {
         categoryList = setCategoryList(db)
         binding.calendarMonthView.setCategoryList(categoryList)
-        personalEventRVAdapter.setCategory(categoryList)
-        groupEventRVAdapter.setCategory(categoryList)
+        personalScheduleRVAdapter.setCategory(categoryList)
+        groupScheduleRVAdapter.setCategory(categoryList)
     }
 
     private fun setDaily(idx: Int) {
         binding.homeDailyHeaderTv.text = monthList[idx].toString("MM.dd (E)")
         binding.dailyScrollSv.scrollTo(0, 0)
         setData(idx)
-        Log.d("CHECK_GROUP_EVENT", monthGroupEvent.toString())
+        Log.d("CHECK_GROUP_EVENT", monthGroupSchedule.toString())
     }
 
     private fun setData(idx: Int) {
         getGroupDiary()
-        getEvent(idx)
+        getSchedule(idx)
     }
 
     private fun setPersonalEmptyMsg() {
@@ -245,7 +244,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
         else binding.homeDailyGroupEventNoneTv.visibility = View.GONE
     }
 
-    private fun getEvent(idx: Int) {
+    private fun getSchedule(idx: Int) {
         event_personal.clear()
         event_group.clear()
         val todayStart = (monthList[idx].withTimeAtStartOfDay().millis) / 1000
@@ -262,12 +261,12 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setGroupSchedule(todayStart: Long, todayEnd: Long) {
-        event_group = monthGroupEvent.filter { item -> item.startLong <= todayEnd && item.endLong >= todayStart } as ArrayList<Event>
+        event_group = monthGroupSchedule.filter { item -> item.startLong <= todayEnd && item.endLong >= todayStart } as ArrayList<Schedule>
 
-        groupEventRVAdapter.addGroup(event_group)
+        groupScheduleRVAdapter.addGroup(event_group)
         requireActivity().runOnUiThread {
-            Log.d("CalendarMonth", "Group Event : $event_group")
-            groupEventRVAdapter.notifyDataSetChanged()
+            Log.d("CalendarMonth", "Group Schedule : $event_group")
+            groupScheduleRVAdapter.notifyDataSetChanged()
         }
         setGroupEmptyMsg()
     }
@@ -289,13 +288,13 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
         Log.d("getDailySchedules", "initObserve()")
         viewModel.scheduleList.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
-                val dailyEvent = it as ArrayList<Event>
-                event_personal = dailyEvent.filter { item -> !item.moimSchedule } as ArrayList<Event>
+                val dailySchedule = it as ArrayList<Schedule>
+                event_personal = dailySchedule.filter { item -> !item.moimSchedule } as ArrayList<Schedule>
 
-                personalEventRVAdapter.addPersonal(event_personal)
-                Log.d("CalendarMonth", "getDailySchedules Personal Event : $event_personal")
+                personalScheduleRVAdapter.addPersonal(event_personal)
+                Log.d("CalendarMonth", "getDailySchedules Personal Schedule : $event_personal")
                 requireActivity().runOnUiThread {
-                    personalEventRVAdapter.notifyDataSetChanged()
+                    personalScheduleRVAdapter.notifyDataSetChanged()
                     setPersonalEmptyMsg()
                 }
             }
@@ -315,8 +314,8 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
         }
     }
 
-    private fun serverToEvent(schedule: GetMonthEventResult): Event {
-        return Event(
+    private fun serverToSchedule(schedule: GetMonthScheduleResult): Schedule {
+        return Schedule(
             0,
             schedule.name,
             schedule.startDate,
@@ -339,23 +338,23 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
 
     override fun onGetGroupMonthSuccess(response: DiaryGetMonthResponse) {
         val data = response.result
-        groupEventRVAdapter.addGroupDiary(data.content as ArrayList<MonthDiary>)
+        groupScheduleRVAdapter.addGroupDiary(data.content as ArrayList<MonthDiary>)
     }
 
     override fun onGetGroupMonthFailure(message: String) {
         Log.d("GET_GROUP_MONTH", message)
     }
 
-    override fun onGetMonthMoimEventSuccess(response: GetMonthEventResponse) {
+    override fun onGetMonthMoimScheduleSuccess(response: GetMonthScheduleResponse) {
         val result = response.result
-        monthGroupEvent = result.map { serverToEvent(it) } as ArrayList
-        Log.d("SUCCESS_MOIM", monthGroupEvent.toString())
+        monthGroupSchedule = result.map { serverToSchedule(it) } as ArrayList
+        Log.d("SUCCESS_MOIM", monthGroupSchedule.toString())
 
         var forDB: Thread = Thread {
-            tempEvent = db.eventDao.getEventMonth(
+            tempSchedule = db.scheduleDao.getScheduleMonth(
                 monthList[0].withTimeAtStartOfDay().millis / 1000,
                 monthList[41].plusDays(1).withTimeAtStartOfDay().millis / 1000
-            ) as ArrayList<Event>
+            ) as ArrayList<Schedule>
         }
         forDB.start()
         try {
@@ -363,15 +362,15 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
-        tempEvent.addAll(monthGroupEvent)
-        Log.d("SUCCESS_MOIM_TEMP", tempEvent.toString())
+        tempSchedule.addAll(monthGroupSchedule)
+        Log.d("SUCCESS_MOIM_TEMP", tempSchedule.toString())
 
 
-        binding.calendarMonthView.setEventList(tempEvent)
+        binding.calendarMonthView.setScheduleList(tempSchedule)
 
     }
 
-    override fun onGetMonthMoimEventFailure(message: String) {
+    override fun onGetMonthMoimScheduleFailure(message: String) {
         Log.d("GET_MONTH_EVENT", "Failure -> $message")
     }
 }
