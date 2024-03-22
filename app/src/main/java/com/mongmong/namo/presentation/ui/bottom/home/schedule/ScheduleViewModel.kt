@@ -23,10 +23,8 @@ class ScheduleViewModel @Inject constructor(
 
     fun getDailySchedules(startDate: Long, endDate: Long) {
         viewModelScope.launch {
-            _scheduleList.value?.let {
-                Log.d("ScheduleViewModel", "getDailySchedules")
-                repository.getDailySchedules(startDate, endDate)
-            }
+            Log.d("ScheduleViewModel", "getDailySchedules")
+            _scheduleList.value = repository.getDailySchedules(startDate, endDate)
         }
     }
 

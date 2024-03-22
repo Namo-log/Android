@@ -223,7 +223,6 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
     }
 
     private fun setDaily(idx: Int) {
-//        initObserve()
         binding.homeDailyHeaderTv.text = monthList[idx].toString("MM.dd (E)")
         binding.dailyScrollSv.scrollTo(0, 0)
         setData(idx)
@@ -233,26 +232,43 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
     private fun setData(idx: Int) {
         getGroupDiary()
         getEvent(idx)
-        setEmptyMsg()
     }
 
-    private fun setEmptyMsg() {
+    private fun setPersonalEmptyMsg() {
         if (event_personal.size == 0) binding.homeDailyEventNoneTv.visibility = View.VISIBLE
         else binding.homeDailyEventNoneTv.visibility = View.GONE
+    }
 
+    private fun setGroupEmptyMsg() {
         if (event_group.size == 0) binding.homeDailyGroupEventNoneTv.visibility = View.VISIBLE
         else binding.homeDailyGroupEventNoneTv.visibility = View.GONE
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun getEvent(idx: Int) { //TODO
+    private fun getEvent(idx: Int) {
         event_personal.clear()
         event_group.clear()
-        val todayStart = monthList[idx].withTimeAtStartOfDay().millis
-        val todayEnd = monthList[idx].plusDays(1).withTimeAtStartOfDay().millis - 1
+        val todayStart = (monthList[idx].withTimeAtStartOfDay().millis) / 1000
+        val todayEnd = (monthList[idx].plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000
+        setPersonalSchedule(todayStart, todayEnd) // 개인 일정 표시
+        setGroupSchedule(todayStart, todayEnd) // 그룹 일정 표시
+    }
+
+    private fun setPersonalSchedule(todayStart: Long, todayEnd: Long) {
         lifecycleScope.launch {
-            viewModel.getDailySchedules(todayStart / 1000, todayEnd / 1000)
+            viewModel.getDailySchedules(todayStart, todayEnd)
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun setGroupSchedule(todayStart: Long, todayEnd: Long) {
+        event_group = monthGroupEvent.filter { item -> item.startLong <= todayEnd && item.endLong >= todayStart } as ArrayList<Event>
+
+        groupEventRVAdapter.addGroup(event_group)
+        requireActivity().runOnUiThread {
+            Log.d("CalendarMonth", "Group Event : $event_group")
+            groupEventRVAdapter.notifyDataSetChanged()
+        }
+        setGroupEmptyMsg()
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -271,20 +287,15 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
     private fun initObserve() {
         Log.d("getDailySchedules", "initObserve()")
         viewModel.scheduleList.observe(viewLifecycleOwner) {
-            it.forEach { event ->
-                Log.d("CalendarMonth", "${event.eventId}, ${event.title} getDailySchedules")
-            }
             if (!it.isNullOrEmpty()) {
                 val dailyEvent = it as ArrayList<Event>
                 event_personal = dailyEvent.filter { item -> !item.moimSchedule } as ArrayList<Event>
 
                 personalEventRVAdapter.addPersonal(event_personal)
-//                groupEventRVAdapter.addGroup(event_group)
                 Log.d("CalendarMonth", "getDailySchedules Personal Event : $event_personal")
-                Log.d("CalendarMonth", "getDailySchedules Group Event : $event_personal")
                 requireActivity().runOnUiThread {
                     personalEventRVAdapter.notifyDataSetChanged()
-//                groupEventRVAdapter.notifyDataSetChanged()
+                    setPersonalEmptyMsg()
                 }
             }
         }
