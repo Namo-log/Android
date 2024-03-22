@@ -129,7 +129,6 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
             db.eventDao.deleteAllEvents()
             db.diaryDao.deleteAllDiaries()
             db.categoryDao.deleteAllCategories()
-            db.groupDao.deleteAllGroups()
         }
         thread.start()
         try {

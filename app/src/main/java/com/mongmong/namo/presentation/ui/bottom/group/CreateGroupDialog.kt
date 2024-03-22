@@ -25,7 +25,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
-import com.mongmong.namo.data.local.entity.group.Group
 import com.mongmong.namo.domain.model.AddMoimResponse
 import com.mongmong.namo.data.remote.moim.AddMoimView
 import com.mongmong.namo.data.remote.moim.MoimService
@@ -45,7 +44,6 @@ class CreateGroupDialog : DialogFragment(), AddMoimView {
 
     private lateinit var mContext: Context
     private lateinit var db: NamoDatabase
-    private lateinit var group: Group
 
     private var title: String = ""
     lateinit var coverImg: MultipartBody.Part
@@ -119,7 +117,6 @@ class CreateGroupDialog : DialogFragment(), AddMoimView {
     }
 
     private fun insertData() {
-        insertRoom()
 
         if (!NetworkManager.checkNetworkState(requireContext())) {
             // 인터넷 연결 안 됨
@@ -141,17 +138,6 @@ class CreateGroupDialog : DialogFragment(), AddMoimView {
                 Toast.makeText(context, "이미지 파일을 가져올 수 없습니다.", Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    private fun insertRoom() {
-        Thread {
-            with(binding) {
-                title = createGroupTitleEt.text.toString()
-            }
-            // TODO: 그룹 프로필 추가
-            group = Group(0, title)
-            db.groupDao.insertGroup(group)
-        }.start()
     }
 
     private fun hideBottomNavigation(bool: Boolean) {
