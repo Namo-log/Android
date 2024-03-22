@@ -16,8 +16,13 @@ class ScheduleRepositoryImpl @Inject constructor(
     private val networkChecker: NetworkChecker
 ) : ScheduleRepository {
 
-    override suspend fun getSchedule(localId: Long): Event {
-        TODO("Not yet implemented")
+    override suspend fun getDailySchedules(startDate: Long, endDate: Long): List<Event> {
+        val list = localScheduleDataSource.getDailySchedules(startDate, endDate)
+        Log.d("ScheduleRepositoryImpl", "getDailySchedules")
+        list.forEach { event ->
+            Log.d("getDailySchedules", "${event.eventId}, ${event.title}")
+        }
+        return list
     }
 
     override suspend fun addSchedule(schedule: Event) {

@@ -58,6 +58,7 @@ import com.mongmong.namo.databinding.ActivityMainBinding
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResult
 import com.mongmong.namo.presentation.utils.NetworkManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 
@@ -65,6 +66,7 @@ import org.joda.time.DateTime
 private const val PERMISSION_REQUEST_CODE= 1001
 private const val NOTIFICATION_PERMISSION_REQUEST_CODE= 777
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEventView,
     CategorySettingView, GetMonthDiaryView, CategoryDetailView, CategoryDeleteView {
 

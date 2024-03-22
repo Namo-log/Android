@@ -10,6 +10,21 @@ import javax.inject.Inject
 class LocalScheduleDataSource @Inject constructor(
     private val scheduleDao: EventDao
 ) {
+    suspend fun getDailySchedules(startDate: Long, endDate: Long): List<Event> {
+        var schedulesResult = listOf<Event>()
+        withContext(Dispatchers.IO) {
+            runCatching {
+                scheduleDao.getEventDaily(startDate, endDate)
+            }.onSuccess {
+                Log.d("LocalScheduleDataSource", "getDailySchedules Success")
+                schedulesResult = it
+            }.onFailure {
+                Log.d("LocalScheduleDataSource", "getDailySchedules Fail")
+            }
+        }
+        return schedulesResult
+    }
+
     suspend fun addSchedule(schedule: Event) {
         withContext(Dispatchers.IO) {
             runCatching {
