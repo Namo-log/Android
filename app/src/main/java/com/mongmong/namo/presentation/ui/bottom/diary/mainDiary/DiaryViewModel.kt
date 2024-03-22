@@ -15,6 +15,7 @@ import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.diary.DiaryEvent
 import com.mongmong.namo.data.local.entity.home.Event
 import com.mongmong.namo.domain.repositories.DiaryRepository
+import com.mongmong.namo.presentation.config.RoomState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -64,7 +65,7 @@ class DiaryViewModel @Inject constructor(
             serverId = event.serverIdx,
             content = content,
             images = _imgList.value,
-            state = R.string.event_current_added.toString()
+            state = RoomState.ADDED.state
         )
     }
 
@@ -85,7 +86,7 @@ class DiaryViewModel @Inject constructor(
         viewModelScope.launch {
             _diary.value?.let {
                 it.content = content
-                it.state = R.string.event_current_edited.toString()
+                it.state = RoomState.EDITED.state
             }
             Log.d("DiaryViewModel editDiary", "${_diary.value}")
             _diary.value?.let {

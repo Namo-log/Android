@@ -2,12 +2,12 @@ package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
 import com.mongmong.namo.R
-import com.mongmong.namo.data.datasource.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.local.entity.home.Event
 import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.domain.repositories.ScheduleRepository
+import com.mongmong.namo.presentation.config.RoomState
 import javax.inject.Inject
 
 class ScheduleRepositoryImpl @Inject constructor(
@@ -35,8 +35,8 @@ class ScheduleRepositoryImpl @Inject constructor(
                 localScheduleDataSource.updateScheduleAfterUpload(
                     localId = schedule.eventId,
                     serverId = addResponse.result.eventIdx,
-                    isUpload = LocalDiaryDataSource.UPLOAD_SUCCESS,
-                    status = R.string.event_current_default.toString(),
+                    isUpload = IS_UPLOAD,
+                    status = RoomState.DEFAULT.state,
                 )
             } else {
                 Log.d("ScheduleRepositoryImpl", "addSchedule Fail, code = ${addResponse.code}, message = ${addResponse.message}")
@@ -54,8 +54,8 @@ class ScheduleRepositoryImpl @Inject constructor(
                 localScheduleDataSource.updateScheduleAfterUpload(
                     localId = schedule.eventId,
                     serverId = editResponse.result.eventIdx,
-                    isUpload = LocalDiaryDataSource.UPLOAD_SUCCESS,
-                    status = R.string.event_current_default.toString(),
+                    isUpload = IS_UPLOAD,
+                    status = RoomState.DEFAULT.state,
                 )
             } else {
                 Log.d("ScheduleRepositoryImpl", "editSchedule Fail, code = ${editResponse.code}, message = ${editResponse.message}")
@@ -68,8 +68,8 @@ class ScheduleRepositoryImpl @Inject constructor(
         localScheduleDataSource.updateScheduleAfterUpload(
             localId = localId,
             serverId = serverId,
-            isUpload = 0,
-            status = R.string.event_current_deleted.toString(),
+            isUpload = IS_NOT_UPLOAD,
+            status = RoomState.DELETED.state,
         )
         if (networkChecker.isOnline()) {
             // 서버 db에서 삭제
@@ -93,6 +93,8 @@ class ScheduleRepositoryImpl @Inject constructor(
 
     companion object {
         const val SUCCESS_CODE = 200
+        const val IS_UPLOAD = true
+        const val IS_NOT_UPLOAD = false
     }
 
 }

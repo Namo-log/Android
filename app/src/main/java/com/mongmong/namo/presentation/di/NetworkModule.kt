@@ -35,13 +35,13 @@ object NetworkModule {
     @Singleton
     @InterceptorRetrofit
     fun provideInterceptorOkHttpClient(
-        interceptor: HttpLoggingInterceptor,
+        //interceptor: HttpLoggingInterceptor,
         @InterceptorRetrofit authInterceptor: XAccessTokenInterceptor
     ): OkHttpClient =
         OkHttpClient.Builder()
             .readTimeout(5000, TimeUnit.MILLISECONDS)
             .connectTimeout(5000, TimeUnit.MILLISECONDS)
-            .addInterceptor(interceptor)
+            //.addInterceptor(interceptor)
             .addInterceptor(authInterceptor)
             .build()
 
@@ -78,12 +78,12 @@ object NetworkModule {
     @Singleton
     @BasicRetrofit
     fun provideBasicOkHttpClient(
-        interceptor: HttpLoggingInterceptor
+       //interceptor: HttpLoggingInterceptor
     ): OkHttpClient =
         OkHttpClient.Builder()
             .readTimeout(5000, TimeUnit.MILLISECONDS)
             .connectTimeout(5000, TimeUnit.MILLISECONDS)
-            .addInterceptor(interceptor)
+            //.addInterceptor(interceptor)
             .build()
 
     @Provides

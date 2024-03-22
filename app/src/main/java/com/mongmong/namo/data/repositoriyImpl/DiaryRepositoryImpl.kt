@@ -11,6 +11,7 @@ import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.diary.DiaryEvent
 import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.domain.repositories.DiaryRepository
+import com.mongmong.namo.presentation.config.RoomState
 import java.io.File
 import javax.inject.Inject
 
@@ -40,7 +41,7 @@ class DiaryRepositoryImpl @Inject constructor(
                     localId = diary.diaryId,
                     serverId = addResponse.result.scheduleIdx,
                     IS_UPLOAD,
-                    R.string.event_current_default.toString()
+                    RoomState.DEFAULT.state
                 )
             } else {
                 Log.d("DiaryRepositoryImpl addDiary Fail", "$diary")
@@ -62,7 +63,7 @@ class DiaryRepositoryImpl @Inject constructor(
                     localId = diary.diaryId,
                     serverId = diary.serverId,
                     IS_UPLOAD,
-                    R.string.event_current_default.toString()
+                    RoomState.DEFAULT.state
                 )
             } else {
                 // 서버 업로드 실패 시 로직
@@ -77,7 +78,7 @@ class DiaryRepositoryImpl @Inject constructor(
             localId,
             scheduleServerId,
             IS_NOT_UPLOAD,
-            R.string.event_current_deleted.toString()
+            RoomState.DELETED.state
         )
         if (networkChecker.isOnline()) {
             // 서버 db에서 삭제
@@ -105,10 +106,8 @@ class DiaryRepositoryImpl @Inject constructor(
     }
 
     companion object {
-        const val EVENT_CURRENT_DELETED = "DELETED"
-        const val EVENT_CURRENT_DEFAULT = "DEFAULT"
-        const val IS_NOT_UPLOAD = 0
-        const val IS_UPLOAD = 1
+        const val IS_NOT_UPLOAD = false
+        const val IS_UPLOAD = true
         const val SUCCESS_CODE = 200
     }
 }

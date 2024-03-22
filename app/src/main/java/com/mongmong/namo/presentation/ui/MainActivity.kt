@@ -57,6 +57,7 @@ import com.mongmong.namo.domain.model.PostEventResponse
 import com.mongmong.namo.databinding.ActivityMainBinding
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResult
+import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.utils.NetworkManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -93,6 +94,10 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         const val PLACE_Y_INTENT_KEY: String = "place_y"
         const val GROUP_MEMBER_INTENT_KEY : String = "group_member"
         var IS_MOIM_EVENT_SUCCESS : Boolean = false
+
+
+        const val IS_UPLOAD = true
+        const val IS_NOT_UPLOAD = false
 
         fun setCategoryList(db: NamoDatabase): List<Category> {
             var categoryList =listOf<Category>()
@@ -224,14 +229,14 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
 
         for (i in unUploaded) {
             if (i.serverIdx == 0L) {
-                if (i.state == R.string.event_current_deleted.toString()) {
+                if (i.state == RoomState.DELETED.state) {
                     return
                 } else {
                     //POST
                     eventService.postEvent(i.eventToEventForUpload(), i.eventId)
                 }
             } else {
-                if (i.state == R.string.event_current_deleted.toString()) {
+                if (i.state == RoomState.DELETED.state) {
                     eventService.deleteEvent(i.serverIdx, i.eventId, 0)
                 } else {
                     eventService.editEvent(i.serverIdx, i.eventToEventForUpload(), i.eventId)
@@ -250,14 +255,14 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
                 }
             }
             if (i.serverIdx == 0L) {
-                if (i.state == R.string.event_current_deleted.toString()) {
+                if (i.state == RoomState.DELETED.state) {
                     return
                 } else {
                     //POST
                     CategoryService(this).tryPostCategory(CategoryBody(i.name, paletteId, i.share), i.categoryIdx)
                 }
             } else {
-                if (i.state == R.string.event_current_deleted.toString()) {
+                if (i.state == RoomState.DELETED.state) {
                     CategoryDeleteService(this).tryDeleteCategory(i.serverIdx, i.categoryIdx)
                 } else {
                     CategoryService(this).tryPatchCategory(i.serverIdx, CategoryBody(i.name, paletteId, i.share), i.categoryIdx)
@@ -371,9 +376,9 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         lifecycleScope.launch {
             db.eventDao.updateEventAfterUpload(
                 eventId,
-                1,
+                IS_UPLOAD,
                 result.eventIdx,
-                R.string.event_current_default.toString()
+                RoomState.DEFAULT.state
             )
         }
         val repo=DiaryRepository(this)
@@ -394,9 +399,9 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         lifecycleScope.launch {
             db.eventDao.updateEventAfterUpload(
                 eventId,
-                1,
+                IS_UPLOAD,
                 result.eventIdx,
-                R.string.event_current_default.toString()
+                RoomState.DEFAULT.state
             )
         }
     }
@@ -495,7 +500,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
                 categoryId,
                 1,
                 result.categoryId,
-                R.string.event_current_default.toString()
+                RoomState.DEFAULT.state
             )
         }
         thread.start()
@@ -522,7 +527,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
                 categoryId,
                 1,
                 result.categoryId,
-                R.string.event_current_default.toString()
+                RoomState.DEFAULT.state
             )
         }
         thread.start()
@@ -597,8 +602,8 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
                                     diary.serverId,
                                     diary.content,
                                     diary.images,
-                                    R.string.event_current_default.toString(),
-                                    1
+                                    RoomState.DEFAULT.state,
+                                    IS_UPLOAD
                                 )
                                 lifecycleScope.launch {
                                     db.diaryDao.insertDiary(diaryData)
@@ -639,7 +644,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
             schedule.y,
             0,
             schedule.alarmDate ?:listOf(),
-            1,
+            IS_UPLOAD,
             (R.string.event_current_default).toString(),
             schedule.scheduleId,
             schedule.categoryId,
@@ -659,8 +664,8 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
             categoryColorArray[category.paletteId - 1],
             category.isShare,
             true,
-            1,
-            R.string.event_current_default.toString(),
+            IS_UPLOAD,
+            RoomState.DEFAULT.state,
             category.categoryId
         )
     }
@@ -671,8 +676,8 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
             diary.scheduleId,
             diary.contents,
             diary.urls,
-            R.string.event_current_default.toString(),
-            1
+            RoomState.DEFAULT.state,
+            IS_UPLOAD
         )
     }
 
@@ -697,5 +702,6 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         var ft: FragmentTransaction = fragmentManager.beginTransaction()
         ft.detach(fragment).attach(fragment).commit()
     }
+
 
 }

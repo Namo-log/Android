@@ -26,6 +26,7 @@ import com.mongmong.namo.data.remote.event.GetMonthMoimEventView
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.MonthDiary
+import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.GroupDetailActivity
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.PersonalDetailActivity
 import com.mongmong.namo.presentation.ui.bottom.home.HomeFragment
@@ -304,6 +305,9 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
     companion object {
         private const val MILLIS = "MILLIS"
 
+        const val IS_UPLOAD = true
+        const val IS_NOT_UPLOAD = false
+
         fun newInstance(millis: Long) = CalendarMonthFragment().apply {
             arguments = Bundle().apply {
                 putLong(MILLIS, millis)
@@ -324,8 +328,8 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimEventVi
             schedule.y,
             0,
             schedule.alarmDate ?: listOf(),
-            1,
-            (R.string.event_current_default).toString(),
+            IS_UPLOAD,
+            RoomState.DEFAULT.state,
             schedule.scheduleId,
             schedule.categoryId,
             if (schedule.hasDiary) 1 else 0,

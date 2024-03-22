@@ -28,6 +28,7 @@ import com.mongmong.namo.data.local.entity.home.Event
 import com.mongmong.namo.presentation.utils.NetworkManager
 import com.mongmong.namo.databinding.FragmentDiaryBinding
 import com.mongmong.namo.domain.model.MonthDiary
+import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.adapter.DiaryGroupAdapter
 import com.mongmong.namo.presentation.ui.bottom.home.calendar.SetMonthDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -228,8 +229,8 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
             item.event_title,
             item.event_start, 0L, 0,
             item.event_category_idx, item.event_place_name,
-            0.0, 0.0, 0, null, 1,
-            R.string.event_current_default.toString(),
+            0.0, 0.0, 0, null, IS_UPLOAD,
+            RoomState.DEFAULT.state,
             item.event_server_idx,
             item.event_category_server_idx,
             1
@@ -268,6 +269,9 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     companion object {
         const val IS_GROUP = 1
         const val IS_NOT_GROUP = 0
+        const val IS_UPLOAD = true
+        const val IS_NOT_UPLOAD = false
+
     }
 }
 

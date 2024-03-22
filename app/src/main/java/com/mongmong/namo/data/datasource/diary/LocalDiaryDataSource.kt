@@ -5,6 +5,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.domain.model.DiaryAddResponse
+import com.mongmong.namo.presentation.config.RoomState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -17,8 +18,8 @@ class LocalDiaryDataSource @Inject constructor(private val diaryDao: DiaryDao) {
             serverId = 0L,
             content = "",
             images = listOf(""),
-            state = R.string.event_current_default.toString(),
-            isUpload = 0,
+            state = RoomState.DEFAULT.state,
+            isUpload = false,
             isHeader = false
         )
         withContext(Dispatchers.IO) {
@@ -81,7 +82,7 @@ class LocalDiaryDataSource @Inject constructor(private val diaryDao: DiaryDao) {
     suspend fun updateDiaryAfterUpload(
         localId: Long,
         serverId: Long,
-        isUpload: Int,
+        isUpload: Boolean,
         state: String
     ) {
         Log.d("LocalDiaryDataSource updateDiaryAfterUpload", "$localId, $serverId")

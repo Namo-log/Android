@@ -25,13 +25,13 @@ interface EventDao {
     @Query("SELECT COUNT(*) FROM calendar_event_table")
     fun getAllEvent() : Int
 
-    @Query("SELECT * FROM calendar_event_table WHERE event_start <= :todayEnd AND event_end >= :todayStart AND event_state != ${R.string.event_current_deleted} ORDER BY event_day_interval DESC")
+    @Query("SELECT * FROM calendar_event_table WHERE event_start <= :todayEnd AND event_end >= :todayStart AND event_state != 'DELETED' ORDER BY event_day_interval DESC")
     fun getEventDaily(todayStart : Long, todayEnd : Long) : List<Event>
 
-    @Query("SELECT * FROM calendar_event_table WHERE event_start <= :monthEnd AND event_end >= :monthStart AND event_state != ${R.string.event_current_deleted} ORDER BY event_day_interval DESC")
+    @Query("SELECT * FROM calendar_event_table WHERE event_start <= :monthEnd AND event_end >= :monthStart AND event_state != 'DELETED' ORDER BY event_day_interval DESC")
     fun getEventMonth(monthStart : Long, monthEnd : Long) : List<Event>
 
-    @Query("SELECT * FROM calendar_event_table WHERE event_start <= :calendarEnd AND event_end >= :calendarStart AND event_state != ${R.string.event_current_deleted} ORDER BY event_day_interval DESC")
+    @Query("SELECT * FROM calendar_event_table WHERE event_start <= :calendarEnd AND event_end >= :calendarStart AND event_state != 'DELETED' ORDER BY event_day_interval DESC")
     fun getEventCalendar(calendarStart : Long, calendarEnd : Long) : List<Event>
 
     @Query("SELECT * FROM calendar_event_table WHERE event_category_idx == :categoryIdx")
@@ -41,7 +41,7 @@ interface EventDao {
     fun getNotUploadedEvent() : List<Event>
 
     @Query("UPDATE calendar_event_table SET event_upload=:isUpload, event_server_idx=:serverIdx, event_state=:state WHERE eventId=:eventId")
-    suspend fun updateEventAfterUpload(eventId : Long, isUpload : Int, serverIdx : Long, state : String)
+    suspend fun updateEventAfterUpload(eventId : Long, isUpload : Boolean, serverIdx : Long, state : String)
 
     @Query("DELETE FROM calendar_event_table WHERE eventId=:eventId")
     fun deleteEventById(eventId : Long)
