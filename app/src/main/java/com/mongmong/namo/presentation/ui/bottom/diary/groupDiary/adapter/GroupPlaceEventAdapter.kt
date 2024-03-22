@@ -10,21 +10,21 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.data.local.entity.diary.DiaryGroupEvent
+import com.mongmong.namo.data.local.entity.diary.DiaryGroupSchedule
 import com.mongmong.namo.databinding.ItemDiaryGroupEventBinding
 import java.text.NumberFormat
 import java.util.*
 
 
-class GroupPlaceEventAdapter(
+class GroupPlaceScheduleAdapter(
     // 그룹 다이어리 장소 추가, 정산, 이미지
     val context: Context,
-    private val listData: MutableList<DiaryGroupEvent>,
+    private val listData: MutableList<DiaryGroupSchedule>,
     val payClickListener: (pay: Long, position: Int, payText: TextView) -> Unit,
     val imageClickListener: (imgLists: ArrayList<String?>, position: Int) -> Unit,
     val placeClickListener: (text: String, position: Int) -> Unit,
     val deleteItemList: (deleteItems: MutableList<Long>) -> Unit
-) : RecyclerView.Adapter<GroupPlaceEventAdapter.Holder>() {
+) : RecyclerView.Adapter<GroupPlaceScheduleAdapter.Holder>() {
 
     private val items = arrayListOf<ArrayList<String?>>()
     private var deleteItems = arrayListOf<Long>()
@@ -86,7 +86,7 @@ class GroupPlaceEventAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("NotifyDataSetChanged")
-        fun bind(item: DiaryGroupEvent) {
+        fun bind(item: DiaryGroupSchedule) {
 
             binding.itemPlaceNameTv.setText(item.place)
 

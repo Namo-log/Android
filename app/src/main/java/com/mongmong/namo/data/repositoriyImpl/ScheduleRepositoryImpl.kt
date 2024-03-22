@@ -2,10 +2,9 @@ package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
 import com.mongmong.namo.R
-import com.mongmong.namo.data.datasource.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import javax.inject.Inject
@@ -16,26 +15,26 @@ class ScheduleRepositoryImpl @Inject constructor(
     private val networkChecker: NetworkChecker
 ) : ScheduleRepository {
 
-    override suspend fun getDailySchedules(startDate: Long, endDate: Long): List<Event> {
+    override suspend fun getDailySchedules(startDate: Long, endDate: Long): List<Schedule> {
         val list = localScheduleDataSource.getDailySchedules(startDate, endDate)
         Log.d("ScheduleRepositoryImpl", "getDailySchedules")
         list.forEach { event ->
-            Log.d("getDailySchedules", "${event.eventId}, ${event.title}")
+            Log.d("getDailySchedules", "${event.scheduleId}, ${event.title}")
         }
         return list
     }
 
-    override suspend fun addSchedule(schedule: Event) {
+    override suspend fun addSchedule(schedule: Schedule) {
         Log.d("ScheduleRepositoryImpl", "addSchedule $schedule")
         localScheduleDataSource.addSchedule(schedule)
         if (networkChecker.isOnline()) {
-            val addResponse = remoteScheduleDataSource.addScheduleToServer(schedule.eventToEventForUpload())
+            val addResponse = remoteScheduleDataSource.addScheduleToServer(schedule.eventToScheduleForUpload())
             if (addResponse.code == SUCCESS_CODE) {
                 Log.d("ScheduleRepositoryImpl", "addSchedule Success")
                 localScheduleDataSource.updateScheduleAfterUpload(
-                    localId = schedule.eventId,
-                    serverId = addResponse.result.eventIdx,
-                    isUpload = LocalDiaryDataSource.UPLOAD_SUCCESS,
+                    localId = schedule.scheduleId,
+                    serverId = addResponse.result.scheduleIdx,
+                    isUpload = 1,
                     status = R.string.event_current_default.toString(),
                 )
             } else {
@@ -44,17 +43,17 @@ class ScheduleRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun editSchedule(schedule: Event) {
+    override suspend fun editSchedule(schedule: Schedule) {
         Log.d("ScheduleRepositoryImpl", "editSchedule $schedule")
         localScheduleDataSource.editSchedule(schedule)
         if (networkChecker.isOnline()) {
-            val editResponse = remoteScheduleDataSource.editScheduleToServer(schedule.eventId, schedule.eventToEventForUpload())
+            val editResponse = remoteScheduleDataSource.editScheduleToServer(schedule.scheduleId, schedule.eventToScheduleForUpload())
             if (editResponse.code == SUCCESS_CODE) {
                 Log.d("ScheduleRepositoryImpl", "editSchedule Success")
                 localScheduleDataSource.updateScheduleAfterUpload(
-                    localId = schedule.eventId,
-                    serverId = editResponse.result.eventIdx,
-                    isUpload = LocalDiaryDataSource.UPLOAD_SUCCESS,
+                    localId = schedule.scheduleId,
+                    serverId = editResponse.result.scheduleIdx,
+                    isUpload = 1,
                     status = R.string.event_current_default.toString(),
                 )
             } else {

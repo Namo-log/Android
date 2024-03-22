@@ -5,23 +5,22 @@ import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.mongmong.namo.data.local.dao.DiaryDao
-import com.mongmong.namo.data.local.entity.diary.DiaryEvent
+import com.mongmong.namo.data.local.entity.diary.DiarySchedule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 
 class DiaryPersonalPagingSource (
     private val diaryDao: DiaryDao,
     private val date: String
-) : PagingSource<Int, DiaryEvent>() {
+) : PagingSource<Int, DiarySchedule>() {
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DiaryEvent> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DiarySchedule> {
         return try {
             Log.d("pagingSource load", "${params.key}")
             val page = params.key ?: 0
             val result = withContext(Dispatchers.IO) {
-                diaryDao.getDiaryEventList(date, page, PAGE_SIZE).toListItems()
+                diaryDao.getDiaryScheduleList(date, page, PAGE_SIZE).toListItems()
             }
 
             LoadResult.Page(
@@ -34,23 +33,23 @@ class DiaryPersonalPagingSource (
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, DiaryEvent>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, DiarySchedule>): Int? {
         // Refresh 키 정의 (예시에서는 null 반환하여 새로고침 키 없음을 의미)
         return null
     }
 
-    private fun List<DiaryEvent>.toListItems(): List<DiaryEvent> {
-        val result = mutableListOf<DiaryEvent>()
+    private fun List<DiarySchedule>.toListItems(): List<DiarySchedule> {
+        val result = mutableListOf<DiarySchedule>()
         var groupHeaderDate: Long = 0
 
         this.forEach { event ->
-            if (groupHeaderDate * 1000 != event.event_start * 1000) {
+            if (groupHeaderDate * 1000 != event.startDate * 1000) {
 
-                val headerEvent =
-                    event.copy(event_start = event.event_start * 1000, isHeader = true)
-                result.add(headerEvent)
+                val headerSchedule =
+                    event.copy(startDate = event.startDate * 1000, isHeader = true)
+                result.add(headerSchedule)
 
-                groupHeaderDate = event.event_start
+                groupHeaderDate = event.startDate
             }
             result.add(event)
         }

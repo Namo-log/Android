@@ -1,8 +1,8 @@
 package com.mongmong.namo.data.local
 
-import android.media.metrics.Event
 import androidx.room.TypeConverter
 import com.google.gson.Gson
+import com.mongmong.namo.data.local.entity.home.Schedule
 
 class StringListConverters {
     @TypeConverter
@@ -10,7 +10,6 @@ class StringListConverters {
 
     @TypeConverter
     fun jsonToList(value: String?) = Gson().fromJson(value, Array<String?>::class.java).toList()
-
 }
 
 class IntListConverters {
@@ -21,10 +20,10 @@ class IntListConverters {
     fun jsonToList(value: String?) = Gson().fromJson(value, Array<Int?>::class.java).toList()
 }
 
-class EventListConverters {
+class ScheduleListConverters {
     @TypeConverter
-    fun listToJson(value : List<Event>?) = Gson().toJson(value)
+    fun listToJson(value : List<Schedule>?) = Gson().toJson(value)
 
     @TypeConverter
-    fun jsonToList(value : String?) = Gson().fromJson(value, Array<Event?>::class.java).toList()
+    fun jsonToList(value : String?) = Gson().fromJson(value, Array<Schedule?>::class.java).toList()
 }

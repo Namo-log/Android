@@ -3,7 +3,7 @@ package com.mongmong.namo.data.local.entity.diary
 
 import androidx.room.PrimaryKey
 
-data class DiaryGroupEvent(
+data class DiaryGroupSchedule(
     @PrimaryKey(autoGenerate = false)
     var place: String = "",
     var pay: Long = 0L,

@@ -7,25 +7,22 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.mongmong.namo.data.local.dao.CategoryDao
 import com.mongmong.namo.data.local.dao.DiaryDao
-import com.mongmong.namo.data.local.dao.EventDao
-import com.mongmong.namo.data.local.dao.GroupDao
+import com.mongmong.namo.data.local.dao.ScheduleDao
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.local.entity.home.Event
-import com.mongmong.namo.data.local.entity.group.Group
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.local.entity.home.Category
 
-@Database(entities = [Event::class, Group::class, Category::class, Diary::class], version = 1, exportSchema = false)
+@Database(entities = [Schedule::class, Category::class, Diary::class], version = 1, exportSchema = false)
 @TypeConverters(
     value = [
         StringListConverters::class,
         IntListConverters::class,
-        EventListConverters::class
+        ScheduleListConverters::class
     ]
 )
 abstract class NamoDatabase : RoomDatabase() {
-    abstract val eventDao : EventDao
+    abstract val scheduleDao : ScheduleDao
     abstract val diaryDao : DiaryDao
-    abstract val groupDao : GroupDao
     abstract val categoryDao : CategoryDao
 
     companion object {

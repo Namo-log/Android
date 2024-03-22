@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -15,11 +15,11 @@ import javax.inject.Inject
 class ScheduleViewModel @Inject constructor(
     private val repository: ScheduleRepository
 ) : ViewModel() {
-    private val _schedule = MutableLiveData<Event>()
-    val schedule: LiveData<Event> = _schedule
+    private val _schedule = MutableLiveData<Schedule>()
+    val schedule: LiveData<Schedule> = _schedule
 
-    private val _scheduleList = MutableLiveData<List<Event>>(emptyList())
-    val scheduleList: LiveData<List<Event>> = _scheduleList
+    private val _scheduleList = MutableLiveData<List<Schedule>>(emptyList())
+    val scheduleList: LiveData<List<Schedule>> = _scheduleList
 
     fun getDailySchedules(startDate: Long, endDate: Long) {
         viewModelScope.launch {
@@ -30,7 +30,7 @@ class ScheduleViewModel @Inject constructor(
 
     fun getScheduleList() = _scheduleList.value
 
-    fun addSchedule(schedule: Event) {
+    fun addSchedule(schedule: Schedule) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "addSchedule $schedule")
             repository.addSchedule(
@@ -39,7 +39,7 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-    fun editSchedule(schedule: Event) {
+    fun editSchedule(schedule: Schedule) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "editSchedule $schedule")
             repository.editSchedule(

@@ -12,8 +12,8 @@ import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.local.entity.diary.DiaryEvent
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.diary.DiarySchedule
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -40,7 +40,7 @@ class DiaryViewModel @Inject constructor(
     val isGroup : LiveData<Int> = _isGroup
 
     /** 개인 기록 리스트 조회 **/
-    fun getPersonalPaging(date: String): Flow<PagingData<DiaryEvent>> {
+    fun getPersonalPaging(date: String): Flow<PagingData<DiarySchedule>> {
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
@@ -58,10 +58,10 @@ class DiaryViewModel @Inject constructor(
         }
     }
     /** 개인 기록 추가시 데이터 초기화 **/
-    fun setNewDiary(event: Event, content: String) {
+    fun setNewDiary(event: Schedule, content: String) {
         _diary.value = Diary(
-            diaryId = event.eventId,
-            serverId = event.serverIdx,
+            diaryId = event.scheduleId,
+            serverId = event.serverId,
             content = content,
             images = _imgList.value,
             state = R.string.event_current_added.toString()

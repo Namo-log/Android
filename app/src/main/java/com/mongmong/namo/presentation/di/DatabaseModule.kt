@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.dao.DiaryDao
-import com.mongmong.namo.data.local.dao.EventDao
+import com.mongmong.namo.data.local.dao.ScheduleDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,7 +23,7 @@ object DatabaseModule {
 
     /** 일정 */
     @Provides
-    fun provideScheduleDao(database: NamoDatabase): EventDao = database.eventDao
+    fun provideScheduleDao(database: NamoDatabase): ScheduleDao = database.scheduleDao
 
     /** 기록 */
     @Provides

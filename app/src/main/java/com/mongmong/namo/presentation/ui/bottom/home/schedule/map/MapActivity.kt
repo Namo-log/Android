@@ -104,7 +104,7 @@ class MapActivity : AppCompatActivity() {
         mapRVAdapter.notifyDataSetChanged()
     }
 
-    private fun searchEventStart() {
+    private fun searchstartDate() {
         val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
 
@@ -125,7 +125,7 @@ class MapActivity : AppCompatActivity() {
 
         binding.mapSearchEt.setOnKeyListener { _, keyCode, event ->
             if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-                searchEventStart()
+                searchstartDate()
                 true
             } else {
                 false
@@ -133,7 +133,7 @@ class MapActivity : AppCompatActivity() {
         }
 
         binding.mapSearchBtn.setOnClickListener {
-            searchEventStart()
+            searchstartDate()
         }
 
         mapRVAdapter.setItemClickListener( object :

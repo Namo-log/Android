@@ -11,7 +11,7 @@
             android:id="@+id/item_calendar_event_color_view"
             android:layout_width="30dp"
             android:layout_height="0dp"
-            android:background="@drawable/ic_calendar_event_color_corner"
+            android:background="@drawable/bg_schedule_preview_catory_color_corner"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -22,7 +22,7 @@
             android:id="@+id/item_calendar_event_base_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_calendar_event_base_corner"
+            android:background="@drawable/bg_schedule_preview_base_corner"
             app:layout_constraintStart_toEndOf="@id/item_calendar_event_color_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/item_calendar_event_color_view"
@@ -50,7 +50,7 @@
                     app:layout_constraintStart_toStartOf="parent"/>
 
                 <TextView
-                    android:id="@+id/item_calendar_event_title"
+                    android:id="@+id/item_calendar_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="코딩스터디"

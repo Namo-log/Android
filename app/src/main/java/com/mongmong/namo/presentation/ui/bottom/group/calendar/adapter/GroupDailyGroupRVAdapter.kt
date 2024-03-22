@@ -8,7 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.MoimSchedule
-import com.mongmong.namo.databinding.ItemCalendarEventBinding
+import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
 import org.joda.time.DateTime
 
 class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter.ViewHolder>() {
@@ -18,7 +18,7 @@ class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter
     private lateinit var context : Context
 
     interface DiaryInterface {
-        fun onGroupMemoClicked(groupEvent: MoimSchedule)
+        fun onGroupMemoClicked(groupSchedule: MoimSchedule)
     }
     private lateinit var diaryGroupMemoClickListener: DiaryInterface
     fun setRecordClickListener(itemClickListener: DiaryInterface){
@@ -36,7 +36,7 @@ class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
-        val binding : ItemCalendarEventBinding = ItemCalendarEventBinding.inflate(
+        val binding : ItemSchedulePreviewBinding = ItemSchedulePreviewBinding.inflate(
             LayoutInflater.from(viewGroup.context), viewGroup, false)
         context = viewGroup.context
         colorArray = context.resources.getIntArray(R.array.categoryColorArr)
@@ -65,7 +65,7 @@ class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(val binding : ItemCalendarEventBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("ResourceType")
         fun bind(groupSchedule: MoimSchedule) {
@@ -77,9 +77,9 @@ class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter
                         else if (groupSchedule.users.size < 2 && groupSchedule.users[0].color != 0) groupSchedule.users[0].color
                         else 3
 
-            binding.itemCalendarEventTitle.text = groupSchedule.name
-            binding.itemCalendarEventTitle.isSelected = true
-            binding.itemCalendarEventTime.text = time
+            binding.itemCalendarTitle.text = groupSchedule.name
+            binding.itemCalendarTitle.isSelected = true
+            binding.itemCalendarTitle.text = time
             binding.itemCalendarEventColorView.background.setTint(colorArray[paletteId - 1])
 
             if(groupSchedule.hasDiaryPlace)

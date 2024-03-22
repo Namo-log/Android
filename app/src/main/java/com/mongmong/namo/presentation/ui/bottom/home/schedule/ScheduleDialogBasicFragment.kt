@@ -40,7 +40,7 @@ import com.mongmong.namo.presentation.ui.MainActivity.Companion.setCategoryList
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.moim.EditMoimScheduleView
 import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
 import com.mongmong.namo.data.remote.moim.MoimService
@@ -63,7 +63,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     private lateinit var binding : FragmentScheduleDialogBasicBinding
     private val args : ScheduleDialogBasicFragmentArgs by navArgs()
 
-    private var event : Event = Event()
+    private var event : Schedule = Schedule()
 
     private var isAlarm : Boolean = false
 
@@ -95,7 +95,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     private var prevAlarmList : List<Int>? = null
     private var alarmText : String = ""
 
-    private val failList = ArrayList<Event>()
+    private val failList = ArrayList<Schedule>()
 
     private var isMoimScheduleCategorySaved = false
     private var isMoimScheduleAlarmSaved = false
@@ -132,9 +132,9 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
             initCategory()
         }
 
-        if (event.eventId != 0L) {
+        if (event.scheduleId != 0L) {
             binding.dialogScheduleHeaderTv.text = "일정 편집"
-            scheduleIdx = event.eventId
+            scheduleIdx = event.scheduleId
         } else {
             binding.dialogScheduleHeaderTv.text = "새 일정"
         }
@@ -334,21 +334,21 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
                 moimService.setEditMoimScheduleView(this)
                 moimService.patchMoimScheduleCategory(
                     PatchMoimScheduleCategoryBody(
-                        event.serverIdx,
-                        event.categoryServerIdx
+                        event.serverId,
+                        event.categoryServerId
                     )
                 )
                 if (isMoimSchedulePrevAlarm) {
                     moimService.patchMoimScheduleAlarm(
                         MoimScheduleAlarmBody(
-                            event.serverIdx,
+                            event.serverId,
                             event.alarmList!!
                         )
                     )
                 } else {
                     moimService.postMoimScheduleAlarm(
                         MoimScheduleAlarmBody(
-                            event.serverIdx,
+                            event.serverId,
                             event.alarmList!!
                         )
                     )
@@ -356,7 +356,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
             }
             // 개인일정일 경우
             else {
-                if (event.eventId == 0L) {
+                if (event.scheduleId == 0L) {
                     lifecycleScope.launch {
                         insertData()
                     }
@@ -375,7 +375,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         // 현재 일정의 상태가 추가 상태임을 나타냄
         event.state = R.string.event_current_added.toString()
         event.isUpload = 0
-        event.serverIdx = 0
+        event.serverId = 0
 
         // 새 일정 등록
         viewModel.addSchedule(event)
@@ -392,7 +392,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         // 이전 알람 삭제 후 변경 알람 저장
         for (i in prevAlarmList!!) {
             deleteNotification(
-                event.eventId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt()
+                event.scheduleId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt()
             )
         }
         setAlarm(event.startLong)
@@ -632,14 +632,14 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         Log.d("TEST_CATEGORY", categoryList.toString())
         Log.d("TEST_CATEGORY", event.toString())
         val category = categoryList.find {
-            if (it.serverIdx != 0L) it.serverIdx == event.categoryServerIdx
-            else it.categoryIdx == event.categoryIdx
+            if (it.serverId != 0L) it.serverId == event.categoryServerId
+            else it.categoryId == event.categoryId
         }
         if (category != null) {
             selectedCategory = category
         }
-        event.categoryIdx = selectedCategory.categoryIdx
-        event.categoryServerIdx = selectedCategory.serverIdx
+        event.categoryId = selectedCategory.categoryId
+        event.categoryServerId = selectedCategory.serverId
         setCategory()
 
         //시작일, 종료일
@@ -677,7 +677,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         event.title = binding.dialogScheduleTitleEt.text.toString()
         event.startLong = startDateTime.millis / 1000
         event.endLong = endDateTime.millis / 1000
-        event.dayInterval = getInterval(event.startLong, event.endLong)
+        event.endDate = getInterval(event.startLong, event.endLong)
 
         setAlarmList()
         event.alarmList = alarmList
@@ -788,8 +788,8 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
         categoryList = setCategoryList(db)
         selectedCategory = categoryList[0]
-        event.categoryIdx = selectedCategory.categoryIdx
-        event.categoryServerIdx = selectedCategory.serverIdx
+        event.categoryId = selectedCategory.categoryId
+        event.categoryServerId = selectedCategory.serverId
 
         setCategory()
     }
@@ -811,7 +811,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     }
 
     private fun setCategory() {
-        event.categoryServerIdx = selectedCategory.serverIdx
+        event.categoryServerId = selectedCategory.serverId
         binding.dialogScheduleCategoryNameTv.text = selectedCategory.name
         binding.dialogScheduleCategoryColorIv.background.setTint(selectedCategory.color)
     }
@@ -819,7 +819,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     private fun printNotUploaded() {
         val thread = Thread {
             failList.clear()
-            failList.addAll(db.eventDao.getNotUploadedEvent() as ArrayList<Event>)
+            failList.addAll(db.scheduleDao.getNotUploadedSchedule() as ArrayList<Schedule>)
         }
         thread.start()
         try {
@@ -870,8 +870,8 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     private fun isMoimScheduleSaved() {
         if (isMoimScheduleCategorySaved && isMoimScheduleAlarmSaved) {
             val thread = Thread {
-                db.eventDao.updateEvent(event)
-//                Log.d("UPDATE_MOIM_SCHEDULE", db.eventDao.getEventById(event.eventId).toString())
+                db.scheduleDao.updateSchedule(event)
+//                Log.d("UPDATE_MOIM_SCHEDULE", db.eventDao.getScheduleById(event.scheduleId).toString())
             }
 
             thread.start()

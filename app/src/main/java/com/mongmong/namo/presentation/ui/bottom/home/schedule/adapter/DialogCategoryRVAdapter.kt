@@ -30,7 +30,7 @@ class DialogCategoryRVAdapter(
             binding.categoryColorView.background.setTint(category.color)
             binding.categoryNameTv.text = category.name
 
-            if (category.categoryIdx == selectedIdx) {
+            if (category.categoryId == selectedIdx) {
                 binding.categorySelectedIv.visibility = View.VISIBLE
             } else {
                 binding.categorySelectedIv.visibility = View.GONE
@@ -50,7 +50,7 @@ class DialogCategoryRVAdapter(
         holder.bind(categoryList[position])
 
         holder.itemView.setOnClickListener {
-            selectedIdx = categoryList[position].categoryIdx
+            selectedIdx = categoryList[position].categoryId
             mItemClickListener.onSendIdx(categoryList[position])
 
             notifyDataSetChanged()

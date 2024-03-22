@@ -30,7 +30,7 @@ import com.mongmong.namo.presentation.config.BaseResponse
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.CategoryBody
 import com.mongmong.namo.data.remote.category.CategoryDeleteService
 import com.mongmong.namo.data.remote.category.CategoryDeleteView
@@ -42,18 +42,17 @@ import com.mongmong.namo.domain.model.GetCategoryResponse
 import com.mongmong.namo.domain.model.GetCategoryResult
 import com.mongmong.namo.domain.model.PostCategoryResponse
 import com.mongmong.namo.data.remote.diary.DiaryRepository
-import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.data.remote.diary.DiaryService
 import com.mongmong.namo.data.remote.diary.GetMonthDiaryView
-import com.mongmong.namo.domain.model.DeleteEventResponse
-import com.mongmong.namo.data.remote.event.DeleteEventView
-import com.mongmong.namo.domain.model.EditEventResponse
-import com.mongmong.namo.data.remote.event.EventService
-import com.mongmong.namo.data.remote.event.EventView
-import com.mongmong.namo.data.remote.event.GetAllEventView
-import com.mongmong.namo.domain.model.GetMonthEventResponse
-import com.mongmong.namo.domain.model.GetMonthEventResult
-import com.mongmong.namo.domain.model.PostEventResponse
+import com.mongmong.namo.domain.model.DeleteScheduleResponse
+import com.mongmong.namo.data.remote.schedule.DeleteScheduleView
+import com.mongmong.namo.domain.model.EditScheduleResponse
+import com.mongmong.namo.data.remote.schedule.ScheduleService
+import com.mongmong.namo.data.remote.schedule.ScheduleView
+import com.mongmong.namo.data.remote.schedule.GetAllScheduleView
+import com.mongmong.namo.domain.model.GetMonthScheduleResponse
+import com.mongmong.namo.domain.model.GetMonthScheduleResult
+import com.mongmong.namo.domain.model.PostScheduleResponse
 import com.mongmong.namo.databinding.ActivityMainBinding
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResult
@@ -67,23 +66,23 @@ private const val PERMISSION_REQUEST_CODE= 1001
 private const val NOTIFICATION_PERMISSION_REQUEST_CODE= 777
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEventView,
+class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetAllScheduleView,
     CategorySettingView, GetMonthDiaryView, CategoryDetailView, CategoryDeleteView {
 
     private lateinit var binding: ActivityMainBinding
     lateinit var db: NamoDatabase
-    lateinit var unUploaded: List<Event>
+    lateinit var unUploaded: List<Schedule>
     lateinit var unUploadedCategory : List<Category>
     var paletteId : Int = 0
 
-    private val serverEvent = ArrayList<Event>()
+    private val serverSchedule = ArrayList<Schedule>()
     private val serverCategory = ArrayList<Category>()
     private val serverDiary = ArrayList<Diary>()
 
     private lateinit var categoryColorArray: IntArray
 
     private var isCategorySuccess = false
-    private var isEventSuccess = false
+    private var isScheduleSuccess = false
     private var isDiarySuccess = false
 
     companion object {
@@ -168,10 +167,10 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         return size
     }
 
-    private fun getAllEventSize(): Int {
+    private fun getAllScheduleSize(): Int {
         var size: Int = 0
         val thread = Thread{
-            size = db.eventDao.getAllEvent()
+            size = db.scheduleDao.getAllSchedule()
         }
         thread.start()
         try {
@@ -190,9 +189,9 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         CategorySettingService(this).tryGetAllCategory()
 
         //이벤트
-        val eventService = EventService()
-        eventService.setGetAllEventView(this)
-        eventService.getAllEvent()
+        val eventService = ScheduleService()
+        eventService.setGetAllScheduleView(this)
+        eventService.getAllSchedule()
 
         // 다이어리
         val diaryService = DiaryService()
@@ -204,7 +203,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
     private fun uploadRoomToServer() {
 
         val thread = Thread{
-            unUploaded = db.eventDao.getNotUploadedEvent()
+            unUploaded = db.scheduleDao.getNotUploadedSchedule()
             unUploadedCategory = db.categoryDao.getNotUploadedCategory()
         }
         thread.start()
@@ -218,23 +217,23 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         // serverId가 없는데 delete인 것들은 안 올림, ID가 0이 아닌데 delete인 건 delete로 올림
         // serverId = 0 인데 state가 delete가 아닌 애들은 POST로 올림, serverId !=0 인 건 PATCH로 올림
 
-        val eventService = EventService()
-        eventService.setEventView(this)
-        eventService.setDeleteEventView(this)
+        val eventService = ScheduleService()
+        eventService.setScheduleView(this)
+        eventService.setDeleteScheduleView(this)
 
         for (i in unUploaded) {
-            if (i.serverIdx == 0L) {
+            if (i.serverId == 0L) {
                 if (i.state == R.string.event_current_deleted.toString()) {
                     return
                 } else {
                     //POST
-                    eventService.postEvent(i.eventToEventForUpload(), i.eventId)
+                    eventService.postSchedule(i.eventToScheduleForUpload(), i.scheduleId)
                 }
             } else {
                 if (i.state == R.string.event_current_deleted.toString()) {
-                    eventService.deleteEvent(i.serverIdx, i.eventId, 0)
+                    eventService.deleteSchedule(i.serverId, i.scheduleId, 0)
                 } else {
-                    eventService.editEvent(i.serverIdx, i.eventToEventForUpload(), i.eventId)
+                    eventService.editSchedule(i.serverId, i.eventToScheduleForUpload(), i.scheduleId)
                 }
             }
         }
@@ -249,18 +248,18 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
                     paletteId = j + 5
                 }
             }
-            if (i.serverIdx == 0L) {
+            if (i.serverId == 0L) {
                 if (i.state == R.string.event_current_deleted.toString()) {
                     return
                 } else {
                     //POST
-                    CategoryService(this).tryPostCategory(CategoryBody(i.name, paletteId, i.share), i.categoryIdx)
+                    CategoryService(this).tryPostCategory(CategoryBody(i.name, paletteId, i.share), i.categoryId)
                 }
             } else {
                 if (i.state == R.string.event_current_deleted.toString()) {
-                    CategoryDeleteService(this).tryDeleteCategory(i.serverIdx, i.categoryIdx)
+                    CategoryDeleteService(this).tryDeleteCategory(i.serverId, i.categoryId)
                 } else {
-                    CategoryService(this).tryPatchCategory(i.serverIdx, CategoryBody(i.name, paletteId, i.share), i.categoryIdx)
+                    CategoryService(this).tryPatchCategory(i.serverId, CategoryBody(i.name, paletteId, i.share), i.categoryId)
                 }
 
             }
@@ -361,60 +360,60 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         //바텀내비 백스택 수정 필요
     }
 
-    override fun onPostEventSuccess(response: PostEventResponse, eventId: Long) {
-        Log.d("MainActivity", "onPostEventSuccess")
-        Log.d("MAIN_SERVER_UPLOAD", "$eventId 번 일정 post 완료")
+    override fun onPostScheduleSuccess(response: PostScheduleResponse, scheduleId: Long) {
+        Log.d("MainActivity", "onPostScheduleSuccess")
+        Log.d("MAIN_SERVER_UPLOAD", "$scheduleId 번 일정 post 완료")
 
         val result = response.result
 
         //룸디비에 isUpload, serverId, state 업데이트하기
         lifecycleScope.launch {
-            db.eventDao.updateEventAfterUpload(
-                eventId,
+            db.scheduleDao.updateScheduleAfterUpload(
+                scheduleId,
                 1,
-                result.eventIdx,
+                result.scheduleIdx,
                 R.string.event_current_default.toString()
             )
         }
         val repo=DiaryRepository(this)
-        repo.postDiaryToServer(result.eventIdx , eventId)
+        repo.postDiaryToServer(result.scheduleIdx , scheduleId)
     }
 
-    override fun onPostEventFailure(message: String) {
-        Log.d("MainActivity", "onPostEventFailure")
+    override fun onPostScheduleFailure(message: String) {
+        Log.d("MainActivity", "onPostScheduleFailure")
     }
 
-    override fun onEditEventSuccess(response: EditEventResponse, eventId: Long) {
-        Log.d("MainActivity", "onEditEventSuccess")
-        Log.d("MAIN_SERVER_UPLOAD", "$eventId 번 일정 edit 완료")
+    override fun onEditScheduleSuccess(response: EditScheduleResponse, scheduleId: Long) {
+        Log.d("MainActivity", "onEditScheduleSuccess")
+        Log.d("MAIN_SERVER_UPLOAD", "$scheduleId 번 일정 edit 완료")
 
         val result = response.result
 
         //룸디비에 isUpload, serverId, state 업데이트하기
         lifecycleScope.launch {
-            db.eventDao.updateEventAfterUpload(
-                eventId,
+            db.scheduleDao.updateScheduleAfterUpload(
+                scheduleId,
                 1,
-                result.eventIdx,
+                result.scheduleIdx,
                 R.string.event_current_default.toString()
             )
         }
     }
 
-    override fun onEditEventFailure(message: String) {
-        Log.d("MainActivity", "onEditEventFailure")
+    override fun onEditScheduleFailure(message: String) {
+        Log.d("MainActivity", "onEditScheduleFailure")
     }
 
-    override fun onDeleteEventSuccess(response: DeleteEventResponse, eventId: Long) {
-        Log.d("MainActivity", "onDeleteEventSuccess")
-        Log.d("MAIN_SERVER_UPLOAD", "$eventId 번 일정 삭제 완료")
+    override fun onDeleteScheduleSuccess(response: DeleteScheduleResponse, scheduleId: Long) {
+        Log.d("MainActivity", "onDeleteScheduleSuccess")
+        Log.d("MAIN_SERVER_UPLOAD", "$scheduleId 번 일정 삭제 완료")
 
         val result = response.result
-        Toast.makeText(this, "$eventId 번 일정의 $result", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "$scheduleId 번 일정의 $result", Toast.LENGTH_SHORT).show()
 
 
         var deleteDB: Thread = Thread{
-            db.eventDao.deleteEventById(eventId)
+            db.scheduleDao.deleteScheduleById(scheduleId)
         }
         deleteDB.start()
         try {
@@ -424,26 +423,26 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         }
     }
 
-    override fun onDeleteEventFailure(message: String) {
-        Log.d("MainActivity", "onDeleteEventFailure")
+    override fun onDeleteScheduleFailure(message: String) {
+        Log.d("MainActivity", "onDeleteScheduleFailure")
     }
 
-    override fun onGetAllEventSuccess (response: GetMonthEventResponse) {
-        Log.d("MAIN_SERVER_UPLOAD", "onGetAllEventSuccess")
+    override fun onGetAllScheduleSuccess (response: GetMonthScheduleResponse) {
+        Log.d("MAIN_SERVER_UPLOAD", "onGetAllScheduleSuccess")
 
         val result = response.result
-        serverEvent.clear()
-        serverEvent.addAll(result.map{serverToEvent(it)})
-        Log.d("TEST_CHECK", "서버에 있던 이벤트 : " + serverEvent.toString())
-        Log.d("MAIN_SERVER_UPLOAD", "Get All Event Finish")
-        isEventSuccess = true
+        serverSchedule.clear()
+        serverSchedule.addAll(result.map{serverToSchedule(it)})
+        Log.d("TEST_CHECK", "서버에 있던 이벤트 : " + serverSchedule.toString())
+        Log.d("MAIN_SERVER_UPLOAD", "Get All Schedule Finish")
+        isScheduleSuccess = true
         checkServerDownloadCompleted()
 
     }
 
-    override fun onGetAllEventFailure (message: String) {
-        Log.d("MAIN_SERVER_UPLOAD", "onGetAllEventFailure")
-        isEventSuccess = false
+    override fun onGetAllScheduleFailure (message: String) {
+        Log.d("MAIN_SERVER_UPLOAD", "onGetAllScheduleFailure")
+        isScheduleSuccess = false
     }
     override fun onGetAllCategorySuccess(response: GetCategoryResponse) {
         Log.d("MAIN_SERVER_UPLOAD", "onGetAllCategorySuccess")
@@ -563,15 +562,15 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
 
     private fun checkServerDownloadCompleted() {
 
-        if (isCategorySuccess && isEventSuccess && isDiarySuccess) {
+        if (isCategorySuccess && isScheduleSuccess && isDiarySuccess) {
             val uploadRoom = Thread{
                 for (category in serverCategory) {
                     db.categoryDao.insertCategory(category)
                 }
-                for (event in serverEvent) {
+                for (event in serverSchedule) {
                     if (!event.moimSchedule) {
                         lifecycleScope.launch {
-                            db.eventDao.insertEvent(event)
+                            db.scheduleDao.insertSchedule(event)
                         }
                     }
                 }
@@ -586,14 +585,14 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
 
             val uploadRoom2 = Thread{ // event,category 완료된 후 다이어리 업로드
 
-                val allEvent = db.diaryDao.getAllEvent()
+                val allSchedule = db.diaryDao.getAllSchedule()
 
                 for (diary in serverDiary) {
-                    for (event in allEvent){
+                    for (event in allSchedule){
                         if (event.hasDiary == 1){
-                            if(event.serverIdx == diary.serverId) {
+                            if(event.serverId == diary.serverId) {
                                 val diaryData = Diary(
-                                    event.eventId,
+                                    event.scheduleId,
                                     diary.serverId,
                                     diary.content,
                                     diary.images,
@@ -626,8 +625,8 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
     }
 
 
-    private fun serverToEvent(schedule: GetMonthEventResult): Event {
-        return Event(
+    private fun serverToSchedule(schedule: GetMonthScheduleResult): Schedule {
+        return Schedule(
             0,
             schedule.name,
             schedule.startDate,

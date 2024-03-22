@@ -22,9 +22,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.mongmong.namo.R
 import com.mongmong.namo.data.datasource.diary.DiaryGroupPagingSource
-import com.mongmong.namo.data.datasource.diary.DiaryPersonalPagingSource
-import com.mongmong.namo.data.local.entity.diary.DiaryEvent
-import com.mongmong.namo.data.local.entity.home.Event
+import com.mongmong.namo.data.local.entity.diary.DiarySchedule
+import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.presentation.utils.NetworkManager
 import com.mongmong.namo.databinding.FragmentDiaryBinding
 import com.mongmong.namo.domain.model.MonthDiary
@@ -45,7 +44,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     private val viewModel : DiaryViewModel by viewModels()
 
-    private lateinit var pagingDataFlow: Flow<PagingData<DiaryEvent>>
+    private lateinit var pagingDataFlow: Flow<PagingData<DiarySchedule>>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -205,7 +204,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     private fun groupPaging(
         date: String,
-        adapter: PagingDataAdapter<DiaryEvent, RecyclerView.ViewHolder>?
+        adapter: PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>?
     ) {
         // Pager를 통해 페이징 데이터 생성
         pagingDataFlow = Pager(
@@ -221,17 +220,17 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         }
     }
 
-    private fun onEditClickListener(item: DiaryEvent) {  // 개인 기록 수정 클릭리스너
+    private fun onEditClickListener(item: DiarySchedule) {  // 개인 기록 수정 클릭리스너
 
-        val event = Event(
-            item.eventId,
-            item.event_title,
-            item.event_start, 0L, 0,
-            item.event_category_idx, item.event_place_name,
+        val event = Schedule(
+            item.scheduleId,
+            item.title,
+            item.startDate, 0L, 0,
+            item.categoryId, item.place,
             0.0, 0.0, 0, null, 1,
             R.string.event_current_default.toString(),
-            item.event_server_idx,
-            item.event_category_server_idx,
+            item.serverId,
+            item.categoryServerId,
             1
         )
 
@@ -240,11 +239,11 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     }
 
-    private fun onDetailClickListener(item: DiaryEvent) {  // 그룹 기록 수정 클릭리스너
+    private fun onDetailClickListener(item: DiarySchedule) {  // 그룹 기록 수정 클릭리스너
 
         val monthDiary = MonthDiary(
-            item.eventId, item.event_title, item.event_start, item.content,
-            item.images ?: emptyList(), item.event_category_idx, 0L, item.event_place_name
+            item.scheduleId, item.title, item.startDate, item.content,
+            item.images ?: emptyList(), item.categoryId, 0L, item.place
         )
 
         requireActivity().startActivity(Intent(context, GroupDetailActivity::class.java)
