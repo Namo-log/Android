@@ -16,8 +16,7 @@ import com.mongmong.namo.databinding.ItemDiaryListBinding
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.adapter.DiaryGalleryRVAdapter
 import java.text.SimpleDateFormat
 
-private const val ITEM_VIEW_TYPE_HEADER = 0
-private const val ITEM_VIEW_TYPE_ITEM = 1
+
 
 class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
     val editClickListener: (DiaryEvent) -> Unit,
@@ -158,4 +157,8 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
         }
     }
 
+    companion object {
+        private const val ITEM_VIEW_TYPE_HEADER = 0
+        private const val ITEM_VIEW_TYPE_ITEM = 1
+    }
 }
