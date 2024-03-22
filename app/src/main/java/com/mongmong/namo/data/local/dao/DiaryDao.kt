@@ -37,7 +37,7 @@ interface DiaryDao {
     )
     fun getDiaryScheduleList(yearMonth: String, page: Int, size: Int): List<DiarySchedule>
 
-    @Query("UPDATE diary_table SET isUpload=:isUpload, serverId=:serverId, state=:state WHERE diaryId=:localId")
+    @Query("UPDATE diary_table SET isUpload=:isUpload, scheduleServerId=:serverId, state=:state WHERE diaryId=:localId")
     suspend fun updateDiaryAfterUpload(localId: Long, serverId: Long, isUpload: Boolean, state: String)
 
     @Query("SELECT * FROM diary_table WHERE isUpload = 0")

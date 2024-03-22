@@ -8,9 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
 import androidx.paging.cachedIn
-import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.diary.DiarySchedule
 import com.mongmong.namo.data.local.entity.home.Schedule
@@ -22,7 +20,6 @@ import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 import org.joda.time.DateTime
-import org.joda.time.YearMonth
 
 @HiltViewModel
 class DiaryViewModel @Inject constructor(
@@ -62,7 +59,7 @@ class DiaryViewModel @Inject constructor(
     fun setNewDiary(event: Schedule, content: String) {
         _diary.value = Diary(
             diaryId = event.scheduleId,
-            serverId = event.serverId,
+            scheduleServerId = event.serverId,
             content = content,
             images = _imgList.value,
             state = RoomState.ADDED.state

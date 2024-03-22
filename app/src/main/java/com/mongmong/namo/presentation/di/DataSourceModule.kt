@@ -26,5 +26,5 @@ object DataSourceModule {
     @Provides
     fun provideLocalDataSource(diaryDao: DiaryDao): LocalDiaryDataSource = LocalDiaryDataSource(diaryDao)
     @Provides
-    fun provideRemoteDataSource(apiService: DiaryApiService): RemoteDiaryDataSource = RemoteDiaryDataSource (apiService)
+    fun provideRemoteDataSource(apiService: DiaryApiService): RemoteDiaryDataSource = RemoteDiaryDataSource(apiService)
 }

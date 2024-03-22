@@ -112,10 +112,6 @@
     <string name="group_money">금액 정산</string>
 
     <!-- event 관련 String   -->
-    <string name="event_current_default">DEFAULT</string>
-    <string name="event_current_added">ADDED</string>
-    <string name="event_current_edited">EDITED</string>
-    <string name="event_current_deleted">DELETED</string>
     <string name="more_view">더보기</string>
 
 

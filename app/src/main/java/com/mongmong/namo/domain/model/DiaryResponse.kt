@@ -15,7 +15,7 @@ data class DiaryAddResponse(
 ) : BaseResponse()
 
 data class GetScheduleIdx(
-    val scheduleIdx: Long
+    val scheduleId: Long
 )
 
 /** 기록 월 별 조회 **/

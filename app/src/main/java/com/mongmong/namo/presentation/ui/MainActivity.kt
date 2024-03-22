@@ -596,10 +596,10 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                 for (diary in serverDiary) {
                     for (event in allSchedule){
                         if (event.hasDiary == 1){
-                            if(event.serverId == diary.serverId) {
+                            if(event.serverId == diary.scheduleServerId) {
                                 val diaryData = Diary(
                                     event.scheduleId,
-                                    diary.serverId,
+                                    diary.scheduleServerId,
                                     diary.content,
                                     diary.images,
                                     RoomState.DEFAULT.state,
@@ -644,8 +644,8 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
             schedule.y,
             0,
             schedule.alarmDate ?:listOf(),
-            IS_UPLOAD,
-            (R.string.event_current_default).toString(),
+            UploadState.IS_UPLOAD.state,
+            RoomState.DEFAULT.state,
             schedule.scheduleId,
             schedule.categoryId,
             if (schedule.hasDiary) 1 else 0,
