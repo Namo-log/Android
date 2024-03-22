@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.dao.DiaryDao
+import com.mongmong.namo.data.local.dao.EventDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,6 +21,11 @@ object DatabaseModule {
     fun provideNamoDatabase(@ApplicationContext context: Context): NamoDatabase =
         Room.databaseBuilder(context, NamoDatabase::class.java, "namo_database").build()
 
+    /** 일정 */
+    @Provides
+    fun provideScheduleDao(database: NamoDatabase): EventDao = database.eventDao
+
+    /** 기록 */
     @Provides
     fun provideDiaryDao(database: NamoDatabase): DiaryDao = database.diaryDao
 }

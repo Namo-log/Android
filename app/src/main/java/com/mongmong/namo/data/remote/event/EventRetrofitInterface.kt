@@ -16,22 +16,20 @@ import retrofit2.http.Path
 interface EventRetrofitInterface {
     @POST("schedules")
     fun postEvent(
-//        @Header("Authorization") token : String,
         @Body event : EventForUpload
-    ) : Call<PostEventResponse>
+    ) : PostEventResponse
 
     @PATCH("schedules/{serverIdx}")
     fun editEvent(
         @Path("serverIdx") serverIdx : Long,
         @Body event : EventForUpload
-    ) : Call<EditEventResponse>
+    ) : EditEventResponse
 
     @DELETE("schedules/{serverIdx}/{kind}")
     fun deleteEvent(
         @Path("serverIdx") serverIdx : Long,
         @Path("kind") isMoimSchedule: Int,
-//        @Header("Authorization") token : String,
-    ) : Call<DeleteEventResponse>
+    ) : DeleteEventResponse
 
     @GET("schedules/{yearMonth}")
     fun getMonthEvent(

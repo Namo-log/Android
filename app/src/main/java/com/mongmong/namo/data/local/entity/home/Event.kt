@@ -59,17 +59,31 @@ data class Event(
     @ColumnInfo(name = "event_is_group")
     var moimSchedule: Boolean = false
 
-) : Serializable
+) : Serializable {
+    fun eventToEventForUpload() : EventForUpload {
+        return EventForUpload(
+            name = this.title,
+            startDate = this.startLong,
+            endDate = this.endLong,
+            interval = this.dayInterval,
+            alarmDate = this.alarmList,
+            x = this.placeX,
+            y = this.placeY,
+            locationName = this.placeName,
+            categoryId = this.categoryServerIdx,
+        )
+    }
+}
 
 
 data class EventForUpload(
-    var name : String = "",
-    var startDate : Long = 0L,
-    var endDate : Long = 0L,
-    var interval : Int = 0,
-    var alarmDate : List<Int>? = listOf(),
-    var x : Double = 0.0,
-    var y : Double = 0.0,
-    var locationName : String = "없음",
-    var categoryId : Long = 0L
+    var name: String = "",
+    var startDate: Long = 0L,
+    var endDate: Long = 0L,
+    var interval: Int = 0,
+    var alarmDate: List<Int>? = listOf(),
+    var x: Double = 0.0,
+    var y: Double = 0.0,
+    var locationName: String = "없음",
+    var categoryId: Long = 0L
 )

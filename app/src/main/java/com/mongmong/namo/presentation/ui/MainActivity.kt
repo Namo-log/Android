@@ -57,7 +57,6 @@ import com.mongmong.namo.domain.model.PostEventResponse
 import com.mongmong.namo.databinding.ActivityMainBinding
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResult
-import com.mongmong.namo.presentation.ui.bottom.home.schedule.ScheduleDialogBasicFragment.Companion.eventToEventForUpload
 import com.mongmong.namo.presentation.utils.NetworkManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -121,7 +120,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         categoryColorArray =resources.getIntArray(R.array.categoryColorArr)
         Log.d("CATEGORY_ARR", categoryColorArray.contentToString())
 
-        logToken()
+//        logToken()
         checkPermissions()
         checkNetworkUpload()
 
@@ -229,15 +228,14 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
                     return
                 } else {
                     //POST
-                    eventService.postEvent(eventToEventForUpload(i), i.eventId)
+                    eventService.postEvent(i.eventToEventForUpload(), i.eventId)
                 }
             } else {
                 if (i.state == R.string.event_current_deleted.toString()) {
                     eventService.deleteEvent(i.serverIdx, i.eventId, 0)
                 } else {
-                    eventService.editEvent(i.serverIdx, eventToEventForUpload(i), i.eventId)
+                    eventService.editEvent(i.serverIdx, i.eventToEventForUpload(), i.eventId)
                 }
-
             }
         }
         val paletteDatas = arrayListOf(
@@ -271,8 +269,6 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         lifecycleScope.launch {
             repo.uploadDiaryToServer()  // 다이어리 서버에 올림
         }
-
-
 
     }
 
@@ -372,7 +368,7 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         val result = response.result
 
         //룸디비에 isUpload, serverId, state 업데이트하기
-        var thread = Thread{
+        lifecycleScope.launch {
             db.eventDao.updateEventAfterUpload(
                 eventId,
                 1,
@@ -380,13 +376,6 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
                 R.string.event_current_default.toString()
             )
         }
-        thread.start()
-        try {
-            thread.join()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
-
         val repo=DiaryRepository(this)
         repo.postDiaryToServer(result.eventIdx , eventId)
     }
@@ -402,19 +391,13 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
         val result = response.result
 
         //룸디비에 isUpload, serverId, state 업데이트하기
-        var thread = Thread{
+        lifecycleScope.launch {
             db.eventDao.updateEventAfterUpload(
                 eventId,
                 1,
                 result.eventIdx,
                 R.string.event_current_default.toString()
             )
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
         }
     }
 
@@ -586,9 +569,10 @@ class MainActivity : AppCompatActivity(), EventView, DeleteEventView, GetAllEven
                     db.categoryDao.insertCategory(category)
                 }
                 for (event in serverEvent) {
-//                    db.eventDao.insertEvent(event)
                     if (!event.moimSchedule) {
-                        db.eventDao.insertEvent(event)
+                        lifecycleScope.launch {
+                            db.eventDao.insertEvent(event)
+                        }
                     }
                 }
                 Log.d("TEST_CHECK", "Now categories are ${db.categoryDao.getAllCategorySize()}")

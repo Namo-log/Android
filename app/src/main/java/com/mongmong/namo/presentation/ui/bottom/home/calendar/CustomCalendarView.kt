@@ -458,9 +458,9 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
     }
 
     private fun setBgPaintColor(event: Event) {
-        Log.d("BG_COLOR_CHECK", categoryList.toString())
-        Log.d("BG_COLOR_CHECK", event.toString())
-        Log.d("BG_COLOR_CHECK", "Category Server : " + event.categoryServerIdx + " | Category Idx : " + event.categoryIdx)
+//        Log.d("BG_COLOR_CHECK", categoryList.toString())
+//        Log.d("BG_COLOR_CHECK", event.toString())
+//        Log.d("BG_COLOR_CHECK", "Category Server : " + event.categoryServerIdx + " | Category Idx : " + event.categoryIdx)
 
         val foundCategory = categoryList.find {
             if (it.serverIdx != 0L) it.serverIdx == event.categoryServerIdx

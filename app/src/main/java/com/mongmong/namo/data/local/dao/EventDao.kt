@@ -11,7 +11,7 @@ import com.mongmong.namo.data.local.entity.home.Event
 @Dao
 interface EventDao {
     @Insert
-    fun insertEvent(event : Event) : Long
+    suspend fun insertEvent(event : Event)
 
     @Delete
     fun deleteEvent(event : Event)
@@ -41,7 +41,7 @@ interface EventDao {
     fun getNotUploadedEvent() : List<Event>
 
     @Query("UPDATE calendar_event_table SET event_upload=:isUpload, event_server_idx=:serverIdx, event_state=:state WHERE eventId=:eventId")
-    fun updateEventAfterUpload(eventId : Long, isUpload : Int, serverIdx : Long, state : String)
+    suspend fun updateEventAfterUpload(eventId : Long, isUpload : Int, serverIdx : Long, state : String)
 
     @Query("DELETE FROM calendar_event_table WHERE eventId=:eventId")
     fun deleteEventById(eventId : Long)

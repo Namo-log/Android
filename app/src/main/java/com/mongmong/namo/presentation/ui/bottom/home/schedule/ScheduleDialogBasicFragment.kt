@@ -1,6 +1,7 @@
 package com.mongmong.namo.presentation.ui.bottom.home.schedule
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -30,6 +31,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.mongmong.namo.presentation.ui.MainActivity
@@ -38,11 +41,6 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Event
-import com.mongmong.namo.data.local.entity.home.EventForUpload
-import com.mongmong.namo.domain.model.EditEventResponse
-import com.mongmong.namo.data.remote.event.EventService
-import com.mongmong.namo.data.remote.event.EventView
-import com.mongmong.namo.domain.model.PostEventResponse
 import com.mongmong.namo.data.remote.moim.EditMoimScheduleView
 import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
 import com.mongmong.namo.data.remote.moim.MoimService
@@ -51,25 +49,23 @@ import com.mongmong.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.mongmong.namo.presentation.ui.bottom.home.notify.PushNotificationReceiver
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.getInterval
-import com.mongmong.namo.presentation.utils.NetworkManager
 import com.google.android.material.chip.Chip
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 import org.joda.time.DateTime
 
-class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView {
+@AndroidEntryPoint
+class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
     private lateinit var binding : FragmentScheduleDialogBasicBinding
     private val args : ScheduleDialogBasicFragmentArgs by navArgs()
-    private val scope = CoroutineScope(IO)
 
-    var isEdit : Boolean = false
     private var event : Event = Event()
 
-    var isAlarm : Boolean = false
+    private var isAlarm : Boolean = false
 
     private var categoryList : List<Category> = arrayListOf()
     private lateinit var selectedCategory : Category
@@ -90,10 +86,6 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
 
     lateinit var db : NamoDatabase
 
-    private val PERMISSIONS_REQUEST_CODE = 100
-    private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-    private val NOTIFICATION_PERMISSION_REQUEST_CODE = 777
-
     private lateinit var getResult : ActivityResultLauncher<Intent>
 
     private var scheduleIdx : Long = 0
@@ -109,7 +101,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
     private var isMoimScheduleAlarmSaved = false
     private var isMoimSchedulePrevAlarm = false
 
-    private var clickable = true // 중복 생성을 방지하기 위함
+    private val viewModel : ScheduleViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -123,6 +115,8 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         binding.dialogSchedulePlaceKakaoBtn.visibility = View.GONE
         binding.dialogSchedulePlaceContainer.visibility = View.GONE
         mapViewContainer?.visibility = View.GONE
+
+        initObservers()
 
         if (args.event != null) {
             event = args.event!!
@@ -333,94 +327,82 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
             }
             storeContent()
 
-            if (binding.dialogScheduleTitleEt.text.isEmpty()) {
-                Toast.makeText(requireContext(), "일정의 제목을 입력해 주세요.", Toast.LENGTH_SHORT).show()
-            } else {
-                if (clickable) { // 더블클릭 방지
-                    // 모임일정일 경우
-                    if (event.moimSchedule) {
-                        // 카테고리와 알람 추가/수정
-                        val moimService = MoimService()
-                        moimService.setEditMoimScheduleView(this)
-                        moimService.patchMoimScheduleCategory(
-                            PatchMoimScheduleCategoryBody(
-                                event.serverIdx,
-                                event.categoryServerIdx
-                            )
+            // 모임 일정일 경우
+            if (event.moimSchedule) {
+                // 카테고리와 알람 추가/수정
+                val moimService = MoimService()
+                moimService.setEditMoimScheduleView(this)
+                moimService.patchMoimScheduleCategory(
+                    PatchMoimScheduleCategoryBody(
+                        event.serverIdx,
+                        event.categoryServerIdx
+                    )
+                )
+                if (isMoimSchedulePrevAlarm) {
+                    moimService.patchMoimScheduleAlarm(
+                        MoimScheduleAlarmBody(
+                            event.serverIdx,
+                            event.alarmList!!
                         )
-                        if (isMoimSchedulePrevAlarm) {
-                            moimService.patchMoimScheduleAlarm(
-                                MoimScheduleAlarmBody(
-                                    event.serverIdx,
-                                    event.alarmList!!
-                                )
-                            )
-                        } else {
-                            moimService.postMoimScheduleAlarm(
-                                MoimScheduleAlarmBody(
-                                    event.serverIdx,
-                                    event.alarmList!!
-                                )
-                            )
-                        }
+                    )
+                } else {
+                    moimService.postMoimScheduleAlarm(
+                        MoimScheduleAlarmBody(
+                            event.serverIdx,
+                            event.alarmList!!
+                        )
+                    )
+                }
+            }
+            // 개인일정일 경우
+            else {
+                if (event.eventId == 0L) {
+                    lifecycleScope.launch {
+                        insertData()
                     }
-                    // 개인일정일 경우
-                    else {
-                        if (event.eventId == 0L) {
-                            // 일정 추가
-                            // 현재 일정의 상태가 추가 상태임을 나타냄
-                            event.state = R.string.event_current_added.toString()
-                            event.isUpload = 0
-                            event.serverIdx = 0
-
-                            // 새 일정 등록
-                            var storeDB = Thread {
-                                scheduleIdx = db.eventDao.insertEvent(event)
-                            }
-                            storeDB.start()
-                            try {
-                                storeDB.join()
-                            } catch (e: InterruptedException) {
-                                e.printStackTrace()
-                            }
-
-                            setAlarm(event.startLong)
-
-                            uploadToServer(R.string.event_current_added.toString())
-                        } else {
-                            // 일정 수정
-                            event.state = R.string.event_current_edited.toString()
-                            event.isUpload = 0
-
-                            val updateDB: Thread = Thread {
-                                db.eventDao.updateEvent(event)
-                            }
-                            updateDB.start()
-                            try {
-                                updateDB.join()
-                            } catch (e: InterruptedException) {
-                                e.printStackTrace()
-                            }
-                            Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT)
-                                .show()
-
-                            // 이전 알람 삭제 후 변경 알람 저장
-                            for (i in prevAlarmList!!) {
-                                deleteNotification(
-                                    event.eventId.toInt() + DateTime(event.startLong).minusMinutes(
-                                        i
-                                    ).millis.toInt()
-                                )
-                            }
-                            setAlarm(event.startLong)
-
-                            uploadToServer(R.string.event_current_edited.toString())
-                        }
+                } else {
+                    // 일정 수정
+                    lifecycleScope.launch {
+                        updateData()
                     }
                 }
-                clickable = false
             }
         }
+    }
+
+    /** 일정 추가 **/
+    private fun insertData() {
+        // 현재 일정의 상태가 추가 상태임을 나타냄
+        event.state = R.string.event_current_added.toString()
+        event.isUpload = 0
+        event.serverIdx = 0
+
+        // 새 일정 등록
+        viewModel.addSchedule(event)
+        // 뒤로가기
+        requireActivity().finish()
+    }
+
+    /** 일정 수정 **/
+    private fun updateData() {
+        // 현재 일정의 상태가 수정 상태임을 나타냄
+        event.state = R.string.event_current_edited.toString()
+        event.isUpload = 0
+
+        // 이전 알람 삭제 후 변경 알람 저장
+        for (i in prevAlarmList!!) {
+            deleteNotification(
+                event.eventId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt()
+            )
+        }
+        setAlarm(event.startLong)
+
+        // 일정 편집
+        viewModel.editSchedule(event)
+
+        Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
+        // 뒤로가기
+        requireActivity().finish()
     }
 
     private fun hidekeyboard() {
@@ -490,6 +472,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         }
     }
 
+    @SuppressLint("ScheduleExactAlarm")
     private fun schedulePushNotification(desiredTimestamp : Long, id : Int) {
         val context = requireContext()
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -604,6 +587,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
 
         mapView.addPOIItem(marker)
     }
+
     private fun getLocationPermission() {
         val permissionCheck = ContextCompat.checkSelfPermission(requireActivity(),
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -790,6 +774,12 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         }
     }
 
+    private fun initObservers() {
+        viewModel.schedule.observe(requireActivity()) { schedule ->
+            binding.dialogScheduleTitleEt.setText(schedule.title)
+        }
+    }
+
 
     // Category Zone
     private fun initCategory() {
@@ -809,7 +799,7 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         val thread = Thread {
             if (db.categoryDao.getCategoryList().isEmpty()) {
                 db.categoryDao.insertCategory(Category(0, "일정", R.color.schedule, true))
-                db.categoryDao.insertCategory(Category(0, "그룹", R.color.schedule_group, true))
+                db.categoryDao.insertCategory(Category(0, "모임", R.color.schedule_group, true))
             }
         }
         thread.start()
@@ -824,31 +814,6 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
         event.categoryServerIdx = selectedCategory.serverIdx
         binding.dialogScheduleCategoryNameTv.text = selectedCategory.name
         binding.dialogScheduleCategoryColorIv.background.setTint(selectedCategory.color)
-    }
-
-
-//    서버 연결
-    private fun uploadToServer(state : String) {
-        if (!NetworkManager.checkNetworkState(requireContext())) {
-            //인터넷 연결 안 됨
-            printNotUploaded()
-            return
-        }
-
-        val eventService = EventService()
-        eventService.setEventView(this)
-
-        when(state) {
-            R.string.event_current_added.toString() -> {
-                eventService.postEvent(eventToEventForUpload(event), scheduleIdx)
-            }
-            R.string.event_current_edited.toString() -> {
-                eventService.editEvent(event.serverIdx, eventToEventForUpload(event), scheduleIdx)
-            }
-            else -> {
-                Log.d("ScheduleBasic", "서버 업로드 중 state 오류")
-            }
-        }
     }
 
     private fun printNotUploaded() {
@@ -867,86 +832,6 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
 
         // 화면 이동
         requireActivity().finish()
-    }
-
-    override fun onPostEventSuccess(response: PostEventResponse, eventId : Long) {
-        Log.d("ScheduleBasic", "onPostEventSuccess : ${response.result.eventIdx} eventId : ${eventId}")
-
-        var result = response.result
-
-//        scope.launch {
-//            db.eventDao.updateEventAfterUpload(
-//                eventId,
-//                1,
-//                result.eventIdx,
-//                R.string.event_current_default.toString()
-//            )
-//        }
-
-        //룸디비에 isUpload, serverId, state 업데이트하기
-        val thread = Thread {
-            db.eventDao.updateEventAfterUpload(eventId, 1, result.eventIdx, R.string.event_current_default.toString())
-            Log.d("UPDATE_AFTER",db.eventDao.getEventById(eventId).toString())
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch ( e: InterruptedException) {
-            e.printStackTrace()
-        }
-        Log.d("UPDATE_AFTER", "Update after Post finish")
-
-        requireActivity().finish()
-    }
-
-    override fun onPostEventFailure(message: String) {
-        Log.d("ScheduleBasic", "onPostEventFailure")
-        printNotUploaded()
-
-        return
-    }
-
-    override fun onEditEventSuccess(response: EditEventResponse, eventId : Long) {
-        Log.d("ScheduleBasic", "onEditEventSuccess")
-
-        val result = response.result
-
-        //룸디비에 isUpload, serverId, state 업데이트하기
-        var thread = Thread {
-            db.eventDao.updateEventAfterUpload(eventId, 1, result.eventIdx, R.string.event_current_default.toString())
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch ( e: InterruptedException) {
-            e.printStackTrace()
-        }
-
-        requireActivity().finish()
-    }
-
-    override fun onEditEventFailure(message: String) {
-        Log.d("ScheduleBasic", "onEditEventFailure")
-        printNotUploaded()
-
-        return
-    }
-
-    companion object {
-        fun eventToEventForUpload(event : Event) : EventForUpload {
-            return EventForUpload(
-                name = event.title,
-                startDate = event.startLong,
-                endDate = event.endLong,
-                interval = event.dayInterval,
-                alarmDate = event.alarmList,
-                x = event.placeX,
-                y = event.placeY,
-                locationName = event.placeName,
-                categoryId = event.categoryServerIdx,
-//                categoryId = 10 // 지금 category 등록이 안되어서 임시방편
-            )
-        }
     }
 
     override fun onPatchMoimScheduleCategorySuccess(message: String) {
@@ -998,5 +883,11 @@ class ScheduleDialogBasicFragment : Fragment(), EventView, EditMoimScheduleView 
 
             requireActivity().finish()
         }
+    }
+
+    companion object {
+        private const val PERMISSIONS_REQUEST_CODE = 100
+        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+        private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 777
     }
 }

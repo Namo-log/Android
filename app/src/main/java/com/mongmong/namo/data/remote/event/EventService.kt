@@ -6,13 +6,12 @@ import com.mongmong.namo.data.local.entity.home.EventForUpload
 import com.mongmong.namo.domain.model.DeleteEventResponse
 import com.mongmong.namo.domain.model.EditEventResponse
 import com.mongmong.namo.domain.model.GetMonthEventResponse
-import com.mongmong.namo.domain.model.PostEventResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 
-class EventService() {
+class EventService {
     private lateinit var eventView : EventView
     private lateinit var deleteEventView : DeleteEventView
     private lateinit var getMonthEventView : GetMonthEventView
@@ -47,6 +46,7 @@ class EventService() {
     val eventRetrofitInterface = ApplicationClass.sRetrofit.create(EventRetrofitInterface::class.java)
 
     fun postEvent(body : EventForUpload, eventId : Long) {
+        /*
         eventRetrofitInterface.postEvent(body).enqueue(object : Callback<PostEventResponse> {
             override fun onResponse(call: Call<PostEventResponse>, response: Response<PostEventResponse>) {
                 when (response.code()) {
@@ -63,9 +63,11 @@ class EventService() {
                 eventView.onPostEventFailure(t.message ?: "통신 오류")
             }
         })
+        */
     }
 
     fun editEvent(serverIdx : Long, body: EventForUpload, eventId : Long) {
+        /*
         Log.d("EditEvent", "serverIdx : $serverIdx")
         eventRetrofitInterface.editEvent(serverIdx, body).enqueue(object : Callback<EditEventResponse> {
             override fun onResponse(call: Call<EditEventResponse>, response: Response<EditEventResponse>) {
@@ -84,9 +86,11 @@ class EventService() {
                 eventView.onEditEventFailure(t.message ?: "통신 오류")
             }
         })
+         */
     }
 
     fun deleteEvent(serverIdx: Long, eventId : Long, isMoimSchedule: Int) {
+        /*
         eventRetrofitInterface.deleteEvent(serverIdx, isMoimSchedule).enqueue(object : Callback<DeleteEventResponse> {
             override fun onResponse(call: Call<DeleteEventResponse>, response: Response<DeleteEventResponse>) {
                 when (response.code()) {
@@ -104,6 +108,7 @@ class EventService() {
                 deleteEventView.onDeleteEventFailure(t.message ?: "통신 오류")
             }
         })
+         */
     }
 
     fun getMonthEvent(yearMonth : String) {
