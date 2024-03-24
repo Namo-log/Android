@@ -18,13 +18,17 @@ interface DiaryRepository {
         diary: Diary,
         images: List<File>?
     )
+
     suspend fun deleteDiary(
         localId: Long,
         scheduleServerId: Long
     )
+
     suspend fun uploadDiaryToServer()
 
     suspend fun postDiaryToServer(serverId: Long, scheduleId: Long)
 
     fun getPersonalDiaryPagingSource(month: String): PagingSource<Int, DiarySchedule>
+
+    fun getMoimDiaryPagingSource(month: String): PagingSource<Int, DiarySchedule>
 }

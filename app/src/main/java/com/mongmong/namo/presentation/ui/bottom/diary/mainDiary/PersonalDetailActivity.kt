@@ -21,7 +21,6 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
-import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.diary.DiaryRepository
 import com.mongmong.namo.databinding.ActivityPersonalDiaryDetailBinding
@@ -42,7 +41,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     private lateinit var repo: DiaryRepository
 
-    private lateinit var event: Schedule
+    private lateinit var schedule: Schedule
 
     private val viewModel : DiaryViewModel by viewModels()
 
@@ -63,21 +62,21 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
     }
 
     private fun setSchedule() {
-        event = (intent.getSerializableExtra("event") as? Schedule)!!
+        schedule = (intent.getSerializableExtra("event") as? Schedule)!!
         hasDiary()
 
-        val category = repo.getCategory(event.categoryId, event.categoryServerId)
+        val category = repo.getCategory(schedule.categoryId, schedule.categoryServerId)
         binding.itemDiaryCategoryColorIv.background.setTint(category.color)
 
         binding.apply {
-            val formatDate = DateTime(event.startLong * 1000).toString("yyyy.MM.dd (EE)")
-            diaryTodayDayTv.text = DateTime(event.startLong * 1000).toString("EE")
-            diaryTodayNumTv.text = DateTime(event.startLong * 1000).toString("dd")
+            val formatDate = DateTime(schedule.startLong * 1000).toString("yyyy.MM.dd (EE)")
+            diaryTodayDayTv.text = DateTime(schedule.startLong * 1000).toString("EE")
+            diaryTodayNumTv.text = DateTime(schedule.startLong * 1000).toString("dd")
             diaryTitleTv.isSelected = true  // marquee
-            diaryTitleTv.text = event.title
+            diaryTitleTv.text = schedule.title
 
-            if (event.placeName.isEmpty()) diaryInputPlaceTv.text = NO_PLACE
-            else diaryInputPlaceTv.text = event.placeName
+            if (schedule.placeName.isEmpty()) diaryInputPlaceTv.text = NO_PLACE
+            else diaryInputPlaceTv.text = schedule.placeName
 
             diaryInputDateTv.text = formatDate
         }
@@ -85,15 +84,15 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     private fun hasDiary() {
         with(binding) {
-            if (event.hasDiary == 0) {  // 기록 없을 때, 추가
-                viewModel.setNewDiary(event, "")
+            if (schedule.hasDiary == 0) {  // 기록 없을 때, 추가
+                viewModel.setNewDiary(schedule, "")
                 diaryEditTv.text = resources.getString(R.string.diary_add)
                 diaryEditTv.setTextColor(getColor(R.color.white))
                 diaryEditTv.setBackgroundResource(R.color.MainOrange)
                 diaryDeleteIv.visibility = View.GONE
             } else {  // 기록 있을 때, 수정
                 //diary = repo.getDiary(event.scheduleId) // 개별 다이어리 조회
-                viewModel.getExistingDiary(event.scheduleId)
+                viewModel.getExistingDiary(schedule.scheduleId)
                 diaryEditTv.text = resources.getString(R.string.diary_edit)
                 diaryEditTv.setTextColor(getColor(R.color.MainOrange))
                 diaryEditTv.setBackgroundResource(R.color.white)
@@ -108,7 +107,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
             diaryGalleryClickIv.setOnClickListener { getGallery() }
             diaryEditTv.setOnClickListener {
                 lifecycleScope.launch {
-                    if(event.hasDiary == 0) insertData()
+                    if(schedule.hasDiary == 0) insertData()
                     else updateDiary()
                 }
             }
@@ -132,7 +131,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
             Snackbar.make(binding.root, "내용이나 이미지를 추가해주세요!", Snackbar.LENGTH_SHORT).show()
             return
         } else {
-            viewModel.setNewDiary(event, content)
+            viewModel.setNewDiary(schedule, content)
             viewModel.addDiary(imageToFile(viewModel.getImgList(), this@PersonalDetailActivity))
 
             finish()
@@ -146,20 +145,13 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
             imageToFile(viewModel.getImgList(), this@PersonalDetailActivity)
         )
 
-        /*repo.editDiary(
-            event.scheduleId,
-            binding.diaryContentsEt.text.toString(),
-            imgList as List<String>?,
-            event.serverId
-        )*/
-
         Toast.makeText(this, "수정되었습니다", Toast.LENGTH_SHORT).show()
         finish()
     }
 
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
-        viewModel.deleteDiary(event.scheduleId, event.serverId)
+        viewModel.deleteDiary(schedule.scheduleId, schedule.serverId)
         Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
         finish()
     }

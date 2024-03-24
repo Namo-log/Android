@@ -13,15 +13,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.mongmong.namo.R
-import com.mongmong.namo.data.datasource.diary.DiaryGroupPagingSource
 import com.mongmong.namo.data.local.entity.diary.DiarySchedule
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.presentation.utils.NetworkManager
@@ -32,7 +26,6 @@ import com.mongmong.namo.presentation.config.UploadState
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.adapter.DiaryGroupAdapter
 import com.mongmong.namo.presentation.ui.bottom.home.calendar.SetMonthDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
@@ -43,10 +36,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     private var _binding: FragmentDiaryBinding? = null
     private val binding get() = _binding!!
-
     private val viewModel : DiaryViewModel by viewModels()
-
-    private lateinit var pagingDataFlow: Flow<PagingData<DiarySchedule>>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,13 +64,13 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     }
 
     private fun initObserve() {
-        viewModel.isGroup.observe(viewLifecycleOwner, isGroupObserver)
+        viewModel.isMoim.observe(viewLifecycleOwner, isGroupObserver)
         viewModel.currentDate.observe(viewLifecycleOwner, currentDateObserver)
     }
 
     private fun removeObserve() {
         // LiveData 관찰 중지
-        viewModel.isGroup.removeObserver(isGroupObserver)
+        viewModel.isMoim.removeObserver(isGroupObserver)
         viewModel.currentDate.removeObserver(currentDateObserver)
     }
 
@@ -106,7 +96,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
             addTab(newTab().setText(getString(R.string.diary_group)))
             addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
-                    viewModel.setIsGroup(tab.position == IS_GROUP)
+                    viewModel.setIsGroup(tab.position == IS_MOIM)
                     getList()
                 }
                 override fun onTabUnselected(tab: TabLayout.Tab) {}
@@ -126,16 +116,16 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     private fun getList() {
         Log.d("DiaryFragment", "getList")
-        if (viewModel.getIsGroup() == IS_NOT_GROUP) {
+        if (viewModel.getIsGroup() == IS_NOT_MOIM) {
             // 개인 기록 가져오기
-            getPersonalList()
+            getPersonalDiaryList()
         } else {
             // 모임 기록 가져오기
-            getGroupList()
+            getMoimDiaryList()
         }
     }
 
-    private fun getPersonalList() {
+    private fun getPersonalDiaryList() {
         // 리사이클러뷰 어댑터 연결
         val diaryPersonalAdapter = DiaryAdapter(
             editClickListener = { onEditClickListener(it) }
@@ -171,11 +161,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         }
     }
 
-    private fun getGroupList() {
-
-        binding.diaryPersonalListRv.visibility = View.GONE
-        binding.diaryGroupListRv.visibility = View.VISIBLE
-
+    private fun getMoimDiaryList() {
         if (!NetworkManager.checkNetworkState(requireContext())) {
             //인터넷 연결 안 됨
             binding.diaryListEmptyTv.visibility = View.VISIBLE
@@ -184,11 +170,12 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
             return
         }
-
         // 리사이클러뷰 어댑터 연결
         val diaryGroupAdapter = DiaryGroupAdapter(
             detailClickListener = { onDetailClickListener(it) }
             , imageClickListener = { ImageDialog(it).show(parentFragmentManager, "test") })
+        binding.diaryPersonalListRv.visibility = View.GONE
+        binding.diaryGroupListRv.visibility = View.VISIBLE
 
         val yearMonthSplit = viewModel.getCurrentDate().split(".")
         val year = yearMonthSplit[0]
@@ -201,29 +188,29 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
             addItemDecoration(DiaryItemDecoration(context))
         }
 
-        groupPaging(formatYearMonth, diaryGroupAdapter)
-    }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getMoimPaging(formatYearMonth).collectLatest { pagingData ->
+                diaryGroupAdapter?.submitData(pagingData)
+            }
+        }
 
-    private fun groupPaging(
-        date: String,
-        adapter: PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>?
-    ) {
-        // Pager를 통해 페이징 데이터 생성
-        pagingDataFlow = Pager(
-            config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-            pagingSourceFactory = { DiaryGroupPagingSource(date,binding.diaryGroupListRv,binding.diaryListEmptyTv) }
-        ).flow
-
-        // 페이징 데이터 플로우를 수집하여 데이터를 어댑터에 제출
-        lifecycleScope.launch {
-            pagingDataFlow.collectLatest { pagingData ->
-                adapter?.submitData(pagingData)
+        diaryGroupAdapter.addLoadStateListener { loadState ->
+            if (loadState.refresh is LoadState.NotLoading && diaryGroupAdapter.itemCount == 0) {
+                // 첫 페이지 로드가 완료되었으나 아이템이 없을 경우
+                binding.diaryGroupListRv.visibility = View.GONE
+                binding.diaryListEmptyTv.apply {
+                    visibility = View.VISIBLE
+                    text = getString(R.string.diary_empty)
+                }
+            } else {
+                // 데이터가 있는 경우나 로딩 중인 경우
+                binding.diaryGroupListRv.visibility = View.VISIBLE
             }
         }
     }
 
     private fun onEditClickListener(item: DiarySchedule) {  // 개인 기록 수정 클릭리스너
-        val event = Schedule(
+        val schedule = Schedule(
             item.scheduleId,
             item.title,
             item.startDate, 0L, 0,
@@ -236,7 +223,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         )
 
         startActivity(Intent(context, PersonalDetailActivity::class.java)
-            .putExtra("event", event))
+            .putExtra("event", schedule))
 
     }
 
@@ -266,11 +253,8 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     ): Long = DateTimeFormat.forPattern(pattern).parseDateTime(yearMonthStr).toDate().time
 
     companion object {
-        const val IS_GROUP = 1
-        const val IS_NOT_GROUP = 0
-        const val IS_UPLOAD = true
-        const val IS_NOT_UPLOAD = false
-
+        const val IS_MOIM = 1
+        const val IS_NOT_MOIM = 0
     }
 }
 

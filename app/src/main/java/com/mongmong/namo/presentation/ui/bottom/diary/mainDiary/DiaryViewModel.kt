@@ -34,8 +34,8 @@ class DiaryViewModel @Inject constructor(
     private val _currentDate = MutableLiveData<String>(DateTime().toString("yyyy.MM"))
     val currentDate : LiveData<String> = _currentDate
 
-    private val _isGroup = MutableLiveData<Int>(0)
-    val isGroup : LiveData<Int> = _isGroup
+    private val _isMoim = MutableLiveData<Int>(0)
+    val isMoim : LiveData<Int> = _isMoim
 
     /** 개인 기록 리스트 조회 **/
     fun getPersonalPaging(date: String): Flow<PagingData<DiarySchedule>> {
@@ -48,6 +48,18 @@ class DiaryViewModel @Inject constructor(
             pagingSourceFactory = { repository.getPersonalDiaryPagingSource(date) }
         ).flow.cachedIn(viewModelScope)
     }
+    /** 모임 기록 리스트 조회 **/
+    fun getMoimPaging(date: String): Flow<PagingData<DiarySchedule>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                initialLoadSize = PAGE_SIZE * 2,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { repository.getMoimDiaryPagingSource(date) }
+        ).flow.cachedIn(viewModelScope)
+    }
+
     /** 개인 기록 개별 조회 **/
     fun getExistingDiary(diaryId: Long) {
         viewModelScope.launch {
@@ -56,10 +68,10 @@ class DiaryViewModel @Inject constructor(
         }
     }
     /** 개인 기록 추가시 데이터 초기화 **/
-    fun setNewDiary(event: Schedule, content: String) {
+    fun setNewDiary(schedule: Schedule, content: String) {
         _diary.value = Diary(
-            diaryId = event.scheduleId,
-            scheduleServerId = event.serverId,
+            diaryId = schedule.scheduleId,
+            scheduleServerId = schedule.serverId,
             content = content,
             images = _imgList.value,
             state = RoomState.ADDED.state
@@ -111,13 +123,11 @@ class DiaryViewModel @Inject constructor(
     fun getCurrentDate(): String = _currentDate.value ?: DateTime().toString("yyyy.MM")
     fun setCurrentDate(yearMonth: String) { _currentDate.value = yearMonth }
     /** 개인/그룹 여부 토글  **/
-    fun getIsGroup(): Int = _isGroup.value ?: 0
-    fun setIsGroup(isGroup: Boolean) { _isGroup.value = if(isGroup) IS_GROUP else IS_NOT_GROUP }
+    fun getIsGroup(): Int = _isMoim.value ?: 0
+    fun setIsGroup(isGroup: Boolean) { _isMoim.value = if(isGroup) IS_GROUP else IS_NOT_GROUP }
     companion object {
-        const val EVENT_CURRENT_ADDED = "ADDED"
-        const val EVENT_CURRENT_EDITED = "EDITED"
         const val IS_GROUP = 1
         const val IS_NOT_GROUP = 0
-        const val PAGE_SIZE = 10
+        const val PAGE_SIZE = 5
     }
 }

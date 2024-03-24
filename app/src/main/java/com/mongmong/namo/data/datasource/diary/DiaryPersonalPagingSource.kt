@@ -17,12 +17,12 @@ class DiaryPersonalPagingSource (
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DiarySchedule> {
         return try {
-            Log.d("pagingSource load", "${params.key}")
+
             val page = params.key ?: 0
             val result = withContext(Dispatchers.IO) {
                 diaryDao.getDiaryScheduleList(date, page, PAGE_SIZE).toListItems()
             }
-
+            Log.d("pagingSource load", "${params.key} : $result")
             LoadResult.Page(
                 data = result,
                 prevKey = if (page == 0) null else page.minus(1),
@@ -58,7 +58,7 @@ class DiaryPersonalPagingSource (
     }
 
     companion object {
-        const val PAGE_SIZE = 10
+        const val PAGE_SIZE = 5
     }
 }
 

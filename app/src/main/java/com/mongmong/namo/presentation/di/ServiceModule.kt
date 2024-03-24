@@ -19,7 +19,6 @@ object ServiceModule {
 
     /** 기록 */
     @Provides
-    @Singleton
     fun provideDiaryService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : DiaryApiService =
         retrofit.create(DiaryApiService::class.java)
 }

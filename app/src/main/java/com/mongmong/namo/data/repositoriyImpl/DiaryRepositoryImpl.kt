@@ -2,12 +2,14 @@ package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
 import androidx.paging.PagingSource
+import com.mongmong.namo.data.datasource.diary.DiaryMoimPagingSource
 import com.mongmong.namo.data.datasource.diary.DiaryPersonalPagingSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.diary.DiarySchedule
+import com.mongmong.namo.data.remote.diary.DiaryApiService
 import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.presentation.config.RoomState
@@ -18,6 +20,7 @@ class DiaryRepositoryImpl @Inject constructor(
     private val localDiaryDataSource: LocalDiaryDataSource,
     private val remoteDiaryDataSource: RemoteDiaryDataSource,
     private val diaryDao: DiaryDao,
+    private val apiService: DiaryApiService,
     private val networkChecker: NetworkChecker
 ) : DiaryRepository {
     /** 개인 기록 개별 조회 **/
@@ -94,6 +97,10 @@ class DiaryRepositoryImpl @Inject constructor(
     /** 개인 기록 리스트 조회 **/
     override fun getPersonalDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
         return DiaryPersonalPagingSource(diaryDao, date)
+    }
+
+    override fun getMoimDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
+        return DiaryMoimPagingSource(apiService, date)
     }
 
     override suspend fun uploadDiaryToServer() {
