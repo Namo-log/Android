@@ -2,7 +2,6 @@ package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
 import androidx.paging.PagingSource
-import com.mongmong.namo.R
 import com.mongmong.namo.data.datasource.diary.DiaryPersonalPagingSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
@@ -39,7 +38,7 @@ class DiaryRepositoryImpl @Inject constructor(
             if (addResponse.code == SUCCESS_CODE) {
                 localDiaryDataSource.updateDiaryAfterUpload(
                     localId = diary.diaryId,
-                    serverId = addResponse.result.scheduleIdx,
+                    serverId = addResponse.result.scheduleId,
                     IS_UPLOAD,
                     RoomState.DEFAULT.state
                 )
@@ -61,7 +60,7 @@ class DiaryRepositoryImpl @Inject constructor(
             if (editResponse.code == SUCCESS_CODE) {
                 localDiaryDataSource.updateDiaryAfterUpload(
                     localId = diary.diaryId,
-                    serverId = diary.serverId,
+                    serverId = diary.scheduleServerId,
                     IS_UPLOAD,
                     RoomState.DEFAULT.state
                 )

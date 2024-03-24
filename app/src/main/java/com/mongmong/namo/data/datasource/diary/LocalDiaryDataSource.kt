@@ -1,13 +1,10 @@
 package com.mongmong.namo.data.datasource.diary
 
 import android.util.Log
-import com.mongmong.namo.R
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.presentation.config.RoomState
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -15,7 +12,7 @@ class LocalDiaryDataSource @Inject constructor(private val diaryDao: DiaryDao) {
     suspend fun getDiary(diaryId: Long): Diary {
         var diaryResult = Diary( // 기본 또는 오류 시 반환할 Diary 객체
             diaryId = 0L,
-            serverId = 0L,
+            scheduleServerId = 0L,
             content = "",
             images = listOf(""),
             state = RoomState.DEFAULT.state,
@@ -26,7 +23,7 @@ class LocalDiaryDataSource @Inject constructor(private val diaryDao: DiaryDao) {
             runCatching {
                 diaryDao.getDiaryDaily(diaryId)
             }.onSuccess {
-                Log.d("LocalDiaryDataSource getDiary Success", it.toString())
+                Log.d("LocalDiaryDataSource getDiary Success", "$it")
                 diaryResult = it
             }.onFailure {
                 Log.d("LocalDiaryDataSource getDiary Fail", it.toString())

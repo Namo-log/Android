@@ -22,11 +22,12 @@ class RemoteDiaryDataSource @Inject constructor(private val apiService: DiaryApi
     ): DiaryAddResponse {
         var diaryResponse = DiaryAddResponse(result = GetScheduleIdx(-1))
         val contentRequestBody = (diary.content ?: "").toRequestBody("text/plain".toMediaTypeOrNull())
-        val scheduleIdRequestBody = diary.serverId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val scheduleIdRequestBody = diary.scheduleServerId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
 
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.addDiary(contentRequestBody, scheduleIdRequestBody, imageToMultipart(images))
+                val image = imageToMultipart(images)
+                apiService.addDiary(scheduleIdRequestBody,contentRequestBody, image)
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource addDiaryToServer Success", "$it")
                 diaryResponse = it
@@ -44,16 +45,16 @@ class RemoteDiaryDataSource @Inject constructor(private val apiService: DiaryApi
     ):  DiaryResponse {
         var diaryResponse = DiaryResponse("")
         val contentRequestBody = (diary.content ?: "").toRequestBody("text/plain".toMediaTypeOrNull())
-        val scheduleIdRequestBody = diary.serverId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val scheduleIdRequestBody = diary.scheduleServerId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
 
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.editDiary(contentRequestBody, scheduleIdRequestBody, imageToMultipart(images))
+                apiService.editDiary(scheduleIdRequestBody, contentRequestBody, imageToMultipart(images))
             }.onSuccess {
-                Log.d("RemoteDiaryDataSource addDiaryToServer Success", "$it")
+                Log.d("RemoteDiaryDataSource editDiaryToServer Success", "$it")
                 diaryResponse = it
             }.onFailure {
-                Log.d("RemoteDiaryDataSource addDiaryToServer Failure", "$it")
+                Log.d("RemoteDiaryDataSource editDiaryToServer Failure", "$it")
             }
         }
 

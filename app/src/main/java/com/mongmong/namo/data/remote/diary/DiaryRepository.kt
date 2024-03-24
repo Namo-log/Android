@@ -9,7 +9,6 @@ import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
-import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Category
@@ -83,7 +82,7 @@ class DiaryRepository(
                 ) {
                     diaryDao.updateDiaryAfterUpload(
                         localId,
-                        response.result.scheduleIdx,
+                        response.result.scheduleId,
                         true,
                         RoomState.DEFAULT.state
                     )
@@ -254,18 +253,18 @@ class DiaryRepository(
 
         for (diary in notUploaded) {
 
-            if (diary.serverId == 0L) { // 서버 아이디 없는 것들
+            if (diary.scheduleServerId == 0L) { // 서버 아이디 없는 것들
                 if (diary.state == RoomState.DELETED.state) {
                     return
                 }
             } else {
                 if (diary.state == RoomState.DELETED.state) {
-                    deleteDiary(diary.diaryId, diary.serverId)
+                    deleteDiary(diary.diaryId, diary.scheduleServerId)
                 } else {
                     diary.content?.let {
                         editDiaryToServer(
                             diary.diaryId,
-                            diary.serverId,
+                            diary.scheduleServerId,
                             it,
                             diary.images
                         )
@@ -292,7 +291,7 @@ class DiaryRepository(
 
         for (diary in notUploaded) {
 
-            if (diary.serverId == 0L) { // 서버 아이디 없는 것들
+            if (diary.scheduleServerId == 0L) { // 서버 아이디 없는 것들
                 if (diary.state !== RoomState.DELETED.state && scheduleId == diary.diaryId) {
                     diary.content?.let {
                         addDiaryToServer(

@@ -60,7 +60,9 @@ import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
 import com.mongmong.namo.presentation.utils.NetworkManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 
 
@@ -567,67 +569,39 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
 
 
     private fun checkServerDownloadCompleted() {
-
         if (isCategorySuccess && isScheduleSuccess && isDiarySuccess) {
-            val uploadRoom = Thread{
-                for (category in serverCategory) {
-                    db.categoryDao.insertCategory(category)
-                }
-                for (event in serverSchedule) {
-                    if (!event.moimSchedule) {
-                        lifecycleScope.launch {
-                            db.scheduleDao.insertSchedule(event)
+            lifecycleScope.launch {
+                // 모든 데이터베이스 작업을 한 withContext 블록 안에서 순차적으로 처리
+                withContext(Dispatchers.IO) {
+                    // 카테고리 RoomDB에 저장
+                    serverCategory.forEach { category ->
+                        db.categoryDao.insertCategory(category)
+                    }
+
+                    // 일정 RoomDB에 저장
+                    serverSchedule.filter { !it.moimSchedule }.forEach { event ->
+                        db.scheduleDao.insertSchedule(event)
+                    }
+
+                    // 일정과 비교하고, 기록 RoomDB에 저장
+                    val allSchedule = db.diaryDao.getAllSchedule()
+                    serverDiary.forEach { diary ->
+                        allSchedule.filter { it.hasDiary == 1 && it.serverId == diary.scheduleServerId }.forEach { event ->
+                            val diaryData = Diary(
+                                diaryId = event.scheduleId,
+                                scheduleServerId = diary.scheduleServerId,
+                                content = diary.content,
+                                images = diary.images,
+                                state = RoomState.DEFAULT.state,
+                                isUpload = IS_UPLOAD
+                            )
+                            db.diaryDao.insertDiary(diaryData)
                         }
                     }
                 }
-                Log.d("TEST_CHECK", "Now categories are ${db.categoryDao.getAllCategorySize()}")
+                Log.d("TEST_CHECK", "All data has been successfully uploaded to the Room database.")
             }
-            uploadRoom.start()
-            try {
-                uploadRoom.join()
-            } catch (e : InterruptedException) {
-                e.printStackTrace()
-            }
-
-            val uploadRoom2 = Thread{ // event,category 완료된 후 다이어리 업로드
-
-                val allSchedule = db.diaryDao.getAllSchedule()
-
-                for (diary in serverDiary) {
-                    for (event in allSchedule){
-                        if (event.hasDiary == 1){
-                            if(event.serverId == diary.serverId) {
-                                val diaryData = Diary(
-                                    event.scheduleId,
-                                    diary.serverId,
-                                    diary.content,
-                                    diary.images,
-                                    RoomState.DEFAULT.state,
-                                    IS_UPLOAD
-                                )
-                                lifecycleScope.launch {
-                                    db.diaryDao.insertDiary(diaryData)
-                                }
-                            }
-                        }
-                    }
-
-                }
-                Log.d("TEST_CHECK", "Now diaries are uploaded.")
-            }
-            uploadRoom2.start()
-            try {
-                uploadRoom2.join()
-            } catch (e : InterruptedException) {
-                e.printStackTrace()
-            }
-
-            // Room에 다 업로드 했으면 새로고침하기?
-            //            val intent = Intent(this, MainActivity::class.java)
-            //            finish()
-            //            startActivity(intent)
         }
-
     }
 
 
@@ -644,8 +618,8 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
             schedule.y,
             0,
             schedule.alarmDate ?:listOf(),
-            IS_UPLOAD,
-            (R.string.event_current_default).toString(),
+            UploadState.IS_UPLOAD.state,
+            RoomState.DEFAULT.state,
             schedule.scheduleId,
             schedule.categoryId,
             if (schedule.hasDiary) 1 else 0,
