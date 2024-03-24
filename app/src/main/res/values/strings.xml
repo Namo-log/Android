@@ -66,7 +66,7 @@
     <string name="diary_group">모임</string>
     <string name="diary_attendee">참석자</string>
     <string name="diary_add_place">장소 추가</string>
-    <string name="diary_detail_click">그룹 기록 보러가기</string>
+    <string name="diary_detail_click">모임 기록 보러가기</string>
 
 
     <!--연월 dialog 관련 String-->

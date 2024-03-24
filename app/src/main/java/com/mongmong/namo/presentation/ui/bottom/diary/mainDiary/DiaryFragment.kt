@@ -13,7 +13,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.diary.DiarySchedule
@@ -45,7 +47,6 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     ): View {
         _binding = FragmentDiaryBinding.inflate(inflater, container, false)
 
-        setDiaryList()
         setTabLayout()
         setMonthSelector()
 
@@ -55,7 +56,6 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     override fun onResume() {
         super.onResume()
         initObserve() // 화면이 다시 보일 때 관찰 시작
-        getList() // onResume에서 getList 호출
     }
 
     override fun onPause() {
@@ -86,10 +86,6 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         getList()
     }
 
-
-    private fun setDiaryList() {
-
-    }
     private fun setTabLayout() {
         binding.diaryTab.apply {
             addTab(newTab().setText(getString(R.string.diary_personal)))
@@ -118,95 +114,64 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         Log.d("DiaryFragment", "getList")
         if (viewModel.getIsGroup() == IS_NOT_MOIM) {
             // 개인 기록 가져오기
-            getPersonalDiaryList()
+            setDiaryList(isMoim = false)
         } else {
             // 모임 기록 가져오기
-            getMoimDiaryList()
+            setDiaryList(isMoim = true)
         }
     }
-
-    private fun getPersonalDiaryList() {
-        // 리사이클러뷰 어댑터 연결
-        val diaryPersonalAdapter = DiaryAdapter(
-            editClickListener = { onEditClickListener(it) }
-            , imageClickListener = { ImageDialog(it).show(parentFragmentManager, "test") })
-
-        binding.diaryPersonalListRv.visibility = View.VISIBLE
-        binding.diaryGroupListRv.visibility = View.GONE
-
-        binding.diaryPersonalListRv.apply {
-            adapter = diaryPersonalAdapter
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            addItemDecoration(DiaryItemDecoration(context))
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getPersonalPaging(viewModel.getCurrentDate()).collectLatest { pagingData ->
-                diaryPersonalAdapter?.submitData(pagingData)
+    private fun setDiaryList(isMoim: Boolean) {
+        if(isMoim && !NetworkManager.checkNetworkState(requireContext())) {
+            with(binding) {
+                diaryListEmptyTv.visibility = View.VISIBLE
+                diaryListEmptyTv.text = getString(R.string.diary_network_failure)
+                diaryGroupListRv.visibility = View.GONE
             }
-        }
-
-        diaryPersonalAdapter.addLoadStateListener { loadState ->
-            if (loadState.refresh is LoadState.NotLoading && diaryPersonalAdapter.itemCount == 0) {
-                // 첫 페이지 로드가 완료되었으나 아이템이 없을 경우
-                binding.diaryPersonalListRv.visibility = View.GONE
-                binding.diaryListEmptyTv.apply {
-                    visibility = View.VISIBLE
-                    text = getString(R.string.diary_empty)
-                }
-            } else {
-                // 데이터가 있는 경우나 로딩 중인 경우
-                binding.diaryPersonalListRv.visibility = View.VISIBLE
-            }
-        }
-    }
-
-    private fun getMoimDiaryList() {
-        if (!NetworkManager.checkNetworkState(requireContext())) {
-            //인터넷 연결 안 됨
-            binding.diaryListEmptyTv.visibility = View.VISIBLE
-            binding.diaryListEmptyTv.text = resources.getString(R.string.diary_network_failure)
-            binding.diaryGroupListRv.visibility = View.GONE
-
             return
         }
-        // 리사이클러뷰 어댑터 연결
-        val diaryGroupAdapter = DiaryGroupAdapter(
-            detailClickListener = { onDetailClickListener(it) }
-            , imageClickListener = { ImageDialog(it).show(parentFragmentManager, "test") })
-        binding.diaryPersonalListRv.visibility = View.GONE
-        binding.diaryGroupListRv.visibility = View.VISIBLE
 
-        val yearMonthSplit = viewModel.getCurrentDate().split(".")
-        val year = yearMonthSplit[0]
-        val month = yearMonthSplit[1].removePrefix("0")
-        val formatYearMonth = "$year,$month"
+        val adapter = if (!isMoim)
+            DiaryAdapter(::onEditClickListener,
+                imageClickListener = { ImageDialog(it).show(parentFragmentManager, "test") })
+        else
+            DiaryGroupAdapter(::onDetailClickListener,
+                imageClickListener = { ImageDialog(it).show(parentFragmentManager, "test") })
 
-        binding.diaryGroupListRv.apply {
-            adapter = diaryGroupAdapter
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            addItemDecoration(DiaryItemDecoration(context))
-        }
+        setupRecyclerView(isMoim, adapter)
 
+        // 데이터 로딩 및 어댑터 데이터 설정
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getMoimPaging(formatYearMonth).collectLatest { pagingData ->
-                diaryGroupAdapter?.submitData(pagingData)
+            val pagingDataFlow = if (!isMoim) viewModel.getPersonalPaging(viewModel.getCurrentDate())
+            else viewModel.getMoimPaging(viewModel.getCurrentDate().split(".").let { "${it[0]},${it[1].removePrefix("0")}" })
+
+            pagingDataFlow.collectLatest { pagingData ->
+                adapter.submitData(pagingData)
             }
         }
 
-        diaryGroupAdapter.addLoadStateListener { loadState ->
-            if (loadState.refresh is LoadState.NotLoading && diaryGroupAdapter.itemCount == 0) {
-                // 첫 페이지 로드가 완료되었으나 아이템이 없을 경우
+        // 어댑터의 로드 상태 리스너 설정
+        adapter.addLoadStateListener { loadState ->
+            if (loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
+                binding.diaryPersonalListRv.visibility = View.GONE
                 binding.diaryGroupListRv.visibility = View.GONE
                 binding.diaryListEmptyTv.apply {
                     visibility = View.VISIBLE
                     text = getString(R.string.diary_empty)
                 }
-            } else {
-                // 데이터가 있는 경우나 로딩 중인 경우
-                binding.diaryGroupListRv.visibility = View.VISIBLE
             }
         }
+    }
+
+    private fun setupRecyclerView(isMoim: Boolean, adapter: RecyclerView.Adapter<*>) {
+        val targetRecyclerView = if (!isMoim) binding.diaryPersonalListRv else binding.diaryGroupListRv
+        val hiddenRecyclerView = if (isMoim) binding.diaryPersonalListRv else binding.diaryGroupListRv
+
+        targetRecyclerView.apply {
+            visibility = View.VISIBLE
+            this.adapter = adapter
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        }
+        hiddenRecyclerView.visibility = View.GONE
     }
 
     private fun onEditClickListener(item: DiarySchedule) {  // 개인 기록 수정 클릭리스너

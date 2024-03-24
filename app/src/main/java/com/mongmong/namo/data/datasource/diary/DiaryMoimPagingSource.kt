@@ -41,7 +41,7 @@ class DiaryMoimPagingSource(
                             )
                         )
                     }
-                    diaryItems = diarySchedules.toListItems()
+                    diaryItems = diarySchedules
                 }.onFailure {
                     Log.d("MoimPagingSource load fail", "${params.key} : $it")
                 }
@@ -50,9 +50,9 @@ class DiaryMoimPagingSource(
 
 
             LoadResult.Page(
-                data = diaryItems,
+                data = addHeaders(diaryItems),
                 prevKey = if (page == 0) null else page - 1,
-                nextKey = if (diaryItems.isEmpty()) null else page + 1
+                nextKey = if (diaryItems.size < PAGE_SIZE) null else page + 1
             )
         } catch (e: Exception) {
             LoadResult.Error(e)
@@ -65,26 +65,23 @@ class DiaryMoimPagingSource(
         return null
     }
 
-    private fun List<DiarySchedule>.toListItems(): List<DiarySchedule> {
+    private fun addHeaders(items: List<DiarySchedule>): List<DiarySchedule> {
         val result = mutableListOf<DiarySchedule>()
-        var groupHeaderDate: Long = 0
 
-        this.forEach { event ->
-            if (groupHeaderDate * 1000 != event.startDate * 1000) {
-
-                val headerSchedule =
-                    event.copy(startDate = event.startDate * 1000, isHeader = true)
-                result.add(headerSchedule)
-
-                groupHeaderDate = event.startDate
+        items.forEach { item ->
+            // 이전 페이지의 마지막 날짜와 현재 아이템의 날짜를 비교
+            if (lastHeaderDate != item.startDate) {
+                val headerItem = item.copy(startDate = item.startDate * 1000, isHeader = true)
+                result.add(headerItem)
+                lastHeaderDate = item.startDate // 마지막 헤더 날짜 업데이트
             }
-            result.add(event)
+            result.add(item)
         }
-
         return result
     }
     companion object {
         const val PAGE_SIZE = 5
+        var lastHeaderDate: Long = 0
     }
 }
 
