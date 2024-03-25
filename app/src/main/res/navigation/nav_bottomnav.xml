@@ -23,7 +23,7 @@
     <!-- Diary -->
     <fragment
         android:id="@+id/diaryFragment"
-        android:name="com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.DiaryFragment"
+        android:name="com.mongmong.namo.presentation.ui.bottom.diary.DiaryFragment"
         android:label="DiaryFragment"
         tools:layout="@layout/fragment_diary">
         <action
@@ -38,14 +38,14 @@
     </fragment>
     <fragment
         android:id="@+id/diaryAddFragment"
-        android:name="com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.PersonalDetailFragment"
+        android:name="com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.PersonalDetailFragment"
         android:label="DiaryAddFragment"
         tools:layout="@layout/fragment_diary_personal_detail">
     </fragment>
 
     <fragment
         android:id="@+id/groupDetailFragment"
-        android:name="com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.GroupDetailFragment"
+        android:name="com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.GroupDetailFragment"
         android:label="GroupDetailFragment"
         tools:layout="@layout/fragment_diary_group_detail">
         <action
@@ -80,15 +80,15 @@
     </fragment>
     <fragment
         android:id="@+id/groupModifyFragment"
-        tools:layout="@layout/activity_diary_group_memo"
-        android:name="com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.GroupMemoActivity"
+        tools:layout="@layout/activity_add_moim_diary"
+        android:name="com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.AddMoimDiaryActivity"
         android:label="GroupModifyFragment" />
 
     <activity
         android:id="@+id/groupMemoActivity"
-        android:name="com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.GroupMemoActivity"
+        android:name="com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.AddMoimDiaryActivity"
         android:label="GroupMemoActivity"
-        tools:layout="@layout/activity_diary_group_memo"/>
+        tools:layout="@layout/activity_add_moim_diary"/>
 
     <!-- Custom -->
     <fragment

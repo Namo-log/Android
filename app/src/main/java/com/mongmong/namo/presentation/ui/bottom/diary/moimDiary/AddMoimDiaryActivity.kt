@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.bottom.diary.groupDiary
+package com.mongmong.namo.presentation.ui.bottom.diary.moimDiary
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -25,15 +25,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.diary.DiaryGroupSchedule
 import com.mongmong.namo.data.remote.diary.*
+import com.mongmong.namo.databinding.ActivityAddMoimDiaryBinding
 import com.mongmong.namo.domain.model.MoimSchedule
-import com.mongmong.namo.databinding.ActivityDiaryGroupMemoBinding
 import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.domain.model.GetGroupDiaryResponse
-import com.mongmong.namo.domain.model.GroupDiaryResult
+import com.mongmong.namo.domain.model.GetMoimDiaryResponse
+import com.mongmong.namo.domain.model.MoimDiaryResult
 import com.mongmong.namo.domain.model.GroupUser
 import com.mongmong.namo.domain.model.LocationDto
-import com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.adapter.GroupMemberRVAdapter
-import com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.adapter.GroupPlaceScheduleAdapter
+import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.adapter.GroupMemberRVAdapter
+import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.adapter.GroupPlaceScheduleAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import kotlinx.coroutines.*
@@ -42,16 +42,16 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
+class AddMoimDiaryActivity : AppCompatActivity(), GetGroupDiaryView,
     ConfirmDialogInterface {  // 그룹 다이어리 추가, 수정, 삭제 화면
 
-    private lateinit var binding: ActivityDiaryGroupMemoBinding
+    private lateinit var binding: ActivityAddMoimDiaryBinding
 
     private lateinit var memberadapter: GroupMemberRVAdapter  // 그룹 멤버 리스트 보여주기
     private lateinit var placeadapter: GroupPlaceScheduleAdapter // 각 장소 item
 
     private lateinit var groupMembers: List<GroupUser>
-    private lateinit var groupData: GroupDiaryResult
+    private lateinit var groupData: MoimDiaryResult
 
     private lateinit var memberIntList: List<Long>
     private lateinit var repo: DiaryRepository
@@ -74,8 +74,10 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDiaryGroupMemoBinding.inflate(layoutInflater)
+        binding = ActivityAddMoimDiaryBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        Log.d("GROUP_DIARY_CLICK", "onCreate")
 
         repo = DiaryRepository(this)
 
@@ -129,7 +131,7 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
 
 
     @SuppressLint("SimpleDateFormat", "NotifyDataSetChanged")
-    override fun onGetGroupDiarySuccess(response: GetGroupDiaryResponse) {
+    override fun onGetGroupDiarySuccess(response: GetMoimDiaryResponse) {
         Log.d("GET_GROUP_DIARY", response.toString())
 
         val result = response.result
@@ -371,8 +373,8 @@ class GroupMemoActivity : AppCompatActivity(), GetGroupDiaryView,
                     binding.diaryGroupAddPlaceRv.smoothScrollToPosition(position)
                 },
                 imageClickListener = { imgs, position ->
-                    this@GroupMemoActivity.imgList = imgs
-                    this@GroupMemoActivity.positionForGallery = position
+                    this@AddMoimDiaryActivity.imgList = imgs
+                    this@AddMoimDiaryActivity.positionForGallery = position
 
                     getPermission()
                 },

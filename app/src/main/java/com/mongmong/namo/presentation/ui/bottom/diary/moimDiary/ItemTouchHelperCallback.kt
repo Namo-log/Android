@@ -1,11 +1,11 @@
-package com.mongmong.namo.presentation.ui.bottom.diary.groupDiary
+package com.mongmong.namo.presentation.ui.bottom.diary.moimDiary
 
 
 import android.graphics.Canvas
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.adapter.GroupPlaceScheduleAdapter
+import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.adapter.GroupPlaceScheduleAdapter
 import java.lang.Float.max
 import java.lang.Float.min
 

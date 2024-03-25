@@ -104,17 +104,17 @@
             android:exported="false"
             android:theme="@style/Theme.MaterialTransparent" />
         <activity
-            android:name=".presentation.ui.bottom.diary.groupDiary.GroupMemoActivity"
+            android:name=".presentation.ui.bottom.diary.moimDiary.AddMoimDiaryActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name=".presentation.ui.bottom.diary.mainDiary.PersonalDetailActivity"
+            android:name=".presentation.ui.bottom.diary.personalDiary.PersonalDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
 
         <activity
-            android:name=".presentation.ui.bottom.diary.mainDiary.GroupDetailActivity"
+            android:name=".presentation.ui.bottom.diary.moimDiary.MoimDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
         <meta-data

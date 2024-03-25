@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.bottom.diary.groupDiary
+package com.mongmong.namo.presentation.ui.bottom.diary.moimDiary
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -13,10 +13,9 @@ import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.data.local.entity.diary.DiaryGroupSchedule
-import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.databinding.DialogGroupPayBinding
 import com.mongmong.namo.domain.model.GroupUser
-import com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.adapter.GroupPayMemberRVAdapter
+import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.adapter.GroupPayMemberRVAdapter
 import java.lang.Boolean.TRUE
 import java.text.NumberFormat
 import java.util.*

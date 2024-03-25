@@ -1,7 +1,6 @@
-package com.mongmong.namo.presentation.ui.bottom.diary.mainDiary
+package com.mongmong.namo.presentation.ui.bottom.diary
 
 
-import DiaryAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -13,7 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
@@ -22,10 +20,12 @@ import com.mongmong.namo.data.local.entity.diary.DiarySchedule
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.presentation.utils.NetworkManager
 import com.mongmong.namo.databinding.FragmentDiaryBinding
-import com.mongmong.namo.domain.model.MonthDiary
+import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
-import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.adapter.DiaryGroupAdapter
+import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.MoimDetailActivity
+import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.ImageDialog
+import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.PersonalDetailActivity
 import com.mongmong.namo.presentation.ui.bottom.home.calendar.SetMonthDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -194,12 +194,12 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     private fun onDetailClickListener(item: DiarySchedule) {  // 그룹 기록 수정 클릭리스너
 
-        val monthDiary = MonthDiary(
+        val monthDiary = MoimDiary(
             item.scheduleId, item.title, item.startDate, item.content,
             item.images ?: emptyList(), item.categoryId, 0L, item.place
         )
 
-        requireActivity().startActivity(Intent(context, GroupDetailActivity::class.java)
+        requireActivity().startActivity(Intent(context, MoimDetailActivity::class.java)
                 .putExtra("groupDiary", monthDiary))
 
     }

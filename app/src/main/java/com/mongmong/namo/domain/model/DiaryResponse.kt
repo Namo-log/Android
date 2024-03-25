@@ -31,11 +31,11 @@ data class DiaryGetAllResult(
 
 
 /** 모임 기록 개별 조회 **/
-data class GetGroupDiaryResponse(
-    val result: GroupDiaryResult
+data class GetMoimDiaryResponse(
+    val result: MoimDiaryResult
 ) : BaseResponse()
 
-data class GroupDiaryResult(
+data class MoimDiaryResult(
     val name: String,
     val startDate: Long,
     val locationName: String,
@@ -63,15 +63,15 @@ data class DiaryGetMonthResponse(
 ) : BaseResponse()
 
 data class GroupResult(
-    val content: List<MonthDiary>,
+    val content: List<MoimDiary>,
     val currentPage: Int,
     val size: Int,
     val first: Boolean,
     val last: Boolean
 )
 
-data class MonthDiary(
-    @SerializedName("scheduleId") val scheduleIdx: Long,
+data class MoimDiary(
+    @SerializedName("scheduleId") val scheduleId: Long,
     @SerializedName("name") val title: String,
     @SerializedName("startDate") var startDate: Long,
     @SerializedName("contents") val content: String?,

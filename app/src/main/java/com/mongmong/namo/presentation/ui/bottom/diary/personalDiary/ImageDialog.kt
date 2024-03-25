@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.bottom.diary.mainDiary
+package com.mongmong.namo.presentation.ui.bottom.diary.personalDiary
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable

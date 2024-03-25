@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.bottom.diary.mainDiary
+package com.mongmong.namo.presentation.ui.bottom.diary
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -10,10 +10,10 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.insertSeparators
-import androidx.paging.map
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.diary.DiarySchedule
 import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.domain.model.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.presentation.config.RoomState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,6 +40,10 @@ class DiaryViewModel @Inject constructor(
 
     private val _isMoim = MutableLiveData<Int>(0)
     val isMoim : LiveData<Int> = _isMoim
+
+    private val _moimDiaryResult = MutableLiveData<MoimDiaryResult>()
+    val moimDiaryResult : LiveData<MoimDiaryResult> = _moimDiaryResult
+
 
     /** 개인 기록 리스트 조회 **/
     fun getPersonalPaging(date: String): Flow<PagingData<DiarySchedule>> {
@@ -83,14 +87,14 @@ class DiaryViewModel @Inject constructor(
         return SimpleDateFormat("yyyy.MM.dd").format(this * 1000)
     }
     /** 개인 기록 개별 조회 **/
-    fun getExistingDiary(diaryId: Long) {
+    fun getExistingPersonalDiary(diaryId: Long) {
         viewModelScope.launch {
             Log.d("DiaryViewModel getDiary", "$diaryId")
             _diary.postValue(repository.getDiary(diaryId))
         }
     }
     /** 개인 기록 추가시 데이터 초기화 **/
-    fun setNewDiary(schedule: Schedule, content: String) {
+    fun setNewPersonalDiary(schedule: Schedule, content: String) {
         _diary.value = Diary(
             diaryId = schedule.scheduleId,
             scheduleServerId = schedule.serverId,
@@ -101,7 +105,7 @@ class DiaryViewModel @Inject constructor(
     }
 
     /** 개인 기록 추가 **/
-    fun addDiary(images: List<File>?) {
+    fun addPersonalDiary(images: List<File>?) {
         viewModelScope.launch {
             Log.d("DiaryViewModel addDiary", "$diary")
             _diary.value?.let {
@@ -113,7 +117,7 @@ class DiaryViewModel @Inject constructor(
         }
     }
     /** 개인 기록 수정 **/
-    fun editDiary(content: String, images: List<File>?) {
+    fun editPersonalDiary(content: String, images: List<File>?) {
         viewModelScope.launch {
             _diary.value?.let {
                 it.content = content
@@ -129,11 +133,20 @@ class DiaryViewModel @Inject constructor(
         }
     }
     /** 개인 기록 삭제 **/
-    fun deleteDiary(localId: Long, scheduleServerId: Long) {
+    fun deletePersonalDiary(localId: Long, scheduleServerId: Long) {
         viewModelScope.launch {
             repository.deleteDiary(localId, scheduleServerId)
         }
     }
+
+    /** 모임 기록 개별 조회 **/
+    fun getMoimDiary(scheduleId: Long) {
+        viewModelScope.launch {
+            Log.d("DiaryViewModel getDiary", "$scheduleId")
+            _moimDiaryResult.postValue(repository.getMoimDiary(scheduleId))
+        }
+    }
+
 
     fun getImgList() = _imgList.value
     fun updateImgList(newImgList: List<String>) {

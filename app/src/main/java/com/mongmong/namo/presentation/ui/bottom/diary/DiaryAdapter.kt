@@ -1,3 +1,5 @@
+package com.mongmong.namo.presentation.ui.bottom.diary
+
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
@@ -13,7 +15,7 @@ import com.mongmong.namo.data.remote.diary.DiaryRepository
 import com.mongmong.namo.databinding.ItemDiaryItemListBinding
 import com.mongmong.namo.databinding.ItemDiaryListBinding
 
-import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.adapter.DiaryGalleryRVAdapter
+import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.adapter.DiaryGalleryRVAdapter
 import java.text.SimpleDateFormat
 
 

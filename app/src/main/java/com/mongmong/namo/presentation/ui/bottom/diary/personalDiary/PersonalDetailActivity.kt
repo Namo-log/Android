@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.bottom.diary.mainDiary
+package com.mongmong.namo.presentation.ui.bottom.diary.personalDiary
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -24,10 +24,11 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.diary.DiaryRepository
 import com.mongmong.namo.databinding.ActivityPersonalDiaryDetailBinding
-import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.adapter.GalleryListAdapter
+import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.adapter.GalleryListAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.snackbar.Snackbar
+import com.mongmong.namo.presentation.ui.bottom.diary.DiaryViewModel
 import com.mongmong.namo.presentation.utils.ImageConverter.imageToFile
 import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
 import dagger.hilt.android.AndroidEntryPoint
@@ -85,14 +86,14 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
     private fun hasDiary() {
         with(binding) {
             if (schedule.hasDiary == 0) {  // 기록 없을 때, 추가
-                viewModel.setNewDiary(schedule, "")
+                viewModel.setNewPersonalDiary(schedule, "")
                 diaryEditTv.text = resources.getString(R.string.diary_add)
                 diaryEditTv.setTextColor(getColor(R.color.white))
                 diaryEditTv.setBackgroundResource(R.color.MainOrange)
                 diaryDeleteIv.visibility = View.GONE
             } else {  // 기록 있을 때, 수정
                 //diary = repo.getDiary(event.scheduleId) // 개별 다이어리 조회
-                viewModel.getExistingDiary(schedule.scheduleId)
+                viewModel.getExistingPersonalDiary(schedule.scheduleId)
                 diaryEditTv.text = resources.getString(R.string.diary_edit)
                 diaryEditTv.setTextColor(getColor(R.color.MainOrange))
                 diaryEditTv.setBackgroundResource(R.color.white)
@@ -131,8 +132,8 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
             Snackbar.make(binding.root, "내용이나 이미지를 추가해주세요!", Snackbar.LENGTH_SHORT).show()
             return
         } else {
-            viewModel.setNewDiary(schedule, content)
-            viewModel.addDiary(imageToFile(viewModel.getImgList(), this@PersonalDetailActivity))
+            viewModel.setNewPersonalDiary(schedule, content)
+            viewModel.addPersonalDiary(imageToFile(viewModel.getImgList(), this@PersonalDetailActivity))
 
             finish()
         }
@@ -140,7 +141,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     /** 다이어리 수정 **/
     private suspend fun updateDiary() {
-        viewModel.editDiary(
+        viewModel.editPersonalDiary(
             binding.diaryContentsEt.text.toString(),
             imageToFile(viewModel.getImgList(), this@PersonalDetailActivity)
         )
@@ -151,7 +152,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
-        viewModel.deleteDiary(schedule.scheduleId, schedule.serverId)
+        viewModel.deletePersonalDiary(schedule.scheduleId, schedule.serverId)
         Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
         finish()
     }

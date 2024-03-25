@@ -5,7 +5,9 @@ import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.remote.diary.DiaryApiService
 import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryResponse
+import com.mongmong.namo.domain.model.GetMoimDiaryResponse
 import com.mongmong.namo.domain.model.GetScheduleIdx
+import com.mongmong.namo.domain.model.MoimDiaryResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -16,6 +18,27 @@ import java.io.File
 import javax.inject.Inject
 
 class RemoteDiaryDataSource @Inject constructor(private val apiService: DiaryApiService) {
+    suspend fun getDiary(scheduleId: Long): MoimDiaryResult {
+        var diaryResponse = GetMoimDiaryResponse(result = MoimDiaryResult(
+            name = "",
+            startDate = 0L,
+            locationName = "",
+            users = emptyList(),
+            locationDtos = emptyList()
+        ))
+        withContext(Dispatchers.IO) {
+            runCatching {
+                apiService.getMoimDiary(scheduleId)
+            }.onSuccess {
+                Log.d("RemoteDiaryDataSource getDiary Success", "$it")
+                diaryResponse = it
+            }.onFailure {
+                Log.d("RemoteDiaryDataSource getDiary Fail", "$it")
+            }
+        }
+
+        return diaryResponse.result
+    }
     suspend fun addDiaryToServer(
         diary: Diary,
         images: List<File>?,

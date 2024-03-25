@@ -1,9 +1,8 @@
-package com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.adapter
+package com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.databinding.ItemDiaryGroupPayMemberBinding
 import com.mongmong.namo.domain.model.GroupUser
 

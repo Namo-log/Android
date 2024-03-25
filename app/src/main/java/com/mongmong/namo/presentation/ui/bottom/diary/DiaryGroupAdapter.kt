@@ -1,5 +1,4 @@
-package com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.adapter
-
+package com.mongmong.namo.presentation.ui.bottom.diary
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -15,10 +14,8 @@ import com.mongmong.namo.data.local.entity.diary.DiarySchedule
 import com.mongmong.namo.data.remote.diary.DiaryRepository
 import com.mongmong.namo.databinding.ItemDiaryItemListBinding
 import com.mongmong.namo.databinding.ItemDiaryListBinding
+import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.adapter.DiaryGalleryRVAdapter
 import java.text.SimpleDateFormat
-
-private const val ITEM_VIEW_TYPE_HEADER = 0
-private const val ITEM_VIEW_TYPE_ITEM = 1
 
 class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
     val detailClickListener: (DiarySchedule) -> Unit,
@@ -157,4 +154,8 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
         }
     }
 
+    companion object {
+        private const val ITEM_VIEW_TYPE_HEADER = 0
+        private const val ITEM_VIEW_TYPE_ITEM = 1
+    }
 }

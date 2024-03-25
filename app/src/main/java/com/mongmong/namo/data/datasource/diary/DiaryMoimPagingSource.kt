@@ -6,7 +6,6 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.mongmong.namo.data.local.entity.diary.DiarySchedule
 import com.mongmong.namo.data.remote.diary.DiaryApiService
-import com.mongmong.namo.data.remote.diary.DiaryService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -31,7 +30,7 @@ class DiaryMoimPagingSource(
                     response.result.content.forEach {
                         diarySchedules.add(
                             DiarySchedule(
-                                it.scheduleIdx,
+                                it.scheduleId,
                                 it.title,
                                 it.startDate,
                                 it.categoryId,

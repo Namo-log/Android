@@ -4,7 +4,7 @@ import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.domain.model.GetGroupDiaryResponse
+import com.mongmong.namo.domain.model.GetMoimDiaryResponse
 import retrofit2.Call
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -51,9 +51,9 @@ interface DiaryApiService {
 
 
     @GET("/moims/schedule/memo/{moimId}")
-    fun getGroupDiary(
+    suspend fun getMoimDiary(
         @Path("moimId") scheduleIdx: Long
-    ): Call<GetGroupDiaryResponse>
+    ): GetMoimDiaryResponse
 
 
     @Multipart
