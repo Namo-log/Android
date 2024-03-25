@@ -50,7 +50,7 @@ class DiaryMoimPagingSource(
 
 
             LoadResult.Page(
-                data = addHeaders(diaryItems),
+                data = diaryItems,
                 prevKey = if (page == 0) null else page - 1,
                 nextKey = if (diaryItems.size < PAGE_SIZE) null else page + 1
             )
@@ -65,23 +65,8 @@ class DiaryMoimPagingSource(
         return null
     }
 
-    private fun addHeaders(items: List<DiarySchedule>): List<DiarySchedule> {
-        val result = mutableListOf<DiarySchedule>()
-
-        items.forEach { item ->
-            // 이전 페이지의 마지막 날짜와 현재 아이템의 날짜를 비교
-            if (lastHeaderDate != item.startDate) {
-                val headerItem = item.copy(startDate = item.startDate * 1000, isHeader = true)
-                result.add(headerItem)
-                lastHeaderDate = item.startDate // 마지막 헤더 날짜 업데이트
-            }
-            result.add(item)
-        }
-        return result
-    }
     companion object {
         const val PAGE_SIZE = 5
-        var lastHeaderDate: Long = 0
     }
 }
 

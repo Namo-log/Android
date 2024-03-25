@@ -9,6 +9,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.insertSeparators
+import androidx.paging.map
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.diary.DiarySchedule
 import com.mongmong.namo.data.local.entity.home.Schedule
@@ -16,10 +18,12 @@ import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.presentation.config.RoomState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 import org.joda.time.DateTime
+import java.text.SimpleDateFormat
 
 @HiltViewModel
 class DiaryViewModel @Inject constructor(
@@ -46,8 +50,9 @@ class DiaryViewModel @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = { repository.getPersonalDiaryPagingSource(date) }
-        ).flow.cachedIn(viewModelScope)
+        ).flow.cachedIn(viewModelScope).map { pagingData -> pagingData.insertHeaderLogic() }
     }
+
     /** 모임 기록 리스트 조회 **/
     fun getMoimPaging(date: String): Flow<PagingData<DiarySchedule>> {
         return Pager(
@@ -57,9 +62,26 @@ class DiaryViewModel @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = { repository.getMoimDiaryPagingSource(date) }
-        ).flow.cachedIn(viewModelScope)
+        ).flow.cachedIn(viewModelScope).map { pagingData -> pagingData.insertHeaderLogic() }
     }
 
+    // PagingData에 날짜 구분선 헤더 추가
+    private fun PagingData<DiarySchedule>.insertHeaderLogic(): PagingData<DiarySchedule> {
+        return this.insertSeparators { before, after ->
+            Log.d("insertHeaderLogic", "${before?.startDate?.convertDate()}, ${after?.startDate?.convertDate()}" )
+            if (after == null) { return@insertSeparators null }
+            if (before == null || before.startDate.convertDate() != after.startDate.convertDate()) {
+                // 첫 아이템, 날짜가 변경될 때 헤더 아이템 추가
+                after.copy(startDate = after.startDate * 1000, isHeader = true)
+            } else {
+                // 같은 날짜 내의 아이템 처리
+                null
+            }
+        }
+    }
+    private fun Long.convertDate() : String {
+        return SimpleDateFormat("yyyy.MM.dd").format(this * 1000)
+    }
     /** 개인 기록 개별 조회 **/
     fun getExistingDiary(diaryId: Long) {
         viewModelScope.launch {
