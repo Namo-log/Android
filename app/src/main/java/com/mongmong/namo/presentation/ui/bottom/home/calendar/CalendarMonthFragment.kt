@@ -287,16 +287,16 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
     private fun initObserve() {
         Log.d("getDailySchedules", "initObserve()")
         viewModel.scheduleList.observe(viewLifecycleOwner) {
+            event_personal.clear()
             if (!it.isNullOrEmpty()) {
                 val dailySchedule = it as ArrayList<Schedule>
                 event_personal = dailySchedule.filter { item -> !item.moimSchedule } as ArrayList<Schedule>
-
-                personalScheduleRVAdapter.addPersonal(event_personal)
-                Log.d("CalendarMonth", "getDailySchedules Personal Schedule : $event_personal")
-                requireActivity().runOnUiThread {
-                    personalScheduleRVAdapter.notifyDataSetChanged()
-                    setPersonalEmptyMsg()
-                }
+            }
+            personalScheduleRVAdapter.addPersonal(event_personal)
+            Log.d("getDailySchedules", "Personal Schedule : $event_personal")
+            requireActivity().runOnUiThread {
+                personalScheduleRVAdapter.notifyDataSetChanged()
+                setPersonalEmptyMsg()
             }
         }
     }

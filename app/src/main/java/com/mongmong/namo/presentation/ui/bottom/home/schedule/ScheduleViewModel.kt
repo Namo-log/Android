@@ -19,7 +19,7 @@ class ScheduleViewModel @Inject constructor(
     val schedule: LiveData<Schedule> = _schedule
 
     private val _scheduleList = MutableLiveData<List<Schedule>>(emptyList())
-    val scheduleList: LiveData<List<Schedule>> = _scheduleList
+    val scheduleList: LiveData<List<Schedule>?> = _scheduleList
 
     fun getDailySchedules(startDate: Long, endDate: Long) {
         viewModelScope.launch {
