@@ -12,7 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.setCategoryList
-import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
@@ -53,8 +52,8 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
     private var prevIdx = -1
     private var nowIdx = 0
-    private var event_personal: ArrayList<Schedule> = arrayListOf()
-    private var event_group: ArrayList<Schedule> = arrayListOf()
+    private var schedulePersonal: ArrayList<Schedule> = arrayListOf()
+    private var scheduleMoim: ArrayList<Schedule> = arrayListOf()
     private val personalScheduleRVAdapter = DailyPersonalRVAdapter()
     private val groupScheduleRVAdapter = DailyGroupRVAdapter()
 
@@ -234,19 +233,19 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
         getSchedule(idx)
     }
 
-    private fun setPersonalEmptyMsg() {
-        if (event_personal.size == 0) binding.homeDailyEventNoneTv.visibility = View.VISIBLE
+    private fun setPersonalEmptyText() {
+        if (schedulePersonal.size == 0) binding.homeDailyEventNoneTv.visibility = View.VISIBLE
         else binding.homeDailyEventNoneTv.visibility = View.GONE
     }
 
-    private fun setGroupEmptyMsg() {
-        if (event_group.size == 0) binding.homeDailyGroupEventNoneTv.visibility = View.VISIBLE
+    private fun setMoimEmptyText() {
+        if (scheduleMoim.size == 0) binding.homeDailyGroupEventNoneTv.visibility = View.VISIBLE
         else binding.homeDailyGroupEventNoneTv.visibility = View.GONE
     }
 
     private fun getSchedule(idx: Int) {
-        event_personal.clear()
-        event_group.clear()
+        schedulePersonal.clear()
+        scheduleMoim.clear()
         val todayStart = (monthList[idx].withTimeAtStartOfDay().millis) / 1000
         val todayEnd = (monthList[idx].plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000
         setPersonalSchedule(todayStart, todayEnd) // 개인 일정 표시
@@ -261,14 +260,14 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setGroupSchedule(todayStart: Long, todayEnd: Long) {
-        event_group = monthGroupSchedule.filter { item -> item.startLong <= todayEnd && item.endLong >= todayStart } as ArrayList<Schedule>
+        scheduleMoim = monthGroupSchedule.filter { item -> item.startLong <= todayEnd && item.endLong >= todayStart } as ArrayList<Schedule>
 
-        groupScheduleRVAdapter.addGroup(event_group)
+        groupScheduleRVAdapter.addGroup(scheduleMoim)
         requireActivity().runOnUiThread {
-            Log.d("CalendarMonth", "Group Schedule : $event_group")
+            Log.d("CalendarMonth", "Group Schedule : $scheduleMoim")
             groupScheduleRVAdapter.notifyDataSetChanged()
         }
-        setGroupEmptyMsg()
+        setMoimEmptyText()
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -287,16 +286,16 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
     private fun initObserve() {
         Log.d("getDailySchedules", "initObserve()")
         viewModel.scheduleList.observe(viewLifecycleOwner) {
-            event_personal.clear()
+            schedulePersonal.clear()
             if (!it.isNullOrEmpty()) {
                 val dailySchedule = it as ArrayList<Schedule>
-                event_personal = dailySchedule.filter { item -> !item.moimSchedule } as ArrayList<Schedule>
+                schedulePersonal = dailySchedule.filter { item -> !item.moimSchedule } as ArrayList<Schedule>
             }
-            personalScheduleRVAdapter.addPersonal(event_personal)
-            Log.d("getDailySchedules", "Personal Schedule : $event_personal")
+            personalScheduleRVAdapter.addPersonal(schedulePersonal)
+            Log.d("getDailySchedules", "Personal Schedule : $schedulePersonal")
             requireActivity().runOnUiThread {
                 personalScheduleRVAdapter.notifyDataSetChanged()
-                setPersonalEmptyMsg()
+                setPersonalEmptyText()
             }
         }
     }
