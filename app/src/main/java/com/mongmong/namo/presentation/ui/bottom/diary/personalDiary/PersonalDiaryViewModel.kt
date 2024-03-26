@@ -9,10 +9,12 @@ import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.presentation.config.RoomState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
+@HiltViewModel
 class PersonalDiaryViewModel @Inject constructor(
     private val repository: DiaryRepository
 ) : ViewModel() {

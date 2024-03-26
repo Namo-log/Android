@@ -75,7 +75,7 @@ class MoimDiaryActivity : AppCompatActivity(),
     private var deleteCount: Int = 0
     private var allDeleteFrag = false
 
-    private val viewModel : DiaryViewModel by viewModels()
+    private val viewModel : MoimDiaryViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMoimDiaryBinding.inflate(layoutInflater)
