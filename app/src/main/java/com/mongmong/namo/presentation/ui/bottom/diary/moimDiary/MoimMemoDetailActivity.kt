@@ -9,7 +9,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.data.remote.diary.*
@@ -21,9 +20,7 @@ import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.adapter.Gall
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 
@@ -38,7 +35,7 @@ class MoimMemoDetailActivity: AppCompatActivity(),
 
     private var diaryService = DiaryService()
     private var isDelete: Boolean = false
-    private val viewModel : DiaryViewModel by viewModels()
+    private val viewModel : MoimDiaryViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

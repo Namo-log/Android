@@ -28,7 +28,6 @@ import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.adapter.Gall
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.snackbar.Snackbar
-import com.mongmong.namo.presentation.ui.bottom.diary.DiaryViewModel
 import com.mongmong.namo.presentation.utils.ImageConverter.imageToFile
 import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,7 +43,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     private lateinit var schedule: Schedule
 
-    private val viewModel : DiaryViewModel by viewModels()
+    private val viewModel : PersonalDiaryViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

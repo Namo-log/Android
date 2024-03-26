@@ -11,7 +11,6 @@ import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.diary.DiarySchedule
 import com.mongmong.namo.data.remote.diary.DiaryApiService
 import com.mongmong.namo.data.remote.diary.NetworkChecker
-import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.presentation.config.RoomState
@@ -25,6 +24,16 @@ class DiaryRepositoryImpl @Inject constructor(
     private val apiService: DiaryApiService,
     private val networkChecker: NetworkChecker
 ) : DiaryRepository {
+
+    /** 개인 기록 리스트 조회 **/
+    override fun getPersonalDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
+        return DiaryPersonalPagingSource(diaryDao, date)
+    }
+    /** 모임 기록 리스트 조회 **/
+    override fun getMoimDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
+        return DiaryMoimPagingSource(apiService, date)
+    }
+
     /** 개인 기록 개별 조회 **/
     override suspend fun getDiary(localId: Long): Diary {
         Log.d("DiaryRepositoryImpl getDiary", "$localId")
@@ -96,20 +105,12 @@ class DiaryRepositoryImpl @Inject constructor(
         }
     }
 
-    /** 개인 기록 리스트 조회 **/
-    override fun getPersonalDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
-        return DiaryPersonalPagingSource(diaryDao, date)
-    }
-    /** 모임 기록 리스트 조회 **/
-    override fun getMoimDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
-        return DiaryMoimPagingSource(apiService, date)
-    }
-
     /** 모임 기록 개별 조회 **/
     override suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult {
         return remoteDiaryDataSource.getDiary(scheduleId)
     }
 
+    /** 모임 기록 메모 추가/수정 **/
     override suspend fun patchMoimDiary(scheduleId: Long, content: String): Boolean {
         return remoteDiaryDataSource.patchMoimDiary(scheduleId, content)
     }
