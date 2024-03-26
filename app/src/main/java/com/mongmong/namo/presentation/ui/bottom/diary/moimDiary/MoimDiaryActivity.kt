@@ -15,6 +15,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -25,27 +26,29 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.diary.DiaryGroupSchedule
 import com.mongmong.namo.data.remote.diary.*
-import com.mongmong.namo.databinding.ActivityAddMoimDiaryBinding
+import com.mongmong.namo.databinding.ActivityMoimDiaryBinding
 import com.mongmong.namo.domain.model.MoimSchedule
 import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.domain.model.GetMoimDiaryResponse
 import com.mongmong.namo.domain.model.MoimDiaryResult
 import com.mongmong.namo.domain.model.GroupUser
 import com.mongmong.namo.domain.model.LocationDto
+import com.mongmong.namo.presentation.ui.bottom.diary.DiaryViewModel
 import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.adapter.GroupMemberRVAdapter
 import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.adapter.GroupPlaceScheduleAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import org.joda.time.DateTime
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AddMoimDiaryActivity : AppCompatActivity(), GetGroupDiaryView,
+@AndroidEntryPoint
+class MoimDiaryActivity : AppCompatActivity(),
     ConfirmDialogInterface {  // 그룹 다이어리 추가, 수정, 삭제 화면
 
-    private lateinit var binding: ActivityAddMoimDiaryBinding
+    private lateinit var binding: ActivityMoimDiaryBinding
 
     private lateinit var memberadapter: GroupMemberRVAdapter  // 그룹 멤버 리스트 보여주기
     private lateinit var placeadapter: GroupPlaceScheduleAdapter // 각 장소 item
@@ -72,9 +75,10 @@ class AddMoimDiaryActivity : AppCompatActivity(), GetGroupDiaryView,
     private var deleteCount: Int = 0
     private var allDeleteFrag = false
 
+    private val viewModel : DiaryViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityAddMoimDiaryBinding.inflate(layoutInflater)
+        binding = ActivityMoimDiaryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         Log.d("GROUP_DIARY_CLICK", "onCreate")
@@ -87,6 +91,7 @@ class AddMoimDiaryActivity : AppCompatActivity(), GetGroupDiaryView,
         hasDiaryPlace(getHasDiaryBoolean)
         onClickListener()
 
+        initObserve()
     }
 
     private fun hasDiaryPlace(getHasDiaryBoolean: Boolean) {
@@ -108,9 +113,10 @@ class AddMoimDiaryActivity : AppCompatActivity(), GetGroupDiaryView,
 
         } else { // groupPlace가 있을 때, 서버에서 데이터 가져오고 수정하기
 
-            val diaryService = DiaryService()
+            viewModel.getMoimDiary(groupScheduleId)
+            /*val diaryService = DiaryService()
             diaryService.getGroupDiary(groupScheduleId)
-            diaryService.getGroupDiaryView(this)
+            diaryService.getGroupDiaryView(this)*/
 
             binding.groupSaveTv.text = resources.getString(R.string.diary_edit)
             binding.groupSaveTv.setTextColor(
@@ -130,40 +136,34 @@ class AddMoimDiaryActivity : AppCompatActivity(), GetGroupDiaryView,
     }
 
 
-    @SuppressLint("SimpleDateFormat", "NotifyDataSetChanged")
-    override fun onGetGroupDiarySuccess(response: GetMoimDiaryResponse) {
-        Log.d("GET_GROUP_DIARY", response.toString())
+    private fun initObserve() {
+        viewModel.getMoimDiaryResult.observe(this) { result ->
+            groupMembers = result.users
+            groupData = result
+            groupSchedule = result.locationDtos
 
-        val result = response.result
-        groupMembers = result.users
-        groupData = result
-        groupSchedule = result.locationDtos
+            memberIntList = groupMembers.map { it.userId }
 
-        memberIntList = groupMembers.map { it.userId }
+            placeSchedule.addAll(groupSchedule.map {
+                val copy = it.copy(
+                    imgs = it.imgs.toMutableList()
+                )
+                DiaryGroupSchedule(
+                    copy.place,
+                    copy.pay,
+                    copy.members,
+                    copy.imgs as ArrayList<String?>,
+                    copy.moimMemoLocationId
+                )
+            })
 
-        placeSchedule.addAll(groupSchedule.map {
-            val copy = it.copy(
-                imgs = it.imgs.toMutableList()
-            )
-            DiaryGroupSchedule(
-                copy.place,
-                copy.pay,
-                copy.members,
-                copy.imgs as ArrayList<String?>,
-                copy.moimMemoLocationId
-            )
-        })
+            val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(groupData.startDate * 1000)
+            binding.groupAddInputDateTv.text = formatDate
+            binding.groupAddInputPlaceTv.text = groupData.locationName
+            binding.groupAddTitleTv.text = groupData.name
 
-        val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(groupData.startDate * 1000)
-        binding.groupAddInputDateTv.text = formatDate
-        binding.groupAddInputPlaceTv.text = groupData.locationName
-        binding.groupAddTitleTv.text = groupData.name
-
-        onRecyclerView()
-    }
-
-    override fun onGetGroupDiaryFailure(message: String) {
-        Log.e("GET_GROUP_DIARY", message)
+            onRecyclerView()
+        }
     }
 
     private fun bind() {
@@ -373,8 +373,8 @@ class AddMoimDiaryActivity : AppCompatActivity(), GetGroupDiaryView,
                     binding.diaryGroupAddPlaceRv.smoothScrollToPosition(position)
                 },
                 imageClickListener = { imgs, position ->
-                    this@AddMoimDiaryActivity.imgList = imgs
-                    this@AddMoimDiaryActivity.positionForGallery = position
+                    this@MoimDiaryActivity.imgList = imgs
+                    this@MoimDiaryActivity.positionForGallery = position
 
                     getPermission()
                 },

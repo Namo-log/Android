@@ -25,7 +25,7 @@ import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.presentation.config.RoomState
-import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.MoimDetailActivity
+import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.MoimMemoDetailActivity
 import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.PersonalDetailActivity
 import com.mongmong.namo.presentation.ui.bottom.home.HomeFragment
 import com.mongmong.namo.presentation.ui.bottom.home.adapter.DailyGroupRVAdapter
@@ -205,7 +205,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
         groupScheduleRVAdapter.setRecordClickListener(object : DailyGroupRVAdapter.DiaryInterface {
             override fun onGroupDetailClicked(monthDiary: MoimDiary?) {
 
-                val intent = Intent(context, MoimDetailActivity::class.java)
+                val intent = Intent(context, MoimMemoDetailActivity::class.java)
                 intent.putExtra("groupDiary", monthDiary)
                 requireActivity().startActivity(intent)
             }

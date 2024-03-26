@@ -92,5 +92,12 @@ interface DiaryApiService {
         @Path("scheduleId") scheduleId: Long,
         @Body text: String?
     ): Call<DiaryResponse>
+
+
+    @PATCH("/moims/schedule/memo/text/{scheduleId}")
+    suspend fun patchMoimDiary(
+        @Path("scheduleId") scheduleId: Long,
+        @Body text: String?
+    ): DiaryResponse
 }
 

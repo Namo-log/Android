@@ -87,16 +87,16 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         with(binding) {
             if (schedule.hasDiary == 0) {  // 기록 없을 때, 추가
                 viewModel.setNewPersonalDiary(schedule, "")
-                diaryEditTv.text = resources.getString(R.string.diary_add)
-                diaryEditTv.setTextColor(getColor(R.color.white))
-                diaryEditTv.setBackgroundResource(R.color.MainOrange)
+                diaryEditBtnTv.text = resources.getString(R.string.diary_add)
+                diaryEditBtnTv.setTextColor(getColor(R.color.white))
+                diaryEditBtnTv.setBackgroundResource(R.color.MainOrange)
                 diaryDeleteIv.visibility = View.GONE
             } else {  // 기록 있을 때, 수정
                 //diary = repo.getDiary(event.scheduleId) // 개별 다이어리 조회
                 viewModel.getExistingPersonalDiary(schedule.scheduleId)
-                diaryEditTv.text = resources.getString(R.string.diary_edit)
-                diaryEditTv.setTextColor(getColor(R.color.MainOrange))
-                diaryEditTv.setBackgroundResource(R.color.white)
+                diaryEditBtnTv.text = resources.getString(R.string.diary_edit)
+                diaryEditBtnTv.setTextColor(getColor(R.color.MainOrange))
+                diaryEditBtnTv.setBackgroundResource(R.color.white)
                 diaryDeleteIv.visibility = View.VISIBLE
             }
         }
@@ -106,7 +106,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         binding.apply {
             diaryBackIv.setOnClickListener { finish() }
             diaryGalleryClickIv.setOnClickListener { getGallery() }
-            diaryEditTv.setOnClickListener {
+            diaryEditBtnTv.setOnClickListener {
                 lifecycleScope.launch {
                     if(schedule.hasDiary == 0) insertData()
                     else updateDiary()

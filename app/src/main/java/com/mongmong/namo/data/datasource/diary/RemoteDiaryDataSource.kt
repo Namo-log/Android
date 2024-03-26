@@ -18,27 +18,6 @@ import java.io.File
 import javax.inject.Inject
 
 class RemoteDiaryDataSource @Inject constructor(private val apiService: DiaryApiService) {
-    suspend fun getDiary(scheduleId: Long): MoimDiaryResult {
-        var diaryResponse = GetMoimDiaryResponse(result = MoimDiaryResult(
-            name = "",
-            startDate = 0L,
-            locationName = "",
-            users = emptyList(),
-            locationDtos = emptyList()
-        ))
-        withContext(Dispatchers.IO) {
-            runCatching {
-                apiService.getMoimDiary(scheduleId)
-            }.onSuccess {
-                Log.d("RemoteDiaryDataSource getDiary Success", "$it")
-                diaryResponse = it
-            }.onFailure {
-                Log.d("RemoteDiaryDataSource getDiary Fail", "$it")
-            }
-        }
-
-        return diaryResponse.result
-    }
     suspend fun addDiaryToServer(
         diary: Diary,
         images: List<File>?,
@@ -97,6 +76,45 @@ class RemoteDiaryDataSource @Inject constructor(private val apiService: DiaryApi
             }
         }
         return diaryResponse
+    }
+
+    // 모임
+    suspend fun getDiary(scheduleId: Long): MoimDiaryResult {
+        var diaryResponse = GetMoimDiaryResponse(result = MoimDiaryResult(
+            name = "",
+            startDate = 0L,
+            locationName = "",
+            users = emptyList(),
+            locationDtos = emptyList()
+        ))
+        withContext(Dispatchers.IO) {
+            runCatching {
+                apiService.getMoimDiary(scheduleId)
+            }.onSuccess {
+                Log.d("RemoteDiaryDataSource getDiary Success", "$it")
+                diaryResponse = it
+            }.onFailure {
+                Log.d("RemoteDiaryDataSource getDiary Fail", "$it")
+            }
+        }
+
+        return diaryResponse.result
+    }
+
+    suspend fun patchMoimDiary(scheduleId: Long, content: String): Boolean {
+        var isSuccess = false
+        withContext(Dispatchers.IO) {
+            runCatching {
+                apiService.patchMoimDiary(scheduleId, content)
+            }.onSuccess {
+                Log.d("RemoteDiaryDataSource patchMoimDiary Success", "$it")
+                isSuccess = true
+            }.onFailure {
+                Log.d("RemoteDiaryDataSource patchMoimDiary Failure", "$it")
+            }
+        }
+
+        return isSuccess
     }
 
     private fun imageToMultipart(imageFiles: List<File>?): List<MultipartBody.Part>? {

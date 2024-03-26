@@ -80,15 +80,15 @@
     </fragment>
     <fragment
         android:id="@+id/groupModifyFragment"
-        tools:layout="@layout/activity_add_moim_diary"
-        android:name="com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.AddMoimDiaryActivity"
+        tools:layout="@layout/activity_moim_diary"
+        android:name="com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.MoimDiaryActivity"
         android:label="GroupModifyFragment" />
 
     <activity
         android:id="@+id/groupMemoActivity"
-        android:name="com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.AddMoimDiaryActivity"
+        android:name="com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.MoimDiaryActivity"
         android:label="GroupMemoActivity"
-        tools:layout="@layout/activity_add_moim_diary"/>
+        tools:layout="@layout/activity_moim_diary"/>
 
     <!-- Custom -->
     <fragment

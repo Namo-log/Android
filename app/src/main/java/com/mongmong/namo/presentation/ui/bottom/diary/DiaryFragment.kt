@@ -23,7 +23,7 @@ import com.mongmong.namo.databinding.FragmentDiaryBinding
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
-import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.MoimDetailActivity
+import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.MoimMemoDetailActivity
 import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.ImageDialog
 import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.PersonalDetailActivity
 import com.mongmong.namo.presentation.ui.bottom.home.calendar.SetMonthDialog
@@ -199,7 +199,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
             item.images ?: emptyList(), item.categoryId, 0L, item.place
         )
 
-        requireActivity().startActivity(Intent(context, MoimDetailActivity::class.java)
+        requireActivity().startActivity(Intent(context, MoimMemoDetailActivity::class.java)
                 .putExtra("groupDiary", monthDiary))
 
     }

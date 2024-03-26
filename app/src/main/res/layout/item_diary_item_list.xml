@@ -75,7 +75,7 @@
                         android:contentDescription="@string/diary_modify" />
 
                     <TextView
-                        android:id="@+id/diary_edit_tv"
+                        android:id="@+id/diary_edit_btn_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"

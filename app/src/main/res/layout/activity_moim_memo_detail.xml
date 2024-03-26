@@ -197,10 +197,10 @@
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:background="@color/notyetGray"
-            app:layout_constraintBottom_toTopOf="@id/diary_edit_tv" />
+            app:layout_constraintBottom_toTopOf="@id/diary_edit_btn_tv" />
 
         <TextView
-            android:id="@+id/diary_edit_tv"
+            android:id="@+id/diary_edit_btn_tv"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="@color/MainOrange"
@@ -235,7 +235,7 @@
             android:paddingTop="5dp"
             android:paddingEnd="20dp"
             android:paddingBottom="5dp"
-            app:layout_constraintBottom_toTopOf="@id/diary_edit_tv"
+            app:layout_constraintBottom_toTopOf="@id/diary_edit_btn_tv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 

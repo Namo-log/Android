@@ -110,6 +110,10 @@ class DiaryRepositoryImpl @Inject constructor(
         return remoteDiaryDataSource.getDiary(scheduleId)
     }
 
+    override suspend fun patchMoimDiary(scheduleId: Long, content: String): Boolean {
+        return remoteDiaryDataSource.patchMoimDiary(scheduleId, content)
+    }
+
     override suspend fun uploadDiaryToServer() {
         TODO("Not yet implemented")
     }

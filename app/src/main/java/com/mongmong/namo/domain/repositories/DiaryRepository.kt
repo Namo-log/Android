@@ -10,7 +10,6 @@ import java.io.File
 
 interface DiaryRepository {
     suspend fun getDiary(localId: Long): Diary
-    suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult
 
     suspend fun addDiary(
         diary: Diary,
@@ -34,4 +33,8 @@ interface DiaryRepository {
     fun getPersonalDiaryPagingSource(month: String): PagingSource<Int, DiarySchedule>
 
     fun getMoimDiaryPagingSource(month: String): PagingSource<Int, DiarySchedule>
+
+    suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult
+
+    suspend fun patchMoimDiary(scheduleId: Long, content: String): Boolean
 }

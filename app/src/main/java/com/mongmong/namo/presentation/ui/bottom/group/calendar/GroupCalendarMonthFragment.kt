@@ -16,7 +16,7 @@ import com.mongmong.namo.data.remote.moim.GetMoimScheduleView
 import com.mongmong.namo.domain.model.MoimSchedule
 import com.mongmong.namo.data.remote.moim.MoimService
 import com.mongmong.namo.databinding.FragmentGroupCalendarMonthBinding
-import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.AddMoimDiaryActivity
+import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.MoimDiaryActivity
 import com.mongmong.namo.presentation.ui.bottom.group.GroupCalendarActivity
 import com.mongmong.namo.presentation.ui.bottom.group.GroupScheduleActivity
 import com.mongmong.namo.presentation.ui.bottom.group.calendar.GroupCalendarAdapter.Companion.GROUP_ID
@@ -158,7 +158,7 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
         groupScheduleRVAdapter.setRecordClickListener(object :GroupDailyGroupRVAdapter.DiaryInterface{
             override fun onGroupMemoClicked(groupSchedule: MoimSchedule) {
                 Log.d("GROUP_DIARY_CLICK", groupSchedule.toString())
-                val intent = Intent(context, AddMoimDiaryActivity::class.java)
+                val intent = Intent(context, MoimDiaryActivity::class.java)
                 intent.putExtra("hasGroupPlace",groupSchedule.hasDiaryPlace)
                 intent.putExtra("groupScheduleId", groupSchedule.moimScheduleId)
                 intent.putExtra("groupSchedule", groupSchedule)

@@ -29,21 +29,28 @@ import java.text.SimpleDateFormat
 class DiaryViewModel @Inject constructor(
     private val repository: DiaryRepository
 ) : ViewModel() {
+    // PersonalDetailActivity
     private val _diary = MutableLiveData<Diary>()
     val diary: LiveData<Diary> = _diary
 
     private val _imgList = MutableLiveData<List<String>>(emptyList())
     val imgList: LiveData<List<String>> = _imgList
 
+    // DiaryFragment
     private val _currentDate = MutableLiveData<String>(DateTime().toString("yyyy.MM"))
     val currentDate : LiveData<String> = _currentDate
 
     private val _isMoim = MutableLiveData<Int>(0)
     val isMoim : LiveData<Int> = _isMoim
 
-    private val _moimDiaryResult = MutableLiveData<MoimDiaryResult>()
-    val moimDiaryResult : LiveData<MoimDiaryResult> = _moimDiaryResult
+    // MoimDetailActivity
+    private val _getMoimDiaryResult = MutableLiveData<MoimDiaryResult>()
+    val getMoimDiaryResult : LiveData<MoimDiaryResult> = _getMoimDiaryResult
 
+    private val _patchDiaryResult = MutableLiveData<Boolean>()
+    val patchDiaryResult : LiveData<Boolean> = _patchDiaryResult
+
+    private val _memo = MutableLiveData<String>()
 
     /** 개인 기록 리스트 조회 **/
     fun getPersonalPaging(date: String): Flow<PagingData<DiarySchedule>> {
@@ -72,7 +79,6 @@ class DiaryViewModel @Inject constructor(
     // PagingData에 날짜 구분선 헤더 추가
     private fun PagingData<DiarySchedule>.insertHeaderLogic(): PagingData<DiarySchedule> {
         return this.insertSeparators { before, after ->
-            Log.d("insertHeaderLogic", "${before?.startDate?.convertDate()}, ${after?.startDate?.convertDate()}" )
             if (after == null) { return@insertSeparators null }
             if (before == null || before.startDate.convertDate() != after.startDate.convertDate()) {
                 // 첫 아이템, 날짜가 변경될 때 헤더 아이템 추가
@@ -107,7 +113,7 @@ class DiaryViewModel @Inject constructor(
     /** 개인 기록 추가 **/
     fun addPersonalDiary(images: List<File>?) {
         viewModelScope.launch {
-            Log.d("DiaryViewModel addDiary", "$diary")
+            Log.d("DiaryViewModel addDiary", "$_diary")
             _diary.value?.let {
                 repository.addDiary(
                     diary = it,
@@ -142,10 +148,21 @@ class DiaryViewModel @Inject constructor(
     /** 모임 기록 개별 조회 **/
     fun getMoimDiary(scheduleId: Long) {
         viewModelScope.launch {
-            Log.d("DiaryViewModel getDiary", "$scheduleId")
-            _moimDiaryResult.postValue(repository.getMoimDiary(scheduleId))
+            Log.d("DiaryViewModel getMoimDiary", "$scheduleId")
+            _getMoimDiaryResult.postValue(repository.getMoimDiary(scheduleId))
         }
     }
+
+
+    /** 모임 기록 수정 **/
+    fun patchMoimDiary(scheduleId: Long, content: String) {
+        viewModelScope.launch {
+            _patchDiaryResult.postValue(repository.patchMoimDiary(scheduleId, content))
+        }
+    }
+
+    fun setMemo(memo: String) { _memo.value = memo }
+    fun getMemo() = _memo.value
 
 
     fun getImgList() = _imgList.value
