@@ -18,9 +18,6 @@ class ScheduleRepositoryImpl @Inject constructor(
     override suspend fun getDailySchedules(startDate: Long, endDate: Long): List<Schedule> {
         val list = localScheduleDataSource.getDailySchedules(startDate, endDate)
         Log.d("ScheduleRepositoryImpl", "getDailySchedules")
-        list.forEach { event ->
-            Log.d("getDailySchedules", "${event.scheduleId}, ${event.title}")
-        }
         return list
     }
 
@@ -29,7 +26,7 @@ class ScheduleRepositoryImpl @Inject constructor(
         Log.d("ScheduleRepositoryImpl", "addSchedule scheduleId: ${schedule.scheduleId}\n$schedule")
         if (networkChecker.isOnline()) {
             val addResponse =
-                remoteScheduleDataSource.addScheduleToServer(schedule.eventToScheduleForUpload())
+                remoteScheduleDataSource.addScheduleToServer(schedule.convertLocalScheduleToServer())
             if (addResponse.code == SUCCESS_CODE) {
                 Log.d("ScheduleRepositoryImpl", "addSchedule Success, $addResponse")
                 localScheduleDataSource.updateScheduleAfterUpload(
@@ -53,7 +50,7 @@ class ScheduleRepositoryImpl @Inject constructor(
         if (networkChecker.isOnline()) {
             val editResponse = remoteScheduleDataSource.editScheduleToServer(
                 schedule.serverId,
-                schedule.eventToScheduleForUpload()
+                schedule.convertLocalScheduleToServer()
             )
             if (editResponse.code == SUCCESS_CODE) {
                 Log.d("ScheduleRepositoryImpl", "editSchedule Success")

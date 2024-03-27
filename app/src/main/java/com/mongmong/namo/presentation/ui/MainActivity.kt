@@ -235,13 +235,13 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                     return
                 } else {
                     //POST
-                    eventService.postSchedule(i.eventToScheduleForUpload(), i.scheduleId)
+                    eventService.postSchedule(i.convertLocalScheduleToServer(), i.scheduleId)
                 }
             } else {
                 if (i.state == RoomState.DELETED.state) {
                     eventService.deleteSchedule(i.serverId, i.scheduleId, 0)
                 } else {
-                    eventService.editSchedule(i.serverId, i.eventToScheduleForUpload(), i.scheduleId)
+                    eventService.editSchedule(i.serverId, i.convertLocalScheduleToServer(), i.scheduleId)
                 }
             }
         }
@@ -440,7 +440,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
 
         val result = response.result
         serverSchedule.clear()
-        serverSchedule.addAll(result.map{serverToSchedule(it)})
+        serverSchedule.addAll(result.map{ it.convertServerScheduleResponseToLocal() })
         Log.d("TEST_CHECK", "서버에 있던 이벤트 : " + serverSchedule.toString())
         Log.d("MAIN_SERVER_UPLOAD", "Get All Schedule Finish")
         isScheduleSuccess = true
@@ -602,29 +602,6 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                 Log.d("TEST_CHECK", "All data has been successfully uploaded to the Room database.")
             }
         }
-    }
-
-
-    private fun serverToSchedule(schedule: GetMonthScheduleResult): Schedule {
-        return Schedule(
-            0,
-            schedule.name,
-            schedule.startDate,
-            schedule.endDate,
-            schedule.interval,
-            schedule.categoryId,
-            schedule.locationName,
-            schedule.x,
-            schedule.y,
-            0,
-            schedule.alarmDate ?:listOf(),
-            UploadState.IS_UPLOAD.state,
-            RoomState.DEFAULT.state,
-            schedule.scheduleId,
-            schedule.categoryId,
-            if (schedule.hasDiary) 1 else 0,
-            schedule.moimSchedule
-        )
     }
 
     private fun serverToCategory(category: GetCategoryResult): Category {

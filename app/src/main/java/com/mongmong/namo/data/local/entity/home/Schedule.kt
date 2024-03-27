@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.mongmong.namo.presentation.config.RoomState
-import com.mongmong.namo.presentation.config.UploadState
 import java.io.Serializable
 
 @Entity(tableName = "schedule_table")
@@ -61,7 +60,7 @@ data class Schedule(
     var moimSchedule: Boolean = false
 
 ) : Serializable {
-    fun eventToScheduleForUpload() : ScheduleForUpload {
+    fun convertLocalScheduleToServer() : ScheduleForUpload {
         return ScheduleForUpload(
             name = this.title,
             startDate = this.startLong,

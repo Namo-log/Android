@@ -2,6 +2,9 @@ package com.mongmong.namo.domain.model
 
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
+import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.config.UploadState
 
 data class PostScheduleResponse (
     val result : PostScheduleResult
@@ -40,4 +43,26 @@ data class GetMonthScheduleResult (
     @SerializedName("categoryId") val categoryId : Long,
     @SerializedName("hasDiary") val hasDiary : Boolean,
     @SerializedName("moimSchedule") val moimSchedule : Boolean,
-)
+) {
+    fun convertServerScheduleResponseToLocal(): Schedule {
+        return Schedule(
+            0, // localId
+            this.name,
+            this.startDate,
+            this.endDate,
+            this.interval,
+            this.categoryId,
+            this.locationName,
+            this.x,
+            this.y,
+            0,
+            this.alarmDate ?: listOf(),
+            UploadState.IS_UPLOAD.state,
+            RoomState.DEFAULT.state,
+            this.scheduleId,
+            this.categoryId,
+            if (this.hasDiary) 1 else 0,
+            this.moimSchedule
+        )
+    }
+}
