@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

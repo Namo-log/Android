@@ -25,6 +25,7 @@ import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.MonthDiary
 import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.config.UploadState
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.GroupDetailActivity
 import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.PersonalDetailActivity
 import com.mongmong.namo.presentation.ui.bottom.home.HomeFragment
@@ -264,7 +265,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
         groupScheduleRVAdapter.addGroup(scheduleMoim)
         requireActivity().runOnUiThread {
-            Log.d("CalendarMonth", "Group Schedule : $scheduleMoim")
+//            Log.d("CalendarMonth", "Group Schedule : $scheduleMoim")
             groupScheduleRVAdapter.notifyDataSetChanged()
         }
         setMoimEmptyText()
@@ -303,9 +304,6 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
     companion object {
         private const val MILLIS = "MILLIS"
 
-        const val IS_UPLOAD = true
-        const val IS_NOT_UPLOAD = false
-
         fun newInstance(millis: Long) = CalendarMonthFragment().apply {
             arguments = Bundle().apply {
                 putLong(MILLIS, millis)
@@ -326,7 +324,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
             schedule.y,
             0,
             schedule.alarmDate ?: listOf(),
-            IS_UPLOAD,
+            UploadState.IS_UPLOAD.state,
             RoomState.DEFAULT.state,
             schedule.scheduleId,
             schedule.categoryId,

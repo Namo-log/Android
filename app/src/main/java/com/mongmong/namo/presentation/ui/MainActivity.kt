@@ -379,12 +379,12 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
             db.scheduleDao.updateScheduleAfterUpload(
                 scheduleId,
                 UploadState.IS_UPLOAD.state,
-                result.scheduleIdx,
+                result.scheduleId,
                 RoomState.DEFAULT.state
             )
         }
         val repo=DiaryRepository(this)
-        repo.postDiaryToServer(result.scheduleIdx , scheduleId)
+        repo.postDiaryToServer(result.scheduleId , scheduleId)
     }
 
     override fun onPostScheduleFailure(message: String) {
@@ -402,7 +402,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
             db.scheduleDao.updateScheduleAfterUpload(
                 scheduleId,
                 UploadState.IS_UPLOAD.state,
-                result.scheduleIdx,
+                result.scheduleId,
                 RoomState.DEFAULT.state
             )
         }

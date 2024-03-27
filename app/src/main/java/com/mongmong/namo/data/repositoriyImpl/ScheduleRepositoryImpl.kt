@@ -1,7 +1,6 @@
 package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
-import com.mongmong.namo.R
 import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.local.entity.home.Schedule
@@ -26,16 +25,16 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addSchedule(schedule: Schedule) {
-        Log.d("ScheduleRepositoryImpl", "addSchedule $schedule")
-        localScheduleDataSource.addSchedule(schedule)
+        schedule.scheduleId = localScheduleDataSource.addSchedule(schedule) // 로컬에서 일정 생성후 받아온 scheduleId 업데이트
+        Log.d("ScheduleRepositoryImpl", "addSchedule scheduleId: ${schedule.scheduleId}\n$schedule")
         if (networkChecker.isOnline()) {
             val addResponse =
                 remoteScheduleDataSource.addScheduleToServer(schedule.eventToScheduleForUpload())
             if (addResponse.code == SUCCESS_CODE) {
-                Log.d("ScheduleRepositoryImpl", "addSchedule Success")
+                Log.d("ScheduleRepositoryImpl", "addSchedule Success, $addResponse")
                 localScheduleDataSource.updateScheduleAfterUpload(
                     localId = schedule.scheduleId,
-                    serverId = addResponse.result.scheduleIdx,
+                    serverId = addResponse.result.scheduleId,
                     isUpload = IS_UPLOAD,
                     status = RoomState.DEFAULT.state,
                 )
@@ -53,14 +52,14 @@ class ScheduleRepositoryImpl @Inject constructor(
         localScheduleDataSource.editSchedule(schedule)
         if (networkChecker.isOnline()) {
             val editResponse = remoteScheduleDataSource.editScheduleToServer(
-                schedule.scheduleId,
+                schedule.serverId,
                 schedule.eventToScheduleForUpload()
             )
             if (editResponse.code == SUCCESS_CODE) {
                 Log.d("ScheduleRepositoryImpl", "editSchedule Success")
                 localScheduleDataSource.updateScheduleAfterUpload(
                     localId = schedule.scheduleId,
-                    serverId = editResponse.result.scheduleIdx,
+                    serverId = editResponse.result.scheduleId,
                     isUpload = IS_UPLOAD,
                     status = RoomState.DEFAULT.state,
                 )

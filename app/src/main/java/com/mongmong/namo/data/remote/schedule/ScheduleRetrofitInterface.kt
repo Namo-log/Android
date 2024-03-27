@@ -15,19 +15,19 @@ import retrofit2.http.Path
 
 interface ScheduleRetrofitInterface {
     @POST("schedules")
-    fun postSchedule(
+    suspend fun postSchedule(
         @Body schedule : ScheduleForUpload
     ) : PostScheduleResponse
 
-    @PATCH("schedules/{serverIdx}")
-    fun editSchedule(
-        @Path("serverIdx") serverId : Long,
+    @PATCH("schedules/{serverId}")
+    suspend fun editSchedule(
+        @Path("serverId") serverId : Long,
         @Body schedule : ScheduleForUpload
     ) : EditScheduleResponse
 
-    @DELETE("schedules/{serverIdx}/{kind}")
-    fun deleteSchedule(
-        @Path("serverIdx") serverId : Long,
+    @DELETE("schedules/{serverId}/{kind}")
+    suspend fun deleteSchedule(
+        @Path("serverId") serverId : Long,
         @Path("kind") isMoimSchedule: Int,
     ) : DeleteScheduleResponse
 

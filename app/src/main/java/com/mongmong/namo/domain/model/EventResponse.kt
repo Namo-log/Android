@@ -8,7 +8,7 @@ data class PostScheduleResponse (
 ) : BaseResponse()
 
 data class PostScheduleResult (
-    @SerializedName("scheduleIdx")  val scheduleIdx : Long
+    @SerializedName("scheduleId") val scheduleId : Long
 )
 
 data class EditScheduleResponse (
@@ -16,7 +16,7 @@ data class EditScheduleResponse (
 ) : BaseResponse()
 
 data class EditScheduleResult (
-    @SerializedName("scheduleIdx")  val scheduleIdx : Long
+    @SerializedName("scheduleId")  val scheduleId : Long
 )
 
 data class DeleteScheduleResponse (
