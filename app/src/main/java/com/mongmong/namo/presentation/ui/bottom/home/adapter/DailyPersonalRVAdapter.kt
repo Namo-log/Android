@@ -20,7 +20,7 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
 
     /** 기록 아이템 클릭 리스너 **/
     interface DiaryInterface {
-        fun onDetailClicked(event: Schedule)
+        fun onDetailClicked(schedule: Schedule)
     }
     private lateinit var diaryRecordClickListener: DiaryInterface
     fun setRecordClickListener(itemClickListener: DiaryInterface){
@@ -29,7 +29,7 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
     /** ----- **/
 
     interface ContentClickListener {
-        fun onContentClick(event : Schedule)
+        fun onContentClick(schedule : Schedule)
     }
     private lateinit var contentClickListener : ContentClickListener
     fun setContentClickListener(contentClickListener : ContentClickListener) {

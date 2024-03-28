@@ -27,7 +27,7 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "addScheduleToServer Success $it")
                 scheduleResponse = it
             }.onFailure {
-                Log.d("RemoteScheduleDataSource", "addScheduleToServer Failure $it")
+                Log.d("RemoteScheduleDataSource", "addScheduleToServer Failure")
             }
         }
         return scheduleResponse
@@ -46,7 +46,7 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "editScheduleToServer Success, $it")
                 scheduleResponse = it
             }.onFailure {
-                Log.d("RemoteScheduleDataSource", "editScheduleToServer Fail, $it")
+                Log.d("RemoteScheduleDataSource", "editScheduleToServer Fail")
             }
         }
         return scheduleResponse
@@ -64,7 +64,7 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "deleteScheduleToServer Success, $it")
                 scheduleResponse = it
             }.onFailure {
-                Log.d("RemoteScheduleDataSource", "deleteScheduleToServer Fail, $it")
+                Log.d("RemoteScheduleDataSource", "deleteScheduleToServer Fail")
             }
         }
         return scheduleResponse

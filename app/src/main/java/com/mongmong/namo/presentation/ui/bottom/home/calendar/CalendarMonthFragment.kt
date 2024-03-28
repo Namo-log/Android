@@ -19,10 +19,10 @@ import com.mongmong.namo.data.remote.diary.DiaryService
 import com.mongmong.namo.data.remote.diary.GetGroupMonthView
 import com.mongmong.namo.data.remote.schedule.ScheduleService
 import com.mongmong.namo.domain.model.GetMonthScheduleResponse
-import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.data.remote.schedule.GetMonthMoimScheduleView
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
+
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.MoimMemoDetailActivity
@@ -52,8 +52,8 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
     private var prevIdx = -1
     private var nowIdx = 0
-    private var event_personal: ArrayList<Schedule> = arrayListOf()
-    private var event_group: ArrayList<Schedule> = arrayListOf()
+    private var schedulePersonal: ArrayList<Schedule> = arrayListOf()
+    private var scheduleMoim: ArrayList<Schedule> = arrayListOf()
     private val personalScheduleRVAdapter = DailyPersonalRVAdapter()
     private val groupScheduleRVAdapter = DailyGroupRVAdapter()
 
@@ -175,9 +175,9 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
         personalScheduleRVAdapter.setContentClickListener(object :
             DailyPersonalRVAdapter.ContentClickListener {
-            override fun onContentClick(event: Schedule) {
+            override fun onContentClick(schedule: Schedule) {
                 val intent = Intent(context, ScheduleActivity::class.java)
-                intent.putExtra("event", event)
+                intent.putExtra("schedule", schedule)
                 requireActivity().startActivity(intent)
             }
         })
@@ -186,7 +186,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
             DailyGroupRVAdapter.GroupContentClickListener {
             override fun onGroupContentClick(event: Schedule) {
                 val intent = Intent(context, ScheduleActivity::class.java)
-                intent.putExtra("event", event)
+                intent.putExtra("schedule", event)
                 requireActivity().startActivity(intent)
             }
         })
@@ -194,10 +194,10 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
         /** 기록 아이템 클릭 리스너 **/
         personalScheduleRVAdapter.setRecordClickListener(object :
             DailyPersonalRVAdapter.DiaryInterface {
-            override fun onDetailClicked(event: Schedule) {
+            override fun onDetailClicked(schedule: Schedule) {
 
                 val intent = Intent(context, PersonalDetailActivity::class.java)
-                intent.putExtra("event", event)
+                intent.putExtra("event", schedule)
                 requireActivity().startActivity(intent)
             }
         })
@@ -233,19 +233,19 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
         getSchedule(idx)
     }
 
-    private fun setPersonalEmptyMsg() {
-        if (event_personal.size == 0) binding.homeDailyEventNoneTv.visibility = View.VISIBLE
+    private fun setPersonalEmptyText() {
+        if (schedulePersonal.size == 0) binding.homeDailyEventNoneTv.visibility = View.VISIBLE
         else binding.homeDailyEventNoneTv.visibility = View.GONE
     }
 
-    private fun setGroupEmptyMsg() {
-        if (event_group.size == 0) binding.homeDailyGroupEventNoneTv.visibility = View.VISIBLE
+    private fun setMoimEmptyText() {
+        if (scheduleMoim.size == 0) binding.homeDailyGroupEventNoneTv.visibility = View.VISIBLE
         else binding.homeDailyGroupEventNoneTv.visibility = View.GONE
     }
 
     private fun getSchedule(idx: Int) {
-        event_personal.clear()
-        event_group.clear()
+        schedulePersonal.clear()
+        scheduleMoim.clear()
         val todayStart = (monthList[idx].withTimeAtStartOfDay().millis) / 1000
         val todayEnd = (monthList[idx].plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000
         setPersonalSchedule(todayStart, todayEnd) // 개인 일정 표시
@@ -260,14 +260,14 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setGroupSchedule(todayStart: Long, todayEnd: Long) {
-        event_group = monthGroupSchedule.filter { item -> item.startLong <= todayEnd && item.endLong >= todayStart } as ArrayList<Schedule>
+        scheduleMoim = monthGroupSchedule.filter { item -> item.startLong <= todayEnd && item.endLong >= todayStart } as ArrayList<Schedule>
 
-        groupScheduleRVAdapter.addGroup(event_group)
+        groupScheduleRVAdapter.addGroup(scheduleMoim)
         requireActivity().runOnUiThread {
-            Log.d("CalendarMonth", "Group Schedule : $event_group")
+//            Log.d("CalendarMonth", "Group Schedule : $scheduleMoim")
             groupScheduleRVAdapter.notifyDataSetChanged()
         }
-        setGroupEmptyMsg()
+        setMoimEmptyText()
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -286,16 +286,16 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
     private fun initObserve() {
         Log.d("getDailySchedules", "initObserve()")
         viewModel.scheduleList.observe(viewLifecycleOwner) {
+            schedulePersonal.clear()
             if (!it.isNullOrEmpty()) {
                 val dailySchedule = it as ArrayList<Schedule>
-                event_personal = dailySchedule.filter { item -> !item.moimSchedule } as ArrayList<Schedule>
-
-                personalScheduleRVAdapter.addPersonal(event_personal)
-                Log.d("CalendarMonth", "getDailySchedules Personal Schedule : $event_personal")
-                requireActivity().runOnUiThread {
-                    personalScheduleRVAdapter.notifyDataSetChanged()
-                    setPersonalEmptyMsg()
-                }
+                schedulePersonal = dailySchedule.filter { item -> !item.moimSchedule } as ArrayList<Schedule>
+            }
+            personalScheduleRVAdapter.addPersonal(schedulePersonal)
+            Log.d("getDailySchedules", "Personal Schedule : $schedulePersonal")
+            requireActivity().runOnUiThread {
+                personalScheduleRVAdapter.notifyDataSetChanged()
+                setPersonalEmptyText()
             }
         }
     }
@@ -303,36 +303,11 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
     companion object {
         private const val MILLIS = "MILLIS"
 
-        const val IS_UPLOAD = true
-        const val IS_NOT_UPLOAD = false
-
         fun newInstance(millis: Long) = CalendarMonthFragment().apply {
             arguments = Bundle().apply {
                 putLong(MILLIS, millis)
             }
         }
-    }
-
-    private fun serverToSchedule(schedule: GetMonthScheduleResult): Schedule {
-        return Schedule(
-            0,
-            schedule.name,
-            schedule.startDate,
-            schedule.endDate,
-            schedule.interval,
-            schedule.categoryId,
-            schedule.locationName,
-            schedule.x,
-            schedule.y,
-            0,
-            schedule.alarmDate ?: listOf(),
-            IS_UPLOAD,
-            RoomState.DEFAULT.state,
-            schedule.scheduleId,
-            schedule.categoryId,
-            if (schedule.hasDiary) 1 else 0,
-            schedule.moimSchedule
-        )
     }
 
     override fun onGetGroupMonthSuccess(response: DiaryGetMonthResponse) {
@@ -346,10 +321,10 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
     override fun onGetMonthMoimScheduleSuccess(response: GetMonthScheduleResponse) {
         val result = response.result
-        monthGroupSchedule = result.map { serverToSchedule(it) } as ArrayList
+        monthGroupSchedule = result.map { it.convertServerScheduleResponseToLocal() } as ArrayList
         Log.d("SUCCESS_MOIM", monthGroupSchedule.toString())
 
-        var forDB: Thread = Thread {
+        val forDB: Thread = Thread {
             tempSchedule = db.scheduleDao.getScheduleMonth(
                 monthList[0].withTimeAtStartOfDay().millis / 1000,
                 monthList[41].plusDays(1).withTimeAtStartOfDay().millis / 1000

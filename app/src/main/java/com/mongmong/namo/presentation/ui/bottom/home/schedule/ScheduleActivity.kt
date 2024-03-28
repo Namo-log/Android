@@ -38,7 +38,7 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
     private var alarmList : MutableList<Int> = mutableListOf()
     private val failList = ArrayList<Schedule>()
 
-    private var event : Schedule? = null
+    private var schedule : Schedule? = null
 
     private val viewModel : ScheduleViewModel by viewModels()
 
@@ -49,12 +49,12 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         db = NamoDatabase.getInstance(this)
         setContentView(binding.root)
 
-        val event = intent.getSerializableExtra("event") as? Schedule
+        val schedule = intent.getSerializableExtra("schedule") as? Schedule
         val nowDay = intent.getLongExtra("nowDay", 0)
 
-        if (event != null) {
+        if (schedule != null) {
             binding.scheduleDeleteBtn.visibility = View.VISIBLE
-            this.event = event
+            this.schedule = schedule
             deleteClick()
         } else {
             binding.scheduleDeleteBtn.visibility = View.GONE
@@ -62,7 +62,7 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
                 return@setOnClickListener
             }
         }
-        val action = ScheduleDialogBasicFragmentDirections.actionScheduleDialogBasicFragmentSelf(event = event, nowDay = nowDay)
+        val action = ScheduleDialogBasicFragmentDirections.actionScheduleDialogBasicFragmentSelf(event = schedule, nowDay = nowDay)
         navController.navigate(action)
 
         val slideAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up)
@@ -99,15 +99,15 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     /** 일정 삭제 **/
     private fun deleteData() {
-        event?.let {event ->
+        schedule?.let { schedule ->
             // 알림 리스트 삭제
-            alarmList = event.alarmList!!.toMutableList()
+            alarmList = schedule.alarmList!!.toMutableList()
             for (i in alarmList) {
-                deleteNotification(event.scheduleId.toInt() + DateTime(event.startLong).minusMinutes(i).millis.toInt(), event!!)
+                deleteNotification(schedule.scheduleId.toInt() + DateTime(schedule.startLong).minusMinutes(i).millis.toInt(), schedule!!)
             }
 
             // 일정 삭제
-            viewModel.deleteSchedule(event.scheduleId, event.serverId)
+            viewModel.deleteSchedule(schedule.scheduleId, schedule.serverId)
 
             Toast.makeText(this, "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
 
@@ -116,13 +116,13 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
     }
 
-    private fun deleteNotification(id : Int, event : Schedule) {
+    private fun deleteNotification(id : Int, schedule : Schedule) {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(this, PushNotificationReceiver::class.java)
         intent.putExtra("notification_id", id)
-        intent.putExtra("notification_title", event.title)
-        intent.putExtra("notification_content", DateTime(event.startLong).toString("MM-dd") + " ~ " + DateTime(event.endLong).toString("MM-dd"))
+        intent.putExtra("notification_title", schedule.title)
+        intent.putExtra("notification_content", DateTime(schedule.startLong).toString("MM-dd") + " ~ " + DateTime(schedule.endLong).toString("MM-dd"))
 
         val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.getBroadcast(this, id, intent, PendingIntent.FLAG_IMMUTABLE)

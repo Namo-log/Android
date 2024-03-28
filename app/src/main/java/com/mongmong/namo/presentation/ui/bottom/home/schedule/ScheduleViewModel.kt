@@ -19,8 +19,12 @@ class ScheduleViewModel @Inject constructor(
     val schedule: LiveData<Schedule> = _schedule
 
     private val _scheduleList = MutableLiveData<List<Schedule>>(emptyList())
-    val scheduleList: LiveData<List<Schedule>> = _scheduleList
+    val scheduleList: LiveData<List<Schedule>?> = _scheduleList
 
+    private val _isPostComplete = MutableLiveData<Boolean>()
+    val isPostComplete: LiveData<Boolean> = _isPostComplete
+
+    /** 선택한 날짜의 일정 조회 */
     fun getDailySchedules(startDate: Long, endDate: Long) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "getDailySchedules")
@@ -28,17 +32,18 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-    fun getScheduleList() = _scheduleList.value
-
+    /** 일정 추가 */
     fun addSchedule(schedule: Schedule) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "addSchedule $schedule")
             repository.addSchedule(
                 schedule = schedule
             )
+            _isPostComplete.postValue(true)
         }
     }
 
+    /** 일정 수정 */
     fun editSchedule(schedule: Schedule) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "editSchedule $schedule")
@@ -48,6 +53,7 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
+    /** 일정 삭제 */
     fun deleteSchedule(localId: Long, serverId: Long) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "deleteSchedule $schedule")

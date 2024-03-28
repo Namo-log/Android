@@ -31,6 +31,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.mongmong.namo.presentation.utils.ImageConverter.imageToFile
 import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 
@@ -153,9 +154,8 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
         viewModel.deletePersonalDiary(schedule.scheduleId, schedule.serverId)
-        Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-        finish()
     }
+
     private fun initObserve() {
         viewModel.diary.observe(this) { diary ->
             viewModel.updateImgList(diary.images?: emptyList())
@@ -163,6 +163,13 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         }
         viewModel.imgList.observe(this) {
             galleryAdapter.addImages(it)
+        }
+        viewModel.isDeleteComplete.observe(this) { isComplete ->
+            // 다이어리 삭제 작업이 완료되었을 때 finish() 호출
+            if (isComplete) {
+                Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                finish()
+            }
         }
     }
 

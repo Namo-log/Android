@@ -64,6 +64,7 @@ class LocalDiaryDataSource @Inject constructor(private val diaryDao: DiaryDao) {
             runCatching {
                 diaryDao.deleteDiary(localId)
             }.onSuccess {
+                deleteHasDiary(localId)
                 Log.d("LocalDiaryDataSource deleteDiary Success", "$localId")
             }.onFailure {
                 Log.d("LocalDiaryDataSource deleteDiary Fail", "$localId")
@@ -74,6 +75,10 @@ class LocalDiaryDataSource @Inject constructor(private val diaryDao: DiaryDao) {
 
     private fun updateHasDiary(localId: Long) {
         diaryDao.updateHasDiary(localId)
+    }
+
+    private fun deleteHasDiary(localId: Long) {
+        diaryDao.deleteHasDiary(localId)
     }
 
     suspend fun updateDiaryAfterUpload(

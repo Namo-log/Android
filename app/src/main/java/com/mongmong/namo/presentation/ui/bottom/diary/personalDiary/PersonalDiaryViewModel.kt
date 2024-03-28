@@ -24,6 +24,10 @@ class PersonalDiaryViewModel @Inject constructor(
     private val _imgList = MutableLiveData<List<String>>(emptyList())
     val imgList: LiveData<List<String>> = _imgList
 
+    private val _isDeleteComplete = MutableLiveData<Boolean>()
+    val isDeleteComplete: LiveData<Boolean> = _isDeleteComplete
+
+
     /** 개인 기록 개별 조회 **/
     fun getExistingPersonalDiary(diaryId: Long) {
         viewModelScope.launch {
@@ -74,6 +78,7 @@ class PersonalDiaryViewModel @Inject constructor(
     fun deletePersonalDiary(localId: Long, scheduleServerId: Long) {
         viewModelScope.launch {
             repository.deleteDiary(localId, scheduleServerId)
+            _isDeleteComplete.postValue(true)
         }
     }
 
