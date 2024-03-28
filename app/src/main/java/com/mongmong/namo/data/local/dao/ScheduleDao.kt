@@ -5,13 +5,12 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Schedule
 
 @Dao
 interface ScheduleDao {
     @Insert
-    suspend fun insertSchedule(event : Schedule)
+    suspend fun insertSchedule(event : Schedule) : Long // scheduleId
 
     @Delete
     fun deleteSchedule(event : Schedule)

@@ -25,16 +25,19 @@ class LocalScheduleDataSource @Inject constructor(
         return schedulesResult
     }
 
-    suspend fun addSchedule(schedule: Schedule) {
+    suspend fun addSchedule(schedule: Schedule): Long {
+        var localId = 0L
         withContext(Dispatchers.IO) {
             runCatching {
                 scheduleDao.insertSchedule(schedule)
             }.onSuccess {
-                Log.d("LocalScheduleDataSource", "addSchedule Success")
+                Log.d("LocalScheduleDataSource", "addSchedule Success, scheduleId: $it")
+                localId = it // 룸디비 일정 추가 결과
             }.onFailure {
                 Log.d("LocalScheduleDataSource", "addSchedule Fail")
             }
         }
+        return localId
     }
 
     suspend fun editSchedule(schedule: Schedule) {

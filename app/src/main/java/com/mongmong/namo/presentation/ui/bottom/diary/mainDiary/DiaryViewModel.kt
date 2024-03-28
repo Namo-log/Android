@@ -37,6 +37,10 @@ class DiaryViewModel @Inject constructor(
     private val _isGroup = MutableLiveData<Int>(0)
     val isGroup : LiveData<Int> = _isGroup
 
+    private val _isDeleteComplete = MutableLiveData<Boolean>()
+    val isDeleteComplete: LiveData<Boolean> = _isDeleteComplete
+
+
     /** 개인 기록 리스트 조회 **/
     fun getPersonalPaging(date: String): Flow<PagingData<DiarySchedule>> {
         return Pager(
@@ -98,6 +102,7 @@ class DiaryViewModel @Inject constructor(
     fun deleteDiary(localId: Long, scheduleServerId: Long) {
         viewModelScope.launch {
             repository.deleteDiary(localId, scheduleServerId)
+            _isDeleteComplete.postValue(true) // 삭제 작업 완료 후 LiveData 업데이트
         }
     }
 

@@ -90,7 +90,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
     private lateinit var getResult : ActivityResultLauncher<Intent>
 
-    private var scheduleIdx : Long = 0
+    private var scheduleId : Long = 0
 
     private var prevChecked : MutableList<Int> = mutableListOf()
     private var alarmList : MutableList<Int> = mutableListOf()
@@ -136,7 +136,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
         if (event.scheduleId != 0L) {
             binding.dialogScheduleHeaderTv.text = "일정 편집"
-            scheduleIdx = event.scheduleId
+            scheduleId = event.scheduleId
         } else {
             binding.dialogScheduleHeaderTv.text = "새 일정"
         }
@@ -381,8 +381,6 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
         // 새 일정 등록
         viewModel.addSchedule(event)
-        // 뒤로가기
-        requireActivity().finish()
     }
 
     /** 일정 수정 **/
@@ -454,7 +452,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
                 early = true
                 continue
             }
-            val id = scheduleIdx.toInt() + time.toInt()
+            val id = scheduleId.toInt() + time.toInt()
             checkNotificationPermission(requireActivity(), time, id)
         }
         if (early) {
@@ -780,8 +778,13 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         viewModel.schedule.observe(requireActivity()) { schedule ->
             binding.dialogScheduleTitleEt.setText(schedule.title)
         }
+        viewModel.isPostComplete.observe(requireActivity()) { isComplete ->
+            // 추가 작업이 완료된 후 뒤로가기
+            if (isComplete) {
+                requireActivity().finish()
+            }
+        }
     }
-
 
     // Category Zone
     private fun initCategory() {
