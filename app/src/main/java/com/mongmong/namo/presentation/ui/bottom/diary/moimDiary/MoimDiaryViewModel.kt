@@ -10,6 +10,8 @@ import com.mongmong.namo.domain.model.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -53,20 +55,18 @@ class MoimDiaryViewModel @Inject constructor(
         deleteItems: List<Long>
     ) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                placeSchedule.forEach { activity ->
-                    addOrEditMoimActivities(preActivities, activity, memberIntList, scheduleId)
-                }
-
-                deleteItems.forEach { activityId ->
-                    deleteMoimActivity(activityId)
-                }
-                _patchActivitiesComplete.postValue(true)
+            placeSchedule.map { activity ->
+                addOrEditMoimActivities(preActivities, activity, memberIntList, scheduleId)
             }
+            deleteItems.map { activityId ->
+               deleteMoimActivity(activityId)
+            }
+            // 모든 작업이 완료된 후에 상태 업데이트
+            _patchActivitiesComplete.value = true
         }
     }
 
-    private fun addOrEditMoimActivities(
+    private suspend fun addOrEditMoimActivities(
         preActivities: List<MoimActivity>,
         activity: MoimActivity,
         memberIntList: List<Long>,
@@ -102,39 +102,33 @@ class MoimDiaryViewModel @Inject constructor(
     }
 
     /** 모임 기록 활동 추가 **/
-    private fun addMoimActivity(
+    private suspend fun addMoimActivity(
         moimScheduleId: Long,
         place: String,
         money: Long,
         members: List<Long>?,
         images: List<String>?
     ) {
-        viewModelScope.launch {
-            Log.d("MoimActivity", "viewModel addMoimActivity")
-            repository.addMoimActivity(moimScheduleId, place, money, members, images)
-        }
+        Log.d("MoimActivity", "viewModel addMoimActivity")
+        repository.addMoimActivity(moimScheduleId, place, money, members, images)
     }
 
     /** 모임 기록 활동 수정 **/
-    private fun editMoimActivity(
+    private suspend fun editMoimActivity(
         moimScheduleId: Long,
         place: String,
         money: Long,
         members: List<Long>?,
         images: List<String>?
     ) {
-        viewModelScope.launch {
-            Log.d("MoimActivity", "viewModel editMoimActivity")
-            repository.editMoimActivity(moimScheduleId, place, money, members, images)
-        }
+        Log.d("MoimActivity", "viewModel editMoimActivity")
+        repository.editMoimActivity(moimScheduleId, place, money, members, images)
     }
 
     /** 모임 기록 활동 삭제 **/
-    private fun deleteMoimActivity(activityId: Long) {
-        viewModelScope.launch {
-            Log.d("MoimActivity", "viewModel deleteMoimActivity")
-            repository.deleteMoimActivity(activityId)
-        }
+    private suspend fun deleteMoimActivity(activityId: Long) {
+        Log.d("MoimActivity", "viewModel deleteMoimActivity")
+        repository.deleteMoimActivity(activityId)
     }
 
 
