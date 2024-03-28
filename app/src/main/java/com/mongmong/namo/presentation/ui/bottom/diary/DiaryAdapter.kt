@@ -10,7 +10,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.data.local.entity.diary.DiarySchedule
+import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.data.remote.diary.DiaryRepository
 import com.mongmong.namo.databinding.ItemDiaryItemListBinding
 import com.mongmong.namo.databinding.ItemDiaryListBinding

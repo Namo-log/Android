@@ -6,10 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemDiaryGroupMembersBinding
 import com.mongmong.namo.domain.model.GroupUser
 
-class GroupMemberRVAdapter(  // 그룹 다이어리 화면 멤버 이름
+class MoimMemberRVAdapter(  // 그룹 다이어리 화면 멤버 이름
     private val members: List<GroupUser>
 ) :
-    RecyclerView.Adapter<GroupMemberRVAdapter.ViewHolder>() {
+    RecyclerView.Adapter<MoimMemberRVAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemDiaryGroupMembersBinding = ItemDiaryGroupMembersBinding.inflate(

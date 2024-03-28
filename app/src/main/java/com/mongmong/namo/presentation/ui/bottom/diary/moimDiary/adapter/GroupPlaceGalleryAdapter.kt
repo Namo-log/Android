@@ -20,7 +20,7 @@ class GroupPlaceGalleryAdapter(
     private val items: ArrayList<String?> = arrayListOf()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addItem(image: List<String?>) {
+    fun addItem(image: List<String>) {
         this.items.clear()
         this.items.addAll(image)
         notifyDataSetChanged()

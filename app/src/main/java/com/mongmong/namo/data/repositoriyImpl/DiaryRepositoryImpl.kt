@@ -8,7 +8,7 @@ import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.local.entity.diary.DiarySchedule
+import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.data.remote.diary.DiaryApiService
 import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.domain.model.MoimDiaryResult
@@ -107,12 +107,42 @@ class DiaryRepositoryImpl @Inject constructor(
 
     /** 모임 기록 개별 조회 **/
     override suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult {
-        return remoteDiaryDataSource.getDiary(scheduleId)
+        return remoteDiaryDataSource.getMoimDiary(scheduleId)
     }
 
     /** 모임 기록 메모 추가/수정 **/
-    override suspend fun patchMoimDiary(scheduleId: Long, content: String): Boolean {
-        return remoteDiaryDataSource.patchMoimDiary(scheduleId, content)
+    override suspend fun patchMoimMemo(scheduleId: Long, content: String): Boolean {
+        return remoteDiaryDataSource.patchMoimMemo(scheduleId, content)
+    }
+
+    /** 모임 기록 활동 추가 **/
+    override suspend fun addMoimActivity(
+        moimScheduleId: Long,
+        place: String,
+        money: Long,
+        members: List<Long>?,
+        images: List<String>?
+    ) {
+        Log.d("MoimActivity", "impl addMoimActivity")
+        remoteDiaryDataSource.addMoimActivity(moimScheduleId, place, money, members, images)
+    }
+
+    /** 모임 기록 활동 수정 **/
+    override suspend fun editMoimActivity(
+        moimScheduleId: Long,
+        place: String,
+        money: Long,
+        members: List<Long>?,
+        images: List<String>?
+    ) {
+        Log.d("MoimActivity", "impl editMoimActivity")
+        remoteDiaryDataSource.editMoimActivity(moimScheduleId, place, money, members, images)
+    }
+
+    /** 모임 기록 활동 삭제**/
+    override suspend fun deleteMoimActivity(activityId: Long) {
+        Log.d("MoimActivity", "impl deleteMoimActivity")
+        remoteDiaryDataSource.deleteMoimActivity(activityId)
     }
 
     override suspend fun uploadDiaryToServer() {

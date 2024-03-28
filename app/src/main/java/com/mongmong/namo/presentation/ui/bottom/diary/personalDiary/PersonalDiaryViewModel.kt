@@ -27,7 +27,7 @@ class PersonalDiaryViewModel @Inject constructor(
     /** 개인 기록 개별 조회 **/
     fun getExistingPersonalDiary(diaryId: Long) {
         viewModelScope.launch {
-            Log.d("DiaryViewModel getDiary", "$diaryId")
+            Log.d("PersonalDiaryViewModel getDiary", "$diaryId")
             _diary.postValue(repository.getDiary(diaryId))
         }
     }
@@ -45,7 +45,7 @@ class PersonalDiaryViewModel @Inject constructor(
     /** 개인 기록 추가 **/
     fun addPersonalDiary(images: List<File>?) {
         viewModelScope.launch {
-            Log.d("DiaryViewModel addDiary", "$_diary")
+            Log.d("PersonalDiaryViewModel addDiary", "$_diary")
             _diary.value?.let {
                 repository.addDiary(
                     diary = it,
@@ -61,7 +61,7 @@ class PersonalDiaryViewModel @Inject constructor(
                 it.content = content
                 it.state = RoomState.EDITED.state
             }
-            Log.d("DiaryViewModel editDiary", "${_diary.value}")
+            Log.d("PersonalDiaryViewModel editDiary", "${_diary.value}")
             _diary.value?.let {
                 repository.editDiary(
                     diary = it,

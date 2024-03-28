@@ -4,12 +4,9 @@ import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.mongmong.namo.data.local.dao.DiaryDao
-import com.mongmong.namo.data.local.entity.diary.DiarySchedule
+import com.mongmong.namo.domain.model.DiarySchedule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.TimeZone
 
 class DiaryPersonalPagingSource(
     private val diaryDao: DiaryDao,

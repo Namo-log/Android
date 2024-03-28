@@ -15,7 +15,6 @@ import com.mongmong.namo.data.remote.diary.*
 import com.mongmong.namo.databinding.ActivityMoimMemoDetailBinding
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
-import com.mongmong.namo.presentation.ui.bottom.diary.DiaryViewModel
 import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.adapter.GalleryListAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
@@ -103,7 +102,7 @@ class MoimMemoDetailActivity: AppCompatActivity(),
                 )
             }
             diaryEditBtnTv.setOnClickListener {
-                viewModel.patchMoimDiary(
+                viewModel.patchMoimMemo(
                     moimSchedule.scheduleId,
                     binding.diaryContentsEt.text.toString()
                 )
@@ -117,16 +116,16 @@ class MoimMemoDetailActivity: AppCompatActivity(),
     private fun initObserve() {
         // 모임 기록 가져오기
         viewModel.getMoimDiaryResult.observe(this) { result ->
-            placeIntList = result.locationDtos.map {
-                it.moimMemoLocationId // 그룹 스케줄 별 장소 아이디 가져와서 리스트 만들기
+            placeIntList = result.moimActivities.map {
+                it.moimActivityId // 그룹 스케줄 별 장소 아이디 가져와서 리스트 만들기
             }
-            val imgList = result.locationDtos.flatMap { it.imgs.take(3) }
+            val imgList = result.moimActivities.flatMap { it.imgs?.take(3) ?: emptyList() }
 
             setImgList(imgList)
         }
 
-        // 모임 기록 추가/수정
-        viewModel.patchDiaryResult.observe(this) { isSuccess ->
+        // 모임 기록 메모 추가/수정
+        viewModel.patchMemoResult.observe(this) { isSuccess ->
             if(isSuccess) finish()
         }
     }

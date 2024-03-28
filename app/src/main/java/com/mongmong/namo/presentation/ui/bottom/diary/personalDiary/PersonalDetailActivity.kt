@@ -83,21 +83,22 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
     }
 
     private fun hasDiary() {
-        with(binding) {
-            if (schedule.hasDiary == 0) {  // 기록 없을 때, 추가
-                viewModel.setNewPersonalDiary(schedule, "")
-                diaryEditBtnTv.text = resources.getString(R.string.diary_add)
-                diaryEditBtnTv.setTextColor(getColor(R.color.white))
-                diaryEditBtnTv.setBackgroundResource(R.color.MainOrange)
-                diaryDeleteIv.visibility = View.GONE
-            } else {  // 기록 있을 때, 수정
-                //diary = repo.getDiary(event.scheduleId) // 개별 다이어리 조회
-                viewModel.getExistingPersonalDiary(schedule.scheduleId)
-                diaryEditBtnTv.text = resources.getString(R.string.diary_edit)
-                diaryEditBtnTv.setTextColor(getColor(R.color.MainOrange))
-                diaryEditBtnTv.setBackgroundResource(R.color.white)
-                diaryDeleteIv.visibility = View.VISIBLE
+        if (schedule.hasDiary == 0) {  // 기록 없을 때, 추가
+            viewModel.setNewPersonalDiary(schedule, "")
+            binding.diaryEditBtnTv.apply {
+                text = resources.getString(R.string.diary_add)
+                setTextColor(getColor(R.color.white))
+                setBackgroundResource(R.color.MainOrange)
             }
+            binding.diaryDeleteIv.visibility = View.GONE
+        } else {  // 기록 있을 때, 수정
+            viewModel.getExistingPersonalDiary(schedule.scheduleId)
+            binding.diaryEditBtnTv.apply {
+                text = resources.getString(R.string.diary_edit)
+                setTextColor(getColor(R.color.MainOrange))
+                setBackgroundResource(R.color.white)
+            }
+            binding.diaryDeleteIv.visibility = View.VISIBLE
         }
     }
 

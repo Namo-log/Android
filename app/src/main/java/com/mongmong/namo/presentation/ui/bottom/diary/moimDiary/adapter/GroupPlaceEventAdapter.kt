@@ -10,27 +10,27 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.data.local.entity.diary.DiaryGroupSchedule
 import com.mongmong.namo.databinding.ItemDiaryGroupEventBinding
+import com.mongmong.namo.domain.model.MoimActivity
 import java.text.NumberFormat
 import java.util.*
 
 
-class GroupPlaceScheduleAdapter(
+class MoimActivityRVAdapter(
     // 그룹 다이어리 장소 추가, 정산, 이미지
     val context: Context,
-    private val listData: MutableList<DiaryGroupSchedule>,
+    private val listData: MutableList<MoimActivity>,
     val payClickListener: (pay: Long, position: Int, payText: TextView) -> Unit,
-    val imageClickListener: (imgLists: ArrayList<String?>, position: Int) -> Unit,
+    val imageClickListener: (imgLists: List<String>?, position: Int) -> Unit,
     val placeClickListener: (text: String, position: Int) -> Unit,
     val deleteItemList: (deleteItems: MutableList<Long>) -> Unit
-) : RecyclerView.Adapter<GroupPlaceScheduleAdapter.Holder>() {
+) : RecyclerView.Adapter<MoimActivityRVAdapter.Holder>() {
 
-    private val items = arrayListOf<ArrayList<String?>>()
+    private val items = arrayListOf<ArrayList<String>?>()
     private var deleteItems = arrayListOf<Long>()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addImageItem(image: ArrayList<String?>) {
+    fun addImageItem(image: ArrayList<String>?) {
         this.items.add(image)
         notifyDataSetChanged()
     }
@@ -60,7 +60,7 @@ class GroupPlaceScheduleAdapter(
         holder.binding.groupAddGalleryRv.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-        if (event.imgs.isNotEmpty()) {
+        if (event.imgs?.isNotEmpty() == true) {
             holder.binding.img2.visibility = View.GONE
             holder.binding.img3.visibility = View.GONE
         } else {
@@ -73,7 +73,7 @@ class GroupPlaceScheduleAdapter(
         }
 
         holder.binding.itemPlaceNameTv.hint = "장소"
-        adapter.addItem(event.imgs)
+        event.imgs?.let { adapter.addItem(it) }
 
         holder.bind(event)
 
@@ -86,7 +86,7 @@ class GroupPlaceScheduleAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("NotifyDataSetChanged")
-        fun bind(item: DiaryGroupSchedule) {
+        fun bind(item: MoimActivity) {
 
             binding.itemPlaceNameTv.setText(item.place)
 
@@ -101,7 +101,7 @@ class GroupPlaceScheduleAdapter(
             binding.groupLayout.translationX = 0f
 
             binding.onclickDeleteItem.setOnClickListener {
-                deleteItems.add(item.placeIdx)
+                deleteItems.add(item.moimActivityId)
                 deleteItemList(deleteItems)
                 listData.remove(item)
                 notifyDataSetChanged()

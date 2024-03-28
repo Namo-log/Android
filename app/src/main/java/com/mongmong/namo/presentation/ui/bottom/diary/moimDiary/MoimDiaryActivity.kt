@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -16,7 +15,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -24,25 +22,22 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
-import com.mongmong.namo.data.local.entity.diary.DiaryGroupSchedule
 import com.mongmong.namo.data.remote.diary.*
 import com.mongmong.namo.databinding.ActivityMoimDiaryBinding
 import com.mongmong.namo.domain.model.MoimSchedule
-import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.MoimDiaryResult
 import com.mongmong.namo.domain.model.GroupUser
-import com.mongmong.namo.domain.model.LocationDto
-import com.mongmong.namo.presentation.ui.bottom.diary.DiaryViewModel
-import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.adapter.GroupMemberRVAdapter
-import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.adapter.GroupPlaceScheduleAdapter
+import com.mongmong.namo.domain.model.MoimActivity
+import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.adapter.MoimMemberRVAdapter
+import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.adapter.MoimActivityRVAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import org.joda.time.DateTime
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class MoimDiaryActivity : AppCompatActivity(),
@@ -50,8 +45,8 @@ class MoimDiaryActivity : AppCompatActivity(),
 
     private lateinit var binding: ActivityMoimDiaryBinding
 
-    private lateinit var memberadapter: GroupMemberRVAdapter  // 그룹 멤버 리스트 보여주기
-    private lateinit var placeadapter: GroupPlaceScheduleAdapter // 각 장소 item
+    private lateinit var memberadapter: MoimMemberRVAdapter  // 그룹 멤버 리스트 보여주기
+    private lateinit var activityAdapter: MoimActivityRVAdapter // 각 장소 item
 
     private lateinit var groupMembers: List<GroupUser>
     private lateinit var groupData: MoimDiaryResult
@@ -60,13 +55,12 @@ class MoimDiaryActivity : AppCompatActivity(),
     private lateinit var repo: DiaryRepository
     private lateinit var moimSchedule: MoimSchedule
 
-    private var groupSchedule = emptyList<LocationDto>()
-    private var placeSchedule = ArrayList<DiaryGroupSchedule>()
-    private var diaryService = DiaryService()
+    private var preActivities = emptyList<MoimActivity>()
+    private var placeSchedule = ArrayList<MoimActivity>()
 
-    private var imgList: ArrayList<String?> = ArrayList() // 장소별 이미지
+    private var imgList: ArrayList<String>? = ArrayList() // 장소별 이미지
     private var positionForGallery: Int = -1
-    private var groupScheduleId: Long = 0L
+    private var moimScheduleId: Long = 0L
 
     private val itemTouchSimpleCallback = ItemTouchHelperCallback()  // 아이템 밀어서 삭제
     private val itemTouchHelper = ItemTouchHelper(itemTouchSimpleCallback)
@@ -85,7 +79,7 @@ class MoimDiaryActivity : AppCompatActivity(),
 
         repo = DiaryRepository(this)
 
-        groupScheduleId = intent.getLongExtra("groupScheduleId", 0L)  // 그룹 스케줄 아이디
+        moimScheduleId = intent.getLongExtra("groupScheduleId", 0L)  // 그룹 스케줄 아이디
         val getHasDiaryBoolean = intent.getBooleanExtra("hasGroupPlace", false)
 
         hasDiaryPlace(getHasDiaryBoolean)
@@ -97,63 +91,83 @@ class MoimDiaryActivity : AppCompatActivity(),
     private fun hasDiaryPlace(getHasDiaryBoolean: Boolean) {
         if (!getHasDiaryBoolean) {  // groupPlace가 없을 때, 저장하기
             moimSchedule = intent?.getSerializableExtra("groupSchedule") as MoimSchedule
-            initialize()
-            bind()
-
-            binding.groupSaveTv.text = resources.getString(R.string.diary_add)
-            binding.groupSaveTv.setTextColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.white
-                )
-            )
-            binding.groupSaveTv.setBackgroundResource(R.color.MainOrange)
+            Log.d("hasDiaryPlace", "$moimSchedule")
+            placeSchedule.add(MoimActivity(0L, "", 0, arrayListOf(), arrayListOf()))
+            setViewOnNoDiary()
+            binding.groupSaveTv.apply {
+                text = resources.getString(R.string.diary_add)
+                setTextColor(getColor(R.color.white))
+                setBackgroundResource(R.color.MainOrange)
+            }
             binding.diaryDeleteIv.visibility = View.GONE
-
-
         } else { // groupPlace가 있을 때, 서버에서 데이터 가져오고 수정하기
-
-            viewModel.getMoimDiary(groupScheduleId)
-            /*val diaryService = DiaryService()
-            diaryService.getGroupDiary(groupScheduleId)
-            diaryService.getGroupDiaryView(this)*/
-
-            binding.groupSaveTv.text = resources.getString(R.string.diary_edit)
-            binding.groupSaveTv.setTextColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.MainOrange
-                )
-            )
-            binding.groupSaveTv.setBackgroundResource(R.color.white)
+            viewModel.getMoimDiary(moimScheduleId)
+            binding.groupSaveTv.apply {
+                text = resources.getString(R.string.diary_edit)
+                setTextColor(getColor(R.color.MainOrange))
+                setBackgroundResource(R.color.white)
+            }
             binding.diaryDeleteIv.visibility = View.VISIBLE
-
-            deletePlace()
         }
-
-        addAndEditPlace()
-
     }
 
+    private fun onClickListener() {
+        // 참석자 숨기기 버튼
+        binding.upArrow.setOnClickListener { setMember(true) }
+        binding.bottomArrow.setOnClickListener { setMember(false) }
+        // 뒤로가기
+        binding.groupAddBackIv.setOnClickListener { finish() }
+
+        //  장소 추가 버튼 클릭리스너
+        binding.groudPlaceAddTv.setOnClickListener {
+            if (placeSchedule.size >= 3)
+                Toast.makeText(this, "장소 추가는 3개까지 가능합니다", Toast.LENGTH_SHORT).show()
+            else {
+                placeSchedule.add(MoimActivity(0L, "", 0L, arrayListOf(), arrayListOf()))
+                activityAdapter.notifyDataSetChanged()
+            }
+        }
+
+        // 기록 추가 or 기록 수정
+        binding.groupSaveTv.setOnClickListener {
+            if (!placeSchedule.any { it.place == "" }) {
+                viewModel.patchMoimActivities(
+                    preActivities,
+                    memberIntList,
+                    moimScheduleId,
+                    placeSchedule,
+                    deleteItems
+                )
+            } else {
+                Toast.makeText(this@MoimDiaryActivity, "장소를 입력해주세요!", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+        // 기록 삭제
+        binding.diaryDeleteIv.setOnClickListener {
+            showDeleteDialog()
+        }
+    }
 
     private fun initObserve() {
         viewModel.getMoimDiaryResult.observe(this) { result ->
             groupMembers = result.users
             groupData = result
-            groupSchedule = result.locationDtos
+            preActivities = result.moimActivities
 
             memberIntList = groupMembers.map { it.userId }
 
-            placeSchedule.addAll(groupSchedule.map {
+            placeSchedule.addAll(preActivities.map {
                 val copy = it.copy(
-                    imgs = it.imgs.toMutableList()
+                    imgs = it.imgs?.toMutableList()
                 )
-                DiaryGroupSchedule(
+                MoimActivity(
+                    copy.moimActivityId,
                     copy.place,
                     copy.pay,
                     copy.members,
-                    copy.imgs as ArrayList<String?>,
-                    copy.moimMemoLocationId
+                    copy.imgs,
                 )
             })
 
@@ -164,25 +178,20 @@ class MoimDiaryActivity : AppCompatActivity(),
 
             onRecyclerView()
         }
+
+        viewModel.patchActivitiesComplete.observe(this) { isComplete ->
+            Log.d("MoimActivity", "finish")
+            if(isComplete) finish()
+            else Toast.makeText(this, "네트워크 오류", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    private fun bind() {
-
+    private fun setViewOnNoDiary() {
         // 그룹 장소가 없을 때, 그룹 스케줄에서 가져온 데이터 바인딩
-        val formatDate = DateTime(moimSchedule.startDate * 1000).toString("yyyy.MM.dd (EE)")
-
+        val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(moimSchedule.startDate * 1000)
         binding.groupAddInputDateTv.text = formatDate
         binding.groupAddInputPlaceTv.text = moimSchedule.locationName
         binding.groupAddTitleTv.text = moimSchedule.name
-
-        binding.groupSaveTv.text = "기록 저장"
-        binding.groupSaveTv.setTextColor(
-            ContextCompat.getColor(
-                this,
-                R.color.white
-            )
-        )
-        binding.groupSaveTv.setBackgroundResource(R.color.MainOrange)
 
         val members = arrayListOf<GroupUser>()
         moimSchedule.users.map {
@@ -196,125 +205,7 @@ class MoimDiaryActivity : AppCompatActivity(),
 
     }
 
-    private fun addAndEditPlace() {
-        binding.groupSaveTv.setOnClickListener {
-            val hasNullPlace = placeSchedule.any { it.place == "" }
-            if (!hasNullPlace) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    placeSchedule.forEach { diaryGroupSchedule ->
-                        withContext(Dispatchers.IO) {
-                            addOrEditGroupDiary(diaryGroupSchedule)
-                        }
-                    }
-                    deleteItems.forEach { placeIdx ->
-                        withContext(Dispatchers.IO) {
-                            deleteGroupDiary(placeIdx)
-                        }
-                    }
-                }
-            } else {
-                CoroutineScope(Dispatchers.Main).launch {
-                    Toast.makeText(
-                        applicationContext,
-                        "장소를 입력해주세요!",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                }
-            }
 
-        }
-    }
-
-    private fun addOrEditGroupDiary(diaryGroupSchedule: DiaryGroupSchedule) {
-        val hasDiffer = groupSchedule.any { group ->
-            group.place == diaryGroupSchedule.place &&
-                    group.pay == diaryGroupSchedule.pay &&
-                    group.members == diaryGroupSchedule.members &&
-                    group.imgs == diaryGroupSchedule.imgs.filterNotNull()
-        }
-        val members = diaryGroupSchedule.members.ifEmpty { memberIntList }
-        if (!hasDiffer) {
-            if (diaryGroupSchedule.placeIdx == 0L) {
-                repo.addMoimDiary(
-                    groupScheduleId,
-                    diaryGroupSchedule.place,
-                    diaryGroupSchedule.pay,
-                    members,
-                    diaryGroupSchedule.imgs.filterNotNull(),
-                    object : DiaryBasicView {
-                        override fun onSuccess(response: DiaryResponse) {
-                            Log.d("GROUP_DIARY_ADD", "SUCCESS")
-                            finish()
-                        }
-
-                        override fun onFailure(message: String) {
-                            Log.d("GROUP_DIARY_ADD", message)
-                            CoroutineScope(Dispatchers.Main).launch {
-                                Toast.makeText(
-                                    applicationContext,
-                                    "장소를 입력해주세요!",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                            }
-                        }
-                    })
-            } else {
-                repo.editGroupPlace(
-                    diaryGroupSchedule.placeIdx,
-                    diaryGroupSchedule.place,
-                    diaryGroupSchedule.pay,
-                    members,
-                    diaryGroupSchedule.imgs.filterNotNull(),
-                    object : DiaryBasicView {
-                        override fun onSuccess(response: DiaryResponse) {
-                            Log.d("GROUP_DIARY_EDIT", "SUCCESS")
-                            finish()
-                        }
-
-                        override fun onFailure(message: String) {
-                            Log.d("GROUP_DIARY_EDIT", message)
-                            finish()
-                        }
-                    })
-            }
-
-        }
-    }
-
-    private fun deleteGroupDiary(placeIdx: Long) {
-        try {
-            diaryService.deleteGroupDiary(placeIdx,
-                object : DiaryBasicView {
-                    @RequiresApi(Build.VERSION_CODES.N)
-                    override fun onSuccess(response: DiaryResponse) {
-                        Log.e("DELETE_GROUP_DIARY", "SUCCESS")
-
-                        if (allDeleteFrag) deleteCount--
-                        if (deleteCount == 0) {
-                            finish()
-                            allDeleteFrag = false
-                        }
-                    }
-
-                    override fun onFailure(message: String) {
-                        Log.e("DELETE_GROUP_DIARY", message)
-                        finish()
-                    }
-                })
-        } catch (e: Exception) {
-            Log.e("DELETE_GROUP_DIARY", e.message ?: "알 수 없는 오류 발생")
-            finish()
-        }
-    }
-
-
-    private fun deletePlace() {  // 장소 전체 삭제 버튼
-        binding.diaryDeleteIv.setOnClickListener {
-            showDeleteDialog()
-        }
-    }
 
     private fun showDeleteDialog() {
         // 삭제 확인 다이얼로그
@@ -335,31 +226,24 @@ class MoimDiaryActivity : AppCompatActivity(),
         CoroutineScope(Dispatchers.Main).launch {
             placeSchedule.forEach {
                 withContext(Dispatchers.IO) {
-                    deleteGroupDiary(it.placeIdx)
+                    //deleteGroupDiary(it.placeIdx)
                 }
             }
         }
     }
 
-    private fun initialize() {
-        with(placeSchedule) {
-            add(DiaryGroupSchedule("", 0, arrayListOf(), arrayListOf()))
-        }
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     private fun onRecyclerView() {
-
         binding.apply {
 
             // 멤버 이름 리사이클러뷰
-            memberadapter = GroupMemberRVAdapter(groupMembers)
+            memberadapter = MoimMemberRVAdapter(groupMembers)
             groupAddPeopleRv.adapter = memberadapter
             groupAddPeopleRv.layoutManager =
                 LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
 
             // 장소 추가 리사이클러뷰
-            placeadapter = GroupPlaceScheduleAdapter(
+            activityAdapter = MoimActivityRVAdapter(
                 applicationContext,
                 placeSchedule,
                 payClickListener = { _, position, payText ->
@@ -373,7 +257,7 @@ class MoimDiaryActivity : AppCompatActivity(),
                     binding.diaryGroupAddPlaceRv.smoothScrollToPosition(position)
                 },
                 imageClickListener = { imgs, position ->
-                    this@MoimDiaryActivity.imgList = imgs
+                    this@MoimDiaryActivity.imgList = imgs as ArrayList<String>?
                     this@MoimDiaryActivity.positionForGallery = position
 
                     getPermission()
@@ -386,7 +270,7 @@ class MoimDiaryActivity : AppCompatActivity(),
                 }
             )
 
-            diaryGroupAddPlaceRv.adapter = placeadapter
+            diaryGroupAddPlaceRv.adapter = activityAdapter
             diaryGroupAddPlaceRv.layoutManager =
                 LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
 
@@ -409,48 +293,12 @@ class MoimDiaryActivity : AppCompatActivity(),
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun onClickListener() {
-
-        binding.upArrow.setOnClickListener {// 화살표가 위쪽 방향일 때 리사이클러뷰 숨쪽기
-            setMember(true)
-        }
-
-        binding.bottomArrow.setOnClickListener {
-            setMember(false)
-        }
-
-        binding.groupAddBackIv.setOnClickListener { // 뒤로가기
-            finish()
-        }
-
-        //  장소 추가 버튼 클릭리스너
-        binding.groudPlaceAddTv.setOnClickListener {
-
-            if (placeSchedule.size >= 3) Toast.makeText(
-                this,
-                "장소 추가는 3개까지 가능합니다",
-                Toast.LENGTH_SHORT
-            )
-                .show()
-            else {
-                placeSchedule.add(DiaryGroupSchedule("", 0, arrayListOf(), arrayListOf()))
-                placeadapter.notifyDataSetChanged()
-            }
-        }
-
-    }
 
     private fun setMember(isVisible: Boolean) {  // 그룹 멤버 리스트 세팅
-        if (isVisible) {
-            binding.groupAddPeopleRv.visibility = View.GONE
-            binding.bottomArrow.visibility = View.VISIBLE
-            binding.upArrow.visibility = View.GONE
-
-        } else {
-            binding.groupAddPeopleRv.visibility = View.VISIBLE
-            binding.bottomArrow.visibility = View.GONE
-            binding.upArrow.visibility = View.VISIBLE
+        with(binding) {
+            groupAddPeopleRv.visibility = if (isVisible) View.GONE else View.VISIBLE
+            bottomArrow.visibility = if (isVisible) View.VISIBLE else View.GONE
+            upArrow.visibility = if (isVisible) View.GONE else View.VISIBLE
         }
     }
 
@@ -496,9 +344,8 @@ class MoimDiaryActivity : AppCompatActivity(),
     private val getImage = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-
         if (result.resultCode == Activity.RESULT_OK) {
-            imgList.clear()
+            imgList?.clear()
             if (result.data?.clipData != null) { // 사진 여러개 선택한 경우
                 val count = result.data?.clipData!!.itemCount
                 if (count > 3) {
@@ -507,7 +354,7 @@ class MoimDiaryActivity : AppCompatActivity(),
                 } else {
                     for (i in 0 until count) {
                         val imageUri = result.data?.clipData!!.getItemAt(i).uri
-                        imgList.add(imageUri.toString())
+                        imgList?.add(imageUri.toString())
 
                     }
                 }
@@ -516,7 +363,7 @@ class MoimDiaryActivity : AppCompatActivity(),
             result.data?.data?.let {
                 val imageUri: Uri? = result.data!!.data
                 if (imageUri != null) {
-                    imgList.add(imageUri.toString())
+                    imgList?.add(imageUri.toString())
                 }
             }
         }
@@ -527,7 +374,7 @@ class MoimDiaryActivity : AppCompatActivity(),
 
         if (position != RecyclerView.NO_POSITION) {
             placeSchedule[position].imgs = images
-            placeadapter.addImageItem(images)
+            activityAdapter.addImageItem(images)
         }
     }
 

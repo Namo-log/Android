@@ -9,7 +9,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.insertSeparators
-import com.mongmong.namo.data.local.entity.diary.DiarySchedule
+import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow

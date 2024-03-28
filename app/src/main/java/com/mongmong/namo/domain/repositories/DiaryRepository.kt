@@ -2,8 +2,7 @@ package com.mongmong.namo.domain.repositories
 
 import androidx.paging.PagingSource
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.local.entity.diary.DiarySchedule
-import com.mongmong.namo.domain.model.MoimDiary
+import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.model.MoimDiaryResult
 import java.io.File
 
@@ -36,5 +35,23 @@ interface DiaryRepository {
 
     suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult
 
-    suspend fun patchMoimDiary(scheduleId: Long, content: String): Boolean
+    suspend fun patchMoimMemo(scheduleId: Long, content: String): Boolean
+
+    suspend fun addMoimActivity(
+        moimScheduleId: Long,
+        place: String,
+        money: Long,
+        members: List<Long>?,
+        images: List<String>?
+    )
+
+    suspend fun editMoimActivity(
+        moimScheduleId: Long,
+        place: String,
+        money: Long,
+        members: List<Long>?,
+        images: List<String>?
+    )
+
+    suspend fun deleteMoimActivity(activityId: Long)
 }
