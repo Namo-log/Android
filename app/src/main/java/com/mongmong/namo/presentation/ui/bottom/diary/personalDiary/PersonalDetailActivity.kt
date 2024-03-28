@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -34,6 +35,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
+import java.util.Locale
 
 @AndroidEntryPoint
 class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  // 개인 다이어리 추가,수정,삭제 화면
@@ -71,7 +73,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
         binding.apply {
             val formatDate = DateTime(schedule.startLong * 1000).toString("yyyy.MM.dd (EE)")
-            diaryTodayDayTv.text = DateTime(schedule.startLong * 1000).toString("EE")
+            diaryTodayMonthTv.text = DateTime(schedule.startLong * 1000).toString("MMM", Locale.ENGLISH)
             diaryTodayNumTv.text = DateTime(schedule.startLong * 1000).toString("dd")
             diaryTitleTv.isSelected = true  // marquee
             diaryTitleTv.text = schedule.title
@@ -90,6 +92,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
                 text = resources.getString(R.string.diary_add)
                 setTextColor(getColor(R.color.white))
                 setBackgroundResource(R.color.MainOrange)
+                elevation = 0f
             }
             binding.diaryDeleteIv.visibility = View.GONE
         } else {  // 기록 있을 때, 수정
@@ -98,6 +101,11 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
                 text = resources.getString(R.string.diary_edit)
                 setTextColor(getColor(R.color.MainOrange))
                 setBackgroundResource(R.color.white)
+                elevation = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    10f,
+                    resources.displayMetrics
+                )
             }
             binding.diaryDeleteIv.visibility = View.VISIBLE
         }

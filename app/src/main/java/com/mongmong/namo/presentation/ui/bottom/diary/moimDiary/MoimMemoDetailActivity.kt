@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.util.TypedValue
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
+import java.util.Locale
 
 @AndroidEntryPoint
 class MoimMemoDetailActivity: AppCompatActivity(),
@@ -71,7 +73,7 @@ class MoimMemoDetailActivity: AppCompatActivity(),
             itemDiaryCategoryColorIv.background.setTint(category.color)
             val scheduleDate = moimSchedule.startDate * 1000
 
-            diaryTodayDayTv.text = DateTime(scheduleDate).toString("EE")
+            diaryTodayMonthTv.text = DateTime(scheduleDate).toString("MMM", Locale.ENGLISH)
             diaryTodayNumTv.text = DateTime(scheduleDate).toString("dd")
             diaryTitleTv.text = moimSchedule.title
             diaryInputDateTv.text = DateTime(scheduleDate).toString("yyyy.MM.dd (EE)")
@@ -82,10 +84,16 @@ class MoimMemoDetailActivity: AppCompatActivity(),
                     text = resources.getString(R.string.diary_add)
                     setTextColor(getColor(R.color.white))
                     setBackgroundResource(R.color.MainOrange)
+                    elevation = 0f
                 } else {  // 내용이 있으면, 기록 수정
                     text = resources.getString(R.string.diary_edit)
                     setTextColor(getColor(R.color.MainOrange))
                     setBackgroundResource(R.color.white)
+                    elevation = TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        10f,
+                        resources.displayMetrics
+                    )
                 }
             }
         }

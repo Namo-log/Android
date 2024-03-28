@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -21,6 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import org.joda.time.DateTime
 import com.mongmong.namo.R
 import com.mongmong.namo.data.remote.diary.*
 import com.mongmong.namo.databinding.ActivityMoimDiaryBinding
@@ -98,6 +100,7 @@ class MoimDiaryActivity : AppCompatActivity(),
                 text = resources.getString(R.string.diary_add)
                 setTextColor(getColor(R.color.white))
                 setBackgroundResource(R.color.MainOrange)
+                elevation = 0f
             }
             binding.diaryDeleteIv.visibility = View.GONE
         } else { // groupPlace가 있을 때, 서버에서 데이터 가져오고 수정하기
@@ -106,6 +109,11 @@ class MoimDiaryActivity : AppCompatActivity(),
                 text = resources.getString(R.string.diary_edit)
                 setTextColor(getColor(R.color.MainOrange))
                 setBackgroundResource(R.color.white)
+                elevation = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    10f,
+                    resources.displayMetrics
+                )
             }
             binding.diaryDeleteIv.visibility = View.VISIBLE
         }
@@ -175,6 +183,9 @@ class MoimDiaryActivity : AppCompatActivity(),
             binding.groupAddInputDateTv.text = formatDate
             binding.groupAddInputPlaceTv.text = groupData.locationName
             binding.groupAddTitleTv.text = groupData.name
+            binding.diaryTodayMonthTv.text = DateTime(groupData.startDate * 1000).toString("MMM", Locale.ENGLISH)
+            binding.diaryTodayNumTv.text = DateTime(groupData.startDate*1000).toString("dd")
+            binding.groupAddPeopleTv.text = "참석자 (${groupMembers.size})"
 
             onRecyclerView()
         }
@@ -192,6 +203,9 @@ class MoimDiaryActivity : AppCompatActivity(),
         binding.groupAddInputDateTv.text = formatDate
         binding.groupAddInputPlaceTv.text = moimSchedule.locationName
         binding.groupAddTitleTv.text = moimSchedule.name
+        binding.diaryTodayMonthTv.text = DateTime(groupData.startDate * 1000).toString("MMM", Locale.ENGLISH)
+        binding.diaryTodayNumTv.text = DateTime(groupData.startDate*1000).toString("dd")
+        binding.groupAddPeopleTv.text = "참석자 (${groupMembers.size})"
 
         val members = arrayListOf<GroupUser>()
         moimSchedule.users.map {
