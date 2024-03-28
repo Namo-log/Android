@@ -21,6 +21,9 @@ class ScheduleViewModel @Inject constructor(
     private val _scheduleList = MutableLiveData<List<Schedule>>(emptyList())
     val scheduleList: LiveData<List<Schedule>?> = _scheduleList
 
+    private val _isPostComplete = MutableLiveData<Boolean>()
+    val isPostComplete: LiveData<Boolean> = _isPostComplete
+
     /** 선택한 날짜의 일정 조회 */
     fun getDailySchedules(startDate: Long, endDate: Long) {
         viewModelScope.launch {
@@ -36,6 +39,7 @@ class ScheduleViewModel @Inject constructor(
             repository.addSchedule(
                 schedule = schedule
             )
+            _isPostComplete.postValue(true)
         }
     }
 
