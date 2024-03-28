@@ -160,12 +160,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
-        lifecycleScope.launch {
-            viewModel.deleteDiary(event.scheduleId, event.serverId)
-            delay(100L)
-            Toast.makeText(this@PersonalDetailActivity, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-            finish()
-        }
+        viewModel.deleteDiary(event.scheduleId, event.serverId)
     }
 
     private fun initObserve() {
@@ -175,6 +170,13 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         }
         viewModel.imgList.observe(this) {
             galleryAdapter.addImages(it)
+        }
+        viewModel.isDeleteComplete.observe(this) { isComplete ->
+            // 다이어리 삭제 작업이 완료되었을 때 finish() 호출
+            if (isComplete) {
+                Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                finish()
+            }
         }
     }
 
