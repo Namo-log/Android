@@ -29,18 +29,30 @@ data class DiaryGetAllResult(
     val urls: List<String>,
 )
 
+data class DiarySchedule(
+    var scheduleId: Long = 0L,
+    var title: String = "",
+    var startDate: Long = 0,
+    var categoryId: Long = 0L,
+    var place: String = "없음",
+    var content: String?,
+    var images: List<String>? = null,
+    var serverId: Long = 0L, // eventServerId
+    var categoryServerId : Long = 0L,
+    var isHeader: Boolean = false
+)
 
 /** 모임 기록 개별 조회 **/
-data class GetGroupDiaryResponse(
-    val result: GroupDiaryResult
+data class GetMoimDiaryResponse(
+    val result: MoimDiaryResult
 ) : BaseResponse()
 
-data class GroupDiaryResult(
+data class MoimDiaryResult(
     val name: String,
     val startDate: Long,
     val locationName: String,
     val users: List<GroupUser>,
-    val locationDtos: List<LocationDto>
+    @SerializedName("locationDtos") val moimActivities: List<MoimActivity>
 )
 
 data class GroupUser(
@@ -48,12 +60,12 @@ data class GroupUser(
     val userName: String
 ) : java.io.Serializable
 
-data class LocationDto(
-    val moimMemoLocationId: Long,
-    @SerializedName("name") var place: String,
-    @SerializedName("money") var pay: Long,
-    @SerializedName("participants") var members: MutableList<Long>,
-    @SerializedName("urls") var imgs: List<String>
+data class MoimActivity(
+    @SerializedName("moimMemoLocationId") val moimActivityId: Long = 0L,
+    @SerializedName("name") var place: String = "",
+    @SerializedName("money") var pay: Long = 0L,
+    @SerializedName("participants") var members: List<Long>,
+    @SerializedName("urls") var imgs: List<String>?
 ) : java.io.Serializable
 
 
@@ -63,15 +75,15 @@ data class DiaryGetMonthResponse(
 ) : BaseResponse()
 
 data class GroupResult(
-    val content: List<MonthDiary>,
+    val content: List<MoimDiary>,
     val currentPage: Int,
     val size: Int,
     val first: Boolean,
     val last: Boolean
 )
 
-data class MonthDiary(
-    @SerializedName("scheduleId") val scheduleIdx: Long,
+data class MoimDiary(
+    @SerializedName("scheduleId") val scheduleId: Long,
     @SerializedName("name") val title: String,
     @SerializedName("startDate") var startDate: Long,
     @SerializedName("contents") val content: String?,

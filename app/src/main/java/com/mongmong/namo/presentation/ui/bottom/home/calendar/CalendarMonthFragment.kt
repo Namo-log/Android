@@ -22,9 +22,11 @@ import com.mongmong.namo.domain.model.GetMonthScheduleResponse
 import com.mongmong.namo.data.remote.schedule.GetMonthMoimScheduleView
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
-import com.mongmong.namo.domain.model.MonthDiary
-import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.GroupDetailActivity
-import com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.PersonalDetailActivity
+
+import com.mongmong.namo.domain.model.MoimDiary
+import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.MoimMemoDetailActivity
+import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.PersonalDetailActivity
 import com.mongmong.namo.presentation.ui.bottom.home.HomeFragment
 import com.mongmong.namo.presentation.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.mongmong.namo.presentation.ui.bottom.home.adapter.DailyPersonalRVAdapter
@@ -201,9 +203,9 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
         })
 
         groupScheduleRVAdapter.setRecordClickListener(object : DailyGroupRVAdapter.DiaryInterface {
-            override fun onGroupDetailClicked(monthDiary: MonthDiary?) {
+            override fun onGroupDetailClicked(monthDiary: MoimDiary?) {
 
-                val intent = Intent(context, GroupDetailActivity::class.java)
+                val intent = Intent(context, MoimMemoDetailActivity::class.java)
                 intent.putExtra("groupDiary", monthDiary)
                 requireActivity().startActivity(intent)
             }
@@ -310,7 +312,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
     override fun onGetGroupMonthSuccess(response: DiaryGetMonthResponse) {
         val data = response.result
-        groupScheduleRVAdapter.addGroupDiary(data.content as ArrayList<MonthDiary>)
+        groupScheduleRVAdapter.addGroupDiary(data.content as ArrayList<MoimDiary>)
     }
 
     override fun onGetGroupMonthFailure(message: String) {

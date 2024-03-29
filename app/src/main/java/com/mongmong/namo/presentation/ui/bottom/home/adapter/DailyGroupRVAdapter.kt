@@ -11,14 +11,14 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
-import com.mongmong.namo.domain.model.MonthDiary
+import com.mongmong.namo.domain.model.MoimDiary
 import org.joda.time.DateTime
 
 class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>() {
 
     private val group = ArrayList<Schedule>()
     private val categoryList = ArrayList<Category>()
-    private val groupDiary = ArrayList<MonthDiary>()
+    private val groupDiary = ArrayList<MoimDiary>()
     private lateinit var context : Context
 
     interface GroupContentClickListener {
@@ -32,7 +32,7 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
 
     /** 기록 아이템 클릭 리스너 **/
     interface DiaryInterface {
-        fun onGroupDetailClicked(monthDiary: MonthDiary?)
+        fun onGroupDetailClicked(monthDiary: MoimDiary?)
     }
     private lateinit var diaryRecordClickListener: DiaryInterface
     fun setRecordClickListener(itemClickListener: DiaryInterface){
@@ -59,7 +59,7 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
             val newCategoryId = group[position].categoryServerId
 
             val diary = groupDiary.find {
-                it.scheduleIdx == group[position].serverId
+                it.scheduleId == group[position].serverId
             }
 
             if (diary != null) {
@@ -83,7 +83,7 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addGroupDiary(diaryGroup: ArrayList<MonthDiary>){
+    fun addGroupDiary(diaryGroup: ArrayList<MoimDiary>){
         this.groupDiary.addAll(diaryGroup)
         notifyDataSetChanged()
     }
@@ -104,7 +104,7 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
             binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
 
             val diary=groupDiary.find {
-                it.scheduleIdx==group.serverId
+                it.scheduleId==group.serverId
             }
             if(group.hasDiary !=0) {
                 binding.itemCalendarEventRecord.visibility=View.VISIBLE

@@ -29,10 +29,9 @@
     <!--    usesCleartextTraffic : android 가 HTTP연결을 막아놨는데 카카오맵은 HTTP통신해서 HTTP도 가능하도록 설정-->
     <application
         android:name=".presentation.config.ApplicationClass"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
@@ -104,17 +103,17 @@
             android:exported="false"
             android:theme="@style/Theme.MaterialTransparent" />
         <activity
-            android:name=".presentation.ui.bottom.diary.groupDiary.GroupMemoActivity"
+            android:name=".presentation.ui.bottom.diary.moimDiary.MoimDiaryActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name=".presentation.ui.bottom.diary.mainDiary.PersonalDetailActivity"
+            android:name=".presentation.ui.bottom.diary.personalDiary.PersonalDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
 
         <activity
-            android:name=".presentation.ui.bottom.diary.mainDiary.GroupDetailActivity"
+            android:name=".presentation.ui.bottom.diary.moimDiary.MoimMemoDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
         <meta-data

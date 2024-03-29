@@ -2,13 +2,16 @@ package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
 import androidx.paging.PagingSource
+import com.mongmong.namo.data.datasource.diary.DiaryMoimPagingSource
 import com.mongmong.namo.data.datasource.diary.DiaryPersonalPagingSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.local.entity.diary.DiarySchedule
+import com.mongmong.namo.domain.model.DiarySchedule
+import com.mongmong.namo.data.remote.diary.DiaryApiService
 import com.mongmong.namo.data.remote.diary.NetworkChecker
+import com.mongmong.namo.domain.model.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.presentation.config.RoomState
 import java.io.File
@@ -18,8 +21,19 @@ class DiaryRepositoryImpl @Inject constructor(
     private val localDiaryDataSource: LocalDiaryDataSource,
     private val remoteDiaryDataSource: RemoteDiaryDataSource,
     private val diaryDao: DiaryDao,
+    private val apiService: DiaryApiService,
     private val networkChecker: NetworkChecker
 ) : DiaryRepository {
+
+    /** 개인 기록 리스트 조회 **/
+    override fun getPersonalDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
+        return DiaryPersonalPagingSource(diaryDao, date)
+    }
+    /** 모임 기록 리스트 조회 **/
+    override fun getMoimDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
+        return DiaryMoimPagingSource(apiService, date)
+    }
+
     /** 개인 기록 개별 조회 **/
     override suspend fun getDiary(localId: Long): Diary {
         Log.d("DiaryRepositoryImpl getDiary", "$localId")
@@ -91,9 +105,44 @@ class DiaryRepositoryImpl @Inject constructor(
         }
     }
 
-    /** 개인 기록 리스트 조회 **/
-    override fun getPersonalDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
-        return DiaryPersonalPagingSource(diaryDao, date)
+    /** 모임 기록 개별 조회 **/
+    override suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult {
+        return remoteDiaryDataSource.getMoimDiary(scheduleId)
+    }
+
+    /** 모임 기록 메모 추가/수정 **/
+    override suspend fun patchMoimMemo(scheduleId: Long, content: String): Boolean {
+        return remoteDiaryDataSource.patchMoimMemo(scheduleId, content)
+    }
+
+    /** 모임 기록 활동 추가 **/
+    override suspend fun addMoimActivity(
+        moimScheduleId: Long,
+        place: String,
+        money: Long,
+        members: List<Long>?,
+        images: List<String>?
+    ) {
+        Log.d("MoimActivity", "impl addMoimActivity")
+        remoteDiaryDataSource.addMoimActivity(moimScheduleId, place, money, members, images)
+    }
+
+    /** 모임 기록 활동 수정 **/
+    override suspend fun editMoimActivity(
+        moimScheduleId: Long,
+        place: String,
+        money: Long,
+        members: List<Long>?,
+        images: List<String>?
+    ) {
+        Log.d("MoimActivity", "impl editMoimActivity")
+        remoteDiaryDataSource.editMoimActivity(moimScheduleId, place, money, members, images)
+    }
+
+    /** 모임 기록 활동 삭제**/
+    override suspend fun deleteMoimActivity(activityId: Long) {
+        Log.d("MoimActivity", "impl deleteMoimActivity")
+        remoteDiaryDataSource.deleteMoimActivity(activityId)
     }
 
     override suspend fun uploadDiaryToServer() {

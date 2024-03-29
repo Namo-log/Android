@@ -1,11 +1,11 @@
-package com.mongmong.namo.presentation.ui.bottom.diary.groupDiary
+package com.mongmong.namo.presentation.ui.bottom.diary.moimDiary
 
 
 import android.graphics.Canvas
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.adapter.GroupPlaceScheduleAdapter
+import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.adapter.MoimActivityRVAdapter
 import java.lang.Float.max
 import java.lang.Float.min
 
@@ -80,13 +80,13 @@ class ItemTouchHelperCallback : ItemTouchHelper.SimpleCallback(
 
     // 삭제버튼 width 구하는 함수
     private fun getViewWidth(viewHolder: RecyclerView.ViewHolder): Float {
-        val viewWidth = (viewHolder as GroupPlaceScheduleAdapter.Holder).binding.removeView.width
+        val viewWidth = (viewHolder as MoimActivityRVAdapter.Holder).binding.removeView.width
         return viewWidth.toFloat()
     }
 
     // swipe될 뷰 (우리가 스와이프할 시 움직일 화면)
     private fun getView(viewHolder: RecyclerView.ViewHolder): View {
-        return (viewHolder as GroupPlaceScheduleAdapter.Holder).binding.groupLayout
+        return (viewHolder as MoimActivityRVAdapter.Holder).binding.groupLayout
     }
 
     // view의 tag로 스와이프 고정됐는지 안됐는지 확인 (고정 == true)

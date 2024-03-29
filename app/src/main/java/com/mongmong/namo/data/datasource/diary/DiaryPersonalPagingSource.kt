@@ -1,32 +1,30 @@
 package com.mongmong.namo.data.datasource.diary
 
-
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.mongmong.namo.data.local.dao.DiaryDao
-import com.mongmong.namo.data.local.entity.diary.DiarySchedule
+import com.mongmong.namo.domain.model.DiarySchedule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-
-class DiaryPersonalPagingSource (
+class DiaryPersonalPagingSource(
     private val diaryDao: DiaryDao,
     private val date: String
 ) : PagingSource<Int, DiarySchedule>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DiarySchedule> {
         return try {
-            Log.d("pagingSource load", "${params.key}")
             val page = params.key ?: 0
             val result = withContext(Dispatchers.IO) {
-                diaryDao.getDiaryScheduleList(date, page, PAGE_SIZE).toListItems()
+                diaryDao.getDiaryScheduleList(date, page, PAGE_SIZE)
             }
 
+            Log.d("personalPagingSource load", "${params.key} : $result")
             LoadResult.Page(
                 data = result,
-                prevKey = if (page == 0) null else page.minus(1),
-                nextKey = if (result.isEmpty()) null else page.plus(1)
+                prevKey = if (page == 0) null else page - 1,
+                nextKey = if (result.size < PAGE_SIZE) null else page + 1
             )
         } catch (e: Exception) {
             LoadResult.Error(e)
@@ -34,32 +32,13 @@ class DiaryPersonalPagingSource (
     }
 
     override fun getRefreshKey(state: PagingState<Int, DiarySchedule>): Int? {
-        // Refresh 키 정의 (예시에서는 null 반환하여 새로고침 키 없음을 의미)
         return null
     }
 
-    private fun List<DiarySchedule>.toListItems(): List<DiarySchedule> {
-        val result = mutableListOf<DiarySchedule>()
-        var groupHeaderDate: Long = 0
+    // UNIX 타임스탬프를 '년-월-일' 형식의 문자열로 변환하는 함수
 
-        this.forEach { event ->
-            if (groupHeaderDate * 1000 != event.startDate * 1000) {
-
-                val headerSchedule =
-                    event.copy(startDate = event.startDate * 1000, isHeader = true)
-                result.add(headerSchedule)
-
-                groupHeaderDate = event.startDate
-            }
-            result.add(event)
-        }
-
-        return result
-    }
 
     companion object {
-        const val PAGE_SIZE = 10
+        const val PAGE_SIZE = 5
     }
 }
-
-

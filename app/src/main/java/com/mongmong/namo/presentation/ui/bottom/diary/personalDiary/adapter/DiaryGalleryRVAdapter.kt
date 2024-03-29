@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.bottom.diary.mainDiary.adapter
+package com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.adapter
 
 import android.content.Context
 import android.view.LayoutInflater

@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.bottom.diary.groupDiary
+package com.mongmong.namo.presentation.ui.bottom.diary.moimDiary
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -12,11 +12,10 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.mongmong.namo.data.local.entity.diary.DiaryGroupSchedule
-import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.databinding.DialogGroupPayBinding
 import com.mongmong.namo.domain.model.GroupUser
-import com.mongmong.namo.presentation.ui.bottom.diary.groupDiary.adapter.GroupPayMemberRVAdapter
+import com.mongmong.namo.domain.model.MoimActivity
+import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.adapter.GroupPayMemberRVAdapter
 import java.lang.Boolean.TRUE
 import java.text.NumberFormat
 import java.util.*
@@ -25,7 +24,7 @@ import kotlin.collections.ArrayList
 
 class GroupPayDialog(
     private var placeMember: List<GroupUser>,
-    private var placeSchedule: DiaryGroupSchedule,
+    private var placeSchedule: MoimActivity,
     private val pay: (Long) -> Unit,
     private val checkedMember: (List<Long>) -> Unit
 ) : DialogFragment(), View.OnClickListener {  // 그룹 다이어리 장소별 정산 다이얼로그

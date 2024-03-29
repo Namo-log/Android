@@ -1,5 +1,6 @@
 package com.mongmong.namo.presentation.di
 
+import android.content.Context
 import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
@@ -11,6 +12,7 @@ import com.mongmong.namo.data.remote.schedule.ScheduleRetrofitInterface
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
 @Module
@@ -26,5 +28,9 @@ object DataSourceModule {
     @Provides
     fun provideLocalDataSource(diaryDao: DiaryDao): LocalDiaryDataSource = LocalDiaryDataSource(diaryDao)
     @Provides
-    fun provideRemoteDataSource(apiService: DiaryApiService): RemoteDiaryDataSource = RemoteDiaryDataSource(apiService)
+    fun provideRemoteDataSource(
+        apiService: DiaryApiService,
+        @ApplicationContext context: Context
+    )
+    : RemoteDiaryDataSource = RemoteDiaryDataSource(apiService, context)
 }

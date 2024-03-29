@@ -1,11 +1,9 @@
 package com.mongmong.namo.data.remote.diary
 
 import android.annotation.SuppressLint
-import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.domain.model.GetGroupDiaryResponse
 import com.mongmong.namo.presentation.config.ApplicationClass
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -196,8 +194,8 @@ class DiaryService {
         imgs: List<MultipartBody.Part>?,
         callback: DiaryBasicView
     ) {
-        try {
-            val response = diaryRetrofitInterface.addGroupDiary(
+        /*try {
+            val response = diaryRetrofitInterface.addMoimDiary(
                 moimScheduleIdx,
                 name,
                 money,
@@ -216,7 +214,7 @@ class DiaryService {
             }
         } catch (e: Exception) {
             callback.onFailure(e.message ?: "Unknown error occurred")
-        }
+        }*/
     }
 
 
@@ -224,15 +222,15 @@ class DiaryService {
     fun getGroupDiary(
         moimScheduleIdx: Long
     ) {
-        diaryRetrofitInterface.getGroupDiary(moimScheduleIdx)
-            .enqueue(object : Callback<GetGroupDiaryResponse> {
+        /*diaryRetrofitInterface.get(moimScheduleIdx)
+            .enqueue(object : Callback<GetMoimDiaryResponse> {
 
                 @SuppressLint("SuspiciousIndentation")
                 override fun onResponse(
-                    call: Call<GetGroupDiaryResponse>,
-                    response: Response<GetGroupDiaryResponse>
+                    call: Call<GetMoimDiaryResponse>,
+                    response: Response<GetMoimDiaryResponse>
                 ) {
-                    val resp: GetGroupDiaryResponse? = response.body()
+                    val resp: GetMoimDiaryResponse? = response.body()
                     when (response.code()) {
                         200 -> if (resp != null) {
                             getGroupDiaryView.onGetGroupDiarySuccess(resp)
@@ -244,12 +242,12 @@ class DiaryService {
                 }
 
                 override fun onFailure(
-                    call: Call<GetGroupDiaryResponse>,
+                    call: Call<GetMoimDiaryResponse>,
                     t: Throwable
                 ) {
                     getGroupDiaryView.onGetGroupDiaryFailure(t.message.toString())
                 }
-            })
+            })*/
     }
 
 
@@ -262,7 +260,7 @@ class DiaryService {
         imgs: List<MultipartBody.Part>?,
         callback: DiaryBasicView
     ) {
-        diaryRetrofitInterface.patchGroupDiaryPlace(moimScheduleIdx, name, money, members, imgs)
+        /*diaryRetrofitInterface.editMoimDiary(moimScheduleIdx, name, money, members, imgs)
             .enqueue(object : Callback<DiaryResponse> {
 
                 @SuppressLint("SuspiciousIndentation")
@@ -287,15 +285,15 @@ class DiaryService {
                 ) {
                     callback.onFailure(t.message.toString())
                 }
-            })
+            })*/
     }
 
     fun deleteGroupDiary(
         moimScheduleIdx: Long,
         callback: DiaryBasicView
     ) {
-        try {
-            val response = diaryRetrofitInterface.deleteGroupDiaryPlace(moimScheduleIdx).execute()
+        /*try {
+            val response = diaryRetrofitInterface.deleteMoimDiaryAction(moimScheduleIdx).execute()
 
             if (response.isSuccessful) {
                 val resp = response.body()
@@ -308,7 +306,7 @@ class DiaryService {
             }
         } catch (e: Exception) {
             callback.onFailure(e.message ?: "Unknown error occurred")
-        }
+        }*/
     }
 
     suspend fun getGroupMonthDiary(
