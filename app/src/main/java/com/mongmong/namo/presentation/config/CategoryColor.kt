@@ -2,7 +2,7 @@ package com.mongmong.namo.presentation.config
 
 enum class BelongType { BELONG1, BELONG2 }
 
-enum class CategoryColor(val belongType: BelongType, val paletteId: Int, val hexCode: String) {
+enum class CategoryColor(val belongType: BelongType, val paletteId: Int, val hexColor: String) {
     /** 기본 색상 */
     SCHEDULE(BelongType.BELONG1, 1, "#DE8989"),
     YELLOW(BelongType.BELONG1, 2, "#E1B000"),
@@ -18,5 +18,11 @@ enum class CategoryColor(val belongType: BelongType, val paletteId: Int, val hex
     DEFAULT_PALETTE_COLOR7(BelongType.BELONG2, 11, "#187498"),
     DEFAULT_PALETTE_COLOR8(BelongType.BELONG2, 12, "#8571BF"),
     DEFAULT_PALETTE_COLOR9(BelongType.BELONG2, 13, "#E36488"),
-    DEFAULT_PALETTE_COLOR10(BelongType.BELONG2, 14, "#858585"),
+    DEFAULT_PALETTE_COLOR10(BelongType.BELONG2, 14, "#858585");
+
+    companion object {
+        fun convertPaletteIdToHexColor(paletteId: Int): String { // hexColor를 반환
+            return CategoryColor.values().find { it.paletteId == paletteId }?.hexColor ?: ""
+        }
+    }
 }
