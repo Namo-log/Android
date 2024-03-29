@@ -1,12 +1,15 @@
 package com.mongmong.namo.presentation.di
 
 import com.mongmong.namo.data.remote.diary.DiaryApiService
+import com.mongmong.namo.data.remote.group.GroupApiService
 import com.mongmong.namo.data.remote.schedule.ScheduleRetrofitInterface
+import com.mongmong.namo.domain.repositories.GroupRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
+import retrofit2.create
 import javax.inject.Singleton
 
 @Module
@@ -21,4 +24,8 @@ object ServiceModule {
     @Provides
     fun provideDiaryService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : DiaryApiService =
         retrofit.create(DiaryApiService::class.java)
+
+    @Provides
+    fun provideGroupService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit): GroupApiService =
+        retrofit.create(GroupApiService::class.java)
 }

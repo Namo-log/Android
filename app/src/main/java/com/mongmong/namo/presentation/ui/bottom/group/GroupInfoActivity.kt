@@ -6,33 +6,28 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.KeyEvent
 import android.view.inputmethod.InputMethodManager
-import android.widget.GridLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.config.BaseResponse
-import com.mongmong.namo.domain.model.AddMoimResponse
-import com.mongmong.namo.data.remote.moim.DeleteMoimMemberView
-import com.mongmong.namo.domain.model.Moim
-import com.mongmong.namo.data.remote.moim.MoimService
+import com.mongmong.namo.data.remote.group.DeleteMoimMemberView
+import com.mongmong.namo.domain.model.Group
+import com.mongmong.namo.data.remote.group.MoimService
 import com.mongmong.namo.domain.model.ParticipateMoimResponse
 import com.mongmong.namo.domain.model.UpdateMoimNameBody
 import com.mongmong.namo.databinding.ActivityGroupInfoBinding
 import com.mongmong.namo.presentation.ui.bottom.group.adapter.GroupInfoMemberRVAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
-import java.security.acl.Group
 
 class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface, DeleteMoimMemberView {
 
     private lateinit var binding : ActivityGroupInfoBinding
-    private lateinit var group : Moim
+    private lateinit var group : Group
 
     private lateinit var groupInfoMemberRVAdapter : GroupInfoMemberRVAdapter
 
@@ -48,7 +43,7 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface, DeleteMoi
         Log.d("TEST_COLOR", R.color.palette2.toString())
         Log.d("TEST_COLOR", R.color.palette3.toString())
 
-        group = intent.getSerializableExtra("group") as Moim
+        group = intent.getSerializableExtra("group") as Group
         setAdapter()
         clickListener()
 

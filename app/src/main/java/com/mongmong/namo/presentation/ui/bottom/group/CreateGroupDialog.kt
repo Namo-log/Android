@@ -26,8 +26,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.domain.model.AddMoimResponse
-import com.mongmong.namo.data.remote.moim.AddMoimView
-import com.mongmong.namo.data.remote.moim.MoimService
+import com.mongmong.namo.data.remote.group.AddMoimView
+import com.mongmong.namo.data.remote.group.MoimService
 import com.mongmong.namo.databinding.DialogGroupCreateBinding
 import com.mongmong.namo.presentation.utils.NetworkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView

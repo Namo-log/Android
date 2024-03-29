@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import com.mongmong.namo.data.remote.diary.NetworkChecker
+import com.mongmong.namo.data.remote.NetworkChecker
 
 class NetworkCheckerImpl(private val context: Context) : NetworkChecker {
     override fun isOnline(): Boolean {

@@ -1,7 +1,7 @@
 package com.mongmong.namo.presentation.di
 
 import android.content.Context
-import com.mongmong.namo.data.remote.diary.NetworkChecker
+import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.presentation.config.XAccessTokenInterceptor
 import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
 import com.mongmong.namo.presentation.utils.Utils.BASE_URL

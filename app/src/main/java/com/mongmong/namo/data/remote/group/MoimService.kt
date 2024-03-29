@@ -1,4 +1,4 @@
-package com.mongmong.namo.data.remote.moim
+package com.mongmong.namo.data.remote.group
 
 import android.util.Log
 import com.mongmong.namo.presentation.config.ApplicationClass
@@ -7,7 +7,7 @@ import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
 import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import com.mongmong.namo.domain.model.AddMoimResponse
 import com.mongmong.namo.domain.model.AddMoimScheduleResponse
-import com.mongmong.namo.domain.model.GetMoimListResponse
+import com.mongmong.namo.domain.model.GetGroupsResponse
 import com.mongmong.namo.domain.model.GetMoimScheduleResponse
 import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
 import com.mongmong.namo.domain.model.ParticipateMoimResponse
@@ -21,8 +21,8 @@ import retrofit2.Response
 
 
 class MoimService {
-    private val moimRetrofitInterface : MoimRetrofitInterface =
-        ApplicationClass.sRetrofit.create(MoimRetrofitInterface::class.java)
+    private val moimRetrofitInterface : GroupApiService =
+        ApplicationClass.sRetrofit.create(GroupApiService::class.java)
 
     private lateinit var addMoimView : AddMoimView
     private lateinit var getMoimListView : GetMoimListView
@@ -88,14 +88,14 @@ class MoimService {
     }
 
     fun getMoimList() {
-        moimRetrofitInterface.getMoimList()
-            .enqueue(object : Callback<GetMoimListResponse> {
+        /*moimRetrofitInterface.getGroups()
+            .enqueue(object : Callback<GetGroupsResponse> {
                 override fun onResponse(
-                    call: Call<GetMoimListResponse>,
-                    response: Response<GetMoimListResponse>
+                    call: Call<GetGroupsResponse>,
+                    response: Response<GetGroupsResponse>
                 ) {
                     when(response.code()) {
-                        200 -> getMoimListView.onGetMoimListSuccess(response.body() as GetMoimListResponse)
+                        200 -> getMoimListView.onGetMoimListSuccess(response.body() as GetGroupsResponse)
                         else -> {
                             Log.d("GetMoimList", "Success but error")
                             getMoimListView.onGetMoimListFailure("통신 중 200 외 기타 코드")
@@ -103,12 +103,12 @@ class MoimService {
                     }
                 }
 
-                override fun onFailure(call: Call<GetMoimListResponse>, t: Throwable) {
+                override fun onFailure(call: Call<GetGroupsResponse>, t: Throwable) {
                     Log.d("GetMoimList", "onFailure")
                     getMoimListView.onGetMoimListFailure(t.message ?: "통신 오류")
                 }
 
-            })
+            })*/
     }
 
     fun getMoimSchedule(

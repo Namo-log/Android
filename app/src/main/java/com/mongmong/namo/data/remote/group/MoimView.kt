@@ -1,8 +1,8 @@
-package com.mongmong.namo.data.remote.moim
+package com.mongmong.namo.data.remote.group
 
 import com.mongmong.namo.domain.model.AddMoimResponse
 import com.mongmong.namo.domain.model.AddMoimScheduleResponse
-import com.mongmong.namo.domain.model.GetMoimListResponse
+import com.mongmong.namo.domain.model.GetGroupsResponse
 import com.mongmong.namo.domain.model.GetMoimScheduleResponse
 import com.mongmong.namo.domain.model.ParticipateMoimResponse
 import com.mongmong.namo.presentation.config.BaseResponse
@@ -13,7 +13,7 @@ interface AddMoimView {
 }
 
 interface GetMoimListView {
-    fun onGetMoimListSuccess(response: GetMoimListResponse)
+    fun onGetMoimListSuccess(response: GetGroupsResponse)
     fun onGetMoimListFailure(message : String)
 }
 

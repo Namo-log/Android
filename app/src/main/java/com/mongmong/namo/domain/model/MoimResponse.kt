@@ -12,11 +12,11 @@ data class AddMoimResult (
     @SerializedName("moimId") val moimId : Long
 )
 
-data class GetMoimListResponse (
-    @SerializedName("result") val result : List<Moim>
+data class GetGroupsResponse (
+    @SerializedName("result") val result : List<Group>
 ) : BaseResponse()
 
-data class Moim(
+data class Group(
     @SerializedName("groupId") var groupId : Long,
     @SerializedName("groupName") var groupName : String,
     @SerializedName("groupImgUrl") var groupImgUrl : String,

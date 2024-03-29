@@ -16,7 +16,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
-import com.mongmong.namo.domain.model.Moim
+import com.mongmong.namo.domain.model.Group
 import com.mongmong.namo.databinding.FragmentGroupCalendarBinding
 import com.mongmong.namo.presentation.ui.bottom.group.GroupInfoActivity
 import com.mongmong.namo.presentation.ui.bottom.group.calendar.GroupCalendarAdapter.Companion.GROUP_ID
@@ -29,7 +29,7 @@ class GroupCalendarFragment : Fragment() {
     private lateinit var binding: FragmentGroupCalendarBinding
     private val args : GroupCalendarFragmentArgs by navArgs()
 
-    private lateinit var group : Moim
+    private lateinit var group : Group
     private lateinit var monthList : List<DateTime>
 
     private var millis = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis

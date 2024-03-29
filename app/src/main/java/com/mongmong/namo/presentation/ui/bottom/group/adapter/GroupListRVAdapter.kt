@@ -7,15 +7,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mongmong.namo.R
-import com.mongmong.namo.domain.model.Moim
+import com.mongmong.namo.domain.model.Group
 import com.mongmong.namo.databinding.ItemGroupListBinding
 
-class GroupListRVAdapter(private val moimList: List<Moim>):  RecyclerView.Adapter<GroupListRVAdapter.ViewHolder>() {
+class GroupListRVAdapter(private var groups: List<Group>):  RecyclerView.Adapter<GroupListRVAdapter.ViewHolder>() {
 
     private lateinit var context : Context
 
     interface ItemClickListener{
-        fun onItemClick(moim : Moim)
+        fun onItemClick(moim : Group)
     }
 
     private lateinit var mItemClickListener : ItemClickListener
@@ -32,17 +32,22 @@ class GroupListRVAdapter(private val moimList: List<Moim>):  RecyclerView.Adapte
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(moimList[position])
+        holder.bind(groups[position])
 
         holder.itemView.setOnClickListener {
-            mItemClickListener.onItemClick(moimList[position])
+            mItemClickListener.onItemClick(groups[position])
         }
     }
 
-    override fun getItemCount(): Int = moimList.size
+    override fun getItemCount(): Int = groups.size
+
+    fun updateGroups(newGroups: List<Group>) {
+        this.groups = newGroups
+        notifyDataSetChanged() // 데이터가 변경됨을 알리고 RecyclerView를 갱신
+    }
 
     inner class ViewHolder(val binding: ItemGroupListBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(moim: Moim) {
+        fun bind(moim: Group) {
             binding.itemGroupTitleTv.text = moim.groupName
 
             Glide.with(context)

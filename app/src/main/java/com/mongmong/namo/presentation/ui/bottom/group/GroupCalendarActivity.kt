@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.mongmong.namo.data.local.NamoDatabase
-import com.mongmong.namo.domain.model.Moim
+import com.mongmong.namo.domain.model.Group
 import com.mongmong.namo.databinding.ActivityGroupCalendarBinding
 import com.mongmong.namo.presentation.ui.bottom.group.calendar.GroupCalendarAdapter
 import com.mongmong.namo.presentation.ui.bottom.group.calendar.GroupCalendarAdapter.Companion.GROUP_ID
@@ -19,7 +19,7 @@ class GroupCalendarActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityGroupCalendarBinding
     private lateinit var db : NamoDatabase
-    private lateinit var group : Moim
+    private lateinit var group : Group
     private lateinit var calendarAdapter : GroupCalendarAdapter
 
     private var millis = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
@@ -52,7 +52,7 @@ class GroupCalendarActivity : AppCompatActivity() {
         db = NamoDatabase.getInstance(this)
         setContentView(binding.root)
 
-        group = intent.getSerializableExtra("moim") as Moim
+        group = intent.getSerializableExtra("moim") as Group
         GROUP_ID = group.groupId
         setGroupInfo()
 
@@ -102,7 +102,7 @@ class GroupCalendarActivity : AppCompatActivity() {
         binding.groupCalendarGroupTitleTv.text = group.groupName
     }
 
-    fun getGroup() : Moim {
+    fun getGroup() : Group {
         return group
     }
 

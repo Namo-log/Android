@@ -7,9 +7,9 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.mongmong.namo.data.remote.moim.MoimService
+import com.mongmong.namo.data.remote.group.MoimService
 import com.mongmong.namo.domain.model.ParticipateMoimResponse
-import com.mongmong.namo.data.remote.moim.ParticipateMoimView
+import com.mongmong.namo.data.remote.group.ParticipateMoimView
 import com.mongmong.namo.databinding.DialogGroupCodeBinding
 import org.json.JSONObject
 

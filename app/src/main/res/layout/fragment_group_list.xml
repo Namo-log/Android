@@ -42,18 +42,6 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/group_list_network_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:text="@string/network_group_msg"
-            android:textAlignment="center"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/group_titlebar"/>
-
-        <TextView
             android:id="@+id/group_list_empty_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

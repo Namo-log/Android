@@ -41,9 +41,9 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.data.remote.moim.EditMoimScheduleView
+import com.mongmong.namo.data.remote.group.EditMoimScheduleView
 import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
-import com.mongmong.namo.data.remote.moim.MoimService
+import com.mongmong.namo.data.remote.group.MoimService
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
 import com.mongmong.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.mongmong.namo.presentation.ui.bottom.home.notify.PushNotificationReceiver

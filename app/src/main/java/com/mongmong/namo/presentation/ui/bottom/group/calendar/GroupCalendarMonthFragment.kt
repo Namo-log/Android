@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.GetMoimScheduleResponse
-import com.mongmong.namo.data.remote.moim.GetMoimScheduleView
+import com.mongmong.namo.data.remote.group.GetMoimScheduleView
 import com.mongmong.namo.domain.model.MoimSchedule
-import com.mongmong.namo.data.remote.moim.MoimService
+import com.mongmong.namo.data.remote.group.MoimService
 import com.mongmong.namo.databinding.FragmentGroupCalendarMonthBinding
 import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.MoimDiaryActivity
 import com.mongmong.namo.presentation.ui.bottom.group.GroupCalendarActivity

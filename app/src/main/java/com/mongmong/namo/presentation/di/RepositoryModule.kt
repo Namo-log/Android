@@ -4,12 +4,15 @@ import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
+import com.mongmong.namo.data.datasource.group.GroupDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
+import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.data.remote.diary.DiaryApiService
-import com.mongmong.namo.data.remote.diary.NetworkChecker
 import com.mongmong.namo.data.repositoriyImpl.DiaryRepositoryImpl
+import com.mongmong.namo.data.repositoriyImpl.GroupRepositoryImpl
 import com.mongmong.namo.data.repositoriyImpl.ScheduleRepositoryImpl
 import com.mongmong.namo.domain.repositories.DiaryRepository
+import com.mongmong.namo.domain.repositories.GroupRepository
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import dagger.Module
 import dagger.Provides
@@ -41,5 +44,12 @@ object RepositoryModule {
         diaryDao,
         diaryService,
         networkChecker
+    )
+
+    @Provides
+    fun provideGroupRepository(
+        groupDataSource: GroupDataSource
+    ): GroupRepository = GroupRepositoryImpl(
+        groupDataSource
     )
 }

@@ -1,11 +1,11 @@
-package com.mongmong.namo.data.remote.moim
+package com.mongmong.namo.data.remote.group
 
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
 import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import com.mongmong.namo.domain.model.AddMoimResponse
 import com.mongmong.namo.domain.model.AddMoimScheduleResponse
-import com.mongmong.namo.domain.model.GetMoimListResponse
+import com.mongmong.namo.domain.model.GetGroupsResponse
 import com.mongmong.namo.domain.model.GetMoimScheduleResponse
 import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
 import com.mongmong.namo.domain.model.ParticipateMoimResponse
@@ -23,7 +23,7 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
 
-interface MoimRetrofitInterface {
+interface GroupApiService {
 
     // 모임 추가
     @Multipart
@@ -33,9 +33,9 @@ interface MoimRetrofitInterface {
         @Part("groupName") groupName : RequestBody
     ) : Call<AddMoimResponse>
 
-    // 모임 리스트 조회
+    // 그룹 리스트 조회
     @GET("moims")
-    fun getMoimList () : Call<GetMoimListResponse>
+    suspend fun getGroups () : GetGroupsResponse
 
 
     // 월별 일정 조회
