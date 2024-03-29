@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 @HiltAndroidApp
 class ApplicationClass: Application() {
     // 테스트 서버 주소
-    val API_URL = "https://www.namoserver.shop"
+    val API_URL = BuildConfig.BASE_URL
 
     // 실 서버 주소
 //    val API_URL = " "
