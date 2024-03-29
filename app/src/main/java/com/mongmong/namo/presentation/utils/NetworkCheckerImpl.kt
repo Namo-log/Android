@@ -13,8 +13,8 @@ class NetworkCheckerImpl(private val context: Context) : NetworkChecker {
         val actNetwork : NetworkCapabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
 
         return when {
-//                actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-            actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true // 데이터
+            actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true // 와이파이
             else -> false
         }
     }
