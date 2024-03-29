@@ -1,11 +1,13 @@
 package com.mongmong.namo.presentation.ui.bottom.diary.moimDiary
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -34,6 +36,7 @@ import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.adapter.MoimMemb
 import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.adapter.MoimActivityRVAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.PermissionChecker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.text.NumberFormat
@@ -274,7 +277,7 @@ class MoimDiaryActivity : AppCompatActivity(),
                     this@MoimDiaryActivity.imgList = imgs as ArrayList<String>?
                     this@MoimDiaryActivity.positionForGallery = position
 
-                    getPermission()
+                    getGallery()
                 },
                 placeClickListener = { text, position ->
                     placeSchedule[position].place = text
@@ -316,41 +319,27 @@ class MoimDiaryActivity : AppCompatActivity(),
         }
     }
 
-    @SuppressLint("IntentReset")
-    private fun getPermission() { // 갤러리 권한 여부 확인, 권한이 있을 때만 이미지 가져오기
-
-        val writePermission = ContextCompat.checkSelfPermission(
-            applicationContext,
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-        val readPermission = ContextCompat.checkSelfPermission(
-            applicationContext,
-            android.Manifest.permission.READ_EXTERNAL_STORAGE
-        )
-
-        if (writePermission == PackageManager.PERMISSION_DENIED || readPermission == PackageManager.PERMISSION_DENIED) {
-            // 권한 없어서 요청
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE
-                ),
-                200
-            )
-        } else {
-            // 권한 있음
-            val intent = Intent(Intent.ACTION_PICK).apply {
+    private fun getGallery() {
+        if (PermissionChecker.hasImagePermission(this)) {
+            val galleryIntent = Intent(Intent.ACTION_PICK).apply {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+                type = "image/*"
+                data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
             }
-
-            intent.type = "image/*"
-            intent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
-
-            getImage.launch(intent)
+            getImage.launch(galleryIntent)
+        } else {
+            val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+            } else {
+                arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                )
+            }
+            ActivityCompat.requestPermissions(this, permissions, 200)
         }
     }
 

@@ -60,11 +60,12 @@
             android:id="@+id/date_circle_iv"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:layout_marginStart="30dp"
             android:backgroundTint="@color/white"
             app:cardCornerRadius="80dp"
-            app:cardElevation="10dp"
+            app:cardElevation="5dp"
             app:layout_constraintBottom_toBottomOf="@+id/diary_place_tv"
-            app:layout_constraintStart_toStartOf="@+id/linear_corner"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/diary_date_tv" />
 
         <TextView
