@@ -28,7 +28,7 @@
                 android:layout_height="80dp"
                 android:backgroundTint="@color/white"
                 app:cardCornerRadius="80dp"
-                app:cardElevation="10dp"
+                app:cardElevation="5dp"
                 app:layout_constraintBottom_toBottomOf="@+id/group_add_place_tv"
                 app:layout_constraintStart_toStartOf="@id/group_add_people_tv"
                 app:layout_constraintTop_toTopOf="@+id/group_add_date_tv" />

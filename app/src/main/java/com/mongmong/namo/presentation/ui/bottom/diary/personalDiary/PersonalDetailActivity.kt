@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
@@ -30,6 +31,7 @@ import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.snackbar.Snackbar
 import com.mongmong.namo.presentation.utils.ImageConverter.imageToFile
+import com.mongmong.namo.presentation.utils.PermissionChecker
 import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -191,29 +193,27 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
     }
 
     /** 갤러리에서 이미지 가져오기 **/
-    @SuppressLint("IntentReset")
     private fun getGallery() {
-        if (hasImagePermission(this)) {  // 권한 있으면 갤러리 불러오기
+        if (hasImagePermission(this)) {
             val galleryIntent = Intent(Intent.ACTION_PICK).apply {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+                type = "image/*"
+                data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
             }
-
-            galleryIntent.type = "image/*"
-            galleryIntent.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            galleryIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)   //다중 이미지 가져오기
-
             getImage.launch(galleryIntent)
-        } else {  // 없으면 권한 받기
-            ActivityCompat.requestPermissions(
-                this,
+        } else {
+            val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+            } else {
                 arrayOf(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE,
-                ),
-                200
-            )
+                )
+            }
+            ActivityCompat.requestPermissions(this, permissions, 200)
         }
     }
     //
