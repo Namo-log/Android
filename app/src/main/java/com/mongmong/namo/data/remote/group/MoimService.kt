@@ -5,9 +5,8 @@ import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
 import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
-import com.mongmong.namo.domain.model.AddMoimResponse
+import com.mongmong.namo.domain.model.AddGroupResponse
 import com.mongmong.namo.domain.model.AddMoimScheduleResponse
-import com.mongmong.namo.domain.model.GetGroupsResponse
 import com.mongmong.namo.domain.model.GetMoimScheduleResponse
 import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
 import com.mongmong.namo.domain.model.ParticipateMoimResponse
@@ -64,14 +63,14 @@ class MoimService {
         img: MultipartBody.Part?,
         groupName: RequestBody
     ) {
-        moimRetrofitInterface.addMoim(img, groupName)
-            .enqueue(object : Callback<AddMoimResponse> {
+        /*moimRetrofitInterface.addGroup(img, groupName)
+            .enqueue(object : Callback<AddGroupResponse> {
                 override fun onResponse(
-                    call: Call<AddMoimResponse>,
-                    response: Response<AddMoimResponse>
+                    call: Call<AddGroupResponse>,
+                    response: Response<AddGroupResponse>
                 ) {
                     when (response.code()) {
-                        200 -> addMoimView.onAddMoimSuccess(response.body() as AddMoimResponse)
+                        200 -> addMoimView.onAddMoimSuccess(response.body() as AddGroupResponse)
                         else -> {
                             Log.d("AddMoim", "Success but error")
                             addMoimView.onAddMoimFailure("통신 중 200 외 기타 코드")
@@ -79,12 +78,12 @@ class MoimService {
                     }
                 }
 
-                override fun onFailure(call: Call<AddMoimResponse>, t: Throwable) {
+                override fun onFailure(call: Call<AddGroupResponse>, t: Throwable) {
                     Log.d("AddMoim", "onFailure")
                     addMoimView.onAddMoimFailure(t.message ?: "통신 오류")
                 }
 
-            })
+            })*/
     }
 
     fun getMoimList() {

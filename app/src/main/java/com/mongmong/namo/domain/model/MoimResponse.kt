@@ -4,11 +4,11 @@ import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class AddMoimResponse (
-    @SerializedName("result") val result : AddMoimResult
+data class AddGroupResponse (
+    @SerializedName("result") val result : AddGroupResult
 ) : BaseResponse()
 
-data class AddMoimResult (
+data class AddGroupResult (
     @SerializedName("moimId") val moimId : Long
 )
 

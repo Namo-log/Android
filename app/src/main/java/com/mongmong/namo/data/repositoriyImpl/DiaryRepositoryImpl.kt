@@ -14,8 +14,6 @@ import com.mongmong.namo.data.remote.diary.DiaryApiService
 import com.mongmong.namo.domain.model.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.presentation.config.RoomState
-import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
-import java.io.File
 import javax.inject.Inject
 
 class DiaryRepositoryImpl @Inject constructor(
@@ -44,7 +42,7 @@ class DiaryRepositoryImpl @Inject constructor(
     /** 개인 기록 추가 **/
     override suspend fun addDiary(
         diary: Diary,
-        images: List<File>?
+        images: List<String>?
     ) {
         Log.d("DiaryRepositoryImpl addDiary", "$diary")
         localDiaryDataSource.addDiary(diary)
@@ -66,7 +64,7 @@ class DiaryRepositoryImpl @Inject constructor(
     /** 개인 기록 수정 **/
     override suspend fun editDiary(
         diary: Diary,
-        images: List<File>?
+        images: List<String>?
     ) {
         Log.d("DiaryRepositoryImpl editDiary", "$diary")
         localDiaryDataSource.editDiary(diary)

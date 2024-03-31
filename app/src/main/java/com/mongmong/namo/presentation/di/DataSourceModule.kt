@@ -38,6 +38,7 @@ object DataSourceModule {
 
     @Provides
     fun provideGroupDataSource(
-        apiService: GroupApiService
-    ): GroupDataSource = GroupDataSource(apiService)
+        apiService: GroupApiService,
+        @ApplicationContext context: Context
+    ): GroupDataSource = GroupDataSource(apiService, context)
 }

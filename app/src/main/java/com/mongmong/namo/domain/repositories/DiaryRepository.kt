@@ -4,7 +4,6 @@ import androidx.paging.PagingSource
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.model.MoimDiaryResult
-import java.io.File
 
 
 interface DiaryRepository {
@@ -12,12 +11,12 @@ interface DiaryRepository {
 
     suspend fun addDiary(
         diary: Diary,
-        images: List<File>?
+        images: List<String>?
     )
 
     suspend fun editDiary(
         diary: Diary,
-        images: List<File>?
+        images: List<String>?
     )
 
     suspend fun deleteDiary(

@@ -57,7 +57,7 @@
     <!-- Group -->
     <fragment
         android:id="@+id/groupListFragment"
-        android:name="com.mongmong.namo.presentation.ui.bottom.group.GroupListFragment"
+        android:name="com.mongmong.namo.presentation.ui.bottom.group.GroupFragment"
         android:label="GroupListFragment"
         tools:layout="@layout/fragment_group_list">
         <action

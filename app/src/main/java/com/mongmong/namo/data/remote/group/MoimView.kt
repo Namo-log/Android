@@ -1,6 +1,6 @@
 package com.mongmong.namo.data.remote.group
 
-import com.mongmong.namo.domain.model.AddMoimResponse
+import com.mongmong.namo.domain.model.AddGroupResponse
 import com.mongmong.namo.domain.model.AddMoimScheduleResponse
 import com.mongmong.namo.domain.model.GetGroupsResponse
 import com.mongmong.namo.domain.model.GetMoimScheduleResponse
@@ -8,7 +8,7 @@ import com.mongmong.namo.domain.model.ParticipateMoimResponse
 import com.mongmong.namo.presentation.config.BaseResponse
 
 interface AddMoimView {
-    fun onAddMoimSuccess(response: AddMoimResponse)
+    fun onAddMoimSuccess(response: AddGroupResponse)
     fun onAddMoimFailure(message : String)
 }
 

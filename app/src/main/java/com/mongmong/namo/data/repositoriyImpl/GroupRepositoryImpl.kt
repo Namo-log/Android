@@ -1,6 +1,8 @@
 package com.mongmong.namo.data.repositoriyImpl
 
+import android.net.Uri
 import com.mongmong.namo.data.datasource.group.GroupDataSource
+import com.mongmong.namo.domain.model.AddGroupResponse
 import com.mongmong.namo.domain.model.Group
 import com.mongmong.namo.domain.repositories.GroupRepository
 import javax.inject.Inject
@@ -10,5 +12,9 @@ class GroupRepositoryImpl @Inject constructor(
 ): GroupRepository {
     override suspend fun getGroups(): List<Group> {
         return dataSource.getGroups()
+    }
+
+    override suspend fun addGroups(img: Uri, name: String): AddGroupResponse {
+        return dataSource.addGroup(img, name)
     }
 }

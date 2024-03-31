@@ -16,7 +16,7 @@ import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class GroupListFragment : Fragment() {
+class GroupFragment : Fragment() {
     lateinit var binding: FragmentGroupListBinding
     private val viewModel : GroupViewModel by viewModels()
     private val groupAdapter = GroupListRVAdapter(emptyList())

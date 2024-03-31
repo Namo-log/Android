@@ -9,15 +9,12 @@ import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.GetMoimDiaryResponse
 import com.mongmong.namo.domain.model.GetScheduleIdx
 import com.mongmong.namo.domain.model.MoimDiaryResult
-import com.mongmong.namo.presentation.utils.ImageConverter
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.mongmong.namo.presentation.utils.RequestConverter.convertTextRequest
+import com.mongmong.namo.presentation.utils.RequestConverter.imageToMultipart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
 import javax.inject.Inject
 
 class RemoteDiaryDataSource @Inject constructor(
@@ -26,16 +23,17 @@ class RemoteDiaryDataSource @Inject constructor(
 ) {
     suspend fun addDiaryToServer(
         diary: Diary,
-        images: List<File>?,
+        images: List<String>?,
     ): DiaryAddResponse {
         var diaryResponse = DiaryAddResponse(result = GetScheduleIdx(-1))
-        val contentRequestBody = (diary.content ?: "").toRequestBody("text/plain".toMediaTypeOrNull())
-        val scheduleIdRequestBody = diary.scheduleServerId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
 
         withContext(Dispatchers.IO) {
             runCatching {
-                val image = imageToMultipart(images)
-                apiService.addDiary(scheduleIdRequestBody,contentRequestBody, image)
+                apiService.addDiary(
+                    scheduleId = diary.scheduleServerId.toString().convertTextRequest(),
+                    content = (diary.content ?: "").convertTextRequest(),
+                    imageToMultipart(images, context)
+                )
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource addDiaryToServer Success", "$it")
                 diaryResponse = it
@@ -49,15 +47,17 @@ class RemoteDiaryDataSource @Inject constructor(
 
     suspend fun editDiaryToServer(
         diary: Diary,
-        images: List<File>?
-    ):  DiaryResponse {
+        images: List<String>?
+    ): DiaryResponse {
         var diaryResponse = DiaryResponse("")
-        val contentRequestBody = (diary.content ?: "").toRequestBody("text/plain".toMediaTypeOrNull())
-        val scheduleIdRequestBody = diary.scheduleServerId.toString().toRequestBody("text/plain".toMediaTypeOrNull())
 
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.editDiary(scheduleIdRequestBody, contentRequestBody, imageToMultipart(images))
+                apiService.editDiary(
+                    scheduleId =  diary.scheduleServerId.toString().convertTextRequest(),
+                    content = (diary.content ?: "").convertTextRequest(),
+                    imgs = imageToMultipart(images, context)
+                )
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource editDiaryToServer Success", "$it")
                 diaryResponse = it
@@ -86,13 +86,15 @@ class RemoteDiaryDataSource @Inject constructor(
 
     // 모임 기록 조회
     suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult {
-        var diaryResponse = GetMoimDiaryResponse(result = MoimDiaryResult(
-            name = "",
-            startDate = 0L,
-            locationName = "",
-            users = emptyList(),
-            moimActivities = emptyList()
-        ))
+        var diaryResponse = GetMoimDiaryResponse(
+            result = MoimDiaryResult(
+                name = "",
+                startDate = 0L,
+                locationName = "",
+                users = emptyList(),
+                moimActivities = emptyList()
+            )
+        )
         withContext(Dispatchers.IO) {
             runCatching {
                 apiService.getMoimDiary(scheduleId)
@@ -130,20 +132,14 @@ class RemoteDiaryDataSource @Inject constructor(
         members: List<Long>?,
         images: List<String>?
     ) {
-        val placeRequestBody = place.toRequestBody("text/plain".toMediaTypeOrNull())
-        val moneyRequestBody = money.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-
-        val member = members?.joinToString(",") ?: ""
-        val membersRequestBody = member.toRequestBody("text/plain".toMediaTypeOrNull())
-
         withContext(Dispatchers.IO) {
             runCatching {
                 apiService.addMoimDiary(
-                    moimScheduleId,
-                    placeRequestBody,
-                    moneyRequestBody,
-                    membersRequestBody,
-                    imageToMultipart(ImageConverter.imageToFile(images, context))
+                    scheduleId = moimScheduleId,
+                    place = place.convertTextRequest(),
+                    pay = money.toString().convertTextRequest(),
+                    member = (members?.joinToString(",") ?: "").convertTextRequest(),
+                    imgs = imageToMultipart(images, context)
                 )
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource addMoimActivity Success", "$it")
@@ -160,20 +156,15 @@ class RemoteDiaryDataSource @Inject constructor(
         members: List<Long>?,
         images: List<String>?
     ) {
-        val placeRequestBody = place.toRequestBody("text/plain".toMediaTypeOrNull())
-        val moneyRequestBody = money.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-
-        val member = members?.joinToString(",") ?: ""
-        val membersRequestBody = member.toRequestBody("text/plain".toMediaTypeOrNull())
 
         withContext(Dispatchers.IO) {
             runCatching {
                 apiService.editMoimActivity(
-                    moimScheduleId,
-                    placeRequestBody,
-                    moneyRequestBody,
-                    membersRequestBody,
-                    imageToMultipart(ImageConverter.imageToFile(images, context))
+                    moimScheduldId = moimScheduleId,
+                    place = place.convertTextRequest(),
+                    pay = money.toString().convertTextRequest(),
+                    member = (members?.joinToString(",") ?: "").convertTextRequest(),
+                    imgs = imageToMultipart(images, context)
                 )
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource editMoimActivity Success", "$it")
@@ -192,13 +183,6 @@ class RemoteDiaryDataSource @Inject constructor(
             }.onFailure {
                 Log.d("RemoteDiaryDataSource deleteMoimActivity Success", "$it")
             }
-        }
-    }
-
-    private fun imageToMultipart(imageFiles: List<File>?): List<MultipartBody.Part>? {
-        return imageFiles?.map { file ->
-            val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-            MultipartBody.Part.createFormData("imgs", file.name, requestFile)
         }
     }
 }

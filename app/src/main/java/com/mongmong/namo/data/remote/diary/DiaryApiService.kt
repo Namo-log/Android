@@ -16,7 +16,7 @@ interface DiaryApiService {
     @Multipart
     @POST("/schedules/diary")
     suspend fun addDiary(
-        @Part("scheduleId") scheduleIdx: RequestBody,
+        @Part("scheduleId") scheduleId: RequestBody,
         @Part("content") content: RequestBody?,
         @Part imgs: List<MultipartBody.Part>?
     ): DiaryAddResponse
@@ -25,7 +25,7 @@ interface DiaryApiService {
     @Multipart
     @PATCH("/schedules/diary")
     suspend fun editDiary(
-        @Part("scheduleId") scheduleIdx: RequestBody,
+        @Part("scheduleId") scheduleId: RequestBody,
         @Part("content") content: RequestBody?,
         @Part imgs: List<MultipartBody.Part>?
     ): DiaryResponse
@@ -43,7 +43,7 @@ interface DiaryApiService {
     // 모임 기록 조회
     @GET("/moims/schedule/memo/{moimId}")
     suspend fun getMoimDiary(
-        @Path("moimId") scheduleIdx: Long
+        @Path("moimId") scheduleId: Long
     ): GetMoimDiaryResponse
 
     // 모임 메모 추가 or 수정
@@ -57,7 +57,7 @@ interface DiaryApiService {
     @Multipart
     @POST("/moims/schedule/memo/{moimId}")
     suspend fun addMoimDiary(
-        @Path("moimId") scheduleIdx: Long,
+        @Path("moimId") scheduleId: Long,
         @Part("name") place: RequestBody?,
         @Part("money") pay: RequestBody?,
         @Part("participants") member: RequestBody?,
@@ -68,7 +68,7 @@ interface DiaryApiService {
     @Multipart
     @PATCH("/moims/schedule/memo/{moimMemoLocationId}")
     suspend fun editMoimActivity(
-        @Path("moimMemoLocationId") moimScheduldIdx: Long,
+        @Path("moimMemoLocationId") moimScheduldId: Long,
         @Part("name") place: RequestBody?,
         @Part("money") pay: RequestBody?,
         @Part("participants") member: RequestBody?,
