@@ -10,7 +10,7 @@ import java.io.Serializable
 data class Category(
     @PrimaryKey(autoGenerate = true) val categoryId: Long = 0,
     var name : String = "",
-    var color : Int = 0,
+    var paletteId : Int = 0,
     var share : Boolean = false,
     var active : Boolean = true,
     var isUpload : Boolean = false,

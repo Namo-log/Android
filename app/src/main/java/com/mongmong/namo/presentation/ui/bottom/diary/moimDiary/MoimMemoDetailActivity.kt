@@ -16,6 +16,7 @@ import com.mongmong.namo.data.remote.diary.*
 import com.mongmong.namo.databinding.ActivityMoimMemoDetailBinding
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
+import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.adapter.GalleryListAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
@@ -70,7 +71,7 @@ class MoimMemoDetailActivity: AppCompatActivity(),
         with(binding) {
             val repo = DiaryRepository(this@MoimMemoDetailActivity)
             val category = repo.getCategory(moimSchedule.categoryId, moimSchedule.categoryId)
-            itemDiaryCategoryColorIv.background.setTint(category.color)
+            itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
             val scheduleDate = moimSchedule.startDate * 1000
 
             diaryTodayMonthTv.text = DateTime(scheduleDate).toString("MMM", Locale.ENGLISH)

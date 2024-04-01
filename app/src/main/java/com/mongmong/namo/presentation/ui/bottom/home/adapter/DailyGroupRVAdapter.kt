@@ -12,6 +12,7 @@ import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
 import com.mongmong.namo.domain.model.MoimDiary
+import com.mongmong.namo.presentation.config.CategoryColor
 import org.joda.time.DateTime
 
 class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>() {
@@ -99,7 +100,7 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
             binding.itemCalendarTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
             if (category != null) {
-                binding.itemCalendarEventColorView.background.setTint(category.color)
+                binding.itemCalendarEventColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
             }
             binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
 

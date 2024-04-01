@@ -26,6 +26,8 @@ import com.mongmong.namo.presentation.utils.NetworkManager
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
+import com.mongmong.namo.presentation.config.BelongType
+import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.config.RoomState
 
 class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), CategoryDetailView {
@@ -39,13 +41,12 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
     private val failList = ArrayList<Category>()
 
-    private lateinit var categoryColorArray : IntArray
     private var clickable = true // 중복 생성을 방지하기 위함
 
     // 카테고리에 들어갈 데이터
     var categoryId : Long = -1
     var name: String = ""
-    var color: Int = 0
+    var color: CategoryColor? = null
     var share: Boolean = true
 
     // 서버에 보낼 때 필요한 값
@@ -67,14 +68,17 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
         db = NamoDatabase.getInstance(requireContext())
 
-        categoryColorArray = resources.getIntArray(R.array.categoryColorArr)
         initBasicColor()
 
         checkEditingMode(isEditMode)
         switchToggle()
         onClickListener()
         clickCategoryItem()
-        initPaletteColorRv(color)
+        if (color == null) {
+            initPaletteColorRv(CategoryColor.SCHEDULE)
+        } else {
+            initPaletteColorRv(color!!)
+        }
 
         return binding.root
     }
@@ -89,7 +93,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
             // 저장하기
             categoryDetailSaveTv.setOnClickListener {
-                if (categoryDetailTitleEt.text.toString().isEmpty() || color == 0) {
+                if (categoryDetailTitleEt.text.toString().isEmpty() || color == null) {
                     Toast.makeText(requireContext(), "카테고리를 입력해주세요", Toast.LENGTH_SHORT).show()
                 } else {
                     if (clickable) {
@@ -161,9 +165,9 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
     private fun insertData() {
         // RoomDB
         name = binding.categoryDetailTitleEt.text.toString()
-        category = Category(0, name, color, share)
+        category = Category(0, name, color!!.paletteId, share)
         Thread{
-            category = Category(0, name, color, share)
+            category = Category(0, name, color!!.paletteId, share)
             categoryId = db.categoryDao.insertCategory(category)
             Log.d("CategoryDetailFrag", "Insert roomCategory : $categoryId")
         }.start()
@@ -176,7 +180,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         // RoomDB
         val thread = Thread{
             name = binding.categoryDetailTitleEt.text.toString()
-            category = Category(categoryId, name, color, share)
+            category = Category(categoryId, name, color!!.paletteId, share)
             db.categoryDao.updateCategory(category)
             Log.d("CategoryDetailFrag", "update roomCategory: ${db.categoryDao.getCategoryWithId(categoryId)}")
         }
@@ -203,18 +207,15 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         }
     }
 
-    private fun initPaletteColorRv(initColor: Int) {
+    private fun initPaletteColorRv(initCategory: CategoryColor) {
 
-        // 더미데이터 냅다 집어 넣기
-        val paletteDatas = arrayListOf(
-            categoryColorArray[4], categoryColorArray[5], categoryColorArray[6], categoryColorArray[7], categoryColorArray[8],
-            categoryColorArray[9], categoryColorArray[10], categoryColorArray[11], categoryColorArray[12], categoryColorArray[13]
-        )
+        // 기본 팔레트
+        val paletteDatas = CategoryColor.findPalettes(BelongType.BELONG2)
 
         for (i: Int in paletteDatas.indices) {
             if (paletteDatas[i] == color) {
                 selectedPalettePosition = i
-                paletteId = i + 5
+                paletteId = color!!.paletteId
             }
         }
 
@@ -223,28 +224,29 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 //        Log.d("CategoryDetailFrag", "selectedPalettePosition: $selectedPalettePosition")
 
         // 어댑터 연결
-        paletteAdapter = CategoryPaletteRVAdapter(requireContext(), paletteDatas, initColor, selectedPalettePosition!!)
+        paletteAdapter = CategoryPaletteRVAdapter(requireContext(), paletteDatas,
+            initCategory, selectedPalettePosition!!)
         binding.categoryPaletteRv.apply {
             adapter = paletteAdapter
             layoutManager = GridLayoutManager(context, 5)
         }
         // 아이템 클릭
         paletteAdapter.setColorClickListener(object: CategoryPaletteRVAdapter.MyItemClickListener {
-            override fun onItemClick(position: Int, selectedColor: Int) {
+            override fun onItemClick(position: Int, selectedColor: CategoryColor) {
                 // 팔레트의 색상을 선택했다면 기본 색상의 체크 상태는 초기화
                 for (j: Int in categoryList.indices) {
                     checkList[j].visibility = View.GONE
                 }
                 // 색상값 세팅
                 this@CategoryDetailFragment.color = selectedColor
-                paletteId = position + 5 // 팔레트는 paletteId 5번부터 시작
+                paletteId = selectedColor.paletteId
                 // notifyItemChanged()에서 인자로 넘겨주기 위함. 기본 색상을 클릭했다면 이전에 선택된 팔레트 색상의 체크 표시는 해제
                 selectedPalettePosition = position
             }
         })
     }
 
-    private fun clickCategoryItem() {
+    private fun clickCategoryItem() { // 기본 색상 선택
         for (i: Int in categoryList.indices) {
             categoryList[i].setOnClickListener {
                 // 다른 모든 기본 색상 선택 해제
@@ -252,14 +254,14 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                     checkList[j].visibility = View.GONE
                 }
                 // 팔레트 내의 색상도 모두 선택 해제
-                initPaletteColorRv(-1)
+                initPaletteColorRv(CategoryColor.SCHEDULE)
                 if (selectedPalettePosition != null) {
                     paletteAdapter.notifyItemChanged(selectedPalettePosition!!)
                 }
                 // 선택한 카테고리 표시
                 checkList[i].visibility = View.VISIBLE
-                color = categoryColorArray[i]
-                paletteId = i + 1 // 기본 색상은 paletteId 1번부터 시작
+                color = CategoryColor.findPalettes(BelongType.BELONG1)[i]
+                paletteId = color!!.paletteId
                 // 이제 팔레트가 아니라 기본 색상에서 설정한 색임
                 selectedPalettePosition = null
             }
@@ -297,14 +299,11 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                     // 카테고리 이름
                     categoryDetailTitleEt.setText(data.name)
                     // 카테고리 색
-                    color = data.color
-                    for (i: Int in 0 until 4) {
-                        if (data.color == categoryColorArray[i]) {
-                            // 기본 카테고리 체크 표시
-                            checkList[i].visibility = View.VISIBLE
-                            // 기본 색상은 paletteId 1번부터 시작
-                            paletteId = i + 1
-                        }
+                    color = CategoryColor.findCategoryColorByPaletteId(data.paletteId)
+                    if (CategoryColor.findPalettes(BelongType.BELONG1).contains(color)) {
+                        // 기본 카테고리 체크 표시
+                        checkList[color!!.paletteId - 1].visibility = View.VISIBLE
+                        paletteId = color!!.paletteId
                     }
                     // 카테고리 공유 여부
                     share = data.share
