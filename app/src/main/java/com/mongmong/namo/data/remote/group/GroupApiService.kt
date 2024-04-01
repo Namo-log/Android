@@ -8,7 +8,7 @@ import com.mongmong.namo.domain.model.AddMoimScheduleResponse
 import com.mongmong.namo.domain.model.GetGroupsResponse
 import com.mongmong.namo.domain.model.GetMoimScheduleResponse
 import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
-import com.mongmong.namo.domain.model.ParticipateMoimResponse
+import com.mongmong.namo.domain.model.JoinGroupResponse
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
 import com.mongmong.namo.domain.model.UpdateMoimNameBody
 import okhttp3.MultipartBody
@@ -48,13 +48,13 @@ interface GroupApiService {
     @PATCH("moims/name")
     fun updateMoimName(
         @Body body: UpdateMoimNameBody
-    ): Call<ParticipateMoimResponse>
+    ): Call<JoinGroupResponse>
 
     // 모임 참여하기
     @PATCH("moims/participate/{groupCode}")
-    fun participateMoim(
+    suspend fun joinGroup(
         @Path("groupCode") groupCode: String
-    ): Call<ParticipateMoimResponse>
+    ): JoinGroupResponse
 
     // 모임 삭제하기
     @DELETE("moims/withdraw/{moimId}")

@@ -10,7 +10,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,16 +20,10 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.mongmong.namo.R
-import com.mongmong.namo.domain.model.AddGroupResponse
-import com.mongmong.namo.data.remote.group.AddMoimView
 import com.mongmong.namo.databinding.DialogGroupCreateBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
 import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
 import dagger.hilt.android.AndroidEntryPoint
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
 
 @AndroidEntryPoint
 class CreateGroupDialog : DialogFragment() {
@@ -83,8 +76,8 @@ class CreateGroupDialog : DialogFragment() {
     }
 
     private fun initObserve() {
-        viewModel.addGroupResponse.observe(viewLifecycleOwner) {
-            if(it.result.moimId != 0L) {
+        viewModel.addGroupResult.observe(viewLifecycleOwner) {
+            if(it.moimId != 0L) {
                 Toast.makeText(requireContext(), "그룹 생성에 성공하였습니다.", Toast.LENGTH_SHORT).show()
                 dismiss()
             }

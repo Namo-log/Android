@@ -1,70 +1,63 @@
 package com.mongmong.namo.presentation.ui.bottom.group
 
-import android.app.Dialog
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import com.mongmong.namo.data.remote.group.MoimService
-import com.mongmong.namo.domain.model.ParticipateMoimResponse
-import com.mongmong.namo.data.remote.group.ParticipateMoimView
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import com.mongmong.namo.databinding.DialogGroupCodeBinding
+import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
 
-class GroupCodeDialog(
-    context: Context,
-    private val okCallback: (String) -> Unit,
-) : Dialog(context), ParticipateMoimView { // 뷰를 띄워야하므로 Dialog 클래스는 context를 인자로 받는다.
+@AndroidEntryPoint
+class GroupCodeDialog() : DialogFragment() { // 뷰를 띄워야하므로 Dialog 클래스는 context를 인자로 받는다.
 
     private lateinit var binding: DialogGroupCodeBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private val viewModel : GroupViewModel by viewModels()
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = DialogGroupCodeBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
         initViews()
+        initObserve()
+
+        return binding.root
     }
 
     private fun initViews() = with(binding) {
+        isCancelable = false
 
-        setCancelable(false)
-
-        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        groupCodeBackTv.setOnClickListener {
-            dismiss()
-        }
+        groupCodeBackTv.setOnClickListener { dismiss() }
         // 저장 클릭
         groupCodeSaveTv.setOnClickListener {
             if (groupCodeEt.text.isNullOrBlank()) {
                 Toast.makeText(context, "그룹 코드를 입력하세요!", Toast.LENGTH_SHORT).show()
             } else {
-                val moimService = MoimService()
-                moimService.setParticipateMoimView(this@GroupCodeDialog)
-
-                moimService.participateMoim(groupCodeEt.text.toString())
-                okCallback(groupCodeEt.text.toString())
+                viewModel.joinGroup(groupCodeEt.text.toString())
             }
         }
     }
 
-    override fun onParticipateMoimSuccess(response: ParticipateMoimResponse) {
-        Log.d("GroupCodeDig", "onParticipateMoimSuccess : ${response.result}")
-        Toast.makeText(context, "모임 참여에 성공했습니다.", Toast.LENGTH_SHORT).show()
-        dismiss()
+    private fun initObserve() {
+        viewModel.joinGroupResult.observe(viewLifecycleOwner) {
+            if(it.result != 0L) {
+                Toast.makeText(context, "모임 참여에 성공했습니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, extractMessageFromResponse(it.message), Toast.LENGTH_SHORT).show()
+            }
+            dismiss()
+        }
     }
-
-    override fun onParticipateMoimFailure(message: String) {
-        Log.d("GroupCodeDig", "onParticipateMoimFailure : $message")
-
-        Toast.makeText(context, extractMessageFromResponse(message), Toast.LENGTH_SHORT).show()
-        dismiss()
-//        "message":"이미 가입한 모임입니다.","code":404
-    }
-
     private fun extractMessageFromResponse(responseString: String): String {
         return try {
             val jsonObject = JSONObject(responseString)

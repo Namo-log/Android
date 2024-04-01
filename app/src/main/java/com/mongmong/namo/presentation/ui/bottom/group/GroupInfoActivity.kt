@@ -17,7 +17,7 @@ import com.mongmong.namo.presentation.config.BaseResponse
 import com.mongmong.namo.data.remote.group.DeleteMoimMemberView
 import com.mongmong.namo.domain.model.Group
 import com.mongmong.namo.data.remote.group.MoimService
-import com.mongmong.namo.domain.model.ParticipateMoimResponse
+import com.mongmong.namo.domain.model.JoinGroupResponse
 import com.mongmong.namo.domain.model.UpdateMoimNameBody
 import com.mongmong.namo.databinding.ActivityGroupInfoBinding
 import com.mongmong.namo.presentation.ui.bottom.group.adapter.GroupInfoMemberRVAdapter
@@ -126,7 +126,7 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface, DeleteMoi
         clipboardManager.setPrimaryClip(clipData)
     }
 
-    override fun onUpdateMoimNameSuccess(response: ParticipateMoimResponse) {
+    override fun onUpdateMoimNameSuccess(response: JoinGroupResponse) {
         Log.d("GroupInfoAct", "onUpdateMoimNameSuccess")
         Toast.makeText(this, "모임 이름이 변경되었습니다.", Toast.LENGTH_SHORT).show()
         val resultIntent = Intent(this, GroupCalendarActivity::class.java).apply {

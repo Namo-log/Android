@@ -37,7 +37,7 @@
     <string name="create_group">그룹 생성</string>
     <string name="input_group_code">그룹 코드 입력</string>
     <string name="dialog_close">닫기</string>
-    <string name="dialog_done">완료</string>
+    <string name="dialog_done">저장</string>
     <string name="group_name_input">입력</string>
     <string name="new_group">새 그룹</string>
     <string name="group_name">그룹명</string>

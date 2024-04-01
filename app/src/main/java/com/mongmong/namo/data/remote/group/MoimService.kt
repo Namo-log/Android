@@ -5,11 +5,10 @@ import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
 import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
-import com.mongmong.namo.domain.model.AddGroupResponse
 import com.mongmong.namo.domain.model.AddMoimScheduleResponse
 import com.mongmong.namo.domain.model.GetMoimScheduleResponse
 import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
-import com.mongmong.namo.domain.model.ParticipateMoimResponse
+import com.mongmong.namo.domain.model.JoinGroupResponse
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
 import com.mongmong.namo.domain.model.UpdateMoimNameBody
 import okhttp3.MultipartBody
@@ -140,16 +139,16 @@ class MoimService {
     fun participateMoim(
         groupCode : String
     ) {
-        moimRetrofitInterface.participateMoim(groupCode)
-            .enqueue(object : Callback<ParticipateMoimResponse> {
+        /*moimRetrofitInterface.participateGroup(groupCode)
+            .enqueue(object : Callback<JoinGroupResponse> {
                 override fun onResponse(
-                    call: Call<ParticipateMoimResponse>,
-                    response: Response<ParticipateMoimResponse>
+                    call: Call<JoinGroupResponse>,
+                    response: Response<JoinGroupResponse>
                 ) {
                     when(response.code()) {
                         200 -> {
                             Log.d("ParticipateMoim","Code : 200")
-                            participateMoimView.onParticipateMoimSuccess(response.body() as ParticipateMoimResponse)
+                            participateMoimView.onParticipateMoimSuccess(response.body() as JoinGroupResponse)
                         }
                         else -> {
                             if (response.errorBody() != null) {
@@ -161,12 +160,12 @@ class MoimService {
                     }
                 }
 
-                override fun onFailure(call: Call<ParticipateMoimResponse>, t: Throwable) {
+                override fun onFailure(call: Call<JoinGroupResponse>, t: Throwable) {
                     Log.d("ParticipateMoim", "onFailure")
                     participateMoimView.onParticipateMoimFailure(t.message ?: "통신 오류")
                 }
 
-            })
+            })*/
     }
 
     fun deleteMoimMember(
@@ -199,13 +198,13 @@ class MoimService {
         body: UpdateMoimNameBody
     ) {
         moimRetrofitInterface.updateMoimName(body)
-            .enqueue(object : Callback<ParticipateMoimResponse> {
+            .enqueue(object : Callback<JoinGroupResponse> {
                 override fun onResponse(
-                    call: Call<ParticipateMoimResponse>,
-                    response: Response<ParticipateMoimResponse>
+                    call: Call<JoinGroupResponse>,
+                    response: Response<JoinGroupResponse>
                 ) {
                     when(response.code()) {
-                        200 -> deleteMoimMemberView.onUpdateMoimNameSuccess(response.body() as ParticipateMoimResponse)
+                        200 -> deleteMoimMemberView.onUpdateMoimNameSuccess(response.body() as JoinGroupResponse)
                         else -> {
                             Log.d("UpdateMoimName", "Success but error")
                             deleteMoimMemberView.onDeleteMoimMemberFailure("통신 중 200 외 기타 코드")
@@ -213,7 +212,7 @@ class MoimService {
                     }
                 }
 
-                override fun onFailure(call: Call<ParticipateMoimResponse>, t: Throwable) {
+                override fun onFailure(call: Call<JoinGroupResponse>, t: Throwable) {
                     Log.d("UpdateMoimName", "onFailure")
                     deleteMoimMemberView.onUpdateMoimNameFailure(t.message ?: "통신 오류")
                 }

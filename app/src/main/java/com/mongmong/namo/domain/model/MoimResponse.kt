@@ -53,7 +53,7 @@ data class MoimSchedule(
     @SerializedName("curMoimSchedule") var curMoimSchedule : Boolean = false
 ) : Serializable
 
-data class ParticipateMoimResponse(
+data class JoinGroupResponse(
     @SerializedName("result") val result : Long = 0L
 ) : BaseResponse()
 

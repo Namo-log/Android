@@ -103,8 +103,9 @@ class GroupFragment : Fragment() {
 
     // 그룹 코드
     private fun showGroupCodeDialog() {
-        GroupCodeDialog(requireContext()) {
-            //viewModel.setName(it)
-        }.show()
+        val dialog = GroupCodeDialog()
+        // 알림창이 띄워져있는 동안 배경 클릭 허용
+        dialog.isCancelable = true
+        dialog.show(parentFragmentManager, "GroupCodeDialog")
     }
 }
