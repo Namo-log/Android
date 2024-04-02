@@ -16,7 +16,7 @@ import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class GroupFragment : Fragment() {
+class GroupFragment : Fragment(), CreateGroupDialog.GroupCreationListener {
     lateinit var binding: FragmentGroupListBinding
     private val viewModel : GroupViewModel by viewModels()
     private val groupAdapter = GroupListRVAdapter(emptyList())
@@ -93,12 +93,18 @@ class GroupFragment : Fragment() {
         }
     }
 
+
+
     // 그룹 생성
     private fun showCreateGroupDialog() {
-        val dialog = CreateGroupDialog()
-        // 알림창이 띄워져있는 동안 배경 클릭 허용
+        val dialog = CreateGroupDialog().apply {
+            setGroupCreationListener(this@GroupFragment)
+        }
         dialog.isCancelable = true
         dialog.show(parentFragmentManager, "CreateGroupDialog")
+    }
+    override fun onGroupCreated() {
+        viewModel.getGroups()
     }
 
     // 그룹 코드

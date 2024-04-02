@@ -36,6 +36,16 @@ class CreateGroupDialog : DialogFragment() {
     private var imageUri: Uri? = null
     private var clickable = true // 중복 생성을 방지하기 위함
 
+    interface GroupCreationListener {
+        fun onGroupCreated()
+    }
+
+    private var listener: GroupCreationListener? = null
+
+    fun setGroupCreationListener(listener: GroupCreationListener) {
+        this.listener = listener
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -79,6 +89,7 @@ class CreateGroupDialog : DialogFragment() {
         viewModel.addGroupResult.observe(viewLifecycleOwner) {
             if(it.moimId != 0L) {
                 Toast.makeText(requireContext(), "그룹 생성에 성공하였습니다.", Toast.LENGTH_SHORT).show()
+                listener?.onGroupCreated()
                 dismiss()
             }
         }
