@@ -10,7 +10,7 @@ import com.mongmong.namo.domain.model.GetMoimScheduleResponse
 import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
 import com.mongmong.namo.domain.model.JoinGroupResponse
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
-import com.mongmong.namo.domain.model.UpdateMoimNameBody
+import com.mongmong.namo.domain.model.UpdateGroupNameRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -46,9 +46,9 @@ interface GroupApiService {
 
     // 모임 이름 바꾸기
     @PATCH("moims/name")
-    fun updateMoimName(
-        @Body body: UpdateMoimNameBody
-    ): Call<JoinGroupResponse>
+    suspend fun updateGroupName(
+        @Body body: UpdateGroupNameRequest
+    ): JoinGroupResponse
 
     // 모임 참여하기
     @PATCH("moims/participate/{groupCode}")
@@ -58,9 +58,9 @@ interface GroupApiService {
 
     // 모임 삭제하기
     @DELETE("moims/withdraw/{moimId}")
-    fun deleteMoimMember(
-        @Path("moimId") moimId: Long
-    ): Call<BaseResponse>
+    suspend fun deleteMember(
+        @Path("moimId") groupId: Long
+    ): BaseResponse
 
     // 모임 일정 추가하기
     @POST("moims/schedule")

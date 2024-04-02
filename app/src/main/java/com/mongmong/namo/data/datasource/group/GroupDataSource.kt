@@ -4,10 +4,11 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.mongmong.namo.data.remote.group.GroupApiService
-import com.mongmong.namo.domain.model.AddGroupResponse
 import com.mongmong.namo.domain.model.AddGroupResult
 import com.mongmong.namo.domain.model.Group
 import com.mongmong.namo.domain.model.JoinGroupResponse
+import com.mongmong.namo.domain.model.UpdateGroupNameRequest
+import com.mongmong.namo.presentation.config.BaseResponse
 import com.mongmong.namo.presentation.utils.RequestConverter.convertTextRequest
 import com.mongmong.namo.presentation.utils.RequestConverter.uriToMultipart
 import kotlinx.coroutines.Dispatchers
@@ -24,10 +25,10 @@ class GroupDataSource @Inject constructor(
             runCatching {
                 apiService.getGroups()
             }.onSuccess {
-                Log.d("GroupDataSource Success", "$it")
+                Log.d("GroupDataSource getGroups Success", "$it")
                 groups = it.result
             }.onFailure {
-                Log.d("GroupDataSource Fail", "$it")
+                Log.d("GroupDataSource getGroups Fail", "$it")
             }
         }
         return groups
@@ -39,10 +40,10 @@ class GroupDataSource @Inject constructor(
             runCatching {
                 apiService.addGroup(uriToMultipart(img, context), name.convertTextRequest())
             }.onSuccess {
-                Log.d("GroupDataSource Success", "$it")
+                Log.d("GroupDataSource addGroup Success", "$it")
                 result = it.result
             }.onFailure {
-                Log.d("GroupDataSource Fail", "$it")
+                Log.d("GroupDataSource addGroup Fail", "$it")
             }
         }
         return result
@@ -54,13 +55,43 @@ class GroupDataSource @Inject constructor(
             runCatching {
                 apiService.joinGroup(groupCode)
             }.onSuccess {
-                Log.d("GroupDataSource Success", "$it")
+                Log.d("GroupDataSource joinGroup Success", "$it")
                 response = it
             }.onFailure {
-                Log.d("GroupDataSource Fail", "$it")
+                Log.d("GroupDataSource joinGroup Fail", "$it")
             }
         }
 
         return response
+    }
+
+    suspend fun updateGroupName(groupId: Long, name: String): JoinGroupResponse {
+        var response = JoinGroupResponse(result = 0L)
+        withContext(Dispatchers.IO) {
+            runCatching {
+                apiService.updateGroupName(UpdateGroupNameRequest(groupId, name))
+            }.onSuccess {
+                Log.d("GroupDataSource updateGroupName Success", "$it")
+                response = it
+            }.onFailure {
+                Log.d("GroupDataSource updateGroupName Fail", "$it")
+            }
+        }
+        return response
+    }
+
+    suspend fun deleteMember(groupId: Long): Int {
+        var result = 0
+        withContext(Dispatchers.IO) {
+            runCatching {
+                apiService.deleteMember(groupId)
+            }.onSuccess {
+                Log.d("GroupDataSource updateGroupName Success", "$it")
+                result = it.code
+            }.onFailure {
+                Log.d("GroupDataSource updateGroupName Fail", "$it")
+            }
+        }
+        return result
     }
 }

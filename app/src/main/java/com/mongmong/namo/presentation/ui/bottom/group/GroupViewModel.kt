@@ -16,9 +16,9 @@ import javax.inject.Inject
 @HiltViewModel
 class GroupViewModel @Inject constructor(
     private val repository: GroupRepository
-): ViewModel() {
+) : ViewModel() {
     private val _groups = MutableLiveData<List<Group>>()
-    val groups : LiveData<List<Group>> = _groups
+    val groups: LiveData<List<Group>> = _groups
 
     private val _addGroupResult = MutableLiveData<AddGroupResult>()
     val addGroupResult: LiveData<AddGroupResult> = _addGroupResult
@@ -26,21 +26,51 @@ class GroupViewModel @Inject constructor(
     private val _joinGroupResult = MutableLiveData<JoinGroupResponse>()
     val joinGroupResult: LiveData<JoinGroupResponse> = _joinGroupResult
 
+    private val groupInfo = MutableLiveData<Group>()
+
+    private val _updateGroupNameResult = MutableLiveData<JoinGroupResponse>()
+    val updateGroupNameResult: LiveData<JoinGroupResponse> = _updateGroupNameResult
+
+    private val _deleteMemberResult = MutableLiveData<Int>()
+    val deleteMemberResult: LiveData<Int> = _deleteMemberResult
+
     fun getGroups() {
         viewModelScope.launch {
-            _groups.postValue(repository.getGroups())
+            _groups.value = repository.getGroups()
         }
     }
 
     fun addGroup(img: Uri, name: String) {
         viewModelScope.launch {
-            _addGroupResult.postValue(repository.addGroups(img, name))
+            _addGroupResult.value = repository.addGroups(img, name)
         }
     }
 
     fun joinGroup(groupCode: String) {
         viewModelScope.launch {
-            _joinGroupResult.postValue(repository.joinGroup(groupCode))
+            _joinGroupResult.value = repository.joinGroup(groupCode)
         }
     }
+
+    fun updateGroupName(name: String) {
+        viewModelScope.launch {
+            if (groupInfo.value?.groupName != name) {
+                _updateGroupNameResult.value =
+                    repository.updateGroupName(groupInfo.value?.groupId ?: 0L, name)
+            }
+        }
+    }
+
+    fun deleteGroupMember() {
+        viewModelScope.launch {
+            _deleteMemberResult.value =
+                repository.deleteMember(groupInfo.value?.groupId ?: 0)
+        }
+    }
+
+    fun setGroup(group: Group) {
+        groupInfo.value = group
+    }
+
+    fun getGroup(): Group = groupInfo.value ?: Group()
 }

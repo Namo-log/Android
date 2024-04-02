@@ -110,7 +110,7 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/textGray</item>
     </style>
-    <!-- 다이얼로그 버틎 -->
+    <!-- 다이얼로그 버튼 -->
     <style name="dialog_cancel_button">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

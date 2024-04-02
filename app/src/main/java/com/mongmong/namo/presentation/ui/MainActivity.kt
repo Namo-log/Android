@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
         categoryColorArray =resources.getIntArray(R.array.categoryColorArr)
         Log.d("CATEGORY_ARR", categoryColorArray.contentToString())
 
-//        logToken()
+        logToken()
         checkPermissions()
         checkNetworkUpload()
 

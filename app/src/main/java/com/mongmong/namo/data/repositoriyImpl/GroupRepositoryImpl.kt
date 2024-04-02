@@ -7,6 +7,7 @@ import com.mongmong.namo.domain.model.AddGroupResult
 import com.mongmong.namo.domain.model.Group
 import com.mongmong.namo.domain.model.JoinGroupResponse
 import com.mongmong.namo.domain.repositories.GroupRepository
+import com.mongmong.namo.presentation.config.BaseResponse
 import javax.inject.Inject
 
 class GroupRepositoryImpl @Inject constructor(
@@ -22,5 +23,13 @@ class GroupRepositoryImpl @Inject constructor(
 
     override suspend fun joinGroup(groupCode: String): JoinGroupResponse {
         return dataSource.joinGroup(groupCode)
+    }
+
+    override suspend fun updateGroupName(groupId: Long, name: String): JoinGroupResponse {
+        return dataSource.updateGroupName(groupId, name)
+    }
+
+    override suspend fun deleteMember(groupId: Long): Int {
+        return dataSource.deleteMember(groupId)
     }
 }
