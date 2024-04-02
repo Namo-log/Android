@@ -25,14 +25,7 @@
     <color name="schedule">#DE8989</color> //일정
     <color name="schedule_plan">#E1B000</color> //약속
     <color name="schedule_parttime">#5C8596</color> //알바
-    <color name="schedule_special">#AD7FFF</color> //기념일
     <color name="schedule_group">#DA6022</color> //그룹 일정
-    <color name="test">#29ABE2</color>
-    <!-- Todo Category -->
-    <color name="todo">#DE8989</color>
-    <color name="todo_assignment">#89C5DE</color>
-    <color name="todo_housework">#64D49F</color>
-    <color name="todo_study">#C9C9C9</color>
 
     <!-- Nomal Palette -->
     <color name="palette1">#EB5353</color>
@@ -45,35 +38,4 @@
     <color name="palette8">#8571BF</color>
     <color name="palette9">#E36488</color>
     <color name="palette10">#858585</color>
-
-    <!--  Color Array  -->
-    <array name="categoryColorArr">
-        <item>@color/schedule</item>
-        <item>@color/schedule_plan</item>
-        <item>@color/schedule_parttime</item>
-        <item>@color/schedule_group</item>
-        <item>@color/palette1</item>
-        <item>@color/palette2</item>
-        <item>@color/palette3</item>
-        <item>@color/palette4</item>
-        <item>@color/palette5</item>
-        <item>@color/palette6</item>
-        <item>@color/palette7</item>
-        <item>@color/palette8</item>
-        <item>@color/palette9</item>
-        <item>@color/palette10</item>
-    </array>
-
-    <array name="palette1ColorArr">
-        <item>@color/palette1</item>
-        <item>@color/palette2</item>
-        <item>@color/palette3</item>
-        <item>@color/palette4</item>
-        <item>@color/palette5</item>
-        <item>@color/palette6</item>
-        <item>@color/palette7</item>
-        <item>@color/palette8</item>
-        <item>@color/palette9</item>
-        <item>@color/palette10</item>
-    </array>
 </resources>

@@ -210,7 +210,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
     private fun initPaletteColorRv(initCategory: CategoryColor) {
 
         // 기본 팔레트
-        val paletteDatas = CategoryColor.findPalettes(PaletteType.BASIC_PALETTE)
+        val paletteDatas = CategoryColor.findPaletteByPaletteType(PaletteType.BASIC_PALETTE)
 
         for (i: Int in paletteDatas.indices) {
             if (paletteDatas[i] == color) {
@@ -260,7 +260,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                 }
                 // 선택한 카테고리 표시
                 checkList[i].visibility = View.VISIBLE
-                color = CategoryColor.findPalettes(PaletteType.DEFAULT_4)[i]
+                color = CategoryColor.findPaletteByPaletteType(PaletteType.DEFAULT_4)[i]
                 paletteId = color!!.paletteId
                 // 이제 팔레트가 아니라 기본 색상에서 설정한 색임
                 selectedPalettePosition = null
@@ -300,7 +300,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                     categoryDetailTitleEt.setText(data.name)
                     // 카테고리 색
                     color = CategoryColor.findCategoryColorByPaletteId(data.paletteId)
-                    if (CategoryColor.findPalettes(PaletteType.DEFAULT_4).contains(color)) {
+                    if (CategoryColor.findPaletteByPaletteType(PaletteType.DEFAULT_4).contains(color)) {
                         // 기본 카테고리 체크 표시
                         checkList[color!!.paletteId - 1].visibility = View.VISIBLE
                         paletteId = color!!.paletteId
