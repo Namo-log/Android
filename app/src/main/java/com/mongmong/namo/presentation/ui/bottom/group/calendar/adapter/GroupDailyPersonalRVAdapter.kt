@@ -2,25 +2,26 @@ package com.mongmong.namo.presentation.ui.bottom.group.calendar.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.MoimSchedule
 import com.mongmong.namo.databinding.ItemSchedulePreviewMoimBinding
+import com.mongmong.namo.presentation.config.CategoryColor
+import com.mongmong.namo.presentation.config.PaletteType
 import org.joda.time.DateTime
 
 class GroupDailyPersonalRVAdapter() : RecyclerView.Adapter<GroupDailyPersonalRVAdapter.ViewHolder>() {
 
     private val personal = ArrayList<MoimSchedule>()
-    lateinit var colorArray: IntArray
     private lateinit var context : Context
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
         val binding : ItemSchedulePreviewMoimBinding = ItemSchedulePreviewMoimBinding.inflate(
             LayoutInflater.from(viewGroup.context), viewGroup, false)
         context = viewGroup.context
-        colorArray = context.resources.getIntArray(R.array.categoryColorArr)
 
         return ViewHolder(binding)
     }
@@ -42,6 +43,8 @@ class GroupDailyPersonalRVAdapter() : RecyclerView.Adapter<GroupDailyPersonalRVA
 
         @SuppressLint("ResourceType")
         fun bind(personal: MoimSchedule) {
+            val colorArray = CategoryColor.getAllColors()
+
             val time =
                 DateTime(personal.startDate * 1000L).toString("HH:mm") + " - " + DateTime(personal.endDate * 1000L).toString(
                     "HH:mm"
@@ -59,7 +62,7 @@ class GroupDailyPersonalRVAdapter() : RecyclerView.Adapter<GroupDailyPersonalRVA
             binding.itemCalendarTitle.text = personal.name
             binding.itemCalendarTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
-            binding.itemCalendarEventColorView.background.setTint(colorArray[paletteId - 1])
+            binding.itemCalendarEventColorView.background.setTint(Color.parseColor(colorArray[paletteId - 1]))
             binding.itemCalendarUserName.text = userName
         }
     }

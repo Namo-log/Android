@@ -14,6 +14,7 @@ import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.data.remote.diary.DiaryRepository
 import com.mongmong.namo.databinding.ItemDiaryItemListBinding
 import com.mongmong.namo.databinding.ItemDiaryListBinding
+import com.mongmong.namo.presentation.config.CategoryColor
 
 import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.adapter.DiaryGalleryRVAdapter
 import java.text.SimpleDateFormat
@@ -112,9 +113,7 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
                 val category =
                     repo.getCategory(item.categoryId, item.categoryServerId)
 
-                context.resources?.let {
-                    itemDiaryCategoryColorIv.background.setTint(category.color)
-                }
+                itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
 
                 val adapter =
                     DiaryGalleryRVAdapter(context, item.images, imageClickListener)

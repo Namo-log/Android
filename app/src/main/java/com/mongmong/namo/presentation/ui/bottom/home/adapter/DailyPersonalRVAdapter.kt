@@ -10,6 +10,7 @@ import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
+import com.mongmong.namo.presentation.config.CategoryColor
 import org.joda.time.DateTime
 
 class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewHolder>() {
@@ -84,7 +85,7 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
             binding.itemCalendarTitle.text = personal.title
             binding.itemCalendarTitle.isSelected = true
             binding.itemCalendarEventTime.text = time
-            binding.itemCalendarEventColorView.background.setTint(category.color)
+            binding.itemCalendarEventColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
             binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
 
             /** 기록 아이콘 색깔 **/

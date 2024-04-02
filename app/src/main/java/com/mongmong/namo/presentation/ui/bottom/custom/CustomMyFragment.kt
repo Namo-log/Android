@@ -6,15 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.custom.Palette
 import com.mongmong.namo.databinding.FragmentCustomMyBinding
+import com.mongmong.namo.presentation.config.CategoryColor
+import com.mongmong.namo.presentation.config.PaletteType
 import com.mongmong.namo.presentation.ui.bottom.custom.adapter.PaletteRVAdapter
 
 class CustomMyFragment : Fragment() {
 
     lateinit var binding : FragmentCustomMyBinding
-    lateinit var palette1ColorArr : IntArray
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,11 +22,9 @@ class CustomMyFragment : Fragment() {
     ): View? {
         binding = FragmentCustomMyBinding.inflate(inflater, container, false)
 
-        palette1ColorArr = resources.getIntArray(R.array.palette1ColorArr)
-
         // 팔레트 페이지랑 동일한 데이터
         val paletteDatas = arrayListOf(
-            Palette("기본 팔레트", palette1ColorArr)
+            Palette("기본 팔레트", CategoryColor.findColorsByPaletteType(PaletteType.BASIC_PALETTE))
         )
 
         //어댑터 연결

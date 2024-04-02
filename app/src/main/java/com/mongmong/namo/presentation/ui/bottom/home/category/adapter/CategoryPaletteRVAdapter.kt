@@ -1,22 +1,24 @@
 package com.mongmong.namo.presentation.ui.bottom.home.category.adapter
 
 import android.content.Context
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemPaletteColorBinding
+import com.mongmong.namo.presentation.config.CategoryColor
 
 class CategoryPaletteRVAdapter(
     val context: Context,
-    private val colorList: ArrayList<Int>,
-    initColor: Int,
+    private val colorList: ArrayList<CategoryColor>,
+    initColor: CategoryColor,
     selectedPalettePosition: Int
     ): RecyclerView.Adapter<CategoryPaletteRVAdapter.ViewHolder>() {
 
     interface MyItemClickListener {
-        fun onItemClick(position: Int, selectedColor: Int)
+        fun onItemClick(position: Int, selectedColor: CategoryColor)
     }
 
     private lateinit var mItemClickListener: MyItemClickListener
@@ -64,11 +66,11 @@ class CategoryPaletteRVAdapter(
     inner class ViewHolder(val binding: ItemPaletteColorBinding): RecyclerView.ViewHolder(binding.root) {
         val selectIv = binding.itemPaletteSelectIv
 
-        fun bind(color : Int) {
+        fun bind(color : CategoryColor) {
             // 카테고리 색 확인
 //            Log.d("PaletteColor", "position = ${absoluteAdapterPosition} color = $color")
             // 카드뷰에 색 넣어주기
-            binding.itemPaletteColorCv.background.setTint(color)
+            binding.itemPaletteColorCv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(color.paletteId)
             // 체크 표시 초기화
             if (adapterPosition == currentSelectPosition) selectIv.visibility = View.VISIBLE
             else selectIv.visibility = View.GONE

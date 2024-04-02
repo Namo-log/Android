@@ -2,6 +2,7 @@ package com.mongmong.namo.presentation.ui.bottom.group.calendar.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -9,12 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.MoimSchedule
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
+import com.mongmong.namo.presentation.config.CategoryColor
+import com.mongmong.namo.presentation.config.PaletteType
 import org.joda.time.DateTime
 
 class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter.ViewHolder>() {
 
     private val groupSchedule = ArrayList<MoimSchedule>()
-    lateinit var colorArray: IntArray
+    lateinit var colorArray: ArrayList<String>
     private lateinit var context : Context
 
     interface DiaryInterface {
@@ -39,7 +42,7 @@ class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter
         val binding : ItemSchedulePreviewBinding = ItemSchedulePreviewBinding.inflate(
             LayoutInflater.from(viewGroup.context), viewGroup, false)
         context = viewGroup.context
-        colorArray = context.resources.getIntArray(R.array.categoryColorArr)
+        colorArray = CategoryColor.getAllColors()
 
         return ViewHolder(binding)
     }
@@ -80,7 +83,7 @@ class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter
             binding.itemCalendarTitle.text = groupSchedule.name
             binding.itemCalendarTitle.isSelected = true
             binding.itemCalendarTitle.text = time
-            binding.itemCalendarEventColorView.background.setTint(colorArray[paletteId - 1])
+            binding.itemCalendarEventColorView.background.setTint(Color.parseColor(colorArray[paletteId - 1]))
 
             if(groupSchedule.hasDiaryPlace)
                 binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.MainOrange))

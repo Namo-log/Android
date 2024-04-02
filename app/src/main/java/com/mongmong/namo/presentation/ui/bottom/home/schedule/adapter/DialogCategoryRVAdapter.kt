@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.databinding.ItemDialogScheduleCategoryBinding
+import com.mongmong.namo.presentation.config.CategoryColor
 
 class DialogCategoryRVAdapter(
     var context: Context,
@@ -27,7 +28,7 @@ class DialogCategoryRVAdapter(
 
     inner class ViewHolder(val binding : ItemDialogScheduleCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(category : Category) {
-            binding.categoryColorView.background.setTint(category.color)
+            binding.categoryColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
             binding.categoryNameTv.text = category.name
 
             if (category.categoryId == selectedIdx) {
