@@ -4,24 +4,24 @@ import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class AddMoimResponse (
-    @SerializedName("result") val result : AddMoimResult
+data class AddGroupResponse (
+    @SerializedName("result") val result : AddGroupResult
 ) : BaseResponse()
 
-data class AddMoimResult (
+data class AddGroupResult (
     @SerializedName("moimId") val moimId : Long
 )
 
-data class GetMoimListResponse (
-    @SerializedName("result") val result : List<Moim>
+data class GetGroupsResponse (
+    @SerializedName("result") val result : List<Group>
 ) : BaseResponse()
 
-data class Moim(
-    @SerializedName("groupId") var groupId : Long,
-    @SerializedName("groupName") var groupName : String,
-    @SerializedName("groupImgUrl") var groupImgUrl : String,
-    @SerializedName("groupCode") var groupCode : String,
-    @SerializedName("moimUsers") var moimUsers : List<MoimUser>
+data class Group(
+    @SerializedName("groupId") var groupId : Long = 0L,
+    @SerializedName("groupName") var groupName : String = "",
+    @SerializedName("groupImgUrl") var groupImgUrl : String = "",
+    @SerializedName("groupCode") var groupCode : String = "",
+    @SerializedName("moimUsers") var moimUsers : List<MoimUser> = emptyList()
 ) : Serializable
 
 data class MoimUser (
@@ -53,11 +53,11 @@ data class MoimSchedule(
     @SerializedName("curMoimSchedule") var curMoimSchedule : Boolean = false
 ) : Serializable
 
-data class ParticipateMoimResponse(
+data class JoinGroupResponse(
     @SerializedName("result") val result : Long = 0L
 ) : BaseResponse()
 
-data class UpdateMoimNameBody(
+data class UpdateGroupNameRequest(
     val moimId: Long,
     val moimName: String
 )

@@ -1,4 +1,4 @@
-package com.mongmong.namo.data.remote.diary
+package com.mongmong.namo.data.remote
 
 interface NetworkChecker {
     fun isOnline(): Boolean

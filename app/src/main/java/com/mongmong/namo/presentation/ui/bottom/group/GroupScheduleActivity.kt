@@ -30,11 +30,11 @@ import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
 import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import com.mongmong.namo.domain.model.AddMoimScheduleResponse
-import com.mongmong.namo.domain.model.Moim
+import com.mongmong.namo.domain.model.Group
 import com.mongmong.namo.domain.model.MoimListUserList
 import com.mongmong.namo.domain.model.MoimSchedule
-import com.mongmong.namo.data.remote.moim.MoimScheduleView
-import com.mongmong.namo.data.remote.moim.MoimService
+import com.mongmong.namo.data.remote.group.MoimScheduleView
+import com.mongmong.namo.data.remote.group.MoimService
 import com.mongmong.namo.databinding.ActivityGroupScheduleBinding
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.getInterval
@@ -63,7 +63,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimS
     private var originalMembers : MoimListUserList = MoimListUserList(listOf())
     private var selectedMembers : MoimListUserList = MoimListUserList(listOf())
     private var selectedIds : ArrayList<Long> = arrayListOf()
-    private lateinit var group : Moim
+    private lateinit var group : Group
     private var date = DateTime(System.currentTimeMillis())
     private var postGroupSchedule : AddMoimSchedule = AddMoimSchedule()
     private var editGroupSchedule : EditMoimSchedule = EditMoimSchedule()
@@ -78,7 +78,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimS
         db = NamoDatabase.getInstance(this)
         setContentView(binding.root)
 
-        group = intent.getSerializableExtra("group") as Moim
+        group = intent.getSerializableExtra("group") as Group
         originalMembers.memberList = group.moimUsers
 
         val nowDay = intent.getLongExtra("nowDay", 0L)

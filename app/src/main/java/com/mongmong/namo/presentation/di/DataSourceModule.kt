@@ -5,9 +5,11 @@ import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
+import com.mongmong.namo.data.datasource.group.GroupDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.dao.ScheduleDao
 import com.mongmong.namo.data.remote.diary.DiaryApiService
+import com.mongmong.namo.data.remote.group.GroupApiService
 import com.mongmong.namo.data.remote.schedule.ScheduleRetrofitInterface
 import dagger.Module
 import dagger.Provides
@@ -26,11 +28,17 @@ object DataSourceModule {
 
     /** 기록 */
     @Provides
-    fun provideLocalDataSource(diaryDao: DiaryDao): LocalDiaryDataSource = LocalDiaryDataSource(diaryDao)
+    fun provideLocalDiaryDataSource(diaryDao: DiaryDao): LocalDiaryDataSource = LocalDiaryDataSource(diaryDao)
     @Provides
-    fun provideRemoteDataSource(
+    fun provideRemoteDiaryDataSource(
         apiService: DiaryApiService,
         @ApplicationContext context: Context
     )
     : RemoteDiaryDataSource = RemoteDiaryDataSource(apiService, context)
+
+    @Provides
+    fun provideGroupDataSource(
+        apiService: GroupApiService,
+        @ApplicationContext context: Context
+    ): GroupDataSource = GroupDataSource(apiService, context)
 }

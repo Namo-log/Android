@@ -11,7 +11,6 @@ import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.presentation.config.RoomState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,19 +46,19 @@ class PersonalDiaryViewModel @Inject constructor(
     }
 
     /** 개인 기록 추가 **/
-    fun addPersonalDiary(images: List<File>?) {
+    fun addPersonalDiary() {
         viewModelScope.launch {
             Log.d("PersonalDiaryViewModel addDiary", "$_diary")
             _diary.value?.let {
                 repository.addDiary(
                     diary = it,
-                    images = images
+                    images = _imgList.value
                 )
             }
         }
     }
     /** 개인 기록 수정 **/
-    fun editPersonalDiary(content: String, images: List<File>?) {
+    fun editPersonalDiary(content: String) {
         viewModelScope.launch {
             _diary.value?.let {
                 it.content = content
@@ -69,7 +68,7 @@ class PersonalDiaryViewModel @Inject constructor(
             _diary.value?.let {
                 repository.editDiary(
                     diary = it,
-                    images = images
+                    images = _imgList.value
                 )
             }
         }

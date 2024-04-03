@@ -9,14 +9,33 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
-object ImageConverter {
-    suspend fun imageToFile(images: List<String>?, context: Context): List<File>? = withContext(Dispatchers.IO) {
-        images?.mapNotNull { path ->
-            uriToFile(Uri.parse(path), context)
+object RequestConverter {
+    // String 리스트(이미지)를 MultipartBody.Part 리스트로 변환
+    suspend fun imageToMultipart(imagePaths: List<String>?, context: Context): List<MultipartBody.Part>? = withContext(Dispatchers.IO) {
+        imagePaths?.mapNotNull { path ->
+            uriToMultipart(Uri.parse(path), context)
+        }
+    }
+
+    // Uri를 MultipartBody.Part로 변환
+    suspend fun uriToMultipart(uri: Uri, context: Context): MultipartBody.Part? = withContext(Dispatchers.IO) {
+        try {
+            val file = uriToFile(uri, context)
+            file?.let {
+                val requestFile = it.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                MultipartBody.Part.createFormData("image", it.name, requestFile)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 
@@ -61,5 +80,5 @@ object ImageConverter {
         }
     }
 
-
+    fun String.convertTextRequest() = toRequestBody("text/plain".toMediaTypeOrNull())
 }

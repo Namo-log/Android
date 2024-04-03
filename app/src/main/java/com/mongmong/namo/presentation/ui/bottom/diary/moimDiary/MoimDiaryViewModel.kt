@@ -9,11 +9,7 @@ import com.mongmong.namo.domain.model.MoimActivity
 import com.mongmong.namo.domain.model.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel

@@ -1,19 +1,19 @@
-package com.mongmong.namo.data.remote.moim
+package com.mongmong.namo.data.remote.group
 
-import com.mongmong.namo.domain.model.AddMoimResponse
+import com.mongmong.namo.domain.model.AddGroupResponse
 import com.mongmong.namo.domain.model.AddMoimScheduleResponse
-import com.mongmong.namo.domain.model.GetMoimListResponse
+import com.mongmong.namo.domain.model.GetGroupsResponse
 import com.mongmong.namo.domain.model.GetMoimScheduleResponse
-import com.mongmong.namo.domain.model.ParticipateMoimResponse
+import com.mongmong.namo.domain.model.JoinGroupResponse
 import com.mongmong.namo.presentation.config.BaseResponse
 
 interface AddMoimView {
-    fun onAddMoimSuccess(response: AddMoimResponse)
+    fun onAddMoimSuccess(response: AddGroupResponse)
     fun onAddMoimFailure(message : String)
 }
 
 interface GetMoimListView {
-    fun onGetMoimListSuccess(response: GetMoimListResponse)
+    fun onGetMoimListSuccess(response: GetGroupsResponse)
     fun onGetMoimListFailure(message : String)
 }
 
@@ -23,14 +23,14 @@ interface GetMoimScheduleView {
 }
 
 interface DeleteMoimMemberView {
-    fun onUpdateMoimNameSuccess(response: ParticipateMoimResponse)
+    fun onUpdateMoimNameSuccess(response: JoinGroupResponse)
     fun onUpdateMoimNameFailure(message: String)
     fun onDeleteMoimMemberSuccess(response: BaseResponse)
     fun onDeleteMoimMemberFailure(message: String)
 }
 
 interface ParticipateMoimView {
-    fun onParticipateMoimSuccess(response: ParticipateMoimResponse)
+    fun onParticipateMoimSuccess(response: JoinGroupResponse)
     fun onParticipateMoimFailure(message: String)
 }
 

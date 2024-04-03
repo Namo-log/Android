@@ -35,9 +35,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.utils.ImageConverter.imageToFile
 import com.mongmong.namo.presentation.utils.PermissionChecker
-import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import java.util.Locale
@@ -140,25 +138,22 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
     }
 
     /** 다이어리 추가 **/
-    private suspend fun insertData() {
+    private fun insertData() {
         val content = binding.diaryContentsEt.text.toString()
         if (content.isEmpty() && viewModel.getImgList().isNullOrEmpty()) {
             Snackbar.make(binding.root, "내용이나 이미지를 추가해주세요!", Snackbar.LENGTH_SHORT).show()
             return
         } else {
             viewModel.setNewPersonalDiary(schedule, content)
-            viewModel.addPersonalDiary(imageToFile(viewModel.getImgList(), this@PersonalDetailActivity))
+            viewModel.addPersonalDiary()
 
             finish()
         }
     }
 
     /** 다이어리 수정 **/
-    private suspend fun updateDiary() {
-        viewModel.editPersonalDiary(
-            binding.diaryContentsEt.text.toString(),
-            imageToFile(viewModel.getImgList(), this@PersonalDetailActivity)
-        )
+    private fun updateDiary() {
+        viewModel.editPersonalDiary(binding.diaryContentsEt.text.toString())
 
         Toast.makeText(this, "수정되었습니다", Toast.LENGTH_SHORT).show()
         finish()
