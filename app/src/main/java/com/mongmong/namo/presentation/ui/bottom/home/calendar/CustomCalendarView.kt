@@ -12,6 +12,7 @@ import androidx.core.content.withStyledAttributes
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.ui.bottom.home.calendar.data.StartEnd
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.DAYS_PER_WEEK
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
@@ -461,13 +462,12 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
 //        Log.d("BG_COLOR_CHECK", categoryList.toString())
 //        Log.d("BG_COLOR_CHECK", event.toString())
 //        Log.d("BG_COLOR_CHECK", "Category Server : " + event.categoryServerId + " | Category Idx : " + event.categoryId)
-
         val foundCategory = categoryList.find {
             if (it.serverId != 0L) it.serverId == event.categoryServerId
             else it.categoryId == event.categoryId
         }
-
-        bgPaint.color = foundCategory?.color ?: R.color.schedule
+        val hexColor = CategoryColor.convertPaletteIdToHexColor(foundCategory?.paletteId ?: 0)
+        bgPaint.color = Color.parseColor(hexColor)
     }
 
     private fun getScheduleTextStart(title : String, startIdx : Int, endIdx : Int) : Float {

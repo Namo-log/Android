@@ -1,11 +1,13 @@
 package com.mongmong.namo.presentation.ui.bottom.home.category.adapter
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemCategoryBinding
 import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.presentation.config.CategoryColor
 
 class SetCategoryRVAdapter(
     val context: Context,
@@ -43,7 +45,7 @@ class SetCategoryRVAdapter(
     inner class ViewHolder(val binding: ItemCategoryBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(category : Category) {
-            binding.itemCategoryColorIv.background.setTint(category.color)
+            binding.itemCategoryColorIv.background.setTint(Color.parseColor(CategoryColor.convertPaletteIdToHexColor(category.paletteId)))
             binding.itemCategoryNameTv.text = category.name
         }
 

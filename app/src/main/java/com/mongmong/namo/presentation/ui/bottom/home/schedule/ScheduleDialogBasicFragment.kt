@@ -50,6 +50,7 @@ import com.mongmong.namo.presentation.ui.bottom.home.notify.PushNotificationRece
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.getInterval
 import com.google.android.material.chip.Chip
+import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
 import dagger.hilt.android.AndroidEntryPoint
@@ -818,7 +819,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     private fun setCategory() {
         event.categoryServerId = selectedCategory.serverId
         binding.dialogScheduleCategoryNameTv.text = selectedCategory.name
-        binding.dialogScheduleCategoryColorIv.background.setTint(selectedCategory.color)
+        binding.dialogScheduleCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(selectedCategory.paletteId)
     }
 
     private fun printNotUploaded() {

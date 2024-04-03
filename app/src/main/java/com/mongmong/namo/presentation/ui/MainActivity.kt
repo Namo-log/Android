@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
     private val serverCategory = ArrayList<Category>()
     private val serverDiary = ArrayList<Diary>()
 
-    private lateinit var categoryColorArray: IntArray
+//    private lateinit var categoryColorArray: IntArray
 
     private var isCategorySuccess = false
     private var isScheduleSuccess = false
@@ -124,8 +124,8 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         db = NamoDatabase.getInstance(this)
         initNavigation()
-        categoryColorArray =resources.getIntArray(R.array.categoryColorArr)
-        Log.d("CATEGORY_ARR", categoryColorArray.contentToString())
+//        categoryColorArray =resources.getIntArray(R.array.categoryColorArr)
+//        Log.d("CATEGORY_ARR", categoryColorArray.contentToString())
 
         logToken()
         checkPermissions()
@@ -245,23 +245,18 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                 }
             }
         }
-        val paletteDatas = arrayListOf(
-            categoryColorArray[4], categoryColorArray[5], categoryColorArray[6], categoryColorArray[7], categoryColorArray[8],
-            categoryColorArray[9], categoryColorArray[10], categoryColorArray[11], categoryColorArray[12], categoryColorArray[13]
-        )
+//        val paletteDatas = arrayListOf(
+//            categoryColorArray[4], categoryColorArray[5], categoryColorArray[6], categoryColorArray[7], categoryColorArray[8],
+//            categoryColorArray[9], categoryColorArray[10], categoryColorArray[11], categoryColorArray[12], categoryColorArray[13]
+//        )
 
         for (i in unUploadedCategory) {
-            for (j: Int in paletteDatas.indices) {
-                if (paletteDatas[j] == i.color) {
-                    paletteId = j + 5
-                }
-            }
             if (i.serverId == 0L) {
                 if (i.state == RoomState.DELETED.state) {
                     return
                 } else {
                     //POST
-                    CategoryService(this).tryPostCategory(CategoryBody(i.name, paletteId, i.share), i.categoryId)
+                    CategoryService(this).tryPostCategory(CategoryBody(i.name, i.paletteId, i.share), i.categoryId)
                 }
             } else {
                 if (i.state == RoomState.DELETED.state) {
@@ -605,14 +600,14 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
     }
 
     private fun serverToCategory(category: GetCategoryResult): Category {
-        Log.d(
-            "CATEGORY_ARR",
-            "Server to Category - color : ${categoryColorArray[category.paletteId - 1]}"
-        )
+//        Log.d(
+//            "CATEGORY_ARR",
+//            "Server to Category - color : ${category}"
+//        )
         return Category(
             0,
             category.name,
-            categoryColorArray[category.paletteId - 1],
+            category.paletteId, //categoryColorArray[category.paletteId - 1],
             category.isShare,
             true,
             IS_UPLOAD,

@@ -4,6 +4,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
@@ -30,7 +32,9 @@ import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.adapter.Gall
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.snackbar.Snackbar
-import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
+import com.mongmong.namo.presentation.config.CategoryColor
+import com.mongmong.namo.presentation.utils.ImageConverter.imageToFile
+import com.mongmong.namo.presentation.utils.PermissionChecker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
@@ -68,7 +72,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         hasDiary()
 
         val category = repo.getCategory(schedule.categoryId, schedule.categoryServerId)
-        binding.itemDiaryCategoryColorIv.background.setTint(category.color)
+        binding.itemDiaryCategoryColorIv.backgroundTintList = ColorStateList.valueOf(Color.parseColor(CategoryColor.convertPaletteIdToHexColor(category.paletteId)))
 
         binding.apply {
             val formatDate = DateTime(schedule.startLong * 1000).toString("yyyy.MM.dd (EE)")

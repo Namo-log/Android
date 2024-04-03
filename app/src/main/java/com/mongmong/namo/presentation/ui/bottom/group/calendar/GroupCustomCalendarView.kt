@@ -11,6 +11,8 @@ import androidx.core.content.withStyledAttributes
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.domain.model.MoimSchedule
+import com.mongmong.namo.presentation.config.CategoryColor
+import com.mongmong.namo.presentation.config.PaletteType
 import com.mongmong.namo.presentation.ui.bottom.home.calendar.data.StartEnd
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.DAYS_PER_WEEK
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
@@ -75,8 +77,6 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
     private var _eventHorizontalPadding: Float = 0f
     private var _eventCornerRadius : Float = 0f
     private var _eventLineHeight : Float = 0f
-
-    private val colorArray = resources.getIntArray(R.array.categoryColorArr)
 
     init {
         context.withStyledAttributes(attrs, R.styleable.CalendarView, defStyleAttr = R.attr.itemViewStyle, defStyleRes = R.style.Calendar_ItemViewStyle) {
@@ -467,7 +467,7 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
 //                        }
                         else event.users[0].color
     //    Log.d("GroupCalView", "유저 : ${event.users} | paletteId : ${paletteId}")
-        bgPaint.color = colorArray[paletteId - 1]
+        bgPaint.color = Color.parseColor(CategoryColor.getAllColors()[paletteId - 1])
     }
 
     private fun getScheduleTextStart(title : String, startIdx : Int, endIdx : Int) : Float {
