@@ -4,9 +4,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityCategoryBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-
-class CategoryActivity() : AppCompatActivity() {
+@AndroidEntryPoint
+class CategoryActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityCategoryBinding
 

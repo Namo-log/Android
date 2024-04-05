@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
@@ -21,6 +22,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -30,6 +32,7 @@ import com.mongmong.namo.presentation.config.BaseResponse
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.data.local.entity.home.CategoryForUpload
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.CategoryBody
 import com.mongmong.namo.data.remote.category.CategoryDeleteService
@@ -51,13 +54,13 @@ import com.mongmong.namo.data.remote.schedule.ScheduleService
 import com.mongmong.namo.data.remote.schedule.ScheduleView
 import com.mongmong.namo.data.remote.schedule.GetAllScheduleView
 import com.mongmong.namo.domain.model.GetMonthScheduleResponse
-import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.PostScheduleResponse
 import com.mongmong.namo.databinding.ActivityMainBinding
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResult
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
+import com.mongmong.namo.presentation.ui.bottom.home.category.CategoryViewModel
 import com.mongmong.namo.presentation.utils.NetworkManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -88,6 +91,8 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
     private var isCategorySuccess = false
     private var isScheduleSuccess = false
     private var isDiarySuccess = false
+
+    private val categoryViewModel : CategoryViewModel by viewModels()
 
     companion object {
         const val ORIGIN_ACTIVITY_INTENT_KEY: String = "original_activity"
@@ -131,12 +136,20 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
         checkPermissions()
         checkNetworkUpload()
 
+        initObservers()
+
         val sf= this.getSharedPreferences("sf", Context.MODE_PRIVATE)
         val editor = sf.edit()
         editor.remove("yearMonth")
         editor.remove("checked")
         editor.apply()
 
+    }
+
+    private fun initObservers() {
+        categoryViewModel.category.observe(this) {
+            //
+        }
     }
 
     private fun checkNetworkUpload() {
@@ -245,10 +258,6 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                 }
             }
         }
-//        val paletteDatas = arrayListOf(
-//            categoryColorArray[4], categoryColorArray[5], categoryColorArray[6], categoryColorArray[7], categoryColorArray[8],
-//            categoryColorArray[9], categoryColorArray[10], categoryColorArray[11], categoryColorArray[12], categoryColorArray[13]
-//        )
 
         for (i in unUploadedCategory) {
             if (i.serverId == 0L) {
@@ -256,13 +265,13 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                     return
                 } else {
                     //POST
-                    CategoryService(this).tryPostCategory(CategoryBody(i.name, i.paletteId, i.share), i.categoryId)
+                    CategoryService(this).tryPostCategory(CategoryForUpload(i.name, i.paletteId, i.isShare), i.categoryId)
                 }
             } else {
                 if (i.state == RoomState.DELETED.state) {
                     CategoryDeleteService(this).tryDeleteCategory(i.serverId, i.categoryId)
                 } else {
-                    CategoryService(this).tryPatchCategory(i.serverId, CategoryBody(i.name, paletteId, i.share), i.categoryId)
+                    CategoryService(this).tryPatchCategory(i.serverId, CategoryForUpload(i.name, paletteId, i.isShare), i.categoryId)
                 }
 
             }
@@ -492,20 +501,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
         val result = response.result
 
         //룸디비에 isUpload, serverId, state 업데이트하기
-        var thread = Thread{
-            db.categoryDao.updateCategoryAfterUpload(
-                categoryId,
-                1,
-                result.categoryId,
-                RoomState.DEFAULT.state
-            )
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
+        categoryViewModel.updateCategoryAfterUpload(categoryId, true, result.categoryId, RoomState.DEFAULT.state)
     }
 
     override fun onPostCategoryFailure(message: String) {
@@ -519,20 +515,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
         val result = response.result
 
         //룸디비에 isUpload, serverId, state 업데이트하기
-        var thread = Thread{
-            db.categoryDao.updateCategoryAfterUpload(
-                categoryId,
-                1,
-                result.categoryId,
-                RoomState.DEFAULT.state
-            )
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
+        categoryViewModel.updateCategoryAfterUpload(categoryId, true, result.categoryId, RoomState.DEFAULT.state)
     }
 
     override fun onPatchCategoryFailure(message: String) {

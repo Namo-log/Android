@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.config.BaseResponse
@@ -13,10 +14,13 @@ import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.remote.category.CategoryDeleteService
 import com.mongmong.namo.data.remote.category.CategoryDeleteView
 import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.config.UploadState
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.NetworkManager
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, CategoryDeleteView {
 
     lateinit var binding: ActivityCategoryEditBinding
@@ -28,6 +32,8 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
     var serverId: Long = 0
 
     private val failList = ArrayList<Category>()
+
+    private val viewModel: CategoryViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +47,8 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
         supportFragmentManager.beginTransaction()
             .replace(R.id.category_edit_frm, CategoryDetailFragment(true))
             .commitAllowingStateLoss()
+
+        initObservers()
     }
 
     private fun onClickListener() {
@@ -60,6 +68,12 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
             val dialog = ConfirmDialog(this@CategoryEditActivity, title, content, "삭제", 0)
             dialog.isCancelable = false
             dialog.show(this.supportFragmentManager, "ConfirmDialog")
+        }
+    }
+
+    private fun initObservers() {
+        viewModel.category.observe(this) {
+            //
         }
     }
 
@@ -94,7 +108,7 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
         // 룸디비에 isUpload, serverId, state 업데이트하기
         val thread = Thread {
             category = db.categoryDao.getCategoryWithId(categoryId)
-            db.categoryDao.updateCategoryAfterUpload(categoryId, 0, category.serverId, state)
+            viewModel.updateCategoryAfterUpload(categoryId, UploadState.IS_NOT_UPLOAD.state, category.categoryId, RoomState.DEFAULT.state)
             failList.clear()
             failList.addAll(db.categoryDao.getNotUploadedCategory() as ArrayList<Category>)
         }
@@ -119,21 +133,13 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
         when (state) {
             // 서버 통신 성공
             RoomState.DEFAULT.state -> {
-                val thread = Thread {
-                    db.categoryDao.updateCategoryAfterUpload(categoryId, 1, serverId, state)
-                }
-                thread.start()
-                try {
-                    thread.join()
-                } catch ( e: InterruptedException) {
-                    e.printStackTrace()
-                }
-                Log.e("CategoryEditAct", "serverId 업데이트 성공, serverId: ${category.serverId}, categoryId: ${categoryId}")
+                viewModel.updateCategoryAfterUpload(categoryId, UploadState.IS_UPLOAD.state, serverId, state)
+//                Log.e("CategoryEditAct", "serverId 업데이트 성공, serverId: ${category.serverId}, categoryId: ${categoryId}")
             }
             // 서버 업로드 실패
             else -> {
                 val thread = Thread {
-                    db.categoryDao.updateCategoryAfterUpload(categoryId, 0, serverId, state)
+                    viewModel.updateCategoryAfterUpload(categoryId, UploadState.IS_UPLOAD.state, serverId, state)
                     failList.clear()
                     failList.addAll(db.categoryDao.getNotUploadedCategory() as ArrayList<Category>)
                 }
@@ -146,10 +152,6 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
                 Log.d("CategoryEditAct", "Server Fail : $failList")
             }
         }
-
-//        val thread = Thread {
-//            db.categoryDao.updateCategoryAfterUpload(categoryId, 1, result.categoryId, state)
-//        }
     }
 
     override fun onDeleteCategorySuccess(response: BaseResponse, categoryId : Long) {

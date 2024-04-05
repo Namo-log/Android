@@ -1,6 +1,7 @@
 package com.mongmong.namo.data.remote.category
 
 import android.util.Log
+import com.mongmong.namo.data.local.entity.home.CategoryForUpload
 import com.mongmong.namo.domain.model.CategoryBody
 import com.mongmong.namo.domain.model.GetCategoryResponse
 import com.mongmong.namo.domain.model.PostCategoryResponse
@@ -13,24 +14,24 @@ import retrofit2.Response
 class CategoryService(val view: CategoryDetailView) {
     val retrofitInterface = ApplicationClass.sRetrofit.create(CategoryRetrofitInterface::class.java)
 
-    fun tryPostCategory(body: CategoryBody, id: Long) {
-        retrofitInterface.postCategory(body).enqueue(object : Callback<PostCategoryResponse> {
-
-            override fun onResponse(call: Call<PostCategoryResponse>, response: Response<PostCategoryResponse>) {
-                when(response.code()) {
-                    200 -> view.onPostCategorySuccess(response.body() as PostCategoryResponse, id)
-                    else -> view.onPostCategoryFailure(response.message())
-                }
-            }
-
-            override fun onFailure(call: Call<PostCategoryResponse>, t: Throwable) {
-                Log.d("PostCategory", "onFailure")
-                view.onPostCategoryFailure(t.message ?: "통신 오류")
-            }
-        })
+    fun tryPostCategory(body: CategoryForUpload, id: Long) {
+//        retrofitInterface.postCategory(body).enqueue(object : Callback<PostCategoryResponse> {
+//
+//            override fun onResponse(call: Call<PostCategoryResponse>, response: Response<PostCategoryResponse>) {
+//                when(response.code()) {
+//                    200 -> view.onPostCategorySuccess(response.body() as PostCategoryResponse, id)
+//                    else -> view.onPostCategoryFailure(response.message())
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<PostCategoryResponse>, t: Throwable) {
+//                Log.d("PostCategory", "onFailure")
+//                view.onPostCategoryFailure(t.message ?: "통신 오류")
+//            }
+//        })
     }
 
-    fun tryPatchCategory(categoryId: Long, body: CategoryBody, localId : Long) {
+    fun tryPatchCategory(categoryId: Long, body: CategoryForUpload, localId : Long) {
         retrofitInterface.patchCategory(categoryId, body).enqueue(object : Callback<PostCategoryResponse> {
 
             override fun onResponse(call: Call<PostCategoryResponse>, response: Response<PostCategoryResponse>) {

@@ -17,7 +17,9 @@ import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.remote.category.CategorySettingView
 import com.mongmong.namo.domain.model.GetCategoryResponse
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CategorySettingFragment: Fragment(), CategorySettingView {
 
     lateinit var binding: FragmentCategorySettingBinding //플로팅 카테고리 설정 화면
@@ -77,8 +79,9 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
 
     private fun onClickCategoryAddBtn() {
         binding.categoryAddBtn.setOnClickListener { // 새 카테고리
-            (context as CategoryActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.category_frm, CategoryDetailFragment(false))
+            requireActivity().supportFragmentManager.beginTransaction()
+                .add(R.id.category_frm, CategoryDetailFragment(false))
+                .addToBackStack(null) // 백 스택에 트랜잭션을 추가
                 .commitAllowingStateLoss()
         }
     }
@@ -147,8 +150,8 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
         // 리스트에 아무런 카테고리가 없으면 기본 카테고리 설정. 근데 딜레이가 좀 있음
         Thread {
             if (db.categoryDao.getCategoryList().isEmpty()) {
-                db.categoryDao.insertCategory(Category(0, "일정", R.color.schedule, true))
-                db.categoryDao.insertCategory(Category(0, "그룹", R.color.schedule_group, true))
+                db.categoryDao.insertCategory(Category(0, "일정", 1, true))
+                db.categoryDao.insertCategory(Category(0, "모임", 4, true))
             }
         }.start()
     }

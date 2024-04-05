@@ -11,6 +11,9 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
@@ -26,10 +29,15 @@ import com.mongmong.namo.presentation.utils.NetworkManager
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
+import com.mongmong.namo.data.local.entity.home.CategoryForUpload
 import com.mongmong.namo.presentation.config.PaletteType
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.config.UploadState
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), CategoryDetailView {
     private var _binding: FragmentCategoryDetailBinding? = null
     private val binding get() = _binding!!
@@ -42,6 +50,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
     private val failList = ArrayList<Category>()
 
     private var clickable = true // 중복 생성을 방지하기 위함
+
+    private val viewModel : CategoryViewModel by viewModels()
 
     // 카테고리에 들어갈 데이터
     var categoryId : Long = -1
@@ -74,6 +84,9 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         switchToggle()
         onClickListener()
         clickCategoryItem()
+
+        initObservers()
+
         if (color == null) {
             initPaletteColorRv(CategoryColor.SCHEDULE)
         } else {
@@ -103,11 +116,11 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                         }
                         // 생성 모드 -> 카테고리 insert
                         else {
-                            insertData()
+                            lifecycleScope.launch {
+                                insertData()
+                            }
                         }
                     }
-//                    // 화면 이동
-//                    moveToSettingFrag(isEditMode)
                     clickable = false
                 }
             }
@@ -128,7 +141,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             // 룸디비에 isUpload, serverId, state 업데이트하기
             val thread = Thread {
                 category = db.categoryDao.getCategoryWithId(categoryId)
-                db.categoryDao.updateCategoryAfterUpload(categoryId, 0, category.serverId, state)
+                viewModel.updateCategoryAfterUpload(categoryId, UploadState.IS_NOT_UPLOAD.state, category.serverId, state)
                 failList.clear()
                 failList.addAll(db.categoryDao.getNotUploadedCategory() as ArrayList<Category>)
             }
@@ -150,11 +163,11 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         when(state) {
             RoomState.ADDED.state -> {
                 // 카테고리 생성
-                CategoryService(this@CategoryDetailFragment).tryPostCategory(CategoryBody(name, paletteId, share), categoryId)
+                CategoryService(this@CategoryDetailFragment).tryPostCategory(CategoryForUpload(name, paletteId, share), categoryId)
             }
             RoomState.EDITED.state -> {
                 // 카테고리 수정
-                CategoryService(this@CategoryDetailFragment).tryPatchCategory(serverId, CategoryBody(name, paletteId, share), categoryId)
+                CategoryService(this@CategoryDetailFragment).tryPatchCategory(serverId, CategoryForUpload(name, paletteId, share), categoryId)
             }
             else -> {
                 Log.d("CategoryDetailFrag", "서버 업로드 중 state 오류")
@@ -162,18 +175,27 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         }
     }
 
+    private fun initObservers() {
+        viewModel.category.observe(requireActivity()) { category ->
+            binding.categoryDetailTitleEt.setText(category.name)
+        }
+        viewModel.isPostComplete.observe(requireActivity()) { isComplete ->
+            // 추가 작업이 완료된 후 뒤로가기
+            if (isComplete) {
+                moveToSettingFrag(isEditMode)
+            }
+        }
+    }
+
+    /** 카테고리 추가 */
     private fun insertData() {
         // RoomDB
         name = binding.categoryDetailTitleEt.text.toString()
         category = Category(0, name, color!!.paletteId, share)
-        Thread{
-            category = Category(0, name, color!!.paletteId, share)
-            categoryId = db.categoryDao.insertCategory(category)
-            Log.d("CategoryDetailFrag", "Insert roomCategory : $categoryId")
-        }.start()
-        // 서버 통신
-        uploadToServer(RoomState.ADDED.state)
-//        CategoryService(this@CategoryDetailFragment).tryPostCategory(CategoryBody(name, paletteId, share))
+        category.state = RoomState.ADDED.state
+
+        // 새 카테고리 등록
+        viewModel.addCategory(category)
     }
 
     private fun updateData() {
@@ -306,7 +328,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                         paletteId = color!!.paletteId
                     }
                     // 카테고리 공유 여부
-                    share = data.share
+                    share = data.isShare
                 }
 
                 Log.e("CategoryDetailFrag", "roomId: ${categoryId}, serverId: ${serverId}")
@@ -326,9 +348,9 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             }
             activity?.finish()
         } else { // 생성 모드에서의 화면 이동
-            (context as CategoryActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.category_frm, CategorySettingFragment())
-                .commitAllowingStateLoss()
+            // 이전의 모든 프래그먼트를 백 스택에서 제거 (HomeFragment)
+            requireActivity().supportFragmentManager
+                .popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
     }
     private fun updateCategoryAfterUpload(response: PostCategoryResponse?, state: String) {
@@ -338,7 +360,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             // 서버 통신 성공
             RoomState.DEFAULT.state -> {
                 val thread = Thread {
-                    db.categoryDao.updateCategoryAfterUpload(categoryId, 1, result!!.categoryId, state)
+                    viewModel.updateCategoryAfterUpload(categoryId, UploadState.IS_UPLOAD.state, result!!.categoryId, state)
                     db.categoryDao.updateCategory(category.copy(serverId = result.categoryId))
                 }
                 thread.start()
@@ -352,7 +374,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
             // 서버 업로드 실패
             else -> {
                 val thread = Thread {
-                    db.categoryDao.updateCategoryAfterUpload(categoryId, 0, serverId, state)
+                    viewModel.updateCategoryAfterUpload(categoryId, UploadState.IS_NOT_UPLOAD.state, serverId, state)
                     failList.clear()
                     failList.addAll(db.categoryDao.getNotUploadedCategory() as ArrayList<Category>)
                 }
