@@ -1,7 +1,7 @@
 package com.mongmong.namo.data.remote.category
 
 import com.mongmong.namo.data.local.entity.home.CategoryForUpload
-import com.mongmong.namo.domain.model.CategoryBody
+import com.mongmong.namo.domain.model.EditCategoryResponse
 import com.mongmong.namo.domain.model.GetCategoryResponse
 import com.mongmong.namo.domain.model.PostCategoryResponse
 import com.mongmong.namo.presentation.config.BaseResponse
@@ -22,10 +22,10 @@ interface CategoryRetrofitInterface {
 
     // 카테고리 수정
     @PATCH("/categories/{categoryId}")
-    fun patchCategory(
+    suspend fun patchCategory(
         @Path("categoryId") categoryId: Long,
         @Body body: CategoryForUpload
-    ) : Call<PostCategoryResponse>
+    ) : EditCategoryResponse
 
     // 카테고리 조회
     @GET("/categories")

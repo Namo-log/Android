@@ -2,7 +2,6 @@ package com.mongmong.namo.data.remote.category
 
 import android.util.Log
 import com.mongmong.namo.data.local.entity.home.CategoryForUpload
-import com.mongmong.namo.domain.model.CategoryBody
 import com.mongmong.namo.domain.model.GetCategoryResponse
 import com.mongmong.namo.domain.model.PostCategoryResponse
 import com.mongmong.namo.presentation.config.ApplicationClass
@@ -32,20 +31,20 @@ class CategoryService(val view: CategoryDetailView) {
     }
 
     fun tryPatchCategory(categoryId: Long, body: CategoryForUpload, localId : Long) {
-        retrofitInterface.patchCategory(categoryId, body).enqueue(object : Callback<PostCategoryResponse> {
-
-            override fun onResponse(call: Call<PostCategoryResponse>, response: Response<PostCategoryResponse>) {
-                when(response.code()) {
-                    200 -> view.onPatchCategorySuccess(response.body() as PostCategoryResponse, localId)
-                    else -> view.onPatchCategoryFailure(response.message())
-                }
-            }
-
-            override fun onFailure(call: Call<PostCategoryResponse>, t: Throwable) {
-                Log.d("PatchCategory", "onFailure")
-                view.onPatchCategoryFailure(t.message ?: "통신 오류")
-            }
-        })
+//        retrofitInterface.patchCategory(categoryId, body).enqueue(object : Callback<PostCategoryResponse> {
+//
+//            override fun onResponse(call: Call<PostCategoryResponse>, response: Response<PostCategoryResponse>) {
+//                when(response.code()) {
+//                    200 -> view.onPatchCategorySuccess(response.body() as PostCategoryResponse, localId)
+//                    else -> view.onPatchCategoryFailure(response.message())
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<PostCategoryResponse>, t: Throwable) {
+//                Log.d("PatchCategory", "onFailure")
+//                view.onPatchCategoryFailure(t.message ?: "통신 오류")
+//            }
+//        })
     }
 }
 

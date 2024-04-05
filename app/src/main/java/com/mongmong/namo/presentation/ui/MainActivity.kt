@@ -34,7 +34,6 @@ import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.CategoryForUpload
 import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.domain.model.CategoryBody
 import com.mongmong.namo.data.remote.category.CategoryDeleteService
 import com.mongmong.namo.data.remote.category.CategoryDeleteView
 import com.mongmong.namo.data.remote.category.CategoryDetailView

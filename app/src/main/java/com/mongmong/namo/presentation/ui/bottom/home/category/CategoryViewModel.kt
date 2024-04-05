@@ -32,6 +32,17 @@ class CategoryViewModel @Inject constructor(
         }
     }
 
+    /** 카테고리 수정 */
+    fun editCategory(category: Category) {
+        viewModelScope.launch {
+            Log.d("CategoryViewModel", "editCategory $category")
+            repository.editCategory(
+                category = category
+            )
+            _isPostComplete.postValue(true)
+        }
+    }
+
     fun updateCategoryAfterUpload(localId: Long, isUpload: Boolean, serverId: Long, state: String) {
         viewModelScope.launch {
             repository.updateCategoryAfterUpload(localId, serverId, isUpload, state)

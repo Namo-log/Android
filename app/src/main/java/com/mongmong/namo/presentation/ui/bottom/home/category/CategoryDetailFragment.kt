@@ -15,13 +15,11 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.databinding.FragmentCategoryDetailBinding
 import com.mongmong.namo.presentation.ui.bottom.home.category.CategorySettingFragment.Companion.CATEGORY_KEY_DATA
 import com.mongmong.namo.presentation.ui.bottom.home.category.adapter.CategoryPaletteRVAdapter
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.domain.model.CategoryBody
 import com.mongmong.namo.data.remote.category.CategoryDetailView
 import com.mongmong.namo.data.remote.category.CategoryService
 import com.mongmong.namo.domain.model.PostCategoryResponse
@@ -112,7 +110,9 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
                     if (clickable) {
                         // 수정 모드 -> 카테고리 update
                         if (isEditMode) {
-                            updateData()
+                            lifecycleScope.launch {
+                                updateData()
+                            }
                         }
                         // 생성 모드 -> 카테고리 insert
                         else {
@@ -200,20 +200,14 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
     private fun updateData() {
         // RoomDB
-        val thread = Thread{
-            name = binding.categoryDetailTitleEt.text.toString()
-            category = Category(categoryId, name, color!!.paletteId, share)
-            db.categoryDao.updateCategory(category)
-            Log.d("CategoryDetailFrag", "update roomCategory: ${db.categoryDao.getCategoryWithId(categoryId)}")
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch (e : InterruptedException) {
-            e.printStackTrace()
-        }
-        // 서버 통신
-        uploadToServer(RoomState.EDITED.state)
+        name = binding.categoryDetailTitleEt.text.toString()
+        category = Category(categoryId, name, color!!.paletteId, share)
+        category.state = RoomState.EDITED.state
+        category.serverId = serverId
+
+        // 카테고리 편집
+        viewModel.editCategory(category)
+
         Toast.makeText(requireContext(), "카테고리가 수정되었습니다.", Toast.LENGTH_SHORT).show()
     }
 

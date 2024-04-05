@@ -7,6 +7,10 @@ interface CategoryRepository {
         category: Category
     )
 
+    suspend fun editCategory(
+        category: Category
+    )
+
     suspend fun updateCategoryAfterUpload(
         localId: Long,
         serverId: Long,

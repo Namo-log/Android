@@ -25,6 +25,18 @@ class LocalCategoryDataSource @Inject constructor(
         return localId
     }
 
+    suspend fun editCategory(category: Category) {
+        withContext(Dispatchers.IO) {
+            runCatching {
+                categoryDao.updateCategory(category)
+            }.onSuccess {
+                Log.d("LocalCategoryDataSource", "editCategory Success")
+            }.onFailure {
+                Log.d("LocalCategoryDataSource", "editCategory Fail")
+            }
+        }
+    }
+
     suspend fun updateCategoryAfterUpload(
         localId: Long,
         serverId: Long,
