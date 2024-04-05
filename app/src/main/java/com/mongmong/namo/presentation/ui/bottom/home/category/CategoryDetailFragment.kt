@@ -20,8 +20,6 @@ import com.mongmong.namo.databinding.FragmentCategoryDetailBinding
 import com.mongmong.namo.presentation.ui.bottom.home.category.CategorySettingFragment.Companion.CATEGORY_KEY_DATA
 import com.mongmong.namo.presentation.ui.bottom.home.category.adapter.CategoryPaletteRVAdapter
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.data.remote.category.CategoryDetailView
-import com.mongmong.namo.data.remote.category.CategoryService
 import com.mongmong.namo.domain.model.PostCategoryResponse
 import com.mongmong.namo.presentation.utils.NetworkManager
 import com.google.gson.Gson
@@ -36,7 +34,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), CategoryDetailView {
+class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
     private var _binding: FragmentCategoryDetailBinding? = null
     private val binding get() = _binding!!
 
@@ -163,11 +161,11 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
         when(state) {
             RoomState.ADDED.state -> {
                 // 카테고리 생성
-                CategoryService(this@CategoryDetailFragment).tryPostCategory(CategoryForUpload(name, paletteId, share), categoryId)
+//                CategoryService(this@CategoryDetailFragment).tryPostCategory(CategoryForUpload(name, paletteId, share), categoryId)
             }
             RoomState.EDITED.state -> {
                 // 카테고리 수정
-                CategoryService(this@CategoryDetailFragment).tryPatchCategory(serverId, CategoryForUpload(name, paletteId, share), categoryId)
+//                CategoryService(this@CategoryDetailFragment).tryPatchCategory(serverId, CategoryForUpload(name, paletteId, share), categoryId)
             }
             else -> {
                 Log.d("CategoryDetailFrag", "서버 업로드 중 state 오류")
@@ -384,32 +382,5 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment(), Cate
 
         // 화면 이동
         moveToSettingFrag(isEditMode)
-    }
-
-
-    // 카테고리 생성
-    override fun onPostCategorySuccess(response: PostCategoryResponse, categoryId : Long) {
-        Log.d("CategoryDetailFrag", "onPostCategorySuccess, categoryId = $categoryId")
-        // 룸디비에 isUpload, serverId, state 업데이트하기
-        updateCategoryAfterUpload(response, RoomState.DEFAULT.state)
-    }
-
-    override fun onPostCategoryFailure(message: String) {
-        Log.d("CategoryDetailFrag", "onPostCategoryFailure")
-        // 룸디비에 failList 업데이트하기
-        updateCategoryAfterUpload(null, RoomState.ADDED.state)
-    }
-
-    // 카테고리 수정
-    override fun onPatchCategorySuccess(response: PostCategoryResponse, categoryId: Long) {
-        Log.d("CategoryDetailFrag", "onPatchCategorySuccess, categoryId = $categoryId")
-        // 룸디비에 isUpload, serverId, state 업데이트하기
-        updateCategoryAfterUpload(response, RoomState.DEFAULT.state)
-    }
-
-    override fun onPatchCategoryFailure(message: String) {
-        Log.d("CategoryDetailFrag", "onPatchCategoryFailure")
-        // 룸디비에 failList 업데이트하기
-        updateCategoryAfterUpload(null, RoomState.EDITED.state)
     }
 }
