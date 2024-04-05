@@ -33,8 +33,7 @@ import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.snackbar.Snackbar
 import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.utils.ImageConverter.imageToFile
-import com.mongmong.namo.presentation.utils.PermissionChecker
+import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
