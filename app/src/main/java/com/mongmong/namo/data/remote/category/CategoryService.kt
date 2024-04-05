@@ -72,18 +72,18 @@ class CategoryDeleteService(val view: CategoryDeleteView) {
     val retrofitInterface = ApplicationClass.sRetrofit.create(CategoryRetrofitInterface::class.java)
 
     fun tryDeleteCategory(categoryId: Long, localId : Long) {
-        retrofitInterface.deleteCategory(categoryId).enqueue(object : Callback<BaseResponse> {
-
-            override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
-                when(response.code()) {
-                    200 -> view.onDeleteCategorySuccess(response.body() as BaseResponse, localId)
-                }
-            }
-
-            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
-                Log.d("GetCategory", "onFailure")
-                view.onDeleteCategoryFailure(t.message ?: "통신 오류")
-            }
-        })
+//        retrofitInterface.deleteCategory(categoryId).enqueue(object : Callback<BaseResponse> {
+//
+//            override fun onResponse(call: Call<BaseResponse>, response: Response<BaseResponse>) {
+//                when(response.code()) {
+//                    200 -> view.onDeleteCategorySuccess(response.body() as BaseResponse, localId)
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
+//                Log.d("GetCategory", "onFailure")
+//                view.onDeleteCategoryFailure(t.message ?: "통신 오류")
+//            }
+//        })
     }
 }

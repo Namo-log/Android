@@ -11,6 +11,10 @@ interface CategoryRepository {
         category: Category
     )
 
+    suspend fun deleteCategory(
+        category: Category
+    )
+
     suspend fun updateCategoryAfterUpload(
         localId: Long,
         serverId: Long,

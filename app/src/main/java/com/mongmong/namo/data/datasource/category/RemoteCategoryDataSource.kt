@@ -1,8 +1,10 @@
 package com.mongmong.namo.data.datasource.category
 
 import android.util.Log
+import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.local.entity.home.CategoryForUpload
 import com.mongmong.namo.data.remote.category.CategoryRetrofitInterface
+import com.mongmong.namo.domain.model.DeleteCategoryResponse
 import com.mongmong.namo.domain.model.EditCategoryResponse
 import com.mongmong.namo.domain.model.EditCategoryResult
 import com.mongmong.namo.domain.model.PostCategoryResponse
@@ -46,6 +48,24 @@ class RemoteCategoryDataSource @Inject constructor(
                 categoryResponse = it
             }.onFailure {
                 Log.d("RemoteCategoryDataSource", "editCategoryToServer Failure")
+            }
+        }
+        return categoryResponse
+    }
+
+    suspend fun deleteCategoryToServer(
+        categoryId: Long
+    ) : DeleteCategoryResponse {
+        var categoryResponse = DeleteCategoryResponse("")
+
+        withContext(Dispatchers.IO) {
+            runCatching {
+                apiService.deleteCategory(categoryId)
+            }.onSuccess {
+                Log.d("RemoteCategoryDataSource", "deleteCategoryToServer Success, $it")
+                categoryResponse = it
+            }.onFailure {
+                Log.d("RemoteCategoryDataSource", "deleteCategoryToServer Fail")
             }
         }
         return categoryResponse

@@ -43,6 +43,16 @@ class CategoryViewModel @Inject constructor(
         }
     }
 
+    /** 카테고리 삭제 */
+    fun deleteCategory(category: Category) {
+        viewModelScope.launch {
+            Log.d("CategoryViewModel", "deleteCategory $category")
+            repository.deleteCategory(
+                category = category
+            )
+        }
+    }
+
     fun updateCategoryAfterUpload(localId: Long, isUpload: Boolean, serverId: Long, state: String) {
         viewModelScope.launch {
             repository.updateCategoryAfterUpload(localId, serverId, isUpload, state)

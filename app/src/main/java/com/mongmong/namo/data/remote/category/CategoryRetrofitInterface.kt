@@ -1,6 +1,7 @@
 package com.mongmong.namo.data.remote.category
 
 import com.mongmong.namo.data.local.entity.home.CategoryForUpload
+import com.mongmong.namo.domain.model.DeleteCategoryResponse
 import com.mongmong.namo.domain.model.EditCategoryResponse
 import com.mongmong.namo.domain.model.GetCategoryResponse
 import com.mongmong.namo.domain.model.PostCategoryResponse
@@ -33,7 +34,7 @@ interface CategoryRetrofitInterface {
 
     // 카테고리 삭제
     @DELETE("/categories/{categoryId}")
-    fun deleteCategory(
+    suspend fun deleteCategory(
         @Path("categoryId") categoryId: Long
-    ) : Call<BaseResponse>
+    ) : DeleteCategoryResponse
 }

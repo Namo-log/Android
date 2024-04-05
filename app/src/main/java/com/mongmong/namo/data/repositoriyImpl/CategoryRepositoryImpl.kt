@@ -23,7 +23,7 @@ class CategoryRepositoryImpl @Inject constructor(
             val addResponse = remoteCategoryDataSource.addCategoryToServer(category.convertLocalCategoryToServer())
             if (addResponse.code == ScheduleRepositoryImpl.SUCCESS_CODE) {
                 Log.d("CategoryRepositoryImpl", "addCategory Success, $addResponse")
-                localCategoryDataSource.updateCategoryAfterUpload(
+                updateCategoryAfterUpload(
                     localId = category.categoryId,
                     serverId = addResponse.result.categoryId,
                     isUpload = UploadState.IS_UPLOAD.state,
@@ -51,6 +51,24 @@ class CategoryRepositoryImpl @Inject constructor(
                 updateCategoryAfterUpload(category.categoryId, category.serverId, UploadState.IS_UPLOAD.state, RoomState.DEFAULT.state)
             } else {
                 Log.d("CategoryRepositoryImpl", "editCategory Fail, code = ${editResponse.code}, message = ${editResponse.message}")
+            }
+        }
+    }
+
+    override suspend fun deleteCategory(category: Category) {
+        Log.d("CategoryRepositoryImpl", "deleteCategory $category")
+        // room db에서 삭제 상태로 변경
+        localCategoryDataSource.deleteCategory(category)
+        if (networkChecker.isOnline()) {
+            // 서버 db에서 삭제
+            val deleteResponse = remoteCategoryDataSource.deleteCategoryToServer(
+                category.serverId
+            )
+            if (deleteResponse.code == ScheduleRepositoryImpl.SUCCESS_CODE) {
+                Log.d("CategoryRepositoryImpl", "deleteCategory Success, $deleteResponse")
+                updateCategoryAfterUpload(category.categoryId, category.serverId, UploadState.IS_UPLOAD.state, RoomState.DEFAULT.state)
+            } else {
+                Log.d("CategoryRepositoryImpl", "deleteCategory Fail, code = ${deleteResponse.code}, message = ${deleteResponse.message}")
             }
         }
     }

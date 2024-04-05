@@ -138,9 +138,9 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
 
         // spf에 저장
         editor
-            .putString(CATEGORY_KEY_DATA, json)
-            .putLong(CATEGORY_KEY_IDX, dataSet.categoryId)
-            .putLong(CATEGORY_KEY_SERVER_IDX, dataSet.serverId)
+            .putString(CATEGORY_DATA, json)
+            .putLong(CATEGORY_ID, dataSet.categoryId)
+            .putLong(CATEGORY_SERVER_ID, dataSet.serverId)
             .apply()
 
         Log.d("debug", "Category Data saved")
@@ -158,9 +158,9 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
 
     companion object {
         const val CATEGORY_KEY_PREFS = "category"
-        const val CATEGORY_KEY_DATA = "category_data"
-        const val CATEGORY_KEY_IDX = "categoryId"
-        const val CATEGORY_KEY_SERVER_IDX = "serverId"
+        const val CATEGORY_DATA = "category_data"
+        const val CATEGORY_ID = "categoryId"
+        const val CATEGORY_SERVER_ID = "serverId"
     }
 
     override fun onGetAllCategorySuccess(response: GetCategoryResponse) {

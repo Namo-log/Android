@@ -21,6 +21,11 @@ class EditCategoryResult (
     @SerializedName("id") val categoryId: Long = 0
 )
 
+// 카테고리 삭제
+data class DeleteCategoryResponse (
+    @SerializedName("result") val result : String
+) : BaseResponse()
+
 // 모든 카테고리 조회
 class GetCategoryResponse (
     val result: ArrayList<GetCategoryResult>

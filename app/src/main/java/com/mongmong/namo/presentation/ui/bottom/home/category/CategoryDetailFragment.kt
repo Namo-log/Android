@@ -17,7 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.databinding.FragmentCategoryDetailBinding
-import com.mongmong.namo.presentation.ui.bottom.home.category.CategorySettingFragment.Companion.CATEGORY_KEY_DATA
+import com.mongmong.namo.presentation.ui.bottom.home.category.CategorySettingFragment.Companion.CATEGORY_DATA
 import com.mongmong.namo.presentation.ui.bottom.home.category.adapter.CategoryPaletteRVAdapter
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.domain.model.PostCategoryResponse
@@ -296,9 +296,9 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
     private fun loadPref() {
         val spf = requireActivity().getSharedPreferences(CategorySettingFragment.CATEGORY_KEY_PREFS, Context.MODE_PRIVATE)
 
-        if (spf.contains(CATEGORY_KEY_DATA)) {
+        if (spf.contains(CATEGORY_DATA)) {
             val gson = Gson()
-            val json = spf.getString(CATEGORY_KEY_DATA, "")
+            val json = spf.getString(CATEGORY_DATA, "")
             try {
                 // 데이터에 타입을 부여하기 위한 typeToken
                 val typeToken = object : TypeToken<Category>() {}.type

@@ -6,22 +6,24 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.google.gson.Gson
+import com.google.gson.JsonParseException
+import com.google.gson.reflect.TypeToken
 import com.mongmong.namo.R
-import com.mongmong.namo.presentation.config.BaseResponse
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.databinding.ActivityCategoryEditBinding
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.data.remote.category.CategoryDeleteService
-import com.mongmong.namo.data.remote.category.CategoryDeleteView
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.NetworkManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, CategoryDeleteView {
+class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     lateinit var binding: ActivityCategoryEditBinding
 
@@ -42,6 +44,7 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
 
         db = NamoDatabase.getInstance(this)
 
+        loadPref()
         onClickListener()
 
         supportFragmentManager.beginTransaction()
@@ -71,6 +74,23 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
         }
     }
 
+    private fun loadPref() {
+        // roomDB
+        val spf = getSharedPreferences(CategorySettingFragment.CATEGORY_KEY_PREFS, Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = spf.getString(CategorySettingFragment.CATEGORY_DATA, "")
+        try {
+            // 데이터에 타입을 부여하기 위한 typeToken
+            val typeToken = object : TypeToken<Category>() {}.type
+            // 데이터 받기
+            category = gson.fromJson(json, typeToken)
+        } catch (e: JsonParseException) { // 파싱이 안 될 경우
+            e.printStackTrace()
+        }
+//        categoryId = spf.getLong(CategorySettingFragment.CATEGORY_ID, -1)
+//        serverId = spf.getLong(CategorySettingFragment.CATEGORY_SERVER_ID, -1)
+    }
+
     private fun initObservers() {
         viewModel.category.observe(this) {
             //
@@ -78,30 +98,19 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
     }
 
     private fun deleteCategory() {
-        // roomDB
-        val spf = getSharedPreferences(CategorySettingFragment.CATEGORY_KEY_PREFS, Context.MODE_PRIVATE)
-        categoryId = spf.getLong(CategorySettingFragment.CATEGORY_KEY_IDX, -1)
-        serverId = spf.getLong(CategorySettingFragment.CATEGORY_KEY_SERVER_IDX, -1)
 
         if (categoryId == 1L || categoryId == 2L) {
             Toast.makeText(this, "기본 카테고리는 삭제할 수 없습니다", Toast.LENGTH_SHORT).show()
         } else {
-            // 서버 통신
-            uploadToServer(RoomState.DELETED.state)
-            Thread{
-                category = db.categoryDao.getCategoryWithId(categoryId)
-                // 삭제 대신 비활성화 처리
-                db.categoryDao.updateCategory(category.copy(active = false))
-//                db.categoryDao.deleteCategory(category)
-                Log.d("CategoryEditActivity", "deleteCategory: $category")
-            }.start()
+            category.isUpload = UploadState.IS_NOT_UPLOAD.state
+            category.state = RoomState.DELETED.state
+            viewModel.deleteCategory(category)
             Toast.makeText(this, "카테고리가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
             finish()
 
             // 서버 통신
-            uploadToServer(RoomState.DELETED.state)
+//            uploadToServer(RoomState.DELETED.state)
         }
-//        CategoryDeleteService(this).tryDeleteCategory(7)
     }
 
     private fun uploadToServer(state : String) {
@@ -125,51 +134,14 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface, Catego
             return
         }
 
-        CategoryDeleteService(this).tryDeleteCategory(serverId, categoryId)
-    }
-
-    private fun updateCategoryAfterUpload(state: String) {
-
-        when (state) {
-            // 서버 통신 성공
-            RoomState.DEFAULT.state -> {
-                viewModel.updateCategoryAfterUpload(categoryId, UploadState.IS_UPLOAD.state, serverId, state)
-//                Log.e("CategoryEditAct", "serverId 업데이트 성공, serverId: ${category.serverId}, categoryId: ${categoryId}")
-            }
-            // 서버 업로드 실패
-            else -> {
-                val thread = Thread {
-                    viewModel.updateCategoryAfterUpload(categoryId, UploadState.IS_UPLOAD.state, serverId, state)
-                    failList.clear()
-                    failList.addAll(db.categoryDao.getNotUploadedCategory() as ArrayList<Category>)
-                }
-                thread.start()
-                try {
-                    thread.join()
-                } catch ( e: InterruptedException) {
-                    e.printStackTrace()
-                }
-                Log.d("CategoryEditAct", "Server Fail : $failList")
-            }
-        }
-    }
-
-    override fun onDeleteCategorySuccess(response: BaseResponse, categoryId : Long) {
-        Log.d("CategoryEditAct", "onDeleteCategorySuccess")
-        // 룸디비에 isUpload, serverId, state 업데이트하기
-        updateCategoryAfterUpload(RoomState.DEFAULT.state)
-    }
-
-    override fun onDeleteCategoryFailure(message: String) {
-        Log.d("CategoryEditAct", "onDeleteCategoryFailure")
-
-        // 룸디비에 failList 업데이트하기
-        updateCategoryAfterUpload(RoomState.DELETED.state)
+//        CategoryDeleteService(this).tryDeleteCategory(serverId, categoryId)
     }
 
     override fun onClickYesButton(id: Int) {
         // 삭제 버튼 클릭하면 삭제 진행
-        deleteCategory()
+        lifecycleScope.launch {
+            deleteCategory()
+        }
     }
 
 }
