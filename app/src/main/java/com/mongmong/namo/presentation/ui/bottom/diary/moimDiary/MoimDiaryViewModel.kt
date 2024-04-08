@@ -25,6 +25,9 @@ class MoimDiaryViewModel @Inject constructor(
     private val _patchActivitiesComplete = MutableLiveData<Boolean>()
     val patchActivitiesComplete : LiveData<Boolean> = _patchActivitiesComplete
 
+    private val _deleteDiaryComplete = MutableLiveData<Boolean>()
+    val deleteDiaryComplete : LiveData<Boolean> = _deleteDiaryComplete
+
     private val _memo = MutableLiveData<String>()
 
     /** 모임 기록 개별 조회 **/
@@ -125,6 +128,11 @@ class MoimDiaryViewModel @Inject constructor(
     private suspend fun deleteMoimActivity(activityId: Long) {
         Log.d("MoimActivity", "viewModel deleteMoimActivity")
         repository.deleteMoimActivity(activityId)
+    }
+
+    /** 모임 기록 삭제 (그룹에서) **/
+    suspend fun deleteMoimDiary(diaryId: Long) {
+        _deleteDiaryComplete.postValue(repository.deleteMoimDiary(diaryId))
     }
 
 

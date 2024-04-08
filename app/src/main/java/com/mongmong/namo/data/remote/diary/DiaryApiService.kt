@@ -5,6 +5,7 @@ import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.GetMoimDiaryResponse
+import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.Call
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -79,7 +80,13 @@ interface DiaryApiService {
     @DELETE("/moims/schedule/memo/{moimMemoLocationId}")
     suspend fun deleteMoimActivity(
         @Path("moimMemoLocationId") moimActivityId: Long
-    ): DiaryResponse
+    ): BaseResponse
+
+    // 모임 기록 삭제 (그룹에서 삭제)
+    @DELETE("/moims/schedule/memo/all/{moimMemoId}")
+    suspend fun deleteMoimDiary(
+        @Path("moimMemoId") moimDiaryId: Long
+    ): BaseResponse
 
 
     // 모임 기록 월별 리스트 조회
