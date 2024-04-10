@@ -4,6 +4,7 @@ import com.mongmong.namo.data.remote.diary.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupApiService
 import com.mongmong.namo.data.remote.schedule.ScheduleRetrofitInterface
 import com.mongmong.namo.domain.repositories.GroupRepository
+import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.data.KakaoAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,10 +23,19 @@ object ServiceModule {
 
     /** 기록 */
     @Provides
+    @Singleton
     fun provideDiaryService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : DiaryApiService =
         retrofit.create(DiaryApiService::class.java)
 
+    /** 그룹 **/
     @Provides
+    @Singleton
     fun provideGroupService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit): GroupApiService =
         retrofit.create(GroupApiService::class.java)
+
+    /** 카카오 맵 **/
+    @Provides
+    @Singleton
+    fun provideKakaoService(retrofit: Retrofit): KakaoAPI =
+        retrofit.create(KakaoAPI::class.java)
 }
