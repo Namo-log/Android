@@ -89,8 +89,10 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
     private fun setAdapter() {
         Log.d("getCategories", "initRV")
         categoryRVAdapter = SetCategoryRVAdapter()
-        binding.categoryCalendarRv.layoutManager = GridLayoutManager(context, 2)
-        binding.categoryCalendarRv.adapter = categoryRVAdapter
+        binding.categoryCalendarRv.apply {
+            adapter = categoryRVAdapter
+            layoutManager = GridLayoutManager(context, 2)
+        }
         categoryRVAdapter.setCategoryClickListener(object: SetCategoryRVAdapter.MyItemClickListener {
             // 아이템 클릭
             override fun onItemClick(category: Category, position: Int) {
@@ -143,18 +145,18 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
         Log.d("debug", "Category Data saved")
     }
 
-    companion object {
-        const val CATEGORY_KEY_PREFS = "category"
-        const val CATEGORY_DATA = "category_data"
-        const val CATEGORY_ID = "categoryId"
-        const val CATEGORY_SERVER_ID = "serverId"
-    }
-
     override fun onGetAllCategorySuccess(response: GetCategoryResponse) {
         Log.d("CategorySettingFrag", "onGetAllCategorySuccess")
     }
 
     override fun onGetAllCategoryFailure(message: String) {
         Log.d("CategorySettingFrag", "onGetAllCategoryFailure")
+    }
+
+    companion object {
+        const val CATEGORY_KEY_PREFS = "category"
+        const val CATEGORY_DATA = "category_data"
+        const val CATEGORY_ID = "categoryId"
+        const val CATEGORY_SERVER_ID = "serverId"
     }
 }
