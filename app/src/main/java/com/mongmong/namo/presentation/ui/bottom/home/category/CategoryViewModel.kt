@@ -7,19 +7,32 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.domain.repositories.CategoryRepository
+import com.mongmong.namo.domain.usecase.GetCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CategoryViewModel @Inject constructor(
-    private val repository: CategoryRepository
+    private val repository: CategoryRepository,
+    private val getCategoriesUseCase: GetCategoriesUseCase
 ) : ViewModel() {
     private val _category = MutableLiveData<Category>()
     val category: LiveData<Category> = _category
 
+    private val _categoryList = MutableLiveData<List<Category>>(emptyList())
+    val categoryList: LiveData<List<Category>> = _categoryList
+
     private val _isPostComplete = MutableLiveData<Boolean>()
     val isPostComplete: LiveData<Boolean> = _isPostComplete
+
+    /** 카테고리 조회 */
+    fun getCategories() {
+        viewModelScope.launch {
+            Log.d("CategoryViewModel", "getCategories")
+            _categoryList.value = getCategoriesUseCase.invoke()
+        }
+    }
 
     /** 카테고리 추가 */
     fun addCategory(category: Category) {

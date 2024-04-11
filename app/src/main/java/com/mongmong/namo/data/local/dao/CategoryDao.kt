@@ -21,7 +21,6 @@ interface CategoryDao {
     @Query("DELETE FROM category_table WHERE categoryId=:categoryId")
     fun deleteCategoryById(categoryId : Long)
 
-
     @Query("SELECT * FROM category_table")
     fun getCategoryList(): List<Category>
 

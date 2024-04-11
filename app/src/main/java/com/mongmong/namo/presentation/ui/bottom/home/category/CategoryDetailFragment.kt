@@ -25,6 +25,7 @@ import com.mongmong.namo.presentation.utils.NetworkManager
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
+import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.CategoryForUpload
 import com.mongmong.namo.presentation.config.PaletteType
 import com.mongmong.namo.presentation.config.CategoryColor
@@ -340,9 +341,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
             }
             activity?.finish()
         } else { // 생성 모드에서의 화면 이동
-            // 이전의 모든 프래그먼트를 백 스택에서 제거 (HomeFragment)
             requireActivity().supportFragmentManager
-                .popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                .popBackStack() // 뒤로가기
         }
     }
     private fun updateCategoryAfterUpload(response: PostCategoryResponse?, state: String) {

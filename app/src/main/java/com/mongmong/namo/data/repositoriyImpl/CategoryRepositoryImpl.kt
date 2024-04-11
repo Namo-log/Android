@@ -16,6 +16,12 @@ class CategoryRepositoryImpl @Inject constructor(
     private val networkChecker: NetworkChecker
 ) : CategoryRepository {
 
+    override suspend fun getCategories(): List<Category> {
+        val list = localCategoryDataSource.getCategories()
+        Log.d("CategoryRepositoryImpl", "getCategories, $list")
+        return list
+    }
+
     override suspend fun addCategory(category: Category) {
         category.categoryId = localCategoryDataSource.addCategory(category) // 로컬에서 카테고리 생성 후 받아온 categoryId로 업데이트
         Log.d("CategoryRepositoryImpl", "addCategory categoryId: ${category.categoryId}\n$category")

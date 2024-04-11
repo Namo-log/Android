@@ -11,6 +11,21 @@ import javax.inject.Inject
 class LocalCategoryDataSource @Inject constructor(
     private val categoryDao: CategoryDao
 ) {
+    suspend fun getCategories(): List<Category> {
+        var categoriesResult = listOf<Category>()
+        withContext(Dispatchers.IO) {
+            runCatching {
+                categoryDao.getActiveCategoryList(true)
+            }.onSuccess {
+                Log.d("LocalCategoryDataSource", "getCategories Success, $it")
+                categoriesResult = it
+            }.onFailure {
+                Log.d("LocalCategoryDataSource", "getCategories Fail")
+            }
+        }
+        return categoriesResult
+    }
+
     suspend fun addCategory(category: Category): Long {
         var localId = 0L
         withContext(Dispatchers.IO) {

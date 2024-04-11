@@ -3,6 +3,8 @@ package com.mongmong.namo.domain.repositories
 import com.mongmong.namo.data.local.entity.home.Category
 
 interface CategoryRepository {
+    suspend fun getCategories(): List<Category>
+
     suspend fun addCategory(
         category: Category
     )
