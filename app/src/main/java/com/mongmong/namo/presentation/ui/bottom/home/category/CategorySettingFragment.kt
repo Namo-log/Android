@@ -29,8 +29,6 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
 
     private lateinit var categoryRVAdapter: SetCategoryRVAdapter
 
-    private lateinit var db: NamoDatabase
-
     private var categoryList: ArrayList<Category> = arrayListOf() // arrayListOf<Category>()
 
     private var gson: Gson = Gson()
@@ -44,11 +42,6 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
 
     ): View {
         binding = FragmentCategorySettingBinding.inflate(inflater, container, false)
-
-        db = NamoDatabase.getInstance(requireContext())
-
-        // 카테고리가 아무것도 없으면 기본 카테고리 2개 생성 (일정, 모임)
-        setInitialCategory()
 
         initObserve()
         onClickSchedule()
@@ -148,16 +141,6 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
             .apply()
 
         Log.d("debug", "Category Data saved")
-    }
-
-    private fun setInitialCategory() {
-        // 리스트에 아무런 카테고리가 없으면 기본 카테고리 설정. 근데 딜레이가 좀 있음
-        Thread {
-            if (db.categoryDao.getCategoryList().isEmpty()) {
-                db.categoryDao.insertCategory(Category(0, "일정", 1, true))
-                db.categoryDao.insertCategory(Category(0, "모임", 4, true))
-            }
-        }.start()
     }
 
     companion object {

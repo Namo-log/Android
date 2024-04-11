@@ -789,8 +789,6 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
     // Category Zone
     private fun initCategory() {
-        // 카테고리가 아무것도 없으면 기본 카테고리 2개 생성 (일정, 모임)
-        setInitialCategory()
 
         categoryList = setCategoryList(db)
         selectedCategory = categoryList[0]
@@ -798,22 +796,6 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         event.categoryServerId = selectedCategory.serverId
 
         setCategory()
-    }
-
-    private fun setInitialCategory() {
-        // 리스트에 아무런 카테고리가 없으면 기본 카테고리 설정
-        val thread = Thread {
-            if (db.categoryDao.getCategoryList().isEmpty()) {
-                db.categoryDao.insertCategory(Category(0, "일정", R.color.schedule, true))
-                db.categoryDao.insertCategory(Category(0, "모임", R.color.schedule_group, true))
-            }
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch (e : InterruptedException) {
-            e.printStackTrace()
-        }
     }
 
     private fun setCategory() {

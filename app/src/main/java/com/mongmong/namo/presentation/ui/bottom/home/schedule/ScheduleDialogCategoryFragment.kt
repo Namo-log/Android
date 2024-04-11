@@ -56,9 +56,6 @@ class ScheduleDialogCategoryFragment : Fragment() {
     }
 
     private fun getCategoryList() {
-        // 카테고리가 아무것도 없으면 기본 카테고리 2개 생성 (일정, 모임)
-        setInitialCategory()
-
         val rv = binding.dialogScheduleCategoryRv
 
         val r = Runnable {
@@ -93,22 +90,6 @@ class ScheduleDialogCategoryFragment : Fragment() {
         }
 
         val thread = Thread(r)
-        thread.start()
-        try {
-            thread.join()
-        } catch (e : InterruptedException) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun setInitialCategory() {
-        // 리스트에 아무런 카테고리가 없으면 기본 카테고리 설정
-        val thread = Thread {
-            if (db.categoryDao.getCategoryList().isEmpty()) {
-                db.categoryDao.insertCategory(Category(0, "일정", R.color.schedule, true))
-                db.categoryDao.insertCategory(Category(0, "그룹", R.color.schedule_group, true))
-            }
-        }
         thread.start()
         try {
             thread.join()
