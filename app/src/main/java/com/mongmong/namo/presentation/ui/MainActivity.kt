@@ -85,51 +85,18 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
     private val serverCategory = ArrayList<Category>()
     private val serverDiary = ArrayList<Diary>()
 
-//    private lateinit var categoryColorArray: IntArray
-
     private var isCategorySuccess = false
     private var isScheduleSuccess = false
     private var isDiarySuccess = false
 
+    private var categoryList : List<Category> = arrayListOf()
     private val categoryViewModel : CategoryViewModel by viewModels()
-
-    companion object {
-        const val ORIGIN_ACTIVITY_INTENT_KEY: String = "original_activity"
-        const val PLACE_NAME_INTENT_KEY: String = "place_name"
-        const val PLACE_X_INTENT_KEY: String = "place_x"
-        const val PLACE_Y_INTENT_KEY: String = "place_y"
-        const val GROUP_MEMBER_INTENT_KEY : String = "group_member"
-        var IS_MOIM_EVENT_SUCCESS : Boolean = false
-
-
-        const val IS_UPLOAD = true
-        const val IS_NOT_UPLOAD = false
-
-        fun setCategoryList(db: NamoDatabase): List<Category> {
-            var categoryList =listOf<Category>()
-            val thread = Thread{
-                categoryList = db.categoryDao.getCategoryList()
-            }
-            thread.start()
-            try {
-                thread.join()
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
-
-            Log.d("SetCategory", categoryList.toString())
-
-            return categoryList
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         db = NamoDatabase.getInstance(this)
         initNavigation()
-//        categoryColorArray =resources.getIntArray(R.array.categoryColorArr)
-//        Log.d("CATEGORY_ARR", categoryColorArray.contentToString())
 
         logToken()
         checkPermissions()
@@ -146,8 +113,10 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
     }
 
     private fun initObservers() {
-        categoryViewModel.category.observe(this) {
-            //
+        categoryViewModel.categoryList.observe(this) {
+            if (!it.isNullOrEmpty()) {
+                categoryList = it
+            }
         }
     }
 
@@ -570,7 +539,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                                 content = diary.content,
                                 images = diary.images,
                                 state = RoomState.DEFAULT.state,
-                                isUpload = IS_UPLOAD
+                                isUpload = UploadState.IS_UPLOAD.state
                             )
                             db.diaryDao.insertDiary(diaryData)
                         }
@@ -592,7 +561,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
             category.paletteId, //categoryColorArray[category.paletteId - 1],
             category.isShare,
             true,
-            IS_UPLOAD,
+            UploadState.IS_UPLOAD.state,
             RoomState.DEFAULT.state,
             category.categoryId
         )
@@ -605,7 +574,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
             diary.contents,
             diary.urls,
             RoomState.DEFAULT.state,
-            IS_UPLOAD
+            UploadState.IS_UPLOAD.state,
         )
     }
 
@@ -631,5 +600,13 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
         ft.detach(fragment).attach(fragment).commit()
     }
 
+    companion object {
+        const val ORIGIN_ACTIVITY_INTENT_KEY: String = "original_activity"
+        const val PLACE_NAME_INTENT_KEY: String = "place_name"
+        const val PLACE_X_INTENT_KEY: String = "place_x"
+        const val PLACE_Y_INTENT_KEY: String = "place_y"
+        const val GROUP_MEMBER_INTENT_KEY : String = "group_member"
+        var IS_MOIM_EVENT_SUCCESS : Boolean = false
+    }
 
 }

@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mongmong.namo.presentation.ui.MainActivity.Companion.setCategoryList
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
@@ -22,14 +21,13 @@ import com.mongmong.namo.domain.model.GetMonthScheduleResponse
 import com.mongmong.namo.data.remote.schedule.GetMonthMoimScheduleView
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
-
 import com.mongmong.namo.domain.model.MoimDiary
-import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.MoimMemoDetailActivity
 import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.PersonalDetailActivity
 import com.mongmong.namo.presentation.ui.bottom.home.HomeFragment
 import com.mongmong.namo.presentation.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.mongmong.namo.presentation.ui.bottom.home.adapter.DailyPersonalRVAdapter
+import com.mongmong.namo.presentation.ui.bottom.home.category.CategoryViewModel
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.ScheduleViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -57,7 +55,8 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
     private val personalScheduleRVAdapter = DailyPersonalRVAdapter()
     private val groupScheduleRVAdapter = DailyGroupRVAdapter()
 
-    private val viewModel : ScheduleViewModel by viewModels()
+    private val scheduleViewModel : ScheduleViewModel by viewModels()
+    private val categoryViewModel : CategoryViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,16 +122,10 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
         return binding.root
     }
 
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//
-//        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, onBackPressedCallback)
-//    }
-
     override fun onResume() {
         super.onResume()
-        setAdapter()
         getCategoryList()
+        setAdapter()
 
         val date = SimpleDateFormat("yyyy,MM").format(millis)
 
@@ -164,14 +157,11 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setAdapter() {
-        binding.homeDailyEventRv.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.homeDailyEventRv.adapter = personalScheduleRVAdapter
-
-        binding.homeDailyGroupEventRv.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.homeDailyGroupEventRv.adapter = groupScheduleRVAdapter
-//        if (nowIdx==0) setToday()
+        /** 개인 */
+        binding.homeDailyGroupEventRv.apply {
+            adapter = personalScheduleRVAdapter
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        }
 
         personalScheduleRVAdapter.setContentClickListener(object :
             DailyPersonalRVAdapter.ContentClickListener {
@@ -182,16 +172,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
             }
         })
 
-        groupScheduleRVAdapter.setGorupContentClickListener(object :
-            DailyGroupRVAdapter.GroupContentClickListener {
-            override fun onGroupContentClick(event: Schedule) {
-                val intent = Intent(context, ScheduleActivity::class.java)
-                intent.putExtra("schedule", event)
-                requireActivity().startActivity(intent)
-            }
-        })
-
-        /** 기록 아이템 클릭 리스너 **/
+        // 기록 아이템 클릭 리스너
         personalScheduleRVAdapter.setRecordClickListener(object :
             DailyPersonalRVAdapter.DiaryInterface {
             override fun onDetailClicked(schedule: Schedule) {
@@ -202,6 +183,25 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
             }
         })
 
+
+        /** 모임 */
+        binding.homeDailyGroupEventRv.apply {
+            adapter = groupScheduleRVAdapter
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        }
+//        if (nowIdx==0) setToday()
+
+
+        groupScheduleRVAdapter.setGorupContentClickListener(object :
+            DailyGroupRVAdapter.GroupContentClickListener {
+            override fun onGroupContentClick(event: Schedule) {
+                val intent = Intent(context, ScheduleActivity::class.java)
+                intent.putExtra("schedule", event)
+                requireActivity().startActivity(intent)
+            }
+        })
+
+        // 기록
         groupScheduleRVAdapter.setRecordClickListener(object : DailyGroupRVAdapter.DiaryInterface {
             override fun onGroupDetailClicked(monthDiary: MoimDiary?) {
 
@@ -209,13 +209,10 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
                 intent.putExtra("groupDiary", monthDiary)
                 requireActivity().startActivity(intent)
             }
-
         })
-        /** ----- **/
     }
 
-    private fun getCategoryList() {
-        categoryList = setCategoryList(db)
+    private fun setCategoryList() {
         binding.calendarMonthView.setCategoryList(categoryList)
         personalScheduleRVAdapter.setCategory(categoryList)
         groupScheduleRVAdapter.setCategory(categoryList)
@@ -254,7 +251,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
     private fun setPersonalSchedule(todayStart: Long, todayEnd: Long) {
         lifecycleScope.launch {
-            viewModel.getDailySchedules(todayStart, todayEnd)
+            scheduleViewModel.getDailySchedules(todayStart, todayEnd)
         }
     }
 
@@ -268,6 +265,12 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
             groupScheduleRVAdapter.notifyDataSetChanged()
         }
         setMoimEmptyText()
+    }
+
+    private fun getCategoryList() {
+        lifecycleScope.launch{
+            categoryViewModel.getCategories()
+        }
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -285,7 +288,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
     @SuppressLint("NotifyDataSetChanged")
     private fun initObserve() {
         Log.d("getDailySchedules", "initObserve()")
-        viewModel.scheduleList.observe(viewLifecycleOwner) {
+        scheduleViewModel.scheduleList.observe(viewLifecycleOwner) {
             schedulePersonal.clear()
             if (!it.isNullOrEmpty()) {
                 val dailySchedule = it as ArrayList<Schedule>
@@ -298,14 +301,10 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
                 setPersonalEmptyText()
             }
         }
-    }
-
-    companion object {
-        private const val MILLIS = "MILLIS"
-
-        fun newInstance(millis: Long) = CalendarMonthFragment().apply {
-            arguments = Bundle().apply {
-                putLong(MILLIS, millis)
+        categoryViewModel.categoryList.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmpty()) {
+                categoryList = it
+                setCategoryList()
             }
         }
     }
@@ -346,5 +345,15 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
     override fun onGetMonthMoimScheduleFailure(message: String) {
         Log.d("GET_MONTH_EVENT", "Failure -> $message")
+    }
+
+    companion object {
+        private const val MILLIS = "MILLIS"
+
+        fun newInstance(millis: Long) = CalendarMonthFragment().apply {
+            arguments = Bundle().apply {
+                putLong(MILLIS, millis)
+            }
+        }
     }
 }
