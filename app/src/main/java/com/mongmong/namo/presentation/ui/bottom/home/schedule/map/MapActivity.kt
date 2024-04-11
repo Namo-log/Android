@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -31,24 +30,22 @@ import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.data.KakaoAPI
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.data.Place
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.data.ResultSearchPlace
 import com.mongmong.namo.BuildConfig
+import dagger.hilt.android.AndroidEntryPoint
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
 
-class MapActivity : AppCompatActivity() {
-
+@AndroidEntryPoint
+class MapActivity() : AppCompatActivity() {
     private lateinit var binding : ActivityMapBinding
     private lateinit var mapView : MapView
-    private lateinit var mapViewContainer : ViewGroup
 
     private val mapRVAdapter : MapRVAdapter = MapRVAdapter()
-    private var isTherePrev : Boolean = false
 
     private val placeList : ArrayList<Place> = arrayListOf()
     private val markerList : ArrayList<MapPOIItem> = arrayListOf()
@@ -58,32 +55,38 @@ class MapActivity : AppCompatActivity() {
     private var uLatitude : Double = 0.0
     private var uLongitude : Double = 0.0
 
+    @Inject
+    lateinit var kakaoService: KakaoAPI
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMapBinding.inflate(layoutInflater)
-        mapView = MapView(this)
-        mapViewContainer = binding.mapView
-        mapViewContainer.addView(mapView)
         setContentView(binding.root)
+
+        mapView = MapView(this)
+        binding.mapView.addView(mapView)
 
         getLocationPermission()
 
-        if (intent.getStringExtra("PREV_PLACE_NAME").isNullOrEmpty()) {
-            isTherePrev = false
+        val hasPreLocation = if (intent.getStringExtra("PREV_PLACE_NAME").isNullOrEmpty()) {
             setCurrentLocation()
+            false
         } else {
-            isTherePrev = true
-            setPrevLocation()
+            setPreLocation()
+            true
         }
 
         setAdapter()
-        setClickListener()
+        setClickListener(hasPreLocation)
     }
 
     private fun setAdapter() {
-        binding.mapRv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        binding.mapRv.adapter = mapRVAdapter
+        binding.mapRv.apply {
+            layoutManager =
+                LinearLayoutManager(this@MapActivity, LinearLayoutManager.VERTICAL, false)
+            adapter = mapRVAdapter
+        }
 
         setRVData()
     }
@@ -106,7 +109,7 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
-    private fun setClickListener() {
+    private fun setClickListener(hasPreLocation: Boolean) {
         val targetActivityClass = when(intent.getStringExtra(ORIGIN_ACTIVITY_INTENT_KEY)) {
             "GroupSchedule" -> GroupScheduleActivity::class.java
             "Schedule" -> ScheduleActivity::class.java
@@ -133,17 +136,15 @@ class MapActivity : AppCompatActivity() {
                 Log.d("SELECTED_PLACE", place.toString())
                 selectedPlace = place
 
-                val mapPoint = MapPoint.mapPointWithGeoCoord(place.y.toDouble(), place.x.toDouble())
+                val mapPoint = MapPoint.mapPointWithGeoCoord(place.y, place.x)
                 mapView.setMapCenterPointAndZoomLevel(mapPoint, 1, true)
-
                 mapView.selectPOIItem(markerList[position], true)
-
                 binding.mapBtnLayout.visibility = View.VISIBLE
             }
         })
 
         binding.cancelBtn.setOnClickListener {
-            if (isTherePrev) {
+            if (hasPreLocation) {
                 val intent = Intent(this, targetActivityClass)
                 intent.putExtra(PLACE_NAME_INTENT_KEY, prevPlace.place_name)
                 intent.putExtra(PLACE_X_INTENT_KEY, prevPlace.x)
@@ -169,12 +170,7 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun searchPlace(keyword : String) {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val api = retrofit.create(KakaoAPI::class.java)
-        val call = api.getSearchPlace("KakaoAK ${API_KEY}", keyword, uLongitude.toString(), uLatitude.toString(), "distance")
+        val call = kakaoService.getSearchPlace("KakaoAK $API_KEY", keyword, uLongitude.toString(), uLatitude.toString(), "distance")
 
         call.enqueue(object : Callback<ResultSearchPlace> {
             @SuppressLint("NotifyDataSetChanged")
@@ -224,7 +220,7 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
-    private fun setPrevLocation() {
+    private fun setPreLocation() {
         prevPlace.x = intent.getDoubleExtra("PREV_PLACE_X", 0.0)
         prevPlace.y = intent.getDoubleExtra("PREV_PLACE_Y", 0.0)
         prevPlace.place_name = intent.getStringExtra("PREV_PLACE_NAME").toString()
@@ -279,7 +275,6 @@ class MapActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val BASE_URL = "https://dapi.kakao.com"
         const val API_KEY = BuildConfig.KAKAO_REST_KEY
     }
 }
