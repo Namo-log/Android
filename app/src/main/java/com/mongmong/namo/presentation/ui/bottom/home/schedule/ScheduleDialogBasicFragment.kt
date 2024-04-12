@@ -573,8 +573,8 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
     //Location Map Zone
     private fun initMapView() {
-        mapView = MapView(context as ScheduleActivity).also {
-            mapViewContainer = RelativeLayout(context as ScheduleActivity)
+        mapView = MapView(requireActivity()).also {
+            mapViewContainer = RelativeLayout(requireActivity())
             mapViewContainer?.layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
             binding.dialogSchedulePlaceContainer.addView(mapViewContainer)
             mapViewContainer?.addView(it)
