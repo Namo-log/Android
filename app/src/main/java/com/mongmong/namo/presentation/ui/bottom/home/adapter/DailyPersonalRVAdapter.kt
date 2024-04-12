@@ -2,6 +2,7 @@ package com.mongmong.namo.presentation.ui.bottom.home.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -66,11 +67,16 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
     fun addPersonal(personal : ArrayList<Schedule>) {
         this.personal.clear()
         this.personal.addAll(personal)
+
+        notifyDataSetChanged()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setCategory(categoryList : List<Category>) {
         this.categoryList.clear()
         this.categoryList.addAll(categoryList)
+
+        notifyDataSetChanged()
     }
 
     inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {

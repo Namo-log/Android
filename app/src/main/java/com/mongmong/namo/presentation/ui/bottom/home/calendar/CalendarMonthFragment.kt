@@ -31,7 +31,10 @@ import com.mongmong.namo.presentation.ui.bottom.home.category.CategoryViewModel
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.ScheduleViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 
@@ -40,7 +43,6 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
     lateinit var db: NamoDatabase
     private lateinit var binding: FragmentCalendarMonthBinding
-    private lateinit var categoryList: List<Category>
 
     private var millis: Long = 0L
     var isShow = false
@@ -124,6 +126,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
     override fun onResume() {
         super.onResume()
+
         getCategoryList()
         setAdapter()
 
@@ -158,7 +161,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
     @SuppressLint("NotifyDataSetChanged")
     private fun setAdapter() {
         /** 개인 */
-        binding.homeDailyGroupEventRv.apply {
+        binding.homeDailyEventRv.apply {
             adapter = personalScheduleRVAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
@@ -212,7 +215,8 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
         })
     }
 
-    private fun setCategoryList() {
+    private fun setCategoryList(categoryList: List<Category>) {
+        Log.d("CalendarMonthFrag", "categoryList: $categoryList")
         binding.calendarMonthView.setCategoryList(categoryList)
         personalScheduleRVAdapter.setCategory(categoryList)
         groupScheduleRVAdapter.setCategory(categoryList)
@@ -285,9 +289,14 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun initObserve() {
-        Log.d("getDailySchedules", "initObserve()")
+        // 카테고리 리스트
+        categoryViewModel.categoryList.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmpty()) {
+                setCategoryList(it)
+            }
+        }
+        // 개인 일정 리스트
         scheduleViewModel.scheduleList.observe(viewLifecycleOwner) {
             schedulePersonal.clear()
             if (!it.isNullOrEmpty()) {
@@ -296,16 +305,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
             }
             personalScheduleRVAdapter.addPersonal(schedulePersonal)
             Log.d("getDailySchedules", "Personal Schedule : $schedulePersonal")
-            requireActivity().runOnUiThread {
-                personalScheduleRVAdapter.notifyDataSetChanged()
-                setPersonalEmptyText()
-            }
-        }
-        categoryViewModel.categoryList.observe(viewLifecycleOwner) {
-            if (!it.isNullOrEmpty()) {
-                categoryList = it
-                setCategoryList()
-            }
+            setPersonalEmptyText()
         }
     }
 
