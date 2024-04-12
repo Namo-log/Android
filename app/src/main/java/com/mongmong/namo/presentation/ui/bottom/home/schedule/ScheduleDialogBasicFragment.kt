@@ -170,8 +170,8 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     private fun setInit() {
         if (args.event != null) {
             event = args.event!!
+            findCategory(event)
             prevAlarmList = event.alarmList
-            setContent()
         } else {
             binding.dialogScheduleHeaderTv.text = "새 일정"
             val nowDay = args.nowDay
@@ -636,20 +636,12 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
 
     // Content Zone
-    fun setContent() {
+    private fun setContent() {
         //제목
         binding.dialogScheduleTitleEt.setText(event.title)
 
         //카테고리
         Log.d("TEST_CATEGORY", categoryList.toString())
-        Log.d("TEST_CATEGORY", event.toString())
-        val category = categoryList.find {
-            if (it.serverId != 0L) it.serverId == event.categoryServerId
-            else it.categoryId == event.categoryId
-        }
-        if (category != null) {
-            selectedCategory = category
-        }
         event.categoryId = selectedCategory.categoryId
         event.categoryServerId = selectedCategory.serverId
         setCategory()
@@ -802,9 +794,19 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
                 setInit()
             }
         }
+        categoryViewModel.category.observe(viewLifecycleOwner) {
+            selectedCategory = it
+            setContent()
+        }
     }
 
     // Category Zone
+    private fun findCategory(schedule: Schedule) {
+        lifecycleScope.launch {
+            categoryViewModel.findCategoryById(schedule.categoryId, schedule.categoryServerId)
+        }
+    }
+
     private fun initCategory() {
         selectedCategory = categoryList[0]
         event.categoryId = selectedCategory.categoryId

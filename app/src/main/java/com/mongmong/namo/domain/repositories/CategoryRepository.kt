@@ -5,6 +5,8 @@ import com.mongmong.namo.data.local.entity.home.Category
 interface CategoryRepository {
     suspend fun getCategories(): List<Category>
 
+    suspend fun findCategoryById(localId: Long, serverId: Long): Category
+
     suspend fun addCategory(
         category: Category
     )

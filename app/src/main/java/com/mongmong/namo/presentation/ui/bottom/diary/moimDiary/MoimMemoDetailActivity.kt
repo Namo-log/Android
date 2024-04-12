@@ -10,6 +10,7 @@ import android.util.TypedValue
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.data.remote.diary.*
@@ -18,10 +19,12 @@ import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.adapter.GalleryListAdapter
+import com.mongmong.namo.presentation.ui.bottom.home.category.CategoryViewModel
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 import java.util.Locale
@@ -38,6 +41,7 @@ class MoimMemoDetailActivity: AppCompatActivity(),
     private var diaryService = DiaryService()
     private var isDelete: Boolean = false
     private val viewModel : MoimDiaryViewModel by viewModels()
+    private val categoryViewModel : CategoryViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,9 +73,7 @@ class MoimMemoDetailActivity: AppCompatActivity(),
     private fun initView() {
         viewModel.setMemo(moimSchedule.content ?: "")
         with(binding) {
-            val repo = DiaryRepository(this@MoimMemoDetailActivity)
-            val category = repo.getCategory(moimSchedule.categoryId, moimSchedule.categoryId)
-            itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
+            findCategory(moimSchedule.categoryId, moimSchedule.categoryId)
             val scheduleDate = moimSchedule.startDate * 1000
 
             diaryTodayMonthTv.text = DateTime(scheduleDate).toString("MMM", Locale.ENGLISH)
@@ -136,6 +138,17 @@ class MoimMemoDetailActivity: AppCompatActivity(),
         // 모임 기록 메모 추가/수정
         viewModel.patchMemoResult.observe(this) { isSuccess ->
             if(isSuccess) finish()
+        }
+
+        // 카테고리 찾기
+        categoryViewModel.category.observe(this) {
+            binding.itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(it.paletteId)
+        }
+    }
+
+    private fun findCategory(localId: Long, serverId: Long) {
+        lifecycleScope.launch {
+            categoryViewModel.findCategoryById(localId, serverId)
         }
     }
 

@@ -17,9 +17,15 @@ class CategoryRepositoryImpl @Inject constructor(
 ) : CategoryRepository {
 
     override suspend fun getCategories(): List<Category> {
-        val list = localCategoryDataSource.getCategories()
-        Log.d("CategoryRepositoryImpl", "getCategories, $list")
-        return list
+        return localCategoryDataSource.getCategories()
+    }
+
+    override suspend fun findCategoryById(localId: Long, serverId: Long): Category {
+        val categoryList = getCategories()
+        return categoryList.find {
+            if (it.serverId != 0L) it.serverId == serverId
+            else it.categoryId == localId
+        } ?: Category()
     }
 
     override suspend fun addCategory(category: Category) {

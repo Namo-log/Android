@@ -5,13 +5,16 @@ import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
+import com.mongmong.namo.domain.usecase.FindCategoryUseCase
 import com.mongmong.namo.presentation.config.CategoryColor
+import com.mongmong.namo.presentation.ui.bottom.home.category.CategoryViewModel
 import org.joda.time.DateTime
 
 class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewHolder>() {
@@ -28,7 +31,6 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
     fun setRecordClickListener(itemClickListener: DiaryInterface){
         diaryRecordClickListener=itemClickListener
     }
-    /** ----- **/
 
     interface ContentClickListener {
         fun onContentClick(schedule : Schedule)
@@ -96,7 +98,8 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
 
             /** 기록 아이콘 색깔 **/
             if(personal.hasDiary !=0)
-                binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context , R.color.MainOrange))}
+                binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context , R.color.MainOrange))
         }
+    }
 
 }
