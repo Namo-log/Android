@@ -52,7 +52,6 @@ import com.google.android.material.chip.Chip
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
-import com.mongmong.namo.presentation.ui.bottom.home.category.CategoryViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.daum.mf.map.api.MapPOIItem
@@ -104,8 +103,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     private var isMoimScheduleAlarmSaved = false
     private var isMoimSchedulePrevAlarm = false
 
-    private val scheduleViewModel : ScheduleViewModel by viewModels()
-    private val categoryViewModel : CategoryViewModel by viewModels()
+    private val viewModel : ScheduleViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -114,7 +112,6 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     ): View? {
         binding = FragmentScheduleDialogBasicBinding.inflate(inflater, container, false)
         db = NamoDatabase.getInstance(requireContext())
-//        categoryList = setCategoryList(db)
 
         binding.dialogSchedulePlaceKakaoBtn.visibility = View.GONE
         binding.dialogSchedulePlaceContainer.visibility = View.GONE
@@ -380,7 +377,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     /** 카테고리 조회 */
     private fun getCategoryList() {
         lifecycleScope.launch{
-            categoryViewModel.getCategories()
+            viewModel.getCategories()
         }
     }
 
@@ -392,7 +389,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         event.serverId = 0
 
         // 새 일정 등록
-        scheduleViewModel.addSchedule(event)
+        viewModel.addSchedule(event)
     }
 
     /** 일정 수정 **/
@@ -410,7 +407,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         setAlarm(event.startLong)
 
         // 일정 편집
-        scheduleViewModel.editSchedule(event)
+        viewModel.editSchedule(event)
 
         Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
         // 뒤로가기
@@ -779,22 +776,22 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     }
 
     private fun initObservers() {
-        scheduleViewModel.schedule.observe(requireActivity()) { schedule ->
+        viewModel.schedule.observe(requireActivity()) { schedule ->
             binding.dialogScheduleTitleEt.setText(schedule.title)
         }
-        scheduleViewModel.isPostComplete.observe(requireActivity()) { isComplete ->
+        viewModel.isPostComplete.observe(requireActivity()) { isComplete ->
             // 추가 작업이 완료된 후 뒤로가기
             if (isComplete) {
                 requireActivity().finish()
             }
         }
-        categoryViewModel.categoryList.observe(viewLifecycleOwner) {
+        viewModel.categoryList.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
                 categoryList = it
                 setInit()
             }
         }
-        categoryViewModel.category.observe(viewLifecycleOwner) {
+        viewModel.category.observe(viewLifecycleOwner) {
             selectedCategory = it
             setContent()
         }
@@ -803,7 +800,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     // Category Zone
     private fun findCategory(schedule: Schedule) {
         lifecycleScope.launch {
-            categoryViewModel.findCategoryById(schedule.categoryId, schedule.categoryServerId)
+            viewModel.findCategoryById(schedule.categoryId, schedule.categoryServerId)
         }
     }
 

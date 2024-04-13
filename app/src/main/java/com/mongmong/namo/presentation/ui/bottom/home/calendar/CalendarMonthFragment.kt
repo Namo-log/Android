@@ -27,14 +27,10 @@ import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.PersonalDeta
 import com.mongmong.namo.presentation.ui.bottom.home.HomeFragment
 import com.mongmong.namo.presentation.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.mongmong.namo.presentation.ui.bottom.home.adapter.DailyPersonalRVAdapter
-import com.mongmong.namo.presentation.ui.bottom.home.category.CategoryViewModel
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.ScheduleViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 
@@ -57,8 +53,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
     private val personalScheduleRVAdapter = DailyPersonalRVAdapter()
     private val groupScheduleRVAdapter = DailyGroupRVAdapter()
 
-    private val scheduleViewModel : ScheduleViewModel by viewModels()
-    private val categoryViewModel : CategoryViewModel by viewModels()
+    private val viewModel : ScheduleViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -255,7 +250,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
     private fun setPersonalSchedule(todayStart: Long, todayEnd: Long) {
         lifecycleScope.launch {
-            scheduleViewModel.getDailySchedules(todayStart, todayEnd)
+            viewModel.getDailySchedules(todayStart, todayEnd)
         }
     }
 
@@ -273,7 +268,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
     private fun getCategoryList() {
         lifecycleScope.launch{
-            categoryViewModel.getCategories()
+            viewModel.getCategories()
         }
     }
 
@@ -291,13 +286,13 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView, GetMonthMoimSchedul
 
     private fun initObserve() {
         // 카테고리 리스트
-        categoryViewModel.categoryList.observe(viewLifecycleOwner) {
+        viewModel.categoryList.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
                 setCategoryList(it)
             }
         }
         // 개인 일정 리스트
-        scheduleViewModel.scheduleList.observe(viewLifecycleOwner) {
+        viewModel.scheduleList.observe(viewLifecycleOwner) {
             schedulePersonal.clear()
             if (!it.isNullOrEmpty()) {
                 val dailySchedule = it as ArrayList<Schedule>

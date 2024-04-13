@@ -30,7 +30,6 @@ import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.snackbar.Snackbar
 import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.ui.bottom.home.category.CategoryViewModel
 import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -45,7 +44,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
     private lateinit var schedule: Schedule
 
     private val viewModel : PersonalDiaryViewModel by viewModels()
-    private val categoryViewModel : CategoryViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,7 +107,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     private fun findCategory(schedule: Schedule) {
         lifecycleScope.launch {
-            categoryViewModel.findCategoryById(schedule.categoryId, schedule.categoryServerId)
+            viewModel.findCategoryById(schedule.categoryId, schedule.categoryServerId)
         }
     }
 
@@ -178,7 +176,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
                 finish()
             }
         }
-        categoryViewModel.category.observe(this) {
+        viewModel.category.observe(this) {
             binding.itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(it.paletteId)
         }
     }
