@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.diary.DiaryService
@@ -35,13 +34,12 @@ import java.text.SimpleDateFormat
 @AndroidEntryPoint
 class CalendarMonthFragment : Fragment(), GetGroupMonthView {
 
-    lateinit var db: NamoDatabase
     private lateinit var binding: FragmentCalendarMonthBinding
 
     private var millis: Long = 0L
     var isShow = false
-    private lateinit var monthList: List<DateTime>
-    private var tempSchedule: ArrayList<Schedule> = arrayListOf()
+    private lateinit var monthDayList: List<DateTime>
+    private var calendarSchedules: ArrayList<Schedule> = arrayListOf() // 캘린더 일정 표시
     private var monthGroupSchedule: ArrayList<Schedule> = arrayListOf()
 
     private var prevIdx = -1
@@ -66,19 +64,52 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentCalendarMonthBinding.inflate(inflater, container, false)
-        db = NamoDatabase.getInstance(requireContext())
 
         binding.calendarMonthView.setDayList(millis)
-        monthList = binding.calendarMonthView.getDayList()
+        monthDayList = binding.calendarMonthView.getDayList()
 
         initObserve()
+        initClickListeners()
 
+        return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        getCategoryList()
+        setMonthCalendarSchedule(monthDayList[0].withTimeAtStartOfDay().millis / 1000, monthDayList[41].plusDays(1).withTimeAtStartOfDay().millis / 1000)
+        setAdapter()
+
+        if (HomeFragment.currentFragment == null) {
+            return
+        } else if (this@CalendarMonthFragment != HomeFragment.currentFragment) {
+            isShow = false
+            prevIdx = -1
+        } else {
+            binding.calendarMonthView.selectedDate = HomeFragment.currentSelectedDate
+            nowIdx = HomeFragment.currentSelectedPos!!
+            setDaily(nowIdx)
+            binding.constraintLayout.transitionToEnd()
+            isShow = true
+            prevIdx = nowIdx
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        calendarSchedules.clear()
+    }
+
+    private fun initClickListeners() {
+        // 새 일정 추가
         binding.homeFab.setOnClickListener {
             val intent = Intent(context, ScheduleActivity::class.java)
-            intent.putExtra("nowDay", monthList[nowIdx].millis)
+            intent.putExtra("nowDay", monthDayList[nowIdx].millis)
             requireActivity().startActivity(intent)
         }
-
+        // 캘린더 날짜 클릭
         binding.calendarMonthView.onDateClickListener =
             object : CustomCalendarView.OnDateClickListener {
                 override fun onDateClick(date: DateTime?, pos: Int?) {
@@ -114,42 +145,11 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
 //                binding.calendarMonthView.invalidate()
                 }
             }
-
-        return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        getCategoryList()
-        setMonthCalendarSchedule(monthList[0].withTimeAtStartOfDay().millis / 1000, monthList[41].plusDays(1).withTimeAtStartOfDay().millis / 1000)
-        setAdapter()
-
-//        onBackPressedCallback.isEnabled = true
-        Log.d(
-            "CalendarMonth",
-            "Schedule list : " + binding.calendarMonthView.getScheduleList().toString()
-        )
-
-        if (HomeFragment.currentFragment == null) {
-            return
-        } else if (this@CalendarMonthFragment != HomeFragment.currentFragment) {
-            isShow = false
-            prevIdx = -1
-        } else {
-            binding.calendarMonthView.selectedDate = HomeFragment.currentSelectedDate
-            nowIdx = HomeFragment.currentSelectedPos!!
-            setDaily(nowIdx)
-            binding.constraintLayout.transitionToEnd()
-            isShow = true
-            prevIdx = nowIdx
-        }
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
     private fun setAdapter() {
         /** 개인 */
-        binding.homeDailyEventRv.apply {
+        binding.homeDailyPersonalScheduleRv.apply {
             adapter = personalScheduleRVAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
@@ -169,14 +169,14 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
             override fun onDetailClicked(schedule: Schedule) {
 
                 val intent = Intent(context, PersonalDetailActivity::class.java)
-                intent.putExtra("event", schedule)
+                intent.putExtra("schedule", schedule)
                 requireActivity().startActivity(intent)
             }
         })
 
 
         /** 모임 */
-        binding.homeDailyGroupEventRv.apply {
+        binding.homeDailyMoimScheduleRv.apply {
             adapter = groupScheduleRVAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
@@ -184,9 +184,9 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
 
         groupScheduleRVAdapter.setGorupContentClickListener(object :
             DailyGroupRVAdapter.GroupContentClickListener {
-            override fun onGroupContentClick(event: Schedule) {
+            override fun onGroupContentClick(schedule: Schedule) {
                 val intent = Intent(context, ScheduleActivity::class.java)
-                intent.putExtra("schedule", event)
+                intent.putExtra("schedule", schedule)
                 requireActivity().startActivity(intent)
             }
         })
@@ -202,6 +202,12 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
         })
     }
 
+    private fun getCategoryList() {
+        lifecycleScope.launch{
+            personalViewModel.getCategories()
+        }
+    }
+
     private fun setCategoryList(categoryList: List<Category>) {
         Log.d("CalendarMonthFrag", "categoryList: $categoryList")
         binding.calendarMonthView.setCategoryList(categoryList)
@@ -209,73 +215,59 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
         groupScheduleRVAdapter.setCategory(categoryList)
     }
 
-    private fun setDaily(idx: Int) {
-        binding.homeDailyHeaderTv.text = monthList[idx].toString("MM.dd (E)")
-        binding.dailyScrollSv.scrollTo(0, 0)
-        setDailyItemData(idx)
-        Log.d("CHECK_GROUP_EVENT", monthGroupSchedule.toString())
-    }
-
-    private fun setDailyItemData(idx: Int) {
-        getGroupDiary() // 다이어리 표시
-        getSchedule(idx) // 일정 표시
-    }
-
-    private fun setPersonalEmptyText() {
-        if (schedulePersonal.size == 0) binding.homeDailyEventNoneTv.visibility = View.VISIBLE
-        else binding.homeDailyEventNoneTv.visibility = View.GONE
-    }
-
-    private fun setMoimEmptyText() {
-        if (scheduleMoim.size == 0) binding.homeDailyGroupEventNoneTv.visibility = View.VISIBLE
-        else binding.homeDailyGroupEventNoneTv.visibility = View.GONE
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    private fun getSchedule(idx: Int) {
-        val todayStart = (monthList[idx].withTimeAtStartOfDay().millis) / 1000
-        val todayEnd = (monthList[idx].plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000
-
-        schedulePersonal.clear()
-        scheduleMoim.clear()
-        setPersonalDailySchedule(todayStart, todayEnd) // 개인 일정 표시
-        setMoimDailySchedule(todayStart, todayEnd) // 그룹 일정 표시
-    }
-
     // 캘린더에 표시할 월별 일정
     private fun setMonthCalendarSchedule(monthStart: Long, monthEnd: Long) {
-        val yearMonth = SimpleDateFormat("yyyy,MM").format(millis)
-
         lifecycleScope.launch {
             personalViewModel.getMonthSchedules(monthStart, monthEnd)
-            moimViewModel.getMonthMoimSchedule(yearMonth)
+            moimViewModel.getMonthMoimSchedule(yearMonthDate(millis))
         }
     }
 
-    private fun setPersonalDailySchedule(todayStart: Long, todayEnd: Long) {
+    // 일정 상세보기
+    private fun setDaily(dateId: Int) {
+        binding.homeDailyHeaderTv.text = monthDayList[dateId].toString("MM.dd (E)")
+        binding.dailyScrollSv.scrollTo(0, 0)
+        // 일정 아이템 표시
+        getMoimDiary() // 다이어리
+        getSchedule(dateId) // 일정 내용
+        Log.d("CHECK_GROUP_EVENT", monthGroupSchedule.toString())
+    }
+
+    private fun setPersonalEmptyText(isEmpty: Boolean) {
+        binding.homeDailyPersonalScheduleNoneTv.visibility = if (isEmpty) View.VISIBLE else View.GONE
+    }
+
+    private fun setMoimEmptyText(isEmpty: Boolean) {
+        binding.homeDailyMoimScheduleNoneTv.visibility = if (isEmpty) View.VISIBLE else View.GONE
+    }
+
+    private fun getSchedule(dateId: Int) {
+        val todayStart = (monthDayList[dateId].withTimeAtStartOfDay().millis) / 1000
+        val todayEnd = (monthDayList[dateId].plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000
+
+        schedulePersonal.clear()
+        scheduleMoim.clear()
+        setDailyPersonalSchedule(todayStart, todayEnd) // 개인 일정 표시
+        setDailyMoimSchedule(todayStart, todayEnd) // 그룹 일정 표시
+    }
+
+    private fun setDailyPersonalSchedule(todayStart: Long, todayEnd: Long) {
         lifecycleScope.launch {
             personalViewModel.getDailySchedules(todayStart, todayEnd)
         }
     }
 
-    private fun setMoimDailySchedule(todayStart: Long, todayEnd: Long) {
+    private fun setDailyMoimSchedule(todayStart: Long, todayEnd: Long) {
+        // 선택한 날짜의 모임 일정
         scheduleMoim = monthGroupSchedule.filter { item -> item.startLong <= todayEnd && item.endLong >= todayStart } as ArrayList<Schedule>
         groupScheduleRVAdapter.addGroup(scheduleMoim)
-        setMoimEmptyText()
+        setMoimEmptyText(scheduleMoim.isEmpty())
     }
 
-    private fun getCategoryList() {
-        lifecycleScope.launch{
-            personalViewModel.getCategories()
-        }
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    private fun getGroupDiary() {
+    private fun getMoimDiary() {
         try {
-            val date = SimpleDateFormat("yyyy,MM").format(millis)
             val service = DiaryService()
-            service.getGroupMonthDiary2(date, 0, 50)
+            service.getGroupMonthDiary2(yearMonthDate(millis), 0, 50)
             service.getGroupMonthView(this@CalendarMonthFragment)
         } catch (e: java.lang.Exception) {
             Log.e("Exception", "Exception occurred: ${e.message}")
@@ -298,11 +290,11 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
             }
             personalScheduleRVAdapter.addPersonal(schedulePersonal)
             Log.d("getDailySchedules", "Personal Schedule : $schedulePersonal")
-            setPersonalEmptyText()
+            setPersonalEmptyText(schedulePersonal.isEmpty())
         }
         personalViewModel.scheduleList.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
-                tempSchedule.addAll(it)
+                calendarSchedules.addAll(it)
             }
         }
         // 모임 일정 리스트
@@ -310,8 +302,8 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
             scheduleMoim.clear()
             if (!result.isNullOrEmpty()) {
                 monthGroupSchedule = result.map { it.convertServerScheduleResponseToLocal() } as ArrayList
-                tempSchedule.addAll(monthGroupSchedule)
-                binding.calendarMonthView.setScheduleList(tempSchedule) // 달력 표시
+                calendarSchedules.addAll(monthGroupSchedule)
+                binding.calendarMonthView.setScheduleList(calendarSchedules) // 달력 표시
             }
         }
     }
@@ -332,6 +324,11 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
             arguments = Bundle().apply {
                 putLong(MILLIS, millis)
             }
+        }
+
+        @SuppressLint("SimpleDateFormat")
+        fun yearMonthDate(millis: Long): String {
+            return SimpleDateFormat("yyyy,MM").format(millis)
         }
     }
 }

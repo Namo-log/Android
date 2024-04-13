@@ -23,7 +23,7 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
     private lateinit var context : Context
 
     interface GroupContentClickListener {
-        fun onGroupContentClick(event: Schedule)
+        fun onGroupContentClick(schedule: Schedule)
     }
     private lateinit var groupContentClickListener: GroupContentClickListener
 

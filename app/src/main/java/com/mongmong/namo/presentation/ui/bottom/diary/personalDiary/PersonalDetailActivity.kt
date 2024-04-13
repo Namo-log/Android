@@ -60,7 +60,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
     }
 
     private fun setSchedule() {
-        schedule = (intent.getSerializableExtra("event") as? Schedule)!!
+        schedule = (intent.getSerializableExtra("schedule") as? Schedule)!!
         hasDiary()
 
         findCategory(schedule)
