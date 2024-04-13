@@ -5,15 +5,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.repositories.ScheduleRepository
+import com.mongmong.namo.domain.usecase.FindCategoryUseCase
+import com.mongmong.namo.domain.usecase.GetCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
-    private val repository: ScheduleRepository
+    private val repository: ScheduleRepository,
+    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val findCategoryUseCase: FindCategoryUseCase
 ) : ViewModel() {
     private val _schedule = MutableLiveData<Schedule>()
     val schedule: LiveData<Schedule> = _schedule
@@ -23,6 +28,12 @@ class ScheduleViewModel @Inject constructor(
 
     private val _isPostComplete = MutableLiveData<Boolean>()
     val isPostComplete: LiveData<Boolean> = _isPostComplete
+
+    private val _category = MutableLiveData<Category>()
+    val category: LiveData<Category> = _category
+
+    private val _categoryList = MutableLiveData<List<Category>>(emptyList())
+    val categoryList: LiveData<List<Category>> = _categoryList
 
     /** 선택한 날짜의 일정 조회 */
     fun getDailySchedules(startDate: Long, endDate: Long) {
@@ -61,6 +72,21 @@ class ScheduleViewModel @Inject constructor(
                 localId = localId,
                 serverId = serverId
             )
+        }
+    }
+
+    /** 카테고리 조회 */
+    fun getCategories() {
+        viewModelScope.launch {
+            Log.d("CategoryViewModel", "getCategories")
+            _categoryList.value = getCategoriesUseCase.invoke()
+        }
+    }
+
+    /** 카테고리 id로 카테고리 조회 */
+    fun findCategoryById(localId: Long, serverId: Long) {
+        viewModelScope.launch {
+            _category.value = findCategoryUseCase.invoke(localId, serverId)
         }
     }
 }

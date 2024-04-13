@@ -36,7 +36,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.mongmong.namo.presentation.ui.MainActivity
-import com.mongmong.namo.presentation.ui.MainActivity.Companion.setCategoryList
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Category
@@ -113,34 +112,13 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     ): View? {
         binding = FragmentScheduleDialogBasicBinding.inflate(inflater, container, false)
         db = NamoDatabase.getInstance(requireContext())
-        categoryList = setCategoryList(db)
 
         binding.dialogSchedulePlaceKakaoBtn.visibility = View.GONE
         binding.dialogSchedulePlaceContainer.visibility = View.GONE
         mapViewContainer?.visibility = View.GONE
 
         initObservers()
-
-        if (args.event != null) {
-            event = args.event!!
-            prevAlarmList = event.alarmList
-            setContent()
-        } else {
-            binding.dialogScheduleHeaderTv.text = "새 일정"
-            val nowDay = args.nowDay
-            if (nowDay != 0L) {
-                date = DateTime(args.nowDay)
-            }
-            initPickerText()
-            initCategory()
-        }
-
-        if (event.scheduleId != 0L) {
-            binding.dialogScheduleHeaderTv.text = "일정 편집"
-            scheduleId = event.scheduleId
-        } else {
-            binding.dialogScheduleHeaderTv.text = "새 일정"
-        }
+        getCategoryList()
 
         clickListener()
 
@@ -184,6 +162,29 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         super.onPause()
         mapViewContainer?.removeView(mapView)
         Log.d("OnPause", "Map remove")
+    }
+
+    private fun setInit() {
+        if (args.event != null) {
+            event = args.event!!
+            findCategory(event)
+            prevAlarmList = event.alarmList
+        } else {
+            binding.dialogScheduleHeaderTv.text = "새 일정"
+            val nowDay = args.nowDay
+            if (nowDay != 0L) {
+                date = DateTime(args.nowDay)
+            }
+            initPickerText()
+            initCategory()
+        }
+
+        if (event.scheduleId != 0L) {
+            binding.dialogScheduleHeaderTv.text = "일정 편집"
+            scheduleId = event.scheduleId
+        } else {
+            binding.dialogScheduleHeaderTv.text = "새 일정"
+        }
     }
 
     private fun clickListener() {
@@ -370,6 +371,13 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
                     }
                 }
             }
+        }
+    }
+
+    /** 카테고리 조회 */
+    private fun getCategoryList() {
+        lifecycleScope.launch{
+            viewModel.getCategories()
         }
     }
 
@@ -625,20 +633,12 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
 
     // Content Zone
-    fun setContent() {
+    private fun setContent() {
         //제목
         binding.dialogScheduleTitleEt.setText(event.title)
 
         //카테고리
         Log.d("TEST_CATEGORY", categoryList.toString())
-        Log.d("TEST_CATEGORY", event.toString())
-        val category = categoryList.find {
-            if (it.serverId != 0L) it.serverId == event.categoryServerId
-            else it.categoryId == event.categoryId
-        }
-        if (category != null) {
-            selectedCategory = category
-        }
         event.categoryId = selectedCategory.categoryId
         event.categoryServerId = selectedCategory.serverId
         setCategory()
@@ -785,35 +785,31 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
                 requireActivity().finish()
             }
         }
+        viewModel.categoryList.observe(viewLifecycleOwner) {
+            if (!it.isNullOrEmpty()) {
+                categoryList = it
+                setInit()
+            }
+        }
+        viewModel.category.observe(viewLifecycleOwner) {
+            selectedCategory = it
+            setContent()
+        }
     }
 
     // Category Zone
-    private fun initCategory() {
-        // 카테고리가 아무것도 없으면 기본 카테고리 2개 생성 (일정, 모임)
-        setInitialCategory()
+    private fun findCategory(schedule: Schedule) {
+        lifecycleScope.launch {
+            viewModel.findCategoryById(schedule.categoryId, schedule.categoryServerId)
+        }
+    }
 
-        categoryList = setCategoryList(db)
+    private fun initCategory() {
         selectedCategory = categoryList[0]
         event.categoryId = selectedCategory.categoryId
         event.categoryServerId = selectedCategory.serverId
 
         setCategory()
-    }
-
-    private fun setInitialCategory() {
-        // 리스트에 아무런 카테고리가 없으면 기본 카테고리 설정
-        val thread = Thread {
-            if (db.categoryDao.getCategoryList().isEmpty()) {
-                db.categoryDao.insertCategory(Category(0, "일정", R.color.schedule, true))
-                db.categoryDao.insertCategory(Category(0, "모임", R.color.schedule_group, true))
-            }
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch (e : InterruptedException) {
-            e.printStackTrace()
-        }
     }
 
     private fun setCategory() {

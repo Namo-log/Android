@@ -4,8 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
@@ -26,7 +24,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.data.remote.diary.DiaryRepository
 import com.mongmong.namo.databinding.ActivityPersonalDiaryDetailBinding
 import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.adapter.GalleryListAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
@@ -44,8 +41,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
     private lateinit var binding: ActivityPersonalDiaryDetailBinding
     private lateinit var galleryAdapter: GalleryListAdapter
 
-    private lateinit var repo: DiaryRepository
-
     private lateinit var schedule: Schedule
 
     private val viewModel : PersonalDiaryViewModel by viewModels()
@@ -56,8 +51,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         setContentView(binding.root)
 
         galleryAdapter = GalleryListAdapter(this)
-
-        repo = DiaryRepository(this)
 
         setSchedule()
         charCnt()
@@ -70,8 +63,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         schedule = (intent.getSerializableExtra("event") as? Schedule)!!
         hasDiary()
 
-        val category = repo.getCategory(schedule.categoryId, schedule.categoryServerId)
-        binding.itemDiaryCategoryColorIv.backgroundTintList = ColorStateList.valueOf(Color.parseColor(CategoryColor.convertPaletteIdToHexColor(category.paletteId)))
+        findCategory(schedule)
 
         binding.apply {
             val formatDate = DateTime(schedule.startLong * 1000).toString("yyyy.MM.dd (EE)")
@@ -110,6 +102,12 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
                 )
             }
             binding.diaryDeleteIv.visibility = View.VISIBLE
+        }
+    }
+
+    private fun findCategory(schedule: Schedule) {
+        lifecycleScope.launch {
+            viewModel.findCategoryById(schedule.categoryId, schedule.categoryServerId)
         }
     }
 
@@ -177,6 +175,9 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
                 Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
                 finish()
             }
+        }
+        viewModel.category.observe(this) {
+            binding.itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(it.paletteId)
         }
     }
 

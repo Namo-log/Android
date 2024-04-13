@@ -1,5 +1,6 @@
 package com.mongmong.namo.presentation.di
 
+import com.mongmong.namo.data.remote.category.CategoryRetrofitInterface
 import com.mongmong.namo.data.remote.diary.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupApiService
 import com.mongmong.namo.data.remote.schedule.ScheduleRetrofitInterface
@@ -26,6 +27,11 @@ object ServiceModule {
     @Singleton
     fun provideDiaryService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : DiaryApiService =
         retrofit.create(DiaryApiService::class.java)
+
+    /** 카테고리 */
+    @Provides
+    @Singleton
+    fun provideCategoryService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : CategoryRetrofitInterface = retrofit.create(CategoryRetrofitInterface::class.java)
 
     /** 그룹 **/
     @Provides

@@ -1,6 +1,6 @@
 package com.mongmong.namo.presentation.ui.bottom.home.category.adapter
 
-import android.content.Context
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,15 +9,20 @@ import com.mongmong.namo.databinding.ItemCategoryBinding
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.presentation.config.CategoryColor
 
-class SetCategoryRVAdapter(
-    val context: Context,
-    private val categoryList: List<Category>
-):  RecyclerView.Adapter<SetCategoryRVAdapter.ViewHolder>(){
+class SetCategoryRVAdapter:  RecyclerView.Adapter<SetCategoryRVAdapter.ViewHolder>(){
 
+    private val categoryList = ArrayList<Category>()
     private lateinit var mItemClickListener: MyItemClickListener
 
     fun setCategoryClickListener(itemClickListener: MyItemClickListener) {
         mItemClickListener = itemClickListener
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun addCategory(categories: ArrayList<Category>) {
+        this.categoryList.clear()
+        this.categoryList.addAll(categories)
+        notifyDataSetChanged()
     }
 
     interface MyItemClickListener {

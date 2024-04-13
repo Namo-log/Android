@@ -5,16 +5,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.domain.model.MoimActivity
 import com.mongmong.namo.domain.model.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
+import com.mongmong.namo.domain.usecase.FindCategoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MoimDiaryViewModel @Inject constructor(
-    private val repository: DiaryRepository
+    private val repository: DiaryRepository,
+    private val findCategoryUseCase: FindCategoryUseCase
 ) : ViewModel() {
     private val _getMoimDiaryResult = MutableLiveData<MoimDiaryResult>()
     val getMoimDiaryResult : LiveData<MoimDiaryResult> = _getMoimDiaryResult
@@ -26,6 +29,9 @@ class MoimDiaryViewModel @Inject constructor(
     val patchActivitiesComplete : LiveData<Boolean> = _patchActivitiesComplete
 
     private val _memo = MutableLiveData<String>()
+
+    private val _category = MutableLiveData<Category>()
+    val category: LiveData<Category> = _category
 
     /** 모임 기록 개별 조회 **/
     fun getMoimDiary(scheduleId: Long) {
@@ -127,7 +133,12 @@ class MoimDiaryViewModel @Inject constructor(
         repository.deleteMoimActivity(activityId)
     }
 
-
+    /** 카테고리 id로 카테고리 조회 */
+    fun findCategoryById(localId: Long, serverId: Long) {
+        viewModelScope.launch {
+            _category.value = findCategoryUseCase.invoke(localId, serverId)
+        }
+    }
 
     fun setMemo(memo: String) { _memo.value = memo }
     fun getMemo() = _memo.value

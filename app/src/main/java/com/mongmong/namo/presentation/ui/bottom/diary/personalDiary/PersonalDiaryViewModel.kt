@@ -6,8 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.data.local.entity.diary.Diary
+import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.repositories.DiaryRepository
+import com.mongmong.namo.domain.usecase.FindCategoryUseCase
 import com.mongmong.namo.presentation.config.RoomState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -15,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PersonalDiaryViewModel @Inject constructor(
-    private val repository: DiaryRepository
+    private val repository: DiaryRepository,
+    private val findCategoryUseCase: FindCategoryUseCase
 ) : ViewModel() {
     private val _diary = MutableLiveData<Diary>()
     val diary: LiveData<Diary> = _diary
@@ -25,6 +28,9 @@ class PersonalDiaryViewModel @Inject constructor(
 
     private val _isDeleteComplete = MutableLiveData<Boolean>()
     val isDeleteComplete: LiveData<Boolean> = _isDeleteComplete
+
+    private val _category = MutableLiveData<Category>()
+    val category: LiveData<Category> = _category
 
 
     /** 개인 기록 개별 조회 **/
@@ -78,6 +84,13 @@ class PersonalDiaryViewModel @Inject constructor(
         viewModelScope.launch {
             repository.deleteDiary(localId, scheduleServerId)
             _isDeleteComplete.postValue(true)
+        }
+    }
+
+    /** 카테고리 id로 카테고리 조회 */
+    fun findCategoryById(localId: Long, serverId: Long) {
+        viewModelScope.launch {
+            _category.value = findCategoryUseCase.invoke(localId, serverId)
         }
     }
 

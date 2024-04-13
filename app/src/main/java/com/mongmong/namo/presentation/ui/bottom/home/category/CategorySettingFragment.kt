@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
@@ -17,18 +19,20 @@ import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.remote.category.CategorySettingView
 import com.mongmong.namo.domain.model.GetCategoryResponse
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class CategorySettingFragment: Fragment(), CategorySettingView {
 
     lateinit var binding: FragmentCategorySettingBinding //플로팅 카테고리 설정 화면
 
     private lateinit var categoryRVAdapter: SetCategoryRVAdapter
 
-    private lateinit var db: NamoDatabase
-
-    private var categoryList : List<Category> = arrayListOf() // arrayListOf<Category>()
+    private var categoryList: ArrayList<Category> = arrayListOf() // arrayListOf<Category>()
 
     private var gson: Gson = Gson()
+    private val viewModel : CategoryViewModel by viewModels()
 
 
     override fun onCreateView(
@@ -39,11 +43,7 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
     ): View {
         binding = FragmentCategorySettingBinding.inflate(inflater, container, false)
 
-        db = NamoDatabase.getInstance(requireContext())
-
-        // 카테고리가 아무것도 없으면 기본 카테고리 2개 생성 (일정, 모임)
-        setInitialCategory()
-
+        initObserve()
         onClickSchedule()
 
         return binding.root
@@ -52,8 +52,9 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
     override fun onResume() {
         super.onResume()
 
-        categoryRVAdapter = SetCategoryRVAdapter(requireContext(), categoryList)
+        Log.d("CategorySettingFrag", "onResume()")
         getCategoryList()
+        setAdapter()
     }
 
     private fun onClickSchedule() {
@@ -72,57 +73,58 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
 
         }
 
+        // 카테고리 추가
         onClickCategoryAddBtn()
     }
 
     private fun onClickCategoryAddBtn() {
         binding.categoryAddBtn.setOnClickListener { // 새 카테고리
-            (context as CategoryActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.category_frm, CategoryDetailFragment(false))
+            requireActivity().supportFragmentManager.beginTransaction()
+                .add(R.id.category_frm, CategoryDetailFragment(false))
+                .addToBackStack(null) // 백 스택에 트랜잭션을 추가
                 .commitAllowingStateLoss()
         }
     }
 
-    private fun getCategoryList() {
-        val rv = binding.categoryCalendarRv
+    private fun setAdapter() {
+        Log.d("getCategories", "initRV")
+        categoryRVAdapter = SetCategoryRVAdapter()
+        binding.categoryCalendarRv.apply {
+            adapter = categoryRVAdapter
+            layoutManager = GridLayoutManager(context, 2)
+        }
+        categoryRVAdapter.setCategoryClickListener(object: SetCategoryRVAdapter.MyItemClickListener {
+            // 아이템 클릭
+            override fun onItemClick(category: Category, position: Int) {
+                Log.d("Category-Set-FRAG", "카테고리 아이템을 클릭했음")
+                Log.e("SET-CATEGORY", "$category , $position")
 
-        // roomDB
-        val r = Runnable {
-            try {
-                // 활성화 상태인 리스트만 보여줌
-                categoryList = db.categoryDao.getActiveCategoryList(true)
+                // 데이터 저장
+                saveClickedData(category)
+                categoryRVAdapter.notifyItemChanged(position)
 
-                categoryRVAdapter.notifyItemChanged(categoryList.size)
-                categoryRVAdapter = SetCategoryRVAdapter(requireContext(), categoryList)
-                categoryRVAdapter.setCategoryClickListener(object: SetCategoryRVAdapter.MyItemClickListener {
-                    // 아이템 클릭
-                    override fun onItemClick(category: Category, position: Int) {
-                        Log.d("Category-Set-FRAG", "카테고리 아이템을 클릭했음")
-                        Log.e("SET-CATEGORY", "$category , $position")
+                // 편집 화면으로 이동
+                startActivity(Intent(requireActivity(), CategoryEditActivity()::class.java))
+            }
+        })
+    }
 
-                        // 데이터 저장
-                        saveClickedData(category)
-                        categoryRVAdapter.notifyItemChanged(position)
-
-                        // 편집 화면으로 이동
-                        startActivity(Intent(requireActivity(), CategoryEditActivity()::class.java))
-                    }
-                })
-                requireActivity().runOnUiThread {
-                    rv.adapter = categoryRVAdapter
-                    rv.layoutManager = GridLayoutManager(context, 2)
-                }
-//                Log.d("CategorySettingFrag", "categoryDao: ${db.categoryDao.getCategoryList()}")
-            } catch (e: Exception) {
-                Log.d("category", "Error - $e")
+    private fun initObserve() {
+        viewModel.categoryList.observe(viewLifecycleOwner) {
+            categoryList.clear()
+            if (!it.isNullOrEmpty()) {
+                categoryList = it as ArrayList<Category>
+                categoryRVAdapter.addCategory(categoryList)
+                Log.d("getCategories", "initObserve")
             }
         }
+    }
 
-        val thread = Thread(r)
-        thread.start()
-
-        // 서버 통신
-//        CategorySettingService(this@CategorySettingFragment).tryGetAllCategory()
+    /** 카테고리 조회 */
+    private fun getCategoryList() {
+        lifecycleScope.launch{
+            viewModel.getCategories()
+        }
     }
 
     private fun saveClickedData(dataSet: Category) {
@@ -135,29 +137,12 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
 
         // spf에 저장
         editor
-            .putString(CATEGORY_KEY_DATA, json)
-            .putLong(CATEGORY_KEY_IDX, dataSet.categoryId)
-            .putLong(CATEGORY_KEY_SERVER_IDX, dataSet.serverId)
+            .putString(CATEGORY_DATA, json)
+            .putLong(CATEGORY_ID, dataSet.categoryId)
+            .putLong(CATEGORY_SERVER_ID, dataSet.serverId)
             .apply()
 
         Log.d("debug", "Category Data saved")
-    }
-
-    private fun setInitialCategory() {
-        // 리스트에 아무런 카테고리가 없으면 기본 카테고리 설정. 근데 딜레이가 좀 있음
-        Thread {
-            if (db.categoryDao.getCategoryList().isEmpty()) {
-                db.categoryDao.insertCategory(Category(0, "일정", R.color.schedule, true))
-                db.categoryDao.insertCategory(Category(0, "그룹", R.color.schedule_group, true))
-            }
-        }.start()
-    }
-
-    companion object {
-        const val CATEGORY_KEY_PREFS = "category"
-        const val CATEGORY_KEY_DATA = "category_data"
-        const val CATEGORY_KEY_IDX = "categoryId"
-        const val CATEGORY_KEY_SERVER_IDX = "serverId"
     }
 
     override fun onGetAllCategorySuccess(response: GetCategoryResponse) {
@@ -166,5 +151,12 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
 
     override fun onGetAllCategoryFailure(message: String) {
         Log.d("CategorySettingFrag", "onGetAllCategoryFailure")
+    }
+
+    companion object {
+        const val CATEGORY_KEY_PREFS = "category"
+        const val CATEGORY_DATA = "category_data"
+        const val CATEGORY_ID = "categoryId"
+        const val CATEGORY_SERVER_ID = "serverId"
     }
 }
