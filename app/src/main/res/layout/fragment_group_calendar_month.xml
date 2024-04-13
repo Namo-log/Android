@@ -73,14 +73,14 @@
                         android:textStyle="bold" />
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/group_daily_event_rv"
+                        android:id="@+id/group_daily_personal_schedule_rv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:nestedScrollingEnabled="false"
                         tools:listitem="@layout/item_schedule_preview"/>
 
                     <TextView
-                        android:id="@+id/group_daily_event_none_tv"
+                        android:id="@+id/group_daily_personal_schedule_none_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
@@ -100,14 +100,14 @@
                         android:textStyle="bold" />
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/group_daily_group_event_rv"
+                        android:id="@+id/group_daily_moim_schedule_rv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:nestedScrollingEnabled="false"
                         tools:listitem="@layout/item_schedule_preview_moim" />
 
                     <TextView
-                        android:id="@+id/group_daily_group_event_none_tv"
+                        android:id="@+id/group_daily_moim_schedule_none_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"

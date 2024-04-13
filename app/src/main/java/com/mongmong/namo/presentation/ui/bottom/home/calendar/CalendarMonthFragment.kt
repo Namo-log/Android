@@ -153,48 +153,33 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
             adapter = personalScheduleRVAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
-
-        personalScheduleRVAdapter.setContentClickListener(object :
-            DailyPersonalRVAdapter.ContentClickListener {
-            override fun onContentClick(schedule: Schedule) {
+        personalScheduleRVAdapter.setPersonalScheduleClickListener(object : DailyPersonalRVAdapter.PersonalScheduleClickListener {
+            override fun onContentClicked(schedule: Schedule) { // 아이템 전체 클릭
                 val intent = Intent(context, ScheduleActivity::class.java)
                 intent.putExtra("schedule", schedule)
                 requireActivity().startActivity(intent)
             }
-        })
 
-        // 기록 아이템 클릭 리스너
-        personalScheduleRVAdapter.setRecordClickListener(object :
-            DailyPersonalRVAdapter.DiaryInterface {
-            override fun onDetailClicked(schedule: Schedule) {
-
+            override fun onDiaryIconClicked(schedule: Schedule) { // 기록 아이콘 클릭
                 val intent = Intent(context, PersonalDetailActivity::class.java)
                 intent.putExtra("schedule", schedule)
                 requireActivity().startActivity(intent)
             }
         })
 
-
         /** 모임 */
         binding.homeDailyMoimScheduleRv.apply {
             adapter = groupScheduleRVAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
-//        if (nowIdx==0) setToday()
-
-        groupScheduleRVAdapter.setGorupContentClickListener(object :
-            DailyGroupRVAdapter.GroupContentClickListener {
-            override fun onGroupContentClick(schedule: Schedule) {
+        groupScheduleRVAdapter.setMoimScheduleClickListener(object : DailyGroupRVAdapter.MoimScheduleClickListener {
+            override fun onContentClicked(schedule: Schedule) { // 아이템 전체 클릭
                 val intent = Intent(context, ScheduleActivity::class.java)
                 intent.putExtra("schedule", schedule)
                 requireActivity().startActivity(intent)
             }
-        })
 
-        // 기록
-        groupScheduleRVAdapter.setRecordClickListener(object : DailyGroupRVAdapter.DiaryInterface {
-            override fun onGroupDetailClicked(monthDiary: MoimDiary?) {
-
+            override fun onDiaryIconClicked(monthDiary: MoimDiary?) { // 기록 아이콘 클릭
                 val intent = Intent(context, MoimMemoDetailActivity::class.java)
                 intent.putExtra("groupDiary", monthDiary)
                 requireActivity().startActivity(intent)

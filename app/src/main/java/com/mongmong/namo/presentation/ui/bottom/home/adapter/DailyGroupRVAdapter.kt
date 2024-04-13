@@ -22,24 +22,17 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
     private val groupDiary = ArrayList<MoimDiary>()
     private lateinit var context : Context
 
-    interface GroupContentClickListener {
-        fun onGroupContentClick(schedule: Schedule)
-    }
-    private lateinit var groupContentClickListener: GroupContentClickListener
-
-    fun setGorupContentClickListener(groupContentClickListener: GroupContentClickListener) {
-        this.groupContentClickListener = groupContentClickListener
+    interface MoimScheduleClickListener {
+        fun onContentClicked(schedule: Schedule)
+        fun onDiaryIconClicked(monthDiary: MoimDiary?)
     }
 
-    /** 기록 아이템 클릭 리스너 **/
-    interface DiaryInterface {
-        fun onGroupDetailClicked(monthDiary: MoimDiary?)
+    fun setMoimScheduleClickListener(moimScheduleClickListener: MoimScheduleClickListener) {
+        this.moimScheduleClickListener = moimScheduleClickListener
     }
-    private lateinit var diaryRecordClickListener: DiaryInterface
-    fun setRecordClickListener(itemClickListener: DiaryInterface){
-        diaryRecordClickListener=itemClickListener
-    }
-    /** ----- **/
+
+    private lateinit var moimScheduleClickListener: MoimScheduleClickListener
+
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
         val binding : ItemSchedulePreviewBinding = ItemSchedulePreviewBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
@@ -50,13 +43,12 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
 
     override fun onBindViewHolder(holder : ViewHolder, position : Int) {
         holder.bind(group[position])
-
-        holder.binding.itemCalendarEventBaseLayout.setOnClickListener {
-            groupContentClickListener.onGroupContentClick(group[position])
+        // 아이템 전체 클릭
+        holder.itemView.setOnClickListener {
+            moimScheduleClickListener.onContentClicked(group[position])
         }
-        
-        holder.binding.itemCalendarEventRecord.setOnClickListener {
-
+        // 기록 아이콘 클릭
+        holder.binding.itemCalendarScheduleRecord.setOnClickListener {
             val newCategoryId = group[position].categoryServerId
 
             val diary = groupDiary.find {
@@ -65,7 +57,7 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
 
             if (diary != null) {
                 val updatedDiary = diary.copy(categoryId = newCategoryId)
-                diaryRecordClickListener.onGroupDetailClicked(updatedDiary)
+                moimScheduleClickListener.onDiaryIconClicked(updatedDiary)
             }
         }
     }
@@ -100,21 +92,21 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
 
             binding.itemCalendarTitle.text = group.title
             binding.itemCalendarTitle.isSelected = true
-            binding.itemCalendarEventTime.text = time
+            binding.itemCalendarScheduleTime.text = time
             if (category != null) {
-                binding.itemCalendarEventColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
+                binding.itemCalendarScheduleColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
             }
-            binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
+            binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
 
-            val diary=groupDiary.find {
-                it.scheduleId==group.serverId
+            val diary = groupDiary.find {
+                it.scheduleId == group.serverId
             }
-            if(group.hasDiary !=0) {
-                binding.itemCalendarEventRecord.visibility=View.VISIBLE
-                if (diary?.content.isNullOrEmpty()) binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
-                else binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.MainOrange))
+            if (group.hasDiary != 0) {
+                binding.itemCalendarScheduleRecord.visibility = View.VISIBLE
+                if (diary?.content.isNullOrEmpty()) binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
+                else binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.MainOrange))
             }
-            else binding.itemCalendarEventRecord.visibility=View.GONE
+            else binding.itemCalendarScheduleRecord.visibility = View.GONE
 
         }
     }

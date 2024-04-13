@@ -188,7 +188,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         )
 
         startActivity(Intent(context, PersonalDetailActivity::class.java)
-            .putExtra("event", schedule))
+            .putExtra("schedule", schedule))
 
     }
 

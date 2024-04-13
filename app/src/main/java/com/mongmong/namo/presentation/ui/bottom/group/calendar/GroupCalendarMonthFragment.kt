@@ -20,7 +20,7 @@ import com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.MoimDiaryActivit
 import com.mongmong.namo.presentation.ui.bottom.group.GroupCalendarActivity
 import com.mongmong.namo.presentation.ui.bottom.group.GroupScheduleActivity
 import com.mongmong.namo.presentation.ui.bottom.group.calendar.GroupCalendarAdapter.Companion.GROUP_ID
-import com.mongmong.namo.presentation.ui.bottom.group.calendar.adapter.GroupDailyGroupRVAdapter
+import com.mongmong.namo.presentation.ui.bottom.group.calendar.adapter.GroupDailyMoimRVAdapter
 import com.mongmong.namo.presentation.ui.bottom.group.calendar.adapter.GroupDailyPersonalRVAdapter
 import com.mongmong.namo.presentation.ui.bottom.home.calendar.CustomCalendarView
 import com.mongmong.namo.presentation.utils.NetworkManager
@@ -45,7 +45,7 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
     private var event_personal : ArrayList<Schedule> = arrayListOf()
     private var event_group : ArrayList<Schedule> = arrayListOf()
     private val personalScheduleRVAdapter = GroupDailyPersonalRVAdapter()
-    private val groupScheduleRVAdapter = GroupDailyGroupRVAdapter()
+    private val groupScheduleRVAdapter = GroupDailyMoimRVAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -140,23 +140,25 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
     }
 
     private fun setAdapter() {
-        binding.groupDailyEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.groupDailyEventRv.adapter = personalScheduleRVAdapter
+        binding.groupDailyPersonalScheduleRv.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            adapter = personalScheduleRVAdapter
+        }
 
-        binding.groupDailyGroupEventRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.groupDailyGroupEventRv.adapter = groupScheduleRVAdapter
+        binding.groupDailyMoimScheduleRv.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            adapter = groupScheduleRVAdapter
+        }
 
-        groupScheduleRVAdapter.setContentClickListener(object : GroupDailyGroupRVAdapter.ContentClickListener {
-            override fun onContentClick(groupSchedule: MoimSchedule) {
+        groupScheduleRVAdapter.setMoimScheduleClickListener(object : GroupDailyMoimRVAdapter.MoimScheduleClickListener {
+            override fun onContentClicked(groupSchedule: MoimSchedule) { // 아이템 전체 클릭
                 val intent = Intent(context, GroupScheduleActivity::class.java)
                 intent.putExtra("group", (activity as GroupCalendarActivity).getGroup())
                 intent.putExtra("moimSchedule", groupSchedule)
                 requireActivity().startActivity(intent)
             }
-        })
 
-        groupScheduleRVAdapter.setRecordClickListener(object :GroupDailyGroupRVAdapter.DiaryInterface{
-            override fun onGroupMemoClicked(groupSchedule: MoimSchedule) {
+            override fun onDiaryIconClicked(groupSchedule: MoimSchedule) { // 기록 아이콘 클릭
                 Log.d("GROUP_DIARY_CLICK", groupSchedule.toString())
                 val intent = Intent(context, MoimDiaryActivity::class.java)
                 intent.putExtra("hasGroupPlace",groupSchedule.hasDiaryPlace)
@@ -164,7 +166,6 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
                 intent.putExtra("groupSchedule", groupSchedule)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 requireActivity().startActivity(intent)
-
             }
         })
     }
@@ -181,8 +182,8 @@ class GroupCalendarMonthFragment : Fragment(), GetMoimScheduleView {
     }
 
     private fun setEmptyMsg() {
-        if (dailySchedules.size == 0 ) binding.groupDailyEventNoneTv.visibility = View.VISIBLE
-        else binding.groupDailyEventNoneTv.visibility = View.GONE
+        if (dailySchedules.size == 0 ) binding.groupDailyPersonalScheduleNoneTv.visibility = View.VISIBLE
+        else binding.groupDailyPersonalScheduleNoneTv.visibility = View.GONE
     }
 
     private fun getSchedule(idx : Int) {

@@ -2,42 +2,31 @@ package com.mongmong.namo.presentation.ui.bottom.home.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
-import com.mongmong.namo.domain.usecase.FindCategoryUseCase
 import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.ui.bottom.home.category.CategoryViewModel
 import org.joda.time.DateTime
 
-class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewHolder>() {
+class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewHolder>() {
 
     private val personal = ArrayList<Schedule>()
     private val categoryList = ArrayList<Category>()
     private lateinit var context : Context
 
-    /** 기록 아이템 클릭 리스너 **/
-    interface DiaryInterface {
-        fun onDetailClicked(schedule: Schedule)
-    }
-    private lateinit var diaryRecordClickListener: DiaryInterface
-    fun setRecordClickListener(itemClickListener: DiaryInterface){
-        diaryRecordClickListener=itemClickListener
+    interface PersonalScheduleClickListener {
+        fun onContentClicked(schedule : Schedule)
+        fun onDiaryIconClicked(schedule: Schedule)
     }
 
-    interface ContentClickListener {
-        fun onContentClick(schedule : Schedule)
-    }
-    private lateinit var contentClickListener : ContentClickListener
-    fun setContentClickListener(contentClickListener : ContentClickListener) {
-        this.contentClickListener = contentClickListener
+    private lateinit var personalScheduleClickListener : PersonalScheduleClickListener
+    fun setPersonalScheduleClickListener(personalScheduleClickListener : PersonalScheduleClickListener) {
+        this.personalScheduleClickListener = personalScheduleClickListener
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
@@ -49,18 +38,16 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
 
     override fun onBindViewHolder(holder : ViewHolder, position : Int) {
         holder.bind(personal[position])
-
-        /** 기록 아이템 클릭 리스너 **/
-        if (!personal[position].moimSchedule){ // 개인 기록
-            holder.binding.itemCalendarEventRecord.setOnClickListener {
-                diaryRecordClickListener.onDetailClicked(personal[position])
+        // 아이템 전체 클릭
+        holder.itemView.setOnClickListener {
+            personalScheduleClickListener.onContentClicked(personal[position])
+        }
+        // 기록 아이콘 클릭
+        if (!personal[position].moimSchedule) { // 개인 기록
+            holder.binding.itemCalendarScheduleRecord.setOnClickListener {
+                personalScheduleClickListener.onDiaryIconClicked(personal[position])
             }
         }
-
-        holder.binding.itemCalendarEventContentLayout.setOnClickListener {
-            contentClickListener.onContentClick(personal[position])
-        }
-
     }
 
     override fun getItemCount(): Int = personal.size
@@ -92,13 +79,13 @@ class DailyPersonalRVAdapter() : RecyclerView.Adapter<DailyPersonalRVAdapter.Vie
 
             binding.itemCalendarTitle.text = personal.title
             binding.itemCalendarTitle.isSelected = true
-            binding.itemCalendarEventTime.text = time
-            binding.itemCalendarEventColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
-            binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
+            binding.itemCalendarScheduleTime.text = time
+            binding.itemCalendarScheduleColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
+            binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
 
             /** 기록 아이콘 색깔 **/
-            if(personal.hasDiary !=0)
-                binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context , R.color.MainOrange))
+            if(personal.hasDiary != 0)
+                binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context , R.color.MainOrange))
         }
     }
 
