@@ -3,6 +3,7 @@ package com.mongmong.namo.presentation.di
 import android.content.Context
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.presentation.config.XAccessTokenInterceptor
+import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
 import com.mongmong.namo.presentation.utils.Utils.BASE_URL
 import dagger.Module
@@ -99,4 +100,13 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideNetworkChecker(@ApplicationContext context: Context): NetworkChecker = NetworkCheckerImpl(context)
+
+
+    @Provides
+    @Singleton
+    fun provideKakaoRetrofit(): Retrofit =
+        Retrofit.Builder()
+            .baseUrl("https://dapi.kakao.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
 }
