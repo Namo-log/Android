@@ -76,6 +76,8 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
     fun addGroup(group : ArrayList<Schedule>) {
         this.group.clear()
         this.group.addAll(group)
+
+        notifyDataSetChanged()
     }
 
     fun setCategory(categoryList : List<Category>) {

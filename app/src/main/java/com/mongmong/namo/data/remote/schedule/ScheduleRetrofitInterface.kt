@@ -45,7 +45,7 @@ interface ScheduleRetrofitInterface {
     ) : Call<GetMonthScheduleResponse>
 
     @GET("schedules/moim/{yearMonth}")
-    fun getMonthMoimSchedule(
+    suspend fun getMonthMoimSchedule(
         @Path("yearMonth") yearMonth: String,
-    ) : Call<GetMonthScheduleResponse>
+    ) : GetMonthScheduleResponse
 }

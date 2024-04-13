@@ -103,7 +103,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     private var isMoimScheduleAlarmSaved = false
     private var isMoimSchedulePrevAlarm = false
 
-    private val viewModel : ScheduleViewModel by viewModels()
+    private val viewModel : PersonalScheduleViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -5,8 +5,10 @@ import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.NetworkChecker
+import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.config.UploadState
 import javax.inject.Inject
 
 class ScheduleRepositoryImpl @Inject constructor(
@@ -15,10 +17,13 @@ class ScheduleRepositoryImpl @Inject constructor(
     private val networkChecker: NetworkChecker
 ) : ScheduleRepository {
 
+    /** 개인 */
+    override suspend fun getMonthSchedules(monthStart: Long, monthEnd: Long): List<Schedule> {
+        return localScheduleDataSource.getMonthSchedule(monthStart, monthEnd)
+    }
+
     override suspend fun getDailySchedules(startDate: Long, endDate: Long): List<Schedule> {
-        val list = localScheduleDataSource.getDailySchedules(startDate, endDate)
-        Log.d("ScheduleRepositoryImpl", "getDailySchedules")
-        return list
+        return localScheduleDataSource.getDailySchedules(startDate, endDate)
     }
 
     override suspend fun addSchedule(schedule: Schedule) {
@@ -32,7 +37,7 @@ class ScheduleRepositoryImpl @Inject constructor(
                 localScheduleDataSource.updateScheduleAfterUpload(
                     localId = schedule.scheduleId,
                     serverId = addResponse.result.scheduleId,
-                    isUpload = IS_UPLOAD,
+                    isUpload = UploadState.IS_UPLOAD.state,
                     status = RoomState.DEFAULT.state,
                 )
             } else {
@@ -57,7 +62,7 @@ class ScheduleRepositoryImpl @Inject constructor(
                 localScheduleDataSource.updateScheduleAfterUpload(
                     localId = schedule.scheduleId,
                     serverId = editResponse.result.scheduleId,
-                    isUpload = IS_UPLOAD,
+                    isUpload = UploadState.IS_UPLOAD.state,
                     status = RoomState.DEFAULT.state,
                 )
             } else {
@@ -74,7 +79,7 @@ class ScheduleRepositoryImpl @Inject constructor(
         localScheduleDataSource.updateScheduleAfterUpload(
             localId = localId,
             serverId = serverId,
-            isUpload = IS_NOT_UPLOAD,
+            isUpload = UploadState.IS_NOT_UPLOAD.state,
             status = RoomState.DELETED.state,
         )
         if (networkChecker.isOnline()) {
@@ -100,10 +105,13 @@ class ScheduleRepositoryImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    /** 모임 */
+    override suspend fun getMonthMoimSchedule(yearMonth: String): List<GetMonthScheduleResult> {
+        return remoteScheduleDataSource.getMonthMoimSchedule(yearMonth)
+    }
+
     companion object {
         const val SUCCESS_CODE = 200
-        const val IS_UPLOAD = true
-        const val IS_NOT_UPLOAD = false
     }
 
 }

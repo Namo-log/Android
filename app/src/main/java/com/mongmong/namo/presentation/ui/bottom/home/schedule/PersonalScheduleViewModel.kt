@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ScheduleViewModel @Inject constructor(
+class PersonalScheduleViewModel @Inject constructor(
     private val repository: ScheduleRepository,
     private val getCategoriesUseCase: GetCategoriesUseCase,
     private val findCategoryUseCase: FindCategoryUseCase
@@ -26,6 +26,9 @@ class ScheduleViewModel @Inject constructor(
     private val _scheduleList = MutableLiveData<List<Schedule>>(emptyList())
     val scheduleList: LiveData<List<Schedule>?> = _scheduleList
 
+    private val _personalScheduleList = MutableLiveData<List<Schedule>>(emptyList())
+    val personalScheduleList: LiveData<List<Schedule>?> = _personalScheduleList
+
     private val _isPostComplete = MutableLiveData<Boolean>()
     val isPostComplete: LiveData<Boolean> = _isPostComplete
 
@@ -35,11 +38,19 @@ class ScheduleViewModel @Inject constructor(
     private val _categoryList = MutableLiveData<List<Category>>(emptyList())
     val categoryList: LiveData<List<Category>> = _categoryList
 
+    /** 월별 일정 리스트 조회 */
+    fun getMonthSchedules(monthStart: Long, monthEnd: Long) {
+        viewModelScope.launch {
+            Log.d("ScheduleViewModel", "getMonthSchedules")
+            _scheduleList.value = repository.getMonthSchedules(monthStart, monthEnd)
+        }
+    }
+
     /** 선택한 날짜의 일정 조회 */
     fun getDailySchedules(startDate: Long, endDate: Long) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "getDailySchedules")
-            _scheduleList.value = repository.getDailySchedules(startDate, endDate)
+            _personalScheduleList.value = repository.getDailySchedules(startDate, endDate)
         }
     }
 
@@ -73,6 +84,11 @@ class ScheduleViewModel @Inject constructor(
                 serverId = serverId
             )
         }
+    }
+
+    /** 모임 일정 조회 */
+    private suspend fun getMonthMoimSchedule(yearMonth: String) {
+        repository.getMonthMoimSchedule(yearMonth)
     }
 
     /** 카테고리 조회 */

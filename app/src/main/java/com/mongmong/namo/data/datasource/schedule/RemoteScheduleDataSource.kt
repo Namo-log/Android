@@ -6,6 +6,8 @@ import com.mongmong.namo.data.remote.schedule.ScheduleRetrofitInterface
 import com.mongmong.namo.domain.model.DeleteScheduleResponse
 import com.mongmong.namo.domain.model.EditScheduleResponse
 import com.mongmong.namo.domain.model.EditScheduleResult
+import com.mongmong.namo.domain.model.GetMonthScheduleResponse
+import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.PostScheduleResponse
 import com.mongmong.namo.domain.model.PostScheduleResult
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +17,7 @@ import javax.inject.Inject
 class RemoteScheduleDataSource @Inject constructor(
     private val apiService: ScheduleRetrofitInterface
 ) {
+    /** 개인 */
     suspend fun addScheduleToServer(
         schedule: ScheduleForUpload,
     ): PostScheduleResponse {
@@ -68,6 +71,26 @@ class RemoteScheduleDataSource @Inject constructor(
             }
         }
         return scheduleResponse
+    }
+
+    /** 모임 */
+    suspend fun getMonthMoimSchedule(
+        yearMonth: String
+    ): List<GetMonthScheduleResult> {
+        var scheduleResponse = GetMonthScheduleResponse(
+            result = emptyList()
+        )
+        withContext(Dispatchers.IO) {
+            runCatching {
+                apiService.getMonthMoimSchedule(yearMonth)
+            }.onSuccess {
+                Log.d("RemoteScheduleDataSource", "deleteMoimActivity Success $it")
+                scheduleResponse = it
+            }.onFailure {
+                Log.d("RemoteScheduleDataSource", "deleteMoimActivity Fail")
+            }
+        }
+        return scheduleResponse.result
     }
 
     companion object {

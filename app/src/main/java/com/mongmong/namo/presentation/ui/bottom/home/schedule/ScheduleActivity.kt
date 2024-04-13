@@ -40,7 +40,7 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private var schedule : Schedule? = null
 
-    private val viewModel : ScheduleViewModel by viewModels()
+    private val viewModel : PersonalScheduleViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
