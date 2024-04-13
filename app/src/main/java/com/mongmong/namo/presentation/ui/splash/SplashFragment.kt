@@ -18,7 +18,7 @@ import com.mongmong.namo.data.remote.login.SplashView
 import com.mongmong.namo.domain.model.TokenBody
 import com.mongmong.namo.databinding.FragmentSplashBinding
 
-class SplashFragment : Fragment(), SplashView {
+class SplashFragment : Fragment() {
 
     private var _binding : FragmentSplashBinding? = null
     private val binding get() = _binding!!
@@ -37,12 +37,12 @@ class SplashFragment : Fragment(), SplashView {
         super.onViewCreated(view, savedInstanceState)
 
         // 서버 통신
-        val splashService = RefreshService()
+/*        val splashService = RefreshService()
         splashService.setSplashView(this)
 
         val accessToken = ApplicationClass.sSharedPreferences.getString(ApplicationClass.X_ACCESS_TOKEN, null)
         val refreshToken = ApplicationClass.sSharedPreferences.getString(ApplicationClass.X_REFRESH_TOKEN, null)
-        splashService.splashTokenRefresh(TokenBody(accessToken.toString(), refreshToken.toString()))
+        splashService.splashTokenRefresh(TokenBody(accessToken.toString(), refreshToken.toString()))*/
 
 //        Handler(Looper.getMainLooper()).postDelayed({
 //            //앱 처음인지, 로그인 되어있는지 유무 판단해야 됨
@@ -73,7 +73,7 @@ class SplashFragment : Fragment(), SplashView {
         _binding = null
     }
 
-    override fun onVerifyTokenSuccess(response: LoginResponse) {
+/*    override fun onVerifyTokenSuccess(response: LoginResponse) {
         Log.d("SplashFragment", "onVerifyTokenSuccess")
         // 로그인 성공
         // 토큰 업데이트
@@ -93,5 +93,5 @@ class SplashFragment : Fragment(), SplashView {
         } else {
             findNavController().navigate(R.id.action_splashFragment_to_onBoardingFragment)
         }
-    }
+    }*/
 }

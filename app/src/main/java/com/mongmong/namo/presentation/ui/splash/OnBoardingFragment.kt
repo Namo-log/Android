@@ -1,10 +1,14 @@
 package com.mongmong.namo.presentation.ui.splash
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentOnboardingBinding
 import com.mongmong.namo.presentation.ui.splash.adapter.OnboardingVPAdapter
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
@@ -23,6 +27,8 @@ class OnBoardingFragment : Fragment() {
     ): View? {
         _binding = FragmentOnboardingBinding.inflate(inflater, container, false)
         dotsIndicator = binding.onboardingDotsIndicatorDi
+
+        navigateToLogin()
 
         return binding.root
     }
@@ -57,5 +63,16 @@ class OnBoardingFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun isOnBoardingFinished() : Boolean {
+        val prefs = requireActivity().getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
+        return prefs.getBoolean("finished", false)
+    }
+
+    private fun navigateToLogin() {
+        if (isOnBoardingFinished()) {
+            findNavController().navigate(R.id.action_onBoardingFragment_to_loginFragment)
+        }
     }
 }
