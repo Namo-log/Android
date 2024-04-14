@@ -24,6 +24,7 @@ import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kakao.sdk.user.UserApiClient
 import com.mongmong.namo.data.local.NamoDatabase
+import com.mongmong.namo.presentation.ui.splash.OnBoardingActivity
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
@@ -143,7 +144,7 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
         ApplicationClass.sSharedPreferences.edit().clear().apply()
         // 화면 이동
         activity?.finishAffinity()
-        startActivity(Intent(context, SplashActivity()::class.java))
+        startActivity(Intent(context, OnBoardingActivity()::class.java))
     }
 
 

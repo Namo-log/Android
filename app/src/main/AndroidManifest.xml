@@ -2,32 +2,24 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.mongmong.namo">
-
-    <!--    카카오맵 API 권한추가-->
+    <!-- 카카오맵 API 권한추가 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-    <!-- 갤러리 이미지 가져오기-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 갤러리 이미지 가져오기 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-
-    <!--    푸시알림-->
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" /> <!-- 푸시알림 -->
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-
-    <!-- 광고 -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" /> <!-- 광고 -->
     <uses-permission
         android:name="com.google.android.gms.permission.AD_ID"
         tools:node="remove" />
 
-    <!--    usesCleartextTraffic : android 가 HTTP연결을 막아놨는데 카카오맵은 HTTP통신해서 HTTP도 가능하도록 설정-->
     <application
         android:name=".presentation.config.ApplicationClass"
         android:allowBackup="false"
@@ -44,9 +36,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.ui.splash.OnBoardingActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.ui.MainActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".presentation.ui.splash.SplashActivity"
             android:exported="true"
@@ -76,7 +71,7 @@
         <activity
             android:name=".presentation.ui.bottom.home.schedule.map.MapActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".presentation.ui.bottom.home.category.CategoryActivity"
             android:theme="@style/Theme.Transparent" />
@@ -107,25 +102,25 @@
             android:name=".presentation.ui.bottom.diary.moimDiary.MoimDiaryActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
-
         <activity
             android:name=".presentation.ui.bottom.diary.personalDiary.PersonalDetailActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
-
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".presentation.ui.bottom.diary.moimDiary.MoimMemoDetailActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
+
         <meta-data
             android:name="google_analytics_adid_collection_enabled"
             android:value="false" />
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="${KAKAO_API_KEY}" />
+
         <receiver
             android:name=".presentation.ui.bottom.home.notify.PushNotificationReceiver"
-            android:exported="true"/>
+            android:exported="true" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -136,7 +131,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
     </application>
 
 </manifest>
