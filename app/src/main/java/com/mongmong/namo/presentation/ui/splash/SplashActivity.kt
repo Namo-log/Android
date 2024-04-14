@@ -36,8 +36,6 @@ class SplashActivity : AppCompatActivity(), SplashView {
 
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        autoLogin()
     }
 
     private fun autoLogin() {
@@ -57,32 +55,19 @@ class SplashActivity : AppCompatActivity(), SplashView {
             .putString(ApplicationClass.X_ACCESS_TOKEN, response.result.accessToken)
             .apply()
 
-        CoroutineScope(Dispatchers.Main).launch {
-            navigateToMainActivity()
-            delay(500)
+        runOnUiThread() {
+            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+            finish()
             isDataLoaded.value = true
         }
     }
 
     override fun onVerifyTokenFailure(message: String) {
-        CoroutineScope(Dispatchers.Main).launch {
-            navigateToOnBoardingActivity()
-            delay(500)
+        runOnUiThread() {
+            startActivity(Intent(this@SplashActivity, OnBoardingActivity::class.java))
+            finish()
+            overridePendingTransition(0, 0)
             isDataLoaded.value = true
         }
-    }
-
-    private fun navigateToMainActivity() {
-        val intent = Intent(this@SplashActivity, MainActivity::class.java)
-        startActivity(intent)
-        finish()
-        overridePendingTransition(0, 0)
-    }
-
-    private fun navigateToOnBoardingActivity() {
-        val intent = Intent(this, OnBoardingActivity::class.java)
-        startActivity(intent)
-        finish()
-        overridePendingTransition(0, 0)
     }
 }
