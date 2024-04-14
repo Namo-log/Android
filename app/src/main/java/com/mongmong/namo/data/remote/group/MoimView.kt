@@ -35,8 +35,8 @@ interface ParticipateMoimView {
 }
 
 interface MoimScheduleView {
-    fun onAddMoimScheduleSuccess(response : AddMoimScheduleResponse)
-    fun onAddMoimScheduleFailure(message: String)
+//    fun onAddMoimScheduleSuccess(response : AddMoimScheduleResponse)
+//    fun onAddMoimScheduleFailure(message: String)
 
     fun onEditMoimScheduleSuccess(message: String)
     fun onEditMoimScheduleFailure(message: String)

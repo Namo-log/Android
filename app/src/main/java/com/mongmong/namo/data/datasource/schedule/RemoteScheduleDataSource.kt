@@ -1,8 +1,11 @@
 package com.mongmong.namo.data.datasource.schedule
 
 import android.util.Log
+import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
 import com.mongmong.namo.data.local.entity.home.ScheduleForUpload
+import com.mongmong.namo.data.remote.group.GroupApiService
 import com.mongmong.namo.data.remote.schedule.ScheduleRetrofitInterface
+import com.mongmong.namo.domain.model.AddMoimScheduleResponse
 import com.mongmong.namo.domain.model.DeleteScheduleResponse
 import com.mongmong.namo.domain.model.EditScheduleResponse
 import com.mongmong.namo.domain.model.EditScheduleResult
@@ -15,7 +18,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class RemoteScheduleDataSource @Inject constructor(
-    private val apiService: ScheduleRetrofitInterface
+    private val personalApiService: ScheduleRetrofitInterface,
+    private val groupApiService: GroupApiService,
 ) {
     /** 개인 */
     suspend fun addScheduleToServer(
@@ -25,7 +29,7 @@ class RemoteScheduleDataSource @Inject constructor(
 
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.postSchedule(schedule)
+                personalApiService.postSchedule(schedule)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "addScheduleToServer Success $it")
                 scheduleResponse = it
@@ -44,7 +48,7 @@ class RemoteScheduleDataSource @Inject constructor(
 
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.editSchedule(scheduleId, schedule)
+                personalApiService.editSchedule(scheduleId, schedule)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "editScheduleToServer Success, $it")
                 scheduleResponse = it
@@ -62,7 +66,7 @@ class RemoteScheduleDataSource @Inject constructor(
 
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.deleteSchedule(scheduleId, IS_NOT_GROUP) // 개인
+                personalApiService.deleteSchedule(scheduleId, IS_NOT_GROUP) // 개인
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "deleteScheduleToServer Success, $it")
                 scheduleResponse = it
@@ -73,7 +77,7 @@ class RemoteScheduleDataSource @Inject constructor(
         return scheduleResponse
     }
 
-    /** 모임 */
+    // 모임
     suspend fun getMonthMoimSchedule(
         yearMonth: String
     ): List<GetMonthScheduleResult> {
@@ -82,7 +86,7 @@ class RemoteScheduleDataSource @Inject constructor(
         )
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.getMonthMoimSchedule(yearMonth)
+                personalApiService.getMonthMoimSchedule(yearMonth)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "deleteMoimActivity Success $it")
                 scheduleResponse = it
@@ -91,6 +95,24 @@ class RemoteScheduleDataSource @Inject constructor(
             }
         }
         return scheduleResponse.result
+    }
+
+    /** 그룹 */
+    suspend fun addMoimSchedule(
+        moimSchedule: AddMoimSchedule
+    ) {
+        var scheduleResponse = AddMoimScheduleResponse(-1)
+        withContext(Dispatchers.IO) {
+            runCatching {
+                groupApiService.postMoimSchedule(moimSchedule)
+            }.onSuccess {
+                Log.d("RemoteScheduleDataSource", "addMoimSchedule Success $it")
+                scheduleResponse = it
+            }.onFailure {
+                Log.d("RemoteScheduleDataSource", "addMoimSchedule Failure")
+            }
+        }
+//        return scheduleResponse
     }
 
     companion object {

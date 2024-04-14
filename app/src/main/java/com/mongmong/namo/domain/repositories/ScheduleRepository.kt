@@ -1,6 +1,8 @@
 package com.mongmong.namo.domain.repositories
 
+import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
 import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.domain.model.AddMoimScheduleResponse
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
 
 interface ScheduleRepository {
@@ -32,8 +34,14 @@ interface ScheduleRepository {
 
     suspend fun postScheduleToServer(scheduleServerId: Long, scheduleId: Long)
 
-    /** 모임 */
+    // 모임
     suspend fun getMonthMoimSchedule(
         yearMonth: String
     ): List<GetMonthScheduleResult>
+
+
+    /** 그룹 */
+    suspend fun addMoimSchedule(
+        moimSchedule: AddMoimSchedule
+    )
 }

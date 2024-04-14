@@ -9,9 +9,6 @@ import com.mongmong.namo.domain.model.AddMoimScheduleResponse
 import com.mongmong.namo.domain.model.GetMoimScheduleResponse
 import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
-import com.mongmong.namo.domain.model.UpdateGroupNameRequest
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -64,30 +61,6 @@ class MoimService {
                 }
 
             })
-    }
-
-
-
-    fun postMoimSchedule(body : AddMoimSchedule) {
-        moimRetrofitInterface.postMoimSchedule(body).enqueue(object : Callback<AddMoimScheduleResponse> {
-            override fun onResponse(
-                call: Call<AddMoimScheduleResponse>,
-                response: Response<AddMoimScheduleResponse>
-            ) {
-                when(response.code()) {
-                    200 -> moimScheduleView.onAddMoimScheduleSuccess(response.body() as AddMoimScheduleResponse)
-                    else -> {
-                        Log.d("PostMoimSchedule", "Success but error")
-                        moimScheduleView.onAddMoimScheduleFailure("통신 중 200 외 기타 코드")
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<AddMoimScheduleResponse>, t: Throwable) {
-                Log.d("PostMoimSchedule", "onFailure")
-                moimScheduleView.onAddMoimScheduleFailure(t.message ?: "통신 오류")
-            }
-        })
     }
 
     fun editMoimSchedule(body : EditMoimSchedule) {

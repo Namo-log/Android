@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,4 +30,14 @@ class MoimScheduleViewModel @Inject constructor(
             _scheduleList.value = repository.getMonthMoimSchedule(yearMonth)
         }
     }
+
+    // 그룹쪽
+    fun postMoimSchedule(moimSchedule: AddMoimSchedule) {
+        viewModelScope.launch {
+            repository.addMoimSchedule(
+                moimSchedule = moimSchedule
+            )
+        }
+    }
+
 }

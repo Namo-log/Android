@@ -64,9 +64,9 @@ interface GroupApiService {
 
     // 모임 일정 추가하기
     @POST("moims/schedule")
-    fun postMoimSchedule(
+    suspend fun postMoimSchedule(
         @Body body: AddMoimSchedule
-    ): Call<AddMoimScheduleResponse>
+    ): AddMoimScheduleResponse
 
     // 모임 일정 수정하기
     @PATCH("moims/schedule")
