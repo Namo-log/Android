@@ -59,7 +59,7 @@ class SplashActivity : AppCompatActivity(), SplashView {
 
         CoroutineScope(Dispatchers.Main).launch {
             navigateToMainActivity()
-            delay(1000)
+            delay(500)
             isDataLoaded.value = true
         }
     }
@@ -67,7 +67,7 @@ class SplashActivity : AppCompatActivity(), SplashView {
     override fun onVerifyTokenFailure(message: String) {
         CoroutineScope(Dispatchers.Main).launch {
             navigateToOnBoardingActivity()
-            delay(1000)
+            delay(500)
             isDataLoaded.value = true
         }
     }
