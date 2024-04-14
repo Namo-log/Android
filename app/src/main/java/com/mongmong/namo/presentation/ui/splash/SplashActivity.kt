@@ -15,6 +15,7 @@ import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.ui.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -27,20 +28,19 @@ class SplashActivity : AppCompatActivity(), SplashView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         splashScreen = installSplashScreen()
-
         splashScreen.setKeepOnScreenCondition {
             !isDataLoaded.value
         }
 
-        performNetworkRequest()
+        autoLogin()
 
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        autoLogin()
     }
 
-    private fun performNetworkRequest() {
-        // 네트워크 요청을 수행하고, 완료시 콜백 실행
+    private fun autoLogin() {
         CoroutineScope(Dispatchers.IO).launch {
             val splashService = RefreshService()
             splashService.setSplashView(this@SplashActivity)
@@ -52,30 +52,37 @@ class SplashActivity : AppCompatActivity(), SplashView {
     }
 
     override fun onVerifyTokenSuccess(response: LoginResponse) {
-        Log.d("SplashFragment", "onVerifyTokenSuccess")
-        // 로그인 성공
-        // 토큰 업데이트
         ApplicationClass.sSharedPreferences.edit()
             .putString(ApplicationClass.X_REFRESH_TOKEN, response.result.refreshToken)
             .putString(ApplicationClass.X_ACCESS_TOKEN, response.result.accessToken)
             .apply()
 
-        isDataLoaded.value = true
-
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
-
-
+        CoroutineScope(Dispatchers.Main).launch {
+            navigateToMainActivity()
+            delay(1000)
+            isDataLoaded.value = true
+        }
     }
 
     override fun onVerifyTokenFailure(message: String) {
-        Log.d("SplashFragment", "onVerifyTokenFailure")
-        isDataLoaded.value = true
+        CoroutineScope(Dispatchers.Main).launch {
+            navigateToOnBoardingActivity()
+            delay(1000)
+            isDataLoaded.value = true
+        }
+    }
 
-
-        startActivity(Intent(this, OnBoardingActivity::class.java))
+    private fun navigateToMainActivity() {
+        val intent = Intent(this@SplashActivity, MainActivity::class.java)
+        startActivity(intent)
         finish()
+        overridePendingTransition(0, 0)
+    }
 
-
+    private fun navigateToOnBoardingActivity() {
+        val intent = Intent(this, OnBoardingActivity::class.java)
+        startActivity(intent)
+        finish()
+        overridePendingTransition(0, 0)
     }
 }
