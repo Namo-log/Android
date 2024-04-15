@@ -1,8 +1,8 @@
 package com.mongmong.namo.domain.repositories
 
 import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
+import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.domain.model.AddMoimScheduleResponse
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
 
 interface ScheduleRepository {
@@ -43,5 +43,9 @@ interface ScheduleRepository {
     /** 그룹 */
     suspend fun addMoimSchedule(
         moimSchedule: AddMoimSchedule
+    )
+
+    suspend fun editMoimSchedule(
+        moimSchedule: EditMoimSchedule
     )
 }

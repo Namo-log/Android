@@ -2,6 +2,7 @@ package com.mongmong.namo.data.datasource.schedule
 
 import android.util.Log
 import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
+import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import com.mongmong.namo.data.local.entity.home.ScheduleForUpload
 import com.mongmong.namo.data.remote.group.GroupApiService
 import com.mongmong.namo.data.remote.schedule.ScheduleRetrofitInterface
@@ -113,6 +114,20 @@ class RemoteScheduleDataSource @Inject constructor(
             }
         }
 //        return scheduleResponse
+    }
+
+    suspend fun editMoimSchedule(
+        moimSchedule: EditMoimSchedule
+    ) {
+        withContext(Dispatchers.IO) {
+            runCatching {
+                groupApiService.editMoimSchedule(moimSchedule)
+            }.onSuccess {
+                Log.d("RemoteScheduleDataSource", "editMoimSchedule Success $it")
+            }.onFailure {
+                Log.d("RemoteScheduleDataSource", "editMoimSchedule Failure")
+            }
+        }
     }
 
     companion object {

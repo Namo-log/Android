@@ -70,9 +70,9 @@ interface GroupApiService {
 
     // 모임 일정 수정하기
     @PATCH("moims/schedule")
-    fun editMoimSchedule(
+    suspend fun editMoimSchedule(
         @Body body: EditMoimSchedule
-    ): Call<BaseResponse>
+    ): BaseResponse
 
     // 모임 일정 삭제하기
     @DELETE("moims/schedule/{moimScheduleId}")

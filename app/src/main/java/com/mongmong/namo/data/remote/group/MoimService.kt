@@ -63,28 +63,6 @@ class MoimService {
             })
     }
 
-    fun editMoimSchedule(body : EditMoimSchedule) {
-        moimRetrofitInterface.editMoimSchedule(body).enqueue(object : Callback<BaseResponse> {
-            override fun onResponse(
-                call: Call<BaseResponse>,
-                response: Response<BaseResponse>
-            ) {
-                when(response.code()) {
-                    200 -> moimScheduleView.onEditMoimScheduleSuccess(response.message())
-                    else -> {
-                        Log.d("EditMoimSchedule", "Success but error")
-                        moimScheduleView.onEditMoimScheduleFailure("통신 중 200 외 기타 코드")
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
-                Log.d("EditMoimSchedule", "onFailure")
-                moimScheduleView.onEditMoimScheduleFailure(t.message ?: "통신 오류")
-            }
-        })
-    }
-
     fun deleteMoimSchedule(moimScheduleId : Long) {
         moimRetrofitInterface.deleteMoimSchedule(moimScheduleId).enqueue(object : Callback<BaseResponse> {
             override fun onResponse(

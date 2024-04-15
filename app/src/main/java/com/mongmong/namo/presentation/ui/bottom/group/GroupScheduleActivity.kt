@@ -213,9 +213,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimS
             if (isPostOrEdit) { // 생성
                 insertData(postGroupSchedule)
             } else { // 수정
-                val moimService = MoimService()
-                moimService.setMoimScheduleView(this)
-                moimService.editMoimSchedule(editGroupSchedule)
+                editData(editGroupSchedule)
             }
         }
 
@@ -232,6 +230,12 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimS
     private fun insertData(moimSchedule: AddMoimSchedule) {
         viewModel.postMoimSchedule(moimSchedule)
         Toast.makeText(this, "모임 일정이 등록되었습니다.", Toast.LENGTH_SHORT).show()
+        finish()
+    }
+
+    private fun editData(moimSchedule: EditMoimSchedule) {
+        viewModel.editMoimSchedule(moimSchedule)
+        Toast.makeText(this, "모임 일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
         finish()
     }
 
@@ -492,17 +496,6 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimS
         val dialog = ConfirmDialog(this@GroupScheduleActivity, title, content, "삭제", 0)
         dialog.isCancelable = false
         dialog.show(this.supportFragmentManager, "ConfirmDialog")
-    }
-
-    override fun onEditMoimScheduleSuccess(message: String) {
-        Log.d("GroupScheduleActivity", "onEditMoimScheduleSuccess : ${message}")
-        Toast.makeText(this, "모임 일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
-        finish()
-    }
-
-    override fun onEditMoimScheduleFailure(message: String) {
-        Log.d("GroupScheduleActivity", "onEditMoimScheduleFailure")
-        return
     }
 
     override fun onDeleteMoimScheduleSuccess(message: String) {

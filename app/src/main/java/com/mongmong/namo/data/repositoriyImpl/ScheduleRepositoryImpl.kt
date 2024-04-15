@@ -4,6 +4,7 @@ import android.util.Log
 import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
+import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
@@ -114,6 +115,10 @@ class ScheduleRepositoryImpl @Inject constructor(
     /** 그룹 */
     override suspend fun addMoimSchedule(moimSchedule: AddMoimSchedule) {
         return remoteScheduleDataSource.addMoimSchedule(moimSchedule)
+    }
+
+    override suspend fun editMoimSchedule(moimSchedule: EditMoimSchedule) {
+        return remoteScheduleDataSource.editMoimSchedule(moimSchedule)
     }
 
     companion object {
