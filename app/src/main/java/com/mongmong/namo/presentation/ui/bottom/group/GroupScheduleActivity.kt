@@ -21,21 +21,18 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.GROUP_MEMBER_INTENT_KEY
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_NAME_INTENT_KEY
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_X_INTENT_KEY
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_Y_INTENT_KEY
 import com.mongmong.namo.R
-import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
 import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import com.mongmong.namo.domain.model.Group
 import com.mongmong.namo.domain.model.MoimListUserList
 import com.mongmong.namo.domain.model.MoimSchedule
 import com.mongmong.namo.data.remote.group.MoimScheduleView
-import com.mongmong.namo.data.remote.group.MoimService
 import com.mongmong.namo.databinding.ActivityGroupScheduleBinding
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.MoimScheduleViewModel
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.MapActivity
@@ -43,7 +40,6 @@ import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.getInterval
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
@@ -112,7 +108,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimS
             isPostOrEdit = false
             setEditSchedule(moimSchedule)
             binding.scheduleDeleteBtn.visibility = View.VISIBLE
-            binding.dialogGroupScheduleHeaderTv.text = "모임 일정 편집"
+            binding.dialogGroupScheduleHeaderTv.text = "일정 편집"
             setContent()
         } else { // 모임 일정 생성
             binding.scheduleDeleteBtn.visibility = View.GONE
@@ -211,9 +207,9 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimS
             Log.d("STORE_GROUP_SCHEDULE", "is Post or Edit ? ${isPostOrEdit}")
             Log.d("STORE_GROUP_SCHEDULE", if (isPostOrEdit) postGroupSchedule.toString() else editGroupSchedule.toString())
             if (isPostOrEdit) { // 생성
-                insertData(postGroupSchedule)
+                insertSchedule(postGroupSchedule)
             } else { // 수정
-                editData(editGroupSchedule)
+                editSchedule(editGroupSchedule)
             }
         }
 
@@ -227,15 +223,23 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimS
     }
 
     /** 모임 일정 추가 */
-    private fun insertData(moimSchedule: AddMoimSchedule) {
+    private fun insertSchedule(moimSchedule: AddMoimSchedule) {
         viewModel.postMoimSchedule(moimSchedule)
         Toast.makeText(this, "모임 일정이 등록되었습니다.", Toast.LENGTH_SHORT).show()
         finish()
     }
 
-    private fun editData(moimSchedule: EditMoimSchedule) {
+    /** 모임 일정 수정 */
+    private fun editSchedule(moimSchedule: EditMoimSchedule) {
         viewModel.editMoimSchedule(moimSchedule)
         Toast.makeText(this, "모임 일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
+        finish()
+    }
+
+    /** 모임 일정 삭제 */
+    private fun deleteSchedule(moimScheduleId: Long) {
+        viewModel.deleteMoimSchedule(moimScheduleId)
+        Toast.makeText(this, "모임 일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
         finish()
     }
 
@@ -498,21 +502,8 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimS
         dialog.show(this.supportFragmentManager, "ConfirmDialog")
     }
 
-    override fun onDeleteMoimScheduleSuccess(message: String) {
-        Log.d("GroupScheduleActivity", "onDeleteMoimScheduleSuccess : ${message}")
-        Toast.makeText(this, "모임 일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-        finish()
-    }
-
-    override fun onDeleteMoimScheduleFailure(message: String) {
-        Log.d("GroupScheduleActivity", "onDeleteMoimScheduleFailure")
-        return
-    }
-
     override fun onClickYesButton(id: Int) {
         // 일정 삭제 진행
-        val moimService = MoimService()
-        moimService.setMoimScheduleView(this)
-        moimService.deleteMoimSchedule(editGroupSchedule.moimScheduleId)
+        deleteSchedule(editGroupSchedule.moimScheduleId)
     }
 }

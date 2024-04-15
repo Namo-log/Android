@@ -48,4 +48,8 @@ interface ScheduleRepository {
     suspend fun editMoimSchedule(
         moimSchedule: EditMoimSchedule
     )
+
+    suspend fun deleteMoimSchedule(
+        moimScheduleId: Long
+    )
 }

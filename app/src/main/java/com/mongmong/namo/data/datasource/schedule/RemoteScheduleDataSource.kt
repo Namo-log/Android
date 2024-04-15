@@ -130,6 +130,20 @@ class RemoteScheduleDataSource @Inject constructor(
         }
     }
 
+    suspend fun deleteMoimSchedule(
+        moimScheduleId: Long
+    ) {
+        withContext(Dispatchers.IO) {
+            runCatching {
+                groupApiService.deleteMoimSchedule(moimScheduleId)
+            }.onSuccess {
+                Log.d("RemoteScheduleDataSource", "deleteMoimSchedule Success $it")
+            }.onFailure {
+                Log.d("RemoteScheduleDataSource", "deleteMoimSchedule Failure")
+            }
+        }
+    }
+
     companion object {
         const val IS_GROUP = 1
         const val IS_NOT_GROUP = 0

@@ -41,8 +41,8 @@ interface MoimScheduleView {
 //    fun onEditMoimScheduleSuccess(message: String)
 //    fun onEditMoimScheduleFailure(message: String)
 
-    fun onDeleteMoimScheduleSuccess(message: String)
-    fun onDeleteMoimScheduleFailure(message: String)
+//    fun onDeleteMoimScheduleSuccess(message: String)
+//    fun onDeleteMoimScheduleFailure(message: String)
 }
 
 interface EditMoimScheduleView {

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
 import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
+import com.mongmong.namo.domain.model.MoimSchedule
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -47,4 +48,10 @@ class MoimScheduleViewModel @Inject constructor(
         }
     }
 
+    /** 모임 일정 삭제 */
+    fun deleteMoimSchedule(moimScheduleId: Long) {
+        viewModelScope.launch {
+            repository.deleteMoimSchedule(moimScheduleId)
+        }
+    }
 }

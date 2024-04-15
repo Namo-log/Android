@@ -64,25 +64,25 @@ class MoimService {
     }
 
     fun deleteMoimSchedule(moimScheduleId : Long) {
-        moimRetrofitInterface.deleteMoimSchedule(moimScheduleId).enqueue(object : Callback<BaseResponse> {
-            override fun onResponse(
-                call: Call<BaseResponse>,
-                response: Response<BaseResponse>
-            ) {
-                when(response.code()) {
-                    200 -> moimScheduleView.onDeleteMoimScheduleSuccess(response.message())
-                    else -> {
-                        Log.d("DeleteMoimSchedule", "Success but error")
-                        moimScheduleView.onDeleteMoimScheduleFailure("통신 중 200 외 기타 코드")
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
-                Log.d("DeleteMoimSchedule", "onFailure")
-                moimScheduleView.onDeleteMoimScheduleFailure(t.message ?: "통신 오류")
-            }
-        })
+//        moimRetrofitInterface.deleteMoimSchedule(moimScheduleId).enqueue(object : Callback<BaseResponse> {
+//            override fun onResponse(
+//                call: Call<BaseResponse>,
+//                response: Response<BaseResponse>
+//            ) {
+//                when(response.code()) {
+//                    200 -> moimScheduleView.onDeleteMoimScheduleSuccess(response.message())
+//                    else -> {
+//                        Log.d("DeleteMoimSchedule", "Success but error")
+//                        moimScheduleView.onDeleteMoimScheduleFailure("통신 중 200 외 기타 코드")
+//                    }
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
+//                Log.d("DeleteMoimSchedule", "onFailure")
+//                moimScheduleView.onDeleteMoimScheduleFailure(t.message ?: "통신 오류")
+//            }
+//        })
     }
 
     fun patchMoimScheduleCategory(body : PatchMoimScheduleCategoryBody) {

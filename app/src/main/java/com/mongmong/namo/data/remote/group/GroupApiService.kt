@@ -76,9 +76,9 @@ interface GroupApiService {
 
     // 모임 일정 삭제하기
     @DELETE("moims/schedule/{moimScheduleId}")
-    fun deleteMoimSchedule(
+    suspend fun deleteMoimSchedule(
         @Path("moimScheduleId") moimScheduleId: Long
-    ): Call<BaseResponse>
+    ): BaseResponse
 
     @PATCH("moims/schedule/category")
     fun patchMoimScheduleCategory(

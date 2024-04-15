@@ -121,6 +121,10 @@ class ScheduleRepositoryImpl @Inject constructor(
         return remoteScheduleDataSource.editMoimSchedule(moimSchedule)
     }
 
+    override suspend fun deleteMoimSchedule(moimScheduleId: Long) {
+        return remoteScheduleDataSource.deleteMoimSchedule(moimScheduleId)
+    }
+
     companion object {
         const val SUCCESS_CODE = 200
     }
