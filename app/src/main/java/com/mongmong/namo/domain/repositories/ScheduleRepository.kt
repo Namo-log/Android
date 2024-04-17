@@ -4,6 +4,7 @@ import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
 import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
+import com.mongmong.namo.domain.model.MoimSchedule
 
 interface ScheduleRepository {
     /** 개인 */
@@ -41,6 +42,10 @@ interface ScheduleRepository {
 
 
     /** 그룹 */
+    suspend fun getGroupAllSchedules(
+        groupId: Long
+    ): List<MoimSchedule>
+
     suspend fun addMoimSchedule(
         moimSchedule: AddMoimSchedule
     )

@@ -414,16 +414,13 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun setMembers() {
-        var text = ""
         selectedIds.clear()
         for (i in selectedMembers.memberList.indices) {
-            if (i == 0) text = selectedMembers.memberList[i].userName
-            else text = text + ", " + selectedMembers.memberList[i].userName
-
             selectedIds.add(selectedMembers.memberList[i].userId)
         }
 
-        binding.dialogGroupScheduleMemberTv.text = text
+        binding.dialogGroupScheduleMemberTv.text =
+            selectedMembers.memberList.joinToString(", ") { it.userName }
         Log.d("GROUP_MEMBER", selectedIds.toString())
     }
 

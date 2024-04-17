@@ -8,6 +8,7 @@ import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
+import com.mongmong.namo.domain.model.MoimSchedule
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
@@ -113,6 +114,10 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
     /** 그룹 */
+    override suspend fun getGroupAllSchedules(groupId: Long): List<MoimSchedule> {
+        return remoteScheduleDataSource.getGroupAllSchedules(groupId)
+    }
+
     override suspend fun addMoimSchedule(moimSchedule: AddMoimSchedule) {
         return remoteScheduleDataSource.addMoimSchedule(moimSchedule)
     }

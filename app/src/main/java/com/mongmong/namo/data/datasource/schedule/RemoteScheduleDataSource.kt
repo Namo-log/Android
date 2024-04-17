@@ -10,8 +10,10 @@ import com.mongmong.namo.domain.model.AddMoimScheduleResponse
 import com.mongmong.namo.domain.model.DeleteScheduleResponse
 import com.mongmong.namo.domain.model.EditScheduleResponse
 import com.mongmong.namo.domain.model.EditScheduleResult
+import com.mongmong.namo.domain.model.GetMoimScheduleResponse
 import com.mongmong.namo.domain.model.GetMonthScheduleResponse
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
+import com.mongmong.namo.domain.model.MoimSchedule
 import com.mongmong.namo.domain.model.PostScheduleResponse
 import com.mongmong.namo.domain.model.PostScheduleResult
 import kotlinx.coroutines.Dispatchers
@@ -99,6 +101,23 @@ class RemoteScheduleDataSource @Inject constructor(
     }
 
     /** 그룹 */
+    suspend fun getGroupAllSchedules(
+        groupId: Long
+    ): List<MoimSchedule> {
+        var scheduleResponse = GetMoimScheduleResponse(result = emptyList())
+        withContext(Dispatchers.IO) {
+            runCatching {
+                groupApiService.getAllMoimSchedule(groupId)
+            }.onSuccess {
+                Log.d("RemoteScheduleDataSource", "getAllMoimSchedules Success $it")
+                scheduleResponse = it
+            }.onFailure {
+                Log.d("RemoteScheduleDataSource", "getAllMoimSchedules Fail")
+            }
+        }
+        return scheduleResponse.result
+    }
+
     suspend fun addMoimSchedule(
         moimSchedule: AddMoimSchedule
     ) {

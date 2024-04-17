@@ -25,7 +25,8 @@ import retrofit2.http.Path
 
 interface GroupApiService {
 
-    // 모임 추가
+    /** 그룹 */
+    // 그룹 추가
     @Multipart
     @POST("moims")
     suspend fun addGroup(
@@ -37,30 +38,37 @@ interface GroupApiService {
     @GET("moims")
     suspend fun getGroups(): GetGroupsResponse
 
-    // 월별 일정 조회
-    @GET("moims/schedule/{moimId}/{yearMonth}")
-    fun getMoimSchedule(
-        @Path("moimId") moimId: Long,
-        @Path("yearMonth") yearMonth: String
-    ): Call<GetMoimScheduleResponse>
-
-    // 모임 이름 바꾸기
+    // 그룹명 바꾸기
     @PATCH("moims/name")
     suspend fun updateGroupName(
         @Body body: UpdateGroupNameRequest
     ): JoinGroupResponse
 
-    // 모임 참여하기
+    // 그룹 참여하기
     @PATCH("moims/participate/{groupCode}")
     suspend fun joinGroup(
         @Path("groupCode") groupCode: String
     ): JoinGroupResponse
 
-    // 모임 삭제하기
+    // 그룹 삭제하기
     @DELETE("moims/withdraw/{moimId}")
     suspend fun deleteMember(
         @Path("moimId") groupId: Long
     ): BaseResponse
+
+    /** 모임 */
+    // 월별 일정 조회
+    @GET("moims/schedule/{moimId}/{yearMonth}")
+    fun getMonthMoimSchedule(
+        @Path("moimId") moimId: Long,
+        @Path("yearMonth") yearMonth: String
+    ): Call<GetMoimScheduleResponse>
+
+    // 모든 일정 조회
+    @GET("moims/schedule/{moimId}/all")
+    suspend fun getAllMoimSchedule(
+        @Path("moimId") moimId: Long
+    ): GetMoimScheduleResponse
 
     // 모임 일정 추가하기
     @POST("moims/schedule")
@@ -80,6 +88,7 @@ interface GroupApiService {
         @Path("moimScheduleId") moimScheduleId: Long
     ): BaseResponse
 
+    /** 개인에서 쓰이는 부분 */
     @PATCH("moims/schedule/category")
     fun patchMoimScheduleCategory(
         @Body body: PatchMoimScheduleCategoryBody

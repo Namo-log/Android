@@ -74,7 +74,7 @@ class GroupDailyMoimRVAdapter : RecyclerView.Adapter<GroupDailyMoimRVAdapter.Vie
 
             binding.itemCalendarTitle.text = groupSchedule.name
             binding.itemCalendarTitle.isSelected = true
-            binding.itemCalendarTitle.text = time
+            binding.itemCalendarScheduleTime.text = time
             binding.itemCalendarScheduleColorView.background.setTint(Color.parseColor(colorArray[paletteId - 1]))
 
             if(groupSchedule.hasDiaryPlace)

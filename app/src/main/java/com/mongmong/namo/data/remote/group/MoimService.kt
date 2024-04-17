@@ -31,7 +31,7 @@ class MoimService {
         moimId : Long,
         yearMonth : String
     ) {
-        moimRetrofitInterface.getMoimSchedule(moimId, yearMonth)
+        moimRetrofitInterface.getMonthMoimSchedule(moimId, yearMonth)
             .enqueue(object : Callback<GetMoimScheduleResponse> {
                 override fun onResponse(
                     call: Call<GetMoimScheduleResponse>,
