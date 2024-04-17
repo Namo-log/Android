@@ -32,7 +32,6 @@ import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import com.mongmong.namo.domain.model.Group
 import com.mongmong.namo.domain.model.MoimListUserList
 import com.mongmong.namo.domain.model.MoimSchedule
-import com.mongmong.namo.data.remote.group.MoimScheduleView
 import com.mongmong.namo.databinding.ActivityGroupScheduleBinding
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.MoimScheduleViewModel
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.MapActivity
@@ -47,7 +46,7 @@ import org.joda.time.DateTime
 import java.lang.NullPointerException
 
 @AndroidEntryPoint
-class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface, MoimScheduleView {
+class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private lateinit var binding : ActivityGroupScheduleBinding
 

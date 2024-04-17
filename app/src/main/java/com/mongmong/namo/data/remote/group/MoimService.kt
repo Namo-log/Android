@@ -3,9 +3,6 @@ package com.mongmong.namo.data.remote.group
 import android.util.Log
 import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.config.BaseResponse
-import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
-import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
-import com.mongmong.namo.domain.model.AddMoimScheduleResponse
 import com.mongmong.namo.domain.model.GetMoimScheduleResponse
 import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
@@ -19,17 +16,11 @@ class MoimService {
         ApplicationClass.sRetrofit.create(GroupApiService::class.java)
 
     private lateinit var getMoimScheduleView : GetMoimScheduleView
-    private lateinit var moimScheduleView : MoimScheduleView
     private lateinit var editMoimScheduleView : EditMoimScheduleView
 
 
     fun setGetMoimScheduleView(getMoimScheduleView: GetMoimScheduleView) {
         this.getMoimScheduleView = getMoimScheduleView
-    }
-
-
-    fun setMoimScheduleView (moimScheduleView : MoimScheduleView) {
-        this.moimScheduleView = moimScheduleView
     }
 
     fun setEditMoimScheduleView (editMoimScheduleView: EditMoimScheduleView) {
@@ -61,28 +52,6 @@ class MoimService {
                 }
 
             })
-    }
-
-    fun deleteMoimSchedule(moimScheduleId : Long) {
-//        moimRetrofitInterface.deleteMoimSchedule(moimScheduleId).enqueue(object : Callback<BaseResponse> {
-//            override fun onResponse(
-//                call: Call<BaseResponse>,
-//                response: Response<BaseResponse>
-//            ) {
-//                when(response.code()) {
-//                    200 -> moimScheduleView.onDeleteMoimScheduleSuccess(response.message())
-//                    else -> {
-//                        Log.d("DeleteMoimSchedule", "Success but error")
-//                        moimScheduleView.onDeleteMoimScheduleFailure("통신 중 200 외 기타 코드")
-//                    }
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
-//                Log.d("DeleteMoimSchedule", "onFailure")
-//                moimScheduleView.onDeleteMoimScheduleFailure(t.message ?: "통신 오류")
-//            }
-//        })
     }
 
     fun patchMoimScheduleCategory(body : PatchMoimScheduleCategoryBody) {
