@@ -4,14 +4,12 @@ import com.mongmong.namo.data.remote.category.CategoryRetrofitInterface
 import com.mongmong.namo.data.remote.diary.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupApiService
 import com.mongmong.namo.data.remote.schedule.ScheduleRetrofitInterface
-import com.mongmong.namo.domain.repositories.GroupRepository
-import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.data.KakaoAPI
+import com.mongmong.namo.presentation.ui.home.schedule.map.data.KakaoAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
-import retrofit2.create
 import javax.inject.Singleton
 
 @Module

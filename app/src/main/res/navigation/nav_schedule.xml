@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/scheduleDialogBasicFragment"
-        android:name="com.mongmong.namo.presentation.ui.bottom.home.schedule.ScheduleDialogBasicFragment"
+        android:name="com.mongmong.namo.presentation.ui.home.schedule.ScheduleDialogBasicFragment"
         android:label="ScheduleDialogBasicFragment"
         tools:layout="@layout/fragment_schedule_dialog_basic">
         <action
@@ -30,7 +30,7 @@
     </fragment>
     <fragment
         android:id="@+id/scheduleDialogCategoryFragment"
-        android:name="com.mongmong.namo.presentation.ui.bottom.home.schedule.ScheduleDialogCategoryFragment"
+        android:name="com.mongmong.namo.presentation.ui.home.schedule.ScheduleDialogCategoryFragment"
         android:label="ScheduleDialogCategoryFragment"
         tools:layout="@layout/fragment_schedule_dialog_category">
         <action

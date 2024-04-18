@@ -3,7 +3,6 @@ package com.mongmong.namo.presentation.config
 import android.app.Application
 import android.content.SharedPreferences
 import com.mongmong.namo.BuildConfig
-import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.data.KakaoAPI
 import com.kakao.sdk.common.KakaoSdk
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient

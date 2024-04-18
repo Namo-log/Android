@@ -4,7 +4,7 @@ import android.util.Log
 import com.mongmong.namo.domain.model.LogoutBody
 import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.config.BaseResponse
-import com.mongmong.namo.presentation.ui.bottom.custom.CustomSettingFramgent
+import com.mongmong.namo.presentation.ui.custom.CustomSettingFramgent
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

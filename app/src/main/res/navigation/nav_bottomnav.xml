@@ -8,7 +8,7 @@
     <!-- Home -->
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.mongmong.namo.presentation.ui.bottom.home.HomeFragment"
+        android:name="com.mongmong.namo.presentation.ui.home.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/fragment_home">
         <action
@@ -23,7 +23,7 @@
     <!-- Diary -->
     <fragment
         android:id="@+id/diaryFragment"
-        android:name="com.mongmong.namo.presentation.ui.bottom.diary.DiaryFragment"
+        android:name="com.mongmong.namo.presentation.ui.diary.DiaryFragment"
         android:label="DiaryFragment"
         tools:layout="@layout/fragment_diary">
         <action
@@ -38,14 +38,14 @@
     </fragment>
     <fragment
         android:id="@+id/diaryAddFragment"
-        android:name="com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.PersonalDetailFragment"
+        android:name="com.mongmong.namo.presentation.ui.diary.personalDiary.PersonalDetailFragment"
         android:label="DiaryAddFragment"
         tools:layout="@layout/fragment_diary_personal_detail">
     </fragment>
 
     <fragment
         android:id="@+id/groupDetailFragment"
-        android:name="com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.GroupDetailFragment"
+        android:name="com.mongmong.namo.presentation.ui.diary.personalDiary.GroupDetailFragment"
         android:label="GroupDetailFragment"
         tools:layout="@layout/fragment_diary_group_detail">
         <action
@@ -57,7 +57,7 @@
     <!-- Group -->
     <fragment
         android:id="@+id/groupListFragment"
-        android:name="com.mongmong.namo.presentation.ui.bottom.group.GroupFragment"
+        android:name="com.mongmong.namo.presentation.ui.group.GroupFragment"
         android:label="GroupListFragment"
         tools:layout="@layout/fragment_group_list">
         <action
@@ -66,7 +66,7 @@
     </fragment>
     <fragment
         android:id="@+id/groupCalendarFragment"
-        android:name="com.mongmong.namo.presentation.ui.bottom.group.calendar.GroupCalendarFragment"
+        android:name="com.mongmong.namo.presentation.ui.group.calendar.GroupCalendarFragment"
         android:label="GroupCalendarFragment"
         tools:layout="@layout/fragment_group_calendar">
         <action
@@ -81,19 +81,19 @@
     <fragment
         android:id="@+id/groupModifyFragment"
         tools:layout="@layout/activity_moim_diary"
-        android:name="com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.MoimDiaryActivity"
+        android:name="com.mongmong.namo.presentation.ui.diary.moimDiary.MoimDiaryActivity"
         android:label="GroupModifyFragment" />
 
     <activity
         android:id="@+id/groupMemoActivity"
-        android:name="com.mongmong.namo.presentation.ui.bottom.diary.moimDiary.MoimDiaryActivity"
+        android:name="com.mongmong.namo.presentation.ui.diary.moimDiary.MoimDiaryActivity"
         android:label="GroupMemoActivity"
         tools:layout="@layout/activity_moim_diary"/>
 
     <!-- Custom -->
     <fragment
         android:id="@+id/customFragment"
-        android:name="com.mongmong.namo.presentation.ui.bottom.custom.CustomFragment"
+        android:name="com.mongmong.namo.presentation.ui.custom.CustomFragment"
         android:label="CustomFragment"
         tools:layout="@layout/fragment_custom">
         <action
@@ -102,7 +102,7 @@
     </fragment>
     <fragment
         android:id="@+id/customSettingFragment"
-        android:name="com.mongmong.namo.presentation.ui.bottom.custom.CustomSettingFramgent"
+        android:name="com.mongmong.namo.presentation.ui.custom.CustomSettingFramgent"
         android:label="CustomSettingFragment"
         tools:layout="@layout/fragment_custom_setting"/>
 

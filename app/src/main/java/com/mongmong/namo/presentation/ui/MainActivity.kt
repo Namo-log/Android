@@ -58,7 +58,7 @@ import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResult
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
-import com.mongmong.namo.presentation.ui.bottom.home.category.CategoryViewModel
+import com.mongmong.namo.presentation.ui.home.category.CategoryViewModel
 import com.mongmong.namo.presentation.utils.NetworkManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
