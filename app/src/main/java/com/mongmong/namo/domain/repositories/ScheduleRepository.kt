@@ -30,7 +30,8 @@ interface ScheduleRepository {
 
     suspend fun deleteSchedule(
         localId: Long,
-        serverId: Long
+        serverId: Long,
+        isGroup: Boolean
     )
 
     suspend fun uploadScheduleToServer()

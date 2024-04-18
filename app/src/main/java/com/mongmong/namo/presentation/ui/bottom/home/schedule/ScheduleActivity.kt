@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
@@ -34,7 +33,6 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private var alarmList : MutableList<Int> = mutableListOf()
-    private val failList = ArrayList<Schedule>()
 
     private var schedule : Schedule? = null
 
@@ -104,7 +102,7 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
             }
 
             // 일정 삭제
-            viewModel.deleteSchedule(schedule.scheduleId, schedule.serverId)
+            viewModel.deleteSchedule(schedule.scheduleId, schedule.serverId, schedule.moimSchedule)
 
             Toast.makeText(this, "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
             finish()

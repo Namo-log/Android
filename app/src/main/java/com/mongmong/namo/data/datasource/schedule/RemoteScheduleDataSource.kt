@@ -65,13 +65,15 @@ class RemoteScheduleDataSource @Inject constructor(
     }
 
     suspend fun deleteScheduleToServer(
-        scheduleId: Long
+        scheduleId: Long,
+        isGroup: Boolean
     ) : DeleteScheduleResponse {
         var scheduleResponse = DeleteScheduleResponse("")
+        val value = if (isGroup) IS_GROUP else IS_NOT_GROUP
 
         withContext(Dispatchers.IO) {
             runCatching {
-                personalApiService.deleteSchedule(scheduleId, IS_NOT_GROUP) // 개인
+                personalApiService.deleteSchedule(scheduleId, value)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "deleteScheduleToServer Success, $it")
                 scheduleResponse = it

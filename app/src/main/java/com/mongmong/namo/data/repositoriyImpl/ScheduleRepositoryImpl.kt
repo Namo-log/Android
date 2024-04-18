@@ -79,7 +79,14 @@ class ScheduleRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteSchedule(localId: Long, serverId: Long) {
+    override suspend fun deleteSchedule(localId: Long, serverId: Long, isGroup: Boolean) {
+        // 모임 일정
+        if (isGroup) {
+            remoteScheduleDataSource.deleteScheduleToServer(serverId, isGroup)
+            return
+        }
+
+        // 개인 일정
         // room db에 삭제 상태로 변경
         localScheduleDataSource.updateScheduleAfterUpload(
             localId = localId,
@@ -89,7 +96,7 @@ class ScheduleRepositoryImpl @Inject constructor(
         )
         if (networkChecker.isOnline()) {
             // 서버 db에서 삭제
-            val deleteResponse = remoteScheduleDataSource.deleteScheduleToServer(serverId)
+            val deleteResponse = remoteScheduleDataSource.deleteScheduleToServer(serverId, isGroup)
             if (deleteResponse.code == DiaryRepositoryImpl.SUCCESS_CODE) {
                 // room db에서 삭제
                 localScheduleDataSource.deleteSchedule(localId)

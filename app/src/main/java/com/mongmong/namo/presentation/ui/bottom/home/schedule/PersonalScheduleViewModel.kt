@@ -82,12 +82,13 @@ class PersonalScheduleViewModel @Inject constructor(
     }
 
     /** 일정 삭제 */
-    fun deleteSchedule(localId: Long, serverId: Long) {
+    fun deleteSchedule(localId: Long, serverId: Long, isGroup: Boolean) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "deleteSchedule $schedule")
             repository.deleteSchedule(
                 localId = localId,
-                serverId = serverId
+                serverId = serverId,
+                isGroup = isGroup
             )
         }
     }
