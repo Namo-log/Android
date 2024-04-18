@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
@@ -15,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.mongmong.namo.R
-import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.ActivityScheduleBinding
 import com.mongmong.namo.presentation.ui.bottom.home.notify.PushNotificationReceiver
@@ -28,7 +26,6 @@ import org.joda.time.DateTime
 class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private lateinit var binding : ActivityScheduleBinding
-    lateinit var db : NamoDatabase
 
     private val navController: NavController by lazy {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.schedule_nav_host) as NavHostFragment
@@ -36,17 +33,15 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private var alarmList : MutableList<Int> = mutableListOf()
-    private val failList = ArrayList<Schedule>()
 
     private var schedule : Schedule? = null
 
-    private val viewModel : ScheduleViewModel by viewModels()
+    private val viewModel : PersonalScheduleViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityScheduleBinding.inflate(layoutInflater)
-        db = NamoDatabase.getInstance(this)
         setContentView(binding.root)
 
         val schedule = intent.getSerializableExtra("schedule") as? Schedule
@@ -62,7 +57,7 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
                 return@setOnClickListener
             }
         }
-        val action = ScheduleDialogBasicFragmentDirections.actionScheduleDialogBasicFragmentSelf(event = schedule, nowDay = nowDay)
+        val action = ScheduleDialogBasicFragmentDirections.actionScheduleDialogBasicFragmentSelf(schedule = schedule, nowDay = nowDay)
         navController.navigate(action)
 
         val slideAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up)
@@ -107,11 +102,9 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
             }
 
             // 일정 삭제
-            viewModel.deleteSchedule(schedule.scheduleId, schedule.serverId)
+            viewModel.deleteSchedule(schedule.scheduleId, schedule.serverId, schedule.moimSchedule)
 
             Toast.makeText(this, "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-
-            printNotUploaded()
             finish()
         }
     }
@@ -130,21 +123,6 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
             PendingIntent.getBroadcast(this, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         }
         alarmManager.cancel(pendingIntent)
-    }
-
-    private fun printNotUploaded() {
-        val thread = Thread {
-            failList.clear()
-            failList.addAll(db.scheduleDao.getNotUploadedSchedule() as ArrayList<Schedule>)
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch ( e : InterruptedException) {
-            e.printStackTrace()
-        }
-
-        Log.d("ScheduleActivity", "Not uploaded Schedule : ${failList}")
     }
 
     override fun onClickYesButton(id: Int) {

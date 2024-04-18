@@ -11,31 +11,23 @@ import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.MoimSchedule
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
 import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.config.PaletteType
 import org.joda.time.DateTime
 
-class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter.ViewHolder>() {
+class GroupDailyMoimRVAdapter : RecyclerView.Adapter<GroupDailyMoimRVAdapter.ViewHolder>() {
 
     private val groupSchedule = ArrayList<MoimSchedule>()
     lateinit var colorArray: ArrayList<String>
     private lateinit var context : Context
 
-    interface DiaryInterface {
-        fun onGroupMemoClicked(groupSchedule: MoimSchedule)
-    }
-    private lateinit var diaryGroupMemoClickListener: DiaryInterface
-    fun setRecordClickListener(itemClickListener: DiaryInterface){
-        diaryGroupMemoClickListener=itemClickListener
+    interface MoimScheduleClickListener {
+        fun onContentClicked(groupSchedule: MoimSchedule)
+        fun onDiaryIconClicked(groupSchedule: MoimSchedule)
     }
 
-    interface ContentClickListener {
-        fun onContentClick(groupSchedule: MoimSchedule)
-    }
+    private lateinit var moimScheduleClickListener : MoimScheduleClickListener
 
-    private lateinit var contentClickListener : ContentClickListener
-
-    fun setContentClickListener(contentClickListener : ContentClickListener) {
-        this.contentClickListener = contentClickListener
+    fun setMoimScheduleClickListener(moimScheduleClickListener : MoimScheduleClickListener) {
+        this.moimScheduleClickListener = moimScheduleClickListener
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
@@ -49,13 +41,13 @@ class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter
 
     override fun onBindViewHolder(holder : ViewHolder, position : Int) {
         holder.bind(groupSchedule[position])
-
-        holder.binding.itemCalendarEventContentLayout.setOnClickListener {
-            contentClickListener.onContentClick(groupSchedule[position])
+        // 아이템 전체 클릭
+        holder.itemView.setOnClickListener {
+            moimScheduleClickListener.onContentClicked(groupSchedule[position])
         }
-
-        holder.binding.itemCalendarEventRecord.setOnClickListener {
-           diaryGroupMemoClickListener.onGroupMemoClicked(groupSchedule[position])
+        // 기록 아이콘 클릭
+        holder.binding.itemCalendarScheduleRecord.setOnClickListener { // 모임 기록
+            moimScheduleClickListener.onDiaryIconClicked(groupSchedule[position])
         }
     }
 
@@ -82,13 +74,13 @@ class GroupDailyGroupRVAdapter() : RecyclerView.Adapter<GroupDailyGroupRVAdapter
 
             binding.itemCalendarTitle.text = groupSchedule.name
             binding.itemCalendarTitle.isSelected = true
-            binding.itemCalendarTitle.text = time
-            binding.itemCalendarEventColorView.background.setTint(Color.parseColor(colorArray[paletteId - 1]))
+            binding.itemCalendarScheduleTime.text = time
+            binding.itemCalendarScheduleColorView.background.setTint(Color.parseColor(colorArray[paletteId - 1]))
 
             if(groupSchedule.hasDiaryPlace)
-                binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.MainOrange))
+                binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.MainOrange))
             else
-                binding.itemCalendarEventRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
+                binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
         }
     }
 

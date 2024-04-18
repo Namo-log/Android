@@ -4,7 +4,10 @@ import com.mongmong.namo.data.local.entity.home.ScheduleForUpload
 import com.mongmong.namo.domain.model.DeleteScheduleResponse
 import com.mongmong.namo.domain.model.EditScheduleResponse
 import com.mongmong.namo.domain.model.GetMonthScheduleResponse
+import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
+import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
 import com.mongmong.namo.domain.model.PostScheduleResponse
+import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -14,6 +17,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ScheduleRetrofitInterface {
+    /** 개인 일정 */
     @POST("schedules")
     suspend fun postSchedule(
         @Body schedule : ScheduleForUpload
@@ -40,12 +44,23 @@ interface ScheduleRetrofitInterface {
     fun getAllSchedule(
     ) : Call<GetMonthScheduleResponse>
 
+    /** 모임 일정 */
     @GET("schedules/moim/all")
     fun getAllMoimSchedule(
     ) : Call<GetMonthScheduleResponse>
 
     @GET("schedules/moim/{yearMonth}")
-    fun getMonthMoimSchedule(
+    suspend fun getMonthMoimSchedule(
         @Path("yearMonth") yearMonth: String,
-    ) : Call<GetMonthScheduleResponse>
+    ) : GetMonthScheduleResponse
+
+    @PATCH("moims/schedule/category")
+    suspend fun patchMoimScheduleCategory(
+        @Body body: PatchMoimScheduleCategoryBody
+    ): BaseResponse
+
+    @PATCH("moims/schedule/alarm")
+    suspend fun patchMoimScheduleAlarm(
+        @Body body: MoimScheduleAlarmBody
+    ): BaseResponse
 }

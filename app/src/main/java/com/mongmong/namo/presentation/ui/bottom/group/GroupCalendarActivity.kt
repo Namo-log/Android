@@ -13,8 +13,10 @@ import com.mongmong.namo.databinding.ActivityGroupCalendarBinding
 import com.mongmong.namo.presentation.ui.bottom.group.calendar.GroupCalendarAdapter
 import com.mongmong.namo.presentation.ui.bottom.group.calendar.GroupCalendarAdapter.Companion.GROUP_ID
 import com.mongmong.namo.presentation.ui.bottom.home.calendar.SetMonthDialog
+import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 
+@AndroidEntryPoint
 class GroupCalendarActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityGroupCalendarBinding

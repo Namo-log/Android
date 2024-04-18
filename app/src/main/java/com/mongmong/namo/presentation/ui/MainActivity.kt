@@ -22,7 +22,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -67,9 +66,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 
-
-private const val PERMISSION_REQUEST_CODE= 1001
-private const val NOTIFICATION_PERMISSION_REQUEST_CODE= 777
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetAllScheduleView,
@@ -601,6 +597,9 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
     }
 
     companion object {
+        const val PERMISSION_REQUEST_CODE= 1001
+        const val NOTIFICATION_PERMISSION_REQUEST_CODE= 777
+
         const val ORIGIN_ACTIVITY_INTENT_KEY: String = "original_activity"
         const val PLACE_NAME_INTENT_KEY: String = "place_name"
         const val PLACE_X_INTENT_KEY: String = "place_x"

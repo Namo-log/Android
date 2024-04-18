@@ -28,7 +28,7 @@ class ScheduleDialogCategoryFragment : Fragment() {
 
     private val args : ScheduleDialogCategoryFragmentArgs by navArgs()
 
-    private var event : Schedule = Schedule()
+    private var schedule : Schedule = Schedule()
 
     private lateinit var categoryRVAdapter : DialogCategoryRVAdapter
     private var categoryList : List<Category> = arrayListOf()
@@ -45,9 +45,9 @@ class ScheduleDialogCategoryFragment : Fragment() {
         binding = FragmentScheduleDialogCategoryBinding.inflate(inflater, container, false)
         Log.d("DIALOG_CATEGORY", "카테고리 다이얼로그")
 
-        event = args.event
+        schedule = args.schedule
 
-        selectedCategory = event.categoryId
+        selectedCategory = schedule.categoryId
 
         onClickCategoryEdit()
         initObserve()
@@ -74,12 +74,12 @@ class ScheduleDialogCategoryFragment : Fragment() {
             // 아이템 클릭
             override fun onSendId(category: Category) {
                 // 카테고리 세팅
-                event.categoryId = category.categoryId
-                event.categoryServerId = category.serverId
-                Log.d("TEST_CATEGORY", "In category : ${event.categoryId}")
-                Log.d("TEST_CATEGORY", "In category Server: ${event.categoryServerId}")
-                Log.d("TEST_CATEGORY", "In category Result: ${event}")
-                val action = ScheduleDialogCategoryFragmentDirections.actionScheduleDialogCategoryFragmentToScheduleDialogBasicFragment(event)
+                schedule.categoryId = category.categoryId
+                schedule.categoryServerId = category.serverId
+                Log.d("TEST_CATEGORY", "In category : ${schedule.categoryId}")
+                Log.d("TEST_CATEGORY", "In category Server: ${schedule.categoryServerId}")
+                Log.d("TEST_CATEGORY", "In category Result: ${schedule}")
+                val action = ScheduleDialogCategoryFragmentDirections.actionScheduleDialogCategoryFragmentToScheduleDialogBasicFragment(schedule)
                 findNavController().navigate(action)
             }
         })

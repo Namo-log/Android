@@ -19,7 +19,7 @@
             app:popUpTo="@id/scheduleDialogBasicFragment"
             app:popUpToInclusive="true" />
         <argument
-            android:name="event"
+            android:name="schedule"
             app:argType="com.mongmong.namo.data.local.entity.home.Schedule"
             app:nullable="true"
             android:defaultValue="@null" />
@@ -39,7 +39,7 @@
             app:popUpTo="@id/scheduleDialogBasicFragment"
             app:popUpToInclusive="true" />
         <argument
-            android:name="event"
+            android:name="schedule"
             app:argType="com.mongmong.namo.data.local.entity.home.Schedule" />
     </fragment>
 </navigation>

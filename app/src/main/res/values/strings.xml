@@ -50,6 +50,12 @@
     <string name="custom_font">커스텀 폰트는 열심히 준비중이몽몽~!</string>
     <string name="custom_my">my fragment</string>
 
+    <!-- schedule 관련 String -->
+    <string name="schedule_personal">개인 일정</string>
+    <string name="schedule_personal_empty">등록된 개인 일정이 없습니다.</string>
+    <string name="schedule_moim">모임 일정</string>
+    <string name="schedule_moim_empty">등록된 모임 일정이 없습니다.</string>
+
     <!--diary 관련 String-->
     <string name="diary_network_failure">모임 기록은 네트워크 연결 시 확인할 수 있습니다.\n네트워크 연결 후 다시 시도해 주세요.</string>
     <string name="diary_empty">기록이 없습니다. 기록을 추가해 보세요!</string>

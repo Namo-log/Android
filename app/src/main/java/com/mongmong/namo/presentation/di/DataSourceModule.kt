@@ -28,7 +28,10 @@ object DataSourceModule {
     @Provides
     fun provideLocalScheduleDataSource(scheduleDao: ScheduleDao): LocalScheduleDataSource = LocalScheduleDataSource(scheduleDao)
     @Provides
-    fun provideRemoteScheduleDataSource(apiService: ScheduleRetrofitInterface): RemoteScheduleDataSource = RemoteScheduleDataSource(apiService)
+    fun provideRemoteScheduleDataSource(
+        apiService: ScheduleRetrofitInterface, // 개인 쪽
+        groupApiService: GroupApiService // 그룹 쪽
+    ): RemoteScheduleDataSource = RemoteScheduleDataSource(apiService, groupApiService)
 
     /** 기록 */
     @Provides
