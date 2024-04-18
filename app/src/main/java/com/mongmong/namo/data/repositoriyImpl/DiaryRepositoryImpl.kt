@@ -10,8 +10,8 @@ import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.domain.model.DiarySchedule
-import com.mongmong.namo.data.remote.diary.DiaryApiService
-import com.mongmong.namo.domain.model.MoimDiaryResult
+import com.mongmong.namo.data.remote.DiaryApiService
+import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.presentation.config.RoomState
 import javax.inject.Inject

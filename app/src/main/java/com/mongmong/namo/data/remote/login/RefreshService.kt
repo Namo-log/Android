@@ -1,6 +1,7 @@
 package com.mongmong.namo.data.remote.login
 
 import android.util.Log
+import com.mongmong.namo.data.remote.LoginApiService
 import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.TokenBody
@@ -15,8 +16,9 @@ class RefreshService {
         this.splashView=splashView
     }
 
-    private val refreshRetrofitInterface: LoginRetrofitInterface = ApplicationClass.bRetrofit.create(LoginRetrofitInterface::class.java)
-    private val splashRetrofitInterface = ApplicationClass.sRetrofit.create(LoginRetrofitInterface::class.java)
+    private val refreshRetrofitInterface: LoginApiService = ApplicationClass.bRetrofit.create(
+        LoginApiService::class.java)
+    private val splashRetrofitInterface = ApplicationClass.sRetrofit.create(LoginApiService::class.java)
 
     fun tryTokenRefresh(tokenBody: TokenBody) : Response<LoginResponse> {
         return refreshRetrofitInterface.refreshToken(tokenBody).execute()

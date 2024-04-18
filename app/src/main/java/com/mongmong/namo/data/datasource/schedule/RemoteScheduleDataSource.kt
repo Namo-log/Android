@@ -1,40 +1,40 @@
 package com.mongmong.namo.data.datasource.schedule
 
 import android.util.Log
-import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
-import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
-import com.mongmong.namo.data.local.entity.home.ScheduleForUpload
-import com.mongmong.namo.data.remote.group.GroupApiService
-import com.mongmong.namo.data.remote.schedule.ScheduleRetrofitInterface
-import com.mongmong.namo.domain.model.AddMoimScheduleResponse
+import com.mongmong.namo.data.remote.group.GroupScheduleApiService
+import com.mongmong.namo.data.remote.ScheduleApiService
+import com.mongmong.namo.domain.model.group.AddMoimScheduleResponse
 import com.mongmong.namo.domain.model.DeleteScheduleResponse
 import com.mongmong.namo.domain.model.EditScheduleResponse
 import com.mongmong.namo.domain.model.EditScheduleResult
-import com.mongmong.namo.domain.model.GetMoimScheduleResponse
+import com.mongmong.namo.domain.model.group.GetMoimScheduleResponse
 import com.mongmong.namo.domain.model.GetMonthScheduleResponse
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
-import com.mongmong.namo.domain.model.MoimSchedule
-import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
-import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
+import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
+import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.domain.model.PostScheduleResponse
 import com.mongmong.namo.domain.model.PostScheduleResult
+import com.mongmong.namo.domain.model.ScheduleRequestBody
+import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
+import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class RemoteScheduleDataSource @Inject constructor(
-    private val personalApiService: ScheduleRetrofitInterface,
-    private val groupApiService: GroupApiService,
+    private val scheduleApiService: ScheduleApiService,
+    private val groupScheduleApiService: GroupScheduleApiService,
 ) {
     /** 개인 */
     suspend fun addScheduleToServer(
-        schedule: ScheduleForUpload,
+        schedule: ScheduleRequestBody,
     ): PostScheduleResponse {
         var scheduleResponse = PostScheduleResponse(result = PostScheduleResult(-1))
 
         withContext(Dispatchers.IO) {
             runCatching {
-                personalApiService.postSchedule(schedule)
+                scheduleApiService.postSchedule(schedule)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "addScheduleToServer Success $it")
                 scheduleResponse = it
@@ -47,13 +47,13 @@ class RemoteScheduleDataSource @Inject constructor(
 
     suspend fun editScheduleToServer(
         scheduleId: Long,
-        schedule: ScheduleForUpload
+        schedule: ScheduleRequestBody
     ) : EditScheduleResponse {
         var scheduleResponse = EditScheduleResponse(result = EditScheduleResult(-1))
 
         withContext(Dispatchers.IO) {
             runCatching {
-                personalApiService.editSchedule(scheduleId, schedule)
+                scheduleApiService.editSchedule(scheduleId, schedule)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "editScheduleToServer Success, $it")
                 scheduleResponse = it
@@ -73,7 +73,7 @@ class RemoteScheduleDataSource @Inject constructor(
 
         withContext(Dispatchers.IO) {
             runCatching {
-                personalApiService.deleteSchedule(scheduleId, value)
+                scheduleApiService.deleteSchedule(scheduleId, value)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "deleteScheduleToServer Success, $it")
                 scheduleResponse = it
@@ -93,7 +93,7 @@ class RemoteScheduleDataSource @Inject constructor(
         )
         withContext(Dispatchers.IO) {
             runCatching {
-                personalApiService.getMonthMoimSchedule(yearMonth)
+                scheduleApiService.getMonthMoimSchedule(yearMonth)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "deleteMoimActivity Success $it")
                 scheduleResponse = it
@@ -105,11 +105,11 @@ class RemoteScheduleDataSource @Inject constructor(
     }
 
     suspend fun editMoimScheduleCategory(
-        category: PatchMoimScheduleCategoryBody
+        category: PatchMoimScheduleCategoryRequestBody
     ) {
         withContext(Dispatchers.IO) {
             runCatching {
-                personalApiService.patchMoimScheduleCategory(category)
+                scheduleApiService.patchMoimScheduleCategory(category)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleCategory Success $it")
             }.onFailure {
@@ -119,11 +119,11 @@ class RemoteScheduleDataSource @Inject constructor(
     }
 
     suspend fun editMoimScheduleAlert(
-        alert: MoimScheduleAlarmBody
+        alert: PatchMoimScheduleAlarmRequestBody
     ) {
         withContext(Dispatchers.IO) {
             runCatching {
-                personalApiService.patchMoimScheduleAlarm(alert)
+                scheduleApiService.patchMoimScheduleAlarm(alert)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleAlert Success $it")
             }.onFailure {
@@ -135,11 +135,11 @@ class RemoteScheduleDataSource @Inject constructor(
     /** 그룹 */
     suspend fun getGroupAllSchedules(
         groupId: Long
-    ): List<MoimSchedule> {
+    ): List<MoimScheduleBody> {
         var scheduleResponse = GetMoimScheduleResponse(result = emptyList())
         withContext(Dispatchers.IO) {
             runCatching {
-                groupApiService.getAllMoimSchedule(groupId)
+                groupScheduleApiService.getAllMoimSchedule(groupId)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "getAllMoimSchedules Success $it")
                 scheduleResponse = it
@@ -151,12 +151,12 @@ class RemoteScheduleDataSource @Inject constructor(
     }
 
     suspend fun addMoimSchedule(
-        moimSchedule: AddMoimSchedule
+        moimSchedule: AddMoimScheduleRequestBody
     ) {
         var scheduleResponse = AddMoimScheduleResponse(-1)
         withContext(Dispatchers.IO) {
             runCatching {
-                groupApiService.postMoimSchedule(moimSchedule)
+                groupScheduleApiService.postMoimSchedule(moimSchedule)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "addMoimSchedule Success $it")
                 scheduleResponse = it
@@ -168,11 +168,11 @@ class RemoteScheduleDataSource @Inject constructor(
     }
 
     suspend fun editMoimSchedule(
-        moimSchedule: EditMoimSchedule
+        moimSchedule: EditMoimScheduleRequestBody
     ) {
         withContext(Dispatchers.IO) {
             runCatching {
-                groupApiService.editMoimSchedule(moimSchedule)
+                groupScheduleApiService.editMoimSchedule(moimSchedule)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "editMoimSchedule Success $it")
             }.onFailure {
@@ -186,7 +186,7 @@ class RemoteScheduleDataSource @Inject constructor(
     ) {
         withContext(Dispatchers.IO) {
             runCatching {
-                groupApiService.deleteMoimSchedule(moimScheduleId)
+                groupScheduleApiService.deleteMoimSchedule(moimScheduleId)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "deleteMoimSchedule Success $it")
             }.onFailure {

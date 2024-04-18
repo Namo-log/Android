@@ -1,19 +1,18 @@
 package com.mongmong.namo.data.remote.category
 
 import android.util.Log
-import com.mongmong.namo.data.local.entity.home.CategoryForUpload
+import com.mongmong.namo.data.remote.CategoryApiService
+import com.mongmong.namo.domain.model.CategoryRequestBody
 import com.mongmong.namo.domain.model.GetCategoryResponse
-import com.mongmong.namo.domain.model.PostCategoryResponse
 import com.mongmong.namo.presentation.config.ApplicationClass
-import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class CategoryService(val view: CategoryDetailView) {
-    val retrofitInterface = ApplicationClass.sRetrofit.create(CategoryRetrofitInterface::class.java)
+    val retrofitInterface = ApplicationClass.sRetrofit.create(CategoryApiService::class.java)
 
-    fun tryPostCategory(body: CategoryForUpload, id: Long) {
+    fun tryPostCategory(body: CategoryRequestBody, id: Long) {
 //        retrofitInterface.postCategory(body).enqueue(object : Callback<PostCategoryResponse> {
 //
 //            override fun onResponse(call: Call<PostCategoryResponse>, response: Response<PostCategoryResponse>) {
@@ -30,7 +29,7 @@ class CategoryService(val view: CategoryDetailView) {
 //        })
     }
 
-    fun tryPatchCategory(categoryId: Long, body: CategoryForUpload, localId : Long) {
+    fun tryPatchCategory(categoryId: Long, body: CategoryRequestBody, localId : Long) {
 //        retrofitInterface.patchCategory(categoryId, body).enqueue(object : Callback<PostCategoryResponse> {
 //
 //            override fun onResponse(call: Call<PostCategoryResponse>, response: Response<PostCategoryResponse>) {
@@ -49,7 +48,7 @@ class CategoryService(val view: CategoryDetailView) {
 }
 
 class CategorySettingService(val view: CategorySettingView) {
-    val retrofitInterface = ApplicationClass.sRetrofit.create(CategoryRetrofitInterface::class.java)
+    val retrofitInterface = ApplicationClass.sRetrofit.create(CategoryApiService::class.java)
 
     fun tryGetAllCategory() {
         retrofitInterface.getCategories().enqueue(object : Callback<GetCategoryResponse> {
@@ -69,7 +68,7 @@ class CategorySettingService(val view: CategorySettingView) {
 }
 
 class CategoryDeleteService(val view: CategoryDeleteView) {
-    val retrofitInterface = ApplicationClass.sRetrofit.create(CategoryRetrofitInterface::class.java)
+    val retrofitInterface = ApplicationClass.sRetrofit.create(CategoryApiService::class.java)
 
     fun tryDeleteCategory(categoryId: Long, localId : Long) {
 //        retrofitInterface.deleteCategory(categoryId).enqueue(object : Callback<BaseResponse> {

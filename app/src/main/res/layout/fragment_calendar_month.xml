@@ -11,7 +11,7 @@
         android:paddingHorizontal="10dp"
         app:layoutDescription="@xml/fragment_calendar_month2_xml_constraintlayout_scene">
 
-        <com.mongmong.namo.presentation.ui.bottom.home.calendar.CustomCalendarView
+        <com.mongmong.namo.presentation.ui.home.calendar.CustomCalendarView
             android:id="@+id/calendar_month_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"

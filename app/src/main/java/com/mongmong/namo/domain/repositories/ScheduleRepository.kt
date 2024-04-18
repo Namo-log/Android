@@ -1,12 +1,12 @@
 package com.mongmong.namo.domain.repositories
 
-import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
-import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
-import com.mongmong.namo.domain.model.MoimSchedule
-import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
-import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
+import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
+import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
+import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
+import com.mongmong.namo.domain.model.group.MoimScheduleBody
 
 interface ScheduleRepository {
     /** 개인 */
@@ -43,22 +43,22 @@ interface ScheduleRepository {
         yearMonth: String
     ): List<GetMonthScheduleResult>
 
-    suspend fun editMoimScheduleCategory(category: PatchMoimScheduleCategoryBody)
+    suspend fun editMoimScheduleCategory(category: PatchMoimScheduleCategoryRequestBody)
 
-    suspend fun editMoimScheduleAlert(alert: MoimScheduleAlarmBody)
+    suspend fun editMoimScheduleAlert(alert: PatchMoimScheduleAlarmRequestBody)
 
 
     /** 그룹 */
     suspend fun getGroupAllSchedules(
         groupId: Long
-    ): List<MoimSchedule>
+    ): List<MoimScheduleBody>
 
     suspend fun addMoimSchedule(
-        moimSchedule: AddMoimSchedule
+        moimSchedule: AddMoimScheduleRequestBody
     )
 
     suspend fun editMoimSchedule(
-        moimSchedule: EditMoimSchedule
+        moimSchedule: EditMoimScheduleRequestBody
     )
 
     suspend fun deleteMoimSchedule(

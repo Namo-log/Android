@@ -69,45 +69,45 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.ui.bottom.home.schedule.map.MapActivity"
+            android:name=".presentation.ui.home.schedule.map.MapActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".presentation.ui.bottom.home.category.CategoryActivity"
+            android:name=".presentation.ui.category.CategoryActivity"
             android:theme="@style/Theme.Transparent" />
         <activity
-            android:name=".presentation.ui.bottom.home.category.CategoryEditActivity"
+            android:name=".presentation.ui.category.CategoryEditActivity"
             android:theme="@style/Theme.Transparent" />
         <activity
-            android:name=".presentation.ui.bottom.home.schedule.ScheduleActivity"
+            android:name=".presentation.ui.home.schedule.ScheduleActivity"
             android:exported="false"
             android:theme="@style/SlideAnimation" />
         <activity
-            android:name=".presentation.ui.bottom.group.GroupInfoActivity"
+            android:name=".presentation.ui.group.GroupInfoActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialTransparent"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".presentation.ui.bottom.group.GroupCalendarActivity"
+            android:name=".presentation.ui.group.GroupCalendarActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.bottom.group.GroupScheduleActivity"
+            android:name=".presentation.ui.group.schedule.GroupScheduleActivity"
             android:exported="false"
             android:theme="@style/SlideAnimation" />
         <activity
-            android:name=".presentation.ui.bottom.group.GroupScheduleMemberActivity"
+            android:name=".presentation.ui.group.schedule.GroupScheduleMemberActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialTransparent" />
         <activity
-            android:name=".presentation.ui.bottom.diary.moimDiary.MoimDiaryActivity"
+            android:name=".presentation.ui.group.diary.MoimDiaryActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".presentation.ui.bottom.diary.personalDiary.PersonalDetailActivity"
+            android:name=".presentation.ui.diary.PersonalDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".presentation.ui.bottom.diary.moimDiary.MoimMemoDetailActivity"
+            android:name=".presentation.ui.diary.MoimMemoDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
 
@@ -119,7 +119,7 @@
             android:value="${KAKAO_API_KEY}" />
 
         <receiver
-            android:name=".presentation.ui.bottom.home.notify.PushNotificationReceiver"
+            android:name=".presentation.ui.home.notify.PushNotificationReceiver"
             android:exported="true" />
 
         <provider

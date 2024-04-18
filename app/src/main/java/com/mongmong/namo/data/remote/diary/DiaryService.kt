@@ -1,9 +1,9 @@
 package com.mongmong.namo.data.remote.diary
 
 import android.annotation.SuppressLint
+import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
-import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.presentation.config.ApplicationClass
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -345,37 +345,6 @@ class DiaryService {
                     t: Throwable
                 ) {
                     getGroupMonthView.onGetGroupMonthFailure(t.message.toString())
-                }
-            })
-    }
-
-    fun addGroupAfterDiary(
-        groupScheduleIdx: Long,
-        content: String?
-    ) {
-        diaryRetrofitInterface.addGroupAfterDiary(groupScheduleIdx, content)
-            .enqueue(object : Callback<DiaryResponse> {
-
-                @SuppressLint("SuspiciousIndentation")
-                override fun onResponse(
-                    call: Call<DiaryResponse>,
-                    response: Response<DiaryResponse>
-                ) {
-                    val resp: DiaryResponse? = response.body()
-                    when (response.code()) {
-                        200 -> if (resp != null) {
-                            addGroupAfterDiaryView.onAddGroupAfterDiarySuccess(resp)
-                        }
-                        else -> addGroupAfterDiaryView.onAddGroupAfterDiaryFailure(response.toString())
-                    }
-
-                }
-
-                override fun onFailure(
-                    call: Call<DiaryResponse>,
-                    t: Throwable
-                ) {
-                    addGroupAfterDiaryView.onAddGroupAfterDiaryFailure(t.message.toString())
                 }
             })
     }

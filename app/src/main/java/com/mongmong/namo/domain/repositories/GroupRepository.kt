@@ -1,10 +1,9 @@
 package com.mongmong.namo.domain.repositories
 
 import android.net.Uri
-import com.mongmong.namo.domain.model.AddGroupResult
-import com.mongmong.namo.domain.model.Group
-import com.mongmong.namo.domain.model.JoinGroupResponse
-import com.mongmong.namo.presentation.config.BaseResponse
+import com.mongmong.namo.domain.model.group.AddGroupResult
+import com.mongmong.namo.domain.model.group.Group
+import com.mongmong.namo.domain.model.group.JoinGroupResponse
 
 interface GroupRepository {
     suspend fun getGroups(): List<Group>

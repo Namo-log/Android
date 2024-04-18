@@ -3,7 +3,6 @@ package com.mongmong.namo.presentation.di
 import android.content.Context
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.presentation.config.XAccessTokenInterceptor
-import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
 import com.mongmong.namo.presentation.utils.Utils.BASE_URL
 import dagger.Module

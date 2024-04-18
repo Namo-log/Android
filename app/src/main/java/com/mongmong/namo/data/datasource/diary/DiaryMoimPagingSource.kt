@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.mongmong.namo.domain.model.DiarySchedule
-import com.mongmong.namo.data.remote.diary.DiaryApiService
+import com.mongmong.namo.data.remote.DiaryApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

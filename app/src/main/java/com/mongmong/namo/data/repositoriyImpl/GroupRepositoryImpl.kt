@@ -2,12 +2,10 @@ package com.mongmong.namo.data.repositoriyImpl
 
 import android.net.Uri
 import com.mongmong.namo.data.datasource.group.GroupDataSource
-import com.mongmong.namo.domain.model.AddGroupResponse
-import com.mongmong.namo.domain.model.AddGroupResult
-import com.mongmong.namo.domain.model.Group
-import com.mongmong.namo.domain.model.JoinGroupResponse
+import com.mongmong.namo.domain.model.group.AddGroupResult
+import com.mongmong.namo.domain.model.group.Group
+import com.mongmong.namo.domain.model.group.JoinGroupResponse
 import com.mongmong.namo.domain.repositories.GroupRepository
-import com.mongmong.namo.presentation.config.BaseResponse
 import javax.inject.Inject
 
 class GroupRepositoryImpl @Inject constructor(

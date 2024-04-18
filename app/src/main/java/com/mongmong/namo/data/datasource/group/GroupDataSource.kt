@@ -4,13 +4,12 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.mongmong.namo.data.remote.group.GroupApiService
-import com.mongmong.namo.domain.model.AddGroupResult
-import com.mongmong.namo.domain.model.Group
-import com.mongmong.namo.domain.model.JoinGroupResponse
-import com.mongmong.namo.domain.model.UpdateGroupNameRequest
-import com.mongmong.namo.presentation.config.BaseResponse
-import com.mongmong.namo.presentation.utils.RequestConverter.convertTextRequest
-import com.mongmong.namo.presentation.utils.RequestConverter.uriToMultipart
+import com.mongmong.namo.domain.model.group.AddGroupResult
+import com.mongmong.namo.domain.model.group.Group
+import com.mongmong.namo.domain.model.group.JoinGroupResponse
+import com.mongmong.namo.domain.model.group.UpdateGroupNameRequestBody
+import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
+import com.mongmong.namo.data.utils.RequestConverter.uriToMultipart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -35,7 +34,7 @@ class GroupDataSource @Inject constructor(
     }
 
     suspend fun addGroup(img: Uri, name: String): AddGroupResult {
-        var result = AddGroupResult(moimId = 0L)
+        var result = AddGroupResult(groupId = 0L)
         withContext(Dispatchers.IO) {
             runCatching {
                 apiService.addGroup(uriToMultipart(img, context), name.convertTextRequest())
@@ -69,7 +68,7 @@ class GroupDataSource @Inject constructor(
         var response = JoinGroupResponse(result = 0L)
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.updateGroupName(UpdateGroupNameRequest(groupId, name))
+                apiService.updateGroupName(UpdateGroupNameRequestBody(groupId, name))
             }.onSuccess {
                 Log.d("GroupDataSource updateGroupName Success", "$it")
                 response = it
