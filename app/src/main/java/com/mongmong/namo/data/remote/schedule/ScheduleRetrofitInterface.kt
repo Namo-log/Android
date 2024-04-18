@@ -4,7 +4,10 @@ import com.mongmong.namo.data.local.entity.home.ScheduleForUpload
 import com.mongmong.namo.domain.model.DeleteScheduleResponse
 import com.mongmong.namo.domain.model.EditScheduleResponse
 import com.mongmong.namo.domain.model.GetMonthScheduleResponse
+import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
+import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
 import com.mongmong.namo.domain.model.PostScheduleResponse
+import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -48,4 +51,9 @@ interface ScheduleRetrofitInterface {
     suspend fun getMonthMoimSchedule(
         @Path("yearMonth") yearMonth: String,
     ) : GetMonthScheduleResponse
+
+    @PATCH("moims/schedule/category")
+    suspend fun patchMoimScheduleCategory(
+        @Body body: PatchMoimScheduleCategoryBody
+    ): BaseResponse
 }

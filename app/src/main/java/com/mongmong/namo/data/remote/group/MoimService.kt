@@ -55,25 +55,25 @@ class MoimService {
     }
 
     fun patchMoimScheduleCategory(body : PatchMoimScheduleCategoryBody) {
-        moimRetrofitInterface.patchMoimScheduleCategory(body).enqueue(object : Callback<BaseResponse> {
-            override fun onResponse(
-                call: Call<BaseResponse>,
-                response: Response<BaseResponse>
-            ) {
-                when(response.code()) {
-                    200 -> editMoimScheduleView.onPatchMoimScheduleCategorySuccess(response.message())
-                    else -> {
-                        Log.d("PatchMoimScheduleCategory", "Success but error")
-                        editMoimScheduleView.onPatchMoimScheduleCategoryFailure("통신 중 200 외 기타 코드")
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
-                Log.d("PatchMoimScheduleCategory", "onFailure")
-                editMoimScheduleView.onPatchMoimScheduleCategoryFailure(t.message ?: "통신 오류")
-            }
-        })
+//        moimRetrofitInterface.patchMoimScheduleCategory(body).enqueue(object : Callback<BaseResponse> {
+//            override fun onResponse(
+//                call: Call<BaseResponse>,
+//                response: Response<BaseResponse>
+//            ) {
+//                when(response.code()) {
+//                    200 -> editMoimScheduleView.onPatchMoimScheduleCategorySuccess(response.message())
+//                    else -> {
+//                        Log.d("PatchMoimScheduleCategory", "Success but error")
+//                        editMoimScheduleView.onPatchMoimScheduleCategoryFailure("통신 중 200 외 기타 코드")
+//                    }
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<BaseResponse>, t: Throwable) {
+//                Log.d("PatchMoimScheduleCategory", "onFailure")
+//                editMoimScheduleView.onPatchMoimScheduleCategoryFailure(t.message ?: "통신 오류")
+//            }
+//        })
     }
 
     fun postMoimScheduleAlarm(body : MoimScheduleAlarmBody) {

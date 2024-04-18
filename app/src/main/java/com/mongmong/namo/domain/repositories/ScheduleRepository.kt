@@ -5,6 +5,7 @@ import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.MoimSchedule
+import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
 
 interface ScheduleRepository {
     /** 개인 */
@@ -39,6 +40,8 @@ interface ScheduleRepository {
     suspend fun getMonthMoimSchedule(
         yearMonth: String
     ): List<GetMonthScheduleResult>
+
+    suspend fun editMoimScheduleCategory(category: PatchMoimScheduleCategoryBody)
 
 
     /** 그룹 */

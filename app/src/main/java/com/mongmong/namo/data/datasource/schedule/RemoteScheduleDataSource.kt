@@ -14,6 +14,7 @@ import com.mongmong.namo.domain.model.GetMoimScheduleResponse
 import com.mongmong.namo.domain.model.GetMonthScheduleResponse
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.MoimSchedule
+import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
 import com.mongmong.namo.domain.model.PostScheduleResponse
 import com.mongmong.namo.domain.model.PostScheduleResult
 import kotlinx.coroutines.Dispatchers
@@ -98,6 +99,20 @@ class RemoteScheduleDataSource @Inject constructor(
             }
         }
         return scheduleResponse.result
+    }
+
+    suspend fun editMoimScheduleCategory(
+        category: PatchMoimScheduleCategoryBody
+    ) {
+        withContext(Dispatchers.IO) {
+            runCatching {
+                personalApiService.patchMoimScheduleCategory(category)
+            }.onSuccess {
+                Log.d("RemoteScheduleDataSource", "editMoimScheduleCategory Success $it")
+            }.onFailure {
+                Log.d("RemoteScheduleDataSource", "editMoimScheduleCategory Fail")
+            }
+        }
     }
 
     /** 그룹 */

@@ -21,22 +21,10 @@ class MoimScheduleViewModel @Inject constructor(
     private val _schedule = MutableLiveData<GetMonthScheduleResult>()
     val schedule: LiveData<GetMonthScheduleResult> = _schedule
 
-    private val _scheduleList = MutableLiveData<List<GetMonthScheduleResult>>(emptyList())
-    val scheduleList: LiveData<List<GetMonthScheduleResult>?> = _scheduleList
-
     private val _groupScheduleList = MutableLiveData<List<MoimSchedule>>(emptyList())
     val groupScheduleList: LiveData<List<MoimSchedule>?> = _groupScheduleList
 
-    // 개인쪽
-    /** 월별 모임 일정 조회 */
-    fun getMonthMoimSchedule(yearMonth: String) {
-        viewModelScope.launch {
-            Log.d("MoimScheduleViewModel", "getMonthMoimSchedule")
-            _scheduleList.value = repository.getMonthMoimSchedule(yearMonth)
-        }
-    }
-
-    // 그룹쪽
+    /** 그룹의 모든 일정 조회 */
     fun getGroupAllSchedules(groupId: Long) {
         viewModelScope.launch {
             Log.d("MoimScheduleViewModel", "getGroupAllSchedules")

@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.domain.model.GetMonthScheduleResult
+import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecase.FindCategoryUseCase
 import com.mongmong.namo.domain.usecase.GetCategoriesUseCase
@@ -23,14 +25,17 @@ class PersonalScheduleViewModel @Inject constructor(
     private val _schedule = MutableLiveData<Schedule>()
     val schedule: LiveData<Schedule> = _schedule
 
-    private val _scheduleList = MutableLiveData<List<Schedule>>(emptyList())
-    val scheduleList: LiveData<List<Schedule>?> = _scheduleList
+    private val _personalDailyScheduleList = MutableLiveData<List<Schedule>>(emptyList())
+    val personalDailyScheduleList: LiveData<List<Schedule>?> = _personalDailyScheduleList
 
     private val _personalScheduleList = MutableLiveData<List<Schedule>>(emptyList())
     val personalScheduleList: LiveData<List<Schedule>?> = _personalScheduleList
 
-    private val _isPostComplete = MutableLiveData<Boolean>()
-    val isPostComplete: LiveData<Boolean> = _isPostComplete
+    private val _moimScheduleList = MutableLiveData<List<GetMonthScheduleResult>>(emptyList())
+    val moimScheduleList: LiveData<List<GetMonthScheduleResult>?> = _moimScheduleList
+
+    private val _isComplete = MutableLiveData<Boolean>()
+    val isComplete: LiveData<Boolean> = _isComplete
 
     private val _category = MutableLiveData<Category>()
     val category: LiveData<Category> = _category
@@ -42,7 +47,7 @@ class PersonalScheduleViewModel @Inject constructor(
     fun getMonthSchedules(monthStart: Long, monthEnd: Long) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "getMonthSchedules")
-            _scheduleList.value = repository.getMonthSchedules(monthStart, monthEnd)
+            _personalScheduleList.value = repository.getMonthSchedules(monthStart, monthEnd)
         }
     }
 
@@ -50,7 +55,7 @@ class PersonalScheduleViewModel @Inject constructor(
     fun getDailySchedules(startDate: Long, endDate: Long) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "getDailySchedules")
-            _personalScheduleList.value = repository.getDailySchedules(startDate, endDate)
+            _personalDailyScheduleList.value = repository.getDailySchedules(startDate, endDate)
         }
     }
 
@@ -61,7 +66,7 @@ class PersonalScheduleViewModel @Inject constructor(
             repository.addSchedule(
                 schedule = schedule
             )
-            _isPostComplete.postValue(true)
+            _isComplete.postValue(true)
         }
     }
 
@@ -86,9 +91,20 @@ class PersonalScheduleViewModel @Inject constructor(
         }
     }
 
-    /** 모임 일정 조회 */
-    private suspend fun getMonthMoimSchedule(yearMonth: String) {
-        repository.getMonthMoimSchedule(yearMonth)
+    // 모임
+    /** 월별 모임 일정 조회 */
+    fun getMonthMoimSchedule(yearMonth: String) {
+        viewModelScope.launch {
+            Log.d("MoimScheduleViewModel", "getMonthMoimSchedule")
+            _moimScheduleList.value = repository.getMonthMoimSchedule(yearMonth)
+        }
+    }
+
+    /** 모임 일정 카테고리 수정 */
+    fun editMoimScheduleCategory(scheduleId: Long, categoryId: Long) {
+        viewModelScope.launch {
+            repository.editMoimScheduleCategory(PatchMoimScheduleCategoryBody(scheduleId, categoryId))
+        }
     }
 
     /** 카테고리 조회 */

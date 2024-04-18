@@ -23,7 +23,6 @@ import com.mongmong.namo.presentation.ui.bottom.diary.personalDiary.PersonalDeta
 import com.mongmong.namo.presentation.ui.bottom.home.HomeFragment
 import com.mongmong.namo.presentation.ui.bottom.home.adapter.DailyGroupRVAdapter
 import com.mongmong.namo.presentation.ui.bottom.home.adapter.DailyPersonalRVAdapter
-import com.mongmong.namo.presentation.ui.bottom.home.schedule.MoimScheduleViewModel
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.PersonalScheduleViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,8 +48,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
     private val personalScheduleRVAdapter = DailyPersonalRVAdapter()
     private val groupScheduleRVAdapter = DailyGroupRVAdapter()
 
-    private val personalViewModel : PersonalScheduleViewModel by viewModels()
-    private val moimViewModel : MoimScheduleViewModel by viewModels()
+    private val viewModel : PersonalScheduleViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -189,7 +187,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
 
     private fun getCategoryList() {
         lifecycleScope.launch{
-            personalViewModel.getCategories()
+            viewModel.getCategories()
         }
     }
 
@@ -203,8 +201,8 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
     // 캘린더에 표시할 월별 일정
     private fun setMonthCalendarSchedule(monthStart: Long, monthEnd: Long) {
         lifecycleScope.launch {
-            personalViewModel.getMonthSchedules(monthStart, monthEnd)
-            moimViewModel.getMonthMoimSchedule(yearMonthDate(millis))
+            viewModel.getMonthSchedules(monthStart, monthEnd)
+            viewModel.getMonthMoimSchedule(yearMonthDate(millis))
         }
     }
 
@@ -238,7 +236,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
 
     private fun setDailyPersonalSchedule(todayStart: Long, todayEnd: Long) {
         lifecycleScope.launch {
-            personalViewModel.getDailySchedules(todayStart, todayEnd)
+            viewModel.getDailySchedules(todayStart, todayEnd)
         }
     }
 
@@ -261,13 +259,13 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
 
     private fun initObserve() {
         // 카테고리 리스트
-        personalViewModel.categoryList.observe(viewLifecycleOwner) {
+        viewModel.categoryList.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
                 setCategoryList(it)
             }
         }
         // 개인 일정 리스트
-        personalViewModel.personalScheduleList.observe(viewLifecycleOwner) {
+        viewModel.personalDailyScheduleList.observe(viewLifecycleOwner) {
             schedulePersonal.clear()
             if (!it.isNullOrEmpty()) {
                 val dailySchedule = it as ArrayList<Schedule>
@@ -277,13 +275,13 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
             Log.d("getDailySchedules", "Personal Schedule : $schedulePersonal")
             setPersonalEmptyText(schedulePersonal.isEmpty())
         }
-        personalViewModel.scheduleList.observe(viewLifecycleOwner) {
+        viewModel.personalScheduleList.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
                 calendarSchedules.addAll(it)
             }
         }
         // 모임 일정 리스트
-        moimViewModel.scheduleList.observe(viewLifecycleOwner) { result ->
+        viewModel.moimScheduleList.observe(viewLifecycleOwner) { result ->
             scheduleMoim.clear()
             if (!result.isNullOrEmpty()) {
                 monthGroupSchedule = result.map { it.convertServerScheduleResponseToLocal() } as ArrayList

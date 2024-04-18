@@ -89,11 +89,6 @@ interface GroupApiService {
     ): BaseResponse
 
     /** 개인에서 쓰이는 부분 */
-    @PATCH("moims/schedule/category")
-    fun patchMoimScheduleCategory(
-        @Body body: PatchMoimScheduleCategoryBody
-    ): Call<BaseResponse>
-
     @POST("moims/schedule/alarm")
     fun postMoimScheduleAlarm(
         @Body body: MoimScheduleAlarmBody
