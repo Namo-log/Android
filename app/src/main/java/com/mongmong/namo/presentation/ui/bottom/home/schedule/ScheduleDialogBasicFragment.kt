@@ -40,8 +40,6 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.group.EditMoimScheduleView
-import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
-import com.mongmong.namo.data.remote.group.MoimService
 import com.mongmong.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.mongmong.namo.presentation.ui.bottom.home.notify.PushNotificationReceiver
 import com.mongmong.namo.presentation.ui.bottom.home.schedule.map.MapActivity
@@ -58,7 +56,7 @@ import net.daum.mf.map.api.MapView
 import org.joda.time.DateTime
 
 @AndroidEntryPoint
-class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
+class ScheduleDialogBasicFragment : Fragment() {
 
     private lateinit var binding : FragmentScheduleDialogBasicBinding
     private val args : ScheduleDialogBasicFragmentArgs by navArgs()
@@ -92,9 +90,6 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     private var alarmList : MutableList<Int> = mutableListOf()
     private var prevAlarmList : List<Int>? = null
     private var alarmText : String = ""
-
-    private var isMoimScheduleAlarmSaved = false
-    private var isMoimSchedulePrevAlarm = false
 
     private val viewModel : PersonalScheduleViewModel by viewModels()
 
@@ -318,28 +313,12 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
 
             // 모임 일정일 경우
             if (schedule.moimSchedule) {
-                val moimService = MoimService()
-                moimService.setEditMoimScheduleView(this)
                 // 카테고리 수정
                 editMoimScheduleCategory()
-                // 알람 추가/수정
-                if (isMoimSchedulePrevAlarm) { // 알림 추가
-                    moimService.patchMoimScheduleAlarm(
-                        MoimScheduleAlarmBody(
-                            schedule.serverId,
-                            schedule.alarmList!!
-                        )
-                    )
-                } else { // 알림 수정
-                    moimService.postMoimScheduleAlarm(
-                        MoimScheduleAlarmBody(
-                            schedule.serverId,
-                            schedule.alarmList!!
-                        )
-                    )
-                }
+                // 알람 수정
+                editMoimScheduleAlert()
             }
-            // 개인일정일 경우
+            // 개인 일정일 경우
             else {
                 if (schedule.scheduleId == 0L) {
                     insertData()
@@ -362,7 +341,6 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     }
 
     private fun inactivateMoimScheduleEdit() {
-        isMoimSchedulePrevAlarm = !schedule.alarmList.isNullOrEmpty()
         binding.apply {
             setTextViewsInactive(
                 dialogScheduleTitleEt,
@@ -420,6 +398,12 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     /** 모임 일정 카테고리 수정 */
     private fun editMoimScheduleCategory() {
         viewModel.editMoimScheduleCategory(schedule.serverId, schedule.categoryServerId)
+    }
+
+    /** 모임 일정 알림 수정 */
+    private fun editMoimScheduleAlert() {
+        Log.d("alertList", "${schedule.alarmList}")
+        viewModel.editMoimScheduleAlert(schedule.serverId, schedule.alarmList!!)
         // 뒤로가기
         requireActivity().finish()
     }
@@ -826,26 +810,6 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         schedule.categoryServerId = selectedCategory.serverId
         binding.dialogScheduleCategoryNameTv.text = selectedCategory.name
         binding.dialogScheduleCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(selectedCategory.paletteId)
-    }
-
-    override fun onPostMoimScheduleAlarmSuccess(message: String) {
-        isMoimScheduleAlarmSaved = true
-    }
-
-    override fun onPostMoimScheduleAlarmFailure(message: String) {
-        isMoimScheduleAlarmSaved = false
-        Log.d("UPDATE_MOIM_SCHEDULE", message)
-        Toast.makeText(context, "알람 리스트 등록에 실패하였습니다.", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onPatchMoimScheduleAlarmSuccess(message: String) {
-        isMoimScheduleAlarmSaved = true
-    }
-
-    override fun onPatchMoimScheduleAlarmFailure(message: String) {
-        isMoimScheduleAlarmSaved = false
-        Log.d("UPDATE_MOIM_SCHEDULE", message)
-        Toast.makeText(context, "알람 리스트 업데이트에 실패하였습니다.", Toast.LENGTH_SHORT).show()
     }
 
     companion object {

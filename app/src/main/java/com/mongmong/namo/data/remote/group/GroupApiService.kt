@@ -87,15 +87,4 @@ interface GroupApiService {
     suspend fun deleteMoimSchedule(
         @Path("moimScheduleId") moimScheduleId: Long
     ): BaseResponse
-
-    /** 개인에서 쓰이는 부분 */
-    @POST("moims/schedule/alarm")
-    fun postMoimScheduleAlarm(
-        @Body body: MoimScheduleAlarmBody
-    ): Call<BaseResponse>
-
-    @PATCH("moims/schedule/alarm")
-    fun patchMoimScheduleAlarm(
-        @Body body: MoimScheduleAlarmBody
-    ): Call<BaseResponse>
 }

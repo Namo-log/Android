@@ -17,6 +17,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ScheduleRetrofitInterface {
+    /** 개인 일정 */
     @POST("schedules")
     suspend fun postSchedule(
         @Body schedule : ScheduleForUpload
@@ -43,6 +44,7 @@ interface ScheduleRetrofitInterface {
     fun getAllSchedule(
     ) : Call<GetMonthScheduleResponse>
 
+    /** 모임 일정 */
     @GET("schedules/moim/all")
     fun getAllMoimSchedule(
     ) : Call<GetMonthScheduleResponse>
@@ -55,5 +57,10 @@ interface ScheduleRetrofitInterface {
     @PATCH("moims/schedule/category")
     suspend fun patchMoimScheduleCategory(
         @Body body: PatchMoimScheduleCategoryBody
+    ): BaseResponse
+
+    @PATCH("moims/schedule/alarm")
+    suspend fun patchMoimScheduleAlarm(
+        @Body body: MoimScheduleAlarmBody
     ): BaseResponse
 }

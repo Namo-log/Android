@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
+import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecase.FindCategoryUseCase
@@ -104,6 +105,13 @@ class PersonalScheduleViewModel @Inject constructor(
     fun editMoimScheduleCategory(scheduleId: Long, categoryId: Long) {
         viewModelScope.launch {
             repository.editMoimScheduleCategory(PatchMoimScheduleCategoryBody(scheduleId, categoryId))
+        }
+    }
+
+    /** 모임 일정 알림 수정 */
+    fun editMoimScheduleAlert(scheduleId: Long, alertList: List<Int>) {
+        viewModelScope.launch {
+            repository.editMoimScheduleAlert(MoimScheduleAlarmBody(scheduleId, alertList))
         }
     }
 

@@ -14,6 +14,7 @@ import com.mongmong.namo.domain.model.GetMoimScheduleResponse
 import com.mongmong.namo.domain.model.GetMonthScheduleResponse
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.MoimSchedule
+import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
 import com.mongmong.namo.domain.model.PostScheduleResponse
 import com.mongmong.namo.domain.model.PostScheduleResult
@@ -111,6 +112,20 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleCategory Success $it")
             }.onFailure {
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleCategory Fail")
+            }
+        }
+    }
+
+    suspend fun editMoimScheduleAlert(
+        alert: MoimScheduleAlarmBody
+    ) {
+        withContext(Dispatchers.IO) {
+            runCatching {
+                personalApiService.patchMoimScheduleAlarm(alert)
+            }.onSuccess {
+                Log.d("RemoteScheduleDataSource", "editMoimScheduleAlert Success $it")
+            }.onFailure {
+                Log.d("RemoteScheduleDataSource", "editMoimScheduleAlert Fail $it")
             }
         }
     }
