@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.diary.personalDiary
+package com.mongmong.namo.presentation.ui.diary
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.ActivityPersonalDiaryDetailBinding
-import com.mongmong.namo.presentation.ui.diary.personalDiary.adapter.GalleryListAdapter
+import com.mongmong.namo.presentation.ui.diary.adapter.GalleryListAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.snackbar.Snackbar
@@ -43,7 +43,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     private lateinit var schedule: Schedule
 
-    private val viewModel : PersonalDiaryViewModel by viewModels()
+    private val viewModel : DiaryDetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

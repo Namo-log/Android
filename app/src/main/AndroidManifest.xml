@@ -103,11 +103,11 @@
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".presentation.ui.diary.personalDiary.PersonalDetailActivity"
+            android:name=".presentation.ui.diary.PersonalDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".presentation.ui.group.diary.MoimMemoDetailActivity"
+            android:name=".presentation.ui.diary.MoimMemoDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
 

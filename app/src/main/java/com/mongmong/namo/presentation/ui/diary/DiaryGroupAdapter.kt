@@ -15,7 +15,7 @@ import com.mongmong.namo.data.remote.diary.DiaryRepository
 import com.mongmong.namo.databinding.ItemDiaryItemListBinding
 import com.mongmong.namo.databinding.ItemDiaryListBinding
 import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.ui.diary.personalDiary.adapter.DiaryGalleryRVAdapter
+import com.mongmong.namo.presentation.ui.diary.adapter.DiaryGalleryRVAdapter
 import java.text.SimpleDateFormat
 
 class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터

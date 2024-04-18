@@ -16,19 +16,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MoimDiaryViewModel @Inject constructor(
-    private val repository: DiaryRepository,
-    private val findCategoryUseCase: FindCategoryUseCase
+    private val repository: DiaryRepository
 ) : ViewModel() {
     private val _getMoimDiaryResult = MutableLiveData<MoimDiaryResult>()
     val getMoimDiaryResult : LiveData<MoimDiaryResult> = _getMoimDiaryResult
 
-    private val _patchMemoResult = MutableLiveData<Boolean>()
-    val patchMemoResult : LiveData<Boolean> = _patchMemoResult
 
     private val _patchActivitiesComplete = MutableLiveData<Boolean>()
     val patchActivitiesComplete : LiveData<Boolean> = _patchActivitiesComplete
-
-    private val _memo = MutableLiveData<String>()
 
     private val _category = MutableLiveData<Category>()
     val category: LiveData<Category> = _category
@@ -38,14 +33,6 @@ class MoimDiaryViewModel @Inject constructor(
         viewModelScope.launch {
             Log.d("MoimDiaryViewModel getMoimDiary", "$scheduleId")
             _getMoimDiaryResult.postValue(repository.getMoimDiary(scheduleId))
-        }
-    }
-
-
-    /** 모임 메모 수정 **/
-    fun patchMoimMemo(scheduleId: Long, content: String) {
-        viewModelScope.launch {
-            _patchMemoResult.postValue(repository.patchMoimMemo(scheduleId, content))
         }
     }
 
@@ -132,14 +119,4 @@ class MoimDiaryViewModel @Inject constructor(
         Log.d("MoimActivity", "viewModel deleteMoimActivity")
         repository.deleteMoimActivity(activityId)
     }
-
-    /** 카테고리 id로 카테고리 조회 */
-    fun findCategoryById(localId: Long, serverId: Long) {
-        viewModelScope.launch {
-            _category.value = findCategoryUseCase.invoke(localId, serverId)
-        }
-    }
-
-    fun setMemo(memo: String) { _memo.value = memo }
-    fun getMemo() = _memo.value
 }

@@ -18,8 +18,8 @@ import com.mongmong.namo.data.remote.diary.GetGroupMonthView
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.MoimDiary
-import com.mongmong.namo.presentation.ui.group.diary.MoimMemoDetailActivity
-import com.mongmong.namo.presentation.ui.diary.personalDiary.PersonalDetailActivity
+import com.mongmong.namo.presentation.ui.diary.MoimMemoDetailActivity
+import com.mongmong.namo.presentation.ui.diary.PersonalDetailActivity
 import com.mongmong.namo.presentation.ui.home.HomeFragment
 import com.mongmong.namo.presentation.ui.home.adapter.DailyGroupRVAdapter
 import com.mongmong.namo.presentation.ui.home.adapter.DailyPersonalRVAdapter

@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.group.diary
+package com.mongmong.namo.presentation.ui.diary
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -18,7 +18,9 @@ import com.mongmong.namo.databinding.ActivityMoimMemoDetailBinding
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.ui.diary.personalDiary.adapter.GalleryListAdapter
+import com.mongmong.namo.presentation.ui.diary.adapter.GalleryListAdapter
+import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryActivity
+import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryViewModel
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,7 +41,7 @@ class MoimMemoDetailActivity: AppCompatActivity(),
 
     private var diaryService = DiaryService()
     private var isDelete: Boolean = false
-    private val viewModel : MoimDiaryViewModel by viewModels()
+    private val viewModel : DiaryDetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
