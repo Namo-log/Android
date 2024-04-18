@@ -4,13 +4,17 @@ import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.domain.model.GetMoimDiaryResponse
+import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
 import retrofit2.Call
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.*
 
 interface DiaryApiService {
+    /** 개인 */
+    // 개인 기록 전체 조회
+    @GET("/schedules/diary/all")
+    fun getAllDiary(): Call<DiaryGetAllResponse>
 
     // 개인 기록 추가
     @Multipart
@@ -36,11 +40,8 @@ interface DiaryApiService {
         @Path("scheduleId") scheduleId: Long
     ): DiaryResponse
 
-
-    @GET("/schedules/diary/all")
-    fun getAllDiary(): Call<DiaryGetAllResponse>
-
-    // 모임 기록 조회
+    /** 모임 */
+    // 모임 기록 개별 조회
     @GET("/moims/schedule/memo/{moimId}")
     suspend fun getMoimDiary(
         @Path("moimId") scheduleId: Long
@@ -52,35 +53,6 @@ interface DiaryApiService {
         @Path("scheduleId") scheduleId: Long,
         @Body text: String?
     ): DiaryResponse
-
-    // 모임 기록 활동 추가
-    @Multipart
-    @POST("/moims/schedule/memo/{moimId}")
-    suspend fun addMoimDiary(
-        @Path("moimId") scheduleId: Long,
-        @Part("name") place: RequestBody?,
-        @Part("money") pay: RequestBody?,
-        @Part("participants") member: RequestBody?,
-        @Part imgs: List<MultipartBody.Part>?
-    ): DiaryResponse
-
-    // 모임 기록 활동 수정
-    @Multipart
-    @PATCH("/moims/schedule/memo/{moimMemoLocationId}")
-    suspend fun editMoimActivity(
-        @Path("moimMemoLocationId") moimScheduldId: Long,
-        @Part("name") place: RequestBody?,
-        @Part("money") pay: RequestBody?,
-        @Part("participants") member: RequestBody?,
-        @Part imgs: List<MultipartBody.Part>?
-    ): DiaryResponse
-
-    // 모임 기록 활동 삭제
-    @DELETE("/moims/schedule/memo/{moimMemoLocationId}")
-    suspend fun deleteMoimActivity(
-        @Path("moimMemoLocationId") moimActivityId: Long
-    ): DiaryResponse
-
 
     // 모임 기록 월별 리스트 조회
     @GET("/moims/schedule/memo/month/{month}")
@@ -96,13 +68,6 @@ interface DiaryApiService {
         @Query("page") page: Int,
         @Query("size") size: Int
     ): Call<DiaryGetMonthResponse>
-
-
-    @PATCH("/moims/schedule/memo/text/{scheduleId}")
-    fun addGroupAfterDiary(
-        @Path("scheduleId") scheduleId: Long,
-        @Body text: String?
-    ): Call<DiaryResponse>
 
 }
 

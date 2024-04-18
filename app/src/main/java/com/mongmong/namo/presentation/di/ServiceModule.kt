@@ -3,6 +3,8 @@ package com.mongmong.namo.presentation.di
 import com.mongmong.namo.data.remote.category.CategoryApiService
 import com.mongmong.namo.data.remote.diary.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupApiService
+import com.mongmong.namo.data.remote.group.GroupDiaryApiService
+import com.mongmong.namo.data.remote.group.GroupScheduleApiService
 import com.mongmong.namo.data.remote.schedule.ScheduleApiService
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.KakaoAPI
 import dagger.Module
@@ -29,13 +31,25 @@ object ServiceModule {
     /** 카테고리 */
     @Provides
     @Singleton
-    fun provideCategoryService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : CategoryApiService = retrofit.create(CategoryApiService::class.java)
+    fun provideCategoryService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : CategoryApiService =
+        retrofit.create(CategoryApiService::class.java)
 
     /** 그룹 **/
     @Provides
     @Singleton
     fun provideGroupService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit): GroupApiService =
         retrofit.create(GroupApiService::class.java)
+    // 모임 일정
+    @Provides
+    @Singleton
+    fun provideGroupScheduleService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit): GroupScheduleApiService =
+        retrofit.create(GroupScheduleApiService::class.java)
+    // 모임 기록
+    @Provides
+    @Singleton
+    fun provideGroupDiaryService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit): GroupDiaryApiService =
+        retrofit.create(GroupDiaryApiService::class.java)
+
 
     /** 카카오 맵 **/
     @Provides

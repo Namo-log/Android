@@ -8,20 +8,20 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
-import com.mongmong.namo.domain.model.MoimSchedule
+import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
 import com.mongmong.namo.presentation.config.CategoryColor
 import org.joda.time.DateTime
 
 class GroupDailyMoimRVAdapter : RecyclerView.Adapter<GroupDailyMoimRVAdapter.ViewHolder>() {
 
-    private val groupSchedule = ArrayList<MoimSchedule>()
+    private val groupSchedule = ArrayList<MoimScheduleBody>()
     lateinit var colorArray: ArrayList<String>
     private lateinit var context : Context
 
     interface MoimScheduleClickListener {
-        fun onContentClicked(groupSchedule: MoimSchedule)
-        fun onDiaryIconClicked(groupSchedule: MoimSchedule)
+        fun onContentClicked(groupSchedule: MoimScheduleBody)
+        fun onDiaryIconClicked(groupSchedule: MoimScheduleBody)
     }
 
     private lateinit var moimScheduleClickListener : MoimScheduleClickListener
@@ -54,7 +54,7 @@ class GroupDailyMoimRVAdapter : RecyclerView.Adapter<GroupDailyMoimRVAdapter.Vie
     override fun getItemCount(): Int = groupSchedule.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addGroupSchedule(personal : ArrayList<MoimSchedule>) {
+    fun addGroupSchedule(personal : ArrayList<MoimScheduleBody>) {
         this.groupSchedule.clear()
         this.groupSchedule.addAll(personal)
         notifyDataSetChanged()
@@ -63,7 +63,7 @@ class GroupDailyMoimRVAdapter : RecyclerView.Adapter<GroupDailyMoimRVAdapter.Vie
     inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("ResourceType")
-        fun bind(groupSchedule: MoimSchedule) {
+        fun bind(groupSchedule: MoimScheduleBody) {
             val time =
                 DateTime(groupSchedule.startDate * 1000L).toString("HH:mm") + " - " + DateTime(groupSchedule.endDate * 1000L).toString(
                     "HH:mm"

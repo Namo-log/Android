@@ -6,19 +6,13 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import com.mongmong.namo.presentation.config.BaseResponse
-import com.mongmong.namo.data.remote.group.DeleteMoimMemberView
-import com.mongmong.namo.domain.model.Group
-import com.mongmong.namo.data.remote.group.MoimService
-import com.mongmong.namo.domain.model.JoinGroupResponse
-import com.mongmong.namo.domain.model.UpdateGroupNameRequest
+import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.databinding.ActivityGroupInfoBinding
 import com.mongmong.namo.presentation.ui.group.adapter.GroupInfoMemberRVAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
@@ -50,7 +44,7 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private fun setAdapter() {
         binding.groupInfoMemberRv.layoutManager = GridLayoutManager(this, 2)
-        groupInfoMemberRVAdapter = GroupInfoMemberRVAdapter(viewModel.getGroup().moimUsers)
+        groupInfoMemberRVAdapter = GroupInfoMemberRVAdapter(viewModel.getGroup().groupMembers)
         binding.groupInfoMemberRv.adapter = groupInfoMemberRVAdapter
     }
 
@@ -81,7 +75,7 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
         val group = viewModel.getGroup()
         with(binding) {
             groupInfoGroupNameContentEt.setText(group?.groupName)
-            groupInfoMemberHeaderContentTv.text = group?.moimUsers?.size.toString()
+            groupInfoMemberHeaderContentTv.text = group?.groupMembers?.size.toString()
             groupInfoCodeTv.isSelected = true
             groupInfoCodeTv.text = group?.groupCode
         }

@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
-import com.mongmong.namo.domain.model.Group
+import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.databinding.FragmentGroupListBinding
 import com.mongmong.namo.presentation.ui.group.adapter.GroupListRVAdapter
 import com.mongmong.namo.presentation.utils.NetworkCheckerImpl

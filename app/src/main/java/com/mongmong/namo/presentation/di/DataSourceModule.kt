@@ -14,6 +14,8 @@ import com.mongmong.namo.data.local.dao.ScheduleDao
 import com.mongmong.namo.data.remote.category.CategoryApiService
 import com.mongmong.namo.data.remote.diary.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupApiService
+import com.mongmong.namo.data.remote.group.GroupDiaryApiService
+import com.mongmong.namo.data.remote.group.GroupScheduleApiService
 import com.mongmong.namo.data.remote.schedule.ScheduleApiService
 import dagger.Module
 import dagger.Provides
@@ -29,19 +31,20 @@ object DataSourceModule {
     fun provideLocalScheduleDataSource(scheduleDao: ScheduleDao): LocalScheduleDataSource = LocalScheduleDataSource(scheduleDao)
     @Provides
     fun provideRemoteScheduleDataSource(
-        apiService: ScheduleApiService, // 개인 쪽
-        groupApiService: GroupApiService // 그룹 쪽
-    ): RemoteScheduleDataSource = RemoteScheduleDataSource(apiService, groupApiService)
+        scheduleApiService: ScheduleApiService,
+        groupScheduleApiService: GroupScheduleApiService
+    ): RemoteScheduleDataSource = RemoteScheduleDataSource(scheduleApiService, groupScheduleApiService)
 
     /** 기록 */
     @Provides
     fun provideLocalDiaryDataSource(diaryDao: DiaryDao): LocalDiaryDataSource = LocalDiaryDataSource(diaryDao)
     @Provides
     fun provideRemoteDiaryDataSource(
-        apiService: DiaryApiService,
+        diaryApiService: DiaryApiService,
+        groupDiaryApiService: GroupDiaryApiService,
         @ApplicationContext context: Context
     )
-    : RemoteDiaryDataSource = RemoteDiaryDataSource(apiService, context)
+    : RemoteDiaryDataSource = RemoteDiaryDataSource(diaryApiService, groupDiaryApiService, context)
 
     /** 카테고리 */
     @Provides

@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
@@ -20,7 +19,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,10 +26,10 @@ import org.joda.time.DateTime
 import com.mongmong.namo.R
 import com.mongmong.namo.data.remote.diary.*
 import com.mongmong.namo.databinding.ActivityMoimDiaryBinding
-import com.mongmong.namo.domain.model.MoimSchedule
-import com.mongmong.namo.domain.model.MoimDiaryResult
-import com.mongmong.namo.domain.model.GroupUser
-import com.mongmong.namo.domain.model.MoimActivity
+import com.mongmong.namo.domain.model.group.MoimActivity
+import com.mongmong.namo.domain.model.group.MoimDiaryResult
+import com.mongmong.namo.domain.model.group.MoimScheduleBody
+import com.mongmong.namo.domain.model.group.MoimScheduleMember
 import com.mongmong.namo.presentation.ui.diary.moimDiary.adapter.MoimMemberRVAdapter
 import com.mongmong.namo.presentation.ui.diary.moimDiary.adapter.MoimActivityRVAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
@@ -53,12 +51,12 @@ class MoimDiaryActivity : AppCompatActivity(),
     private lateinit var memberadapter: MoimMemberRVAdapter  // 그룹 멤버 리스트 보여주기
     private lateinit var activityAdapter: MoimActivityRVAdapter // 각 장소 item
 
-    private lateinit var groupMembers: List<GroupUser>
+    private lateinit var groupMembers: List<MoimScheduleMember>
     private lateinit var groupData: MoimDiaryResult
 
     private lateinit var memberIntList: List<Long>
     private lateinit var repo: DiaryRepository
-    private lateinit var moimSchedule: MoimSchedule
+    private lateinit var moimScheduleBody: MoimScheduleBody
 
     private var preActivities = emptyList<MoimActivity>()
     private var placeSchedule = ArrayList<MoimActivity>()
@@ -95,8 +93,8 @@ class MoimDiaryActivity : AppCompatActivity(),
 
     private fun hasDiaryPlace(getHasDiaryBoolean: Boolean) {
         if (!getHasDiaryBoolean) {  // groupPlace가 없을 때, 저장하기
-            moimSchedule = intent?.getSerializableExtra("groupSchedule") as MoimSchedule
-            Log.d("hasDiaryPlace", "$moimSchedule")
+            moimScheduleBody = intent?.getSerializableExtra("groupSchedule") as MoimScheduleBody
+            Log.d("hasDiaryPlace", "$moimScheduleBody")
             placeSchedule.add(MoimActivity(0L, "", 0, arrayListOf(), arrayListOf()))
             setViewOnNoDiary()
             binding.groupSaveTv.apply {
@@ -202,17 +200,17 @@ class MoimDiaryActivity : AppCompatActivity(),
 
     private fun setViewOnNoDiary() {
         // 그룹 장소가 없을 때, 그룹 스케줄에서 가져온 데이터 바인딩
-        val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(moimSchedule.startDate * 1000)
+        val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(moimScheduleBody.startDate * 1000)
         binding.groupAddInputDateTv.text = formatDate
-        binding.groupAddInputPlaceTv.text = moimSchedule.locationName
-        binding.groupAddTitleTv.text = moimSchedule.name
+        binding.groupAddInputPlaceTv.text = moimScheduleBody.locationName
+        binding.groupAddTitleTv.text = moimScheduleBody.name
         binding.diaryTodayMonthTv.text = DateTime(groupData.startDate * 1000).toString("MMM", Locale.ENGLISH)
         binding.diaryTodayNumTv.text = DateTime(groupData.startDate*1000).toString("dd")
         binding.groupAddPeopleTv.text = "참석자 (${groupMembers.size})"
 
-        val members = arrayListOf<GroupUser>()
-        moimSchedule.users.map {
-            members.add(GroupUser(it.userId, it.userName))
+        val members = arrayListOf<MoimScheduleMember>()
+        moimScheduleBody.users.map {
+            members.add(MoimScheduleMember(it.userId, it.userName))
         }
 
         groupMembers = members

@@ -1,6 +1,6 @@
 package com.mongmong.namo.data.remote.category
 
-import com.mongmong.namo.data.local.entity.home.CategoryForUpload
+import com.mongmong.namo.domain.model.CategoryRequestBody
 import com.mongmong.namo.domain.model.DeleteCategoryResponse
 import com.mongmong.namo.domain.model.EditCategoryResponse
 import com.mongmong.namo.domain.model.GetCategoryResponse
@@ -17,14 +17,14 @@ interface CategoryApiService {
     // 카테고리 생성
     @POST("/categories")
     suspend fun postCategory(
-        @Body body: CategoryForUpload
+        @Body body: CategoryRequestBody
     ) : PostCategoryResponse
 
     // 카테고리 수정
     @PATCH("/categories/{categoryId}")
     suspend fun patchCategory(
         @Path("categoryId") categoryId: Long,
-        @Body body: CategoryForUpload
+        @Body body: CategoryRequestBody
     ) : EditCategoryResponse
 
     // 카테고리 조회

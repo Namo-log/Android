@@ -6,8 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.domain.model.MoimActivity
-import com.mongmong.namo.domain.model.MoimDiaryResult
+import com.mongmong.namo.domain.model.group.MoimActivity
+import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.usecase.FindCategoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

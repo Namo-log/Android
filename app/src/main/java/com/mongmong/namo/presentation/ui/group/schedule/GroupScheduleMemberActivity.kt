@@ -6,14 +6,14 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.GROUP_MEMBER_INTENT_KEY
-import com.mongmong.namo.domain.model.MoimListUserList
+import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
 import com.mongmong.namo.databinding.ActivityGroupScheduleMemberBinding
 import com.mongmong.namo.presentation.ui.group.adapter.GroupScheduleMemberRVAdapter
 
 class GroupScheduleMemberActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityGroupScheduleMemberBinding
-    private lateinit var members : MoimListUserList
+    private lateinit var members : MoimSchduleMemberList
     private lateinit var selectedPosition : ArrayList<Boolean>
     private lateinit var groupScheduleMemberRVAdapter : GroupScheduleMemberRVAdapter
 
@@ -22,7 +22,7 @@ class GroupScheduleMemberActivity : AppCompatActivity() {
         binding = ActivityGroupScheduleMemberBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        members = intent.getSerializableExtra("members") as MoimListUserList
+        members = intent.getSerializableExtra("members") as MoimSchduleMemberList
         val selected = intent.getLongArrayExtra("selectedIds")
         val selectedIdsList = selected?.toMutableList() ?: ArrayList() // Long 배열을 ArrayList<Long>로 변환
 
@@ -56,7 +56,7 @@ class GroupScheduleMemberActivity : AppCompatActivity() {
         }
 
         binding.groupScheduleMemberSave.setOnClickListener {
-            val selectedMembers = MoimListUserList(groupScheduleMemberRVAdapter.getSelectedMembers())
+            val selectedMembers = MoimSchduleMemberList(groupScheduleMemberRVAdapter.getSelectedMembers())
             Log.d("GROUP_MEMBER", selectedMembers.toString())
             val intent = Intent(this, GroupScheduleActivity::class.java)
             intent.putExtra(GROUP_MEMBER_INTENT_KEY, selectedMembers)

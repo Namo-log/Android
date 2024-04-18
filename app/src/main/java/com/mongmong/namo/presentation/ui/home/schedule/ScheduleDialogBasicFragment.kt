@@ -39,7 +39,6 @@ import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.data.remote.group.EditMoimScheduleView
 import com.mongmong.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.mongmong.namo.presentation.ui.home.notify.PushNotificationReceiver
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity

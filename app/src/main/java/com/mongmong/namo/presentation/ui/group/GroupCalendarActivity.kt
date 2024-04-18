@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.mongmong.namo.data.local.NamoDatabase
-import com.mongmong.namo.domain.model.Group
+import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.databinding.ActivityGroupCalendarBinding
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupCalendarAdapter
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupCalendarAdapter.Companion.GROUP_ID

@@ -16,7 +16,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
-import com.mongmong.namo.domain.model.Group
+import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.databinding.FragmentGroupCalendarBinding
 import com.mongmong.namo.presentation.ui.group.GroupInfoActivity
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupCalendarAdapter

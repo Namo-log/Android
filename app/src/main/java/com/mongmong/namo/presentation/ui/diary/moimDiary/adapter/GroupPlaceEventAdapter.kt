@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemDiaryGroupEventBinding
-import com.mongmong.namo.domain.model.MoimActivity
+import com.mongmong.namo.domain.model.group.MoimActivity
 import java.text.NumberFormat
 import java.util.*
 

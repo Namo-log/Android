@@ -348,37 +348,6 @@ class DiaryService {
                 }
             })
     }
-
-    fun addGroupAfterDiary(
-        groupScheduleIdx: Long,
-        content: String?
-    ) {
-        diaryRetrofitInterface.addGroupAfterDiary(groupScheduleIdx, content)
-            .enqueue(object : Callback<DiaryResponse> {
-
-                @SuppressLint("SuspiciousIndentation")
-                override fun onResponse(
-                    call: Call<DiaryResponse>,
-                    response: Response<DiaryResponse>
-                ) {
-                    val resp: DiaryResponse? = response.body()
-                    when (response.code()) {
-                        200 -> if (resp != null) {
-                            addGroupAfterDiaryView.onAddGroupAfterDiarySuccess(resp)
-                        }
-                        else -> addGroupAfterDiaryView.onAddGroupAfterDiaryFailure(response.toString())
-                    }
-
-                }
-
-                override fun onFailure(
-                    call: Call<DiaryResponse>,
-                    t: Throwable
-                ) {
-                    addGroupAfterDiaryView.onAddGroupAfterDiaryFailure(t.message.toString())
-                }
-            })
-    }
 }
 
 

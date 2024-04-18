@@ -10,9 +10,8 @@ import android.view.View
 import androidx.core.content.withStyledAttributes
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.domain.model.MoimSchedule
+import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.config.PaletteType
 import com.mongmong.namo.presentation.ui.home.calendar.data.StartEnd
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.DAYS_PER_WEEK
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
@@ -41,7 +40,7 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
     private val today = DateTime.now().withTimeAtStartOfDay().millis
 
     private val dayList = mutableListOf<DateTime>()
-    private val eventList = mutableListOf<MoimSchedule>()
+    private val eventList = mutableListOf<MoimScheduleBody>()
     private val categoryList = mutableListOf<Category>()
     private val orderList = mutableListOf<Int>()
     private val moreList = mutableListOf<Int>()
@@ -458,7 +457,7 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
         )
     }
 
-    private fun setBgPaintColor(event: MoimSchedule) {
+    private fun setBgPaintColor(event: MoimScheduleBody) {
       //  Log.d("BG_COLOR", event.toString())
         val paletteId = if (event.curMoimSchedule) 4
 //                        else {
@@ -491,7 +490,7 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
         dayList.addAll(getMonthList(DateTime(millis)))
     }
 
-    fun setScheduleList(events : List<MoimSchedule>) {
+    fun setScheduleList(events : List<MoimScheduleBody>) {
         eventList.clear()
         eventList.addAll(events)
     }
@@ -500,7 +499,7 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
         return dayList
     }
 
-    fun getScheduleList() : MutableList<MoimSchedule> {
+    fun getScheduleList() : MutableList<MoimScheduleBody> {
         return eventList
     }
 }

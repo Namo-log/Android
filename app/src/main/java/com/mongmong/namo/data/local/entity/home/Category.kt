@@ -2,6 +2,7 @@ package com.mongmong.namo.data.local.entity.home
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.mongmong.namo.domain.model.CategoryRequestBody
 import com.mongmong.namo.presentation.config.RoomState
 import java.io.Serializable
 
@@ -16,17 +17,11 @@ data class Category(
     var state : String = RoomState.DEFAULT.state,
     var serverId : Long = 0L
 ) : Serializable {
-    fun convertLocalCategoryToServer() : CategoryForUpload {
-        return CategoryForUpload(
+    fun convertLocalCategoryToServer() : CategoryRequestBody {
+        return CategoryRequestBody(
             name = this.name,
             paletteId = this.paletteId,
             isShare = this.isShare
         )
     }
 }
-
-data class CategoryForUpload(
-    val name : String,
-    val paletteId: Int,
-    val isShare: Boolean = true
-)

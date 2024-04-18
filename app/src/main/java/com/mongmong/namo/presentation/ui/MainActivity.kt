@@ -31,7 +31,6 @@ import com.mongmong.namo.presentation.config.BaseResponse
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.data.local.entity.home.CategoryForUpload
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.category.CategoryDeleteService
 import com.mongmong.namo.data.remote.category.CategoryDeleteView
@@ -54,6 +53,7 @@ import com.mongmong.namo.data.remote.schedule.GetAllScheduleView
 import com.mongmong.namo.domain.model.GetMonthScheduleResponse
 import com.mongmong.namo.domain.model.PostScheduleResponse
 import com.mongmong.namo.databinding.ActivityMainBinding
+import com.mongmong.namo.domain.model.CategoryRequestBody
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResult
 import com.mongmong.namo.presentation.config.RoomState
@@ -229,13 +229,13 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                     return
                 } else {
                     //POST
-                    CategoryService(this).tryPostCategory(CategoryForUpload(i.name, i.paletteId, i.isShare), i.categoryId)
+                    CategoryService(this).tryPostCategory(CategoryRequestBody(i.name, i.paletteId, i.isShare), i.categoryId)
                 }
             } else {
                 if (i.state == RoomState.DELETED.state) {
                     CategoryDeleteService(this).tryDeleteCategory(i.serverId, i.categoryId)
                 } else {
-                    CategoryService(this).tryPatchCategory(i.serverId, CategoryForUpload(i.name, paletteId, i.isShare), i.categoryId)
+                    CategoryService(this).tryPatchCategory(i.serverId, CategoryRequestBody(i.name, paletteId, i.isShare), i.categoryId)
                 }
 
             }

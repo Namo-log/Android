@@ -3,14 +3,14 @@ package com.mongmong.namo.data.repositoriyImpl
 import android.util.Log
 import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
-import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
-import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
-import com.mongmong.namo.domain.model.MoimSchedule
-import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
-import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
+import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
+import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
+import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
+import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
@@ -122,24 +122,24 @@ class ScheduleRepositoryImpl @Inject constructor(
         return remoteScheduleDataSource.getMonthMoimSchedule(yearMonth)
     }
 
-    override suspend fun editMoimScheduleCategory(category: PatchMoimScheduleCategoryBody) {
+    override suspend fun editMoimScheduleCategory(category: PatchMoimScheduleCategoryRequestBody) {
         return remoteScheduleDataSource.editMoimScheduleCategory(category)
     }
 
-    override suspend fun editMoimScheduleAlert(alert: MoimScheduleAlarmBody) {
+    override suspend fun editMoimScheduleAlert(alert: PatchMoimScheduleAlarmRequestBody) {
         return remoteScheduleDataSource.editMoimScheduleAlert(alert)
     }
 
     /** 그룹 */
-    override suspend fun getGroupAllSchedules(groupId: Long): List<MoimSchedule> {
+    override suspend fun getGroupAllSchedules(groupId: Long): List<MoimScheduleBody> {
         return remoteScheduleDataSource.getGroupAllSchedules(groupId)
     }
 
-    override suspend fun addMoimSchedule(moimSchedule: AddMoimSchedule) {
+    override suspend fun addMoimSchedule(moimSchedule: AddMoimScheduleRequestBody) {
         return remoteScheduleDataSource.addMoimSchedule(moimSchedule)
     }
 
-    override suspend fun editMoimSchedule(moimSchedule: EditMoimSchedule) {
+    override suspend fun editMoimSchedule(moimSchedule: EditMoimScheduleRequestBody) {
         return remoteScheduleDataSource.editMoimSchedule(moimSchedule)
     }
 

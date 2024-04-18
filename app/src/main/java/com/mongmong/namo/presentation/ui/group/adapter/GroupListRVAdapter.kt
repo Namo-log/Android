@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mongmong.namo.R
-import com.mongmong.namo.domain.model.Group
+import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.databinding.ItemGroupListBinding
 
 class GroupListRVAdapter(private var groups: List<Group>):  RecyclerView.Adapter<GroupListRVAdapter.ViewHolder>() {
@@ -58,9 +58,9 @@ class GroupListRVAdapter(private var groups: List<Group>):  RecyclerView.Adapter
                 .circleCrop()
                 .into(binding.itemGroupCoverImgIv)
 
-            binding.itemGroupTotalPeopleNumTv.text = moim.moimUsers.size.toString()
+            binding.itemGroupTotalPeopleNumTv.text = moim.groupMembers.size.toString()
 
-            val userNameList: List<String> = moim.moimUsers.map { it.userName }
+            val userNameList: List<String> = moim.groupMembers.map { it.userName }
             binding.itemGroupTotalPeopleNameTv.text = userNameList.joinToString()
         }
     }

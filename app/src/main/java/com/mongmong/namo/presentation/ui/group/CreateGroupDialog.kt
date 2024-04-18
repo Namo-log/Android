@@ -87,7 +87,7 @@ class CreateGroupDialog : DialogFragment() {
 
     private fun initObserve() {
         viewModel.addGroupResult.observe(viewLifecycleOwner) {
-            if(it.moimId != 0L) {
+            if(it.groupId != 0L) {
                 Toast.makeText(requireContext(), "그룹 생성에 성공하였습니다.", Toast.LENGTH_SHORT).show()
                 listener?.onGroupCreated()
                 dismiss()

@@ -1,8 +1,8 @@
 package com.mongmong.namo.data.datasource.category
 
 import android.util.Log
-import com.mongmong.namo.data.local.entity.home.CategoryForUpload
 import com.mongmong.namo.data.remote.category.CategoryApiService
+import com.mongmong.namo.domain.model.CategoryRequestBody
 import com.mongmong.namo.domain.model.DeleteCategoryResponse
 import com.mongmong.namo.domain.model.EditCategoryResponse
 import com.mongmong.namo.domain.model.EditCategoryResult
@@ -16,7 +16,7 @@ class RemoteCategoryDataSource @Inject constructor(
     private val apiService: CategoryApiService
 ) {
     suspend fun addCategoryToServer(
-        category: CategoryForUpload,
+        category: CategoryRequestBody,
     ): PostCategoryResponse {
         var categoryResponse = PostCategoryResponse(result = PostCategoryResult(-1))
 
@@ -35,7 +35,7 @@ class RemoteCategoryDataSource @Inject constructor(
 
     suspend fun editCategoryToServer(
         categoryId: Long,
-        category: CategoryForUpload
+        category: CategoryRequestBody
     ) : EditCategoryResponse {
         var categoryResponse = EditCategoryResponse(result = EditCategoryResult(categoryId))
 

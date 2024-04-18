@@ -3,6 +3,7 @@ package com.mongmong.namo.data.local.entity.home
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.mongmong.namo.domain.model.ScheduleRequestBody
 import com.mongmong.namo.presentation.config.RoomState
 import java.io.Serializable
 
@@ -60,8 +61,8 @@ data class Schedule(
     var moimSchedule: Boolean = false
 
 ) : Serializable {
-    fun convertLocalScheduleToServer() : ScheduleForUpload {
-        return ScheduleForUpload(
+    fun convertLocalScheduleToServer() : ScheduleRequestBody {
+        return ScheduleRequestBody(
             name = this.title,
             startDate = this.startLong,
             endDate = this.endLong,
@@ -74,16 +75,3 @@ data class Schedule(
         )
     }
 }
-
-
-data class ScheduleForUpload(
-    var name: String = "",
-    var startDate: Long = 0L,
-    var endDate: Long = 0L,
-    var interval: Int = 0,
-    var alarmDate: List<Int>? = listOf(),
-    var x: Double = 0.0,
-    var y: Double = 0.0,
-    var locationName: String = "없음",
-    var categoryId: Long = 0L
-)

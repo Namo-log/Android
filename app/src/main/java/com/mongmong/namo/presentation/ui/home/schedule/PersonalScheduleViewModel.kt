@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
-import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
-import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
+import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
+import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecase.FindCategoryUseCase
 import com.mongmong.namo.domain.usecase.GetCategoriesUseCase
@@ -105,14 +105,14 @@ class PersonalScheduleViewModel @Inject constructor(
     /** 모임 일정 카테고리 수정 */
     fun editMoimScheduleCategory(scheduleId: Long, categoryId: Long) {
         viewModelScope.launch {
-            repository.editMoimScheduleCategory(PatchMoimScheduleCategoryBody(scheduleId, categoryId))
+            repository.editMoimScheduleCategory(PatchMoimScheduleCategoryRequestBody(scheduleId, categoryId))
         }
     }
 
     /** 모임 일정 알림 수정 */
     fun editMoimScheduleAlert(scheduleId: Long, alertList: List<Int>) {
         viewModelScope.launch {
-            repository.editMoimScheduleAlert(MoimScheduleAlarmBody(scheduleId, alertList))
+            repository.editMoimScheduleAlert(PatchMoimScheduleAlarmRequestBody(scheduleId, alertList))
         }
     }
 

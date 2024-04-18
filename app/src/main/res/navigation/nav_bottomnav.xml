@@ -76,7 +76,7 @@
             app:popUpToInclusive="true" />
         <argument
             android:name="group"
-            app:argType="com.mongmong.namo.domain.model.Group" />
+            app:argType="com.mongmong.namo.domain.model.group.Group" />
     </fragment>
     <fragment
         android:id="@+id/groupModifyFragment"

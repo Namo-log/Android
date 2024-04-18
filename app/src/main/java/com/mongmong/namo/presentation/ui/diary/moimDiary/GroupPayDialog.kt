@@ -13,8 +13,8 @@ import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.databinding.DialogGroupPayBinding
-import com.mongmong.namo.domain.model.GroupUser
-import com.mongmong.namo.domain.model.MoimActivity
+import com.mongmong.namo.domain.model.group.MoimActivity
+import com.mongmong.namo.domain.model.group.MoimScheduleMember
 import com.mongmong.namo.presentation.ui.diary.moimDiary.adapter.GroupPayMemberRVAdapter
 import java.lang.Boolean.TRUE
 import java.text.NumberFormat
@@ -23,7 +23,7 @@ import kotlin.collections.ArrayList
 
 
 class GroupPayDialog(
-    private var placeMember: List<GroupUser>,
+    private var placeMember: List<MoimScheduleMember>,
     private var placeSchedule: MoimActivity,
     private val pay: (Long) -> Unit,
     private val checkedMember: (List<Long>) -> Unit

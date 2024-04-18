@@ -6,16 +6,14 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.R
-import com.mongmong.namo.domain.model.MoimSchedule
+import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.databinding.ItemSchedulePreviewMoimBinding
 import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.config.PaletteType
 import org.joda.time.DateTime
 
 class GroupDailyPersonalRVAdapter() : RecyclerView.Adapter<GroupDailyPersonalRVAdapter.ViewHolder>() {
 
-    private val personal = ArrayList<MoimSchedule>()
+    private val personal = ArrayList<MoimScheduleBody>()
     private lateinit var context : Context
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
@@ -33,7 +31,7 @@ class GroupDailyPersonalRVAdapter() : RecyclerView.Adapter<GroupDailyPersonalRVA
     override fun getItemCount(): Int = personal.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addPersonal(personal : ArrayList<MoimSchedule>) {
+    fun addPersonal(personal : ArrayList<MoimScheduleBody>) {
         this.personal.clear()
         this.personal.addAll(personal)
         notifyDataSetChanged()
@@ -42,7 +40,7 @@ class GroupDailyPersonalRVAdapter() : RecyclerView.Adapter<GroupDailyPersonalRVA
     inner class ViewHolder(val binding : ItemSchedulePreviewMoimBinding) : RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("ResourceType")
-        fun bind(personal: MoimSchedule) {
+        fun bind(personal: MoimScheduleBody) {
             val colorArray = CategoryColor.getAllColors()
 
             val time =

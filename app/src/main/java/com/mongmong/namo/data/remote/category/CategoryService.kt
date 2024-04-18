@@ -1,7 +1,7 @@
 package com.mongmong.namo.data.remote.category
 
 import android.util.Log
-import com.mongmong.namo.data.local.entity.home.CategoryForUpload
+import com.mongmong.namo.domain.model.CategoryRequestBody
 import com.mongmong.namo.domain.model.GetCategoryResponse
 import com.mongmong.namo.presentation.config.ApplicationClass
 import retrofit2.Call
@@ -11,7 +11,7 @@ import retrofit2.Response
 class CategoryService(val view: CategoryDetailView) {
     val retrofitInterface = ApplicationClass.sRetrofit.create(CategoryApiService::class.java)
 
-    fun tryPostCategory(body: CategoryForUpload, id: Long) {
+    fun tryPostCategory(body: CategoryRequestBody, id: Long) {
 //        retrofitInterface.postCategory(body).enqueue(object : Callback<PostCategoryResponse> {
 //
 //            override fun onResponse(call: Call<PostCategoryResponse>, response: Response<PostCategoryResponse>) {
@@ -28,7 +28,7 @@ class CategoryService(val view: CategoryDetailView) {
 //        })
     }
 
-    fun tryPatchCategory(categoryId: Long, body: CategoryForUpload, localId : Long) {
+    fun tryPatchCategory(categoryId: Long, body: CategoryRequestBody, localId : Long) {
 //        retrofitInterface.patchCategory(categoryId, body).enqueue(object : Callback<PostCategoryResponse> {
 //
 //            override fun onResponse(call: Call<PostCategoryResponse>, response: Response<PostCategoryResponse>) {

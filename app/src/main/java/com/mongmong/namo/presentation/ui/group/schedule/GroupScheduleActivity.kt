@@ -27,12 +27,12 @@ import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_NAME_INTEN
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_X_INTENT_KEY
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_Y_INTENT_KEY
 import com.mongmong.namo.R
-import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
-import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
-import com.mongmong.namo.domain.model.Group
-import com.mongmong.namo.domain.model.MoimListUserList
-import com.mongmong.namo.domain.model.MoimSchedule
+import com.mongmong.namo.domain.model.group.Group
+import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
+import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.databinding.ActivityGroupScheduleBinding
+import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
+import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.presentation.ui.home.schedule.MoimScheduleViewModel
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.getInterval
@@ -60,13 +60,13 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
     private var place_y : Double = 0.0
 
     private lateinit var getMemberResult : ActivityResultLauncher<Intent>
-    private var originalMembers : MoimListUserList = MoimListUserList(listOf())
-    private var selectedMembers : MoimListUserList = MoimListUserList(listOf())
+    private var originalMembers : MoimSchduleMemberList = MoimSchduleMemberList(listOf())
+    private var selectedMembers : MoimSchduleMemberList = MoimSchduleMemberList(listOf())
     private var selectedIds : ArrayList<Long> = arrayListOf()
     private lateinit var group : Group
     private var date = DateTime(System.currentTimeMillis())
-    private var postGroupSchedule : AddMoimSchedule = AddMoimSchedule()
-    private var editGroupSchedule : EditMoimSchedule = EditMoimSchedule()
+    private var postGroupSchedule : AddMoimScheduleRequestBody = AddMoimScheduleRequestBody()
+    private var editGroupSchedule : EditMoimScheduleRequestBody = EditMoimScheduleRequestBody()
 
     private var prevClicked : TextView? = null
     private var startDateTime = DateTime(System.currentTimeMillis())
@@ -99,13 +99,13 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private fun setInit() {
         group = intent.getSerializableExtra("group") as Group
-        originalMembers.memberList = group.moimUsers
+        originalMembers.memberList = group.groupMembers
 
         val nowDay = intent.getLongExtra("nowDay", 0L)
-        val moimSchedule = intent.getSerializableExtra("moimSchedule") as? MoimSchedule
-        if (moimSchedule != null) { // 모일 일정 수정
+        val moimScheduleBody = intent.getSerializableExtra("moimSchedule") as? MoimScheduleBody
+        if (moimScheduleBody != null) { // 모일 일정 수정
             isPostOrEdit = false
-            setEditSchedule(moimSchedule)
+            setEditSchedule(moimScheduleBody)
             binding.scheduleDeleteBtn.visibility = View.VISIBLE
             binding.dialogGroupScheduleHeaderTv.text = "일정 편집"
             setContent()
@@ -133,22 +133,22 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         binding.scheduleContainerLayout.startAnimation(slideAnimation)
     }
 
-    private fun setEditSchedule(moimSchedule: MoimSchedule) {
-        editGroupSchedule.moimScheduleId = moimSchedule.moimScheduleId
-        editGroupSchedule.name = moimSchedule.name
-        editGroupSchedule.startLong = moimSchedule.startDate
-        editGroupSchedule.endLong = moimSchedule.endDate
-        editGroupSchedule.interval = moimSchedule.interval
-        editGroupSchedule.x = moimSchedule.x
-        editGroupSchedule.y = moimSchedule.y
-        editGroupSchedule.locationName = moimSchedule.locationName
+    private fun setEditSchedule(moimScheduleBody: MoimScheduleBody) {
+        editGroupSchedule.moimScheduleId = moimScheduleBody.moimScheduleId
+        editGroupSchedule.name = moimScheduleBody.name
+        editGroupSchedule.startLong = moimScheduleBody.startDate
+        editGroupSchedule.endLong = moimScheduleBody.endDate
+        editGroupSchedule.interval = moimScheduleBody.interval
+        editGroupSchedule.x = moimScheduleBody.x
+        editGroupSchedule.y = moimScheduleBody.y
+        editGroupSchedule.locationName = moimScheduleBody.locationName
 
         place_name = editGroupSchedule.name
         place_x = editGroupSchedule.x
         place_y = editGroupSchedule.y
 
-        editGroupSchedule.users = moimSchedule.users.map { user -> user.userId }
-        selectedIds = moimSchedule.users.map { user -> user.userId } as ArrayList<Long>
+        editGroupSchedule.users = moimScheduleBody.users.map { user -> user.userId }
+        selectedIds = moimScheduleBody.users.map { user -> user.userId } as ArrayList<Long>
         Log.d("SetEditSchedule", editGroupSchedule.toString())
     }
 
@@ -222,14 +222,14 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     /** 모임 일정 추가 */
-    private fun insertSchedule(moimSchedule: AddMoimSchedule) {
+    private fun insertSchedule(moimSchedule: AddMoimScheduleRequestBody) {
         viewModel.postMoimSchedule(moimSchedule)
         Toast.makeText(this, "모임 일정이 등록되었습니다.", Toast.LENGTH_SHORT).show()
         finish()
     }
 
     /** 모임 일정 수정 */
-    private fun editSchedule(moimSchedule: EditMoimSchedule) {
+    private fun editSchedule(moimSchedule: EditMoimScheduleRequestBody) {
         viewModel.editMoimSchedule(moimSchedule)
         Toast.makeText(this, "모임 일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
         finish()
@@ -291,7 +291,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         binding.dialogGroupScheduleTitleEt.setText(editGroupSchedule.name)
 
         //참여자 넣어야됨
-        binding.dialogGroupScheduleMemberTv.text = group.moimUsers.filter { it.userId in editGroupSchedule.users }.map { it.userName }.joinToString(", ")
+        binding.dialogGroupScheduleMemberTv.text = group.groupMembers.filter { it.userId in editGroupSchedule.users }.map { it.userName }.joinToString(", ")
 
         //시작일, 종료일, 시작시간, 종료시간
         setDateTime(DateTime(editGroupSchedule.startLong * 1000L), DateTime(editGroupSchedule.endLong * 1000L))
@@ -407,7 +407,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
     private fun setResultMember() {
         getMemberResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                selectedMembers = result.data?.getSerializableExtra(GROUP_MEMBER_INTENT_KEY) as MoimListUserList
+                selectedMembers = result.data?.getSerializableExtra(GROUP_MEMBER_INTENT_KEY) as MoimSchduleMemberList
                 setMembers()
             }
         }

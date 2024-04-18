@@ -11,7 +11,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -25,8 +24,6 @@ import com.mongmong.namo.presentation.utils.NetworkManager
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
-import com.mongmong.namo.R
-import com.mongmong.namo.data.local.entity.home.CategoryForUpload
 import com.mongmong.namo.presentation.config.PaletteType
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.config.RoomState
