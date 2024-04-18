@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.group
+package com.mongmong.namo.presentation.ui.group.schedule
 
 import android.content.Intent
 import android.os.Bundle

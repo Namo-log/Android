@@ -24,7 +24,7 @@ import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_X_INTENT_K
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_Y_INTENT_KEY
 import com.mongmong.namo.databinding.ActivityMapBinding
 import com.mongmong.namo.BuildConfig
-import com.mongmong.namo.presentation.ui.group.GroupScheduleActivity
+import com.mongmong.namo.presentation.ui.group.schedule.GroupScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.map.adapter.MapRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.KakaoAPI

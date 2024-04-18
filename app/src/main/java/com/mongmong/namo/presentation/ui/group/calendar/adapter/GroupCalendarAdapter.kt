@@ -1,8 +1,8 @@
-package com.mongmong.namo.presentation.ui.group.calendar
+package com.mongmong.namo.presentation.ui.group.calendar.adapter
 
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.mongmong.namo.presentation.ui.group.calendar.GroupCalendarMonthFragment
 import org.joda.time.DateTime
 
 class GroupCalendarAdapter(fm : FragmentActivity) : FragmentStateAdapter(fm) {

@@ -10,8 +10,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.domain.model.Group
 import com.mongmong.namo.databinding.ActivityGroupCalendarBinding
-import com.mongmong.namo.presentation.ui.group.calendar.GroupCalendarAdapter
-import com.mongmong.namo.presentation.ui.group.calendar.GroupCalendarAdapter.Companion.GROUP_ID
+import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupCalendarAdapter
+import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupCalendarAdapter.Companion.GROUP_ID
 import com.mongmong.namo.presentation.ui.home.calendar.SetMonthDialog
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime

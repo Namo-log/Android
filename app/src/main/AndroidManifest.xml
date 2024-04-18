@@ -91,11 +91,11 @@
             android:name=".presentation.ui.group.GroupCalendarActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.group.GroupScheduleActivity"
+            android:name=".presentation.ui.group.schedule.GroupScheduleActivity"
             android:exported="false"
             android:theme="@style/SlideAnimation" />
         <activity
-            android:name=".presentation.ui.group.GroupScheduleMemberActivity"
+            android:name=".presentation.ui.group.schedule.GroupScheduleMemberActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialTransparent" />
         <activity
