@@ -11,10 +11,10 @@ import retrofit2.Response
 
 class LoginService(val view: LoginFragment) {
 
-    val loginRetrofitInterface = ApplicationClass.bRetrofit.create(LoginRetrofitInterface::class.java)
+    val loginApiService = ApplicationClass.bRetrofit.create(LoginApiService::class.java)
 
     fun tryPostKakaoSDK(body: TokenBody) {
-        loginRetrofitInterface.postKakaoSDK(body).enqueue(object : Callback<LoginResponse> {
+        loginApiService.postKakaoSDK(body).enqueue(object : Callback<LoginResponse> {
 
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 view.onPostKakaoSDKSuccess(response.body() as LoginResponse)
@@ -28,7 +28,7 @@ class LoginService(val view: LoginFragment) {
     }
 
     fun tryPostNaverSDK(body: TokenBody) {
-        loginRetrofitInterface.postNaverSDK(body).enqueue(object : Callback<LoginResponse> {
+        loginApiService.postNaverSDK(body).enqueue(object : Callback<LoginResponse> {
 
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 view.onPostNaverSDKSuccess(response.body() as LoginResponse)

@@ -11,7 +11,7 @@ import retrofit2.Response
 
 class LogoutService(val view: CustomSettingFramgent) {
 
-    val retrofitInterface = ApplicationClass.bRetrofit.create(LoginRetrofitInterface::class.java)
+    val retrofitInterface = ApplicationClass.bRetrofit.create(LoginApiService::class.java)
 
     fun tryPostLogout(body: LogoutBody) {
         retrofitInterface.postLogout(body).enqueue(object : Callback<BaseResponse> {

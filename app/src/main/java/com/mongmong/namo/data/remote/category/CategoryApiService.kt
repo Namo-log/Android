@@ -5,7 +5,6 @@ import com.mongmong.namo.domain.model.DeleteCategoryResponse
 import com.mongmong.namo.domain.model.EditCategoryResponse
 import com.mongmong.namo.domain.model.GetCategoryResponse
 import com.mongmong.namo.domain.model.PostCategoryResponse
-import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -14,7 +13,7 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-interface CategoryRetrofitInterface {
+interface CategoryApiService {
     // 카테고리 생성
     @POST("/categories")
     suspend fun postCategory(

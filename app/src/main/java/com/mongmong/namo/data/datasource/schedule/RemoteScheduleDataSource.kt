@@ -5,7 +5,7 @@ import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
 import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
 import com.mongmong.namo.data.local.entity.home.ScheduleForUpload
 import com.mongmong.namo.data.remote.group.GroupApiService
-import com.mongmong.namo.data.remote.schedule.ScheduleRetrofitInterface
+import com.mongmong.namo.data.remote.schedule.ScheduleApiService
 import com.mongmong.namo.domain.model.AddMoimScheduleResponse
 import com.mongmong.namo.domain.model.DeleteScheduleResponse
 import com.mongmong.namo.domain.model.EditScheduleResponse
@@ -23,7 +23,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class RemoteScheduleDataSource @Inject constructor(
-    private val personalApiService: ScheduleRetrofitInterface,
+    private val personalApiService: ScheduleApiService,
     private val groupApiService: GroupApiService,
 ) {
     /** 개인 */

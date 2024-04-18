@@ -1,9 +1,9 @@
 package com.mongmong.namo.presentation.di
 
-import com.mongmong.namo.data.remote.category.CategoryRetrofitInterface
+import com.mongmong.namo.data.remote.category.CategoryApiService
 import com.mongmong.namo.data.remote.diary.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupApiService
-import com.mongmong.namo.data.remote.schedule.ScheduleRetrofitInterface
+import com.mongmong.namo.data.remote.schedule.ScheduleApiService
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.KakaoAPI
 import dagger.Module
 import dagger.Provides
@@ -18,7 +18,7 @@ object ServiceModule {
     /** 일정 */
     @Provides
     @Singleton
-    fun provideScheduleService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : ScheduleRetrofitInterface = retrofit.create(ScheduleRetrofitInterface::class.java)
+    fun provideScheduleService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : ScheduleApiService = retrofit.create(ScheduleApiService::class.java)
 
     /** 기록 */
     @Provides
@@ -29,7 +29,7 @@ object ServiceModule {
     /** 카테고리 */
     @Provides
     @Singleton
-    fun provideCategoryService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : CategoryRetrofitInterface = retrofit.create(CategoryRetrofitInterface::class.java)
+    fun provideCategoryService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : CategoryApiService = retrofit.create(CategoryApiService::class.java)
 
     /** 그룹 **/
     @Provides

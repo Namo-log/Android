@@ -41,7 +41,7 @@ class ScheduleService {
         this.getMonthMoimScheduleView = getMonthMoimScheduleView
     }
 
-    val eventRetrofitInterface = ApplicationClass.sRetrofit.create(ScheduleRetrofitInterface::class.java)
+    val eventRetrofitInterface = ApplicationClass.sRetrofit.create(ScheduleApiService::class.java)
 
     fun postSchedule(body : ScheduleForUpload, scheduleId : Long) {
         /*

@@ -16,7 +16,7 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-interface ScheduleRetrofitInterface {
+interface ScheduleApiService {
     /** 개인 일정 */
     @POST("schedules")
     suspend fun postSchedule(

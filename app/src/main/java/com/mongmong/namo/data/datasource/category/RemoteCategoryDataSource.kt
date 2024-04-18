@@ -1,9 +1,8 @@
 package com.mongmong.namo.data.datasource.category
 
 import android.util.Log
-import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.local.entity.home.CategoryForUpload
-import com.mongmong.namo.data.remote.category.CategoryRetrofitInterface
+import com.mongmong.namo.data.remote.category.CategoryApiService
 import com.mongmong.namo.domain.model.DeleteCategoryResponse
 import com.mongmong.namo.domain.model.EditCategoryResponse
 import com.mongmong.namo.domain.model.EditCategoryResult
@@ -14,7 +13,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class RemoteCategoryDataSource @Inject constructor(
-    private val apiService: CategoryRetrofitInterface
+    private val apiService: CategoryApiService
 ) {
     suspend fun addCategoryToServer(
         category: CategoryForUpload,
