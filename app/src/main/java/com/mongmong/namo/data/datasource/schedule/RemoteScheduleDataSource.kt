@@ -2,7 +2,7 @@ package com.mongmong.namo.data.datasource.schedule
 
 import android.util.Log
 import com.mongmong.namo.data.remote.group.GroupScheduleApiService
-import com.mongmong.namo.data.remote.schedule.ScheduleApiService
+import com.mongmong.namo.data.remote.ScheduleApiService
 import com.mongmong.namo.domain.model.group.AddMoimScheduleResponse
 import com.mongmong.namo.domain.model.DeleteScheduleResponse
 import com.mongmong.namo.domain.model.EditScheduleResponse

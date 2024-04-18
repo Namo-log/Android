@@ -1,11 +1,11 @@
 package com.mongmong.namo.presentation.di
 
-import com.mongmong.namo.data.remote.category.CategoryApiService
-import com.mongmong.namo.data.remote.diary.DiaryApiService
+import com.mongmong.namo.data.remote.CategoryApiService
+import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
 import com.mongmong.namo.data.remote.group.GroupScheduleApiService
-import com.mongmong.namo.data.remote.schedule.ScheduleApiService
+import com.mongmong.namo.data.remote.ScheduleApiService
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.KakaoAPI
 import dagger.Module
 import dagger.Provides
@@ -20,7 +20,8 @@ object ServiceModule {
     /** 일정 */
     @Provides
     @Singleton
-    fun provideScheduleService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : ScheduleApiService = retrofit.create(ScheduleApiService::class.java)
+    fun provideScheduleService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : ScheduleApiService = retrofit.create(
+        ScheduleApiService::class.java)
 
     /** 기록 */
     @Provides

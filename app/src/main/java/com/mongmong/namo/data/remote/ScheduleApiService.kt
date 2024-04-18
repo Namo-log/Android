@@ -1,4 +1,4 @@
-package com.mongmong.namo.data.remote.schedule
+package com.mongmong.namo.data.remote
 
 import com.mongmong.namo.domain.model.DeleteScheduleResponse
 import com.mongmong.namo.domain.model.EditScheduleResponse

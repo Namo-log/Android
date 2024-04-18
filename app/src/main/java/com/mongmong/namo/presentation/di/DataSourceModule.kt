@@ -11,12 +11,12 @@ import com.mongmong.namo.data.datasource.group.GroupDataSource
 import com.mongmong.namo.data.local.dao.CategoryDao
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.dao.ScheduleDao
-import com.mongmong.namo.data.remote.category.CategoryApiService
-import com.mongmong.namo.data.remote.diary.DiaryApiService
+import com.mongmong.namo.data.remote.CategoryApiService
+import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
 import com.mongmong.namo.data.remote.group.GroupScheduleApiService
-import com.mongmong.namo.data.remote.schedule.ScheduleApiService
+import com.mongmong.namo.data.remote.ScheduleApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

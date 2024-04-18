@@ -1,9 +1,9 @@
 package com.mongmong.namo.data.remote.diary
 
 import android.annotation.SuppressLint
+import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
-import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.presentation.config.ApplicationClass
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

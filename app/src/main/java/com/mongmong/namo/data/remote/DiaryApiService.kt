@@ -1,4 +1,4 @@
-package com.mongmong.namo.data.remote.diary
+package com.mongmong.namo.data.remote
 
 import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResponse

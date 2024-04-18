@@ -1,7 +1,7 @@
 package com.mongmong.namo.data.datasource.category
 
 import android.util.Log
-import com.mongmong.namo.data.remote.category.CategoryApiService
+import com.mongmong.namo.data.remote.CategoryApiService
 import com.mongmong.namo.domain.model.CategoryRequestBody
 import com.mongmong.namo.domain.model.DeleteCategoryResponse
 import com.mongmong.namo.domain.model.EditCategoryResponse

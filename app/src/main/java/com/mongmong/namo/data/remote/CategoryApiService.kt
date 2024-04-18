@@ -1,4 +1,4 @@
-package com.mongmong.namo.data.remote.category
+package com.mongmong.namo.data.remote
 
 import com.mongmong.namo.domain.model.CategoryRequestBody
 import com.mongmong.namo.domain.model.DeleteCategoryResponse

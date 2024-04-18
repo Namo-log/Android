@@ -3,7 +3,7 @@ package com.mongmong.namo.data.datasource.diary
 import android.content.Context
 import android.util.Log
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.remote.diary.DiaryApiService
+import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
 import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryResponse

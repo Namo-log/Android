@@ -1,6 +1,7 @@
 package com.mongmong.namo.data.remote.category
 
 import android.util.Log
+import com.mongmong.namo.data.remote.CategoryApiService
 import com.mongmong.namo.domain.model.CategoryRequestBody
 import com.mongmong.namo.domain.model.GetCategoryResponse
 import com.mongmong.namo.presentation.config.ApplicationClass
