@@ -13,7 +13,7 @@ import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.databinding.FragmentHomeBinding
-import com.mongmong.namo.presentation.ui.home.calendar.SetMonthDialog
+import com.mongmong.namo.presentation.utils.SetMonthDialog
 import com.mongmong.namo.presentation.ui.home.calendar.CalendarAdapter
 import org.joda.time.DateTime
 

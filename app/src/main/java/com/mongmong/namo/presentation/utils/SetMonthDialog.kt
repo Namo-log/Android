@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.home.calendar
+package com.mongmong.namo.presentation.utils
 
 import android.app.Dialog
 import android.content.Context

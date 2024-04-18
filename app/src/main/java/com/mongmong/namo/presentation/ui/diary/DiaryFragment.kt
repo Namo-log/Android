@@ -26,7 +26,7 @@ import com.mongmong.namo.presentation.config.UploadState
 import com.mongmong.namo.presentation.ui.diary.moimDiary.MoimMemoDetailActivity
 import com.mongmong.namo.presentation.ui.diary.personalDiary.ImageDialog
 import com.mongmong.namo.presentation.ui.diary.personalDiary.PersonalDetailActivity
-import com.mongmong.namo.presentation.ui.home.calendar.SetMonthDialog
+import com.mongmong.namo.presentation.utils.SetMonthDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

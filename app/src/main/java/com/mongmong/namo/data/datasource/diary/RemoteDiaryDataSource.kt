@@ -9,12 +9,10 @@ import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.GetMoimDiaryResponse
 import com.mongmong.namo.domain.model.GetScheduleIdx
 import com.mongmong.namo.domain.model.MoimDiaryResult
-import com.mongmong.namo.presentation.utils.RequestConverter.convertTextRequest
-import com.mongmong.namo.presentation.utils.RequestConverter.imageToMultipart
+import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
+import com.mongmong.namo.data.utils.RequestConverter.imageToMultipart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 class RemoteDiaryDataSource @Inject constructor(

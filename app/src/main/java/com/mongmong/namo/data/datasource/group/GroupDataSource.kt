@@ -8,9 +8,8 @@ import com.mongmong.namo.domain.model.AddGroupResult
 import com.mongmong.namo.domain.model.Group
 import com.mongmong.namo.domain.model.JoinGroupResponse
 import com.mongmong.namo.domain.model.UpdateGroupNameRequest
-import com.mongmong.namo.presentation.config.BaseResponse
-import com.mongmong.namo.presentation.utils.RequestConverter.convertTextRequest
-import com.mongmong.namo.presentation.utils.RequestConverter.uriToMultipart
+import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
+import com.mongmong.namo.data.utils.RequestConverter.uriToMultipart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

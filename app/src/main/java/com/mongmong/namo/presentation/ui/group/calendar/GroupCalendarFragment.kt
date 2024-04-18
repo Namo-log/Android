@@ -21,7 +21,7 @@ import com.mongmong.namo.databinding.FragmentGroupCalendarBinding
 import com.mongmong.namo.presentation.ui.group.GroupInfoActivity
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupCalendarAdapter
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupCalendarAdapter.Companion.GROUP_ID
-import com.mongmong.namo.presentation.ui.home.calendar.SetMonthDialog
+import com.mongmong.namo.presentation.utils.SetMonthDialog
 import org.joda.time.DateTime
 
 class GroupCalendarFragment : Fragment() {

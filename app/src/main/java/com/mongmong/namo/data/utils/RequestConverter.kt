@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.utils
+package com.mongmong.namo.data.utils
 
 import android.content.Context
 import android.graphics.Bitmap
