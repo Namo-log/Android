@@ -23,7 +23,7 @@ import com.mongmong.namo.databinding.FragmentDiaryBinding
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
-import com.mongmong.namo.presentation.ui.diary.moimDiary.MoimMemoDetailActivity
+import com.mongmong.namo.presentation.ui.group.diary.MoimMemoDetailActivity
 import com.mongmong.namo.presentation.ui.diary.personalDiary.ImageDialog
 import com.mongmong.namo.presentation.ui.diary.personalDiary.PersonalDetailActivity
 import com.mongmong.namo.presentation.utils.SetMonthDialog

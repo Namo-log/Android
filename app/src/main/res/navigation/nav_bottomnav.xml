@@ -81,12 +81,12 @@
     <fragment
         android:id="@+id/groupModifyFragment"
         tools:layout="@layout/activity_moim_diary"
-        android:name="com.mongmong.namo.presentation.ui.diary.moimDiary.MoimDiaryActivity"
+        android:name="com.mongmong.namo.presentation.ui.group.diary.MoimDiaryActivity"
         android:label="GroupModifyFragment" />
 
     <activity
         android:id="@+id/groupMemoActivity"
-        android:name="com.mongmong.namo.presentation.ui.diary.moimDiary.MoimDiaryActivity"
+        android:name="com.mongmong.namo.presentation.ui.group.diary.MoimDiaryActivity"
         android:label="GroupMemoActivity"
         tools:layout="@layout/activity_moim_diary"/>
 

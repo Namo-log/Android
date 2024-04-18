@@ -99,7 +99,7 @@
             android:exported="false"
             android:theme="@style/Theme.MaterialTransparent" />
         <activity
-            android:name=".presentation.ui.diary.moimDiary.MoimDiaryActivity"
+            android:name=".presentation.ui.group.diary.MoimDiaryActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
@@ -107,7 +107,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".presentation.ui.diary.moimDiary.MoimMemoDetailActivity"
+            android:name=".presentation.ui.group.diary.MoimMemoDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
 

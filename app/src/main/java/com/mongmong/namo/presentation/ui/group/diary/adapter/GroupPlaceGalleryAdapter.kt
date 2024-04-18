@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.diary.moimDiary.adapter
+package com.mongmong.namo.presentation.ui.group.diary.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context

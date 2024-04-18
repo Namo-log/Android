@@ -1,11 +1,11 @@
-package com.mongmong.namo.presentation.ui.diary.moimDiary
+package com.mongmong.namo.presentation.ui.group.diary
 
 
 import android.graphics.Canvas
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.presentation.ui.diary.moimDiary.adapter.MoimActivityRVAdapter
+import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityRVAdapter
 import java.lang.Float.max
 import java.lang.Float.min
 

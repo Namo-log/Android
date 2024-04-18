@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.diary.moimDiary
+package com.mongmong.namo.presentation.ui.group.diary
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -30,8 +30,8 @@ import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.domain.model.group.MoimScheduleMember
-import com.mongmong.namo.presentation.ui.diary.moimDiary.adapter.MoimMemberRVAdapter
-import com.mongmong.namo.presentation.ui.diary.moimDiary.adapter.MoimActivityRVAdapter
+import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimMemberRVAdapter
+import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityRVAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.PermissionChecker
