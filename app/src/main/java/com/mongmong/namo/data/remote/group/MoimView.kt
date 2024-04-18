@@ -36,8 +36,8 @@ interface ParticipateMoimView {
 
 
 interface EditMoimScheduleView {
-    fun onPatchMoimScheduleCategorySuccess(message: String)
-    fun onPatchMoimScheduleCategoryFailure(message: String)
+//    fun onPatchMoimScheduleCategorySuccess(message: String)
+//    fun onPatchMoimScheduleCategoryFailure(message: String)
     fun onPostMoimScheduleAlarmSuccess(message: String)
     fun onPostMoimScheduleAlarmFailure(message: String)
     fun onPatchMoimScheduleAlarmSuccess(message: String)

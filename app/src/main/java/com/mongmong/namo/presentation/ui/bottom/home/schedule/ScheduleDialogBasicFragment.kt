@@ -93,7 +93,6 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
     private var prevAlarmList : List<Int>? = null
     private var alarmText : String = ""
 
-    private var isMoimScheduleCategorySaved = false
     private var isMoimScheduleAlarmSaved = false
     private var isMoimSchedulePrevAlarm = false
 
@@ -178,6 +177,7 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         }
         if (schedule.moimSchedule) {
             binding.dialogScheduleHeaderTv.text = "모임 일정 편집"
+            inactivateMoimScheduleEdit() // 비활성화 처리
         }
 
         Log.e("ScheduleDialogFrag", "schedule: $schedule")
@@ -303,17 +303,6 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
             startActivity(intent)
         }
 
-        if (schedule.moimSchedule) {
-            isMoimSchedulePrevAlarm = !schedule.alarmList.isNullOrEmpty()
-            binding.dialogScheduleTitleEt.inputType = InputType.TYPE_NULL
-            binding.dialogScheduleStartDateTv.setOnClickListener { null }
-            binding.dialogScheduleEndDateTv.setOnClickListener { null }
-            binding.dialogScheduleStartTimeTv.setOnClickListener { null }
-            binding.dialogScheduleEndTimeTv.setOnClickListener { null }
-            binding.dialogSchedulePlaceBtn.visibility = View.INVISIBLE
-            binding.dialogSchedulePlaceLayout.setOnClickListener { null }
-        }
-
         // 닫기 클릭
         binding.dialogScheduleCloseBtn.setOnClickListener {
             requireActivity().finish()
@@ -359,6 +348,32 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
                     updateData()
                 }
             }
+        }
+    }
+
+    private fun setTextViewsInactive(vararg textViews: TextView) {
+        textViews.forEach {
+            // 클릭 비활성화
+            it.inputType = InputType.TYPE_NULL
+            it.setOnClickListener(null)
+            // 색상 비활성화
+            it.setTextColor(ContextCompat.getColor(requireContext(), R.color.disableTextGray))
+        }
+    }
+
+    private fun inactivateMoimScheduleEdit() {
+        isMoimSchedulePrevAlarm = !schedule.alarmList.isNullOrEmpty()
+        binding.apply {
+            setTextViewsInactive(
+                dialogScheduleTitleEt,
+                dialogScheduleStartDateTv,
+                dialogScheduleEndDateTv,
+                dialogScheduleStartTimeTv,
+                dialogScheduleEndTimeTv,
+                dialogSchedulePlaceNameTv
+            )
+            dialogSchedulePlaceLayout.setOnClickListener { null }
+            dialogSchedulePlaceBtn.visibility = View.GONE
         }
     }
 
@@ -811,16 +826,6 @@ class ScheduleDialogBasicFragment : Fragment(), EditMoimScheduleView {
         schedule.categoryServerId = selectedCategory.serverId
         binding.dialogScheduleCategoryNameTv.text = selectedCategory.name
         binding.dialogScheduleCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(selectedCategory.paletteId)
-    }
-
-    override fun onPatchMoimScheduleCategorySuccess(message: String) {
-        isMoimScheduleCategorySaved = true
-    }
-
-    override fun onPatchMoimScheduleCategoryFailure(message: String) {
-        isMoimScheduleCategorySaved = false
-        Log.d("UPDATE_MOIM_SCHEDULE", message)
-        Toast.makeText(context, "카테고리 업데이트에 실패하였습니다.", Toast.LENGTH_SHORT).show()
     }
 
     override fun onPostMoimScheduleAlarmSuccess(message: String) {
