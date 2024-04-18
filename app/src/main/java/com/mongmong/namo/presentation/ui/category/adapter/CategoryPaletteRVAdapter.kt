@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.home.category.adapter
+package com.mongmong.namo.presentation.ui.category.adapter
 
 import android.content.Context
 import android.graphics.Color

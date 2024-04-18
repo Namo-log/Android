@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.home.category
+package com.mongmong.namo.presentation.ui.category
 
 import android.content.Context
 import android.content.Intent
@@ -17,8 +17,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.databinding.FragmentCategoryDetailBinding
-import com.mongmong.namo.presentation.ui.home.category.CategorySettingFragment.Companion.CATEGORY_DATA
-import com.mongmong.namo.presentation.ui.home.category.adapter.CategoryPaletteRVAdapter
+import com.mongmong.namo.presentation.ui.category.CategorySettingFragment.Companion.CATEGORY_DATA
+import com.mongmong.namo.presentation.ui.category.adapter.CategoryPaletteRVAdapter
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.domain.model.PostCategoryResponse
 import com.mongmong.namo.presentation.utils.NetworkManager

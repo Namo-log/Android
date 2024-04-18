@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.home.category.adapter
+package com.mongmong.namo.presentation.ui.category.adapter
 
 import android.annotation.SuppressLint
 import android.graphics.Color

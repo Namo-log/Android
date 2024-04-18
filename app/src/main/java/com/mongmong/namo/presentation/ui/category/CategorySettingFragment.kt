@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.home.category
+package com.mongmong.namo.presentation.ui.category
 
 import android.content.Context
 import android.content.Intent
@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.databinding.FragmentCategorySettingBinding
-import com.mongmong.namo.presentation.ui.home.category.adapter.SetCategoryRVAdapter
+import com.mongmong.namo.presentation.ui.category.adapter.SetCategoryRVAdapter
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.remote.category.CategorySettingView
 import com.mongmong.namo.domain.model.GetCategoryResponse

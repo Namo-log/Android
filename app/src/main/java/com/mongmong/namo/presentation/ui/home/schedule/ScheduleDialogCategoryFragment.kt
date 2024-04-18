@@ -16,8 +16,8 @@ import com.mongmong.namo.presentation.ui.home.schedule.adapter.DialogCategoryRVA
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.FragmentScheduleDialogCategoryBinding
-import com.mongmong.namo.presentation.ui.home.category.CategoryActivity
-import com.mongmong.namo.presentation.ui.home.category.CategoryViewModel
+import com.mongmong.namo.presentation.ui.category.CategoryActivity
+import com.mongmong.namo.presentation.ui.category.CategoryViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

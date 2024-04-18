@@ -73,10 +73,10 @@
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".presentation.ui.home.category.CategoryActivity"
+            android:name=".presentation.ui.category.CategoryActivity"
             android:theme="@style/Theme.Transparent" />
         <activity
-            android:name=".presentation.ui.home.category.CategoryEditActivity"
+            android:name=".presentation.ui.category.CategoryEditActivity"
             android:theme="@style/Theme.Transparent" />
         <activity
             android:name=".presentation.ui.home.schedule.ScheduleActivity"

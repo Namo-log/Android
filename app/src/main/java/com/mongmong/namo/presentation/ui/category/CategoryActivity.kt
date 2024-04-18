@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.home.category
+package com.mongmong.namo.presentation.ui.category
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
