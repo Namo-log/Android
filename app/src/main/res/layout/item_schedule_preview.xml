@@ -8,39 +8,39 @@
         android:layout_marginBottom="15dp">
 
         <View
-            android:id="@+id/item_calendar_event_color_view"
+            android:id="@+id/item_calendar_schedule_color_view"
             android:layout_width="30dp"
             android:layout_height="0dp"
             android:background="@drawable/bg_schedule_preview_catory_color_corner"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/item_calendar_event_base_layout"
+            app:layout_constraintEnd_toStartOf="@id/item_calendar_schedule_base_layout"
             app:layout_constraintHorizontal_chainStyle="packed"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/item_calendar_event_base_layout"
+            android:id="@+id/item_calendar_schedule_base_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_schedule_preview_base_corner"
-            app:layout_constraintStart_toEndOf="@id/item_calendar_event_color_view"
+            app:layout_constraintStart_toEndOf="@id/item_calendar_schedule_color_view"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/item_calendar_event_color_view"
-            app:layout_constraintBottom_toBottomOf="@id/item_calendar_event_color_view"
+            app:layout_constraintTop_toTopOf="@id/item_calendar_schedule_color_view"
+            app:layout_constraintBottom_toBottomOf="@id/item_calendar_schedule_color_view"
             android:paddingVertical="9dp"
             android:paddingHorizontal="15dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/item_calendar_event_content_layout"
+                android:id="@+id/item_calendar_schedule_content_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/item_calendar_event_record">
+                app:layout_constraintEnd_toStartOf="@id/item_calendar_schedule_record">
 
                 <TextView
-                    android:id="@+id/item_calendar_event_time"
+                    android:id="@+id/item_calendar_schedule_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="11:00 - 13:00"
@@ -60,13 +60,13 @@
                     android:textStyle="bold"
                     android:textColor="@color/black"
                     android:textSize="15sp"
-                    app:layout_constraintTop_toBottomOf="@id/item_calendar_event_time"
-                    app:layout_constraintStart_toStartOf="@id/item_calendar_event_time"/>
+                    app:layout_constraintTop_toBottomOf="@id/item_calendar_schedule_time"
+                    app:layout_constraintStart_toStartOf="@id/item_calendar_schedule_time"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/item_calendar_event_record"
+                android:id="@+id/item_calendar_schedule_record"
                 android:layout_width="34dp"
                 android:layout_height="34dp"
                 android:src="@drawable/ic_add_record"
@@ -76,7 +76,6 @@
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

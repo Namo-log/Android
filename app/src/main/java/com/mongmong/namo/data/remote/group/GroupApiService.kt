@@ -1,19 +1,12 @@
 package com.mongmong.namo.data.remote.group
 
 import com.mongmong.namo.presentation.config.BaseResponse
-import com.mongmong.namo.data.local.entity.group.AddMoimSchedule
-import com.mongmong.namo.data.local.entity.group.EditMoimSchedule
-import com.mongmong.namo.domain.model.AddGroupResponse
-import com.mongmong.namo.domain.model.AddMoimScheduleResponse
-import com.mongmong.namo.domain.model.GetGroupsResponse
-import com.mongmong.namo.domain.model.GetMoimScheduleResponse
-import com.mongmong.namo.domain.model.MoimScheduleAlarmBody
-import com.mongmong.namo.domain.model.JoinGroupResponse
-import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryBody
-import com.mongmong.namo.domain.model.UpdateGroupNameRequest
+import com.mongmong.namo.domain.model.group.AddGroupResponse
+import com.mongmong.namo.domain.model.group.GetGroupsResponse
+import com.mongmong.namo.domain.model.group.JoinGroupResponse
+import com.mongmong.namo.domain.model.group.UpdateGroupNameRequestBody
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -24,8 +17,11 @@ import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface GroupApiService {
+    // 그룹 리스트 조회
+    @GET("moims")
+    suspend fun getGroups(): GetGroupsResponse
 
-    // 모임 추가
+    // 그룹 추가하기
     @Multipart
     @POST("moims")
     suspend fun addGroup(
@@ -33,65 +29,21 @@ interface GroupApiService {
         @Part("groupName") groupName: RequestBody
     ): AddGroupResponse
 
-    // 그룹 리스트 조회
-    @GET("moims")
-    suspend fun getGroups(): GetGroupsResponse
-
-    // 월별 일정 조회
-    @GET("moims/schedule/{moimId}/{yearMonth}")
-    fun getMoimSchedule(
-        @Path("moimId") moimId: Long,
-        @Path("yearMonth") yearMonth: String
-    ): Call<GetMoimScheduleResponse>
-
-    // 모임 이름 바꾸기
-    @PATCH("moims/name")
-    suspend fun updateGroupName(
-        @Body body: UpdateGroupNameRequest
-    ): JoinGroupResponse
-
-    // 모임 참여하기
+    // 그룹 참여하기
     @PATCH("moims/participate/{groupCode}")
     suspend fun joinGroup(
         @Path("groupCode") groupCode: String
     ): JoinGroupResponse
 
-    // 모임 삭제하기
+    // 그룹 탈퇴하기
     @DELETE("moims/withdraw/{moimId}")
     suspend fun deleteMember(
         @Path("moimId") groupId: Long
     ): BaseResponse
 
-    // 모임 일정 추가하기
-    @POST("moims/schedule")
-    fun postMoimSchedule(
-        @Body body: AddMoimSchedule
-    ): Call<AddMoimScheduleResponse>
-
-    // 모임 일정 수정하기
-    @PATCH("moims/schedule")
-    fun editMoimSchedule(
-        @Body body: EditMoimSchedule
-    ): Call<BaseResponse>
-
-    // 모임 일정 삭제하기
-    @DELETE("moims/schedule/{moimScheduleId}")
-    fun deleteMoimSchedule(
-        @Path("moimScheduleId") moimScheduleId: Long
-    ): Call<BaseResponse>
-
-    @PATCH("moims/schedule/category")
-    fun patchMoimScheduleCategory(
-        @Body body: PatchMoimScheduleCategoryBody
-    ): Call<BaseResponse>
-
-    @POST("moims/schedule/alarm")
-    fun postMoimScheduleAlarm(
-        @Body body: MoimScheduleAlarmBody
-    ): Call<BaseResponse>
-
-    @PATCH("moims/schedule/alarm")
-    fun patchMoimScheduleAlarm(
-        @Body body: MoimScheduleAlarmBody
-    ): Call<BaseResponse>
+    // 그룹명 바꾸기
+    @PATCH("moims/name")
+    suspend fun updateGroupName(
+        @Body body: UpdateGroupNameRequestBody
+    ): JoinGroupResponse
 }

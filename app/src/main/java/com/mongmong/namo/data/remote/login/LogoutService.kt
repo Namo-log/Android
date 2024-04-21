@@ -1,17 +1,18 @@
 package com.mongmong.namo.data.remote.login
 
 import android.util.Log
+import com.mongmong.namo.data.remote.LoginApiService
 import com.mongmong.namo.domain.model.LogoutBody
 import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.config.BaseResponse
-import com.mongmong.namo.presentation.ui.bottom.custom.CustomSettingFramgent
+import com.mongmong.namo.presentation.ui.custom.CustomSettingFramgent
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class LogoutService(val view: CustomSettingFramgent) {
 
-    val retrofitInterface = ApplicationClass.bRetrofit.create(LoginRetrofitInterface::class.java)
+    val retrofitInterface = ApplicationClass.bRetrofit.create(LoginApiService::class.java)
 
     fun tryPostLogout(body: LogoutBody) {
         retrofitInterface.postLogout(body).enqueue(object : Callback<BaseResponse> {

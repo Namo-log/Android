@@ -99,4 +99,13 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideNetworkChecker(@ApplicationContext context: Context): NetworkChecker = NetworkCheckerImpl(context)
+
+
+    @Provides
+    @Singleton
+    fun provideKakaoRetrofit(): Retrofit =
+        Retrofit.Builder()
+            .baseUrl("https://dapi.kakao.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
 }

@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:fitsSystemWindows="true"
-        tools:context=".ui.bottom.home.schedule.map.MapActivity"
+        tools:context=".ui.home.schedule.map.MapActivity"
         android:background="@color/white">
 
         <RelativeLayout

@@ -1,5 +1,7 @@
 package com.mongmong.namo.presentation.di
 
+import com.mongmong.namo.data.datasource.category.LocalCategoryDataSource
+import com.mongmong.namo.data.datasource.category.RemoteCategoryDataSource
 import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
@@ -7,10 +9,12 @@ import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.datasource.group.GroupDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.remote.NetworkChecker
-import com.mongmong.namo.data.remote.diary.DiaryApiService
+import com.mongmong.namo.data.remote.DiaryApiService
+import com.mongmong.namo.data.repositoriyImpl.CategoryRepositoryImpl
 import com.mongmong.namo.data.repositoriyImpl.DiaryRepositoryImpl
 import com.mongmong.namo.data.repositoriyImpl.GroupRepositoryImpl
 import com.mongmong.namo.data.repositoriyImpl.ScheduleRepositoryImpl
+import com.mongmong.namo.domain.repositories.CategoryRepository
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.repositories.GroupRepository
 import com.mongmong.namo.domain.repositories.ScheduleRepository
@@ -46,6 +50,15 @@ object RepositoryModule {
         networkChecker
     )
 
+    /** 카테고리 */
+    @Provides
+    fun provideCategoryRepository(
+        localCategoryDataSource: LocalCategoryDataSource,
+        remoteCategoryDataSource: RemoteCategoryDataSource,
+        networkChecker: NetworkChecker
+    ): CategoryRepository = CategoryRepositoryImpl(localCategoryDataSource, remoteCategoryDataSource, networkChecker)
+
+    /** 그룹 */
     @Provides
     fun provideGroupRepository(
         groupDataSource: GroupDataSource

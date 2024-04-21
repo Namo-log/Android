@@ -21,7 +21,6 @@ interface CategoryDao {
     @Query("DELETE FROM category_table WHERE categoryId=:categoryId")
     fun deleteCategoryById(categoryId : Long)
 
-
     @Query("SELECT * FROM category_table")
     fun getCategoryList(): List<Category>
 
@@ -38,6 +37,6 @@ interface CategoryDao {
     fun getNotUploadedCategory() : List<Category>
 
     @Query("UPDATE category_table SET isUpload=:isUpload, serverId=:serverId, state=:state WHERE categoryId=:categoryId")
-    fun updateCategoryAfterUpload(categoryId : Long, isUpload : Int, serverId : Long, state : String)
+    suspend fun updateCategoryAfterUpload(categoryId : Long, isUpload : Boolean, serverId : Long, state : String)
 
 }

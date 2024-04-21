@@ -4,7 +4,7 @@ import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.domain.model.GetMoimDiaryResponse
+import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
 
 interface AddPersonalDiaryView {
     suspend fun onAddDiarySuccess(response: DiaryAddResponse, localId: Long)

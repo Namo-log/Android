@@ -1,9 +1,10 @@
 package com.mongmong.namo.data.remote.schedule
 
 import android.util.Log
+import com.mongmong.namo.data.remote.ScheduleApiService
 import com.mongmong.namo.presentation.config.ApplicationClass
-import com.mongmong.namo.data.local.entity.home.ScheduleForUpload
 import com.mongmong.namo.domain.model.GetMonthScheduleResponse
+import com.mongmong.namo.domain.model.ScheduleRequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -41,9 +42,9 @@ class ScheduleService {
         this.getMonthMoimScheduleView = getMonthMoimScheduleView
     }
 
-    val eventRetrofitInterface = ApplicationClass.sRetrofit.create(ScheduleRetrofitInterface::class.java)
+    val eventRetrofitInterface = ApplicationClass.sRetrofit.create(ScheduleApiService::class.java)
 
-    fun postSchedule(body : ScheduleForUpload, scheduleId : Long) {
+    fun postSchedule(body : ScheduleRequestBody, scheduleId : Long) {
         /*
         eventRetrofitInterface.postSchedule(body).enqueue(object : Callback<PostScheduleResponse> {
             override fun onResponse(call: Call<PostScheduleResponse>, response: Response<PostScheduleResponse>) {
@@ -64,7 +65,7 @@ class ScheduleService {
         */
     }
 
-    fun editSchedule(serverId : Long, body: ScheduleForUpload, scheduleId : Long) {
+    fun editSchedule(serverId : Long, body: ScheduleRequestBody, scheduleId : Long) {
         /*
         Log.d("EditSchedule", "serverId : $serverId")
         eventRetrofitInterface.editSchedule(serverId, body).enqueue(object : Callback<EditScheduleResponse> {
@@ -182,26 +183,26 @@ class ScheduleService {
     }
 
     fun getMonthMoimSchedule(yearMonth : String) {
-        eventRetrofitInterface.getMonthMoimSchedule(yearMonth)
-            .enqueue(object : Callback<GetMonthScheduleResponse> {
-                override fun onResponse(
-                    call: Call<GetMonthScheduleResponse>,
-                    response: Response<GetMonthScheduleResponse>
-                ) {
-                    when (response.code()) {
-                        200 -> getMonthMoimScheduleView.onGetMonthMoimScheduleSuccess(response.body() as GetMonthScheduleResponse)
-                        else -> {
-                            Log.d("GetMonthMoimSchedule", "Success but error")
-                            getMonthMoimScheduleView.onGetMonthMoimScheduleFailure("통신 중 200 외 기타 코드")
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<GetMonthScheduleResponse>, t: Throwable) {
-                    Log.d("GetMonthMoimSchedule", "OnFailure")
-                    getMonthMoimScheduleView.onGetMonthMoimScheduleFailure(t.message ?: "통신 오류")
-                }
-
-            })
+//        eventRetrofitInterface.getMonthMoimSchedule(yearMonth)
+//            .enqueue(object : Callback<GetMonthScheduleResponse> {
+//                override fun onResponse(
+//                    call: Call<GetMonthScheduleResponse>,
+//                    response: Response<GetMonthScheduleResponse>
+//                ) {
+//                    when (response.code()) {
+//                        200 -> getMonthMoimScheduleView.onGetMonthMoimScheduleSuccess(response.body() as GetMonthScheduleResponse)
+//                        else -> {
+//                            Log.d("GetMonthMoimSchedule", "Success but error")
+//                            getMonthMoimScheduleView.onGetMonthMoimScheduleFailure("통신 중 200 외 기타 코드")
+//                        }
+//                    }
+//                }
+//
+//                override fun onFailure(call: Call<GetMonthScheduleResponse>, t: Throwable) {
+//                    Log.d("GetMonthMoimSchedule", "OnFailure")
+//                    getMonthMoimScheduleView.onGetMonthMoimScheduleFailure(t.message ?: "통신 오류")
+//                }
+//
+//            })
     }
 }

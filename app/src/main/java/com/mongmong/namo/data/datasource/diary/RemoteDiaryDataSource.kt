@@ -3,33 +3,33 @@ package com.mongmong.namo.data.datasource.diary
 import android.content.Context
 import android.util.Log
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.remote.diary.DiaryApiService
+import com.mongmong.namo.data.remote.DiaryApiService
+import com.mongmong.namo.data.remote.group.GroupDiaryApiService
 import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.domain.model.GetMoimDiaryResponse
-import com.mongmong.namo.domain.model.GetScheduleIdx
-import com.mongmong.namo.domain.model.MoimDiaryResult
-import com.mongmong.namo.presentation.utils.RequestConverter.convertTextRequest
-import com.mongmong.namo.presentation.utils.RequestConverter.imageToMultipart
+import com.mongmong.namo.domain.model.GetScheduleId
+import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
+import com.mongmong.namo.data.utils.RequestConverter.imageToMultipart
+import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
+import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 class RemoteDiaryDataSource @Inject constructor(
-    private val apiService: DiaryApiService,
+    private val diaryApiService: DiaryApiService,
+    private val groupDiaryApiService: GroupDiaryApiService,
     private val context: Context
 ) {
     suspend fun addDiaryToServer(
         diary: Diary,
         images: List<String>?,
     ): DiaryAddResponse {
-        var diaryResponse = DiaryAddResponse(result = GetScheduleIdx(-1))
+        var diaryResponse = DiaryAddResponse(result = GetScheduleId(-1))
 
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.addDiary(
+                diaryApiService.addDiary(
                     scheduleId = diary.scheduleServerId.toString().convertTextRequest(),
                     content = (diary.content ?: "").convertTextRequest(),
                     imageToMultipart(images, context)
@@ -53,7 +53,7 @@ class RemoteDiaryDataSource @Inject constructor(
 
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.editDiary(
+                diaryApiService.editDiary(
                     scheduleId =  diary.scheduleServerId.toString().convertTextRequest(),
                     content = (diary.content ?: "").convertTextRequest(),
                     imgs = imageToMultipart(images, context)
@@ -73,7 +73,7 @@ class RemoteDiaryDataSource @Inject constructor(
         var diaryResponse = DiaryResponse("")
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.deleteDiary(scheduleServerId)
+                diaryApiService.deleteDiary(scheduleServerId)
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource deleteDiary Success", "$it")
                 diaryResponse = it
@@ -97,7 +97,7 @@ class RemoteDiaryDataSource @Inject constructor(
         )
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.getMoimDiary(scheduleId)
+                diaryApiService.getMoimDiary(scheduleId)
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource getMoimDiary Success", "$it")
                 diaryResponse = it
@@ -113,7 +113,7 @@ class RemoteDiaryDataSource @Inject constructor(
         var isSuccess = false
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.patchMoimMemo(scheduleId, content)
+                diaryApiService.patchMoimMemo(scheduleId, content)
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource patchMoimMemo Success", "$it")
                 isSuccess = true
@@ -134,7 +134,7 @@ class RemoteDiaryDataSource @Inject constructor(
     ) {
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.addMoimDiary(
+                groupDiaryApiService.addMoimDiary(
                     scheduleId = moimScheduleId,
                     place = place.convertTextRequest(),
                     pay = money.toString().convertTextRequest(),
@@ -159,7 +159,7 @@ class RemoteDiaryDataSource @Inject constructor(
 
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.editMoimActivity(
+                groupDiaryApiService.editMoimActivity(
                     moimScheduldId = moimScheduleId,
                     place = place.convertTextRequest(),
                     pay = money.toString().convertTextRequest(),
@@ -177,7 +177,7 @@ class RemoteDiaryDataSource @Inject constructor(
     suspend fun deleteMoimActivity(activityId: Long) {
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.deleteMoimActivity(activityId)
+                groupDiaryApiService.deleteMoimActivity(activityId)
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource deleteMoimActivity Success", "$it")
             }.onFailure {

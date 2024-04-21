@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
@@ -31,7 +32,6 @@ import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.domain.model.CategoryBody
 import com.mongmong.namo.data.remote.category.CategoryDeleteService
 import com.mongmong.namo.data.remote.category.CategoryDeleteView
 import com.mongmong.namo.data.remote.category.CategoryDetailView
@@ -51,13 +51,14 @@ import com.mongmong.namo.data.remote.schedule.ScheduleService
 import com.mongmong.namo.data.remote.schedule.ScheduleView
 import com.mongmong.namo.data.remote.schedule.GetAllScheduleView
 import com.mongmong.namo.domain.model.GetMonthScheduleResponse
-import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.PostScheduleResponse
 import com.mongmong.namo.databinding.ActivityMainBinding
+import com.mongmong.namo.domain.model.CategoryRequestBody
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResult
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
+import com.mongmong.namo.presentation.ui.category.CategoryViewModel
 import com.mongmong.namo.presentation.utils.NetworkManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -65,9 +66,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 
-
-private const val PERMISSION_REQUEST_CODE= 1001
-private const val NOTIFICATION_PERMISSION_REQUEST_CODE= 777
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetAllScheduleView,
@@ -83,53 +81,24 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
     private val serverCategory = ArrayList<Category>()
     private val serverDiary = ArrayList<Diary>()
 
-//    private lateinit var categoryColorArray: IntArray
-
     private var isCategorySuccess = false
     private var isScheduleSuccess = false
     private var isDiarySuccess = false
 
-    companion object {
-        const val ORIGIN_ACTIVITY_INTENT_KEY: String = "original_activity"
-        const val PLACE_NAME_INTENT_KEY: String = "place_name"
-        const val PLACE_X_INTENT_KEY: String = "place_x"
-        const val PLACE_Y_INTENT_KEY: String = "place_y"
-        const val GROUP_MEMBER_INTENT_KEY : String = "group_member"
-        var IS_MOIM_EVENT_SUCCESS : Boolean = false
-
-
-        const val IS_UPLOAD = true
-        const val IS_NOT_UPLOAD = false
-
-        fun setCategoryList(db: NamoDatabase): List<Category> {
-            var categoryList =listOf<Category>()
-            val thread = Thread{
-                categoryList = db.categoryDao.getCategoryList()
-            }
-            thread.start()
-            try {
-                thread.join()
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
-
-            Log.d("SetCategory", categoryList.toString())
-
-            return categoryList
-        }
-    }
+    private var categoryList : List<Category> = arrayListOf()
+    private val categoryViewModel : CategoryViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         db = NamoDatabase.getInstance(this)
         initNavigation()
-//        categoryColorArray =resources.getIntArray(R.array.categoryColorArr)
-//        Log.d("CATEGORY_ARR", categoryColorArray.contentToString())
 
         logToken()
         checkPermissions()
         checkNetworkUpload()
+
+        initObservers()
 
         val sf= this.getSharedPreferences("sf", Context.MODE_PRIVATE)
         val editor = sf.edit()
@@ -137,6 +106,14 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
         editor.remove("checked")
         editor.apply()
 
+    }
+
+    private fun initObservers() {
+        categoryViewModel.categoryList.observe(this) {
+            if (!it.isNullOrEmpty()) {
+                categoryList = it
+            }
+        }
     }
 
     private fun checkNetworkUpload() {
@@ -245,10 +222,6 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                 }
             }
         }
-//        val paletteDatas = arrayListOf(
-//            categoryColorArray[4], categoryColorArray[5], categoryColorArray[6], categoryColorArray[7], categoryColorArray[8],
-//            categoryColorArray[9], categoryColorArray[10], categoryColorArray[11], categoryColorArray[12], categoryColorArray[13]
-//        )
 
         for (i in unUploadedCategory) {
             if (i.serverId == 0L) {
@@ -256,13 +229,13 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                     return
                 } else {
                     //POST
-                    CategoryService(this).tryPostCategory(CategoryBody(i.name, i.paletteId, i.share), i.categoryId)
+                    CategoryService(this).tryPostCategory(CategoryRequestBody(i.name, i.paletteId, i.isShare), i.categoryId)
                 }
             } else {
                 if (i.state == RoomState.DELETED.state) {
                     CategoryDeleteService(this).tryDeleteCategory(i.serverId, i.categoryId)
                 } else {
-                    CategoryService(this).tryPatchCategory(i.serverId, CategoryBody(i.name, paletteId, i.share), i.categoryId)
+                    CategoryService(this).tryPatchCategory(i.serverId, CategoryRequestBody(i.name, paletteId, i.isShare), i.categoryId)
                 }
 
             }
@@ -492,20 +465,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
         val result = response.result
 
         //룸디비에 isUpload, serverId, state 업데이트하기
-        var thread = Thread{
-            db.categoryDao.updateCategoryAfterUpload(
-                categoryId,
-                1,
-                result.categoryId,
-                RoomState.DEFAULT.state
-            )
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
+        categoryViewModel.updateCategoryAfterUpload(categoryId, true, result.categoryId, RoomState.DEFAULT.state)
     }
 
     override fun onPostCategoryFailure(message: String) {
@@ -519,20 +479,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
         val result = response.result
 
         //룸디비에 isUpload, serverId, state 업데이트하기
-        var thread = Thread{
-            db.categoryDao.updateCategoryAfterUpload(
-                categoryId,
-                1,
-                result.categoryId,
-                RoomState.DEFAULT.state
-            )
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
+        categoryViewModel.updateCategoryAfterUpload(categoryId, true, result.categoryId, RoomState.DEFAULT.state)
     }
 
     override fun onPatchCategoryFailure(message: String) {
@@ -588,7 +535,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                                 content = diary.content,
                                 images = diary.images,
                                 state = RoomState.DEFAULT.state,
-                                isUpload = IS_UPLOAD
+                                isUpload = UploadState.IS_UPLOAD.state
                             )
                             db.diaryDao.insertDiary(diaryData)
                         }
@@ -610,7 +557,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
             category.paletteId, //categoryColorArray[category.paletteId - 1],
             category.isShare,
             true,
-            IS_UPLOAD,
+            UploadState.IS_UPLOAD.state,
             RoomState.DEFAULT.state,
             category.categoryId
         )
@@ -623,7 +570,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
             diary.contents,
             diary.urls,
             RoomState.DEFAULT.state,
-            IS_UPLOAD
+            UploadState.IS_UPLOAD.state,
         )
     }
 
@@ -649,5 +596,16 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
         ft.detach(fragment).attach(fragment).commit()
     }
 
+    companion object {
+        const val PERMISSION_REQUEST_CODE= 1001
+        const val NOTIFICATION_PERMISSION_REQUEST_CODE= 777
+
+        const val ORIGIN_ACTIVITY_INTENT_KEY: String = "original_activity"
+        const val PLACE_NAME_INTENT_KEY: String = "place_name"
+        const val PLACE_X_INTENT_KEY: String = "place_x"
+        const val PLACE_Y_INTENT_KEY: String = "place_y"
+        const val GROUP_MEMBER_INTENT_KEY : String = "group_member"
+        var IS_MOIM_EVENT_SUCCESS : Boolean = false
+    }
 
 }

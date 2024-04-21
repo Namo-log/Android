@@ -3,7 +3,7 @@ package com.mongmong.namo.domain.repositories
 import androidx.paging.PagingSource
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.domain.model.DiarySchedule
-import com.mongmong.namo.domain.model.MoimDiaryResult
+import com.mongmong.namo.domain.model.group.MoimDiaryResult
 
 
 interface DiaryRepository {

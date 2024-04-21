@@ -12,7 +12,7 @@
         android:paddingHorizontal="10dp"
         app:layoutDescription="@xml/fragment_group_calendar_xml_constraintlayout2_scene">
 
-        <com.mongmong.namo.presentation.ui.bottom.group.calendar.GroupCustomCalendarView
+        <com.mongmong.namo.presentation.ui.group.calendar.GroupCustomCalendarView
             android:id="@+id/group_calendar_month_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -67,24 +67,24 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="15dp"
-                        android:text="개인 일정"
+                        android:text="@string/schedule_personal"
                         android:textColor="@color/textGray"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/group_daily_event_rv"
+                        android:id="@+id/group_daily_personal_schedule_rv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:nestedScrollingEnabled="false"
                         tools:listitem="@layout/item_schedule_preview"/>
 
                     <TextView
-                        android:id="@+id/group_daily_event_none_tv"
+                        android:id="@+id/group_daily_personal_schedule_none_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
-                        android:text="등록된 개인 일정이 없습니다."
+                        android:text="@string/schedule_personal_empty"
                         android:textAlignment="center"
                         android:textColor="@color/textGray"
                         android:textSize="16sp"
@@ -94,24 +94,24 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="15dp"
-                        android:text="모임 일정"
+                        android:text="@string/schedule_moim"
                         android:textColor="@color/textGray"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/group_daily_group_event_rv"
+                        android:id="@+id/group_daily_moim_schedule_rv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:nestedScrollingEnabled="false"
                         tools:listitem="@layout/item_schedule_preview_moim" />
 
                     <TextView
-                        android:id="@+id/group_daily_group_event_none_tv"
+                        android:id="@+id/group_daily_moim_schedule_none_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
-                        android:text="등록된 모임 일정이 없습니다."
+                        android:text="@string/schedule_moim_empty"
                         android:textAlignment="center"
                         android:textColor="@color/textGray"
                         android:textSize="16sp"
