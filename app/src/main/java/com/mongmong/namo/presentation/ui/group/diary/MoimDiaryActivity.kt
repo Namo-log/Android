@@ -52,8 +52,8 @@ class MoimDiaryActivity : AppCompatActivity(),
     private lateinit var memberAdapter: MoimMemberRVAdapter  // 그룹 멤버 리스트 보여주기
     private lateinit var activityAdapter: MoimActivityRVAdapter // 각 장소 item
 
-    private lateinit var groupMembers: List<MoimScheduleMember>
-    private lateinit var groupData: MoimDiaryResult
+    private var groupMembers = emptyList<MoimScheduleMember>()
+    private var groupData = MoimDiaryResult("", 0L, "", emptyList(), emptyList())
 
     private lateinit var memberIntList: List<Long>
     private lateinit var repo: DiaryRepository
