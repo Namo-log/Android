@@ -186,9 +186,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
     }
 
     private fun getCategoryList() {
-        lifecycleScope.launch{
-            viewModel.getCategories()
-        }
+        viewModel.getCategories()
     }
 
     private fun setCategoryList(categoryList: List<Category>) {
@@ -200,10 +198,9 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
 
     // 캘린더에 표시할 월별 일정
     private fun setMonthCalendarSchedule(monthStart: Long, monthEnd: Long) {
-        lifecycleScope.launch {
-            viewModel.getMonthSchedules(monthStart, monthEnd)
-            viewModel.getMonthMoimSchedule(yearMonthDate(millis))
-        }
+        viewModel.getMonthSchedules(monthStart, monthEnd)
+        viewModel.getMonthMoimSchedule(yearMonthDate(millis))
+
     }
 
     // 일정 상세보기

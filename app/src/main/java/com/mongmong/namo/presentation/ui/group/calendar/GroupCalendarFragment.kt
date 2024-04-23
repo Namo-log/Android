@@ -25,13 +25,11 @@ import com.mongmong.namo.presentation.utils.SetMonthDialog
 import org.joda.time.DateTime
 
 class GroupCalendarFragment : Fragment() {
-
-    private lateinit var calendarAdapter : GroupCalendarAdapter
     private lateinit var binding: FragmentGroupCalendarBinding
-    private val args : GroupCalendarFragmentArgs by navArgs()
+    private val args: GroupCalendarFragmentArgs by navArgs()
 
-    private lateinit var group : Group
-    private lateinit var monthList : List<DateTime>
+    private lateinit var group: Group
+    private lateinit var monthList: List<DateTime>
 
     private var millis = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
     private val todayPos = Int.MAX_VALUE / 2
@@ -40,41 +38,44 @@ class GroupCalendarFragment : Fragment() {
     private var prevIdx = -1
     private var nowIdx = 0
 
-    lateinit var db : NamoDatabase
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_group_calendar, container, false)
-        db = NamoDatabase.getInstance(requireContext())
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_group_calendar, container, false)
 
-        //그룹 정보 저장
-        group = args.group
-        GROUP_ID = group.groupId
-        setGroupInfo()
-
-        calendarAdapter = GroupCalendarAdapter(context as MainActivity)
-
-        binding.groupCalendarVp.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-        binding.groupCalendarVp.adapter = calendarAdapter
-        binding.groupCalendarVp.setCurrentItem(GroupCalendarAdapter.START_POSITION, false)
-        binding.groupCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
-
-        binding.groupCalendarVp.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                pos = position
-                prevIdx = -1
-                millis = binding.groupCalendarVp.adapter!!.getItemId(position)
-                binding.groupCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
-                super.onPageSelected(position)
-            }
-        })
-
+        setView()
         clickListener()
 
         return binding.root
+    }
+
+    private fun setView() {
+        with(binding) {
+            //그룹 정보 저장
+            group = args.group
+            GROUP_ID = group.groupId
+            setGroupInfo()
+
+            groupCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
+            groupCalendarVp.apply {
+                orientation = ViewPager2.ORIENTATION_HORIZONTAL
+                adapter = GroupCalendarAdapter(context as MainActivity)
+                setCurrentItem(GroupCalendarAdapter.START_POSITION, false)
+                
+                registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        pos = position
+                        prevIdx = -1
+                        millis = binding.groupCalendarVp.adapter!!.getItemId(position)
+                        binding.groupCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
+                        super.onPageSelected(position)
+                    }
+                })
+            }
+        }
     }
 
     private fun clickListener() {
@@ -88,16 +89,18 @@ class GroupCalendarFragment : Fragment() {
             SetMonthDialog(requireContext(), millis) {
                 val date = it
                 var result = 0
-                result = (date.year - DateTime(millis).year) * 12 + (date.monthOfYear - DateTime(millis).monthOfYear)
+                result =
+                    (date.year - DateTime(millis).year) * 12 + (date.monthOfYear - DateTime(millis).monthOfYear)
                 binding.groupCalendarVp.setCurrentItem(pos + result, true)
             }.show()
         }
     }
 
-    private val launcher : ActivityResultLauncher<Intent> =
+    private val launcher: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
-                view?.findNavController()?.navigate(R.id.action_groupCalendarFragment_to_groupListFragment)
+                view?.findNavController()
+                    ?.navigate(R.id.action_groupCalendarFragment_to_groupListFragment)
             }
         }
 
@@ -105,13 +108,7 @@ class GroupCalendarFragment : Fragment() {
         binding.groupCalendarGroupTitleTv.text = group.groupName
     }
 
-    fun getGroupId() : Long {
+    fun getGroupId(): Long {
         return group.groupId
-    }
-
-    companion object{
-        var currentFragment : Fragment? = null
-        var currentSelectedPos : Int? = null
-        var currentSelectedDate : DateTime? = null
     }
 }
