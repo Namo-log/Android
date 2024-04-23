@@ -190,7 +190,7 @@ class RemoteDiaryDataSource @Inject constructor(
         var isSuccess = false
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.deleteMoimActivity(moimDiaryId)
+                groupDiaryApiService.deleteMoimDiary(moimDiaryId)
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource deleteMoimDiary Success", "$it")
                 isSuccess = true

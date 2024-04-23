@@ -55,40 +55,6 @@ interface DiaryApiService {
         @Body text: String?
     ): DiaryResponse
 
-    // 모임 기록 활동 추가
-    @Multipart
-    @POST("/moims/schedule/memo/{moimId}")
-    suspend fun addMoimDiary(
-        @Path("moimId") scheduleId: Long,
-        @Part("name") place: RequestBody?,
-        @Part("money") pay: RequestBody?,
-        @Part("participants") member: RequestBody?,
-        @Part imgs: List<MultipartBody.Part>?
-    ): DiaryResponse
-
-    // 모임 기록 활동 수정
-    @Multipart
-    @PATCH("/moims/schedule/memo/{moimMemoLocationId}")
-    suspend fun editMoimActivity(
-        @Path("moimMemoLocationId") moimScheduldId: Long,
-        @Part("name") place: RequestBody?,
-        @Part("money") pay: RequestBody?,
-        @Part("participants") member: RequestBody?,
-        @Part imgs: List<MultipartBody.Part>?
-    ): DiaryResponse
-
-    // 모임 기록 활동 삭제
-    @DELETE("/moims/schedule/memo/{moimMemoLocationId}")
-    suspend fun deleteMoimActivity(
-        @Path("moimMemoLocationId") moimActivityId: Long
-    ): BaseResponse
-
-    // 모임 기록 삭제 (그룹에서 삭제)
-    @DELETE("/moims/schedule/memo/all/{moimMemoId}")
-    suspend fun deleteMoimDiary(
-        @Path("moimMemoId") moimDiaryId: Long
-    ): BaseResponse
-
     // 모임 기록 월별 리스트 조회
     @GET("/moims/schedule/memo/month/{month}")
     suspend fun getGroupMonthDiary(
