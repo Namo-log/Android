@@ -200,7 +200,6 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
     private fun setMonthCalendarSchedule(monthStart: Long, monthEnd: Long) {
         viewModel.getMonthSchedules(monthStart, monthEnd)
         viewModel.getMonthMoimSchedule(yearMonthDate(millis))
-
     }
 
     // 일정 상세보기
@@ -289,6 +288,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
     }
 
     override fun onGetGroupMonthSuccess(response: DiaryGetMonthResponse) {
+        Log.d("GET_GROUP_MONTH", "$response")
         val data = response.result
         groupScheduleRVAdapter.addGroupDiary(data.content as ArrayList<MoimDiary>)
     }

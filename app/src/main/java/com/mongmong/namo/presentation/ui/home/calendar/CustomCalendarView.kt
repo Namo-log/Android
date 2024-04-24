@@ -22,7 +22,6 @@ import org.joda.time.DateTime
 import kotlin.math.abs
 
 class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context, attrs) {
-
     interface OnDateClickListener {
         fun onDateClick(date : DateTime?, pos : Int?)
     }
@@ -260,7 +259,7 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
 
             for (more in 0 until 42) {
                 if (moreList[more] != 0) {
-                    var moreText : String = "+${moreList[more]}"
+                    var moreText = "+${moreList[more]}"
 
                     val x = (more % DAYS_PER_WEEK) * cellWidth
                     val y = (more / DAYS_PER_WEEK + 1) * cellHeight - _eventMorePadding
@@ -491,12 +490,17 @@ class CustomCalendarView(context: Context, attrs : AttributeSet) : View(context,
         dayList.addAll(getMonthList(DateTime(millis)))
     }
 
-    fun setScheduleList(events : List<Schedule>) {
+    fun setScheduleList(events: List<Schedule>) {
+        val sortedEvents = events.sortedByDescending {
+            DateTime(it.endLong * 1000L).millis - DateTime(it.startLong * 1000L).millis
+        }
+
         eventList.clear()
-        eventList.addAll(events)
+        eventList.addAll(sortedEvents)
 
         invalidate()
     }
+
 
     fun setCategoryList(category : List<Category>) {
         categoryList.clear()
