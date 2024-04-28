@@ -11,9 +11,9 @@ import retrofit2.http.POST
 interface LoginApiService {
     // SDK 카카오 로그인
     @POST("auth/kakao/signup")
-    fun postKakaoSDK(
+    suspend fun postKakaoSDK(
         @Body body: TokenBody
-    ) : Call<LoginResponse>
+    ) : LoginResponse
 
     // SDK 네이버 로그인
     @POST("auth/naver/signup")

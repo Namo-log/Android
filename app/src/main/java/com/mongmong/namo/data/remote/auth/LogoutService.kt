@@ -1,4 +1,4 @@
-package com.mongmong.namo.data.remote.login
+package com.mongmong.namo.data.remote.auth
 
 import android.util.Log
 import com.mongmong.namo.data.remote.LoginApiService

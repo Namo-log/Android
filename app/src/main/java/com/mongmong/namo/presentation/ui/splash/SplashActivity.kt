@@ -2,12 +2,11 @@ package com.mongmong.namo.presentation.ui.splash
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.mongmong.namo.data.remote.login.RefreshService
-import com.mongmong.namo.data.remote.login.SplashView
+import com.mongmong.namo.data.remote.auth.RefreshService
+import com.mongmong.namo.data.remote.auth.SplashView
 import com.mongmong.namo.databinding.ActivitySplashBinding
 import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.TokenBody
@@ -15,7 +14,6 @@ import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.ui.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 

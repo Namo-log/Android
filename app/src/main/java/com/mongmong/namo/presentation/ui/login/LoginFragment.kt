@@ -12,11 +12,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.mongmong.namo.BuildConfig
 import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.config.ApplicationClass
-import com.mongmong.namo.data.remote.login.*
+import com.mongmong.namo.data.remote.auth.*
 import com.mongmong.namo.databinding.FragmentLoginBinding
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
@@ -24,11 +25,15 @@ import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.TokenBody
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.OAuthLoginCallback
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginFragment: Fragment(), LoginView {
     private lateinit var binding: FragmentLoginBinding
     private lateinit var alarmManager : AlarmManager
     private lateinit var notificationManager : NotificationManager
+
+    private val viewModel : AuthViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,6 +46,7 @@ class LoginFragment: Fragment(), LoginView {
         notificationManager = requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
+        initObserve()
         kakaoLogin()
         clickHandler()
 
@@ -52,16 +58,14 @@ class LoginFragment: Fragment(), LoginView {
         binding.loginNaverBt.setOnClickListener {
             startNaverLogin()
         }
+    }
 
-        // 임시 로그인
-//        binding.loginTempBt.setOnClickListener {
-////            setAlarm(System.currentTimeMillis())
-////            setContent("NAMO","나모 이용방법을 알려드려요.")
-////            setAlarm(System.currentTimeMillis() + 10000)
-////            setContent("나모","두 번째 알람입니다.")
-////            setAlarm(System.currentTimeMillis() + 20000)
-//            setLoginFinished()
-//        }
+    private fun initObserve() {
+        viewModel.tokenResult.observe(viewLifecycleOwner) {
+            if (it != null) {
+                setLoginFinished()
+            }
+        }
     }
 
     private fun kakaoLogin() {
@@ -78,7 +82,7 @@ class LoginFragment: Fragment(), LoginView {
 //                Toast.makeText(requireContext(), "카카오 로그인 성공", Toast.LENGTH_SHORT).show()
 
                 // 서버 통신
-                LoginService(this).tryPostKakaoSDK(TokenBody(token.accessToken, token.refreshToken))
+                tryKakaoLogin(token.accessToken, token.refreshToken)
 //                Log.d("kakao_access_token", token.accessToken)
 //                Log.d("kakao_refresh_token", token.refreshToken)
             }
@@ -98,15 +102,17 @@ class LoginFragment: Fragment(), LoginView {
     private fun loginWithKakaoAccount() {
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (token != null) {
-                // 서버 통신
-                LoginService(this).tryPostKakaoSDK(TokenBody(token.accessToken, token.refreshToken))
+                tryKakaoLogin(token.accessToken, token.refreshToken)
             }
         }
         UserApiClient.instance.loginWithKakaoAccount(requireContext(), callback = callback)
     }
 
-    private fun startNaverLogin() {
+    private fun tryKakaoLogin(accessToken: String, refreshToken: String) {
+        viewModel.tryKakaoLogin(accessToken, refreshToken)
+    }
 
+    private fun startNaverLogin() {
         // 네이버 로그인 모듈 초기화
         NaverIdLoginSDK.initialize(
             requireContext(), BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, "나모"
@@ -139,30 +145,8 @@ class LoginFragment: Fragment(), LoginView {
     }
 
     private fun setLoginFinished(){
-        val intent = Intent(requireContext(), MainActivity::class.java)
         requireActivity().finish()
-        startActivity(intent)
-    }
-
-    override fun onPostKakaoSDKSuccess(response: LoginResponse) {
-        Log.d("LoginActivity", "onPostKakaoSDKSuccess")
-        Log.d("Login", "$response")
-
-        val result = response.result
-
-        // 토큰 저장
-        val editor = ApplicationClass.sSharedPreferences.edit()
-        editor
-            .putString(ApplicationClass.X_ACCESS_TOKEN, result.accessToken)
-            .putString(ApplicationClass.X_REFRESH_TOKEN, result.refreshToken)
-            .apply()
-
-        // 화면 이동
-        setLoginFinished()
-    }
-
-    override fun onPostKakaoSDKFailure(message: String) {
-        Log.d("LoginActivity", "onPostKakaoSDKFailure")
+        startActivity(Intent(requireContext(), MainActivity::class.java))
     }
 
     override fun onPostNaverSDKSuccess(response: LoginResponse) {
