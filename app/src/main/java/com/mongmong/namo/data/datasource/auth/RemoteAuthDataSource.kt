@@ -33,4 +33,26 @@ class RemoteAuthDataSource @Inject constructor(
         }
         return loginResponse
     }
+
+    suspend fun postNaverLogin(
+        tokenBody: TokenBody
+    ): LoginResponse {
+        var loginResponse = LoginResponse(
+            result = LoginResult(
+                accessToken = "",
+                refreshToken = ""
+            )
+        )
+        withContext(Dispatchers.IO) {
+            runCatching {
+                loginApiService.postNaverSDK(tokenBody)
+            }.onSuccess {
+                Log.d("RemoteAuthDataSource", "postNaverLogin Success $it")
+                loginResponse = it
+            }.onFailure {
+                Log.d("RemoteAuthDataSource", "postNaverLogin Fail $it")
+            }
+        }
+        return loginResponse
+    }
 }

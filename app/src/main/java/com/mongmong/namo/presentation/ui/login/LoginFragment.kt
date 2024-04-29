@@ -28,7 +28,7 @@ import com.navercorp.nid.oauth.OAuthLoginCallback
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LoginFragment: Fragment(), LoginView {
+class LoginFragment: Fragment() {
     private lateinit var binding: FragmentLoginBinding
     private lateinit var alarmManager : AlarmManager
     private lateinit var notificationManager : NotificationManager
@@ -79,9 +79,7 @@ class LoginFragment: Fragment(), LoginView {
                 }
             } else if (token != null) {
                 Log.i(ContentValues.TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
-//                Toast.makeText(requireContext(), "카카오 로그인 성공", Toast.LENGTH_SHORT).show()
 
-                // 서버 통신
                 tryKakaoLogin(token.accessToken, token.refreshToken)
 //                Log.d("kakao_access_token", token.accessToken)
 //                Log.d("kakao_refresh_token", token.refreshToken)
@@ -112,23 +110,25 @@ class LoginFragment: Fragment(), LoginView {
         viewModel.tryKakaoLogin(accessToken, refreshToken)
     }
 
+    private fun tryNaverLogin(accessToken: String, refreshToken: String) {
+        viewModel.tryNaverLogin(accessToken, refreshToken)
+    }
+
     private fun startNaverLogin() {
         // 네이버 로그인 모듈 초기화
         NaverIdLoginSDK.initialize(
             requireContext(), BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, "나모"
         )
 
-        // OAuthLoginCallback을 authenticate() 메서드 호출 시 파라미터로 전달하거나 NidOAuthLoginButton 객체에 등록하면 인증이 종료되는 것을 확인할 수 있습니다.
+        // OAuthLoginCallback을 authenticate() 메서드 호출 시 파라미터로 전달하거나 NidOAuthLoginButton 객체에 등록하면 인증이 종료됨
         val oauthLoginCallback = object : OAuthLoginCallback {
             override fun onSuccess() {
                 val naverAccessToken = NaverIdLoginSDK.getAccessToken().toString()
                 val naverRefreshToken = NaverIdLoginSDK.getRefreshToken().toString()
 
-                // 서버 통신
-                LoginService(this@LoginFragment).tryPostNaverSDK(TokenBody(naverAccessToken, naverRefreshToken))
-
-                Log.d("naver_access_token", naverAccessToken)
-                Log.d("naver_refresh_token",naverRefreshToken)
+                tryNaverLogin(naverAccessToken, naverRefreshToken)
+//                Log.d("naver_access_token", naverAccessToken)
+//                Log.d("naver_refresh_token",naverRefreshToken)
             }
 
             override fun onFailure(httpStatus: Int, message: String) {
@@ -147,26 +147,5 @@ class LoginFragment: Fragment(), LoginView {
     private fun setLoginFinished(){
         requireActivity().finish()
         startActivity(Intent(requireContext(), MainActivity::class.java))
-    }
-
-    override fun onPostNaverSDKSuccess(response: LoginResponse) {
-        Log.d("LoginActivity", "onPostNaverSDKSuccess")
-        Log.d("Login", "$response")
-
-        val result = response.result
-
-        // 토큰 저장
-        val editor = ApplicationClass.sSharedPreferences.edit()
-        editor
-            .putString(ApplicationClass.X_ACCESS_TOKEN, result.accessToken)
-            .putString(ApplicationClass.X_REFRESH_TOKEN, result.refreshToken)
-            .apply()
-
-        // 화면 이동
-        setLoginFinished()
-    }
-
-    override fun onPostNaverSDKFailure(message: String) {
-        Log.d("LoginActivity", "onPostNaverSDKFailure")
     }
 }

@@ -29,6 +29,17 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    /** 네이버 로그인 */
+    fun tryNaverLogin(accessToken: String, refreshToken: String) {
+        viewModelScope.launch {
+            _tokenResult.value = repository.postNaverLogin(accessToken, refreshToken).result
+            _tokenResult.value?.let {
+                // 토큰 저장
+                saveToken(it)
+            }
+        }
+    }
+
     /** 토큰 정보 앱 내에 저장 */
     private fun saveToken(tokenResult: LoginResult) {
         // 토큰 저장

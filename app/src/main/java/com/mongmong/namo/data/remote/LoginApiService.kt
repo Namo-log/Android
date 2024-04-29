@@ -17,9 +17,9 @@ interface LoginApiService {
 
     // SDK 네이버 로그인
     @POST("auth/naver/signup")
-    fun postNaverSDK(
+    suspend fun postNaverSDK(
         @Body naverData: TokenBody
-    ) : Call<LoginResponse>
+    ) : LoginResponse
 
     // 토큰 재발급
     @POST("auth/reissuance")

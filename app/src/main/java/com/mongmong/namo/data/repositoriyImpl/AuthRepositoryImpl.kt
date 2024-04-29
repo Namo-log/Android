@@ -12,4 +12,8 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun postKakaoLogin(accessToken: String, refreshToken: String): LoginResponse {
         return remoteAuthDataSource.postKakaoLogin(TokenBody(accessToken, refreshToken))
     }
+
+    override suspend fun postNaverLogin(accessToken: String, refreshToken: String): LoginResponse {
+        return remoteAuthDataSource.postNaverLogin(TokenBody(accessToken, refreshToken))
+    }
 }

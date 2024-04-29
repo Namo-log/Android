@@ -11,6 +11,11 @@ interface AuthRepository {
         refreshToken: String
     ): LoginResponse
 
+    suspend fun postNaverLogin(
+        accessToken: String,
+        refreshToken: String
+    ): LoginResponse
+
 //    suspend fun saveToken(
 //        accessToken: String,
 //        refreshToken: String
