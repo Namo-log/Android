@@ -16,13 +16,9 @@ import androidx.fragment.app.viewModels
 import com.mongmong.namo.BuildConfig
 import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.R
-import com.mongmong.namo.presentation.config.ApplicationClass
-import com.mongmong.namo.data.remote.auth.*
 import com.mongmong.namo.databinding.FragmentLoginBinding
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
-import com.mongmong.namo.domain.model.LoginResponse
-import com.mongmong.namo.domain.model.TokenBody
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,8 +26,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class LoginFragment: Fragment() {
     private lateinit var binding: FragmentLoginBinding
-    private lateinit var alarmManager : AlarmManager
-    private lateinit var notificationManager : NotificationManager
 
     private val viewModel : AuthViewModel by viewModels()
 
@@ -43,17 +37,24 @@ class LoginFragment: Fragment() {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
 
-        notificationManager = requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
         initObserve()
-        kakaoLogin()
-        clickHandler()
+        initNaverLoginSDK()
+        initClickListeners()
+        initNotification()
 
         return binding.root
     }
 
-    private fun clickHandler(){
+    private fun initNotification() {
+        requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    }
+
+    private fun initClickListeners(){
+        // 카카오 로그인
+        binding.loginKakaoBt.setOnClickListener {
+            startKakaoLogin()
+        }
         // 네이버 로그인
         binding.loginNaverBt.setOnClickListener {
             startNaverLogin()
@@ -68,7 +69,15 @@ class LoginFragment: Fragment() {
         }
     }
 
-    private fun kakaoLogin() {
+    private fun tryKakaoLogin(accessToken: String, refreshToken: String) {
+        viewModel.tryKakaoLogin(accessToken, refreshToken)
+    }
+
+    private fun tryNaverLogin(accessToken: String, refreshToken: String) {
+        viewModel.tryNaverLogin(accessToken, refreshToken)
+    }
+
+    private fun startKakaoLogin() {
         // 카카오계정 로그인 공통 callback 구성
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {  //토큰 에러
@@ -84,16 +93,12 @@ class LoginFragment: Fragment() {
 //                Log.d("kakao_access_token", token.accessToken)
 //                Log.d("kakao_refresh_token", token.refreshToken)
             }
-
         }
-        // 카카오 로그인 버튼 클릭시 로그인
-        binding.loginKakaoBt.setOnClickListener {
-            // 카카오톡이 설치되어 있으면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
-            if (UserApiClient.instance.isKakaoTalkLoginAvailable(requireContext())) {
-                UserApiClient.instance.loginWithKakaoTalk(requireContext(), callback = callback)
-            } else {
-                loginWithKakaoAccount()
-            }
+        // 카카오톡이 설치되어 있으면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(requireContext())) {
+            UserApiClient.instance.loginWithKakaoTalk(requireContext(), callback = callback)
+        } else {
+            loginWithKakaoAccount()
         }
     }
 
@@ -106,20 +111,7 @@ class LoginFragment: Fragment() {
         UserApiClient.instance.loginWithKakaoAccount(requireContext(), callback = callback)
     }
 
-    private fun tryKakaoLogin(accessToken: String, refreshToken: String) {
-        viewModel.tryKakaoLogin(accessToken, refreshToken)
-    }
-
-    private fun tryNaverLogin(accessToken: String, refreshToken: String) {
-        viewModel.tryNaverLogin(accessToken, refreshToken)
-    }
-
     private fun startNaverLogin() {
-        // 네이버 로그인 모듈 초기화
-        NaverIdLoginSDK.initialize(
-            requireContext(), BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, "나모"
-        )
-
         // OAuthLoginCallback을 authenticate() 메서드 호출 시 파라미터로 전달하거나 NidOAuthLoginButton 객체에 등록하면 인증이 종료됨
         val oauthLoginCallback = object : OAuthLoginCallback {
             override fun onSuccess() {
@@ -142,6 +134,13 @@ class LoginFragment: Fragment() {
             }
         }
         NaverIdLoginSDK.authenticate(requireContext(), oauthLoginCallback)
+    }
+
+    private fun initNaverLoginSDK() {
+        // 네이버 로그인 모듈 초기화
+        NaverIdLoginSDK.initialize(
+            requireContext(), BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, "나모"
+        )
     }
 
     private fun setLoginFinished(){
