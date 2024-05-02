@@ -231,9 +231,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
     }
 
     private fun setDailyPersonalSchedule(todayStart: Long, todayEnd: Long) {
-        lifecycleScope.launch {
-            viewModel.getDailySchedules(todayStart, todayEnd)
-        }
+        viewModel.getDailySchedules(todayStart, todayEnd)
     }
 
     private fun setDailyMoimSchedule(todayStart: Long, todayEnd: Long) {

@@ -491,9 +491,11 @@ class GroupCustomCalendarView(context: Context, attrs : AttributeSet) : View(con
     }
 
     fun setScheduleList(events : List<MoimScheduleBody>) {
-        val sortedEvents = events.sortedByDescending {
+        val sortedEvents = events.sortedWith(compareByDescending<MoimScheduleBody> {
             DateTime(it.endDate * 1000L).millis - DateTime(it.startDate * 1000L).millis
-        }
+        }.thenBy {
+            it.startDate
+        })
 
         eventList.clear()
         eventList.addAll(sortedEvents)
