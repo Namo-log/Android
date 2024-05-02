@@ -286,8 +286,8 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
             if (!result.isNullOrEmpty()) {
                 monthGroupSchedule = result.map { it.convertServerScheduleResponseToLocal() } as ArrayList
                 calendarSchedules.addAll(monthGroupSchedule)
-                binding.calendarMonthView.setScheduleList(calendarSchedules) // 달력 표시
             }
+            binding.calendarMonthView.setScheduleList(calendarSchedules) // 달력 표시
         }
     }
 
