@@ -12,7 +12,7 @@
         android:paddingHorizontal="10dp"
         app:layoutDescription="@xml/fragment_group_calendar_xml_constraintlayout2_scene">
 
-        <com.mongmong.namo.presentation.ui.group.calendar.GroupCustomCalendarView
+        <com.mongmong.namo.presentation.ui.group.calendar.GroupCalendarView
             android:id="@+id/group_calendar_month_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
