@@ -144,6 +144,11 @@ class DiaryRepositoryImpl @Inject constructor(
         remoteDiaryDataSource.deleteMoimActivity(activityId)
     }
 
+    /** 모임 기록 삭제 (그룹에서) **/
+    override suspend fun deleteMoimDiary(moimDiaryId: Long): Boolean {
+        return remoteDiaryDataSource.deleteMoimDiary(moimDiaryId)
+    }
+
     override suspend fun uploadDiaryToServer() {
         TODO("Not yet implemented")
     }

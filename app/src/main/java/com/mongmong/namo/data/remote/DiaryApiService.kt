@@ -5,6 +5,7 @@ import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
+import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.Call
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

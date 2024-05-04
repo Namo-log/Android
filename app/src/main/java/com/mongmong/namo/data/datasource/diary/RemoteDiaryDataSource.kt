@@ -185,4 +185,20 @@ class RemoteDiaryDataSource @Inject constructor(
             }
         }
     }
+
+    suspend fun deleteMoimDiary(moimDiaryId: Long): Boolean {
+        var isSuccess = false
+        withContext(Dispatchers.IO) {
+            runCatching {
+                groupDiaryApiService.deleteMoimDiary(moimDiaryId)
+            }.onSuccess {
+                Log.d("RemoteDiaryDataSource deleteMoimDiary Success", "$it")
+                isSuccess = true
+            }.onFailure {
+                Log.d("RemoteDiaryDataSource deleteMoimDiary Success", "$it")
+            }
+        }
+
+        return isSuccess
+    }
 }

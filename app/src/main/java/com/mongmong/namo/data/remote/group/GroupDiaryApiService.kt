@@ -1,6 +1,7 @@
 package com.mongmong.namo.data.remote.group
 
 import com.mongmong.namo.domain.model.DiaryResponse
+import com.mongmong.namo.presentation.config.BaseResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.DELETE
@@ -38,4 +39,11 @@ interface GroupDiaryApiService {
     suspend fun deleteMoimActivity(
         @Path("moimMemoLocationId") moimActivityId: Long
     ): DiaryResponse
+
+    // 모임 기록 삭제 (그룹에서 삭제)
+    @DELETE("/moims/schedule/memo/all/{moimMemoId}")
+    suspend fun deleteMoimDiary(
+        @Path("moimMemoId") moimDiaryId: Long
+    ): BaseResponse
+
 }

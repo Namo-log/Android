@@ -53,4 +53,6 @@ interface DiaryRepository {
     )
 
     suspend fun deleteMoimActivity(activityId: Long)
+
+    suspend fun deleteMoimDiary(moimDiaryId: Long): Boolean
 }
