@@ -14,9 +14,9 @@ import retrofit2.http.Path
 interface GroupDiaryApiService {
     // 모임 기록 활동 추가
     @Multipart
-    @POST("/moims/schedule/memo/{moimId}")
+    @POST("group/diaries/{activityId}")
     suspend fun addMoimDiary(
-        @Path("moimId") scheduleId: Long,
+        @Path("activityId") scheduleId: Long,
         @Part("name") place: RequestBody?,
         @Part("money") pay: RequestBody?,
         @Part("participants") member: RequestBody?,
@@ -25,9 +25,9 @@ interface GroupDiaryApiService {
 
     // 모임 기록 활동 수정
     @Multipart
-    @PATCH("/moims/schedule/memo/{moimMemoLocationId}")
+    @PATCH("group/diaries/{activityId}")
     suspend fun editMoimActivity(
-        @Path("moimMemoLocationId") moimScheduldId: Long,
+        @Path("activityId") moimScheduldId: Long,
         @Part("name") place: RequestBody?,
         @Part("money") pay: RequestBody?,
         @Part("participants") member: RequestBody?,
@@ -35,15 +35,15 @@ interface GroupDiaryApiService {
     ): DiaryResponse
 
     // 모임 기록 활동 삭제
-    @DELETE("/moims/schedule/memo/{moimMemoLocationId}")
+    @DELETE("group/diaries/{activityId}")
     suspend fun deleteMoimActivity(
-        @Path("moimMemoLocationId") moimActivityId: Long
+        @Path("activityId") moimActivityId: Long
     ): DiaryResponse
 
     // 모임 기록 삭제 (그룹에서 삭제)
-    @DELETE("/moims/schedule/memo/all/{moimMemoId}")
+    @DELETE("group/diaries/all/{moimDiaryId}")
     suspend fun deleteMoimDiary(
-        @Path("moimMemoId") moimDiaryId: Long
+        @Path("moimDiaryId") moimDiaryId: Long
     ): BaseResponse
 
 }

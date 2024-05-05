@@ -13,7 +13,7 @@ data class MoimDiaryResult(
     val startDate: Long,
     val locationName: String,
     val users: List<MoimScheduleMember>,
-    @SerializedName("locationDtos") val moimActivities: List<MoimActivity>
+    @SerializedName("moimActivityDtos") val moimActivities: List<MoimActivity>
 )
 
 data class MoimScheduleMember(
@@ -22,7 +22,7 @@ data class MoimScheduleMember(
 ) : java.io.Serializable
 
 data class MoimActivity(
-    @SerializedName("moimMemoLocationId") val moimActivityId: Long = 0L,
+    @SerializedName("moimActivityId") val moimActivityId: Long = 0L,
     @SerializedName("name") var place: String = "",
     @SerializedName("money") var pay: Long = 0L,
     @SerializedName("participants") var members: List<Long>,

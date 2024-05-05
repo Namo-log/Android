@@ -18,31 +18,31 @@ import retrofit2.http.Path
 
 interface GroupApiService {
     // 그룹 리스트 조회
-    @GET("moims")
+    @GET("groups")
     suspend fun getGroups(): GetGroupsResponse
 
     // 그룹 추가하기
     @Multipart
-    @POST("moims")
+    @POST("groups")
     suspend fun addGroup(
         @Part img: MultipartBody.Part?,
         @Part("groupName") groupName: RequestBody
     ): AddGroupResponse
 
     // 그룹 참여하기
-    @PATCH("moims/participate/{groupCode}")
+    @PATCH("groups/participate/{code}")
     suspend fun joinGroup(
-        @Path("groupCode") groupCode: String
+        @Path("code") groupCode: String
     ): JoinGroupResponse
 
     // 그룹 탈퇴하기
-    @DELETE("moims/withdraw/{moimId}")
+    @DELETE("groups/withdraw/{groupId}")
     suspend fun deleteMember(
-        @Path("moimId") groupId: Long
+        @Path("groupId") groupId: Long
     ): BaseResponse
 
     // 그룹명 바꾸기
-    @PATCH("moims/name")
+    @PATCH("groups/name")
     suspend fun updateGroupName(
         @Body body: UpdateGroupNameRequestBody
     ): JoinGroupResponse

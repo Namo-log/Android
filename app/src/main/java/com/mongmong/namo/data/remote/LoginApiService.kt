@@ -10,25 +10,25 @@ import retrofit2.http.POST
 
 interface LoginApiService {
     // SDK 카카오 로그인
-    @POST("auth/kakao/signup")
+    @POST("auths/kakao/signup")
     fun postKakaoSDK(
         @Body body: TokenBody
     ) : Call<LoginResponse>
 
     // SDK 네이버 로그인
-    @POST("auth/naver/signup")
+    @POST("auths/naver/signup")
     fun postNaverSDK(
         @Body naverData: TokenBody
     ) : Call<LoginResponse>
 
     // 토큰 재발급
-    @POST("auth/reissuance")
+    @POST("auths/reissuance")
     fun refreshToken(
         @Body body: TokenBody
     ) : Call<LoginResponse>
 
     // 로그아웃
-    @POST("auth/logout")
+    @POST("auths/logout")
     fun postLogout(
         @Body body: LogoutBody
     ) : Call<BaseResponse>

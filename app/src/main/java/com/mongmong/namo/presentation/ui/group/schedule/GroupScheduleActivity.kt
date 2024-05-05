@@ -250,7 +250,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private fun storeContent() {
         if (isPostOrEdit) {
-            postGroupSchedule.moimId = group.groupId
+            postGroupSchedule.groupId = group.groupId
             postGroupSchedule.name = binding.dialogGroupScheduleTitleEt.text.toString()
             postGroupSchedule.startLong = startDateTime.millis / 1000
             postGroupSchedule.endLong = endDateTime.millis / 1000

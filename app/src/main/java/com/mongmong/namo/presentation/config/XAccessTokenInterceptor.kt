@@ -21,7 +21,7 @@ class XAccessTokenInterceptor @Inject constructor() : Interceptor {
         val newRequest = request.newBuilder()
 
         if (accessToken != null) {
-            newRequest.addHeader("Authorization", accessToken)
+            newRequest.addHeader("Authorization", "Bearer $accessToken")
         }
 
         val response = chain.proceed(newRequest.build())

@@ -14,12 +14,12 @@ import retrofit2.http.*
 interface DiaryApiService {
     /** 개인 */
     // 개인 기록 전체 조회
-    @GET("/schedules/diary/all")
+    @GET("diaries/all")
     fun getAllDiary(): Call<DiaryGetAllResponse>
 
     // 개인 기록 추가
     @Multipart
-    @POST("/schedules/diary")
+    @POST("diaries")
     suspend fun addDiary(
         @Part("scheduleId") scheduleId: RequestBody,
         @Part("content") content: RequestBody?,
@@ -28,7 +28,7 @@ interface DiaryApiService {
 
     // 개인 기록 수정
     @Multipart
-    @PATCH("/schedules/diary")
+    @PATCH("diaries")
     suspend fun editDiary(
         @Part("scheduleId") scheduleId: RequestBody,
         @Part("content") content: RequestBody?,
@@ -36,39 +36,46 @@ interface DiaryApiService {
     ): DiaryResponse
 
     // 개인 기록 삭제
-    @DELETE("/schedules/diary/{scheduleId}")
+    @DELETE("diaries/{scheduleId}")
     suspend fun deleteDiary(
         @Path("scheduleId") scheduleId: Long
     ): DiaryResponse
 
     /** 모임 */
-    // 모임 기록 개별 조회
-    @GET("/moims/schedule/memo/{moimId}")
-    suspend fun getMoimDiary(
-        @Path("moimId") scheduleId: Long
-    ): GetMoimDiaryResponse
-
-    // 모임 메모 추가 or 수정
-    @PATCH("/moims/schedule/memo/text/{scheduleId}")
-    suspend fun patchMoimMemo(
-        @Path("scheduleId") scheduleId: Long,
-        @Body text: String?
-    ): DiaryResponse
-
-    // 모임 기록 월별 리스트 조회
-    @GET("/moims/schedule/memo/month/{month}")
+    // 월별 모임 기록 조회
+    @GET("group/diaries/month/{month}")
     suspend fun getGroupMonthDiary(
         @Path("month") month: String,
         @Query("page") page: Int,
         @Query("size") size: Int
     ): DiaryGetMonthResponse
 
-    @GET("/moims/schedule/memo/month/{month}")
+    // 모임 기록 개별 조회
+    @GET("group/diaries/{moimScheduleId}")
+    suspend fun getMoimDiary(
+        @Path("moimScheduleId") scheduleId: Long
+    ): GetMoimDiaryResponse
+
+    // 모임 메모 추가 or 수정
+    @PATCH("group/diaries/text/{scheduleId}")
+    suspend fun patchMoimMemo(
+        @Path("scheduleId") scheduleId: Long,
+        @Body text: String?
+    ): DiaryResponse
+
+    // 모임 기록 삭제
+    //TODO: API 연동 필요
+    @PATCH("diaries/person/{scheduleId}")
+    suspend fun deleteMoimDiary(
+        @Path("scheduleId") scheduleId: Long,
+    ): DiaryResponse
+
+    // 월별 모임 기록 조회2
+    @GET("group/diaries/month/{month}")
     fun getGroupMonthDiary2(
         @Path("month") month: String,
         @Query("page") page: Int,
         @Query("size") size: Int
     ): Call<DiaryGetMonthResponse>
-
 }
 

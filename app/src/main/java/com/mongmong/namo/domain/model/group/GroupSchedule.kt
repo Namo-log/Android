@@ -10,7 +10,7 @@ data class AddMoimScheduleResponse(
 
 /** 모임 일정 생성 */
 data class AddMoimScheduleRequestBody(
-    @SerializedName("moimId") var moimId : Long = 0L,
+    @SerializedName("groupId") var groupId : Long = 0L,
     @SerializedName("name") var name : String = "",
     @SerializedName("startDate") var startLong : Long = 0L,
     @SerializedName("endDate") var endLong : Long = 0L,

@@ -25,16 +25,16 @@ interface ScheduleApiService {
     ) : PostScheduleResponse
 
     // 일정 수정
-    @PATCH("schedules/{serverId}")
+    @PATCH("schedules/{scheduleId}")
     suspend fun editSchedule(
-        @Path("serverId") serverId : Long,
+        @Path("scheduleId") serverId : Long,
         @Body schedule : ScheduleRequestBody
     ) : EditScheduleResponse
 
     // 일정 삭제
-    @DELETE("schedules/{serverId}/{kind}")
+    @DELETE("schedules/{scheduleId}/{kind}")
     suspend fun deleteSchedule(
-        @Path("serverId") serverId : Long,
+        @Path("scheduleId") serverId : Long,
         @Path("kind") isMoimSchedule: Int,
     ) : DeleteScheduleResponse
 
@@ -51,24 +51,24 @@ interface ScheduleApiService {
 
     /** 모임 일정 */
     // 모임 일정 전체 조회
-    @GET("schedules/moim/all")
+    @GET("schedules/group/all")
     fun getAllMoimSchedule(
     ) : Call<GetMonthScheduleResponse>
 
     // 월별 모임 일정 조회
-    @GET("schedules/moim/{yearMonth}")
+    @GET("schedules/group/{yearMonth}")
     suspend fun getMonthMoimSchedule(
         @Path("yearMonth") yearMonth: String,
     ) : GetMonthScheduleResponse
 
     // 모임 일정 카테고리 수정
-    @PATCH("moims/schedule/category")
+    @PATCH("group/schedules/category")
     suspend fun patchMoimScheduleCategory(
         @Body body: PatchMoimScheduleCategoryRequestBody
     ): BaseResponse
 
     // 모임 일정 알림 수정
-    @PATCH("moims/schedule/alarm")
+    @PATCH("group/schedules/alarm")
     suspend fun patchMoimScheduleAlarm(
         @Body body: PatchMoimScheduleAlarmRequestBody
     ): BaseResponse
