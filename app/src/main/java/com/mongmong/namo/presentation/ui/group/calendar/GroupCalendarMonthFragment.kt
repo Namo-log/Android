@@ -17,8 +17,9 @@ import com.mongmong.namo.presentation.ui.group.schedule.GroupScheduleActivity
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupCalendarAdapter.Companion.GROUP_ID
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupDailyMoimRVAdapter
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupDailyPersonalRVAdapter
-import com.mongmong.namo.presentation.ui.home.calendar.CustomCalendarView
+import com.mongmong.namo.presentation.ui.home.calendar.PersonalCalendarView
 import com.mongmong.namo.presentation.ui.home.schedule.MoimScheduleViewModel
+import com.mongmong.namo.presentation.utils.CustomCalendarView
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 
@@ -59,8 +60,8 @@ class GroupCalendarMonthFragment : Fragment() {
     ): View? {
         binding = FragmentGroupCalendarMonthBinding.inflate(inflater, container, false)
 
-        binding.groupCalendarMonthView.setDayList(millis)
-        monthDayList = binding.groupCalendarMonthView.getDayList()
+        binding.groupCalendarMonthView.setDays(millis)
+        monthDayList = binding.groupCalendarMonthView.days
 
         initClickListeners()
         initObserve()
@@ -105,7 +106,7 @@ class GroupCalendarMonthFragment : Fragment() {
         }
 
         // 날짜 상세보기
-        binding.groupCalendarMonthView.onDateClickListener = object : GroupCustomCalendarView.OnDateClickListener {
+        binding.groupCalendarMonthView.onDateClickListener = object : CustomCalendarView.OnDateClickListener {
             override fun onDateClick(date: DateTime?, pos: Int?) {
                 val prevFragment = GroupCalendarActivity.currentFragment as GroupCalendarMonthFragment?
                 if (prevFragment != null && prevFragment != this@GroupCalendarMonthFragment) {

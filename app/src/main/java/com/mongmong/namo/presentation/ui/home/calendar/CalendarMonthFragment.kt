@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
@@ -25,8 +24,8 @@ import com.mongmong.namo.presentation.ui.home.adapter.DailyGroupRVAdapter
 import com.mongmong.namo.presentation.ui.home.adapter.DailyPersonalRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.PersonalScheduleViewModel
+import com.mongmong.namo.presentation.utils.CustomCalendarView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 
@@ -63,8 +62,8 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
     ): View? {
         binding = FragmentCalendarMonthBinding.inflate(inflater, container, false)
 
-        binding.calendarMonthView.setDayList(millis)
-        monthDayList = binding.calendarMonthView.getDayList()
+        binding.calendarMonthView.setDays(millis)
+        monthDayList = binding.calendarMonthView.days
 
         initObserve()
         initClickListeners()
@@ -186,9 +185,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
     }
 
     private fun getCategoryList() {
-        lifecycleScope.launch{
-            viewModel.getCategories()
-        }
+        viewModel.getCategories()
     }
 
     private fun setCategoryList(categoryList: List<Category>) {
@@ -200,10 +197,8 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
 
     // 캘린더에 표시할 월별 일정
     private fun setMonthCalendarSchedule(monthStart: Long, monthEnd: Long) {
-        lifecycleScope.launch {
-            viewModel.getMonthSchedules(monthStart, monthEnd)
-            viewModel.getMonthMoimSchedule(yearMonthDate(millis))
-        }
+        viewModel.getMonthSchedules(monthStart, monthEnd)
+        viewModel.getMonthMoimSchedule(yearMonthDate(millis))
     }
 
     // 일정 상세보기
@@ -235,9 +230,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
     }
 
     private fun setDailyPersonalSchedule(todayStart: Long, todayEnd: Long) {
-        lifecycleScope.launch {
-            viewModel.getDailySchedules(todayStart, todayEnd)
-        }
+        viewModel.getDailySchedules(todayStart, todayEnd)
     }
 
     private fun setDailyMoimSchedule(todayStart: Long, todayEnd: Long) {
@@ -292,6 +285,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
     }
 
     override fun onGetGroupMonthSuccess(response: DiaryGetMonthResponse) {
+        Log.d("GET_GROUP_MONTH", "$response")
         val data = response.result
         groupScheduleRVAdapter.addGroupDiary(data.content as ArrayList<MoimDiary>)
     }

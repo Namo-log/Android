@@ -17,59 +17,52 @@ import com.mongmong.namo.presentation.utils.SetMonthDialog
 import com.mongmong.namo.presentation.ui.home.calendar.CalendarAdapter
 import org.joda.time.DateTime
 
-
 class HomeFragment : Fragment() {
-
-    private lateinit var calendarAdapter : CalendarAdapter
     private lateinit var binding: FragmentHomeBinding
-    private lateinit var monthList : List<DateTime>
 
     private var millis = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
     private val todayPos = Int.MAX_VALUE / 2
     private var pos = Int.MAX_VALUE / 2
     private var prevIdx = -1
 
-    lateinit var db : NamoDatabase
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container,false)
 
-        binding = DataBindingUtil.inflate<FragmentHomeBinding>(inflater, R.layout.fragment_home, container,false)
-        db = NamoDatabase.getInstance(requireContext())
-        calendarAdapter = CalendarAdapter(context as MainActivity)
-
-        binding.homeCalendarTodayTv.text = DateTime().dayOfMonth.toString()
-
-        binding.homeCalendarVp.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-        binding.homeCalendarVp.adapter = calendarAdapter
-        binding.homeCalendarVp.setCurrentItem(CalendarAdapter.START_POSITION, false)
-        binding.homeCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
-
-        binding.homeCalendarVp.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-
-            override fun onPageSelected(position: Int) {
-                Log.d("VIEWPAGER_PAGE_SELECTED", "position : $position")
-                pos = position
-                prevIdx = -1
-                millis = binding.homeCalendarVp.adapter!!.getItemId(position)
-                binding.homeCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
-                super.onPageSelected(position)
-            }
-        })
-
+        setView()
         clickListener()
-        Log.e("HOME_LIFECYCLE", "OnCreateView")
 
         return binding.root
     }
 
+    private fun setView() {
+        with(binding) {
+            homeCalendarTodayTv.text = DateTime().dayOfMonth.toString()
+            homeCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
+
+            homeCalendarVp.apply {
+                orientation = ViewPager2.ORIENTATION_HORIZONTAL
+                adapter = CalendarAdapter(requireActivity())
+                setCurrentItem(CalendarAdapter.START_POSITION, false)
+                registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        Log.d("VIEWPAGER_PAGE_SELECTED", "position : $position")
+                        pos = position
+                        prevIdx = -1
+                        millis = binding.homeCalendarVp.adapter!!.getItemId(position)
+                        binding.homeCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
+                        super.onPageSelected(position)
+                    }
+                })
+            }
+        }
+    }
 
     @SuppressLint("ClickableViewAccessibility", "NotifyDataSetChanged")
     private fun clickListener() {
-
         binding.homeCalenderYearMonthLayout.setOnClickListener {
             SetMonthDialog(requireContext(), millis) {
                 val date = it

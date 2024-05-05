@@ -17,9 +17,9 @@ import org.joda.time.DateTime
 
 class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>() {
 
-    private val group = ArrayList<Schedule>()
+    private val schedules = ArrayList<Schedule>()
     private val categoryList = ArrayList<Category>()
-    private val groupDiary = ArrayList<MoimDiary>()
+    private val moimDiary = ArrayList<MoimDiary>()
     private lateinit var context : Context
 
     interface MoimScheduleClickListener {
@@ -42,17 +42,17 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
     }
 
     override fun onBindViewHolder(holder : ViewHolder, position : Int) {
-        holder.bind(group[position])
+        holder.bind(schedules[position])
         // 아이템 전체 클릭
         holder.itemView.setOnClickListener {
-            moimScheduleClickListener.onContentClicked(group[position])
+            moimScheduleClickListener.onContentClicked(schedules[position])
         }
         // 기록 아이콘 클릭
         holder.binding.itemCalendarScheduleRecord.setOnClickListener {
-            val newCategoryId = group[position].categoryServerId
+            val newCategoryId = schedules[position].categoryServerId
 
-            val diary = groupDiary.find {
-                it.scheduleId == group[position].serverId
+            val diary = moimDiary.find {
+                it.scheduleId == schedules[position].serverId
             }
 
             if (diary != null) {
@@ -62,12 +62,12 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
         }
     }
 
-    override fun getItemCount(): Int = group.size
+    override fun getItemCount(): Int = schedules.size
 
     @SuppressLint("NotifyDataSetChanged")
     fun addGroup(group : ArrayList<Schedule>) {
-        this.group.clear()
-        this.group.addAll(group)
+        this.schedules.clear()
+        this.schedules.addAll(group)
 
         notifyDataSetChanged()
     }
@@ -79,18 +79,18 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
 
     @SuppressLint("NotifyDataSetChanged")
     fun addGroupDiary(diaryGroup: ArrayList<MoimDiary>){
-        this.groupDiary.addAll(diaryGroup)
+        this.moimDiary.addAll(diaryGroup)
         notifyDataSetChanged()
     }
 
     inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(group : Schedule) {
-            val time = DateTime(group.startLong * 1000L).toString("HH:mm") + " - " + DateTime(group.endLong * 1000L).toString("HH:mm")
+        fun bind(schedule : Schedule) {
+            val time = DateTime(schedule.startLong * 1000L).toString("HH:mm") + " - " + DateTime(schedule.endLong * 1000L).toString("HH:mm")
             val category = categoryList.find {
-                if (it.serverId != 0L) it.serverId == group.categoryServerId
-                else it.categoryId == group.categoryId }
+                if (it.serverId != 0L) it.serverId == schedule.categoryServerId
+                else it.categoryId == schedule.categoryId }
 
-            binding.itemCalendarTitle.text = group.title
+            binding.itemCalendarTitle.text = schedule.title
             binding.itemCalendarTitle.isSelected = true
             binding.itemCalendarScheduleTime.text = time
             if (category != null) {
@@ -98,10 +98,10 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
             }
             binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
 
-            val diary = groupDiary.find {
-                it.scheduleId == group.serverId
+            val diary = moimDiary.find {
+                it.scheduleId == schedule.serverId
             }
-            if (group.hasDiary != 0) {
+            if (schedule.hasDiary != 0) {
                 binding.itemCalendarScheduleRecord.visibility = View.VISIBLE
                 if (diary?.content.isNullOrEmpty()) binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
                 else binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.MainOrange))
