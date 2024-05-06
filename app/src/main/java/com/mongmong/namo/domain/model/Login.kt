@@ -11,7 +11,8 @@ data class LoginResponse(
 ) : BaseResponse()
 data class LoginResult(
     val accessToken: String,
-    val refreshToken: String
+    val refreshToken: String,
+    val newUser: Boolean
 )
 
 data class TokenBody(

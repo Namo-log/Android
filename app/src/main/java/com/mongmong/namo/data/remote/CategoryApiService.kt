@@ -14,25 +14,25 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface CategoryApiService {
+    // 카테고리 조회
+    @GET("categories")
+    fun getCategories() : Call<GetCategoryResponse>
+
     // 카테고리 생성
-    @POST("/categories")
+    @POST("categories")
     suspend fun postCategory(
         @Body body: CategoryRequestBody
     ) : PostCategoryResponse
 
     // 카테고리 수정
-    @PATCH("/categories/{categoryId}")
+    @PATCH("categories/{categoryId}")
     suspend fun patchCategory(
         @Path("categoryId") categoryId: Long,
         @Body body: CategoryRequestBody
     ) : EditCategoryResponse
 
-    // 카테고리 조회
-    @GET("/categories")
-    fun getCategories() : Call<GetCategoryResponse>
-
     // 카테고리 삭제
-    @DELETE("/categories/{categoryId}")
+    @DELETE("categories/{categoryId}")
     suspend fun deleteCategory(
         @Path("categoryId") categoryId: Long
     ) : DeleteCategoryResponse

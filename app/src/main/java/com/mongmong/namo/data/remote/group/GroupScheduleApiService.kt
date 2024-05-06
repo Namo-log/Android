@@ -15,32 +15,32 @@ import retrofit2.http.Path
 
 interface GroupScheduleApiService {
     // 그룹의 모든 일정 조회
-    @GET("moims/schedule/{moimId}/all")
+    @GET("group/schedules/{groupId}/all")
     suspend fun getAllMoimSchedule(
-        @Path("moimId") moimId: Long
+        @Path("groupId") moimId: Long
     ): GetMoimScheduleResponse
 
     // 그룹의 월별 일정 조회
-    @GET("moims/schedule/{moimId}/{yearMonth}")
+    @GET("group/schedules/{groupId}/{yearMonth}")
     fun getMonthMoimSchedule(
-        @Path("moimId") moimId: Long,
+        @Path("groupId") moimId: Long,
         @Path("yearMonth") yearMonth: String
     ): Call<GetMoimScheduleResponse>
 
-    // 모임 일정 추가하기
-    @POST("moims/schedule")
+    // 모임 일정 생성
+    @POST("group/schedules")
     suspend fun postMoimSchedule(
         @Body body: AddMoimScheduleRequestBody
     ): AddMoimScheduleResponse
 
-    // 모임 일정 수정하기
-    @PATCH("moims/schedule")
+    // 모임 일정 수정
+    @PATCH("group/schedules")
     suspend fun editMoimSchedule(
         @Body body: EditMoimScheduleRequestBody
     ): BaseResponse
 
-    // 모임 일정 삭제하기
-    @DELETE("moims/schedule/{moimScheduleId}")
+    // 모임 일정 삭제
+    @DELETE("group/schedules/{moimScheduleId}")
     suspend fun deleteMoimSchedule(
         @Path("moimScheduleId") moimScheduleId: Long
     ): BaseResponse

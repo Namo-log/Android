@@ -127,6 +127,7 @@ class MoimMemoDetailActivity: AppCompatActivity(),
     private fun initObserve() {
         // 모임 기록 가져오기
         viewModel.getMoimDiaryResult.observe(this) { result ->
+            //TODO: 수정 필요
             placeIntList = result.moimActivities.map {
                 it.moimActivityId // 그룹 스케줄 별 장소 아이디 가져와서 리스트 만들기
             }

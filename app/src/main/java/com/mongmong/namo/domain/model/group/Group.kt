@@ -14,7 +14,7 @@ data class Group(
     @SerializedName("groupName") var groupName : String = "",
     @SerializedName("groupImgUrl") var groupImgUrl : String = "",
     @SerializedName("groupCode") var groupCode : String = "",
-    @SerializedName("moimUsers") var groupMembers : List<GroupMember> = emptyList()
+    @SerializedName("groupUsers") var groupMembers : List<GroupMember> = emptyList()
 ) : Serializable
 
 data class GroupMember (
@@ -29,7 +29,7 @@ data class AddGroupResponse (
 ) : BaseResponse()
 
 data class AddGroupResult (
-    @SerializedName("moimId") val groupId : Long
+    @SerializedName("groupId") val groupId : Long
 )
 
 /** 그룹 참여 **/
@@ -39,8 +39,8 @@ data class JoinGroupResponse(
 
 /** 그룹명 변경 */
 data class UpdateGroupNameRequestBody(
-    @SerializedName("moimId") val groupId: Long,
-    @SerializedName("moimName") val groupName: String
+    @SerializedName("groupId") val groupId: Long,
+    @SerializedName("groupName") val groupName: String
 )
 
 /** 그룹의 일정 조회 */
@@ -54,7 +54,7 @@ data class MoimScheduleBody(
     @SerializedName("endDate") var endDate : Long = 0L,
     @SerializedName("interval") var interval : Int = 0,
     @SerializedName("users") var users : List<GroupMember> = listOf(),
-    @SerializedName("moimId") var moimId : Long = 0L,
+    @SerializedName("groupId") var moimId : Long = 0L,
     @SerializedName("moimScheduleId") var moimScheduleId : Long = 0L,
     @SerializedName("x") var x : Double = 0.0,
     @SerializedName("y") var y : Double = 0.0,
