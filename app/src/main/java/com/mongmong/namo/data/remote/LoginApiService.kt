@@ -13,13 +13,13 @@ interface LoginApiService {
     @POST("auths/kakao/signup")
     fun postKakaoSDK(
         @Body body: TokenBody
-    ) : Call<LoginResponse>
+    ) : LoginResponse
 
     // SDK 네이버 로그인
     @POST("auths/naver/signup")
     fun postNaverSDK(
         @Body naverData: TokenBody
-    ) : Call<LoginResponse>
+    ) : LoginResponse
 
     // 토큰 재발급
     @POST("auths/reissuance")

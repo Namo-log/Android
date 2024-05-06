@@ -4,7 +4,7 @@ import android.util.Log
 import com.mongmong.namo.presentation.config.ApplicationClass.Companion.X_ACCESS_TOKEN
 import com.mongmong.namo.presentation.config.ApplicationClass.Companion.X_REFRESH_TOKEN
 import com.mongmong.namo.presentation.config.ApplicationClass.Companion.sSharedPreferences
-import com.mongmong.namo.data.remote.login.RefreshService
+import com.mongmong.namo.data.remote.auth.RefreshService
 import com.mongmong.namo.domain.model.TokenBody
 import okhttp3.Interceptor
 import okhttp3.Response
