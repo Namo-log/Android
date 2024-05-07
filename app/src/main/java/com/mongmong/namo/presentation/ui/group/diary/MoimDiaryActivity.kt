@@ -241,7 +241,7 @@ class MoimDiaryActivity : AppCompatActivity(),
     override fun onClickYesButton(id: Int) {
         // 모임 기록 전체 삭제
         lifecycleScope.launch {
-            viewModel.deleteMoimDiary(0L)
+            viewModel.deleteMoimDiary(moimScheduleId)
         }
     }
 

@@ -30,6 +30,9 @@ class DiaryDetailViewModel @Inject constructor(
     private val _isDeleteComplete = MutableLiveData<Boolean>()
     val isDeleteComplete: LiveData<Boolean> = _isDeleteComplete
 
+    private val _isMemoDeleteComplete = MutableLiveData<Boolean>()
+    val isMemoDeleteComplete: LiveData<Boolean> = _isMemoDeleteComplete
+
     private val _getMoimDiaryResult = MutableLiveData<MoimDiaryResult>()
     val getMoimDiaryResult : LiveData<MoimDiaryResult> = _getMoimDiaryResult
 
@@ -111,6 +114,14 @@ class DiaryDetailViewModel @Inject constructor(
     fun patchMoimMemo(scheduleId: Long, content: String) {
         viewModelScope.launch {
             _patchMemoResult.postValue(repository.patchMoimMemo(scheduleId, content))
+        }
+    }
+
+    // 모임 메모 삭제
+    fun deleteMoimMemo(scheduleId: Long) {
+        viewModelScope.launch {
+            Log.d("MoimDiaryViewModel deleteMoimMemo", "$scheduleId")
+            _isMemoDeleteComplete.value = repository.deleteMoimDiary(scheduleId)
         }
     }
 
