@@ -2,6 +2,7 @@ package com.mongmong.namo.data.datasource.auth
 
 import android.util.Log
 import com.mongmong.namo.data.remote.LoginApiService
+import com.mongmong.namo.domain.model.AccessTokenBody
 import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.LoginResult
 import com.mongmong.namo.domain.model.TokenBody
@@ -13,12 +14,13 @@ class RemoteAuthDataSource @Inject constructor(
     private val loginApiService: LoginApiService
 ) {
     suspend fun postKakaoLogin(
-        tokenBody: TokenBody
+        tokenBody: AccessTokenBody
     ): LoginResponse {
         var loginResponse = LoginResponse(
             result = LoginResult(
                 accessToken = "",
-                refreshToken = ""
+                refreshToken = "",
+                newUser = false
             )
         )
         withContext(Dispatchers.IO) {
@@ -35,12 +37,13 @@ class RemoteAuthDataSource @Inject constructor(
     }
 
     suspend fun postNaverLogin(
-        tokenBody: TokenBody
+        tokenBody: AccessTokenBody
     ): LoginResponse {
         var loginResponse = LoginResponse(
             result = LoginResult(
                 accessToken = "",
-                refreshToken = ""
+                refreshToken = "",
+                newUser = false
             )
         )
         withContext(Dispatchers.IO) {
