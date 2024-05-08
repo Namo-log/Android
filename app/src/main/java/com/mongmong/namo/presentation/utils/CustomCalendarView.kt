@@ -322,9 +322,12 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
         )
     }
 
-    fun getScheduleTextStart(title: String, startIdx: Int, endIdx: Int): Float {
-        return (((startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding) + ((endIdx % DAYS_PER_WEEK) * cellWidth + cellWidth - _eventHorizontalPadding)) / 2 - eventBounds.width() / 2
+    fun getScheduleTextStart(startIdx: Int): Float {
+        val startX = (startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding
+        val additionalMargin = dpToPx(context, 2f)  // 여기에서 context는 해당 뷰 또는 액티비티의 컨텍스트입니다.
+        return startX + additionalMargin
     }
+
 
     fun getScheduleTextBottom(title: String, startIdx: Int, endIdx: Int, order: Int): Float {
         return (((startIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding + _eventHeight) * order) + ((endIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding * order) + (_eventHeight * (order + 1)))) / 2 + eventBounds.height() / 2

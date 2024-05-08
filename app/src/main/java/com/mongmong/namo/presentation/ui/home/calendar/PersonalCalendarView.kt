@@ -63,11 +63,7 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
 
                         canvas.drawText(
                             ellipsizedText.toString(),
-                            getScheduleTextStart(
-                                ellipsizedText.toString(),
-                                splitSchedule.startIdx,
-                                splitSchedule.endIdx
-                            ),
+                            getScheduleTextStart(splitSchedule.startIdx),
                             getScheduleTextBottom(
                                 ellipsizedText.toString(),
                                 splitSchedule.startIdx,
@@ -87,11 +83,7 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
 
                         canvas.drawText(
                             scheduleList[i].title,
-                            getScheduleTextStart(
-                                scheduleList[i].title,
-                                splitSchedule.startIdx,
-                                splitSchedule.endIdx
-                            ),
+                            getScheduleTextStart(splitSchedule.startIdx),
                             getScheduleTextBottom(
                                 scheduleList[i].title,
                                 splitSchedule.startIdx,
