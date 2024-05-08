@@ -1,5 +1,6 @@
 package com.mongmong.namo.presentation.ui.login
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,8 +21,9 @@ class AuthViewModel @Inject constructor(
 
     /** 카카오 로그인 */
     fun tryKakaoLogin(accessToken: String, refreshToken: String) {
+        Log.d("kakaoToken", accessToken)
         viewModelScope.launch {
-            _tokenResult.value = repository.postKakaoLogin(accessToken, refreshToken).result
+            _tokenResult.value = repository.postKakaoLogin(accessToken).result
             _tokenResult.value?.let {
                 // 토큰 저장
                 saveToken(it)
@@ -31,8 +33,9 @@ class AuthViewModel @Inject constructor(
 
     /** 네이버 로그인 */
     fun tryNaverLogin(accessToken: String, refreshToken: String) {
+        Log.d("naverToken", accessToken)
         viewModelScope.launch {
-            _tokenResult.value = repository.postNaverLogin(accessToken, refreshToken).result
+            _tokenResult.value = repository.postNaverLogin(accessToken).result
             _tokenResult.value?.let {
                 // 토큰 저장
                 saveToken(it)

@@ -1,5 +1,6 @@
 package com.mongmong.namo.data.remote
 
+import com.mongmong.namo.domain.model.AccessTokenBody
 import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.LogoutBody
 import com.mongmong.namo.domain.model.TokenBody
@@ -11,14 +12,14 @@ import retrofit2.http.POST
 interface LoginApiService {
     // SDK 카카오 로그인
     @POST("auths/kakao/signup")
-    fun postKakaoSDK(
-        @Body body: TokenBody
+    suspend fun postKakaoSDK(
+        @Body body: AccessTokenBody
     ) : LoginResponse
 
     // SDK 네이버 로그인
     @POST("auths/naver/signup")
-    fun postNaverSDK(
-        @Body naverData: TokenBody
+    suspend fun postNaverSDK(
+        @Body body: AccessTokenBody
     ) : LoginResponse
 
     // 토큰 재발급
