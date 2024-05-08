@@ -7,13 +7,11 @@ interface AuthRepository {
     /** 로그인 */
     // 카카오
     suspend fun postKakaoLogin(
-        accessToken: String,
-        refreshToken: String
+        accessToken: String
     ): LoginResponse
 
     suspend fun postNaverLogin(
-        accessToken: String,
-        refreshToken: String
+        accessToken: String
     ): LoginResponse
 
 //    suspend fun saveToken(

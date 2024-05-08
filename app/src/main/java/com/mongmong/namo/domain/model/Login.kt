@@ -9,6 +9,7 @@ data class LoginResponse(
 //    @SerializedName("message") val message: String = ""
     val result: LoginResult
 ) : BaseResponse()
+
 data class LoginResult(
     val accessToken: String,
     val refreshToken: String,
@@ -18,6 +19,10 @@ data class LoginResult(
 data class TokenBody(
     val accessToken: String,
     val refreshToken: String
+)
+
+data class AccessTokenBody(
+    val accessToken: String
 )
 
 data class LogoutBody(
