@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentTermsBinding
+import com.mongmong.namo.presentation.utils.Constants
 
 class TermsFragment: Fragment() {
     private lateinit var binding: FragmentTermsBinding
@@ -137,17 +138,13 @@ class TermsFragment: Fragment() {
         with(binding) {
             // 이용약관
             termsAgreeServiceSeeIv.setOnClickListener {
-                val url = "https://www.notion.so/30d9c6cf5b9f414cb624780360d2da8c?pvs=4"
-
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(Constants.TERM_URL))
                 startActivity(intent)
             }
 
             // 개인정보 처리방침
             termsAgreePersonalSeeIv.setOnClickListener {
-                val url = "https://www.notion.so/ca8d93c7a4ef4ad98fd6169c444a5f32?pvs=4"
-
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(Constants.POLICY_URL))
                 startActivity(intent)
             }
         }
