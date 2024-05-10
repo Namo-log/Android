@@ -4,6 +4,8 @@ import com.mongmong.namo.data.datasource.auth.RemoteAuthDataSource
 import com.mongmong.namo.domain.model.AccessTokenBody
 import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.LogoutBody
+import com.mongmong.namo.domain.model.RefreshResponse
+import com.mongmong.namo.domain.model.TokenBody
 import com.mongmong.namo.domain.repositories.AuthRepository
 import javax.inject.Inject
 
@@ -16,6 +18,13 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun postNaverLogin(accessToken: String): LoginResponse {
         return remoteAuthDataSource.postNaverLogin(AccessTokenBody(accessToken))
+    }
+
+    override suspend fun postTokenRefresh(
+        accessToken: String,
+        refreshToken: String
+    ): RefreshResponse {
+        return remoteAuthDataSource.postTokenRefresh(TokenBody(accessToken, refreshToken))
     }
 
     override suspend fun postLogout(accessToken: String): Boolean {

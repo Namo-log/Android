@@ -62,7 +62,7 @@ class LoginFragment: Fragment() {
     }
 
     private fun initObserve() {
-        viewModel.tokenResult.observe(viewLifecycleOwner) {
+        viewModel.loginResult.observe(viewLifecycleOwner) {
             if (!it?.accessToken.isNullOrEmpty()) {
                 Toast.makeText(requireContext(), "로그인에 성공했습니다.", Toast.LENGTH_SHORT).show()
                 setLoginFinished()

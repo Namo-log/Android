@@ -1,6 +1,7 @@
 package com.mongmong.namo.domain.repositories
 
 import com.mongmong.namo.domain.model.LoginResponse
+import com.mongmong.namo.domain.model.RefreshResponse
 import com.mongmong.namo.domain.model.TokenBody
 
 interface AuthRepository {
@@ -13,6 +14,12 @@ interface AuthRepository {
     suspend fun postNaverLogin(
         accessToken: String
     ): LoginResponse
+
+    /** 토큰 재발급 */
+    suspend fun postTokenRefresh(
+        accessToken: String,
+        refreshToken: String
+    ): RefreshResponse
 
     /** 로그아웃 */
     suspend fun postLogout(

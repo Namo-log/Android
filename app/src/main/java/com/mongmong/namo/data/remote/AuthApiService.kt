@@ -4,6 +4,7 @@ import com.mongmong.namo.domain.model.AccessTokenBody
 import com.mongmong.namo.domain.model.AuthResponse
 import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.LogoutBody
+import com.mongmong.namo.domain.model.RefreshResponse
 import com.mongmong.namo.domain.model.TokenBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -27,7 +28,7 @@ interface AuthApiService {
     @POST("auths/reissuance")
     fun refreshToken(
         @Body body: TokenBody
-    ): Call<LoginResponse>
+    ): Call<RefreshResponse>
 
     // 로그아웃
     @POST("auths/logout")
