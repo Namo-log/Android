@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +23,7 @@ class MoimActivityRVAdapter(
     private val listData: MutableList<MoimActivity>,
     val payClickListener: (pay: Long, position: Int, payText: TextView) -> Unit,
     val imageClickListener: (imgLists: List<String>?, position: Int) -> Unit,
-    val placeClickListener: (text: String, position: Int) -> Unit,
+    val activityClickListener: (text: String, position: Int) -> Unit,
     val deleteItemList: (deleteItems: MutableList<Long>) -> Unit
 ) : RecyclerView.Adapter<MoimActivityRVAdapter.Holder>() {
 
@@ -47,33 +48,51 @@ class MoimActivityRVAdapter(
         val event = listData[position]
         val updatedPosition = holder.bindingAdapterPosition
 
-        // 정산 다이얼로그
-        holder.binding.itemPlaceMoneyTv.text =
-            NumberFormat.getNumberInstance(Locale.US).format(event.pay)
-        holder.binding.clickMoneyLy.setOnClickListener {
-            payClickListener(event.pay, updatedPosition, holder.binding.itemPlaceMoneyTv)
+        with(holder.binding) {
+            // 정산 다이얼로그
+            itemPlaceMoneyTv.text =
+                NumberFormat.getNumberInstance(Locale.US).format(event.pay)
+            clickMoneyLy.setOnClickListener {
+                payClickListener(event.pay, updatedPosition, holder.binding.itemPlaceMoneyTv)
+            }
+
+            // 장소별 이미지 가져오기
+            val adapter = MoimActivityGalleryAdapter(context)
+            groupAddGalleryRv.apply {
+                this.adapter = adapter.apply {
+                    itemClickListener = if (event.imgs?.size == 3) {
+                        {
+                            imageClickListener(event.imgs, updatedPosition)
+                            Log.d("dd","dd")
+                        }
+                    } else {
+                        null
+                    }
+                }
+                layoutManager =
+                    LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            }
+            if (event.imgs?.size == 3) {
+                img1.visibility = View.GONE
+                img2.visibility = View.GONE
+                img3.visibility = View.GONE
+            } else if (event.imgs?.isNotEmpty() == true) {
+                img1.visibility = View.VISIBLE
+                img2.visibility = View.GONE
+                img3.visibility = View.GONE
+            } else {
+                img1.visibility = View.VISIBLE
+                img2.visibility = View.VISIBLE
+                img3.visibility = View.VISIBLE
+            }
+
+            holder.binding.groupGalleryLv.setOnClickListener {
+                imageClickListener(event.imgs, updatedPosition)
+            }
+
+            holder.binding.itemPlaceNameTv.hint = "활동"
+            event.imgs?.let { adapter.addItem(it) }
         }
-
-        // 장소별 이미지 가져오기
-        val adapter = GroupPlaceGalleryAdapter(context)
-        holder.binding.groupAddGalleryRv.adapter = adapter
-        holder.binding.groupAddGalleryRv.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-
-        if (event.imgs?.isNotEmpty() == true) {
-            holder.binding.img2.visibility = View.GONE
-            holder.binding.img3.visibility = View.GONE
-        } else {
-            holder.binding.img2.visibility = View.VISIBLE
-            holder.binding.img3.visibility = View.VISIBLE
-        }
-
-        holder.binding.groupGalleryLv.setOnClickListener {
-            imageClickListener(event.imgs, updatedPosition)
-        }
-
-        holder.binding.itemPlaceNameTv.hint = "장소"
-        event.imgs?.let { adapter.addItem(it) }
 
         holder.bind(event)
 
@@ -94,7 +113,7 @@ class MoimActivityRVAdapter(
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 override fun afterTextChanged(p0: Editable?) {
-                    placeClickListener(p0.toString(), absoluteAdapterPosition)
+                    activityClickListener(p0.toString(), absoluteAdapterPosition)
                 }
             })
 

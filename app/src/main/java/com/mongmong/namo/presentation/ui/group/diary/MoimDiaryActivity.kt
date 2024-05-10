@@ -31,8 +31,10 @@ import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.domain.model.group.MoimScheduleMember
+import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityItemDecoration
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimMemberRVAdapter
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityRVAdapter
+import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.dpToPx
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.PermissionChecker
@@ -250,11 +252,12 @@ class MoimDiaryActivity : AppCompatActivity(),
         binding.apply {
 
             // 멤버 이름 리사이클러뷰
-            memberAdapter = MoimMemberRVAdapter(groupMembers)
-            groupAddPeopleRv.adapter = memberAdapter
-            groupAddPeopleRv.layoutManager =
-                LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
-
+            moimPeopleRv.apply {
+                memberAdapter = MoimMemberRVAdapter(groupMembers)
+                adapter = memberAdapter
+                layoutManager =
+                    LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
+            }
             // 장소 추가 리사이클러뷰
             activityAdapter = MoimActivityRVAdapter(
                 applicationContext,
@@ -275,7 +278,7 @@ class MoimDiaryActivity : AppCompatActivity(),
 
                     getGallery()
                 },
-                placeClickListener = { text, position ->
+                activityClickListener = { text, position ->
                     activities[position].place = text
                 },
                 deleteItemList = { deleteItem ->
@@ -283,10 +286,14 @@ class MoimDiaryActivity : AppCompatActivity(),
                 }
             )
 
-            diaryGroupAddPlaceRv.adapter = activityAdapter
-            diaryGroupAddPlaceRv.layoutManager =
-                LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
+            diaryGroupAddPlaceRv.apply {
+                adapter = activityAdapter
+                layoutManager =
+                    LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
 
+
+                addItemDecoration(MoimActivityItemDecoration(dpToPx(context, 25f)))
+            }
             itemTouchHelper.attachToRecyclerView(binding.diaryGroupAddPlaceRv)
 
             // RecyclerView의 다른 곳을 터치하거나 Swipe 시 기존에 Swipe된 것은 제자리로 변경
@@ -309,7 +316,7 @@ class MoimDiaryActivity : AppCompatActivity(),
 
     private fun setMember(isVisible: Boolean) {  // 그룹 멤버 리스트 세팅
         with(binding) {
-            groupAddPeopleRv.visibility = if (isVisible) View.GONE else View.VISIBLE
+            moimPeopleRv.visibility = if (isVisible) View.GONE else View.VISIBLE
             bottomArrow.visibility = if (isVisible) View.VISIBLE else View.GONE
             upArrow.visibility = if (isVisible) View.GONE else View.VISIBLE
         }

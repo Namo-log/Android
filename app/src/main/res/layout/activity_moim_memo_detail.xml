@@ -197,6 +197,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="15dp"
             android:orientation="horizontal"
+            android:overScrollMode="never"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_num_tv"

@@ -11,12 +11,12 @@ import com.bumptech.glide.request.RequestOptions
 import com.mongmong.namo.databinding.ItemGalleryListBinding
 import kotlinx.coroutines.*
 
-class GroupPlaceGalleryAdapter(
+class MoimActivityGalleryAdapter(
     // 그룹 다이어리 장소별 이미지
-    private val context: Context,
+    private val context: Context
 ) :
-    RecyclerView.Adapter<GroupPlaceGalleryAdapter.ViewHolder>() {
-
+    RecyclerView.Adapter<MoimActivityGalleryAdapter.ViewHolder>() {
+    var itemClickListener: (() -> Unit)? = null
     private val items: ArrayList<String?> = arrayListOf()
 
     @SuppressLint("NotifyDataSetChanged")
@@ -47,6 +47,9 @@ class GroupPlaceGalleryAdapter(
             .apply(requestOptions)
             .into(holder.imageUrl)
 
+        holder.itemView.setOnClickListener {
+            itemClickListener?.invoke()
+        }
     }
 
     override fun getItemCount(): Int = items.size
