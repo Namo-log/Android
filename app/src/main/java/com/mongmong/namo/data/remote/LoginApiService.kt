@@ -1,6 +1,7 @@
 package com.mongmong.namo.data.remote
 
 import com.mongmong.namo.domain.model.AccessTokenBody
+import com.mongmong.namo.domain.model.AuthResponse
 import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.LogoutBody
 import com.mongmong.namo.domain.model.TokenBody
@@ -30,7 +31,7 @@ interface LoginApiService {
 
     // 로그아웃
     @POST("auths/logout")
-    fun postLogout(
+    suspend fun postLogout(
         @Body body: LogoutBody
-    ) : Call<BaseResponse>
+    ) : AuthResponse
 }

@@ -3,8 +3,10 @@ package com.mongmong.namo.data.datasource.auth
 import android.util.Log
 import com.mongmong.namo.data.remote.LoginApiService
 import com.mongmong.namo.domain.model.AccessTokenBody
+import com.mongmong.namo.domain.model.AuthResponse
 import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.LoginResult
+import com.mongmong.namo.domain.model.LogoutBody
 import com.mongmong.namo.domain.model.TokenBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -57,5 +59,22 @@ class RemoteAuthDataSource @Inject constructor(
             }
         }
         return loginResponse
+    }
+
+    suspend fun postLogout(
+        tokenBody: LogoutBody
+    ): Boolean {
+        var isSuccess = false
+        withContext(Dispatchers.IO) {
+            runCatching {
+                loginApiService.postLogout(tokenBody)
+            }.onSuccess {
+                Log.d("RemoteAuthDataSource", "postLogout Success $it")
+                isSuccess = true
+            }.onFailure {
+                Log.d("RemoteAuthDataSource", "postLogout Fail $it")
+            }
+        }
+        return isSuccess
     }
 }

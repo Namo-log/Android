@@ -9,13 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.config.ApplicationClass
-import com.mongmong.namo.presentation.config.BaseResponse
-import com.mongmong.namo.domain.model.LogoutBody
-import com.mongmong.namo.data.remote.auth.LogoutService
-import com.mongmong.namo.data.remote.auth.LogoutView
 import com.mongmong.namo.databinding.FragmentCustomSettingBinding
 
 import com.mongmong.namo.presentation.utils.ConfirmDialog
@@ -23,16 +20,19 @@ import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kakao.sdk.user.UserApiClient
 import com.mongmong.namo.data.local.NamoDatabase
+import com.mongmong.namo.presentation.ui.login.AuthViewModel
 import com.mongmong.namo.presentation.ui.splash.OnBoardingActivity
 import com.mongmong.namo.presentation.utils.Constants
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
+import dagger.hilt.android.AndroidEntryPoint
 
-class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
+@AndroidEntryPoint
+class CustomSettingFramgent: Fragment(), ConfirmDialogInterface {
+    private lateinit var binding: FragmentCustomSettingBinding
 
-    private var _binding: FragmentCustomSettingBinding? = null
-    private val binding get() = _binding!!
+    private val viewModel : AuthViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,10 +40,11 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentCustomSettingBinding.inflate(inflater, container, false)
+        binding = FragmentCustomSettingBinding.inflate(inflater, container, false)
 
         hideBottomNavigation(true)
         setVersion()
+        initObserve()
 
         return binding.root
     }
@@ -57,12 +58,18 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
     override fun onDestroy() {
         super.onDestroy()
 
-        _binding = null
         hideBottomNavigation(false)
     }
 
     private fun setVersion() {
         binding.customSettingVerInfoTv.text = ApplicationClass.VERSION
+    }
+
+    private fun initObserve() {
+        viewModel.isComplete.observe(viewLifecycleOwner) {
+            deleteAllRoomDatas()
+            moveToLoginFragment() // 화면 이동
+        }
     }
 
 
@@ -146,11 +153,7 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
 
     override fun onClickYesButton(id: Int) { // 다이얼로그 확인 메시지 클릭
         if (id == 0) { // 로그아웃
-            // 토큰 삭제
-            val token = ApplicationClass.sSharedPreferences.getString(ApplicationClass.X_ACCESS_TOKEN, null)
-            token?.let { LogoutBody(it) }?.let { LogoutService(this).tryPostLogout(it) }
-            // 룸에 있는 모든 데이터 삭제
-            deleteAllRoomDatas()
+            viewModel.tryLogout()
         }
         else if (id == 1) { // 회원탈퇴
 //            LogoutService(this).tryQuit()
@@ -194,22 +197,8 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface, LogoutView {
             bottomNavigationView.visibility = View.VISIBLE
         }
     }
-
-    override fun onPostLogoutSuccess(response: BaseResponse) {
-        Log.d("CustomSettingFrag", "onPostLogoutSuccess")
-        moveToLoginFragment()
-    }
-
-    override fun onPostLogoutFailure(message: String) {
-        Log.d("CustomSettingFrag", "onPostLogoutFailure")
-    }
-
 }
 
 private fun NidOAuthLogin.callDeleteTokenApi(context: OAuthLoginCallback) {
 
 }
-
-//private fun NidOAuthLogin.callDeleteTokenApi(context: OAuthLoginCallback) {
-//
-//}

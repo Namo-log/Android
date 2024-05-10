@@ -14,8 +14,8 @@ interface AuthRepository {
         accessToken: String
     ): LoginResponse
 
-//    suspend fun saveToken(
-//        accessToken: String,
-//        refreshToken: String
-//    )
+    /** 로그아웃 */
+    suspend fun postLogout(
+        accessToken: String
+    ): Boolean
 }
