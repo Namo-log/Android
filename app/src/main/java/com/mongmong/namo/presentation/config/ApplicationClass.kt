@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.SharedPreferences
 import com.mongmong.namo.BuildConfig
 import com.kakao.sdk.common.KakaoSdk
+import com.mongmong.namo.R
+import com.navercorp.nid.NaverIdLoginSDK
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -28,8 +30,11 @@ class ApplicationClass: Application() {
         const val VERSION = "1.0.1"
 
         // JWT Token Header 키 값
-        val X_ACCESS_TOKEN = "X_ACCESS_TOKEN"
-        val X_REFRESH_TOKEN = "X_REFRESH_TOKEN"
+        const val X_ACCESS_TOKEN = "X_ACCESS_TOKEN"
+        const val X_REFRESH_TOKEN = "X_REFRESH_TOKEN"
+
+        const val SDK_PLATFORM = "SDK_PLATFORM"
+        const val SDK_ACCESS_TOKEN = "SDK_ACCESS_TOKEN"
 
         // Retrofit 인스턴스, 앱 실행시 한번만 생성하여 사용합니다.
         lateinit var sRetrofit: Retrofit
@@ -41,8 +46,9 @@ class ApplicationClass: Application() {
         super.onCreate()
         sSharedPreferences = applicationContext.getSharedPreferences("NAMO", MODE_PRIVATE)
 
-        // 카카오 SDK 초기화
-        KakaoSdk.init(this, com.mongmong.namo.BuildConfig.KAKAO_API_KEY)
+        // SDK 초기화
+        KakaoSdk.init(this, BuildConfig.KAKAO_API_KEY)
+        NaverIdLoginSDK.initialize(this, BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, getString(R.string.app_name))
 
         // 레트로핏 인스턴스 생성
         initRetrofitInstance()

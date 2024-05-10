@@ -22,7 +22,7 @@ object ServiceModule {
     /** 인증 */
     @Provides
     @Singleton
-    fun provideLoginService(@NetworkModule.BasicRetrofit retrofit: Retrofit) : LoginApiService =
+    fun provideLoginService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : LoginApiService =
         retrofit.create(LoginApiService::class.java)
 
     /** 일정 */

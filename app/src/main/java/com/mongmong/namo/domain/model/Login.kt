@@ -1,6 +1,7 @@
 package com.mongmong.namo.domain.model
 
 import com.mongmong.namo.presentation.config.BaseResponse
+import com.mongmong.namo.presentation.config.LoginPlatform
 
 data class AuthResponse(
     val result: String
@@ -30,5 +31,10 @@ data class AccessTokenBody(
 )
 
 data class LogoutBody(
+    val accessToken: String
+)
+
+data class SdkInfo(
+    val platform: String,
     val accessToken: String
 )

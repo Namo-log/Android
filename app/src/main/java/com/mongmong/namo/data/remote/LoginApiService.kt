@@ -5,12 +5,12 @@ import com.mongmong.namo.domain.model.AuthResponse
 import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.LogoutBody
 import com.mongmong.namo.domain.model.TokenBody
-import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface LoginApiService {
+    /** 로그인 */
     // SDK 카카오 로그인
     @POST("auths/kakao/signup")
     suspend fun postKakaoSDK(
@@ -33,5 +33,18 @@ interface LoginApiService {
     @POST("auths/logout")
     suspend fun postLogout(
         @Body body: LogoutBody
+    ) : AuthResponse
+
+    /** 회원탈퇴 */
+    // 카카오 회원탈퇴
+    @POST("auths/kakao/delete")
+    suspend fun postKakaoQuit(
+        @Body body: AccessTokenBody
+    ) : AuthResponse
+
+    // 네이버 회원탈퇴
+    @POST("auths/naver/delete")
+    suspend fun postNaverQuit(
+        @Body body: AccessTokenBody
     ) : AuthResponse
 }

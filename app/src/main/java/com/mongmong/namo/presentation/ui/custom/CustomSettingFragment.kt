@@ -1,13 +1,12 @@
 package com.mongmong.namo.presentation.ui.custom
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -18,18 +17,14 @@ import com.mongmong.namo.databinding.FragmentCustomSettingBinding
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.kakao.sdk.user.UserApiClient
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.presentation.ui.login.AuthViewModel
 import com.mongmong.namo.presentation.ui.splash.OnBoardingActivity
-import com.mongmong.namo.presentation.utils.Constants
-import com.navercorp.nid.NaverIdLoginSDK
-import com.navercorp.nid.oauth.NidOAuthLogin
-import com.navercorp.nid.oauth.OAuthLoginCallback
+import com.mongmong.namo.presentation.config.Constants
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class CustomSettingFramgent: Fragment(), ConfirmDialogInterface {
+class CustomSettingFragment: Fragment(), ConfirmDialogInterface {
     private lateinit var binding: FragmentCustomSettingBinding
 
     private val viewModel : AuthViewModel by viewModels()
@@ -66,8 +61,14 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface {
     }
 
     private fun initObserve() {
-        viewModel.isComplete.observe(viewLifecycleOwner) {
+        viewModel.isLogoutComplete.observe(viewLifecycleOwner) {
             deleteAllRoomDatas()
+            Toast.makeText(requireContext(), "로그아웃에 성공하셨습니다.", Toast.LENGTH_SHORT).show()
+            moveToLoginFragment() // 화면 이동
+        }
+        viewModel.isQuitComplete.observe(viewLifecycleOwner) {
+            deleteAllRoomDatas()
+            Toast.makeText(requireContext(), "회원탈퇴에 성공하셨습니다.", Toast.LENGTH_SHORT).show()
             moveToLoginFragment() // 화면 이동
         }
     }
@@ -108,7 +109,7 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface {
         // 다이얼로그
         val title = "로그아웃 하시겠어요?"
 
-        val dialog = ConfirmDialog(this@CustomSettingFramgent, title, null, "확인", 0)
+        val dialog = ConfirmDialog(this@CustomSettingFragment, title, null, "확인", 0)
         // 알림창이 띄워져있는 동안 배경 클릭 막기
         dialog.isCancelable = false
         activity?.let { dialog.show(it.supportFragmentManager, "ConfirmDialog") }
@@ -117,9 +118,10 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface {
     private fun quit() {
         // 다이얼로그
         val title = "정말 계정을 삭제하시겠어요?"
-        val content = "지금까지의 정보가 모두 사라집니다."
+        val content = "지금까지의 정보는\n" +
+                "3일 뒤 모두 사라집니다."
 
-        val dialog = ConfirmDialog(this@CustomSettingFramgent, title, content, "확인", 1)
+        val dialog = ConfirmDialog(this@CustomSettingFragment, title, content, "확인", 1)
         // 알림창이 띄워져있는 동안 배경 클릭 막기
         dialog.isCancelable = false
         activity?.let { dialog.show(it.supportFragmentManager, "ConfirmDialog") }
@@ -156,35 +158,7 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface {
             viewModel.tryLogout()
         }
         else if (id == 1) { // 회원탈퇴
-//            LogoutService(this).tryQuit()
-            // 네이버 연동 해제
-            NidOAuthLogin().callDeleteTokenApi(object : OAuthLoginCallback {
-                override fun onSuccess() {
-                    //서버에서 토큰 삭제에 성공한 상태입니다.
-                }
-                override fun onFailure(httpStatus: Int, message: String) {
-                    // 서버에서 토큰 삭제에 실패했어도 클라이언트에 있는 토큰은 삭제되어 로그아웃된 상태입니다.
-                    // 클라이언트에 토큰 정보가 없기 때문에 추가로 처리할 수 있는 작업은 없습니다.
-                    Log.d(TAG, "errorCode: ${NaverIdLoginSDK.getLastErrorCode().code}")
-                    Log.d(TAG, "errorDesc: ${NaverIdLoginSDK.getLastErrorDescription()}")
-                }
-                override fun onError(errorCode: Int, message: String) {
-                    // 서버에서 토큰 삭제에 실패했어도 클라이언트에 있는 토큰은 삭제되어 로그아웃된 상태입니다.
-                    // 클라이언트에 토큰 정보가 없기 때문에 추가로 처리할 수 있는 작업은 없습니다.
-                    onFailure(errorCode, message)
-                }
-            })
-            // 카카오 연동 해제
-            UserApiClient.instance.unlink { error ->
-                if (error != null) {
-                    Log.e(TAG, "연결 끊기 실패", error)
-                }
-                else {
-                    Log.i(TAG, "연결 끊기 성공. SDK에서 토큰 삭제 됨")
-                }
-            }
-            // 일단 로그인 화면으로 이동
-            moveToLoginFragment()
+            viewModel.tryQuit()
         }
     }
 
@@ -197,8 +171,4 @@ class CustomSettingFramgent: Fragment(), ConfirmDialogInterface {
             bottomNavigationView.visibility = View.VISIBLE
         }
     }
-}
-
-private fun NidOAuthLogin.callDeleteTokenApi(context: OAuthLoginCallback) {
-
 }

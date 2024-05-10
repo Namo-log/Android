@@ -9,13 +9,23 @@ interface AuthRepository {
     suspend fun postKakaoLogin(
         accessToken: String
     ): LoginResponse
-
+    // 네이버
     suspend fun postNaverLogin(
         accessToken: String
     ): LoginResponse
 
     /** 로그아웃 */
     suspend fun postLogout(
+        accessToken: String
+    ): Boolean
+
+    /** 회원탈퇴 */
+    // 카카오
+    suspend fun postKakaoQuit(
+        accessToken: String
+    ): Boolean
+    // 네이버
+    suspend fun postNaverQuit(
         accessToken: String
     ): Boolean
 }

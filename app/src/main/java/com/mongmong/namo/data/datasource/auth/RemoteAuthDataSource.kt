@@ -77,4 +77,38 @@ class RemoteAuthDataSource @Inject constructor(
         }
         return isSuccess
     }
+
+    suspend fun postKakaoQuit(
+        tokenBody: AccessTokenBody
+    ): Boolean {
+        var isSuccess = false
+        withContext(Dispatchers.IO) {
+            runCatching {
+                loginApiService.postKakaoQuit(tokenBody)
+            }.onSuccess {
+                Log.d("RemoteAuthDataSource", "postKakaoQuit Success $it")
+                isSuccess = true
+            }.onFailure {
+                Log.d("RemoteAuthDataSource", "postKakaoQuit Fail $it")
+            }
+        }
+        return isSuccess
+    }
+
+    suspend fun postNaverQuit(
+        tokenBody: AccessTokenBody
+    ): Boolean {
+        var isSuccess = false
+        withContext(Dispatchers.IO) {
+            runCatching {
+                loginApiService.postNaverQuit(tokenBody)
+            }.onSuccess {
+                Log.d("RemoteAuthDataSource", "postNaverQuit Success $it")
+                isSuccess = true
+            }.onFailure {
+                Log.d("RemoteAuthDataSource", "postNaverQuit Fail $it")
+            }
+        }
+        return isSuccess
+    }
 }

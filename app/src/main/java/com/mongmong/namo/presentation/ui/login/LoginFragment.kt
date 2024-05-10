@@ -38,7 +38,6 @@ class LoginFragment: Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
 
         initObserve()
-        initNaverLoginSDK()
         initClickListeners()
         initNotification()
 
@@ -90,8 +89,6 @@ class LoginFragment: Fragment() {
                 Log.i(ContentValues.TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
 
                 tryKakaoLogin(token.accessToken, token.refreshToken)
-//                Log.d("kakao_access_token", token.accessToken)
-//                Log.d("kakao_refresh_token", token.refreshToken)
             }
         }
         // 카카오톡이 설치되어 있으면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
@@ -119,8 +116,6 @@ class LoginFragment: Fragment() {
                 val naverRefreshToken = NaverIdLoginSDK.getRefreshToken().toString()
 
                 tryNaverLogin(naverAccessToken, naverRefreshToken)
-//                Log.d("naver_access_token", naverAccessToken)
-//                Log.d("naver_refresh_token",naverRefreshToken)
             }
 
             override fun onFailure(httpStatus: Int, message: String) {
@@ -134,13 +129,6 @@ class LoginFragment: Fragment() {
             }
         }
         NaverIdLoginSDK.authenticate(requireContext(), oauthLoginCallback)
-    }
-
-    private fun initNaverLoginSDK() {
-        // 네이버 로그인 모듈 초기화
-        NaverIdLoginSDK.initialize(
-            requireContext(), BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, "나모"
-        )
     }
 
     private fun setLoginFinished(){

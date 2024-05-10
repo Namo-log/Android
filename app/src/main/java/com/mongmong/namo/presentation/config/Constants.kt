@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.utils
+package com.mongmong.namo.presentation.config
 
 object Constants {
     /** 약관 관련 */

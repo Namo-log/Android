@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentTermsBinding
-import com.mongmong.namo.presentation.utils.Constants
+import com.mongmong.namo.presentation.config.Constants
 
 class TermsFragment: Fragment() {
     private lateinit var binding: FragmentTermsBinding
