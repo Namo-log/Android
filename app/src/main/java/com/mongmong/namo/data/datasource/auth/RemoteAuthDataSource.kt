@@ -1,19 +1,17 @@
 package com.mongmong.namo.data.datasource.auth
 
 import android.util.Log
-import com.mongmong.namo.data.remote.LoginApiService
+import com.mongmong.namo.data.remote.AuthApiService
 import com.mongmong.namo.domain.model.AccessTokenBody
-import com.mongmong.namo.domain.model.AuthResponse
 import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.LoginResult
 import com.mongmong.namo.domain.model.LogoutBody
-import com.mongmong.namo.domain.model.TokenBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class RemoteAuthDataSource @Inject constructor(
-    private val loginApiService: LoginApiService
+    private val authApiService: AuthApiService
 ) {
     suspend fun postKakaoLogin(
         tokenBody: AccessTokenBody
@@ -27,7 +25,7 @@ class RemoteAuthDataSource @Inject constructor(
         )
         withContext(Dispatchers.IO) {
             runCatching {
-                loginApiService.postKakaoSDK(tokenBody)
+                authApiService.postKakaoSDK(tokenBody)
             }.onSuccess {
                 Log.d("RemoteAuthDataSource", "postKakaoLogin Success $it")
                 loginResponse = it
@@ -50,7 +48,7 @@ class RemoteAuthDataSource @Inject constructor(
         )
         withContext(Dispatchers.IO) {
             runCatching {
-                loginApiService.postNaverSDK(tokenBody)
+                authApiService.postNaverSDK(tokenBody)
             }.onSuccess {
                 Log.d("RemoteAuthDataSource", "postNaverLogin Success $it")
                 loginResponse = it
@@ -67,7 +65,7 @@ class RemoteAuthDataSource @Inject constructor(
         var isSuccess = false
         withContext(Dispatchers.IO) {
             runCatching {
-                loginApiService.postLogout(tokenBody)
+                authApiService.postLogout(tokenBody)
             }.onSuccess {
                 Log.d("RemoteAuthDataSource", "postLogout Success $it")
                 isSuccess = true
@@ -84,7 +82,7 @@ class RemoteAuthDataSource @Inject constructor(
         var isSuccess = false
         withContext(Dispatchers.IO) {
             runCatching {
-                loginApiService.postKakaoQuit(tokenBody)
+                authApiService.postKakaoQuit(tokenBody)
             }.onSuccess {
                 Log.d("RemoteAuthDataSource", "postKakaoQuit Success $it")
                 isSuccess = true
@@ -101,7 +99,7 @@ class RemoteAuthDataSource @Inject constructor(
         var isSuccess = false
         withContext(Dispatchers.IO) {
             runCatching {
-                loginApiService.postNaverQuit(tokenBody)
+                authApiService.postNaverQuit(tokenBody)
             }.onSuccess {
                 Log.d("RemoteAuthDataSource", "postNaverQuit Success $it")
                 isSuccess = true

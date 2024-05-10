@@ -2,7 +2,7 @@ package com.mongmong.namo.presentation.di
 
 import com.mongmong.namo.data.remote.CategoryApiService
 import com.mongmong.namo.data.remote.DiaryApiService
-import com.mongmong.namo.data.remote.LoginApiService
+import com.mongmong.namo.data.remote.AuthApiService
 import com.mongmong.namo.data.remote.group.GroupApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
 import com.mongmong.namo.data.remote.group.GroupScheduleApiService
@@ -13,7 +13,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
-import retrofit2.create
 import javax.inject.Singleton
 
 @Module
@@ -22,8 +21,8 @@ object ServiceModule {
     /** 인증 */
     @Provides
     @Singleton
-    fun provideLoginService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : LoginApiService =
-        retrofit.create(LoginApiService::class.java)
+    fun provideLoginService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : AuthApiService =
+        retrofit.create(AuthApiService::class.java)
 
     /** 일정 */
     @Provides
