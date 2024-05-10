@@ -27,26 +27,17 @@ class AuthViewModel @Inject constructor(
     private val _isQuitComplete = MutableLiveData<Boolean>()
     val isQuitComplete: LiveData<Boolean> = _isQuitComplete
 
-    /** 카카오 로그인 */
-    fun tryKakaoLogin(accessToken: String, refreshToken: String) {
-        Log.d("kakaoToken", accessToken)
+    /** 로그인 */
+    fun tryLogin(platform: LoginPlatform, accessToken: String) {
+        Log.d("${platform.platformName}Token", accessToken)
         viewModelScope.launch {
-            _tokenResult.value = repository.postKakaoLogin(accessToken).result
-            _tokenResult.value?.let {
-                saveLoginSdkInfo(SdkInfo(LoginPlatform.KAKAO.platformName, accessToken))
-                // 토큰 저장
-                saveToken(it)
+            if (platform == LoginPlatform.KAKAO) {
+                _tokenResult.value = repository.postKakaoLogin(accessToken).result
+            } else {
+                _tokenResult.value = repository.postNaverLogin(accessToken).result
             }
-        }
-    }
-
-    /** 네이버 로그인 */
-    fun tryNaverLogin(accessToken: String, refreshToken: String) {
-        Log.d("naverToken", accessToken)
-        viewModelScope.launch {
-            _tokenResult.value = repository.postNaverLogin(accessToken).result
             _tokenResult.value?.let {
-                saveLoginSdkInfo(SdkInfo(LoginPlatform.NAVER.platformName, accessToken))
+                saveLoginSdkInfo(SdkInfo(platform.platformName, accessToken))
                 // 토큰 저장
                 saveToken(it)
             }
