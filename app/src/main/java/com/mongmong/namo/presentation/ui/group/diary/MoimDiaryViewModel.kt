@@ -124,7 +124,7 @@ class MoimDiaryViewModel @Inject constructor(
     }
 
     /** 모임 기록 삭제 (그룹에서) **/
-    suspend fun deleteMoimDiary(diaryId: Long) {
-        _deleteDiaryComplete.postValue(repository.deleteMoimDiary(diaryId))
+    suspend fun deleteMoimDiary(scheduleId: Long) {
+        _deleteDiaryComplete.postValue(repository.deleteMoimDiary(scheduleId))
     }
 }

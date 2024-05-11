@@ -125,6 +125,22 @@ class RemoteDiaryDataSource @Inject constructor(
         return isSuccess
     }
 
+    suspend fun deleteMoimMemo(scheduleId: Long): Boolean {
+        var isSuccess = false
+        withContext(Dispatchers.IO) {
+            runCatching {
+                diaryApiService.deleteMoimMemo(scheduleId)
+            }.onSuccess {
+                Log.d("RemoteDiaryDataSource patchMoimMemo Success", "$it")
+                isSuccess = true
+            }.onFailure {
+                Log.d("RemoteDiaryDataSource patchMoimMemo Failure", "$it")
+            }
+        }
+
+        return isSuccess
+    }
+
     suspend fun addMoimActivity(
         moimScheduleId: Long,
         place: String,
