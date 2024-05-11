@@ -8,7 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingHorizontal="10dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="10dp"
         app:layoutDescription="@xml/fragment_calendar_month2_xml_constraintlayout_scene">
 
         <com.mongmong.namo.presentation.ui.home.calendar.PersonalCalendarView
