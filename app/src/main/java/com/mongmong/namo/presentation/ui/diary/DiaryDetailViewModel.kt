@@ -121,7 +121,7 @@ class DiaryDetailViewModel @Inject constructor(
     fun deleteMoimMemo(scheduleId: Long) {
         viewModelScope.launch {
             Log.d("MoimDiaryViewModel deleteMoimMemo", "$scheduleId")
-            _isMemoDeleteComplete.value = repository.deleteMoimDiary(scheduleId)
+            _isMemoDeleteComplete.value = repository.deleteMoimMemo(scheduleId)
         }
     }
 

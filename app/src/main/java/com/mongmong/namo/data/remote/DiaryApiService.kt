@@ -68,13 +68,6 @@ interface DiaryApiService {
         @Path("scheduleId") scheduleId: Long,
     ): DiaryResponse
 
-    // 모임 기록 삭제
-    //TODO: API 연동 필요
-    @PATCH("diaries/person/{scheduleId}")
-    suspend fun deleteMoimDiary(
-        @Path("scheduleId") scheduleId: Long,
-    ): DiaryResponse
-
     // 월별 모임 기록 조회2
     @GET("group/diaries/month/{month}")
     fun getGroupMonthDiary2(
