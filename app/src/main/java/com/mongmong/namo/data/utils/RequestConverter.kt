@@ -21,17 +21,18 @@ object RequestConverter {
     // String 리스트(이미지)를 MultipartBody.Part 리스트로 변환
     suspend fun imageToMultipart(imagePaths: List<String>?, context: Context): List<MultipartBody.Part>? = withContext(Dispatchers.IO) {
         imagePaths?.mapNotNull { path ->
-            uriToMultipart(Uri.parse(path), context)
+            uriToMultipart(Uri.parse(path), context, true)
         }
     }
 
     // Uri를 MultipartBody.Part로 변환
-    suspend fun uriToMultipart(uri: Uri, context: Context): MultipartBody.Part? = withContext(Dispatchers.IO) {
+    suspend fun uriToMultipart(uri: Uri, context: Context, isList: Boolean): MultipartBody.Part? = withContext(Dispatchers.IO) {
         try {
             val file = uriToFile(uri, context)
             file?.let {
                 val requestFile = it.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                MultipartBody.Part.createFormData("image", it.name, requestFile)
+                if(isList) MultipartBody.Part.createFormData("imgs", it.name, requestFile)
+                else MultipartBody.Part.createFormData("img", it.name, requestFile)
             }
         } catch (e: Exception) {
             e.printStackTrace()
