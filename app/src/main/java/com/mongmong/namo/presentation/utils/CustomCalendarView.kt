@@ -222,7 +222,7 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
         return (eventTop + (_eventBetweenPadding * idx) + (_eventLineHeight * (idx + 1)))
     }
 
-    fun drawPrevMonthRect(prev: Int, canvas: Canvas?) {
+    private fun drawPrevMonthRect(prev: Int, canvas: Canvas?) {
         if (prev <= 7) {
             canvas!!.drawRect(
                 RectF(
@@ -255,7 +255,7 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
         }
     }
 
-    fun drawNextMonthRect(next: Int, canvas: Canvas?) {
+    private fun drawNextMonthRect(next: Int, canvas: Canvas?) {
         if (next <= 7) {
             canvas!!.drawRect(
                 RectF(
@@ -322,15 +322,18 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
         )
     }
 
-    fun getScheduleTextStart(title: String, startIdx: Int, endIdx: Int): Float {
-        return (((startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding) + ((endIdx % DAYS_PER_WEEK) * cellWidth + cellWidth - _eventHorizontalPadding)) / 2 - eventBounds.width() / 2
+    fun getScheduleTextStart(startIdx: Int): Float {
+        val startX = (startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding
+        val additionalMargin = dpToPx(context, 2f)  // 여기에서 context는 해당 뷰 또는 액티비티의 컨텍스트입니다.
+        return startX + additionalMargin
     }
+
 
     fun getScheduleTextBottom(title: String, startIdx: Int, endIdx: Int, order: Int): Float {
         return (((startIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding + _eventHeight) * order) + ((endIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding * order) + (_eventHeight * (order + 1)))) / 2 + eventBounds.height() / 2
     }
 
-    fun isSameMonth(date: DateTime): Boolean {
+    private fun isSameMonth(date: DateTime): Boolean {
         if (date.monthOfYear != DateTime(millis).monthOfYear) {
             return false
         }
@@ -364,15 +367,15 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
                     days[day].dayOfMonth.toString().length,
                     bounds
                 )
-                canvas!!.drawCircle(
-                    (x + cellWidth / 2),
+                canvas.drawCircle(
+                    (x + bounds.width() / 2), // 원의 중심 위치도 조정
                     (y + _dayTextHeight - bounds.height() / 2),
                     bounds.height().toFloat(),
                     todayNoticePaint
                 )
-                canvas!!.drawText(
+                canvas.drawText(
                     days[day].dayOfMonth.toString(),
-                    (x + cellWidth / 2 - bounds.right.toFloat() / 2),
+                    x,
                     y + _dayTextHeight,
                     todayPaint
                 )
@@ -383,20 +386,21 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
                     days[day].dayOfMonth.toString().length,
                     bounds
                 )
-                canvas!!.drawText(
+                canvas.drawText(
                     days[day].dayOfMonth.toString(),
-                    (x + cellWidth / 2 - bounds.right.toFloat() / 2),
+                    x, // 텍스트 시작 위치 수정
                     y + _dayTextHeight,
                     datePaint
                 )
             }
-
         }
     }
+
 
     private fun drawSelected(canvas: Canvas) {
         if (selectedDate != null) {
             val selectedDay = selectedDate!!.dayOfMonth
+
             for (i in days.indices) {
                 if (days[i] == selectedDate && !days[i].isEqual(today)) {
                     val x = (i % DAYS_PER_WEEK) * cellWidth
@@ -410,7 +414,7 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
                     )
                     canvas!!.drawText(
                         selectedDay.toString(),
-                        (x + cellWidth / 2 - bounds.right.toFloat() / 2),
+                        x,
                         y + _dayTextHeight,
                         selectedPaint
                     )

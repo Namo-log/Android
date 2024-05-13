@@ -61,11 +61,7 @@ class GroupCalendarView(context: Context, attrs: AttributeSet) :
 
                         canvas.drawText(
                             ellipsizedText.toString(),
-                            getScheduleTextStart(
-                                ellipsizedText.toString(),
-                                splitSchedule.startIdx,
-                                splitSchedule.endIdx
-                            ),
+                            getScheduleTextStart(splitSchedule.startIdx),
                             getScheduleTextBottom(
                                 ellipsizedText.toString(),
                                 splitSchedule.startIdx,
@@ -85,11 +81,7 @@ class GroupCalendarView(context: Context, attrs: AttributeSet) :
 
                         canvas.drawText(
                             scheduleList[i].name,
-                            getScheduleTextStart(
-                                scheduleList[i].name,
-                                splitSchedule.startIdx,
-                                splitSchedule.endIdx
-                            ),
+                            getScheduleTextStart(splitSchedule.startIdx),
                             getScheduleTextBottom(
                                 scheduleList[i].name,
                                 splitSchedule.startIdx,

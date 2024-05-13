@@ -20,7 +20,6 @@ import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.ui.diary.adapter.GalleryListAdapter
 import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryActivity
-import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryViewModel
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import dagger.hilt.android.AndroidEntryPoint
@@ -145,6 +144,12 @@ class MoimMemoDetailActivity: AppCompatActivity(),
         viewModel.category.observe(this) {
             binding.itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(it.paletteId)
         }
+
+        // 모임 기록 메모 삭제
+        viewModel.isDeleteComplete.observe(this) { isComplete ->
+            if(isComplete) finish()
+            else Toast.makeText(this, "네트워크 오류", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun findCategory(localId: Long, serverId: Long) {
@@ -177,6 +182,7 @@ class MoimMemoDetailActivity: AppCompatActivity(),
         //viewModel.patchMoimDiary(moimSchedule.scheduleId, "")
         //diaryService.addGroupAfterDiary(moimSchedule.scheduleId, "")
         //diaryService.addGroupAfterDiary(this)
+        viewModel.deleteMoimMemo(moimSchedule.scheduleId)
     }
 
     suspend fun patchSuccess(response: DiaryResponse) {

@@ -37,7 +37,7 @@ class GroupDataSource @Inject constructor(
         var result = AddGroupResult(groupId = 0L)
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.addGroup(uriToMultipart(img, context), name.convertTextRequest())
+                apiService.addGroup(uriToMultipart(img, context, false), name.convertTextRequest())
             }.onSuccess {
                 Log.d("GroupDataSource addGroup Success", "$it")
                 result = it.result

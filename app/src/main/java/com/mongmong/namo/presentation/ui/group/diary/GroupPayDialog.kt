@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.databinding.DialogGroupPayBinding
 import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.model.group.MoimScheduleMember
-import com.mongmong.namo.presentation.ui.group.diary.adapter.GroupPayMemberRVAdapter
+import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimPayMemberRVAdapter
 import java.lang.Boolean.TRUE
 import java.text.NumberFormat
 import java.util.*
@@ -30,7 +30,7 @@ class GroupPayDialog(
 ) : DialogFragment(), View.OnClickListener {  // 그룹 다이어리 장소별 정산 다이얼로그
 
     lateinit var binding: DialogGroupPayBinding
-    private lateinit var payMemberRVAdapter: GroupPayMemberRVAdapter
+    private lateinit var payMemberRVAdapter: MoimPayMemberRVAdapter
 
     private var memberIsChecked = mutableListOf<Pair<Long, Boolean>>()
     private var memberCount = 0
@@ -105,7 +105,7 @@ class GroupPayDialog(
 
     private fun account() {
 
-        payMemberRVAdapter = GroupPayMemberRVAdapter(placeMember, memberIsChecked)
+        payMemberRVAdapter = MoimPayMemberRVAdapter(placeMember, memberIsChecked)
         binding.groupPayPersonRv.apply {
             adapter = payMemberRVAdapter
             layoutManager =
@@ -114,7 +114,7 @@ class GroupPayDialog(
         }
 
         payMemberRVAdapter.setPeopleItemClickListener(object :
-            GroupPayMemberRVAdapter.PeopleItemClickListener {
+            MoimPayMemberRVAdapter.PeopleItemClickListener {
             @SuppressLint("SetTextI18n")
             override fun onItemClick(
                 peopleList: ArrayList<String>,

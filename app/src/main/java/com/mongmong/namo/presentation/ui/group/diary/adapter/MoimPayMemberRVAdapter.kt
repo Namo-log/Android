@@ -6,11 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemDiaryGroupPayMemberBinding
 import com.mongmong.namo.domain.model.group.MoimScheduleMember
 
-class GroupPayMemberRVAdapter(  // 그룹 장소별 정산 다이얼로그 멤버
+class MoimPayMemberRVAdapter(  // 그룹 장소별 정산 다이얼로그 멤버
     private var members: List<MoimScheduleMember>,
     private var memberIsChecked: MutableList<Pair<Long, Boolean>>
 ) :
-    RecyclerView.Adapter<GroupPayMemberRVAdapter.ViewHolder>() {
+    RecyclerView.Adapter<MoimPayMemberRVAdapter.ViewHolder>() {
 
     /** 체크한 멤버 정산 **/
     interface PeopleItemClickListener {
