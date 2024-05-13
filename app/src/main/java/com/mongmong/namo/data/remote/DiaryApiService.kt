@@ -63,7 +63,8 @@ interface DiaryApiService {
         @Body text: String?
     ): DiaryResponse
 
-    @PATCH("group/diaries/person/{scheduleId}")
+    // 모임 기록 삭제 (개인)
+    @DELETE("group/diaries/person/{scheduleId}")
     suspend fun deleteMoimMemo(
         @Path("scheduleId") scheduleId: Long,
     ): DiaryResponse

@@ -242,9 +242,7 @@ class MoimDiaryActivity : AppCompatActivity(),
     // 삭제 다이얼로그 확인 버튼
     override fun onClickYesButton(id: Int) {
         // 모임 기록 전체 삭제
-        lifecycleScope.launch {
-            viewModel.deleteMoimDiary(moimScheduleId)
-        }
+        viewModel.deleteMoimDiary(moimScheduleId)
     }
 
     @SuppressLint("ClickableViewAccessibility")

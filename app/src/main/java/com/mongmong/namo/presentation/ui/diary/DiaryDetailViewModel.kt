@@ -27,11 +27,11 @@ class DiaryDetailViewModel @Inject constructor(
     private val _imgList = MutableLiveData<List<String>>(emptyList())
     val imgList: LiveData<List<String>> = _imgList
 
-    private val _isDeleteComplete = MutableLiveData<Boolean>()
-    val isDeleteComplete: LiveData<Boolean> = _isDeleteComplete
+    private val _deleteDiaryResult = MutableLiveData<Boolean>()
+    val deleteDiaryResult: LiveData<Boolean> = _deleteDiaryResult
 
-    private val _isMemoDeleteComplete = MutableLiveData<Boolean>()
-    val isMemoDeleteComplete: LiveData<Boolean> = _isMemoDeleteComplete
+    private val _deleteMemoResult = MutableLiveData<Boolean>()
+    val deleteMemoResult: LiveData<Boolean> = _deleteMemoResult
 
     private val _getMoimDiaryResult = MutableLiveData<MoimDiaryResult>()
     val getMoimDiaryResult : LiveData<MoimDiaryResult> = _getMoimDiaryResult
@@ -96,7 +96,7 @@ class DiaryDetailViewModel @Inject constructor(
     fun deletePersonalDiary(localId: Long, scheduleServerId: Long) {
         viewModelScope.launch {
             repository.deleteDiary(localId, scheduleServerId)
-            _isDeleteComplete.postValue(true)
+            _deleteDiaryResult.postValue(true)
         }
     }
 
@@ -121,7 +121,7 @@ class DiaryDetailViewModel @Inject constructor(
     fun deleteMoimMemo(scheduleId: Long) {
         viewModelScope.launch {
             Log.d("MoimDiaryViewModel deleteMoimMemo", "$scheduleId")
-            _isMemoDeleteComplete.value = repository.deleteMoimMemo(scheduleId)
+            _deleteMemoResult.value = repository.deleteMoimMemo(scheduleId)
         }
     }
 
