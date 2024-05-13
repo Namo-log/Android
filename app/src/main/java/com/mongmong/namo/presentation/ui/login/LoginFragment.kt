@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentLoginBinding
@@ -63,6 +64,10 @@ class LoginFragment: Fragment() {
 
     private fun initObserve() {
         viewModel.loginResult.observe(viewLifecycleOwner) {
+            if (it?.newUser == true) {
+                findNavController().navigate(R.id.action_loginFragment_to_termsFragment)
+                return@observe
+            }
             if (!it?.accessToken.isNullOrEmpty()) {
                 Toast.makeText(requireContext(), "로그인에 성공했습니다.", Toast.LENGTH_SHORT).show()
                 setLoginFinished()

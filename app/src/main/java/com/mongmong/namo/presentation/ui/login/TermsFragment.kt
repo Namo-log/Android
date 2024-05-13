@@ -11,13 +11,19 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.viewModels
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentTermsBinding
+import com.mongmong.namo.domain.model.TermBody
 import com.mongmong.namo.presentation.config.Constants
+import com.mongmong.namo.presentation.ui.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class TermsFragment: Fragment() {
     private lateinit var binding: FragmentTermsBinding
+
+    private val viewModel : TermsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,15 +33,24 @@ class TermsFragment: Fragment() {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_terms, container, false)
 
-        clickHandler()
+        initObserve()
+        initClickListeners()
         checkboxListener()
 
         return binding.root
     }
 
-    private fun clickHandler(){
+    private fun initObserve() {
+        viewModel.isComplete.observe(viewLifecycleOwner) { isComplete ->
+            if (isComplete) {
+                moveToMainActivity()
+            }
+        }
+    }
+
+    private fun initClickListeners(){
         binding.termsNextBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_termsFragment_to_loginFragment)
+            viewModel.tryCheckTerms(TermBody(true, true))
         }
         setTermsSee()
     }
@@ -138,15 +153,18 @@ class TermsFragment: Fragment() {
         with(binding) {
             // 이용약관
             termsAgreeServiceSeeIv.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(Constants.TERM_URL))
-                startActivity(intent)
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Constants.TERM_URL)))
             }
 
             // 개인정보 처리방침
             termsAgreePersonalSeeIv.setOnClickListener {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(Constants.POLICY_URL))
-                startActivity(intent)
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Constants.POLICY_URL)))
             }
         }
+    }
+
+    private fun moveToMainActivity(){
+        requireActivity().finish()
+        startActivity(Intent(requireContext(), MainActivity::class.java))
     }
 }

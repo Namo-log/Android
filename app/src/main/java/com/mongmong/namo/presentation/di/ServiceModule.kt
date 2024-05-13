@@ -7,6 +7,7 @@ import com.mongmong.namo.data.remote.group.GroupApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
 import com.mongmong.namo.data.remote.group.GroupScheduleApiService
 import com.mongmong.namo.data.remote.ScheduleApiService
+import com.mongmong.namo.data.remote.TermApiService
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.KakaoAPI
 import dagger.Module
 import dagger.Provides
@@ -23,6 +24,12 @@ object ServiceModule {
     @Singleton
     fun provideLoginService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : AuthApiService =
         retrofit.create(AuthApiService::class.java)
+
+    /** 약관 */
+    @Provides
+    @Singleton
+    fun provideTermService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : TermApiService =
+        retrofit.create(TermApiService::class.java)
 
     /** 일정 */
     @Provides

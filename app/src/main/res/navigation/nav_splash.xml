@@ -11,28 +11,23 @@
         android:label="OnBoardingFragment"
         tools:layout="@layout/fragment_onboarding">
         <action
-            android:id="@+id/action_onBoardingFragment_to_termsFragment"
-            app:destination="@id/termsFragment"
-            app:popUpTo="@id/onBoardingFragment"
-            app:popUpToInclusive="true"/>
-        <action
             android:id="@+id/action_onBoardingFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/termsFragment"
-        android:name="com.mongmong.namo.presentation.ui.login.TermsFragment"
-        android:label="TermsFragment"
-        tools:layout="@layout/fragment_terms">
-        <action
-            android:id="@+id/action_termsFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:popUpTo="@id/termsFragment"
-            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.mongmong.namo.presentation.ui.login.LoginFragment"
         android:label="LoginFragment"
-        tools:layout="@layout/fragment_login"/>
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_termsFragment"
+            app:destination="@id/termsFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/termsFragment"
+        android:name="com.mongmong.namo.presentation.ui.login.TermsFragment"
+        android:label="TermsFragment"
+        tools:layout="@layout/fragment_terms"/>
 </navigation>

@@ -53,7 +53,7 @@ class FifthFragment : Fragment() {
 
 
         binding.onboarding5StartBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_onBoardingFragment_to_termsFragment)
+            findNavController().navigate(R.id.action_onBoardingFragment_to_loginFragment)
             onBoardingFinished()
         }
 
