@@ -114,6 +114,11 @@ class DiaryRepositoryImpl @Inject constructor(
         return remoteDiaryDataSource.patchMoimMemo(scheduleId, content)
     }
 
+    /** 모임 기록 메모 삭제(개인) **/
+    override suspend fun deleteMoimMemo(scheduleId: Long): Boolean {
+        return remoteDiaryDataSource.deleteMoimMemo(scheduleId)
+    }
+
     /** 모임 기록 활동 추가 **/
     override suspend fun addMoimActivity(
         moimScheduleId: Long,

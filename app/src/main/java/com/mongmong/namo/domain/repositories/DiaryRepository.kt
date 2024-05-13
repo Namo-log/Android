@@ -36,6 +36,8 @@ interface DiaryRepository {
 
     suspend fun patchMoimMemo(scheduleId: Long, content: String): Boolean
 
+    suspend fun deleteMoimMemo(scheduleId: Long): Boolean
+
     suspend fun addMoimActivity(
         moimScheduleId: Long,
         place: String,
@@ -54,5 +56,5 @@ interface DiaryRepository {
 
     suspend fun deleteMoimActivity(activityId: Long)
 
-    suspend fun deleteMoimDiary(moimDiaryId: Long): Boolean
+    suspend fun deleteMoimDiary(scheduleId: Long): Boolean
 }

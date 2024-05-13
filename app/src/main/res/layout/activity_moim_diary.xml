@@ -7,10 +7,10 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:background="@color/white"
         android:fitsSystemWindows="true"
-        tools:context=".ui.home.schedule.map.MapActivity"
-        android:background="@color/white">
+        android:orientation="vertical"
+        tools:context=".ui.home.schedule.map.MapActivity">
 
         <RelativeLayout
             android:id="@+id/view"
@@ -37,28 +37,29 @@
                 android:id="@+id/diary_today_month_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:elevation="10dp"
+                android:textColor="@color/textGray"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:textColor="@color/textGray"
-                android:elevation="10dp"
-                app:layout_constraintVertical_chainStyle="packed"
                 app:layout_constraintBottom_toTopOf="@id/diary_today_num_tv"
-                app:layout_constraintTop_toTopOf="@id/date_circle_iv"
+                app:layout_constraintEnd_toEndOf="@id/date_circle_iv"
                 app:layout_constraintStart_toStartOf="@id/date_circle_iv"
-                app:layout_constraintEnd_toEndOf="@id/date_circle_iv"/>
+                app:layout_constraintTop_toTopOf="@id/date_circle_iv"
+                app:layout_constraintVertical_chainStyle="packed" />
+
             <TextView
                 android:id="@+id/diary_today_num_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:elevation="10dp"
+                android:textColor="@color/textGray"
                 android:textSize="35sp"
                 android:textStyle="bold"
-                android:textColor="@color/textGray"
-                android:elevation="10dp"
-                app:layout_constraintVertical_chainStyle="packed"
-                app:layout_constraintTop_toBottomOf="@id/diary_today_month_tv"
-                app:layout_constraintStart_toStartOf="@id/date_circle_iv"
+                app:layout_constraintBottom_toBottomOf="@id/date_circle_iv"
                 app:layout_constraintEnd_toEndOf="@id/date_circle_iv"
-                app:layout_constraintBottom_toBottomOf="@id/date_circle_iv"/>
+                app:layout_constraintStart_toStartOf="@id/date_circle_iv"
+                app:layout_constraintTop_toBottomOf="@id/diary_today_month_tv"
+                app:layout_constraintVertical_chainStyle="packed" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/group_add_top"
@@ -118,8 +119,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
-                android:textSize="17sp"
                 android:textColor="@color/textGray"
+                android:textSize="17sp"
                 app:layout_constraintStart_toEndOf="@id/group_add_date_tv"
                 app:layout_constraintTop_toTopOf="@id/group_add_date_tv" />
 
@@ -142,9 +143,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
-                android:textColor="@color/textGray"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:textColor="@color/textGray"
                 android:textSize="17sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/group_add_place_tv"
@@ -185,7 +186,7 @@
 
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/group_add_people_rv"
+                android:id="@+id/moim_people_rv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -202,7 +203,7 @@
                 android:layout_marginTop="5dp"
                 app:layout_constraintBottom_toTopOf="@id/group_save_tv"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/group_add_people_rv">
+                app:layout_constraintTop_toBottomOf="@id/moim_people_rv">
 
                 <LinearLayout
                     android:id="@+id/add_place_linear_layout"
@@ -219,24 +220,27 @@
                         android:layout_marginEnd="25dp"
                         android:layout_marginBottom="5dp"
                         android:orientation="vertical"
+                        android:overScrollMode="never"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/group_add_people_rv"
+                        app:layout_constraintTop_toBottomOf="@id/moim_people_rv"
                         tools:itemCount="1"
                         tools:listitem="@layout/item_diary_group_event" />
-                        <TextView
-                            android:id="@+id/groud_place_add_tv"
-                            android:layout_width="150dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:layout_marginTop="20dp"
-                            android:background="@drawable/record_btn_background"
-                            android:text="@string/diary_add_place"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/textGray" />
+
+                    <TextView
+                        android:id="@+id/groud_place_add_tv"
+                        android:layout_width="150dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="40dp"
+                        android:background="@drawable/record_btn_background"
+                        android:gravity="center"
+                        android:text="@string/diary_add_activity"
+                        android:textColor="@color/textGray"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
             </androidx.core.widget.NestedScrollView>
