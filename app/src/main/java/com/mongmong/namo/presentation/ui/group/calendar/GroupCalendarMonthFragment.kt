@@ -164,12 +164,13 @@ class GroupCalendarMonthFragment : Fragment() {
 
             override fun onDiaryIconClicked(groupSchedule: MoimScheduleBody) { // 기록 아이콘 클릭
                 Log.d("GROUP_DIARY_CLICK", groupSchedule.toString())
-                val intent = Intent(context, MoimDiaryActivity::class.java)
-                intent.putExtra("hasGroupPlace",groupSchedule.hasDiaryPlace)
-                intent.putExtra("groupScheduleId", groupSchedule.moimScheduleId)
-                intent.putExtra("groupSchedule", groupSchedule)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                requireActivity().startActivity(intent)
+                startActivity(Intent(context, MoimDiaryActivity::class.java)
+                    .putExtra("from", "groupCalendar")
+                    .putExtra("hasMoimPlace", groupSchedule.hasDiaryPlace)
+                    .putExtra("moimScheduleId", groupSchedule.moimScheduleId)
+                    .putExtra("moimSchedule", groupSchedule)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                )
             }
         })
     }

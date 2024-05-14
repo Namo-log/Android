@@ -107,8 +107,9 @@ class MoimMemoDetailActivity: AppCompatActivity(),
             groupDiaryDetailLy.setOnClickListener {// 그룹 다이어리 장소 아이템 추가 화면으로 이동
                 startActivity(
                     Intent(this@MoimMemoDetailActivity, MoimDiaryActivity::class.java)
-                        .putExtra("hasGroupPlace", true)
-                        .putExtra("groupScheduleId", moimSchedule.scheduleId)
+                        .putExtra("from", "moimMemo")
+                        .putExtra("hasMoimPlace", true)
+                        .putExtra("moimScheduleId", moimSchedule.scheduleId)
                 )
             }
             diaryEditBtnTv.setOnClickListener {
