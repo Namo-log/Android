@@ -150,8 +150,8 @@ class DiaryRepositoryImpl @Inject constructor(
     }
 
     /** 모임 기록 삭제 (그룹에서) **/
-    override suspend fun deleteMoimDiary(moimDiaryId: Long): Boolean {
-        return remoteDiaryDataSource.deleteMoimDiary(moimDiaryId)
+    override suspend fun deleteMoimDiary(moimScheduleId: Long): Boolean {
+        return remoteDiaryDataSource.deleteMoimDiary(moimScheduleId)
     }
 
     override suspend fun uploadDiaryToServer() {

@@ -107,8 +107,9 @@ class MoimMemoDetailActivity: AppCompatActivity(),
             groupDiaryDetailLy.setOnClickListener {// 그룹 다이어리 장소 아이템 추가 화면으로 이동
                 startActivity(
                     Intent(this@MoimMemoDetailActivity, MoimDiaryActivity::class.java)
-                        .putExtra("hasGroupPlace", true)
-                        .putExtra("groupScheduleId", moimSchedule.scheduleId)
+                        .putExtra("from", "moimMemo")
+                        .putExtra("hasMoimPlace", true)
+                        .putExtra("moimScheduleId", moimSchedule.scheduleId)
                 )
             }
             diaryEditBtnTv.setOnClickListener {
@@ -116,17 +117,12 @@ class MoimMemoDetailActivity: AppCompatActivity(),
                     moimSchedule.scheduleId,
                     binding.diaryContentsEt.text.toString()
                 )
-                /*diaryService.addGroupAfterDiary(
-                    moimSchedule.scheduleId,
-                    binding.diaryContentsEt.text.toString()
-                )*/
             }
         }
     }
     private fun initObserve() {
         // 모임 기록 가져오기
         viewModel.getMoimDiaryResult.observe(this) { result ->
-            //TODO: 수정 필요
             placeIntList = result.moimActivities.map {
                 it.moimActivityId // 그룹 스케줄 별 장소 아이디 가져와서 리스트 만들기
             }
@@ -146,16 +142,15 @@ class MoimMemoDetailActivity: AppCompatActivity(),
         }
 
         // 모임 기록 메모 삭제
-        viewModel.isDeleteComplete.observe(this) { isComplete ->
+        viewModel.deleteMemoResult.observe(this) { isComplete ->
+            Log.d("isDeleteComplete", "$isComplete")
             if(isComplete) finish()
             else Toast.makeText(this, "네트워크 오류", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun findCategory(localId: Long, serverId: Long) {
-        lifecycleScope.launch {
-            viewModel.findCategoryById(localId, serverId)
-        }
+        viewModel.findCategoryById(localId, serverId)
     }
 
     private fun setImgList(imgList: List<String>) {
@@ -179,32 +174,7 @@ class MoimMemoDetailActivity: AppCompatActivity(),
 
     override fun onClickYesButton(id: Int) {
         isDelete = true
-        //viewModel.patchMoimDiary(moimSchedule.scheduleId, "")
-        //diaryService.addGroupAfterDiary(moimSchedule.scheduleId, "")
-        //diaryService.addGroupAfterDiary(this)
         viewModel.deleteMoimMemo(moimSchedule.scheduleId)
-    }
-
-    suspend fun patchSuccess(response: DiaryResponse) {
-        if (isDelete) {
-            withContext(Dispatchers.IO) {
-                placeIntList.map { placeIndex ->
-                    diaryService.deleteGroupDiary(placeIndex, object : DiaryBasicView {
-                        override fun onSuccess(response: DiaryResponse) {
-                            Log.e("DELETE_GROUP_DIARY", "SUCCESS")
-                        }
-
-                        override fun onFailure(message: String) {
-                            Log.e("DELETE_GROUP_DIARY", message)
-                        }
-                    })
-                }
-                finish()
-                isDelete = false
-            }
-        } else {
-            finish()
-        }
     }
 
     /** 글자 수 반환 **/

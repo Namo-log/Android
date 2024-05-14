@@ -12,6 +12,7 @@ import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.usecase.FindCategoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -124,7 +125,9 @@ class MoimDiaryViewModel @Inject constructor(
     }
 
     /** 모임 기록 삭제 (그룹에서) **/
-    suspend fun deleteMoimDiary(scheduleId: Long) {
-        _deleteDiaryComplete.postValue(repository.deleteMoimDiary(scheduleId))
+    fun deleteMoimDiary(scheduleId: Long) {
+        viewModelScope.launch {
+            _deleteDiaryComplete.postValue(repository.deleteMoimDiary(scheduleId))
+        }
     }
 }

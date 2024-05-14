@@ -54,7 +54,7 @@ class RemoteDiaryDataSource @Inject constructor(
         withContext(Dispatchers.IO) {
             runCatching {
                 diaryApiService.editDiary(
-                    scheduleId =  diary.scheduleServerId.toString().convertTextRequest(),
+                    scheduleId = diary.scheduleServerId.toString().convertTextRequest(),
                     content = (diary.content ?: "").convertTextRequest(),
                     imgs = imageToMultipart(images, context)
                 )
@@ -125,21 +125,21 @@ class RemoteDiaryDataSource @Inject constructor(
         return isSuccess
     }
 
-    suspend fun deleteMoimMemo(scheduleId: Long): Boolean {
-        var isSuccess = false
+    suspend fun deleteMoimMemo(scheduleId: Long): Boolean =
         withContext(Dispatchers.IO) {
+            var isSuccess = false
             runCatching {
                 diaryApiService.deleteMoimMemo(scheduleId)
             }.onSuccess {
-                Log.d("RemoteDiaryDataSource patchMoimMemo Success", "$it")
+                Log.d("RemoteDiaryDataSource deleteMoimMemo Success", "$it")
                 isSuccess = true
             }.onFailure {
-                Log.d("RemoteDiaryDataSource patchMoimMemo Failure", "$it")
+                Log.d("RemoteDiaryDataSource deleteMoimMemo Failure", "$it")
             }
-        }
 
-        return isSuccess
-    }
+            Log.d("RemoteDiaryDataSource deleteMoimMemo", "$isSuccess")
+            return@withContext isSuccess
+        }
 
     suspend fun addMoimActivity(
         moimScheduleId: Long,
@@ -172,7 +172,6 @@ class RemoteDiaryDataSource @Inject constructor(
         members: List<Long>?,
         images: List<String>?
     ) {
-
         withContext(Dispatchers.IO) {
             runCatching {
                 groupDiaryApiService.editMoimActivity(
@@ -202,19 +201,17 @@ class RemoteDiaryDataSource @Inject constructor(
         }
     }
 
-    suspend fun deleteMoimDiary(moimDiaryId: Long): Boolean {
-        var isSuccess = false
+    suspend fun deleteMoimDiary(moimScheduleId: Long): Boolean =
         withContext(Dispatchers.IO) {
+            var isSuccess = false
             runCatching {
-                groupDiaryApiService.deleteMoimDiary(moimDiaryId)
+                groupDiaryApiService.deleteMoimDiary(moimScheduleId)
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource deleteMoimDiary Success", "$it")
                 isSuccess = true
             }.onFailure {
                 Log.d("RemoteDiaryDataSource deleteMoimDiary Success", "$it")
             }
+            return@withContext isSuccess
         }
-
-        return isSuccess
-    }
 }

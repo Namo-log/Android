@@ -19,11 +19,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.joda.time.DateTime
 import com.mongmong.namo.R
 import com.mongmong.namo.data.remote.diary.*
 import com.mongmong.namo.databinding.ActivityMoimDiaryBinding
@@ -31,19 +29,21 @@ import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.domain.model.group.MoimScheduleMember
+import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityItemDecoration
-import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimMemberRVAdapter
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityRVAdapter
+import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimMemberRVAdapter
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.dpToPx
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.PermissionChecker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import org.joda.time.DateTime
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
+
 
 @AndroidEntryPoint
 class MoimDiaryActivity : AppCompatActivity(),
@@ -83,8 +83,8 @@ class MoimDiaryActivity : AppCompatActivity(),
 
         repo = DiaryRepository(this)
 
-        moimScheduleId = intent.getLongExtra("groupScheduleId", 0L)  // 그룹 스케줄 아이디
-        val getHasDiaryBoolean = intent.getBooleanExtra("hasGroupPlace", false)
+        moimScheduleId = intent.getLongExtra("moimScheduleId", 0L)  // 그룹 스케줄 아이디
+        val getHasDiaryBoolean = intent.getBooleanExtra("hasMoimPlace", false)
 
         hasDiaryPlace(getHasDiaryBoolean)
         onClickListener()
@@ -94,7 +94,7 @@ class MoimDiaryActivity : AppCompatActivity(),
 
     private fun hasDiaryPlace(getHasDiaryBoolean: Boolean) {
         if (!getHasDiaryBoolean) {  // groupPlace가 없을 때, 저장하기
-            moimScheduleBody = intent?.getSerializableExtra("groupSchedule") as MoimScheduleBody
+            moimScheduleBody = intent?.getSerializableExtra("moimSchedule") as MoimScheduleBody
             Log.d("hasDiaryPlace", "$moimScheduleBody")
             activities.add(MoimActivity(0L, "", 0, arrayListOf(), arrayListOf()))
 
@@ -200,7 +200,13 @@ class MoimDiaryActivity : AppCompatActivity(),
         }
 
         viewModel.deleteDiaryComplete.observe(this) { isComplete ->
-            if(isComplete) finish()
+            if(isComplete) {
+                if(intent.getStringExtra("from") == "moimMemo") {
+                    startActivity(Intent(this, MainActivity::class.java)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP))
+                }
+                else finish()
+            }
             else Toast.makeText(this, "네트워크 오류", Toast.LENGTH_SHORT).show()
         }
     }
@@ -242,9 +248,7 @@ class MoimDiaryActivity : AppCompatActivity(),
     // 삭제 다이얼로그 확인 버튼
     override fun onClickYesButton(id: Int) {
         // 모임 기록 전체 삭제
-        lifecycleScope.launch {
-            viewModel.deleteMoimDiary(moimScheduleId)
-        }
+        viewModel.deleteMoimDiary(moimScheduleId)
     }
 
     @SuppressLint("ClickableViewAccessibility")

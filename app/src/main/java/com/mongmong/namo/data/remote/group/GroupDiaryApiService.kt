@@ -41,9 +41,9 @@ interface GroupDiaryApiService {
     ): DiaryResponse
 
     // 모임 기록 삭제 (그룹에서 삭제)
-    @DELETE("group/diaries/all/{scheduleId}")
+    @DELETE("group/diaries/all/{moimScheduleId}")
     suspend fun deleteMoimDiary(
-        @Path("scheduleId") scheduleId: Long
+        @Path("moimScheduleId") moimScheduleId: Long
     ): BaseResponse
 
 }
