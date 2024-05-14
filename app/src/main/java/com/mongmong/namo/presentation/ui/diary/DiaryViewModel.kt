@@ -1,5 +1,6 @@
 package com.mongmong.namo.presentation.ui.diary
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,7 +23,7 @@ import java.text.SimpleDateFormat
 class DiaryViewModel @Inject constructor(
     private val repository: DiaryRepository
 ) : ViewModel() {
-    private val _currentDate = MutableLiveData<String>(DateTime().toString("yyyy.MM"))
+    private val _currentDate = MutableLiveData<String>(DateTime().toString(DATE_FORMAT))
     val currentDate : LiveData<String> = _currentDate
 
     private val _isMoim = MutableLiveData<Int>(0)
@@ -32,6 +33,7 @@ class DiaryViewModel @Inject constructor(
 
     /** 개인 기록 리스트 조회 **/
     fun getPersonalPaging(date: String): Flow<PagingData<DiarySchedule>> {
+        Log.d("Diary", "date: $date")
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
@@ -71,8 +73,8 @@ class DiaryViewModel @Inject constructor(
         return SimpleDateFormat("yyyy.MM.dd").format(this * 1000)
     }
 
-    /** 선택 날짜 **/
-    fun getCurrentDate(): String = _currentDate.value ?: DateTime().toString("yyyy.MM")
+    /** 선택한 피커 날짜 **/
+    fun getCurrentDate(): String = _currentDate.value ?: DateTime().toString(DATE_FORMAT)
     fun setCurrentDate(yearMonth: String) { _currentDate.value = yearMonth }
     /** 개인/그룹 여부 토글  **/
     fun getIsGroup(): Int = _isMoim.value ?: 0
@@ -81,5 +83,6 @@ class DiaryViewModel @Inject constructor(
         const val IS_GROUP = 1
         const val IS_NOT_GROUP = 0
         const val PAGE_SIZE = 5
+        const val DATE_FORMAT = "yyyy.MM"
     }
 }
