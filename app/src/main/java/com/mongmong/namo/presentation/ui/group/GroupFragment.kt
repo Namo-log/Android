@@ -43,23 +43,27 @@ class GroupFragment : Fragment(), CreateGroupDialog.GroupCreationListener {
 
     private fun initObserve() {
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
-            setEmptyView(groups.isEmpty())
-            groupAdapter.updateGroups(groups)
+            setGroupView(groups)
         }
     }
-    private fun setEmptyView(isEmpty: Boolean) {
-        if(isEmpty) {
-            binding.groupListEmptyTv.apply {
-                text = getText(
-                    if(NetworkCheckerImpl(requireContext()).isOnline())
-                        R.string.add_group_msg
-                    else R.string.network_group_msg
-                )
-                visibility = View.VISIBLE
+    private fun setGroupView(groups: List<Group>?) {
+        with(binding) {
+            if(groups == null) {
+                groupListEmptyTv.text = getText(R.string.network_group_msg)
+                groupListEmptyIv.setImageResource(R.drawable.ic_network_disconnect)
+                groupListEmptyTv.visibility = View.VISIBLE
+                groupListEmptyIv.visibility = View.VISIBLE
             }
-        } else {
-            binding.groupListEmptyTv.visibility = View.GONE
-            binding.groupListRv.visibility = View.VISIBLE
+            else if(groups.isEmpty()) {
+                groupListEmptyTv.text = getText(R.string.add_group_msg)
+                groupListEmptyIv.setImageResource(R.drawable.ic_group_empty)
+                groupListEmptyTv.visibility = View.VISIBLE
+                groupListEmptyIv.visibility = View.VISIBLE
+            } else {
+                groupListEmptyTv.visibility = View.GONE
+                groupListEmptyIv.visibility = View.GONE
+                groupAdapter.updateGroups(groups)
+            }
         }
     }
     private fun setRecyclerView() {

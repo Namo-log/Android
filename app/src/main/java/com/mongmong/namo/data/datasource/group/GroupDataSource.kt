@@ -10,6 +10,7 @@ import com.mongmong.namo.domain.model.group.JoinGroupResponse
 import com.mongmong.namo.domain.model.group.UpdateGroupNameRequestBody
 import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
 import com.mongmong.namo.data.utils.RequestConverter.uriToMultipart
+import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -18,7 +19,10 @@ class GroupDataSource @Inject constructor(
     private val apiService: GroupApiService,
     private val context: Context
 ) {
-    suspend fun getGroups(): List<Group> {
+    suspend fun getGroups(): List<Group>? {
+        // 네트워크 연결 없을 때
+        if(!NetworkCheckerImpl(context).isOnline()) return null
+
         var groups = emptyList<Group>()
         withContext(Dispatchers.IO) {
             runCatching {

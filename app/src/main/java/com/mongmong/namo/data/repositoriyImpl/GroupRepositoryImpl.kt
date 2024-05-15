@@ -11,7 +11,7 @@ import javax.inject.Inject
 class GroupRepositoryImpl @Inject constructor(
     private val dataSource: GroupDataSource
 ): GroupRepository {
-    override suspend fun getGroups(): List<Group> {
+    override suspend fun getGroups(): List<Group>? {
         return dataSource.getGroups()
     }
 
