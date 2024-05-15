@@ -8,6 +8,7 @@ import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.datasource.group.GroupDataSource
+import com.mongmong.namo.data.datasource.terms.RemoteTermDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.data.remote.DiaryApiService
@@ -16,11 +17,13 @@ import com.mongmong.namo.data.repositoriyImpl.CategoryRepositoryImpl
 import com.mongmong.namo.data.repositoriyImpl.DiaryRepositoryImpl
 import com.mongmong.namo.data.repositoriyImpl.GroupRepositoryImpl
 import com.mongmong.namo.data.repositoriyImpl.ScheduleRepositoryImpl
+import com.mongmong.namo.data.repositoriyImpl.TermRepositoryImpl
 import com.mongmong.namo.domain.repositories.AuthRepository
 import com.mongmong.namo.domain.repositories.CategoryRepository
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.repositories.GroupRepository
 import com.mongmong.namo.domain.repositories.ScheduleRepository
+import com.mongmong.namo.domain.repositories.TermRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,6 +37,12 @@ object RepositoryModule {
     fun provideAuthRepository(
         remoteAuthDataSource: RemoteAuthDataSource,
     ): AuthRepository = AuthRepositoryImpl(remoteAuthDataSource)
+
+    /** 약관 */
+    @Provides
+    fun provideTermRepository(
+        remoteTermDataSource: RemoteTermDataSource
+    ): TermRepository = TermRepositoryImpl(remoteTermDataSource)
 
     /** 일정 */
     @Provides

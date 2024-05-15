@@ -2,9 +2,9 @@ package com.mongmong.namo.presentation.di
 
 import android.content.Context
 import com.mongmong.namo.data.remote.NetworkChecker
+import com.mongmong.namo.presentation.config.Constants.BASE_URL
 import com.mongmong.namo.presentation.config.XAccessTokenInterceptor
 import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
-import com.mongmong.namo.presentation.utils.Utils.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

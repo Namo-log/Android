@@ -9,6 +9,7 @@ import com.mongmong.namo.data.remote.auth.RefreshService
 import com.mongmong.namo.data.remote.auth.SplashView
 import com.mongmong.namo.databinding.ActivitySplashBinding
 import com.mongmong.namo.domain.model.LoginResponse
+import com.mongmong.namo.domain.model.RefreshResponse
 import com.mongmong.namo.domain.model.TokenBody
 import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.ui.MainActivity
@@ -47,7 +48,7 @@ class SplashActivity : AppCompatActivity(), SplashView {
         }
     }
 
-    override fun onVerifyTokenSuccess(response: LoginResponse) {
+    override fun onVerifyTokenSuccess(response: RefreshResponse) {
         ApplicationClass.sSharedPreferences.edit()
             .putString(ApplicationClass.X_REFRESH_TOKEN, response.result.refreshToken)
             .putString(ApplicationClass.X_ACCESS_TOKEN, response.result.accessToken)

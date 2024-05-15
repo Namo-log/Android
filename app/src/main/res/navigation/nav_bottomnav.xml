@@ -102,7 +102,7 @@
     </fragment>
     <fragment
         android:id="@+id/customSettingFragment"
-        android:name="com.mongmong.namo.presentation.ui.custom.CustomSettingFramgent"
+        android:name="com.mongmong.namo.presentation.ui.custom.CustomSettingFragment"
         android:label="CustomSettingFragment"
         tools:layout="@layout/fragment_custom_setting"/>
 

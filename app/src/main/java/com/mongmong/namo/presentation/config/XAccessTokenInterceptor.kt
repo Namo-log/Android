@@ -62,7 +62,7 @@ class XAccessTokenInterceptor @Inject constructor() : Interceptor {
 
                     // 새로운 토큰으로 하던 작업 서버 재요청
                     val finalRequest = chain.request().newBuilder()
-                        .addHeader("Authorization", newJwtToken)
+                        .addHeader("Authorization", "Bearer $newJwtToken")
                         .build()
 
                     response.close()
