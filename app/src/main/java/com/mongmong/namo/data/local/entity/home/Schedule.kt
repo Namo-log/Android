@@ -55,7 +55,7 @@ data class Schedule(
     var categoryServerId: Long = 0L,
 
     @ColumnInfo(name = "hasDiary")
-    var hasDiary: Int = 0,
+    var hasDiary: Boolean? = false,
 
     @ColumnInfo(name = "isMoim")
     var moimSchedule: Boolean = false

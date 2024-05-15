@@ -10,13 +10,13 @@ import com.mongmong.namo.data.local.entity.home.Schedule
 @Dao
 interface ScheduleDao {
     @Insert
-    suspend fun insertSchedule(event : Schedule) : Long // scheduleId
+    suspend fun insertSchedule(schedule : Schedule) : Long // scheduleId
 
     @Delete
-    fun deleteSchedule(event : Schedule)
+    fun deleteSchedule(schedule : Schedule)
 
     @Update
-    fun updateSchedule(event : Schedule)
+    fun updateSchedule(schedule : Schedule)
 
     @Query("DELETE FROM schedule_table")
     fun deleteAllSchedules()

@@ -2,6 +2,7 @@ package com.mongmong.namo.presentation.ui.home.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +34,6 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
 
     private lateinit var moimScheduleClickListener: MoimScheduleClickListener
 
-
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
         val binding : ItemSchedulePreviewBinding = ItemSchedulePreviewBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
         context = viewGroup.context
@@ -54,6 +54,7 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
             val diary = moimDiary.find {
                 it.scheduleId == schedules[position].serverId
             }
+            Log.d("DailyGroupRVAdapter", "diary: $diary")
 
             if (diary != null) {
                 val updatedDiary = diary.copy(categoryId = newCategoryId)
@@ -96,18 +97,15 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
             if (category != null) {
                 binding.itemCalendarScheduleColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
             }
-            binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
-
-            val diary = moimDiary.find {
-                it.scheduleId == schedule.serverId
+            // 기록 아이콘 표시
+            with(binding.itemCalendarScheduleRecord) {
+                if (schedule.hasDiary != null) { // 그룹에서 추가한 모임 기록이 있을 때
+                    this.visibility = View.VISIBLE
+                    if (schedule.hasDiary == false) this.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
+                    else this.setColorFilter(ContextCompat.getColor(context,R.color.MainOrange)) // 개인이 메모를 추가했을 떄
+                }
+                else this.visibility = View.GONE
             }
-            if (schedule.hasDiary != 0) {
-                binding.itemCalendarScheduleRecord.visibility = View.VISIBLE
-                if (diary?.content.isNullOrEmpty()) binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
-                else binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.MainOrange))
-            }
-            else binding.itemCalendarScheduleRecord.visibility = View.GONE
-
         }
     }
 }

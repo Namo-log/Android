@@ -528,7 +528,7 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
                     // 일정과 비교하고, 기록 RoomDB에 저장
                     val allSchedule = db.diaryDao.getAllSchedule()
                     serverDiary.forEach { diary ->
-                        allSchedule.filter { it.hasDiary == 1 && it.serverId == diary.scheduleServerId }.forEach { event ->
+                        allSchedule.filter { it.hasDiary == true && it.serverId == diary.scheduleServerId }.forEach { event ->
                             val diaryData = Diary(
                                 diaryId = event.scheduleId,
                                 scheduleServerId = diary.scheduleServerId,

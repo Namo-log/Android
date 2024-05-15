@@ -23,7 +23,7 @@ data class GetMonthScheduleResult (
     @SerializedName("y") val y : Double,
     @SerializedName("locationName") val locationName : String,
     @SerializedName("categoryId") val categoryId : Long,
-    @SerializedName("hasDiary") val hasDiary : Boolean,
+    @SerializedName("hasDiary") val hasDiary : Boolean?,
     @SerializedName("moimSchedule") val moimSchedule : Boolean,
 ) {
     fun convertServerScheduleResponseToLocal(): Schedule {
@@ -43,7 +43,7 @@ data class GetMonthScheduleResult (
             RoomState.DEFAULT.state,
             this.scheduleId,
             this.categoryId,
-            if (this.hasDiary) 1 else 0,
+            this.hasDiary,
             this.moimSchedule
         )
     }
