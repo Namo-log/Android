@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.splash.adapter
+package com.mongmong.namo.presentation.ui.onBoarding.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

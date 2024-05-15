@@ -28,7 +28,7 @@ interface AuthApiService {
     @POST("auths/reissuance")
     fun refreshToken(
         @Body body: TokenBody
-    ): Call<RefreshResponse>
+    ): RefreshResponse
 
     // 로그아웃
     @POST("auths/logout")

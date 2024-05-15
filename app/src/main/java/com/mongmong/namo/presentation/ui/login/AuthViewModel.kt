@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.domain.model.LoginResult
+import com.mongmong.namo.domain.model.RefreshResponse
 import com.mongmong.namo.domain.model.SdkInfo
 import com.mongmong.namo.domain.model.TokenBody
 import com.mongmong.namo.domain.repositories.AuthRepository
@@ -28,6 +29,9 @@ class AuthViewModel @Inject constructor(
     private val _isQuitComplete = MutableLiveData<Boolean>()
     val isQuitComplete: LiveData<Boolean> = _isQuitComplete
 
+    private val _refreshResponse = MutableLiveData<RefreshResponse>()
+    val refreshResponse: LiveData<RefreshResponse> = _refreshResponse
+
     /** 로그인 */
     fun tryLogin(platform: LoginPlatform, accessToken: String) {
         Log.d("${platform.platformName}Token", accessToken)
@@ -49,7 +53,7 @@ class AuthViewModel @Inject constructor(
     fun tryRefreshToken() {
         val tokenBody = getSavedToken()
         viewModelScope.launch {
-            repository.postTokenRefresh(tokenBody.accessToken, tokenBody.refreshToken)
+            _refreshResponse.postValue(repository.postTokenRefresh(tokenBody.accessToken, tokenBody.refreshToken))
         }
     }
 

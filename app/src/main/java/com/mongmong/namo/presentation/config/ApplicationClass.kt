@@ -62,7 +62,6 @@ class ApplicationClass: Application() {
             .connectTimeout(5000, TimeUnit.MILLISECONDS)
             // 로그캣에 okhttp.OkHttpClient로 검색하면 http 통신 내용을 보여줍니다.
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-            .addInterceptor(XAccessTokenInterceptor()) // JWT 자동 헤더 전송
             .build()
         // sRetrofit 이라는 전역변수에 API url, 인터셉터, Gson을 넣어주고 빌드해주는 코드
         // 이 전역변수로 http 요청을 서버로 보내면 됩니다.
