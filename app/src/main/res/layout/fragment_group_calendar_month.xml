@@ -67,7 +67,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
+                        android:layout_marginBottom="12dp"
                         android:text="@string/schedule_personal"
                         android:textColor="@color/textGray"
                         android:textSize="15sp"
@@ -80,21 +80,17 @@
                         android:nestedScrollingEnabled="false"
                         tools:listitem="@layout/item_schedule_preview"/>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/group_daily_personal_schedule_none_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
+                        android:layout_marginBottom="45dp"
                         android:text="@string/schedule_personal_empty"
-                        android:textAlignment="center"
-                        android:textColor="@color/textGray"
-                        android:textSize="16sp"
-                        android:visibility="gone" />
+                        style="@style/schedule_empty_text"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="12dp"
                         android:text="@string/schedule_moim"
                         android:textColor="@color/textGray"
                         android:textSize="15sp"
@@ -107,16 +103,11 @@
                         android:nestedScrollingEnabled="false"
                         tools:listitem="@layout/item_schedule_preview_moim" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/group_daily_moim_schedule_none_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
                         android:text="@string/schedule_moim_empty"
-                        android:textAlignment="center"
-                        android:textColor="@color/textGray"
-                        android:textSize="16sp"
-                        android:visibility="gone" />
+                        style="@style/schedule_empty_text"/>
 
                 </LinearLayout>
 
