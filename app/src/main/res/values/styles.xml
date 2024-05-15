@@ -159,4 +159,16 @@
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/textGray</item>
     </style>
+
+    <style name="schedule_empty_text">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:drawableStart">@drawable/ic_schedule_empty</item>
+        <item name="android:drawablePadding">15dp</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:textColor">@color/disableTextGray</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:visibility">gone</item>
+    </style>
 </resources>
