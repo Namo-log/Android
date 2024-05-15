@@ -84,7 +84,7 @@ class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewH
             binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
 
             /** 기록 아이콘 색깔 **/
-            if(personal.hasDiary != 0)
+            if(personal.hasDiary != false)
                 binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context , R.color.MainOrange))
         }
     }

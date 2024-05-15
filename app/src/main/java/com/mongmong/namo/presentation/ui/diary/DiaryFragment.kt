@@ -181,7 +181,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
             RoomState.DEFAULT.state,
             item.serverId,
             item.categoryServerId,
-            1
+            true
         )
 
         startActivity(Intent(context, PersonalDetailActivity::class.java)

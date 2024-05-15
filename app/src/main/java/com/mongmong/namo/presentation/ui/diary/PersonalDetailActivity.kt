@@ -80,7 +80,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
     }
 
     private fun hasDiary() {
-        if (schedule.hasDiary == 0) {  // 기록 없을 때, 추가
+        if (schedule.hasDiary == false) {  // 기록 없을 때, 추가
             viewModel.setNewPersonalDiary(schedule, "")
             binding.diaryEditBtnTv.apply {
                 text = resources.getString(R.string.diary_add)
@@ -117,7 +117,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
             diaryGalleryClickIv.setOnClickListener { getGallery() }
             diaryEditBtnTv.setOnClickListener {
                 lifecycleScope.launch {
-                    if(schedule.hasDiary == 0) insertData()
+                    if(schedule.hasDiary == false) insertData()
                     else updateDiary()
                 }
             }
