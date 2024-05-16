@@ -88,9 +88,18 @@
                 android:textColor="@color/textGray"
                 android:textColorHint="@color/editTextGray"
                 android:textSize="15sp"
+                android:layout_marginEnd="4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/group_info_edit_iv"
                 app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/group_info_edit_iv"
+                android:src="@drawable/ic_edit_group_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/group_info_group_name_content_et"
+                app:layout_constraintBottom_toBottomOf="@id/group_info_group_name_content_et"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

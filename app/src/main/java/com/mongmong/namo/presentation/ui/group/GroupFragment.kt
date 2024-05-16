@@ -43,25 +43,36 @@ class GroupFragment : Fragment(), CreateGroupDialog.GroupCreationListener {
 
     private fun initObserve() {
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
-            setEmptyView(groups.isEmpty())
-            groupAdapter.updateGroups(groups)
+            setGroupView(groups)
         }
     }
-    private fun setEmptyView(isEmpty: Boolean) {
-        if(isEmpty) {
-            binding.groupListEmptyTv.apply {
-                text = getText(
-                    if(NetworkCheckerImpl(requireContext()).isOnline())
-                        R.string.add_group_msg
-                    else R.string.network_group_msg
-                )
-                visibility = View.VISIBLE
+    private fun setGroupView(groups: List<Group>?) {
+        when {
+            groups == null -> showEmptyView(
+                R.string.network_group_msg,
+                R.drawable.ic_network_disconnect
+            )
+            groups.isEmpty() -> showEmptyView(
+                R.string.add_group_msg,
+                R.drawable.ic_group_empty
+            )
+            else -> {
+                groupAdapter.updateGroups(groups)
+                binding.groupListEmptyLayout.visibility = View.GONE
+                binding.groupListRv.visibility = View.VISIBLE
             }
-        } else {
-            binding.groupListEmptyTv.visibility = View.GONE
-            binding.groupListRv.visibility = View.VISIBLE
         }
     }
+
+    private fun showEmptyView(messageResId: Int, imageResId: Int) {
+        with(binding) {
+            groupListEmptyTv.text = getText(messageResId)
+            groupListEmptyIv.setImageResource(imageResId)
+            groupListEmptyLayout.visibility = View.VISIBLE
+            groupListRv.visibility = View.GONE
+        }
+    }
+
     private fun setRecyclerView() {
         groupAdapter.setMyItemClickListener(object : GroupListRVAdapter.ItemClickListener {
             override fun onItemClick(moim: Group) { // 그룹 캘린더로 이동

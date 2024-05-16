@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -42,6 +43,7 @@ class LoginFragment: Fragment() {
         initObserve()
         initClickListeners()
         initNotification()
+        onBackPressed()
 
         return binding.root
     }
@@ -136,5 +138,15 @@ class LoginFragment: Fragment() {
     private fun setLoginFinished(){
         requireActivity().finish()
         startActivity(Intent(requireContext(), MainActivity::class.java))
+    }
+
+    private fun onBackPressed() {
+        // 뒤로 가기 버튼 처리
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // 여기서 뒤로 가기 동작을 정의합니다.
+                requireActivity().finish()
+            }
+        })
     }
 }

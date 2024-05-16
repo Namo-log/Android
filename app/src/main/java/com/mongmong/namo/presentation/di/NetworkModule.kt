@@ -1,7 +1,9 @@
 package com.mongmong.namo.presentation.di
 
 import android.content.Context
+import com.mongmong.namo.data.remote.AuthApiService
 import com.mongmong.namo.data.remote.NetworkChecker
+import com.mongmong.namo.domain.repositories.AuthRepository
 import com.mongmong.namo.presentation.config.Constants.BASE_URL
 import com.mongmong.namo.presentation.config.XAccessTokenInterceptor
 import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
@@ -60,7 +62,8 @@ object NetworkModule {
     @Provides
     @Singleton
     @InterceptorRetrofit
-    fun provideAuthInterceptor(): XAccessTokenInterceptor = XAccessTokenInterceptor()
+    fun provideAuthInterceptor(apiService: AuthApiService)
+    : XAccessTokenInterceptor = XAccessTokenInterceptor(apiService)
 
     @Provides
     @Singleton

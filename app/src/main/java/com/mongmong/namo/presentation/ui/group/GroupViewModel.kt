@@ -17,8 +17,8 @@ import javax.inject.Inject
 class GroupViewModel @Inject constructor(
     private val repository: GroupRepository
 ) : ViewModel() {
-    private val _groups = MutableLiveData<List<Group>>()
-    val groups: LiveData<List<Group>> = _groups
+    private val _groups = MutableLiveData<List<Group>?>()
+    val groups: LiveData<List<Group>?> = _groups
 
     private val _addGroupResult = MutableLiveData<AddGroupResult>()
     val addGroupResult: LiveData<AddGroupResult> = _addGroupResult

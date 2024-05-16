@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.splash
+package com.mongmong.namo.presentation.ui.onBoarding
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.mongmong.namo.R
-import com.mongmong.namo.databinding.FragmentOnboarding4Binding
+import com.mongmong.namo.databinding.FragmentOnboarding2Binding
 
-class FourthFragment : Fragment() {
+class SecondFragment : Fragment() {
 
-    private var _binding : FragmentOnboarding4Binding? = null
+    private var _binding : FragmentOnboarding2Binding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -19,7 +19,7 @@ class FourthFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentOnboarding4Binding.inflate(inflater, container, false)
+        _binding = FragmentOnboarding2Binding.inflate(inflater, container, false)
 
         return binding.root
     }
@@ -29,11 +29,11 @@ class FourthFragment : Fragment() {
 
         val viewPager = activity?.findViewById<ViewPager2>(R.id.onboarding_viewPager_vp)
 
-        binding.onboarding4NextBtn.setOnClickListener {
-            viewPager?.currentItem = 4
+        binding.onboarding2NextBtn.setOnClickListener {
+            viewPager?.currentItem = 2
         }
 
-        binding.onboarding4SkipLayout.setOnClickListener {
+        binding.onboarding2SkipLayout.setOnClickListener {
             viewPager?.currentItem = 4
         }
     }
@@ -44,6 +44,6 @@ class FourthFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance() = FourthFragment()
+        fun newInstance() = SecondFragment()
     }
 }
