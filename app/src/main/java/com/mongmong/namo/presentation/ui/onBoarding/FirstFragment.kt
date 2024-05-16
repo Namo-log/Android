@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.splash
+package com.mongmong.namo.presentation.ui.onBoarding
 
 import android.os.Bundle
 import android.view.LayoutInflater

@@ -71,16 +71,16 @@ class RemoteAuthDataSource @Inject constructor(
                 refreshToken = ""
             )
         )
-//        withContext(Dispatchers.IO) {
-//            runCatching {
-//                authApiService.refreshToken(tokenBody)
-//            }.onSuccess {
-//                Log.d("RemoteAuthDataSource", "postNaverLogin Success $it")
-//                refreshResponse = it
-//            }.onFailure {
-//                Log.d("RemoteAuthDataSource", "postNaverLogin Fail $it")
-//            }
-//        }
+        withContext(Dispatchers.IO) {
+            runCatching {
+                authApiService.refreshToken(tokenBody)
+            }.onSuccess {
+                Log.d("RemoteAuthDataSource", "postTokenRefresh Success $it")
+                refreshResponse = it
+            }.onFailure {
+                Log.d("RemoteAuthDataSource", "postTokenRefresh Fail $it")
+            }
+        }
         return refreshResponse
     }
 

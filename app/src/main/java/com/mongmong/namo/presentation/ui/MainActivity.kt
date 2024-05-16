@@ -170,10 +170,10 @@ class MainActivity : AppCompatActivity(), ScheduleView, DeleteScheduleView, GetA
     private fun downloadServerToRoom() {
         val time = DateTime(System.currentTimeMillis()).toString("yyyy,MM")
 
-        //카테고리
+        // 카테고리
         CategorySettingService(this).tryGetAllCategory()
 
-        //이벤트
+        // 일정
         val eventService = ScheduleService()
         eventService.setGetAllScheduleView(this)
         eventService.getAllSchedule()

@@ -19,7 +19,7 @@ import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.presentation.ui.login.AuthViewModel
-import com.mongmong.namo.presentation.ui.splash.OnBoardingActivity
+import com.mongmong.namo.presentation.ui.onBoarding.OnBoardingActivity
 import com.mongmong.namo.presentation.config.Constants
 import dagger.hilt.android.AndroidEntryPoint
 

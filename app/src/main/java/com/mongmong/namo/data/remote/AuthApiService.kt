@@ -26,9 +26,9 @@ interface AuthApiService {
 
     // 토큰 재발급
     @POST("auths/reissuance")
-    fun refreshToken(
+    suspend fun refreshToken(
         @Body body: TokenBody
-    ): Call<RefreshResponse>
+    ): RefreshResponse
 
     // 로그아웃
     @POST("auths/logout")

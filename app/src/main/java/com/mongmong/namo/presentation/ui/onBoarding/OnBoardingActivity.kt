@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.splash
+package com.mongmong.namo.presentation.ui.onBoarding
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
