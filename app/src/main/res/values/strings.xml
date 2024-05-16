@@ -32,7 +32,7 @@
 
     <!-- Group 화면 관련 String -->
     <string name="group_calendar">Group Calendar</string>
-    <string name="add_group_msg">그룹 리스트가 없습니다. 리스트를 추가해 보세요</string>
+    <string name="add_group_msg">그룹 리스트가 없습니다.\n그룹을 추가해 보세요!</string>
     <string name="network_group_msg">그룹 캘린더는 네트워크 연결 시 확인 가능합니다.\n네트워크 연결 후 다시 시도해주세요.</string>
     <string name="create_group">그룹 생성</string>
     <string name="input_group_code">그룹 코드 입력</string>
