@@ -78,7 +78,7 @@ class MoimMemoDetailActivity: AppCompatActivity(),
             diaryTodayMonthTv.text = DateTime(scheduleDate).toString("MMM", Locale.ENGLISH)
             diaryTodayNumTv.text = DateTime(scheduleDate).toString("dd")
             diaryTitleTv.text = moimSchedule.title
-            diaryInputDateTv.text = DateTime(scheduleDate).toString("yyyy.MM.dd (EE)")
+            diaryInputDateTv.text = DateTime(scheduleDate).toString("yyyy.MM.dd (EE) hh:mm")
             diaryInputPlaceTv.text = moimSchedule.placeName
 
             diaryEditBtnTv.apply {
