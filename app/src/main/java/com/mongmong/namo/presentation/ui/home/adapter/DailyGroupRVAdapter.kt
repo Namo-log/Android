@@ -14,6 +14,7 @@ import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.presentation.config.CategoryColor
+import com.mongmong.namo.presentation.utils.ScheduleTimeConverter
 import org.joda.time.DateTime
 
 class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>() {
@@ -22,6 +23,8 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
     private val categoryList = ArrayList<Category>()
     private val moimDiary = ArrayList<MoimDiary>()
     private lateinit var context : Context
+    private lateinit var moimScheduleClickListener: MoimScheduleClickListener
+    private lateinit var timeConverter: ScheduleTimeConverter
 
     interface MoimScheduleClickListener {
         fun onContentClicked(schedule: Schedule)
@@ -32,7 +35,10 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
         this.moimScheduleClickListener = moimScheduleClickListener
     }
 
-    private lateinit var moimScheduleClickListener: MoimScheduleClickListener
+    fun initScheduleTimeConverter() {
+        Log.d("DailyPersonalRVAdapter", "initScheduleTimeConverter")
+        timeConverter = ScheduleTimeConverter(DateTime.now())
+    }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
         val binding : ItemSchedulePreviewBinding = ItemSchedulePreviewBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
@@ -84,16 +90,20 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
         notifyDataSetChanged()
     }
 
+    fun setClickedDate(date: DateTime) {
+        // converter에서 선택한 날짜 업데이트
+        timeConverter.updateClickedDate(date)
+    }
+
     inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(schedule : Schedule) {
-            val time = DateTime(schedule.startLong * 1000L).toString("HH:mm") + " - " + DateTime(schedule.endLong * 1000L).toString("HH:mm")
             val category = categoryList.find {
                 if (it.serverId != 0L) it.serverId == schedule.categoryServerId
                 else it.categoryId == schedule.categoryId }
 
             binding.itemCalendarTitle.text = schedule.title
             binding.itemCalendarTitle.isSelected = true
-            binding.itemCalendarScheduleTime.text = time
+            binding.itemCalendarScheduleTime.text = timeConverter.getScheduleTimeText(schedule.startLong, schedule.endLong)
             if (category != null) {
                 binding.itemCalendarScheduleColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
             }

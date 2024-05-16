@@ -671,7 +671,7 @@ class ScheduleDialogBasicFragment : Fragment() {
         schedule.title = binding.dialogScheduleTitleEt.text.toString()
         schedule.startLong = startDateTime.millis / 1000
         schedule.endLong = endDateTime.millis / 1000
-        schedule.endDate = getInterval(schedule.startLong, schedule.endLong)
+        schedule.dayInterval = getInterval(schedule.startLong, schedule.endLong)
 
         setAlarmList()
         schedule.alarmList = alarmList

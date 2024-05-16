@@ -2,6 +2,7 @@ package com.mongmong.namo.presentation.ui.home.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -11,22 +12,28 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
 import com.mongmong.namo.presentation.config.CategoryColor
+import com.mongmong.namo.presentation.utils.ScheduleTimeConverter
 import org.joda.time.DateTime
 
 class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewHolder>() {
-
     private val personal = ArrayList<Schedule>()
     private val categoryList = ArrayList<Category>()
     private lateinit var context : Context
+    private lateinit var personalScheduleClickListener : PersonalScheduleClickListener
+    private lateinit var timeConverter: ScheduleTimeConverter
 
     interface PersonalScheduleClickListener {
         fun onContentClicked(schedule : Schedule)
         fun onDiaryIconClicked(schedule: Schedule)
     }
 
-    private lateinit var personalScheduleClickListener : PersonalScheduleClickListener
     fun setPersonalScheduleClickListener(personalScheduleClickListener : PersonalScheduleClickListener) {
         this.personalScheduleClickListener = personalScheduleClickListener
+    }
+
+    fun initScheduleTimeConverter() {
+        Log.d("DailyPersonalRVAdapter", "initScheduleTimeConverter")
+        timeConverter = ScheduleTimeConverter(DateTime.now())
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
@@ -68,25 +75,26 @@ class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewH
         notifyDataSetChanged()
     }
 
+    fun setClickedDate(date: DateTime) {
+        // converter에서 선택한 날짜 업데이트
+        timeConverter.updateClickedDate(date)
+    }
+
     inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
-
-        @SuppressLint("ResourceType")
-        fun bind(personal : Schedule) {
-            val time = DateTime(personal.startLong * 1000L).toString("HH:mm") + " - " + DateTime(personal.endLong * 1000L).toString("HH:mm")
+        fun bind(schedule : Schedule) {
             val category = categoryList.find {
-                if (it.serverId != 0L) it.serverId == personal.categoryServerId
-                else it.categoryId == personal.categoryId }!!
+                if (it.serverId != 0L) it.serverId == schedule.categoryServerId
+                else it.categoryId == schedule.categoryId }!!
 
-            binding.itemCalendarTitle.text = personal.title
+            binding.itemCalendarTitle.text = schedule.title
             binding.itemCalendarTitle.isSelected = true
-            binding.itemCalendarScheduleTime.text = time
+            binding.itemCalendarScheduleTime.text = timeConverter.getScheduleTimeText(schedule.startLong, schedule.endLong)
             binding.itemCalendarScheduleColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
             binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
 
             /** 기록 아이콘 색깔 **/
-            if(personal.hasDiary != false)
+            if(schedule.hasDiary != false)
                 binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context , R.color.MainOrange))
         }
     }
-
 }

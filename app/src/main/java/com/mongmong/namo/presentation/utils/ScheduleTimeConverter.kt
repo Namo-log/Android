@@ -1,13 +1,11 @@
 package com.mongmong.namo.presentation.utils
 
-import android.content.Context
 import android.util.Log
-import com.mongmong.namo.R
 import org.joda.time.DateTime
 import java.util.Calendar
 import kotlin.math.abs
 
-class ScheduleTimeConverter(val context: Context, private var clickedDate: DateTime) {
+class ScheduleTimeConverter(private var clickedDate: DateTime) {
     fun getScheduleTimeText(startLong: Long, endLong: Long): String {
         val dayInterval = getDayInterval(startLong, endLong)
         Log.d("ScheduleTimeConverter", "dayInterval: $dayInterval, startLong: $startLong, endLong: $endLong}")
@@ -52,11 +50,8 @@ class ScheduleTimeConverter(val context: Context, private var clickedDate: DateT
 
     // '시작 시간 - 종료 시간' 형식으로 표시
     private fun setTimeText(startDate: String, endDate: String): String {
-        return String.format(
-            context.getString(R.string.schedule_time),
-            startDate,
-            endDate
-        )
+
+        return "$startDate - $endDate"
     }
 
     // 날짜 변환 (DateTime -> Long)
