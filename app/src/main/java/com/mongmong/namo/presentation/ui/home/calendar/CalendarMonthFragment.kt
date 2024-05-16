@@ -20,7 +20,7 @@ import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.presentation.ui.diary.MoimMemoDetailActivity
 import com.mongmong.namo.presentation.ui.diary.PersonalDetailActivity
 import com.mongmong.namo.presentation.ui.home.HomeFragment
-import com.mongmong.namo.presentation.ui.home.adapter.DailyGroupRVAdapter
+import com.mongmong.namo.presentation.ui.home.adapter.DailyMoimRVAdapter
 import com.mongmong.namo.presentation.ui.home.adapter.DailyPersonalRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.PersonalScheduleViewModel
@@ -45,7 +45,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
     private var schedulePersonal: ArrayList<Schedule> = arrayListOf()
     private var scheduleMoim: ArrayList<Schedule> = arrayListOf()
     private val personalScheduleRVAdapter = DailyPersonalRVAdapter()
-    private val groupScheduleRVAdapter = DailyGroupRVAdapter()
+    private val groupScheduleRVAdapter = DailyMoimRVAdapter()
 
     private val viewModel : PersonalScheduleViewModel by viewModels()
 
@@ -178,7 +178,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
             adapter = groupScheduleRVAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
-        groupScheduleRVAdapter.setMoimScheduleClickListener(object : DailyGroupRVAdapter.MoimScheduleClickListener {
+        groupScheduleRVAdapter.setMoimScheduleClickListener(object : DailyMoimRVAdapter.MoimScheduleClickListener {
             override fun onContentClicked(schedule: Schedule) { // 아이템 전체 클릭
                 val intent = Intent(context, ScheduleActivity::class.java)
                 intent.putExtra("schedule", schedule)

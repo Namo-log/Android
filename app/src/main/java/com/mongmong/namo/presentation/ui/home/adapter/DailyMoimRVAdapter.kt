@@ -17,7 +17,7 @@ import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.utils.ScheduleTimeConverter
 import org.joda.time.DateTime
 
-class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>() {
+class DailyMoimRVAdapter : RecyclerView.Adapter<DailyMoimRVAdapter.ViewHolder>() {
 
     private val schedules = ArrayList<Schedule>()
     private val categoryList = ArrayList<Category>()
@@ -36,7 +36,6 @@ class DailyGroupRVAdapter : RecyclerView.Adapter<DailyGroupRVAdapter.ViewHolder>
     }
 
     fun initScheduleTimeConverter() {
-        Log.d("DailyPersonalRVAdapter", "initScheduleTimeConverter")
         timeConverter = ScheduleTimeConverter(DateTime.now())
     }
 
