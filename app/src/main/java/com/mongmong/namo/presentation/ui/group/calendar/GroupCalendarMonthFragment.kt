@@ -17,7 +17,6 @@ import com.mongmong.namo.presentation.ui.group.schedule.GroupScheduleActivity
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupCalendarAdapter.Companion.GROUP_ID
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupDailyMoimRVAdapter
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupDailyPersonalRVAdapter
-import com.mongmong.namo.presentation.ui.home.calendar.PersonalCalendarView
 import com.mongmong.namo.presentation.ui.home.schedule.MoimScheduleViewModel
 import com.mongmong.namo.presentation.utils.CustomCalendarView
 import dagger.hilt.android.AndroidEntryPoint
@@ -183,12 +182,16 @@ class GroupCalendarMonthFragment : Fragment() {
 
     private fun setDailyData(dateId : Int) {
         getSchedule(dateId) // 오늘 일정 가져오기
-        setEmptyMsg()
+        setEmptyText()
     }
 
-    private fun setEmptyMsg() {
-        if (dailySchedules.size == 0 ) binding.groupDailyPersonalScheduleNoneTv.visibility = View.VISIBLE
-        else binding.groupDailyPersonalScheduleNoneTv.visibility = View.GONE
+    private fun setEmptyText() {
+        with(binding) {
+            // 개인 일정
+            groupDailyPersonalScheduleNoneTv.visibility = if (dailySchedules.size == 0) View.VISIBLE else View.GONE
+            // 모임 일정
+            groupDailyMoimScheduleNoneTv.visibility = if (dailyGroupSchedules.size == 0) View.VISIBLE else View.GONE
+        }
     }
 
     private fun getSchedule(dateId : Int) {
