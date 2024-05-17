@@ -103,6 +103,10 @@ class ScheduleDialogBasicFragment : Fragment() {
         binding.dialogSchedulePlaceContainer.visibility = View.GONE
         mapViewContainer?.visibility = View.GONE
 
+        if (args.nowDay != 0L) {
+            date = DateTime(args.nowDay)
+        }
+
         initObservers()
         getCategoryList()
 
@@ -151,17 +155,17 @@ class ScheduleDialogBasicFragment : Fragment() {
     }
 
     private fun setInit() {
-        val nowDay = args.nowDay
-
         if (args.schedule != null) {
             schedule = args.schedule!!
             findCategory(schedule)
             prevAlarmList = schedule.alarmList
         } else {
             binding.dialogScheduleHeaderTv.text = "새 일정"
+            setDateTime(
+                DateTime(date.year, date.monthOfYear, date.dayOfMonth, 8, 0, 0, 0),
+                DateTime(date.year, date.monthOfYear, date.dayOfMonth, 9, 0, 0, 0),
+            )
         }
-
-        binding.dialogScheduleHeaderTv.text = "새 일정"
         if (schedule.scheduleId != 0L) {
             binding.dialogScheduleHeaderTv.text = "일정 편집"
         }
@@ -169,7 +173,6 @@ class ScheduleDialogBasicFragment : Fragment() {
             binding.dialogScheduleHeaderTv.text = "모임 일정 편집"
             inactivateMoimScheduleEdit() // 비활성화 처리
         }
-        initPickerText()
         initCategory()
         Log.e("ScheduleDialogFrag", "schedule: $schedule")
     }
@@ -609,7 +612,6 @@ class ScheduleDialogBasicFragment : Fragment() {
                     intent.putExtra("PREV_PLACE_Y", schedule.placeY)
                 }
                 getResult.launch(intent)
-//                startActivity(intent)
 
             } catch (e : NullPointerException) {
                 Log.e("LOCATION_ERROR", e.toString())
@@ -639,10 +641,7 @@ class ScheduleDialogBasicFragment : Fragment() {
         setCategory()
 
         //시작일, 종료일
-        startDateTime = DateTime(schedule.startLong * 1000L)
-        endDateTime = DateTime(schedule.endLong * 1000L)
-        binding.dialogScheduleStartDateTv.text = startDateTime.toString(getString(R.string.dateFormat))
-        binding.dialogScheduleEndDateTv.text = endDateTime.toString(getString(R.string.dateFormat))
+        setDateTime(DateTime(schedule.startLong * 1000L), DateTime(schedule.endLong * 1000L))
 
         //시작 시간, 종료 시간
         binding.dialogScheduleStartTimeTv.text = startDateTime.toString(getString(R.string.timeFormat))
@@ -702,16 +701,26 @@ class ScheduleDialogBasicFragment : Fragment() {
         endDateTime = selectedDate
     }
 
-    private fun initPickerText(){
-        startDateTime = DateTime(date.year, date.monthOfYear, date.dayOfMonth, 8, 0, 0, 0)
-        endDateTime = DateTime(date.year, date.monthOfYear, date.dayOfMonth, 9, 0, 0, 0)
+    private fun setDateTime(start: DateTime, end: DateTime) {
+        Log.d("INIT_DATE_TIME", "start: $start\nend: $end")
+        startDateTime = start
+        endDateTime = end
 
-        binding.dialogScheduleStartDateTv.text = startDateTime.toString(getString(R.string.dateFormat))
-        binding.dialogScheduleEndDateTv.text = endDateTime.toString(getString(R.string.dateFormat))
-        binding.dialogScheduleStartTimeTv.text = startDateTime.toString(getString(R.string.timeFormat))
-        binding.dialogScheduleEndTimeTv.text = endDateTime.toString(getString(R.string.timeFormat))
+        initPickerText(start, end)
+    }
 
-        Log.d("INIT_PICKER_TEXT", startDateTime.toString())
+    private fun initPickerText(start: DateTime, end: DateTime){
+        // 텍스트
+        binding.dialogScheduleStartDateTv.text = start.toString(getString(R.string.dateFormat))
+        binding.dialogScheduleEndDateTv.text = end.toString(getString(R.string.dateFormat))
+        binding.dialogScheduleStartTimeTv.text = start.toString(getString(R.string.timeFormat))
+        binding.dialogScheduleEndTimeTv.text = end.toString(getString(R.string.timeFormat))
+        // 시간
+        binding.dialogScheduleStartTimeTp.hour = start.hourOfDay
+        binding.dialogScheduleStartTimeTp.minute = start.minuteOfHour
+        binding.dialogScheduleEndTimeTp.hour = end.hourOfDay
+        binding.dialogScheduleEndTimeTp.minute = end.minuteOfHour
+        Log.d("INIT_PICKER_TEXT", "start: $startDateTime\nend: $endDateTime")
     }
 
     private fun showPicker(clicked : TextView, pickerLayout : MotionLayout) {
@@ -787,6 +796,7 @@ class ScheduleDialogBasicFragment : Fragment() {
                 setInit()
             }
         }
+        // 카테고리 id로 카테고리 조회
         viewModel.category.observe(viewLifecycleOwner) {
             selectedCategory = it
             setContent()
