@@ -64,6 +64,7 @@ class GroupCalendarMonthFragment : Fragment() {
 
         initClickListeners()
         initObserve()
+        initAdapter()
 
         return binding.root
     }
@@ -120,6 +121,9 @@ class GroupCalendarMonthFragment : Fragment() {
                 binding.groupCalendarMonthView.selectedDate = date
 
                 if (date != null && pos != null) {
+                    personalScheduleRVAdapter.setClickedDate(date)
+                    groupScheduleRVAdapter.setClickedDate(date)
+
                     nowIdx = pos
                     setDaily(nowIdx)
 
@@ -140,6 +144,11 @@ class GroupCalendarMonthFragment : Fragment() {
                 binding.groupCalendarMonthView.invalidate()
             }
         }
+    }
+
+    private fun initAdapter() {
+        personalScheduleRVAdapter.initScheduleTimeConverter()
+        groupScheduleRVAdapter.initScheduleTimeConverter()
     }
 
     private fun setAdapter() {
