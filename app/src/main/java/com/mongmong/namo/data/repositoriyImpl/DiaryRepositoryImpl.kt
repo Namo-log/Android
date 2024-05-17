@@ -30,7 +30,7 @@ class DiaryRepositoryImpl @Inject constructor(
     }
     /** 모임 기록 리스트 조회 **/
     override fun getMoimDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
-        return DiaryMoimPagingSource(apiService, date)
+        return DiaryMoimPagingSource(apiService, date, networkChecker)
     }
 
     /** 개인 기록 개별 조회 **/

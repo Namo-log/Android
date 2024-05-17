@@ -66,7 +66,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         findCategory(schedule)
 
         binding.apply {
-            val formatDate = DateTime(schedule.startLong * 1000).toString("yyyy.MM.dd (EE)")
+            val formatDate = DateTime(schedule.startLong * 1000).toString("yyyy.MM.dd (EE) hh:mm")
             diaryTodayMonthTv.text = DateTime(schedule.startLong * 1000).toString("MMM", Locale.ENGLISH)
             diaryTodayNumTv.text = DateTime(schedule.startLong * 1000).toString("dd")
             diaryTitleTv.isSelected = true  // marquee

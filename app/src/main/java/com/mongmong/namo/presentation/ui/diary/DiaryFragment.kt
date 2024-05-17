@@ -118,15 +118,6 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         }
     }
     private fun setDiaryList(isMoim: Boolean) {
-        if(isMoim && !NetworkManager.checkNetworkState(requireContext())) {
-            with(binding) {
-                diaryListEmptyTv.visibility = View.VISIBLE
-                diaryListEmptyTv.text = getString(R.string.diary_network_failure)
-                diaryGroupListRv.visibility = View.GONE
-            }
-            return
-        }
-
         val adapter = if (!isMoim)
             DiaryAdapter(::onEditClickListener,
                 imageClickListener = { ImageDialog(it).show(parentFragmentManager, "test") })
@@ -148,14 +139,29 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
         // 어댑터의 로드 상태 리스너 설정
         adapter.addLoadStateListener { loadState ->
-            if (loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0) {
-                binding.diaryPersonalListRv.visibility = View.GONE
-                binding.diaryGroupListRv.visibility = View.GONE
-                binding.diaryListEmptyTv.apply {
-                    visibility = View.VISIBLE
-                    text = getString(R.string.diary_empty)
+            when {
+                loadState.refresh is LoadState.Error && isMoim -> {
+                    showEmptyView(
+                        messageResId = R.string.diary_network_failure,
+                        imageResId = R.drawable.ic_network_disconnect,
+                    )
+                    Log.d("dd", "network2")
                 }
+                loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0 -> showEmptyView(
+                    messageResId = R.string.diary_empty,
+                    imageResId = R.drawable.ic_diary_empty,
+                )
             }
+        }
+    }
+
+    private fun showEmptyView(messageResId: Int, imageResId: Int) {
+        with(binding) {
+            diaryPersonalListRv.visibility = View.GONE
+            diaryGroupListRv.visibility = View.GONE
+            diaryListEmptyLayout.visibility = View.VISIBLE
+            diaryListEmptyIv.setImageResource(imageResId)
+            diaryListEmptyTv.text = getString(messageResId)
         }
     }
 

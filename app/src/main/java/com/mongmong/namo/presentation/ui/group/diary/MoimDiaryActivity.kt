@@ -182,7 +182,7 @@ class MoimDiaryActivity : AppCompatActivity(),
                 )
             })
 
-            val formatDate = SimpleDateFormat("yyyy.MM.dd (EE)").format(groupData.startDate * 1000)
+            val formatDate = SimpleDateFormat("yyyy.MM.dd (EE) hh:mm").format(groupData.startDate * 1000)
             binding.groupAddInputDateTv.text = formatDate
             binding.groupAddInputPlaceTv.text = groupData.locationName
             binding.groupAddTitleTv.text = groupData.name
