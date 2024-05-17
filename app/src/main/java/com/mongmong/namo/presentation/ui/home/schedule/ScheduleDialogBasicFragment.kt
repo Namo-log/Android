@@ -151,18 +151,14 @@ class ScheduleDialogBasicFragment : Fragment() {
     }
 
     private fun setInit() {
+        val nowDay = args.nowDay
+
         if (args.schedule != null) {
             schedule = args.schedule!!
             findCategory(schedule)
             prevAlarmList = schedule.alarmList
         } else {
             binding.dialogScheduleHeaderTv.text = "새 일정"
-            val nowDay = args.nowDay
-            if (nowDay != 0L) {
-                date = DateTime(args.nowDay)
-            }
-            initPickerText()
-            initCategory()
         }
 
         binding.dialogScheduleHeaderTv.text = "새 일정"
@@ -173,7 +169,8 @@ class ScheduleDialogBasicFragment : Fragment() {
             binding.dialogScheduleHeaderTv.text = "모임 일정 편집"
             inactivateMoimScheduleEdit() // 비활성화 처리
         }
-
+        initPickerText()
+        initCategory()
         Log.e("ScheduleDialogFrag", "schedule: $schedule")
     }
 
@@ -187,50 +184,55 @@ class ScheduleDialogBasicFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        // picker 클릭
-        binding.dialogScheduleStartTimeTp.currentHour = startDateTime.hourOfDay
-        binding.dialogScheduleStartTimeTp.currentMinute = startDateTime.minuteOfHour
-        binding.dialogScheduleStartTimeTp.setOnTimeChangedListener { view, hourOfDay, minute ->
-            startDateTime = startDateTime.withTime(hourOfDay, minute, 0,0)
-            if (startDateTime.millis > endDateTime.millis) {
-                endDateTime = endDateTime.withTime(hourOfDay, minute, 0, 0)
-                binding.dialogScheduleEndTimeTv.text = endDateTime.toString(getString(R.string.timeFormat))
-            }
-            binding.dialogScheduleStartTimeTv.text = startDateTime.toString(getString(R.string.timeFormat))
-        }
-
-        binding.dialogScheduleEndTimeTp.currentHour = endDateTime.hourOfDay
-        binding.dialogScheduleEndTimeTp.currentMinute = endDateTime.minuteOfHour
-        binding.dialogScheduleEndTimeTp.setOnTimeChangedListener { view, hourOfDay, minute ->
-            endDateTime = endDateTime.withTime(hourOfDay, minute, 0, 0)
-            if (endDateTime.millis < startDateTime.millis) {
-                startDateTime = startDateTime.withTime(hourOfDay, minute, 0, 0)
+        /** picker 클릭 */
+        // 시작 시간
+        with(binding.dialogScheduleStartTimeTp) {
+            this.hour = startDateTime.hourOfDay
+            this.minute = startDateTime.minuteOfHour
+            this.setOnTimeChangedListener { view, hourOfDay, minute ->
+                startDateTime = startDateTime.withTime(hourOfDay, minute, 0,0)
+                if (startDateTime.millis > endDateTime.millis) {
+                    endDateTime = endDateTime.withTime(hourOfDay, minute, 0, 0)
+                    binding.dialogScheduleEndTimeTv.text = endDateTime.toString(getString(R.string.timeFormat))
+                }
                 binding.dialogScheduleStartTimeTv.text = startDateTime.toString(getString(R.string.timeFormat))
             }
-            binding.dialogScheduleEndTimeTv.text = endDateTime.toString(getString(R.string.timeFormat))
         }
-
+        // 종료 시간
+        with(binding.dialogScheduleEndTimeTp) {
+            this.hour = endDateTime.hourOfDay
+            this.minute = endDateTime.minuteOfHour
+            this.setOnTimeChangedListener { view, hourOfDay, minute ->
+                endDateTime = endDateTime.withTime(hourOfDay, minute, 0,0)
+                if (endDateTime.millis < startDateTime.millis) {
+                    startDateTime = startDateTime.withTime(hourOfDay, minute, 0, 0)
+                    binding.dialogScheduleStartTimeTv.text = startDateTime.toString(getString(R.string.timeFormat))
+                }
+                binding.dialogScheduleEndTimeTv.text = endDateTime.toString(getString(R.string.timeFormat))
+            }
+        }
+        // 시작일 - 날짜
         binding.dialogScheduleStartDateTv.setOnClickListener {
             hidekeyboard()
             showPicker(binding.dialogScheduleStartDateTv, binding.dialogScheduleDateLayout)
         }
-
+        // 종료일 - 날짜
         binding.dialogScheduleEndDateTv.setOnClickListener {
             hidekeyboard()
             showPicker(binding.dialogScheduleEndDateTv, binding.dialogScheduleDateLayout)
         }
-
+        // 시작일 - 시간
         binding.dialogScheduleStartTimeTv.setOnClickListener {
             hidekeyboard()
             showPicker(binding.dialogScheduleStartTimeTv, binding.dialogScheduleStartTimeLayout)
         }
-
+        // 종료일 - 시간
         binding.dialogScheduleEndTimeTv.setOnClickListener {
             hidekeyboard()
             showPicker(binding.dialogScheduleEndTimeTv, binding.dialogScheduleEndTimeLayout)
         }
 
-        //알람 클릭
+        // 알림 클릭
         binding.dialogScheduleAlarmLayout.setOnClickListener {
             hidekeyboard()
             if (!isAlarm) binding.dialogScheduleAlarmContentLayout.visibility = View.VISIBLE
@@ -699,6 +701,7 @@ class ScheduleDialogBasicFragment : Fragment() {
         binding.dialogScheduleEndDateTv.text = selectedDate.toString(getString(R.string.dateFormat))
         endDateTime = selectedDate
     }
+
     private fun initPickerText(){
         startDateTime = DateTime(date.year, date.monthOfYear, date.dayOfMonth, 8, 0, 0, 0)
         endDateTime = DateTime(date.year, date.monthOfYear, date.dayOfMonth, 9, 0, 0, 0)
