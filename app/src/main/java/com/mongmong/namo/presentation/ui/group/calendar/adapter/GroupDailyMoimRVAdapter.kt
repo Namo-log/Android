@@ -2,7 +2,7 @@ package com.mongmong.namo.presentation.ui.group.calendar.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -10,14 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
-import com.mongmong.namo.presentation.config.CategoryColor
+import com.mongmong.namo.presentation.utils.ScheduleTimeConverter
 import org.joda.time.DateTime
 
 class GroupDailyMoimRVAdapter : RecyclerView.Adapter<GroupDailyMoimRVAdapter.ViewHolder>() {
 
     private val groupSchedule = ArrayList<MoimScheduleBody>()
-    lateinit var colorArray: ArrayList<String>
     private lateinit var context : Context
+    private lateinit var timeConverter: ScheduleTimeConverter
 
     interface MoimScheduleClickListener {
         fun onContentClicked(groupSchedule: MoimScheduleBody)
@@ -34,7 +34,6 @@ class GroupDailyMoimRVAdapter : RecyclerView.Adapter<GroupDailyMoimRVAdapter.Vie
         val binding : ItemSchedulePreviewBinding = ItemSchedulePreviewBinding.inflate(
             LayoutInflater.from(viewGroup.context), viewGroup, false)
         context = viewGroup.context
-        colorArray = CategoryColor.getAllColors()
 
         return ViewHolder(binding)
     }
@@ -60,24 +59,23 @@ class GroupDailyMoimRVAdapter : RecyclerView.Adapter<GroupDailyMoimRVAdapter.Vie
         notifyDataSetChanged()
     }
 
+    fun initScheduleTimeConverter() {
+        timeConverter = ScheduleTimeConverter(DateTime.now())
+    }
+
+    fun setClickedDate(date: DateTime) {
+        // converter에서 선택한 날짜 업데이트
+        timeConverter.updateClickedDate(date)
+    }
+
     inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
-
-        @SuppressLint("ResourceType")
         fun bind(groupSchedule: MoimScheduleBody) {
-            val time =
-                DateTime(groupSchedule.startDate * 1000L).toString("HH:mm") + " - " + DateTime(groupSchedule.endDate * 1000L).toString(
-                    "HH:mm"
-                )
-            val paletteId = if (groupSchedule.curMoimSchedule) 4
-                        else if (groupSchedule.users.size < 2 && groupSchedule.users[0].color != 0) groupSchedule.users[0].color
-                        else 3
-
             binding.itemCalendarTitle.text = groupSchedule.name
             binding.itemCalendarTitle.isSelected = true
-            binding.itemCalendarScheduleTime.text = time
-            binding.itemCalendarScheduleColorView.background.setTint(Color.parseColor(colorArray[paletteId - 1]))
+            binding.itemCalendarScheduleTime.text = timeConverter.getScheduleTimeText(groupSchedule.startDate, groupSchedule.endDate)
+            binding.itemCalendarScheduleColorView.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.MainOrange))
 
-            if(groupSchedule.hasDiaryPlace)
+            if (groupSchedule.hasDiaryPlace)
                 binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.MainOrange))
             else
                 binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
