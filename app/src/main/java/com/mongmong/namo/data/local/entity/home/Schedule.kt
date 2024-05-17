@@ -22,7 +22,7 @@ data class Schedule(
     var endLong: Long = 0,
 
     @ColumnInfo(name = "dayInterval")
-    var endDate: Int = 0,
+    var dayInterval: Int = 0,
 
     @ColumnInfo(name = "categoryId")
     var categoryId: Long = 0L,
@@ -66,7 +66,7 @@ data class Schedule(
             name = this.title,
             startDate = this.startLong,
             endDate = this.endLong,
-            interval = this.endDate,
+            interval = this.dayInterval,
             alarmDate = this.alarmList,
             x = this.placeX,
             y = this.placeY,
