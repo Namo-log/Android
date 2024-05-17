@@ -13,11 +13,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
+import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.remote.diary.*
 import com.mongmong.namo.databinding.ActivityMoimMemoDetailBinding
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
+import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.presentation.config.CategoryColor
+import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.ui.diary.adapter.GalleryListAdapter
 import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
@@ -35,10 +38,7 @@ class MoimMemoDetailActivity: AppCompatActivity(),
 
     private lateinit var binding: ActivityMoimMemoDetailBinding
 
-    private lateinit var moimSchedule: MoimDiary
-    private lateinit var placeIntList: List<Long>
-
-    private var diaryService = DiaryService()
+    private lateinit var moimDiary: MoimDiary
     private var isDelete: Boolean = false
     private val viewModel : DiaryDetailViewModel by viewModels()
 
@@ -47,20 +47,29 @@ class MoimMemoDetailActivity: AppCompatActivity(),
         binding =  ActivityMoimMemoDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        moimSchedule  = (intent.getSerializableExtra("groupDiary") as MoimDiary)
-        diaryService = DiaryService()
+        moimDiary = (intent.getSerializableExtra("moimDiary") as MoimDiary)
+
 
         initView()
-        initClickListener()
         initObserve()
+        initContent()
+        initClickListener()
         charCnt()
-
-
     }
 
+    private fun initContent() {
+        if(moimDiary.content == "") {
+            Log.d("시발2", "${moimDiary.content}")
+            viewModel.getMoimMemo(moimDiary.scheduleId)
+        } else {
+            moimDiary.content?.let {
+                viewModel.setMemo(it)
+            }
+        }
+    }
     override fun onResume() {
         super.onResume()
-        viewModel.getMoimDiary(moimSchedule.scheduleId)
+        viewModel.getMoimDiary(moimDiary.scheduleId)
         binding.diaryContentsEt.setText(viewModel.getMemo())
     }
 
@@ -70,19 +79,18 @@ class MoimMemoDetailActivity: AppCompatActivity(),
     }
 
     private fun initView() {
-        viewModel.setMemo(moimSchedule.content ?: "")
         with(binding) {
-            findCategory(moimSchedule.categoryId, moimSchedule.categoryId)
-            val scheduleDate = moimSchedule.startDate * 1000
+            findCategory(moimDiary.categoryId, moimDiary.categoryId)
+            val scheduleDate = moimDiary.startDate * 1000
 
             diaryTodayMonthTv.text = DateTime(scheduleDate).toString("MMM", Locale.ENGLISH)
             diaryTodayNumTv.text = DateTime(scheduleDate).toString("dd")
-            diaryTitleTv.text = moimSchedule.title
+            diaryTitleTv.text = moimDiary.title
             diaryInputDateTv.text = DateTime(scheduleDate).toString("yyyy.MM.dd (EE) hh:mm")
-            diaryInputPlaceTv.text = moimSchedule.placeName
+            diaryInputPlaceTv.text = moimDiary.placeName
 
             diaryEditBtnTv.apply {
-                if (moimSchedule.content.isNullOrEmpty()) { // 그룹 기록 내용이 없으면, 기록 저장
+                if (moimDiary.content.isNullOrEmpty()) { // 그룹 기록 내용이 없으면, 기록 저장
                     text = resources.getString(R.string.diary_add)
                     setTextColor(getColor(R.color.white))
                     setBackgroundResource(R.color.MainOrange)
@@ -108,13 +116,13 @@ class MoimMemoDetailActivity: AppCompatActivity(),
                 startActivity(
                     Intent(this@MoimMemoDetailActivity, MoimDiaryActivity::class.java)
                         .putExtra("from", "moimMemo")
-                        .putExtra("hasMoimPlace", true)
-                        .putExtra("moimScheduleId", moimSchedule.scheduleId)
+                        .putExtra("hasMoimActivity", true)
+                        .putExtra("moimScheduleId", moimDiary.scheduleId)
                 )
             }
             diaryEditBtnTv.setOnClickListener {
                 viewModel.patchMoimMemo(
-                    moimSchedule.scheduleId,
+                    moimDiary.scheduleId,
                     binding.diaryContentsEt.text.toString()
                 )
             }
@@ -123,14 +131,16 @@ class MoimMemoDetailActivity: AppCompatActivity(),
     private fun initObserve() {
         // 모임 기록 가져오기
         viewModel.getMoimDiaryResult.observe(this) { result ->
-            placeIntList = result.moimActivities.map {
-                it.moimActivityId // 그룹 스케줄 별 장소 아이디 가져와서 리스트 만들기
-            }
             val imgList = result.moimActivities.flatMap { it.imgs?.take(3) ?: emptyList() }
-
             setImgList(imgList)
         }
 
+        viewModel.getMoimMemoResponse.observe(this) { diary ->
+            diary?.let{
+                viewModel.setMemo(it.result.contents)
+                binding.diaryContentsEt.setText(viewModel.getMemo())
+            }
+        }
         // 모임 기록 메모 추가/수정
         viewModel.patchMemoResult.observe(this) { isSuccess ->
             if(isSuccess) finish()
@@ -174,7 +184,7 @@ class MoimMemoDetailActivity: AppCompatActivity(),
 
     override fun onClickYesButton(id: Int) {
         isDelete = true
-        viewModel.deleteMoimMemo(moimSchedule.scheduleId)
+        viewModel.deleteMoimMemo(moimDiary.scheduleId)
     }
 
     /** 글자 수 반환 **/

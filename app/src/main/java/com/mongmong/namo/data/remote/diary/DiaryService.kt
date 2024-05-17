@@ -322,7 +322,7 @@ class DiaryService {
         page: Int,
         size: Int
     ) {
-        diaryRetrofitInterface.getGroupMonthDiary2(month, page, size)
+        /*diaryRetrofitInterface.getGroupMonthDiary2(month, page, size)
             .enqueue(object : Callback<DiaryGetMonthResponse> {
 
                 @SuppressLint("SuspiciousIndentation")
@@ -346,7 +346,7 @@ class DiaryService {
                 ) {
                     getGroupMonthView.onGetGroupMonthFailure(t.message.toString())
                 }
-            })
+            })*/
     }
 }
 

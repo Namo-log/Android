@@ -84,18 +84,18 @@ class MoimDiaryActivity : AppCompatActivity(),
         repo = DiaryRepository(this)
 
         moimScheduleId = intent.getLongExtra("moimScheduleId", 0L)  // 그룹 스케줄 아이디
-        val getHasDiaryBoolean = intent.getBooleanExtra("hasMoimPlace", false)
 
-        hasDiaryPlace(getHasDiaryBoolean)
+        hasDiaryPlace()
         onClickListener()
 
         initObserve()
     }
 
-    private fun hasDiaryPlace(getHasDiaryBoolean: Boolean) {
-        if (!getHasDiaryBoolean) {  // groupPlace가 없을 때, 저장하기
+    private fun hasDiaryPlace() {
+        if (!intent.getBooleanExtra("hasMoimActivity", false)) {
+            // moimActivity가 없을 때, 저장하기
             moimScheduleBody = intent?.getSerializableExtra("moimSchedule") as MoimScheduleBody
-            Log.d("hasDiaryPlace", "$moimScheduleBody")
+
             activities.add(MoimActivity(0L, "", 0, arrayListOf(), arrayListOf()))
 
             setViewOnNoDiary()
@@ -106,7 +106,7 @@ class MoimDiaryActivity : AppCompatActivity(),
                 elevation = 0f
             }
             binding.diaryDeleteIv.visibility = View.GONE
-        } else { // groupPlace가 있을 때, 서버에서 데이터 가져오고 수정하기
+        } else { // moimActivity가 있을 때, 서버에서 데이터 가져오고 수정하기
             viewModel.getMoimDiary(moimScheduleId)
             binding.groupSaveTv.apply {
                 text = resources.getString(R.string.diary_edit)

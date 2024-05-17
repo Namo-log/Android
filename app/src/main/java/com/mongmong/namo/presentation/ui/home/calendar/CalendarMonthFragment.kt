@@ -176,10 +176,21 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
                 requireActivity().startActivity(intent)
             }
 
-            override fun onDiaryIconClicked(monthDiary: MoimDiary?) { // 기록 아이콘 클릭
-                val intent = Intent(context, MoimMemoDetailActivity::class.java)
-                intent.putExtra("groupDiary", monthDiary)
-                requireActivity().startActivity(intent)
+            override fun onDiaryIconClicked(schedule: Schedule) { // 기록 아이콘 클릭
+                val monthDiary = MoimDiary(
+                    schedule.serverId,
+                    schedule.title,
+                    schedule.startLong,
+                    "",
+                    emptyList(),
+                    schedule.categoryId,
+                    schedule.placeName
+                )
+
+                requireActivity().startActivity(
+                    Intent(context, MoimMemoDetailActivity::class.java)
+                        .putExtra("moimDiary", monthDiary)
+                )
             }
         })
     }
@@ -206,7 +217,6 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
         binding.homeDailyHeaderTv.text = monthDayList[dateId].toString("MM.dd (E)")
         binding.dailyScrollSv.scrollTo(0, 0)
         // 일정 아이템 표시
-        getMoimDiary() // 다이어리
         getSchedule(dateId) // 일정 내용
         Log.d("CHECK_GROUP_EVENT", monthGroupSchedule.toString())
     }
@@ -238,16 +248,6 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
         scheduleMoim = monthGroupSchedule.filter { item -> item.startLong <= todayEnd && item.endLong >= todayStart } as ArrayList<Schedule>
         groupScheduleRVAdapter.addGroup(scheduleMoim)
         setMoimEmptyText(scheduleMoim.isEmpty())
-    }
-
-    private fun getMoimDiary() {
-        try {
-            val service = DiaryService()
-            service.getGroupMonthDiary2(yearMonthDate(millis), 0, 50)
-            service.getGroupMonthView(this@CalendarMonthFragment)
-        } catch (e: java.lang.Exception) {
-            Log.e("Exception", "Exception occurred: ${e.message}")
-        }
     }
 
     private fun initObserve() {

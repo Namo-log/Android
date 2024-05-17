@@ -4,6 +4,16 @@ import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 
 
+data class GetDiaryResponse(
+    val result:GetDiaryResult
+): BaseResponse()
+
+data class GetDiaryResult(
+    val contents: String,
+    val urls: List<String>
+)
+
+
 data class DiaryResponse(
     val result: String
 ) : BaseResponse() // 기본 string
@@ -56,14 +66,13 @@ data class GroupResult(
 )
 
 data class MoimDiary(
-    @SerializedName("scheduleId") val scheduleId: Long,
-    @SerializedName("name") val title: String,
+    @SerializedName("scheduleId") var scheduleId: Long,
+    @SerializedName("name") var title: String,
     @SerializedName("startDate") var startDate: Long,
-    @SerializedName("contents") val content: String?,
-    @SerializedName("urls") val imgUrl: List<String>,
-    @SerializedName("categoryId") val categoryId: Long,
-    @SerializedName("color") val categoryColor: Long,
-    @SerializedName("placeName") val placeName: String
+    @SerializedName("contents") var content: String?,
+    @SerializedName("urls") var imgUrl: List<String>,
+    @SerializedName("categoryId") var categoryId: Long,
+    @SerializedName("placeName") var placeName: String
 ) : java.io.Serializable
 
 
