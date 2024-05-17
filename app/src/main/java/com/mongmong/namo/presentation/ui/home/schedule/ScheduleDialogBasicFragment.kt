@@ -194,10 +194,6 @@ class ScheduleDialogBasicFragment : Fragment() {
             this.minute = startDateTime.minuteOfHour
             this.setOnTimeChangedListener { view, hourOfDay, minute ->
                 startDateTime = startDateTime.withTime(hourOfDay, minute, 0,0)
-                if (startDateTime.millis > endDateTime.millis) {
-                    endDateTime = endDateTime.withTime(hourOfDay, minute, 0, 0)
-                    binding.dialogScheduleEndTimeTv.text = endDateTime.toString(getString(R.string.timeFormat))
-                }
                 binding.dialogScheduleStartTimeTv.text = startDateTime.toString(getString(R.string.timeFormat))
             }
         }
@@ -207,10 +203,6 @@ class ScheduleDialogBasicFragment : Fragment() {
             this.minute = endDateTime.minuteOfHour
             this.setOnTimeChangedListener { view, hourOfDay, minute ->
                 endDateTime = endDateTime.withTime(hourOfDay, minute, 0,0)
-                if (endDateTime.millis < startDateTime.millis) {
-                    startDateTime = startDateTime.withTime(hourOfDay, minute, 0, 0)
-                    binding.dialogScheduleStartTimeTv.text = startDateTime.toString(getString(R.string.timeFormat))
-                }
                 binding.dialogScheduleEndTimeTv.text = endDateTime.toString(getString(R.string.timeFormat))
             }
         }
@@ -309,10 +301,7 @@ class ScheduleDialogBasicFragment : Fragment() {
 
         // 저장 클릭
         binding.dialogScheduleSaveBtn.setOnClickListener {
-            if (binding.dialogScheduleTitleEt.text.toString().isEmpty()) {
-                Toast.makeText(context, "일정 제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
+            if (!isValidInput()) return@setOnClickListener
             storeContent()
 
             // 모임 일정일 경우
@@ -332,6 +321,20 @@ class ScheduleDialogBasicFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun isValidInput(): Boolean {
+        // 제목 미입력
+        if (binding.dialogScheduleTitleEt.text.toString().isEmpty()) {
+            Toast.makeText(context, "일정 제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        // 시작일 > 종료일
+        if (startDateTime.millis > endDateTime.millis) {
+            Toast.makeText(context, "시작일이 종료일보다 빠를 수 없습니다.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
     }
 
     private fun setTextViewsInactive(vararg textViews: TextView) {
