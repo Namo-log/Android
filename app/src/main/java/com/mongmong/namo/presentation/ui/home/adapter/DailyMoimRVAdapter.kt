@@ -28,7 +28,7 @@ class DailyMoimRVAdapter : RecyclerView.Adapter<DailyMoimRVAdapter.ViewHolder>()
 
     interface MoimScheduleClickListener {
         fun onContentClicked(schedule: Schedule)
-        fun onDiaryIconClicked(monthDiary: MoimDiary?)
+        fun onDiaryIconClicked(schedule: Schedule)
     }
 
     fun setMoimScheduleClickListener(moimScheduleClickListener: MoimScheduleClickListener) {
@@ -54,16 +54,8 @@ class DailyMoimRVAdapter : RecyclerView.Adapter<DailyMoimRVAdapter.ViewHolder>()
         }
         // 기록 아이콘 클릭
         holder.binding.itemCalendarScheduleRecord.setOnClickListener {
-            val newCategoryId = schedules[position].categoryServerId
-
-            val diary = moimDiary.find {
-                it.scheduleId == schedules[position].serverId
-            }
-            Log.d("DailyGroupRVAdapter", "diary: $diary")
-
-            if (diary != null) {
-                val updatedDiary = diary.copy(categoryId = newCategoryId)
-                moimScheduleClickListener.onDiaryIconClicked(updatedDiary)
+            if (schedules[position].hasDiary != null) {
+                moimScheduleClickListener.onDiaryIconClicked(schedules[position])
             }
         }
     }

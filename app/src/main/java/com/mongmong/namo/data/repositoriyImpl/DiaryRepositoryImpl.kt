@@ -11,6 +11,7 @@ import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.data.remote.DiaryApiService
+import com.mongmong.namo.domain.model.GetDiaryResponse
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.presentation.config.RoomState
@@ -107,6 +108,12 @@ class DiaryRepositoryImpl @Inject constructor(
     /** 모임 기록 개별 조회 **/
     override suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult {
         return remoteDiaryDataSource.getMoimDiary(scheduleId)
+    }
+
+    /** 모임 메모 개별 조회 **/
+    override suspend fun getMoimMemo(scheduleId: Long): GetDiaryResponse {
+        // 개인 기록 개별 조회 api 사용
+        return remoteDiaryDataSource.getMoimMemo(scheduleId)
     }
 
     /** 모임 기록 메모 추가/수정 **/

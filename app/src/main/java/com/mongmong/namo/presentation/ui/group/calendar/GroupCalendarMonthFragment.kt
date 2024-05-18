@@ -174,7 +174,7 @@ class GroupCalendarMonthFragment : Fragment() {
                 Log.d("GROUP_DIARY_CLICK", groupSchedule.toString())
                 startActivity(Intent(context, MoimDiaryActivity::class.java)
                     .putExtra("from", "groupCalendar")
-                    .putExtra("hasMoimPlace", groupSchedule.hasDiaryPlace)
+                    .putExtra("hasMoimActivity", groupSchedule.hasDiaryPlace)
                     .putExtra("moimScheduleId", groupSchedule.moimScheduleId)
                     .putExtra("moimSchedule", groupSchedule)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

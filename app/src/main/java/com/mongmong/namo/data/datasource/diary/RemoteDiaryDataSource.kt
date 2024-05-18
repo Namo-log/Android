@@ -10,6 +10,8 @@ import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.GetScheduleId
 import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
 import com.mongmong.namo.data.utils.RequestConverter.imageToMultipart
+import com.mongmong.namo.domain.model.GetDiaryResponse
+import com.mongmong.namo.domain.model.GetDiaryResult
 import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import kotlinx.coroutines.Dispatchers
@@ -109,6 +111,18 @@ class RemoteDiaryDataSource @Inject constructor(
         return diaryResponse.result
     }
 
+    suspend fun getMoimMemo(scheduleId: Long): GetDiaryResponse = withContext(Dispatchers.IO) {
+        var response = GetDiaryResponse(GetDiaryResult("", emptyList()))
+        runCatching {
+            diaryApiService.getDiary(scheduleId)
+        }.onSuccess {
+            Log.d("RemoteDiaryDataSource getMoimMemo Success", "$it")
+            response = it
+        }.onFailure {
+            Log.d("RemoteDiaryDataSource getMoimMemo Failure", "$it")
+        }
+        return@withContext response
+    }
     suspend fun patchMoimMemo(scheduleId: Long, content: String): Boolean {
         var isSuccess = false
         withContext(Dispatchers.IO) {

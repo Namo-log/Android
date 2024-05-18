@@ -196,14 +196,18 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     }
 
     private fun onDetailClickListener(item: DiarySchedule) {  // 그룹 기록 수정 클릭리스너
-
-        val monthDiary = MoimDiary(
-            item.scheduleId, item.title, item.startDate, item.content,
-            item.images ?: emptyList(), item.categoryId, 0L, item.place
+        val moimDiary = MoimDiary(
+            item.scheduleId,
+            item.title,
+            item.startDate,
+            item.content,
+            item.images ?: emptyList(),
+            item.categoryId,
+            item.place
         )
 
         requireActivity().startActivity(Intent(context, MoimMemoDetailActivity::class.java)
-                .putExtra("groupDiary", monthDiary))
+                .putExtra("moimDiary", moimDiary))
 
     }
 
