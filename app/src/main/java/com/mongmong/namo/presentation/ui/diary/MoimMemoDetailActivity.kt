@@ -59,7 +59,6 @@ class MoimMemoDetailActivity: AppCompatActivity(),
 
     private fun initContent() {
         if(moimDiary.content == "") {
-            Log.d("시발2", "${moimDiary.content}")
             viewModel.getMoimMemo(moimDiary.scheduleId)
         } else {
             moimDiary.content?.let {
