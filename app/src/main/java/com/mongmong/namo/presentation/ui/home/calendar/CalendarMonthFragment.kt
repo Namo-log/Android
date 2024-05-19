@@ -185,20 +185,10 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
                 requireActivity().startActivity(intent)
             }
 
-            override fun onDiaryIconClicked(schedule: Schedule) { // 기록 아이콘 클릭
-                val monthDiary = MoimDiary(
-                    schedule.serverId,
-                    schedule.title,
-                    schedule.startLong,
-                    "",
-                    emptyList(),
-                    schedule.categoryId,
-                    schedule.placeName
-                )
-
+            override fun onDiaryIconClicked(scheduleId: Long) { // 기록 아이콘 클릭
                 requireActivity().startActivity(
                     Intent(context, MoimMemoDetailActivity::class.java)
-                        .putExtra("moimDiary", monthDiary)
+                        .putExtra("moimScheduleId", scheduleId)
                 )
             }
         })

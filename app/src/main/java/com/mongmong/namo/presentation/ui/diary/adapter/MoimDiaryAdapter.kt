@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.diary
+package com.mongmong.namo.presentation.ui.diary.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -15,17 +15,13 @@ import com.mongmong.namo.data.remote.diary.DiaryRepository
 import com.mongmong.namo.databinding.ItemDiaryItemListBinding
 import com.mongmong.namo.databinding.ItemDiaryListBinding
 import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.ui.diary.adapter.DiaryGalleryRVAdapter
-
 import java.text.SimpleDateFormat
+import kotlin.reflect.KFunction1
 
-
-
-class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
-    val editClickListener: (DiarySchedule) -> Unit,
+class MoimDiaryAdapter(  // 월 별 모임 다이어리 리스트 어댑터
+    val detailClickListener: KFunction1<Long, Unit>,
     val imageClickListener: (String) -> Unit
 ) : PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
-
 
     class DiaryDiffCallback : DiffUtil.ItemCallback<DiarySchedule>() {
         override fun areItemsTheSame(oldItem: DiarySchedule, newItem: DiarySchedule): Boolean {
@@ -38,7 +34,6 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
         }
     }
 
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is DiaryHeaderViewHolder -> {
@@ -49,7 +44,7 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
                 val diaryItems = getItem(position) as DiarySchedule
                 holder.bind(diaryItems)
                 holder.onclick.setOnClickListener {
-                    editClickListener(diaryItems)
+                    detailClickListener(diaryItems.serverId)
                 }
             }
         }
@@ -70,7 +65,6 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
             else -> ITEM_VIEW_TYPE_ITEM
         }
     }
-
 
     class DiaryHeaderViewHolder
     private constructor(private val binding: ItemDiaryListBinding) :
@@ -100,6 +94,7 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
     ) : RecyclerView.ViewHolder(binding.root) {
         val onclick = binding.editLy
 
+        @SuppressLint("ResourceAsColor")
         fun bind(item: DiarySchedule) {
             binding.apply {
 
@@ -111,9 +106,9 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
                 val repo = DiaryRepository(context)
 
                 val category =
-                    repo.getCategory(item.categoryId, item.categoryServerId)
+                    repo.getCategory(item.categoryId, item.categoryId)
 
-                itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
+                binding.itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
 
                 val adapter =
                     DiaryGalleryRVAdapter(context, item.images, imageClickListener)

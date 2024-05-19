@@ -3,17 +3,6 @@ package com.mongmong.namo.domain.model
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 
-
-data class GetDiaryResponse(
-    val result:GetDiaryResult
-): BaseResponse()
-
-data class GetDiaryResult(
-    val contents: String,
-    val urls: List<String>
-)
-
-
 data class DiaryResponse(
     val result: String
 ) : BaseResponse() // 기본 string
@@ -50,6 +39,21 @@ data class DiarySchedule(
     var serverId: Long = 0L, // eventServerId
     var categoryServerId : Long = 0L,
     var isHeader: Boolean = false
+)
+
+data class GetMoimMemoResponse(
+    val result: GetMoimMemoResult
+): BaseResponse()
+
+data class GetMoimMemoResult(
+    val scheduleId: Long,
+    val name: String,
+    val startDate: Long,
+    val contents: String,
+    val urls: List<String>,
+    val categoryId: Long,
+    val color: Long,
+    val placeName: String
 )
 
 /** 모임 기록 월 별 조회 **/

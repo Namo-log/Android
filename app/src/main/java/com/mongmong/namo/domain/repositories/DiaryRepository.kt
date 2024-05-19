@@ -3,8 +3,7 @@ package com.mongmong.namo.domain.repositories
 import androidx.paging.PagingSource
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.domain.model.DiarySchedule
-import com.mongmong.namo.domain.model.GetDiaryResponse
-import com.mongmong.namo.domain.model.GetDiaryResult
+import com.mongmong.namo.domain.model.GetMoimMemoResponse
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 
 
@@ -36,7 +35,7 @@ interface DiaryRepository {
 
     suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult
 
-    suspend fun getMoimMemo(scheduleId: Long): GetDiaryResponse
+    suspend fun getMoimMemo(scheduleId: Long): GetMoimMemoResponse
 
     suspend fun patchMoimMemo(scheduleId: Long, content: String): Boolean
 
