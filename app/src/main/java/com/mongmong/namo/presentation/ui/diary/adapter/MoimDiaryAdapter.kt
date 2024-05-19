@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat
 import kotlin.reflect.KFunction1
 
 class MoimDiaryAdapter(  // 월 별 모임 다이어리 리스트 어댑터
-    val detailClickListener: KFunction1<Long, Unit>,
+    val detailClickListener: (Long) -> Unit,
     val imageClickListener: (String) -> Unit
 ) : PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
 
@@ -44,7 +44,7 @@ class MoimDiaryAdapter(  // 월 별 모임 다이어리 리스트 어댑터
                 val diaryItems = getItem(position) as DiarySchedule
                 holder.bind(diaryItems)
                 holder.onclick.setOnClickListener {
-                    detailClickListener(diaryItems.serverId)
+                    detailClickListener(diaryItems.scheduleId)
                 }
             }
         }
