@@ -356,8 +356,10 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
     }
 
     private fun drawDays(canvas: Canvas) {
+        val padding = dpToPx(context, 5f)  // 5dp를 픽셀로 변환
+
         for (day in 0 until 42) {
-            val x = (day % DAYS_PER_WEEK) * cellWidth
+            val x = (day % DAYS_PER_WEEK) * cellWidth + padding  // X 좌표를 오른쪽으로 5dp 이동
             val y = (day / DAYS_PER_WEEK) * cellHeight
 
             if (days[day].isEqual(today)) {
@@ -396,14 +398,15 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
         }
     }
 
-
     private fun drawSelected(canvas: Canvas) {
+        val padding = dpToPx(context, 5f)  // 5dp를 픽셀로 변환
+
         if (selectedDate != null) {
             val selectedDay = selectedDate!!.dayOfMonth
 
             for (i in days.indices) {
                 if (days[i] == selectedDate && !days[i].isEqual(today)) {
-                    val x = (i % DAYS_PER_WEEK) * cellWidth
+                    val x = (i % DAYS_PER_WEEK) * cellWidth + padding  // X 좌표를 오른쪽으로 5dp 이동
                     val y = (i / DAYS_PER_WEEK) * cellHeight
 
                     selectedPaint.getTextBounds(
@@ -430,6 +433,7 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
         moreList.clear()
         for (i in 0 until 42) moreList.add(0)
     }
+
     private fun drawRestDays(canvas: Canvas) {
         // 이전달, 다음달은 불투명하게
         var prev = 0
