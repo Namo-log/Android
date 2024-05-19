@@ -38,6 +38,10 @@ import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.getInterval
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.PickerConverter
+import com.mongmong.namo.presentation.utils.PickerConverter.parseDateTimeToDateText
+import com.mongmong.namo.presentation.utils.PickerConverter.parseDateTimeToTimeText
+import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedTime
 import dagger.hilt.android.AndroidEntryPoint
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
@@ -83,7 +87,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         setInit()
         setResultLocation()
         setResultMember()
-        clickListener()
+        initClickListeners()
         initObservers()
     }
 
@@ -115,7 +119,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
             if (nowDay != 0L) {
                 date = DateTime(nowDay)
             }
-            setDateTime(DateTime(date.year, date.monthOfYear, date.dayOfMonth, 8, 0, 0, 0), DateTime(date.year, date.monthOfYear, date.dayOfMonth, 9, 0, 0, 0))
+            setDateTime(PickerConverter.getDefaultDate(date, true), PickerConverter.getDefaultDate(date, false))
 
             selectedMembers = originalMembers
             selectedIds.clear()
@@ -152,27 +156,28 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         Log.d("SetEditSchedule", editGroupSchedule.toString())
     }
 
-    private fun clickListener() {
+    private fun initClickListeners() {
         // 참여자 클릭
         binding.dialogGroupScheduleMemberTv.setOnClickListener {
             val intent = Intent(this, GroupScheduleMemberActivity::class.java)
             intent.putExtra("members", originalMembers)
             intent.putExtra("selectedIds", selectedIds.toLongArray())
-//            Log.d("PUT_INTENT", originalMembers.toString())
-//            Log.d("PUT_INTENT", selectedIds.toString())
             getMemberResult.launch(intent)
         }
 
-        // time & date 클릭
+        /** time & date 클릭 */
         binding.dialogGroupScheduleStartDateTv.setOnClickListener {
             setPicker(binding.dialogGroupScheduleStartDateTv)
         }
+        // 종료일 - 날짜
         binding.dialogGroupScheduleEndDateTv.setOnClickListener {
             setPicker(binding.dialogGroupScheduleEndDateTv)
         }
+        // 시작일 - 시간
         binding.dialogGroupScheduleStartTimeTv.setOnClickListener {
             setPicker(binding.dialogGroupScheduleStartTimeTv)
         }
+        // 종료일 - 시간
         binding.dialogGroupScheduleEndTimeTv.setOnClickListener {
             setPicker(binding.dialogGroupScheduleEndTimeTv)
         }
@@ -294,7 +299,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         binding.dialogGroupScheduleMemberTv.text = group.groupMembers.filter { it.userId in editGroupSchedule.users }.map { it.userName }.joinToString(", ")
 
         //시작일, 종료일, 시작시간, 종료시간
-        setDateTime(DateTime(editGroupSchedule.startLong * 1000L), DateTime(editGroupSchedule.endLong * 1000L))
+        setDateTime(PickerConverter.parseLongToDateTime(editGroupSchedule.startLong), PickerConverter.parseLongToDateTime(editGroupSchedule.endLong))
 
         //장소
         place_name = editGroupSchedule.locationName
@@ -310,34 +315,25 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun initPickerText() {
-        binding.dialogGroupScheduleStartDateTv.text = startDateTime.toString(getString(R.string.dateFormat))
-        binding.dialogGroupScheduleEndDateTv.text = endDateTime.toString(getString(R.string.dateFormat))
-
-        binding.dialogGroupScheduleStartTimeTv.text = startDateTime.toString(getString(R.string.timeFormat))
-        binding.dialogGroupScheduleEndTimeTv.text = endDateTime.toString(getString(R.string.timeFormat))
-
+        // 시작일
+        binding.dialogGroupScheduleStartDateTv.text = parseDateTimeToDateText(startDateTime)
+        binding.dialogGroupScheduleStartTimeTv.text = parseDateTimeToTimeText(startDateTime)
         binding.dialogGroupScheduleStartTimeTp.hour = startDateTime.hourOfDay
         binding.dialogGroupScheduleStartTimeTp.minute = startDateTime.minuteOfHour
-
+        // 종료일
+        binding.dialogGroupScheduleEndDateTv.text = parseDateTimeToDateText(endDateTime)
+        binding.dialogGroupScheduleEndTimeTv.text = parseDateTimeToTimeText(endDateTime)
         binding.dialogGroupScheduleEndTimeTp.hour = endDateTime.hourOfDay
         binding.dialogGroupScheduleEndTimeTp.minute = endDateTime.minuteOfHour
 
         // picker 리스너
         binding.dialogGroupScheduleStartTimeTp.setOnTimeChangedListener { _, hourOfDay, minute ->
-            startDateTime = startDateTime.withTime(hourOfDay, minute, 0, 0)
-            if (startDateTime.millis > endDateTime.millis) {
-                endDateTime = endDateTime.withTime(hourOfDay, minute, 0, 0)
-                binding.dialogGroupScheduleEndTimeTv.text = endDateTime.toString(getString(R.string.timeFormat))
-            }
-            binding.dialogGroupScheduleStartTimeTv.text = startDateTime.toString(getString(R.string.timeFormat))
+            startDateTime = setSelectedTime(startDateTime, hourOfDay, minute)
+            binding.dialogGroupScheduleStartTimeTv.text = parseDateTimeToTimeText(startDateTime)
         }
         binding.dialogGroupScheduleEndTimeTp.setOnTimeChangedListener { _, hourOfDay, minute ->
-            endDateTime = endDateTime.withTime(hourOfDay, minute, 0, 0)
-            if (endDateTime.millis < startDateTime.millis) {
-                startDateTime = startDateTime.withTime(hourOfDay, minute, 0, 0)
-                binding.dialogGroupScheduleStartTimeTv.text = startDateTime.toString(getString(R.string.timeFormat))
-            }
-            binding.dialogGroupScheduleEndTimeTv.text = endDateTime.toString(getString(R.string.timeFormat))
+            endDateTime = setSelectedTime(startDateTime, hourOfDay, minute)
+            binding.dialogGroupScheduleEndTimeTv.text = parseDateTimeToTimeText(endDateTime)
         }
 
         binding.dialogGroupScheduleStartDateDp.init(startDateTime.year, startDateTime.monthOfYear - 1, startDateTime.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
