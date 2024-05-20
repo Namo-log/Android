@@ -95,10 +95,10 @@ class RemoteScheduleDataSource @Inject constructor(
             runCatching {
                 scheduleApiService.getMonthMoimSchedule(yearMonth)
             }.onSuccess {
-                Log.d("RemoteScheduleDataSource", "deleteMoimActivity Success $it")
+                Log.d("RemoteScheduleDataSource", "getMonthMoimSchedule Success $it")
                 scheduleResponse = it
             }.onFailure {
-                Log.d("RemoteScheduleDataSource", "deleteMoimActivity Fail")
+                Log.d("RemoteScheduleDataSource", "getMonthMoimSchedule Fail")
             }
         }
         return scheduleResponse.result

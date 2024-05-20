@@ -30,7 +30,7 @@ import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 
 @AndroidEntryPoint
-class CalendarMonthFragment : Fragment(), GetGroupMonthView {
+class CalendarMonthFragment : Fragment() {
 
     private lateinit var binding: FragmentCalendarMonthBinding
 
@@ -96,8 +96,8 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
 
     override fun onPause() {
         super.onPause()
-
         calendarSchedules.clear()
+        monthGroupSchedule.clear()
     }
 
     private fun initClickListeners() {
@@ -275,22 +275,12 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
         // 모임 일정 리스트
         viewModel.moimScheduleList.observe(viewLifecycleOwner) { result ->
             scheduleMoim.clear()
-            if (!result.isNullOrEmpty()) {
+            if (!result.isNullOrEmpty() && monthGroupSchedule.isEmpty()) {
                 monthGroupSchedule = result.map { it.convertServerScheduleResponseToLocal() } as ArrayList
                 calendarSchedules.addAll(monthGroupSchedule)
             }
             binding.calendarMonthView.setScheduleList(calendarSchedules) // 달력 표시
         }
-    }
-
-    override fun onGetGroupMonthSuccess(response: DiaryGetMonthResponse) {
-        Log.d("GET_GROUP_MONTH", "$response")
-        val data = response.result
-        groupScheduleRVAdapter.addGroupDiary(data.content as ArrayList<MoimDiary>)
-    }
-
-    override fun onGetGroupMonthFailure(message: String) {
-        Log.d("GET_GROUP_MONTH", message)
     }
 
     companion object {
