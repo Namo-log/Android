@@ -362,41 +362,36 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
             val x = (day % DAYS_PER_WEEK) * cellWidth + padding  // X 좌표를 오른쪽으로 5dp 이동
             val y = (day / DAYS_PER_WEEK) * cellHeight
 
+            val dayString = days[day].dayOfMonth.toString()
             if (days[day].isEqual(today)) {
-                todayPaint.getTextBounds(
-                    days[day].dayOfMonth.toString(),
-                    0,
-                    days[day].dayOfMonth.toString().length,
-                    bounds
-                )
+                todayPaint.getTextBounds(dayString, 0, dayString.length, bounds)
+                val textWidth = todayPaint.measureText(dayString)
+                val textHeight = bounds.height()
+
                 canvas.drawCircle(
-                    (x + bounds.width() / 2), // 원의 중심 위치도 조정
-                    (y + _dayTextHeight - bounds.height() / 2),
+                    x + textWidth / 2,  // 원의 중심 X 좌표를 텍스트 중앙으로 조정
+                    y + _dayTextHeight - textHeight / 2,  // 원의 중심 Y 좌표를 텍스트 중앙으로 조정
                     bounds.height().toFloat(),
                     todayNoticePaint
                 )
                 canvas.drawText(
-                    days[day].dayOfMonth.toString(),
+                    dayString,
                     x,
                     y + _dayTextHeight,
                     todayPaint
                 )
             } else {
-                datePaint.getTextBounds(
-                    days[day].dayOfMonth.toString(),
-                    0,
-                    days[day].dayOfMonth.toString().length,
-                    bounds
-                )
+                datePaint.getTextBounds(dayString, 0, dayString.length, bounds)
                 canvas.drawText(
-                    days[day].dayOfMonth.toString(),
-                    x, // 텍스트 시작 위치 수정
+                    dayString,
+                    x,
                     y + _dayTextHeight,
                     datePaint
                 )
             }
         }
     }
+
 
     private fun drawSelected(canvas: Canvas) {
         val padding = dpToPx(context, 5f)  // 5dp를 픽셀로 변환
