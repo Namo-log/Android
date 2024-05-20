@@ -49,7 +49,7 @@ data class GetMoimMemoResult(
     val scheduleId: Long,
     val name: String,
     val startDate: Long,
-    val contents: String,
+    val contents: String?,
     val urls: List<String>,
     val categoryId: Long,
     val color: Long,

@@ -34,9 +34,6 @@ class DiaryDetailViewModel @Inject constructor(
     private val _deleteMemoResult = MutableLiveData<Boolean>()
     val deleteMemoResult: LiveData<Boolean> = _deleteMemoResult
 
-    private val _getMoimDiaryResult = MutableLiveData<MoimDiaryResult>()
-    val getMoimDiaryResult : LiveData<MoimDiaryResult> = _getMoimDiaryResult
-
     private val _patchMemoResult = MutableLiveData<Boolean>()
     val patchMemoResult : LiveData<Boolean> = _patchMemoResult
 
@@ -110,7 +107,6 @@ class DiaryDetailViewModel @Inject constructor(
             _getMoimMemoResponse.postValue(repository.getMoimMemo(scheduleId))
         }
     }
-
 
     // 모임 메모 수정
     fun patchMoimMemo(scheduleId: Long, content: String) {

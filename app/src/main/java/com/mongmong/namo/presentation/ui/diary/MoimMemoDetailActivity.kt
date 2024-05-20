@@ -112,7 +112,7 @@ class MoimMemoDetailActivity: AppCompatActivity(),
 
     private fun initView(moimDiary: GetMoimMemoResult) {
         with(binding) {
-            if(viewModel.getMemo() == null) viewModel.setMemo(moimDiary.contents)
+            if(viewModel.getMemo() == null) viewModel.setMemo(moimDiary.contents ?: "")
             diaryContentsEt.setText(viewModel.getMemo())
 
             findCategory(moimDiary.categoryId, moimDiary.categoryId)
