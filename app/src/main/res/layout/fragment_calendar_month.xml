@@ -8,17 +8,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingStart="20dp"
-        android:paddingEnd="10dp"
         app:layoutDescription="@xml/fragment_calendar_month2_xml_constraintlayout_scene">
 
+        <!-- 캘린더 -->
         <com.mongmong.namo.presentation.ui.home.calendar.PersonalCalendarView
             android:id="@+id/calendar_month_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginStart="@dimen/margin_calendar_start"
+            android:layout_marginEnd="@dimen/margin_calendar_end"
             app:layout_constraintBottom_toTopOf="@id/daily_layout"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- 바텀시트 -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/daily_layout"
             android:layout_width="match_parent"
