@@ -229,7 +229,7 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
                     0f,
                     0f,
                     (prev % DAYS_PER_WEEK).toFloat() * cellWidth,
-                    cellHeight.toFloat()
+                    cellHeight
                 ),
                 alphaPaint
             )
@@ -238,17 +238,17 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
                 RectF(
                     0f,
                     0f,
-                    (7 * cellWidth).toFloat(),
-                    cellHeight.toFloat()
+                    (7 * cellWidth),
+                    cellHeight
                 ),
                 alphaPaint
             )
             canvas!!.drawRect(
                 RectF(
                     0f,
-                    cellHeight.toFloat(),
+                    cellHeight,
                     (prev % DAYS_PER_WEEK).toFloat() * cellWidth,
-                    (2 * cellHeight).toFloat()
+                    (2 * cellHeight)
                 ),
                 alphaPaint
             )
@@ -261,8 +261,8 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
                 RectF(
                     ((42 - next) % DAYS_PER_WEEK).toFloat() * cellWidth,
                     ((42 - next) / DAYS_PER_WEEK).toFloat() * cellHeight,
-                    (7 * cellWidth).toFloat(),
-                    (6 * cellHeight).toFloat(),
+                    (7 * cellWidth),
+                    (6 * cellHeight),
                 ),
                 alphaPaint
             )
@@ -271,31 +271,23 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
                 RectF(
                     ((42 - next) % DAYS_PER_WEEK).toFloat() * cellWidth,
                     ((42 - next) / DAYS_PER_WEEK).toFloat() * cellHeight,
-                    (7 * cellWidth).toFloat(),
-                    (5 * cellHeight).toFloat(),
+                    (7 * cellWidth),
+                    (5 * cellHeight),
                 ),
                 alphaPaint
             )
             canvas!!.drawRect(
                 RectF(
                     0f,
-                    (5 * cellHeight).toFloat(),
-                    (7 * cellWidth).toFloat(),
-                    (6 * cellHeight).toFloat(),
+                    (5 * cellHeight),
+                    (7 * cellWidth),
+                    (6 * cellHeight),
                 ),
                 alphaPaint
             )
         }
     }
 
-    fun setRect(order: Int, startIdx: Int, endIdx: Int): RectF {
-        return RectF(
-            (startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding,
-            (startIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding + _eventHeight) * order,
-            (endIdx % DAYS_PER_WEEK) * cellWidth + cellWidth - _eventHorizontalPadding,
-            (endIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding * order) + (_eventHeight * (order + 1))
-        )
-    }
     fun splitWeek(startIdx: Int, endIdx: Int) : ArrayList<StartEnd> {
         val result  = ArrayList<StartEnd>()
         result.clear()
@@ -313,18 +305,31 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
 
         return result
     }
-    fun setLineRect(order: Int, startIdx: Int, endIdx: Int): RectF {
+
+    fun setRect(order: Int, startIdx: Int, endIdx: Int): RectF {
+        val additionalMargin = dpToPx(context, 5f)
         return RectF(
-            (startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding,
+            (startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding + additionalMargin,
+            (startIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding + _eventHeight) * order,
+            (endIdx % DAYS_PER_WEEK) * cellWidth + cellWidth - _eventHorizontalPadding,
+            (endIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding * order) + (_eventHeight * (order + 1))
+        )
+    }
+
+    fun setLineRect(order: Int, startIdx: Int, endIdx: Int): RectF {
+        val additionalMargin = dpToPx(context, 5f)
+        return RectF(
+            (startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding + additionalMargin,
             (startIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding + _eventLineHeight) * order,
             (endIdx % DAYS_PER_WEEK) * cellWidth + cellWidth - _eventHorizontalPadding,
             (endIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding * order) + (_eventLineHeight * (order + 1))
         )
     }
 
+
     fun getScheduleTextStart(startIdx: Int): Float {
         val startX = (startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding
-        val additionalMargin = dpToPx(context, 2f)  // 여기에서 context는 해당 뷰 또는 액티비티의 컨텍스트입니다.
+        val additionalMargin = dpToPx(context, 7f)
         return startX + additionalMargin
     }
 
