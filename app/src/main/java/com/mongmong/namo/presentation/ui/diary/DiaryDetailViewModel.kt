@@ -8,8 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.domain.model.GetDiaryResponse
-import com.mongmong.namo.domain.model.MoimDiary
+import com.mongmong.namo.domain.model.GetMoimMemoResponse
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.usecase.FindCategoryUseCase
@@ -35,9 +34,6 @@ class DiaryDetailViewModel @Inject constructor(
     private val _deleteMemoResult = MutableLiveData<Boolean>()
     val deleteMemoResult: LiveData<Boolean> = _deleteMemoResult
 
-    private val _getMoimDiaryResult = MutableLiveData<MoimDiaryResult>()
-    val getMoimDiaryResult : LiveData<MoimDiaryResult> = _getMoimDiaryResult
-
     private val _patchMemoResult = MutableLiveData<Boolean>()
     val patchMemoResult : LiveData<Boolean> = _patchMemoResult
 
@@ -46,8 +42,8 @@ class DiaryDetailViewModel @Inject constructor(
     private val _category = MutableLiveData<Category>()
     val category: LiveData<Category> = _category
 
-    private val _getMoimMemoResponse = MutableLiveData<GetDiaryResponse>()
-    val getMoimMemoResponse: LiveData<GetDiaryResponse> = _getMoimMemoResponse
+    private val _getMoimMemoResponse = MutableLiveData<GetMoimMemoResponse>()
+    val getMoimMemoResponse: LiveData<GetMoimMemoResponse> = _getMoimMemoResponse
 
     /** 개인 기록 **/
     // 개인 기록 개별 조회
@@ -105,20 +101,12 @@ class DiaryDetailViewModel @Inject constructor(
     }
 
     /** 모임 기록*/
-    // 모임 기록 개별 조회
-    fun getMoimDiary(scheduleId: Long) {
-        viewModelScope.launch {
-            Log.d("MoimDiaryViewModel getMoimDiary", "$scheduleId")
-            _getMoimDiaryResult.postValue(repository.getMoimDiary(scheduleId))
-        }
-    }
-
+    // 모임 메모 조회
     fun getMoimMemo(scheduleId: Long) {
         viewModelScope.launch {
             _getMoimMemoResponse.postValue(repository.getMoimMemo(scheduleId))
         }
     }
-
 
     // 모임 메모 수정
     fun patchMoimMemo(scheduleId: Long, content: String) {

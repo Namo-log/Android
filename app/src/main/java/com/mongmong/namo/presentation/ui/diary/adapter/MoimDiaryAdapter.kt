@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.diary
+package com.mongmong.namo.presentation.ui.diary.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -15,11 +15,11 @@ import com.mongmong.namo.data.remote.diary.DiaryRepository
 import com.mongmong.namo.databinding.ItemDiaryItemListBinding
 import com.mongmong.namo.databinding.ItemDiaryListBinding
 import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.ui.diary.adapter.DiaryGalleryRVAdapter
 import java.text.SimpleDateFormat
+import kotlin.reflect.KFunction1
 
-class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
-    val detailClickListener: (DiarySchedule) -> Unit,
+class MoimDiaryAdapter(  // 월 별 모임 다이어리 리스트 어댑터
+    val detailClickListener: (Long) -> Unit,
     val imageClickListener: (String) -> Unit
 ) : PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
 
@@ -44,7 +44,7 @@ class DiaryGroupAdapter(  // 월 별 그룹 다이어리 리스트 어댑터
                 val diaryItems = getItem(position) as DiarySchedule
                 holder.bind(diaryItems)
                 holder.onclick.setOnClickListener {
-                    detailClickListener(diaryItems)
+                    detailClickListener(diaryItems.scheduleId)
                 }
             }
         }

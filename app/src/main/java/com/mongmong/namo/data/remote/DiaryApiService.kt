@@ -4,9 +4,8 @@ import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.domain.model.GetDiaryResponse
+import com.mongmong.namo.domain.model.GetMoimMemoResponse
 import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
-import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.Call
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -17,12 +16,6 @@ interface DiaryApiService {
     // 개인 기록 전체 조회
     @GET("diaries/all")
     fun getAllDiary(): Call<DiaryGetAllResponse>
-
-    // 개인 기록 개별 조회
-    @GET("diaries/{scheduleId}")
-    fun getDiary(
-        @Path("scheduleId") scheduleId: Long
-    ):GetDiaryResponse
 
     // 개인 기록 추가
     @Multipart
@@ -62,6 +55,12 @@ interface DiaryApiService {
     suspend fun getMoimDiary(
         @Path("moimScheduleId") scheduleId: Long
     ): GetMoimDiaryResponse
+
+    // 모임 메모 개별 조회
+    @GET("group/diaries/detail/{moimScheduleId}")
+    suspend fun getMoimMemo(
+        @Path("moimScheduleId") moimScheduleId: Long
+    ):GetMoimMemoResponse
 
     // 모임 메모 추가 or 수정
     @PATCH("group/diaries/text/{scheduleId}")
