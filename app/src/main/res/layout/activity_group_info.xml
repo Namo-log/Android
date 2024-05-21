@@ -68,7 +68,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="그룹명"
+                android:text="@string/group_name"
                 android:textColor="@color/textGray"
                 android:textSize="15sp"
                 android:textStyle="bold"
@@ -81,10 +81,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
-                android:hint="그룹명 입력"
+                android:hint="@string/input_group_name"
                 android:inputType="text"
-                android:text="나모 앱런칭 캘린더"
-                android:textAlignment="textEnd"
+                android:gravity="end"
+                tools:text="나모 앱런칭 캘린더"
                 android:textColor="@color/textGray"
                 android:textColorHint="@color/editTextGray"
                 android:textSize="15sp"
@@ -113,7 +113,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="그룹원"
+                android:text="@string/group_member"
                 android:textColor="@color/textGray"
                 android:textSize="15sp"
                 android:textStyle="bold"
@@ -126,7 +126,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
-                android:text="7"
+                tools:text="7"
                 android:textColor="@color/textGray"
                 android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -154,6 +154,7 @@
             android:layout_marginTop="30dp"
             android:orientation="vertical"
             app:spanCount="2"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             tools:listitem="@layout/item_group_member" />
 
         <LinearLayout
@@ -169,30 +170,30 @@
             android:paddingVertical="11dp"
             android:paddingStart="30dp"
             android:paddingEnd="12dp"
-            android:weightSum="7"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/group_info_member_rv">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:text="그룹 코드"
+                android:text="@string/group_code"
                 android:textColor="@color/textGray"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/group_info_code_tv"
-                android:layout_width="100dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
+                android:layout_weight="1"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="10dp"
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:singleLine="true"
-                android:text="0A0B0C"
-                android:textAlignment="textStart"
+                tools:text="0A0B0C"
+                android:textAlignment="center"
                 android:textColor="@color/textGray"
                 android:textSize="14sp" />
 
@@ -200,8 +201,6 @@
                 android:id="@+id/group_info_code_copy_iv"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginStart="20dp"
-                android:layout_weight="1"
                 android:padding="7dp"
                 android:src="@drawable/ic_group_cord_copy"
                 android:visibility="visible" />
@@ -218,7 +217,7 @@
             android:background="@drawable/record_btn_background"
             android:gravity="center"
             android:paddingVertical="10dp"
-            android:text="탈퇴하기"
+            android:text="@string/group_withdrawal"
             android:textColor="@color/black"
             android:textSize="15sp" />
 
