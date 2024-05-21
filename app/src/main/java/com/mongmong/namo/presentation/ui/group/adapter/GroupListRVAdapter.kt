@@ -53,9 +53,8 @@ class GroupListRVAdapter(private var groups: List<Group>):  RecyclerView.Adapter
             Glide.with(context)
                 .load(moim.groupImgUrl)
                 .placeholder(R.color.notyetGray)
-                .error(R.drawable.app_logo_namo)
-                .fallback(R.drawable.app_logo_namo)
-                .circleCrop()
+                .error(R.drawable.ic_mongi_default)
+                .fallback(R.drawable.ic_mongi_default)
                 .into(binding.itemGroupCoverImgIv)
 
             binding.itemGroupTotalPeopleNumTv.text = moim.groupMembers.size.toString()
