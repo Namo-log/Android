@@ -12,11 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.data.remote.diary.DiaryService
-import com.mongmong.namo.data.remote.diary.GetGroupMonthView
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
-import com.mongmong.namo.domain.model.DiaryGetMonthResponse
-import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.presentation.ui.diary.MoimMemoDetailActivity
 import com.mongmong.namo.presentation.ui.diary.PersonalDetailActivity
 import com.mongmong.namo.presentation.ui.home.HomeFragment
@@ -30,7 +26,7 @@ import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 
 @AndroidEntryPoint
-class CalendarMonthFragment : Fragment(), GetGroupMonthView {
+class CalendarMonthFragment : Fragment() {
 
     private lateinit var binding: FragmentCalendarMonthBinding
 
@@ -75,6 +71,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
     override fun onResume() {
         super.onResume()
 
+        clearSchedulesData()
         getCategoryList()
         setMonthCalendarSchedule(monthDayList[0].withTimeAtStartOfDay().millis / 1000, monthDayList[41].plusDays(1).withTimeAtStartOfDay().millis / 1000)
         setAdapter()
@@ -96,8 +93,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
 
     override fun onPause() {
         super.onPause()
-
-        calendarSchedules.clear()
+        clearSchedulesData()
     }
 
     private fun initClickListeners() {
@@ -146,6 +142,11 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
 //                binding.calendarMonthView.invalidate()
                 }
             }
+    }
+
+    private fun clearSchedulesData() {
+        calendarSchedules.clear()
+        monthGroupSchedule.clear()
     }
 
     private fun initAdapter() {
@@ -199,7 +200,7 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
     }
 
     private fun setCategoryList(categoryList: List<Category>) {
-        Log.d("CalendarMonthFrag", "categoryList: $categoryList")
+//        Log.d("CalendarMonthFrag", "categoryList: $categoryList")
         binding.calendarMonthView.setCategoryList(categoryList)
         personalScheduleRVAdapter.setCategory(categoryList)
         groupScheduleRVAdapter.setCategory(categoryList)
@@ -275,22 +276,13 @@ class CalendarMonthFragment : Fragment(), GetGroupMonthView {
         // 모임 일정 리스트
         viewModel.moimScheduleList.observe(viewLifecycleOwner) { result ->
             scheduleMoim.clear()
+            monthGroupSchedule.clear()
             if (!result.isNullOrEmpty()) {
                 monthGroupSchedule = result.map { it.convertServerScheduleResponseToLocal() } as ArrayList
                 calendarSchedules.addAll(monthGroupSchedule)
             }
             binding.calendarMonthView.setScheduleList(calendarSchedules) // 달력 표시
         }
-    }
-
-    override fun onGetGroupMonthSuccess(response: DiaryGetMonthResponse) {
-        Log.d("GET_GROUP_MONTH", "$response")
-        val data = response.result
-        groupScheduleRVAdapter.addGroupDiary(data.content as ArrayList<MoimDiary>)
-    }
-
-    override fun onGetGroupMonthFailure(message: String) {
-        Log.d("GET_GROUP_MONTH", message)
     }
 
     companion object {
