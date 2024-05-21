@@ -6,9 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.domain.model.TermBody
 import com.mongmong.namo.domain.repositories.TermRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class TermsViewModel @Inject constructor(
     private val repository: TermRepository
 ) : ViewModel() {
