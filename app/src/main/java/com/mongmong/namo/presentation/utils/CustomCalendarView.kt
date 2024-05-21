@@ -229,7 +229,7 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
                     0f,
                     0f,
                     (prev % DAYS_PER_WEEK).toFloat() * cellWidth,
-                    cellHeight.toFloat()
+                    cellHeight
                 ),
                 alphaPaint
             )
@@ -238,17 +238,17 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
                 RectF(
                     0f,
                     0f,
-                    (7 * cellWidth).toFloat(),
-                    cellHeight.toFloat()
+                    (7 * cellWidth),
+                    cellHeight
                 ),
                 alphaPaint
             )
             canvas!!.drawRect(
                 RectF(
                     0f,
-                    cellHeight.toFloat(),
+                    cellHeight,
                     (prev % DAYS_PER_WEEK).toFloat() * cellWidth,
-                    (2 * cellHeight).toFloat()
+                    (2 * cellHeight)
                 ),
                 alphaPaint
             )
@@ -261,8 +261,8 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
                 RectF(
                     ((42 - next) % DAYS_PER_WEEK).toFloat() * cellWidth,
                     ((42 - next) / DAYS_PER_WEEK).toFloat() * cellHeight,
-                    (7 * cellWidth).toFloat(),
-                    (6 * cellHeight).toFloat(),
+                    (7 * cellWidth),
+                    (6 * cellHeight),
                 ),
                 alphaPaint
             )
@@ -271,31 +271,23 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
                 RectF(
                     ((42 - next) % DAYS_PER_WEEK).toFloat() * cellWidth,
                     ((42 - next) / DAYS_PER_WEEK).toFloat() * cellHeight,
-                    (7 * cellWidth).toFloat(),
-                    (5 * cellHeight).toFloat(),
+                    (7 * cellWidth),
+                    (5 * cellHeight),
                 ),
                 alphaPaint
             )
             canvas!!.drawRect(
                 RectF(
                     0f,
-                    (5 * cellHeight).toFloat(),
-                    (7 * cellWidth).toFloat(),
-                    (6 * cellHeight).toFloat(),
+                    (5 * cellHeight),
+                    (7 * cellWidth),
+                    (6 * cellHeight),
                 ),
                 alphaPaint
             )
         }
     }
 
-    fun setRect(order: Int, startIdx: Int, endIdx: Int): RectF {
-        return RectF(
-            (startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding,
-            (startIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding + _eventHeight) * order,
-            (endIdx % DAYS_PER_WEEK) * cellWidth + cellWidth - _eventHorizontalPadding,
-            (endIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding * order) + (_eventHeight * (order + 1))
-        )
-    }
     fun splitWeek(startIdx: Int, endIdx: Int) : ArrayList<StartEnd> {
         val result  = ArrayList<StartEnd>()
         result.clear()
@@ -313,18 +305,31 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
 
         return result
     }
-    fun setLineRect(order: Int, startIdx: Int, endIdx: Int): RectF {
+
+    fun setRect(order: Int, startIdx: Int, endIdx: Int): RectF {
+        val additionalMargin = dpToPx(context, 5f)
         return RectF(
-            (startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding,
+            (startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding + additionalMargin,
+            (startIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding + _eventHeight) * order,
+            (endIdx % DAYS_PER_WEEK) * cellWidth + cellWidth - _eventHorizontalPadding,
+            (endIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding * order) + (_eventHeight * (order + 1))
+        )
+    }
+
+    fun setLineRect(order: Int, startIdx: Int, endIdx: Int): RectF {
+        val additionalMargin = dpToPx(context, 5f)
+        return RectF(
+            (startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding + additionalMargin,
             (startIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding + _eventLineHeight) * order,
             (endIdx % DAYS_PER_WEEK) * cellWidth + cellWidth - _eventHorizontalPadding,
             (endIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding * order) + (_eventLineHeight * (order + 1))
         )
     }
 
+
     fun getScheduleTextStart(startIdx: Int): Float {
         val startX = (startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding
-        val additionalMargin = dpToPx(context, 2f)  // 여기에서 context는 해당 뷰 또는 액티비티의 컨텍스트입니다.
+        val additionalMargin = dpToPx(context, 7f)
         return startX + additionalMargin
     }
 
@@ -356,39 +361,35 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
     }
 
     private fun drawDays(canvas: Canvas) {
+        val padding = dpToPx(context, 5f)  // 5dp를 픽셀로 변환
+
         for (day in 0 until 42) {
-            val x = (day % DAYS_PER_WEEK) * cellWidth
+            val x = (day % DAYS_PER_WEEK) * cellWidth + padding  // X 좌표를 오른쪽으로 5dp 이동
             val y = (day / DAYS_PER_WEEK) * cellHeight
 
+            val dayString = days[day].dayOfMonth.toString()
             if (days[day].isEqual(today)) {
-                todayPaint.getTextBounds(
-                    days[day].dayOfMonth.toString(),
-                    0,
-                    days[day].dayOfMonth.toString().length,
-                    bounds
-                )
+                todayPaint.getTextBounds(dayString, 0, dayString.length, bounds)
+                val textWidth = todayPaint.measureText(dayString)
+                val textHeight = bounds.height()
+
                 canvas.drawCircle(
-                    (x + bounds.width() / 2), // 원의 중심 위치도 조정
-                    (y + _dayTextHeight - bounds.height() / 2),
+                    x + textWidth / 2,  // 원의 중심 X 좌표를 텍스트 중앙으로 조정
+                    y + _dayTextHeight - textHeight / 2,  // 원의 중심 Y 좌표를 텍스트 중앙으로 조정
                     bounds.height().toFloat(),
                     todayNoticePaint
                 )
                 canvas.drawText(
-                    days[day].dayOfMonth.toString(),
+                    dayString,
                     x,
                     y + _dayTextHeight,
                     todayPaint
                 )
             } else {
-                datePaint.getTextBounds(
-                    days[day].dayOfMonth.toString(),
-                    0,
-                    days[day].dayOfMonth.toString().length,
-                    bounds
-                )
+                datePaint.getTextBounds(dayString, 0, dayString.length, bounds)
                 canvas.drawText(
-                    days[day].dayOfMonth.toString(),
-                    x, // 텍스트 시작 위치 수정
+                    dayString,
+                    x,
                     y + _dayTextHeight,
                     datePaint
                 )
@@ -398,12 +399,14 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
 
 
     private fun drawSelected(canvas: Canvas) {
+        val padding = dpToPx(context, 5f)  // 5dp를 픽셀로 변환
+
         if (selectedDate != null) {
             val selectedDay = selectedDate!!.dayOfMonth
 
             for (i in days.indices) {
                 if (days[i] == selectedDate && !days[i].isEqual(today)) {
-                    val x = (i % DAYS_PER_WEEK) * cellWidth
+                    val x = (i % DAYS_PER_WEEK) * cellWidth + padding  // X 좌표를 오른쪽으로 5dp 이동
                     val y = (i / DAYS_PER_WEEK) * cellHeight
 
                     selectedPaint.getTextBounds(
@@ -430,6 +433,7 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
         moreList.clear()
         for (i in 0 until 42) moreList.add(0)
     }
+
     private fun drawRestDays(canvas: Canvas) {
         // 이전달, 다음달은 불투명하게
         var prev = 0
