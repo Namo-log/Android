@@ -49,14 +49,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="150dp"
             android:orientation="vertical"
-            android:visibility="gone"
-            >
+            android:visibility="gone">
             <ImageView
                 android:id="@+id/group_list_empty_iv"
-                android:layout_width="wrap_content"
+                android:layout_width="263dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_group_empty"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"/>
             <TextView
                 android:id="@+id/group_list_empty_tv"
                 android:layout_width="wrap_content"
