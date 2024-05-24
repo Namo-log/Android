@@ -20,7 +20,7 @@
 
 <img src="https://img.shields.io/badge/asynchronous-555555?style=for-the-badge">![Coroutines](https://img.shields.io/badge/Coroutines-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
 
-<img src="https://img.shields.io/badge/networking-555555?style=for-the-badge"><img src="https://img.shields.io/badge/Retrofit-3E4348?style=for-the-badge&logo=square&logoColor=FFFFFF">
+<img src="https://img.shields.io/badge/networking-555555?style=for-the-badge"><img src="https://img.shields.io/badge/Retrofit-3E4348?style=for-the-badge&logo=square&logoColor=FFFFFF"><img src="https://img.shields.io/badge/OkHttp-3E4348?style=for-the-badge">
 
 <img src="https://img.shields.io/badge/image-555555?style=for-the-badge">![Glide](https://img.shields.io/badge/glide-%2318BED4.svg?style=for-the-badge&logo=glide&logoColor=white)
 
@@ -46,4 +46,5 @@
 ### 코코아/김나현
 - [나모에서 카테고리 색상을 저장하는 방법](https://namo-log.vercel.app/android-category-color)
 - [나모 안드로이드 팀의 리팩토링 도전기](https://namo-log.vercel.app/android-refactoring-1)
+
 
