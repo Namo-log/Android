@@ -1,2 +1,50 @@
-# Android_new
-나모팀 안드로이드의 새로운 시작입니다
+<div align="center">
+
+# Namo Android
+  
+</div>
+
+![image](https://github.com/Namo-Mongmong/Server/assets/98688494/b0da1285-87f2-40ad-8c7d-9016132235d0)
+
+### 목차
+- [🛠️ 나모는 이런 기술을 사용했어요](#-나모는-이런-기술을-사용했어요)
+- [🔎 나모의 안드로이드 프로젝트 구조](#-나모의-안드로이드-프로젝트-구조)
+- [✍🏻 나모 안드로이드 팀원들은 이렇게 작업해요](#-나모-안드로이-팀원들은-이렇게-작업해요)
+
+
+
+## 🛠️ 나모는 이런 기술을 사용했어요
+<img src="https://img.shields.io/badge/language-555555?style=for-the-badge">![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
+
+<img src="https://img.shields.io/badge/jetpack-555555?style=for-the-badge"><img src="https://img.shields.io/badge/Jetpack%20Navigation-F6F6F7?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjIuMDY4OTEgNDIxLjMyMiI+PHBhdGggZD0iTTYyLjc3NjkyLDE4Mi4zNDJ2MTlhMTksMTksMCwwLDEsMTMuNDQsMzIuNDNjLTIuNDIsMi40My0xMi44NiwxMC40Mi0yNiwxNy45LTE3LjU5LDEwLTI3LjI5LDEyLTMxLjIsMTIuMzguNC00LjM0LDIuNy0xMy4zLDEwLjQ4LTI3LjY5LDguMS0xNSwxNy4zNC0yNywxOS44My0yOS40N2ExOC44OSwxOC44OSwwLDAsMSwxMy40NC01LjU1di0xOWgwYTM3Ljg2MDE0LDM3Ljg2MDE0LDAsMCwwLTI2Ljg2LDExLjFjLTkuODIsOS44My00OS4xNiw2Ny4yLTMxLjMzLDg1LDMuMjMsMy4yMiw3Ljc0LDQuNTcsMTMsNC41NywyNCwwLDY0LTI3Ljg1LDcyLTM1LjlhMzgsMzgsMCwwLDAtMjYuODYtNjQuODFabTE2NS4xMywxNDkuNGEzNy44NDk5LDM3Ljg0OTksMCwwLDAtMjYuODUtMTEuMTF2MTlhMTksMTksMCwwLDEsMTMuNDQsMzIuNDNjLTIuNDMsMi40My0xMi44NywxMC40Mi0yNiwxNy45LTE3LjU5LDEwLTI3LjI5LDEyLTMxLjIsMTIuMzguNC00LjM0LDIuNy0xMy4zLDEwLjQ4LTI3LjY5LDguMS0xNSwxNy4zNC0yNywxOS44NC0yOS40N2ExOC44NSwxOC44NSwwLDAsMSwxMy40My01LjU1di0xOWgwYTM3Ljg1LDM3Ljg1LDAsMCwwLTI2Ljg1LDExLjExYy05LjgyLDkuODItNDkuMTYsNjcuMTktMzEuMzMsODUsMy4yMywzLjIyLDcuNzQsNC41OCwxMyw0LjU4LDI0LDAsNjQtMjcuODYsNzItMzUuOTFhMzgsMzgsMCwwLDAsLjA0LTUzLjY3WiIgc3R5bGU9ImZpbGw6IzA5MzA0MiIvPjxwYXRoIGQ9Ik0zNTEuMjk2OTMsMTM0LjU2MmE4LjE1LDguMTUsMCwxLDEsMTEuNTMsMCw4LjE1LDguMTUsMCwwLDEtMTEuNTMsMG0tNjMuNzUtNjMuNzRhOC4xNiw4LjE2LDAsMSwxLDExLjU0LDAsOC4xNiw4LjE2LDAsMCwxLTExLjU0LDBsMCwwbS0yNCwyMjYuMjcsMTA1LjM2LTEwNS40M2E5Ni4yMiw5Ni4yMiwwLDAsMCwxOS4xNi04OS43N2wzMS40OS04LjQzYTMuMzkxMTcsMy4zOTExNywwLDAsMC0xLjc2LTYuNTVsLTMxLjg5LDguNTRhMTAyLjQ3LDEwMi40NywwLDAsMC01OS4yNC01OS4zbDguNTQtMzEuODhhMy4zOTExNiwzLjM5MTE2LDAsMSwwLTYuNTUtMS43NmwtOC40NCwzMS40OWE5Ni4yNCw5Ni4yNCwwLDAsMC04OS43OCwxOS4xNWwtMTA1LjQyLDEwNS40NVoiIHN0eWxlPSJmaWxsOiMzZGRjODQiLz48cGF0aCBkPSJNMTA2LjE3NjkyLDEzOS43NzJsNTguMzktNTguNCwyMS4xMS0yMS4xYTM3LjI4LDM3LjI4LDAsMCwxLDUyLjcyLDUyLjcxbC03OS40OSw3OS41aDBabTE3NS4xNCwxNzUuMTJoMGw3OS41LTc5LjQ5YTM3LjI4LDM3LjI4LDAsMCwwLTUyLjcyLTUyLjcybC0yMS4xLDIxLjExLTU4LjQsNTguMzZaIiBzdHlsZT0iZmlsbDojMzdiZjZlIi8+PHBhdGggZD0iTTIzMC42NzY5LDEwNS4yNjJhMzcuMjgsMzcuMjgsMCwwLDAtNTIuNzItNTIuNzJsLTIxLjExLDIxLjExLTYwLjcyLDYwLjcxLTExLDExYTYuNyw2LjcsMCwwLDAsMCw5LjQ1bDQzLjI1LDQzLjM0YTYuNyw2LjcsMCwwLDAsOS40NSwwbDExLTExaDBabTEzOC4yMywxMzguMjNhMzcuMjgsMzcuMjgsMCwwLDAtNTIuNzItNTIuNzJsLTIxLjExLDIxLjExLTYwLjcyLDYwLjcxLTExLDExYTYuNyw2LjcsMCwwLDAsMCw5LjQ1bDQzLjI3LDQzLjI3YTYuNzIsNi43MiwwLDAsMCw5LjQ1LDBsMTEtMTFoMFoiIHN0eWxlPSJmaWxsOiM0Mjg1ZjQiLz48L3N2Zz4="><img src="https://img.shields.io/badge/Hilt-F6F6F7?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjIuMDY4OTEgNDIxLjMyMiI+PHBhdGggZD0iTTYyLjc3NjkyLDE4Mi4zNDJ2MTlhMTksMTksMCwwLDEsMTMuNDQsMzIuNDNjLTIuNDIsMi40My0xMi44NiwxMC40Mi0yNiwxNy45LTE3LjU5LDEwLTI3LjI5LDEyLTMxLjIsMTIuMzguNC00LjM0LDIuNy0xMy4zLDEwLjQ4LTI3LjY5LDguMS0xNSwxNy4zNC0yNywxOS44My0yOS40N2ExOC44OSwxOC44OSwwLDAsMSwxMy40NC01LjU1di0xOWgwYTM3Ljg2MDE0LDM3Ljg2MDE0LDAsMCwwLTI2Ljg2LDExLjFjLTkuODIsOS44My00OS4xNiw2Ny4yLTMxLjMzLDg1LDMuMjMsMy4yMiw3Ljc0LDQuNTcsMTMsNC41NywyNCwwLDY0LTI3Ljg1LDcyLTM1LjlhMzgsMzgsMCwwLDAtMjYuODYtNjQuODFabTE2NS4xMywxNDkuNGEzNy44NDk5LDM3Ljg0OTksMCwwLDAtMjYuODUtMTEuMTF2MTlhMTksMTksMCwwLDEsMTMuNDQsMzIuNDNjLTIuNDMsMi40My0xMi44NywxMC40Mi0yNiwxNy45LTE3LjU5LDEwLTI3LjI5LDEyLTMxLjIsMTIuMzguNC00LjM0LDIuNy0xMy4zLDEwLjQ4LTI3LjY5LDguMS0xNSwxNy4zNC0yNywxOS44NC0yOS40N2ExOC44NSwxOC44NSwwLDAsMSwxMy40My01LjU1di0xOWgwYTM3Ljg1LDM3Ljg1LDAsMCwwLTI2Ljg1LDExLjExYy05LjgyLDkuODItNDkuMTYsNjcuMTktMzEuMzMsODUsMy4yMywzLjIyLDcuNzQsNC41OCwxMyw0LjU4LDI0LDAsNjQtMjcuODYsNzItMzUuOTFhMzgsMzgsMCwwLDAsLjA0LTUzLjY3WiIgc3R5bGU9ImZpbGw6IzA5MzA0MiIvPjxwYXRoIGQ9Ik0zNTEuMjk2OTMsMTM0LjU2MmE4LjE1LDguMTUsMCwxLDEsMTEuNTMsMCw4LjE1LDguMTUsMCwwLDEtMTEuNTMsMG0tNjMuNzUtNjMuNzRhOC4xNiw4LjE2LDAsMSwxLDExLjU0LDAsOC4xNiw4LjE2LDAsMCwxLTExLjU0LDBsMCwwbS0yNCwyMjYuMjcsMTA1LjM2LTEwNS40M2E5Ni4yMiw5Ni4yMiwwLDAsMCwxOS4xNi04OS43N2wzMS40OS04LjQzYTMuMzkxMTcsMy4zOTExNywwLDAsMC0xLjc2LTYuNTVsLTMxLjg5LDguNTRhMTAyLjQ3LDEwMi40NywwLDAsMC01OS4yNC01OS4zbDguNTQtMzEuODhhMy4zOTExNiwzLjM5MTE2LDAsMSwwLTYuNTUtMS43NmwtOC40NCwzMS40OWE5Ni4yNCw5Ni4yNCwwLDAsMC04OS43OCwxOS4xNWwtMTA1LjQyLDEwNS40NVoiIHN0eWxlPSJmaWxsOiMzZGRjODQiLz48cGF0aCBkPSJNMTA2LjE3NjkyLDEzOS43NzJsNTguMzktNTguNCwyMS4xMS0yMS4xYTM3LjI4LDM3LjI4LDAsMCwxLDUyLjcyLDUyLjcxbC03OS40OSw3OS41aDBabTE3NS4xNCwxNzUuMTJoMGw3OS41LTc5LjQ5YTM3LjI4LDM3LjI4LDAsMCwwLTUyLjcyLTUyLjcybC0yMS4xLDIxLjExLTU4LjQsNTguMzZaIiBzdHlsZT0iZmlsbDojMzdiZjZlIi8+PHBhdGggZD0iTTIzMC42NzY5LDEwNS4yNjJhMzcuMjgsMzcuMjgsMCwwLDAtNTIuNzItNTIuNzJsLTIxLjExLDIxLjExLTYwLjcyLDYwLjcxLTExLDExYTYuNyw2LjcsMCwwLDAsMCw5LjQ1bDQzLjI1LDQzLjM0YTYuNyw2LjcsMCwwLDAsOS40NSwwbDExLTExaDBabTEzOC4yMywxMzguMjNhMzcuMjgsMzcuMjgsMCwwLDAtNTIuNzItNTIuNzJsLTIxLjExLDIxLjExLTYwLjcyLDYwLjcxLTExLDExYTYuNyw2LjcsMCwwLDAsMCw5LjQ1bDQzLjI3LDQzLjI3YTYuNzIsNi43MiwwLDAsMCw5LjQ1LDBsMTEtMTFoMFoiIHN0eWxlPSJmaWxsOiM0Mjg1ZjQiLz48L3N2Zz4="><img src="https://img.shields.io/badge/Room-F6F6F7?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MjIuMDY4OTEgNDIxLjMyMiI+PHBhdGggZD0iTTYyLjc3NjkyLDE4Mi4zNDJ2MTlhMTksMTksMCwwLDEsMTMuNDQsMzIuNDNjLTIuNDIsMi40My0xMi44NiwxMC40Mi0yNiwxNy45LTE3LjU5LDEwLTI3LjI5LDEyLTMxLjIsMTIuMzguNC00LjM0LDIuNy0xMy4zLDEwLjQ4LTI3LjY5LDguMS0xNSwxNy4zNC0yNywxOS44My0yOS40N2ExOC44OSwxOC44OSwwLDAsMSwxMy40NC01LjU1di0xOWgwYTM3Ljg2MDE0LDM3Ljg2MDE0LDAsMCwwLTI2Ljg2LDExLjFjLTkuODIsOS44My00OS4xNiw2Ny4yLTMxLjMzLDg1LDMuMjMsMy4yMiw3Ljc0LDQuNTcsMTMsNC41NywyNCwwLDY0LTI3Ljg1LDcyLTM1LjlhMzgsMzgsMCwwLDAtMjYuODYtNjQuODFabTE2NS4xMywxNDkuNGEzNy44NDk5LDM3Ljg0OTksMCwwLDAtMjYuODUtMTEuMTF2MTlhMTksMTksMCwwLDEsMTMuNDQsMzIuNDNjLTIuNDMsMi40My0xMi44NywxMC40Mi0yNiwxNy45LTE3LjU5LDEwLTI3LjI5LDEyLTMxLjIsMTIuMzguNC00LjM0LDIuNy0xMy4zLDEwLjQ4LTI3LjY5LDguMS0xNSwxNy4zNC0yNywxOS44NC0yOS40N2ExOC44NSwxOC44NSwwLDAsMSwxMy40My01LjU1di0xOWgwYTM3Ljg1LDM3Ljg1LDAsMCwwLTI2Ljg1LDExLjExYy05LjgyLDkuODItNDkuMTYsNjcuMTktMzEuMzMsODUsMy4yMywzLjIyLDcuNzQsNC41OCwxMyw0LjU4LDI0LDAsNjQtMjcuODYsNzItMzUuOTFhMzgsMzgsMCwwLDAsLjA0LTUzLjY3WiIgc3R5bGU9ImZpbGw6IzA5MzA0MiIvPjxwYXRoIGQ9Ik0zNTEuMjk2OTMsMTM0LjU2MmE4LjE1LDguMTUsMCwxLDEsMTEuNTMsMCw4LjE1LDguMTUsMCwwLDEtMTEuNTMsMG0tNjMuNzUtNjMuNzRhOC4xNiw4LjE2LDAsMSwxLDExLjU0LDAsOC4xNiw4LjE2LDAsMCwxLTExLjU0LDBsMCwwbS0yNCwyMjYuMjcsMTA1LjM2LTEwNS40M2E5Ni4yMiw5Ni4yMiwwLDAsMCwxOS4xNi04OS43N2wzMS40OS04LjQzYTMuMzkxMTcsMy4zOTExNywwLDAsMC0xLjc2LTYuNTVsLTMxLjg5LDguNTRhMTAyLjQ3LDEwMi40NywwLDAsMC01OS4yNC01OS4zbDguNTQtMzEuODhhMy4zOTExNiwzLjM5MTE2LDAsMSwwLTYuNTUtMS43NmwtOC40NCwzMS40OWE5Ni4yNCw5Ni4yNCwwLDAsMC04OS43OCwxOS4xNWwtMTA1LjQyLDEwNS40NVoiIHN0eWxlPSJmaWxsOiMzZGRjODQiLz48cGF0aCBkPSJNMTA2LjE3NjkyLDEzOS43NzJsNTguMzktNTguNCwyMS4xMS0yMS4xYTM3LjI4LDM3LjI4LDAsMCwxLDUyLjcyLDUyLjcxbC03OS40OSw3OS41aDBabTE3NS4xNCwxNzUuMTJoMGw3OS41LTc5LjQ5YTM3LjI4LDM3LjI4LDAsMCwwLTUyLjcyLTUyLjcybC0yMS4xLDIxLjExLTU4LjQsNTguMzZaIiBzdHlsZT0iZmlsbDojMzdiZjZlIi8+PHBhdGggZD0iTTIzMC42NzY5LDEwNS4yNjJhMzcuMjgsMzcuMjgsMCwwLDAtNTIuNzItNTIuNzJsLTIxLjExLDIxLjExLTYwLjcyLDYwLjcxLTExLDExYTYuNyw2LjcsMCwwLDAsMCw5LjQ1bDQzLjI1LDQzLjM0YTYuNyw2LjcsMCwwLDAsOS40NSwwbDExLTExaDBabTEzOC4yMywxMzguMjNhMzcuMjgsMzcuMjgsMCwwLDAtNTIuNzItNTIuNzJsLTIxLjExLDIxLjExLTYwLjcyLDYwLjcxLTExLDExYTYuNyw2LjcsMCwwLDAsMCw5LjQ1bDQzLjI3LDQzLjI3YTYuNzIsNi43MiwwLDAsMCw5LjQ1LDBsMTEtMTFoMFoiIHN0eWxlPSJmaWxsOiM0Mjg1ZjQiLz48L3N2Zz4=">
+
+<img src="https://img.shields.io/badge/asynchronous-555555?style=for-the-badge">![Coroutines](https://img.shields.io/badge/Coroutines-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)
+
+<img src="https://img.shields.io/badge/networking-555555?style=for-the-badge"><img src="https://img.shields.io/badge/Retrofit-3E4348?style=for-the-badge&logo=square&logoColor=FFFFFF"><img src="https://img.shields.io/badge/OkHttp-3E4348?style=for-the-badge">
+
+<img src="https://img.shields.io/badge/image-555555?style=for-the-badge">![Glide](https://img.shields.io/badge/glide-%2318BED4.svg?style=for-the-badge&logo=glide&logoColor=white)
+
+
+
+## 🔎 나모 안드로이드의 아키텍처
+![image](https://github.com/namo-log/Android/assets/99808693/0b03f7f0-6a0d-49f2-aecc-da708422a7c5)
+[나모의 클린하고 싶은 아키텍처](https://namo-log.vercel.app/android-clean-architecture)
+
+[ 나모는 안드로이드 권장 아키텍처를 구현하고자 노력합니다 ]
+- 패키지 단위로 크게 presentation, domain, data 레이어로 분리
+- Repository 패턴을 사용하여 데이터 관리
+- LiveData와 ViewModel을 사용한 UI 상태 관리
+- Room 데이터베이스를 통한 로컬 데이터 저장
+
+
+
+## ✍🏻 나모 안드로이드 팀원들은 이렇게 작업해요
+
+### 짱구/신동원
+- [나모의 코루틴 사용기](https://namo-log.vercel.app/android-coroutine)
+
+### 코코아/김나현
+- [나모에서 카테고리 색상을 저장하는 방법](https://namo-log.vercel.app/android-category-color)
+- [나모 안드로이드 팀의 리팩토링 도전기](https://namo-log.vercel.app/android-refactoring-1)
+
+
