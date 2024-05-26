@@ -4,7 +4,7 @@
   
 </div>
 
-![image](https://github.com/Namo-Mongmong/Server/assets/98688494/b0da1285-87f2-40ad-8c7d-9016132235d0)
+![image_basic](https://github.com/Namo-log/Android/assets/101113025/c31d1390-e95e-4662-a916-cd106dad96d2)
 
 ### 목차
 - [🛠️ 나모는 이런 기술을 사용했어요](#-나모는-이런-기술을-사용했어요)
