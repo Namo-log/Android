@@ -1,12 +1,11 @@
 package com.mongmong.namo.data.remote
 
-import com.mongmong.namo.domain.model.AccessTokenBody
+import com.mongmong.namo.domain.model.LoginBody
 import com.mongmong.namo.domain.model.AuthResponse
 import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.LogoutBody
 import com.mongmong.namo.domain.model.RefreshResponse
 import com.mongmong.namo.domain.model.TokenBody
-import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 
@@ -15,13 +14,13 @@ interface AuthApiService {
     // SDK 카카오 로그인
     @POST("auths/kakao/signup")
     suspend fun postKakaoSDK(
-        @Body body: AccessTokenBody
+        @Body body: LoginBody
     ): LoginResponse
 
     // SDK 네이버 로그인
     @POST("auths/naver/signup")
     suspend fun postNaverSDK(
-        @Body body: AccessTokenBody
+        @Body body: LoginBody
     ): LoginResponse
 
     // 토큰 재발급
@@ -39,13 +38,9 @@ interface AuthApiService {
     /** 회원탈퇴 */
     // 카카오 회원탈퇴
     @POST("auths/kakao/delete")
-    suspend fun postKakaoQuit(
-        @Body body: AccessTokenBody
-    ): AuthResponse
+    suspend fun postKakaoQuit(): AuthResponse
 
     // 네이버 회원탈퇴
     @POST("auths/naver/delete")
-    suspend fun postNaverQuit(
-        @Body body: AccessTokenBody
-    ): AuthResponse
+    suspend fun postNaverQuit(): AuthResponse
 }

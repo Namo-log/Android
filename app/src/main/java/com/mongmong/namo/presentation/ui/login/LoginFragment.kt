@@ -79,8 +79,8 @@ class LoginFragment: Fragment() {
         }
     }
 
-    private fun tryLogin(platform: LoginPlatform, accessToken: String) {
-        viewModel.tryLogin(platform, accessToken)
+    private fun tryLogin(platform: LoginPlatform, accessToken: String, refreshToken: String) {
+        viewModel.tryLogin(platform, accessToken, refreshToken)
     }
 
     private fun startKakaoLogin() {
@@ -95,7 +95,7 @@ class LoginFragment: Fragment() {
             } else if (token != null) {
                 Log.i(ContentValues.TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
 
-                tryLogin(LoginPlatform.KAKAO, token.accessToken)
+                tryLogin(LoginPlatform.KAKAO, token.accessToken, token.refreshToken)
             }
         }
         // 카카오톡이 설치되어 있으면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
@@ -109,7 +109,7 @@ class LoginFragment: Fragment() {
     private fun loginWithKakaoAccount() {
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (token != null) {
-                tryLogin(LoginPlatform.KAKAO, token.accessToken)
+                tryLogin(LoginPlatform.KAKAO, token.accessToken, token.refreshToken)
             }
         }
         UserApiClient.instance.loginWithKakaoAccount(requireContext(), callback = callback)
@@ -119,13 +119,13 @@ class LoginFragment: Fragment() {
         // OAuthLoginCallback을 authenticate() 메서드 호출 시 파라미터로 전달하거나 NidOAuthLoginButton 객체에 등록하면 인증이 종료됨
         val oauthLoginCallback = object : OAuthLoginCallback {
             override fun onSuccess() {
-                tryLogin(LoginPlatform.NAVER, NaverIdLoginSDK.getAccessToken().toString())
+                tryLogin(LoginPlatform.NAVER, NaverIdLoginSDK.getAccessToken().toString(), NaverIdLoginSDK.getRefreshToken().toString())
             }
 
             override fun onFailure(httpStatus: Int, message: String) {
                 val errorCode = NaverIdLoginSDK.getLastErrorCode().code
                 val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
-//                Toast.makeText(requireActivity(), "errorCode: $errorCode, errorDesc: $errorDescription", Toast.LENGTH_SHORT).show()
+                Log.d("naverLogin", "errorCode: $errorCode, errorDesc: $errorDescription")
             }
 
             override fun onError(errorCode: Int, message: String) {

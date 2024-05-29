@@ -1,18 +1,18 @@
 package com.mongmong.namo.domain.repositories
 
+import com.mongmong.namo.domain.model.LoginBody
 import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.RefreshResponse
-import com.mongmong.namo.domain.model.TokenBody
 
 interface AuthRepository {
     /** 로그인 */
     // 카카오
     suspend fun postKakaoLogin(
-        accessToken: String
+        body: LoginBody
     ): LoginResponse
     // 네이버
     suspend fun postNaverLogin(
-        accessToken: String
+        body: LoginBody
     ): LoginResponse
 
     /** 토큰 재발급 */
@@ -28,11 +28,7 @@ interface AuthRepository {
 
     /** 회원탈퇴 */
     // 카카오
-    suspend fun postKakaoQuit(
-        accessToken: String
-    ): Boolean
+    suspend fun postKakaoQuit(): Boolean
     // 네이버
-    suspend fun postNaverQuit(
-        accessToken: String
-    ): Boolean
+    suspend fun postNaverQuit(): Boolean
 }

@@ -35,8 +35,9 @@ data class TokenBody(
     val refreshToken: String
 )
 
-data class AccessTokenBody(
-    val accessToken: String
+data class LoginBody(
+    val accessToken: String,
+    val socialRefreshToken: String
 )
 
 data class LogoutBody(

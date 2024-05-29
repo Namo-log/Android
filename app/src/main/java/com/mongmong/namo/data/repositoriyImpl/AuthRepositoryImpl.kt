@@ -1,7 +1,7 @@
 package com.mongmong.namo.data.repositoriyImpl
 
 import com.mongmong.namo.data.datasource.auth.RemoteAuthDataSource
-import com.mongmong.namo.domain.model.AccessTokenBody
+import com.mongmong.namo.domain.model.LoginBody
 import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.LogoutBody
 import com.mongmong.namo.domain.model.RefreshResponse
@@ -12,12 +12,12 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val remoteAuthDataSource: RemoteAuthDataSource
 ) : AuthRepository {
-    override suspend fun postKakaoLogin(accessToken: String): LoginResponse {
-        return remoteAuthDataSource.postKakaoLogin(AccessTokenBody(accessToken))
+    override suspend fun postKakaoLogin(body: LoginBody): LoginResponse {
+        return remoteAuthDataSource.postKakaoLogin(body)
     }
 
-    override suspend fun postNaverLogin(accessToken: String): LoginResponse {
-        return remoteAuthDataSource.postNaverLogin(AccessTokenBody(accessToken))
+    override suspend fun postNaverLogin(body: LoginBody): LoginResponse {
+        return remoteAuthDataSource.postNaverLogin(body)
     }
 
     override suspend fun postTokenRefresh(
@@ -31,11 +31,11 @@ class AuthRepositoryImpl @Inject constructor(
         return remoteAuthDataSource.postLogout(LogoutBody(accessToken))
     }
 
-    override suspend fun postKakaoQuit(accessToken: String): Boolean {
-        return remoteAuthDataSource.postKakaoQuit(AccessTokenBody(accessToken))
+    override suspend fun postKakaoQuit(): Boolean {
+        return remoteAuthDataSource.postKakaoQuit()
     }
 
-    override suspend fun postNaverQuit(accessToken: String): Boolean {
-        return remoteAuthDataSource.postNaverQuit(AccessTokenBody(accessToken))
+    override suspend fun postNaverQuit(): Boolean {
+        return remoteAuthDataSource.postNaverQuit()
     }
 }

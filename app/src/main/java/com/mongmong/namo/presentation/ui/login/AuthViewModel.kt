@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mongmong.namo.domain.model.LoginBody
 import com.mongmong.namo.domain.model.LoginResult
 import com.mongmong.namo.domain.model.RefreshResponse
 import com.mongmong.namo.domain.model.SdkInfo
@@ -33,13 +34,13 @@ class AuthViewModel @Inject constructor(
     val refreshResponse: LiveData<RefreshResponse> = _refreshResponse
 
     /** 로그인 */
-    fun tryLogin(platform: LoginPlatform, accessToken: String) {
-        Log.d("${platform.platformName}Token", accessToken)
+    fun tryLogin(platform: LoginPlatform, accessToken: String, refreshToken: String) {
+        Log.d("${platform.platformName}Token", "accessToken: $accessToken, refreshToken: $refreshToken")
         viewModelScope.launch {
             if (platform == LoginPlatform.KAKAO) {
-                _loginResult.value = repository.postKakaoLogin(accessToken).result
+                _loginResult.value = repository.postKakaoLogin(LoginBody(accessToken, refreshToken)).result
             } else {
-                _loginResult.value = repository.postNaverLogin(accessToken).result
+                _loginResult.value = repository.postNaverLogin(LoginBody(accessToken, refreshToken)).result
             }
             _loginResult.value?.let {
                 saveLoginSdkInfo(SdkInfo(platform.platformName, accessToken))
@@ -74,9 +75,9 @@ class AuthViewModel @Inject constructor(
         Log.d("SdkInfo", "quit sdk: $sdkInfo")
         viewModelScope.launch {
             val isSuccess = if (sdkInfo.platform == LoginPlatform.KAKAO.platformName) { // 카카오
-                repository.postKakaoQuit(sdkInfo.accessToken)
+                repository.postKakaoQuit()
             } else { // 네이버
-                repository.postNaverQuit(sdkInfo.accessToken)
+                repository.postNaverQuit()
             }
             if (isSuccess) {
                 _isQuitComplete.postValue(true)
