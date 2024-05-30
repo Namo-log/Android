@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.domain.model.LoginBody
 import com.mongmong.namo.domain.model.LoginResult
 import com.mongmong.namo.domain.model.RefreshResponse
-import com.mongmong.namo.domain.model.SdkInfo
 import com.mongmong.namo.domain.model.TokenBody
 import com.mongmong.namo.domain.repositories.AuthRepository
 import com.mongmong.namo.presentation.config.ApplicationClass
@@ -43,7 +42,7 @@ class AuthViewModel @Inject constructor(
                 _loginResult.value = repository.postNaverLogin(LoginBody(accessToken, refreshToken)).result
             }
             _loginResult.value?.let {
-                saveLoginSdkInfo(SdkInfo(platform.platformName, accessToken))
+                saveLoginPlatform(platform)
                 // 토큰 저장
                 saveToken(it)
             }
@@ -71,13 +70,13 @@ class AuthViewModel @Inject constructor(
 
     /** 회원탈퇴 */
     fun tryQuit() {
-        val sdkInfo = getLoginSdkInfo()
-        Log.d("SdkInfo", "quit sdk: $sdkInfo")
+        val platform = getLoginPlatform()
+        Log.d("SdkInfo", "quit sdk: $platform")
         viewModelScope.launch {
-            val isSuccess = if (sdkInfo.platform == LoginPlatform.KAKAO.platformName) { // 카카오
-                repository.postKakaoQuit()
+            val isSuccess = if (platform == LoginPlatform.KAKAO.platformName) { // 카카오
+                repository.postKakaoQuit(getBearerToken())
             } else { // 네이버
-                repository.postNaverQuit()
+                repository.postNaverQuit(getBearerToken())
             }
             if (isSuccess) {
                 _isQuitComplete.postValue(true)
@@ -88,6 +87,10 @@ class AuthViewModel @Inject constructor(
     }
 
     /** 토큰 */
+    private fun getBearerToken(): String {
+        return "Bearer ${getAccessToken()}"
+    }
+
     private fun getAccessToken(): String? {
         return ApplicationClass.sSharedPreferences.getString(ApplicationClass.X_ACCESS_TOKEN, null)
     }
@@ -99,16 +102,15 @@ class AuthViewModel @Inject constructor(
     }
 
     // 로그인 한 sdk 정보 가져오기
-    private fun getLoginSdkInfo(): SdkInfo {
+    private fun getLoginPlatform(): String {
         val spf = ApplicationClass.sSharedPreferences
-        return SdkInfo(spf.getString(ApplicationClass.SDK_PLATFORM, LoginPlatform.KAKAO.platformName)!!, spf.getString(ApplicationClass.SDK_ACCESS_TOKEN, "")!!)
+        return spf.getString(ApplicationClass.SDK_PLATFORM, LoginPlatform.KAKAO.platformName)!!
     }
 
     // 로그인 플랫폼 정보 앱 내에 저장
-    private fun saveLoginSdkInfo(sdkInfo: SdkInfo) {
+    private fun saveLoginPlatform(platform: LoginPlatform) {
         ApplicationClass.sSharedPreferences.edit()
-            .putString(ApplicationClass.SDK_PLATFORM, sdkInfo.platform)
-            .putString(ApplicationClass.SDK_ACCESS_TOKEN, sdkInfo.accessToken)
+            .putString(ApplicationClass.SDK_PLATFORM, platform.platformName)
             .apply()
     }
 

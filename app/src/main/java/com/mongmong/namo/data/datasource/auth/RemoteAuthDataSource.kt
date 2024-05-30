@@ -102,11 +102,12 @@ class RemoteAuthDataSource @Inject constructor(
     }
 
     suspend fun postKakaoQuit(
+        bearerToken: String
     ): Boolean {
         var isSuccess = false
         withContext(Dispatchers.IO) {
             runCatching {
-                authApiService.postKakaoQuit()
+                authApiService.postKakaoQuit(bearerToken)
             }.onSuccess {
                 Log.d("RemoteAuthDataSource", "postKakaoQuit Success $it")
                 isSuccess = true
@@ -118,11 +119,12 @@ class RemoteAuthDataSource @Inject constructor(
     }
 
     suspend fun postNaverQuit(
+        bearerToken: String
     ): Boolean {
         var isSuccess = false
         withContext(Dispatchers.IO) {
             runCatching {
-                authApiService.postNaverQuit()
+                authApiService.postNaverQuit(bearerToken)
             }.onSuccess {
                 Log.d("RemoteAuthDataSource", "postNaverQuit Success $it")
                 isSuccess = true

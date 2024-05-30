@@ -53,7 +53,6 @@ class ApplicationClass: Application() {
         const val X_REFRESH_TOKEN = "X_REFRESH_TOKEN"
 
         const val SDK_PLATFORM = "SDK_PLATFORM"
-        const val SDK_ACCESS_TOKEN = "SDK_ACCESS_TOKEN"
 
         // Retrofit 인스턴스, 앱 실행시 한번만 생성하여 사용합니다.
         val sRetrofit: Retrofit

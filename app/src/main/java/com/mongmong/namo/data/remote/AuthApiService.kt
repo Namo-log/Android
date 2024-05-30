@@ -6,7 +6,9 @@ import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.LogoutBody
 import com.mongmong.namo.domain.model.RefreshResponse
 import com.mongmong.namo.domain.model.TokenBody
+import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.http.Body
+import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface AuthApiService {
@@ -38,9 +40,13 @@ interface AuthApiService {
     /** 회원탈퇴 */
     // 카카오 회원탈퇴
     @POST("auths/kakao/delete")
-    suspend fun postKakaoQuit(): AuthResponse
+    suspend fun postKakaoQuit(
+        @Header("authorization") accessToken: String
+    ): AuthResponse
 
     // 네이버 회원탈퇴
     @POST("auths/naver/delete")
-    suspend fun postNaverQuit(): AuthResponse
+    suspend fun postNaverQuit(
+        @Header("authorization") accessToken: String
+    ): BaseResponse
 }

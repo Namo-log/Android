@@ -43,9 +43,3 @@ data class LoginBody(
 data class LogoutBody(
     val accessToken: String
 )
-
-// 로그인 한 SDK 정보
-data class SdkInfo(
-    val platform: String,
-    val accessToken: String
-)
