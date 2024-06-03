@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1015333471032",
+    "project_id": "namo-6f75c",
+    "storage_bucket": "namo-6f75c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1015333471032:android:57b5afa524b84f8f10f7cd",
+        "android_client_info": {
+          "package_name": "com.mongmong.namo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClhRJn9Q5jWnmNUkAPPKAVURIkVuIB0FA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
