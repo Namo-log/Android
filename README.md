@@ -6,6 +6,8 @@
 
 ![image_basic](https://github.com/Namo-log/Android/assets/101113025/c31d1390-e95e-4662-a916-cd106dad96d2)
 
+> 나의 모임기록 어플 [나모 (Google Play)](https://play.google.com/store/apps/details?id=com.mongmong.namo)
+
 ### 목차
 - [🛠️ 나모는 이런 기술을 사용했어요](#-나모는-이런-기술을-사용했어요)
 - [🔎 나모의 안드로이드 프로젝트 구조](#-나모의-안드로이드-프로젝트-구조)
