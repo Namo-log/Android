@@ -395,7 +395,7 @@ class ScheduleDialogBasicFragment : Fragment() {
                 schedule.scheduleId.toInt() + DateTime(schedule.startLong).minusMinutes(i).millis.toInt()
             )
         }
-        setAlarm(schedule.startLong)
+//        setAlarm(schedule.startLong)
 
         // 일정 편집
         viewModel.editSchedule(schedule)

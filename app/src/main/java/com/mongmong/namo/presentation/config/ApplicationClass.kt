@@ -47,7 +47,7 @@ class ApplicationClass: Application() {
             get() = instance.getSharedPreferences("NAMO", MODE_PRIVATE)
 
         // 버전
-        const val VERSION = "1.0.1"
+        const val VERSION = "1.0.2"
 
         // JWT Token Header 키 값
         const val X_ACCESS_TOKEN = "X_ACCESS_TOKEN"
