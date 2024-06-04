@@ -2,36 +2,29 @@ package com.mongmong.namo.presentation.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.google.android.play.core.appupdate.AppUpdateManager
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.appupdate.AppUpdateOptions
-import com.google.android.play.core.install.InstallStateUpdatedListener
-import com.google.android.play.core.install.model.AppUpdateType
-import com.google.android.play.core.install.model.InstallStatus
-import com.google.android.play.core.install.model.UpdateAvailability
 import com.mongmong.namo.databinding.ActivitySplashBinding
 import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.ui.login.AuthViewModel
 import com.mongmong.namo.presentation.ui.onBoarding.OnBoardingActivity
+import com.mongmong.namo.presentation.utils.AppUpdateHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
 
-    private lateinit var binding : ActivitySplashBinding
+    private lateinit var binding: ActivitySplashBinding
     private lateinit var splashScreen: SplashScreen
     private val isDataLoaded = MutableStateFlow(false)
-    private val viewModel : AuthViewModel by viewModels()
+    private val viewModel: AuthViewModel by viewModels()
 
-    private lateinit var appUpdateManager: AppUpdateManager
+    private lateinit var appUpdateHelper: AppUpdateHelper
 
     private val updateActivityResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
@@ -45,12 +38,6 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-    private val installStateUpdatedListener = InstallStateUpdatedListener { state ->
-        if (state.installStatus() == InstallStatus.DOWNLOADED) {
-            popupCompleteUpdate()
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         splashScreen = installSplashScreen()
@@ -60,77 +47,30 @@ class SplashActivity : AppCompatActivity() {
 
         initObserve()
 
-        appUpdateManager = AppUpdateManagerFactory.create(this)
-        checkForUpdate()
+        appUpdateHelper = AppUpdateHelper(this)
+        appUpdateHelper.registerListener() // 리스너 등록
+        appUpdateHelper.checkForUpdate(updateActivityResultLauncher) {
+            autoLogin()
+        }
 
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
 
-    private fun checkForUpdate() {
-        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
-        Log.d("checkForUpdate", "checkForUpdate")
-
-        appUpdateInfoTask.addOnSuccessListener { info ->
-            if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
-                when (info.updatePriority()) {
-                    HIGH -> {
-                        if (info.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
-                            appUpdateManager.startUpdateFlowForResult(
-                                info,
-                                updateActivityResultLauncher,
-                                AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build())
-                        }
-                    }
-                    MEDIUM -> {
-                        autoLogin()
-                        if (info.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
-                            appUpdateManager.startUpdateFlowForResult(
-                                info,
-                                updateActivityResultLauncher,
-                                AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build())
-                        }
-                        appUpdateManager.registerListener(installStateUpdatedListener)
-                    }
-                    LOW -> {
-                        autoLogin()
-                    }
-                }
-            } else {
-                Log.d("checkForUpdate", "No updateAvailability")
-                autoLogin()
-            }
-        }.addOnFailureListener { exception ->
-            Log.e("checkForUpdate", "Update check failed", exception)
-        }
-    }
-
-    private fun popupCompleteUpdate() {
-        Toast.makeText(
-            this,
-            "다운로드 완료. 앱을 재시작 해주세요.",
-            Toast.LENGTH_LONG
-        ).show()
-
-        appUpdateManager.completeUpdate()
-    }
     override fun onResume() {
         super.onResume()
-        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
-            if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
-                popupCompleteUpdate()
-            }
-        }
+        appUpdateHelper.onResumeCheck()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        appUpdateManager.unregisterListener(installStateUpdatedListener)
+        appUpdateHelper.unregisterListener() // 리스너 해제
     }
 
     private fun autoLogin() {
         viewModel.tryRefreshToken()
     }
+
     private fun initObserve() {
         viewModel.refreshResponse.observe(this) { response ->
             if (response.code == OK_CODE) {
@@ -153,8 +93,5 @@ class SplashActivity : AppCompatActivity() {
 
     companion object {
         const val OK_CODE = 200
-        const val HIGH = 3
-        const val MEDIUM = 2
-        const val LOW = 1
     }
 }
