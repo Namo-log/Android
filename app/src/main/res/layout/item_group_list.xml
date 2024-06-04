@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginBottom="20dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -15,10 +16,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/item_group_cover_img_iv"
             android:layout_width="45dp"
-            android:layout_height="45dp"/>
+            android:layout_height="45dp"
+            tools:src="@drawable/ic_mongi_default"/>
 
         <LinearLayout
             android:id="@+id/item_group_content_layout"
@@ -35,7 +37,7 @@
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:textColor="@color/textGray"
-                android:hint="나모 앱 런칭 캘린더"/>
+                tools:hint="나모 앱 런칭 캘린더"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -50,7 +52,7 @@
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="@color/textGray"
-                    android:hint="7"/>
+                    tools:hint="7"/>
 
                 <TextView
                     android:id="@+id/item_group_total_people_name_tv"
@@ -59,7 +61,7 @@
                     android:layout_marginStart="10dp"
                     android:textSize="12sp"
                     android:textColor="@color/textGray"
-                    android:hint="코코아, 유즈, 지니, 앨리, 라나, 얼리시"/>
+                    tools:hint="코코아, 유즈, 지니, 앨리, 라나, 얼리시"/>
 
             </LinearLayout>
 

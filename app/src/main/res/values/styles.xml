@@ -33,6 +33,11 @@
         <item name="cornerSize">4dp</item>
     </style>
 
+    <!-- Number Picker 텍스트 색상 -->
+    <style name="AppTheme.Picker" parent="Theme.AppCompat.Light.NoActionBar" >
+        <item name="android:textColorPrimary">@color/textGray</item>
+    </style>
+
     <style name="title_text">
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">@color/black</item>
@@ -50,6 +55,11 @@
     <style name="dialog_underline">
         <item name="android:layout_height">1dp</item>
         <item name="android:background">@color/notyetGray</item>
+    </style>
+
+    <style name="TabTextStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">15sp</item>
     </style>
 
     <style name="img_category_check">
@@ -98,8 +108,9 @@
     <style name="tabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/textGray</item>
     </style>
-    <!-- 다이얼로그 버틎 -->
+    <!-- 다이얼로그 버튼 -->
     <style name="dialog_cancel_button">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -138,5 +149,26 @@
         <item name="chipStartPadding">30dp</item>
         <item name="chipEndPadding">30dp</item>
         <item name="chipMinHeight">35dp</item>
+    </style>
+
+    <style name="empty_text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">45dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/textGray</item>
+    </style>
+
+    <style name="schedule_empty_text">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:drawableStart">@drawable/ic_schedule_empty</item>
+        <item name="android:drawablePadding">15dp</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:textColor">@color/disableTextGray</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:visibility">gone</item>
     </style>
 </resources>

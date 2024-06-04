@@ -85,7 +85,7 @@
                 <TextView
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
-                    android:text="총금액"
+                    android:text="총 금액"
                     android:textColor="@color/textGray"
                     android:textStyle="bold" />
 
@@ -97,8 +97,12 @@
                     android:gravity="center_vertical|end"
                     android:hint="금액 입력"
                     android:maxLines="1"
+                    android:inputType="number"
                     android:paddingEnd="10dp"
+                    android:textAlignment="textEnd"
                     android:textSize="15sp"
+                    android:textColor="@color/textGray"
+                    android:textColorHint="@color/editTextGray"
                     tools:ignore="TouchTargetSizeCheck" />
 
             </LinearLayout>

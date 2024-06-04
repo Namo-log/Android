@@ -59,111 +59,121 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
-            <LinearLayout
-                android:id="@+id/category_detail_calender_ll"
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="25dp"
-                android:paddingHorizontal="20dp"
+                android:layout_height="0dp"
+                android:overScrollMode="never"
+                android:fillViewport="true"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/category_close_tv">
-
-                <TextView
-                    android:id="@+id/category_calendar_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="@string/category_calendar"
-                    android:textColor="@color/textGray"
-                    android:textSize="25sp"
-                    android:textStyle="bold"/>
+                app:layout_constraintTop_toBottomOf="@id/category_close_tv"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0">
 
                 <LinearLayout
-                    android:id="@+id/category_palette_ll"
+                    android:id="@+id/category_detail_calender_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginHorizontal="12dp"
-                    android:padding="10dp"
-                    android:background="@drawable/category_box">
+                    android:orientation="vertical"
+                    android:layout_marginTop="25dp"
+                    android:paddingHorizontal="20dp"
+                    android:layout_marginBottom="30dp">
 
                     <TextView
+                        android:id="@+id/category_calendar_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="15sp"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/category_calendar"
                         android:textColor="@color/textGray"
-                        android:textStyle="bold"
-                        android:text="@string/category_palette"/>
+                        android:textSize="25sp"
+                        android:textStyle="bold"/>
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <LinearLayout
+                        android:id="@+id/category_palette_ll"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginHorizontal="12dp"
+                        android:padding="10dp"
+                        android:background="@drawable/category_box">
 
-                        <LinearLayout
-                            android:id="@+id/category_calendar_palette_setting"
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent">
+                            android:textSize="15sp"
+                            android:textColor="@color/textGray"
+                            android:textStyle="bold"
+                            android:text="@string/category_palette"/>
 
-                            <TextView
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <LinearLayout
+                                android:id="@+id/category_calendar_palette_setting"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="15sp"
-                                android:layout_marginEnd="5dp"
-                                android:textColor="@color/textGray"
-                                android:text="@string/palette_normal"/>
+                                android:orientation="horizontal"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent">
 
-                            <ImageView
-                                android:layout_width="10dp"
-                                android:layout_height="20dp"
-                                android:padding="1dp"
-                                android:layout_marginEnd="10dp"
-                                android:src="@drawable/ic_arrow_right_gray"/>
-                        </LinearLayout>
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="15sp"
+                                    android:layout_marginEnd="5dp"
+                                    android:textColor="@color/textGray"
+                                    android:text="@string/palette_normal"/>
+
+                                <ImageView
+                                    android:layout_width="10dp"
+                                    android:layout_height="20dp"
+                                    android:padding="1dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:src="@drawable/ic_arrow_right_gray"/>
+                            </LinearLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/category_calendar_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:overScrollMode="never"
+                        app:spanCount="2"
+                        tools:itemCount="4"
+                        tools:listitem="@layout/item_category"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        tools:layout_editor_absoluteX="0dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/category_add_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="15dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginHorizontal="12dp"
+                        android:background="@drawable/category_box_dotted">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_category_add"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="20dp"
+                            android:text="@string/category_new"
+                            android:textColor="@color/textGray"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
                 </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/category_calendar_rv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:overScrollMode="never"
-                    app:spanCount="2"
-                    tools:itemCount="4"
-                    tools:listitem="@layout/item_category"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                    tools:layout_editor_absoluteX="0dp"/>
-
-                <LinearLayout
-                    android:id="@+id/category_add_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="15dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginHorizontal="12dp"
-                    android:background="@drawable/category_box_dotted">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_category_add"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="20dp"
-                        android:text="@string/category_new"
-                        android:textColor="@color/textGray"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-            </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
 
             <ProgressBar
                 android:id="@+id/category_loading_pb"

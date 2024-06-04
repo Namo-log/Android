@@ -32,25 +32,37 @@
 
     <!-- Group 화면 관련 String -->
     <string name="group_calendar">Group Calendar</string>
-    <string name="add_group_msg">그룹 리스트가 없습니다. 리스트를 추가해 보세요</string>
+    <string name="add_group_msg">그룹 리스트가 없습니다.\n그룹을 추가해 보세요!</string>
     <string name="network_group_msg">그룹 캘린더는 네트워크 연결 시 확인 가능합니다.\n네트워크 연결 후 다시 시도해주세요.</string>
     <string name="create_group">그룹 생성</string>
     <string name="input_group_code">그룹 코드 입력</string>
     <string name="dialog_close">닫기</string>
-    <string name="dialog_done">완료</string>
+    <string name="dialog_done">저장</string>
     <string name="group_name_input">입력</string>
     <string name="new_group">새 그룹</string>
     <string name="group_name">그룹명</string>
     <string name="group_cover_image">커버 이미지</string>
     <string name="group_name_uneditable">추후 변경 불가</string>
+    <string name="group_member">그룹원</string>
     <string name="group_code">그룹 코드</string>
+    <string name="group_withdrawal">탈퇴하기</string>
+    <string name="input_group_name">그룹명 입력</string>
 
     <!-- Custom 화면 관련 String -->
     <string name="custom_palette">palette fragment</string>
     <string name="custom_font">커스텀 폰트는 열심히 준비중이몽몽~!</string>
     <string name="custom_my">my fragment</string>
 
+    <!-- schedule 관련 String -->
+    <string name="schedule_personal">개인 일정</string>
+    <string name="schedule_personal_empty">등록된 개인 일정이 없습니다.</string>
+    <string name="schedule_moim">모임 일정</string>
+    <string name="schedule_moim_empty">등록된 모임 일정이 없습니다.</string>
+    <string name="schedule_time">%s - %s</string>
+
     <!--diary 관련 String-->
+    <string name="diary_network_failure">모임 기록은 네트워크 연결 시 확인할 수 있습니다.\n네트워크 연결 후 다시 시도해 주세요.</string>
+    <string name="diary_empty">기록이 없습니다.\n일정에 기록을 남겨보세요!</string>
     <string name="diary_modify">수정</string>
     <string name="diary_contents">나모의 새로운 시작</string>
     <string name="diary_date">날짜</string>
@@ -63,12 +75,12 @@
     <string name="diary_personal">개인</string>
     <string name="diary_group">모임</string>
     <string name="diary_attendee">참석자</string>
-    <string name="diary_add_place">장소 추가</string>
-    <string name="diary_detail_click">그룹 기록 보러가기</string>
+    <string name="diary_add_activity">활동 추가</string>
+    <string name="diary_detail_click">모임 기록 보러가기</string>
 
 
     <!--연월 dialog 관련 String-->
-   <string name="dialog_confirm">확인</string>
+    <string name="dialog_confirm">확인</string>
     <string name="dialog_cancel">취소</string>
     <string name="dialog_save">저장</string>
 
@@ -96,6 +108,7 @@
     <string name="custom_setting_withdrawal">회원탈퇴</string>
 
     <!-- 카테고리 관련 String -->
+    <string name="category">카테고리</string>
     <string name="category_edit">카테고리 편집</string>
     <string name="category_setting">카테고리 설정</string>
     <string name="category_calendar">캘린더</string>
@@ -109,12 +122,7 @@
     <string name="group_money">금액 정산</string>
 
     <!-- event 관련 String   -->
-    <string name="event_current_default">DEFAULT</string>
-    <string name="event_current_added">ADDED</string>
-    <string name="event_current_edited">EDITED</string>
-    <string name="event_current_deleted">DELETED</string>
     <string name="more_view">더보기</string>
-
 
 
 </resources>

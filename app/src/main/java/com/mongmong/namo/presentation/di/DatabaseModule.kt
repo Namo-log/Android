@@ -1,0 +1,36 @@
+package com.mongmong.namo.presentation.di
+
+import android.content.Context
+import androidx.room.Room
+import com.mongmong.namo.data.local.NamoDatabase
+import com.mongmong.namo.data.local.dao.CategoryDao
+import com.mongmong.namo.data.local.dao.DiaryDao
+import com.mongmong.namo.data.local.dao.ScheduleDao
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+object DatabaseModule {
+
+    @Provides
+    @Singleton
+    fun provideNamoDatabase(@ApplicationContext context: Context): NamoDatabase =
+        Room.databaseBuilder(context, NamoDatabase::class.java, "namo_database").build()
+
+    /** 일정 */
+    @Provides
+    fun provideScheduleDao(database: NamoDatabase): ScheduleDao = database.scheduleDao
+
+    /** 기록 */
+    @Provides
+    fun provideDiaryDao(database: NamoDatabase): DiaryDao = database.diaryDao
+
+    /** 카테고리 */
+    @Provides
+    fun provideCategoryDao(database: NamoDatabase): CategoryDao = database.categoryDao
+}
