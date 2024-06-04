@@ -22,7 +22,8 @@
                 android:id="@+id/year_picker"
                 android:layout_width="wrap_content"
                 android:layout_height="150dp"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp"
+                android:theme="@style/AppTheme.Picker"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -36,7 +37,8 @@
                 android:id="@+id/month_picker"
                 android:layout_width="wrap_content"
                 android:layout_height="150dp"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp"
+                android:theme="@style/AppTheme.Picker"/>
 
             <TextView
                 android:layout_width="wrap_content"

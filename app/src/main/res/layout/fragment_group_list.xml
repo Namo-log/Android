@@ -40,29 +40,32 @@
                     app:layout_constraintBottom_toBottomOf="parent"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/group_list_network_tv"
+        <LinearLayout
+            android:id="@+id/group_list_empty_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:text="@string/network_group_msg"
-            android:textAlignment="center"
-            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/group_titlebar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/group_titlebar"/>
-
-        <TextView
-            android:id="@+id/group_list_empty_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:text="@string/add_group_msg"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/group_titlebar"/>
+            android:layout_marginTop="150dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <ImageView
+                android:id="@+id/group_list_empty_iv"
+                android:layout_width="263dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_group_empty"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"/>
+            <TextView
+                android:id="@+id/group_list_empty_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="45dp"
+                android:text="@string/add_group_msg"
+                android:textAlignment="center"
+                android:layout_gravity="center" />
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/group_list_rv"

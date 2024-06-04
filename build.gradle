@@ -6,6 +6,9 @@ buildscript {
         mavenCentral()
         maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/'}
     }
+    dependencies {
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.38.1'
+    }
 }
 
 plugins {
