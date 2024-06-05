@@ -59,7 +59,9 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        appUpdateHelper.onResumeCheck()
+        appUpdateHelper.onResumeCheck(updateActivityResultLauncher) {
+            autoLogin()
+        }
     }
 
     override fun onDestroy() {

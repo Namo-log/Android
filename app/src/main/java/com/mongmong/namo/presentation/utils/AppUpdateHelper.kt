@@ -50,33 +50,21 @@ class AppUpdateHelper(private val context: Context) {
                                 updateActivityResultLauncher,
                                 AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
                             )
+                            return@addOnSuccessListener
                         } else {
                             Log.d("checkForUpdate", "즉시 업데이트 불가능")
-                            autoLogin()
                         }
                     }.addOnFailureListener { exception ->
                         Log.e("checkForUpdate", "업데이트 체크 실패", exception)
-                        autoLogin()
                     }
                 } else {
                     Log.d("checkForUpdate", "업데이트 필요 없음")
-                    autoLogin()
                 }
             } else {
                 Log.e("checkForUpdate", "Failed to fetch remote config", task.exception)
-                autoLogin()
             }
+            autoLogin()
         }
-    }
-
-    private fun popupCompleteUpdate() {
-        Toast.makeText(
-            context,
-            "다운로드 완료. 앱을 재시작 해주세요.",
-            Toast.LENGTH_LONG
-        ).show()
-
-        appUpdateManager.completeUpdate()
     }
 
     fun registerListener() {
@@ -87,11 +75,27 @@ class AppUpdateHelper(private val context: Context) {
         appUpdateManager.unregisterListener(installStateUpdatedListener)
     }
 
-    fun onResumeCheck() {
-        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
-            if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+    fun onResumeCheck(updateActivityResultLauncher: ActivityResultLauncher<IntentSenderRequest>, autoLogin: () -> Unit) {
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
+            if (info.installStatus() == InstallStatus.DOWNLOADED) {
                 popupCompleteUpdate()
+            } else if (info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                // 업데이트가 진행 중인 경우 다시 업데이트를 시작
+                appUpdateManager.startUpdateFlowForResult(
+                    info,
+                    updateActivityResultLauncher,
+                    AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+                )
+            } else {
+                autoLogin()  // 업데이트가 진행 중이지 않을 때만 autoLogin 호출
             }
+        }.addOnFailureListener {
+            autoLogin()  // 실패한 경우에도 autoLogin 호출
         }
+    }
+
+    private fun popupCompleteUpdate() {
+        Toast.makeText(context, "업데이트가 다운로드되었습니다. 다시 시작하여 업데이트를 적용하세요.", Toast.LENGTH_LONG).show()
+        appUpdateManager.completeUpdate()
     }
 }
