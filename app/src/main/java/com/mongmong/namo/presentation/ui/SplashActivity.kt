@@ -2,6 +2,8 @@ package com.mongmong.namo.presentation.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen
@@ -10,16 +12,31 @@ import com.mongmong.namo.databinding.ActivitySplashBinding
 import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.ui.login.AuthViewModel
 import com.mongmong.namo.presentation.ui.onBoarding.OnBoardingActivity
+import com.mongmong.namo.presentation.utils.AppUpdateHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
 
-    private lateinit var binding : ActivitySplashBinding
+    private lateinit var binding: ActivitySplashBinding
     private lateinit var splashScreen: SplashScreen
     private val isDataLoaded = MutableStateFlow(false)
-    private val viewModel : AuthViewModel by viewModels()
+    private val viewModel: AuthViewModel by viewModels()
+
+    private lateinit var appUpdateHelper: AppUpdateHelper
+
+    private val updateActivityResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            // 업데이트 성공
+            autoLogin()
+        } else {
+            // 업데이트 실패
+            Toast.makeText(this, "업데이트 실패", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,16 +45,34 @@ class SplashActivity : AppCompatActivity() {
             !isDataLoaded.value
         }
 
-        autoLogin()
         initObserve()
+
+        appUpdateHelper = AppUpdateHelper(this)
+        appUpdateHelper.registerListener() // 리스너 등록
+        appUpdateHelper.checkForUpdate(updateActivityResultLauncher) {
+            autoLogin()
+        }
 
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
 
+    override fun onResume() {
+        super.onResume()
+        appUpdateHelper.onResumeCheck(updateActivityResultLauncher) {
+            autoLogin()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        appUpdateHelper.unregisterListener() // 리스너 해제
+    }
+
     private fun autoLogin() {
         viewModel.tryRefreshToken()
     }
+
     private fun initObserve() {
         viewModel.refreshResponse.observe(this) { response ->
             if (response.code == OK_CODE) {
