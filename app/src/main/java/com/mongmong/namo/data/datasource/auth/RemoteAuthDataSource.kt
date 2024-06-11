@@ -2,7 +2,7 @@ package com.mongmong.namo.data.datasource.auth
 
 import android.util.Log
 import com.mongmong.namo.data.remote.AuthApiService
-import com.mongmong.namo.domain.model.AccessTokenBody
+import com.mongmong.namo.domain.model.LoginBody
 import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.LoginResult
 import com.mongmong.namo.domain.model.LogoutBody
@@ -17,7 +17,7 @@ class RemoteAuthDataSource @Inject constructor(
     private val authApiService: AuthApiService
 ) {
     suspend fun postKakaoLogin(
-        tokenBody: AccessTokenBody
+        tokenBody: LoginBody
     ): LoginResponse {
         var loginResponse = LoginResponse(
             result = LoginResult(
@@ -40,7 +40,7 @@ class RemoteAuthDataSource @Inject constructor(
     }
 
     suspend fun postNaverLogin(
-        tokenBody: AccessTokenBody
+        tokenBody: LoginBody
     ): LoginResponse {
         var loginResponse = LoginResponse(
             result = LoginResult(
@@ -102,12 +102,12 @@ class RemoteAuthDataSource @Inject constructor(
     }
 
     suspend fun postKakaoQuit(
-        tokenBody: AccessTokenBody
+        bearerToken: String
     ): Boolean {
         var isSuccess = false
         withContext(Dispatchers.IO) {
             runCatching {
-                authApiService.postKakaoQuit(tokenBody)
+                authApiService.postKakaoQuit(bearerToken)
             }.onSuccess {
                 Log.d("RemoteAuthDataSource", "postKakaoQuit Success $it")
                 isSuccess = true
@@ -119,12 +119,12 @@ class RemoteAuthDataSource @Inject constructor(
     }
 
     suspend fun postNaverQuit(
-        tokenBody: AccessTokenBody
+        bearerToken: String
     ): Boolean {
         var isSuccess = false
         withContext(Dispatchers.IO) {
             runCatching {
-                authApiService.postNaverQuit(tokenBody)
+                authApiService.postNaverQuit(bearerToken)
             }.onSuccess {
                 Log.d("RemoteAuthDataSource", "postNaverQuit Success $it")
                 isSuccess = true

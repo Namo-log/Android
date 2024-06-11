@@ -2,6 +2,7 @@ package com.mongmong.namo.presentation.config
 
 import android.app.Application
 import android.content.SharedPreferences
+import com.google.firebase.FirebaseApp
 import com.mongmong.namo.BuildConfig
 import com.kakao.sdk.common.KakaoSdk
 import com.mongmong.namo.R
@@ -53,7 +54,6 @@ class ApplicationClass: Application() {
         const val X_REFRESH_TOKEN = "X_REFRESH_TOKEN"
 
         const val SDK_PLATFORM = "SDK_PLATFORM"
-        const val SDK_ACCESS_TOKEN = "SDK_ACCESS_TOKEN"
 
         // Retrofit 인스턴스, 앱 실행시 한번만 생성하여 사용합니다.
         val sRetrofit: Retrofit
@@ -67,9 +67,9 @@ class ApplicationClass: Application() {
     override fun onCreate() {
         super.onCreate()
 
+        FirebaseApp.initializeApp(this)
         // SDK 초기화
         KakaoSdk.init(this, BuildConfig.KAKAO_API_KEY)
         NaverIdLoginSDK.initialize(this, BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, getString(R.string.app_name))
-
     }
 }

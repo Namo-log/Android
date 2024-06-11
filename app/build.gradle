@@ -17,8 +17,8 @@ android {
         applicationId "com.mongmong.namo"
         minSdk 23
         targetSdk 33
-        versionCode 3
-        versionName "1.0.2"
+        versionCode 4
+        versionName "1.0.3"
 
         buildConfigField "String", "KAKAO_API_KEY", properties['kakao_api_key']
         buildConfigField "String", "KAKAO_REST_KEY", properties['kakao_rest_key']
@@ -127,5 +127,13 @@ dependencies {
     // hilt
     implementation 'com.google.dagger:hilt-android:2.38.1'
     kapt 'com.google.dagger:hilt-compiler:2.38.1'
+
+    // inApp update
+    implementation 'com.google.android.play:app-update:2.1.0'
+
+    // firebase
+    implementation platform('com.google.firebase:firebase-bom:32.1.0')
+    implementation 'com.google.firebase:firebase-config'
+    apply plugin: 'com.google.gms.google-services'
 
 }

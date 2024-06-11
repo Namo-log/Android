@@ -35,16 +35,11 @@ data class TokenBody(
     val refreshToken: String
 )
 
-data class AccessTokenBody(
-    val accessToken: String
+data class LoginBody(
+    val accessToken: String,
+    val socialRefreshToken: String
 )
 
 data class LogoutBody(
-    val accessToken: String
-)
-
-// 로그인 한 SDK 정보
-data class SdkInfo(
-    val platform: String,
     val accessToken: String
 )
