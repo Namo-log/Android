@@ -19,11 +19,8 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
     override fun drawSchedules(canvas: Canvas) {
         if (cellHeight - eventTop > _eventHeight * 3) {
             for (i in 0 until scheduleList.size) {
-//                x계산하고, y계산하기
-                val startIdx =
-                    days.indexOf(DateTime(scheduleList[i].startLong * 1000L).withTimeAtStartOfDay())
-                val endIdx =
-                    days.indexOf(DateTime(scheduleList[i].endLong * 1000L).withTimeAtStartOfDay())
+                val startIdx = days.indexOf(DateTime(scheduleList[i].startLong * 1000L).withTimeAtStartOfDay())
+                val endIdx = days.indexOf(DateTime(scheduleList[i].endLong * 1000L).withTimeAtStartOfDay())
 
                 for (splitSchedule in splitWeek(startIdx, endIdx)) {
                     val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
@@ -40,71 +37,44 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
                     val path = Path()
                     path.addRoundRect(rect, corners, Path.Direction.CW)
                     setBgPaintColor(scheduleList[i])
-                    canvas!!.drawPath(path, bgPaint)
+                    canvas.drawPath(path, bgPaint)
 
-                    val textWidth =
-                        eventPaint.measureText(scheduleList[i].title) + (2 * _eventHorizontalPadding)
+                    // 텍스트 너비 계산 및 초과 시 텍스트 잘라내기
+                    val textWidth = eventPaint.measureText(scheduleList[i].title) + (2 * _eventHorizontalPadding)
                     val pathWidth = rect.width()
-
-                    if (textWidth > pathWidth) {
-                        val ellipsizedText = TextUtils.ellipsize(
-                            scheduleList[i].title,
-                            eventPaint,
-                            pathWidth - (2 * _eventHorizontalPadding),
-                            TextUtils.TruncateAt.END
-                        )
-
-                        eventPaint.getTextBounds(
-                            ellipsizedText.toString(),
-                            0,
-                            ellipsizedText.toString().length,
-                            eventBounds
-                        )
-
-                        canvas.drawText(
-                            ellipsizedText.toString(),
-                            getScheduleTextStart(splitSchedule.startIdx),
-                            getScheduleTextBottom(
-                                ellipsizedText.toString(),
-                                splitSchedule.startIdx,
-                                splitSchedule.endIdx,
-                                order
-                            ),
-                            eventPaint
-                        )
-
+                    val textToDraw = if (textWidth > pathWidth) {
+                        val availableWidth = pathWidth - (2 * _eventHorizontalPadding)
+                        val limitLength = eventPaint.breakText(scheduleList[i].title, true, availableWidth, null)
+                        scheduleList[i].title.substring(0, limitLength)
                     } else {
-                        eventPaint.getTextBounds(
-                            scheduleList[i].title,
-                            0,
-                            scheduleList[i].title.length,
-                            eventBounds
-                        )
-
-                        canvas.drawText(
-                            scheduleList[i].title,
-                            getScheduleTextStart(splitSchedule.startIdx),
-                            getScheduleTextBottom(
-                                scheduleList[i].title,
-                                splitSchedule.startIdx,
-                                splitSchedule.endIdx,
-                                order
-                            ),
-                            eventPaint
-                        )
+                        scheduleList[i].title
                     }
+
+                    eventPaint.getTextBounds(textToDraw, 0, textToDraw.length, eventBounds)
+
+                    // 이모지와 일반 텍스트 모두에 대해 텍스트 높이를 계산하여 중앙 정렬
+                    val textHeight = eventBounds.height().toFloat()
+                    val textBottom = (rect.top + rect.bottom) / 2 + textHeight / 2 - eventBounds.bottom
+
+                    // 텍스트가 블록 중앙에 오도록 위치 조정
+                    canvas.drawText(
+                        textToDraw,
+                        getScheduleTextStart(splitSchedule.startIdx),
+                        textBottom,
+                        eventPaint
+                    )
                 }
             }
 
             for (more in 0 until 42) {
                 if (moreList[more] != 0) {
-                    var moreText = "+${moreList[more]}"
+                    val moreText = "+${moreList[more]}"
 
                     val x = (more % DAYS_PER_WEEK) * cellWidth
                     val y = (more / DAYS_PER_WEEK + 1) * cellHeight - _eventMorePadding
 
                     morePaint.getTextBounds(moreText, 0, moreText.length, moreBounds)
-                    canvas!!.drawText(
+                    canvas.drawText(
                         moreText,
                         (x + cellWidth / 2 - moreBounds.right.toFloat() / 2),
                         y,
@@ -114,11 +84,8 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
             }
         } else {
             for (i in 0 until scheduleList.size) {
-//                x계산하고, y계산하기
-                val startIdx =
-                    days.indexOf(DateTime(scheduleList[i].startLong * 1000L).withTimeAtStartOfDay())
-                val endIdx =
-                    days.indexOf(DateTime(scheduleList[i].endLong * 1000L).withTimeAtStartOfDay())
+                val startIdx = days.indexOf(DateTime(scheduleList[i].startLong * 1000L).withTimeAtStartOfDay())
+                val endIdx = days.indexOf(DateTime(scheduleList[i].endLong * 1000L).withTimeAtStartOfDay())
 
                 for (splitSchedule in splitWeek(startIdx, endIdx)) {
                     val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
@@ -132,11 +99,14 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
                     val path = Path()
                     path.addRoundRect(rect, corners, Path.Direction.CW)
                     setBgPaintColor(scheduleList[i])
-                    canvas!!.drawPath(path, bgPaint)
+                    canvas.drawPath(path, bgPaint)
                 }
             }
         }
     }
+
+
+
 
     fun setScheduleList(events: List<Schedule>) {
         val sortedEvents = events.sortedWith(compareByDescending<Schedule> {
@@ -158,9 +128,6 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
     }
 
     private fun setBgPaintColor(event: Schedule) {
-        //Log.d("BG_COLOR_CHECK", categoryList.toString())
-        //Log.d("BG_COLOR_CHECK", event.toString())
-        //Log.d("BG_COLOR_CHECK", "Category Server : " + event.categoryServerId + " | Category Idx : " + event.categoryId)
         val foundCategory = categoryList.find {
             if (it.serverId != 0L) it.serverId == event.categoryServerId
             else it.categoryId == event.categoryId
