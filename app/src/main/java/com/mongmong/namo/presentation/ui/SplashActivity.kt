@@ -38,7 +38,7 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-    private var isInitialCheckDone = false
+    private var autoLoginCalled = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +53,6 @@ class SplashActivity : AppCompatActivity() {
         appUpdateHelper.registerListener() // 리스너 등록
         appUpdateHelper.checkForUpdate(updateActivityResultLauncher) {
             autoLogin()
-            isInitialCheckDone = true // 업데이트 체크 완료
         }
 
         binding = ActivitySplashBinding.inflate(layoutInflater)
@@ -62,11 +61,9 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (isInitialCheckDone) {
-            // 백그라운드에서 포그라운드로 전환될 때 업데이트 상태 확인
-            appUpdateHelper.onResumeCheck(updateActivityResultLauncher) {
-                autoLogin()
-            }
+        // 백그라운드에서 포그라운드로 전환될 때 업데이트 상태 확인
+        appUpdateHelper.onResumeCheck(updateActivityResultLauncher) {
+            autoLogin()
         }
     }
 
@@ -76,7 +73,10 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun autoLogin() {
-        viewModel.tryRefreshToken()
+        if (!autoLoginCalled) {
+            autoLoginCalled = true
+            viewModel.tryRefreshToken()
+        }
     }
 
     private fun initObserve() {
