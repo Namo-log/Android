@@ -20,7 +20,7 @@ import kotlin.reflect.KFunction1
 
 class MoimDiaryAdapter(  // 월 별 모임 다이어리 리스트 어댑터
     val detailClickListener: (Long) -> Unit,
-    val imageClickListener: (String) -> Unit
+    private val imageClickListener: (String) -> Unit
 ) : PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
 
     class DiaryDiffCallback : DiffUtil.ItemCallback<DiarySchedule>() {

@@ -107,7 +107,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     private fun findCategory(schedule: Schedule) {
         lifecycleScope.launch {
-            viewModel.findCategoryById(schedule.categoryId, schedule.categoryServerId)
+            viewModel.findCategoryById(schedule.categoryId, schedule.categoryId)
         }
     }
 
@@ -168,12 +168,12 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         }
         viewModel.addDiaryResult.observe(this) { response ->
             if(response.code == OK) {
-                //finish()
+                finish()
             }
         }
         viewModel.editDiaryResult.observe(this) { response ->
             if(response.code == OK) {
-                //finish()
+                finish()
             }
         }
         viewModel.deleteDiaryResult.observe(this) { response ->

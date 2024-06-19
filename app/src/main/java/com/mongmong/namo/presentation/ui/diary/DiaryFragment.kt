@@ -120,10 +120,10 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     private fun setDiaryList(isMoim: Boolean) {
         val adapter = if (!isMoim)
-            DiaryAdapter(::onEditClickListener,
+            DiaryAdapter(::onPersonalEditClickListener,
                 imageClickListener = { ImageDialog(it).show(parentFragmentManager, "test") })
         else
-            MoimDiaryAdapter(::onDetailClickListener)
+            MoimDiaryAdapter(::onMoimEditClickListener)
             { ImageDialog(it).show(parentFragmentManager, "test") }
 
         setRecyclerView(isMoim, adapter)
@@ -131,7 +131,9 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         // 데이터 로딩 및 어댑터 데이터 설정
         viewLifecycleOwner.lifecycleScope.launch {
             val pagingDataFlow =
-                if (!isMoim) viewModel.getPersonalPaging(viewModel.getCurrentDate())
+                if (!isMoim) viewModel.getPersonalPaging(
+                    viewModel.getCurrentDate().split(".")
+                        .let { "${it[0]},${it[1].removePrefix("0")}" })
                 else viewModel.getMoimPaging(
                     viewModel.getCurrentDate().split(".")
                         .let { "${it[0]},${it[1].removePrefix("0")}" })
@@ -184,7 +186,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         hiddenRecyclerView.visibility = View.GONE
     }
 
-    private fun onEditClickListener(item: DiarySchedule) {  // 개인 기록 수정 클릭리스너
+    private fun onPersonalEditClickListener(item: DiarySchedule) {  // 개인 기록 수정 클릭리스너
         val schedule = Schedule(
             item.scheduleId,
             item.title,
@@ -197,6 +199,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
             true
         )
 
+        Log.d("DiaryFragment onPersonalEditClickListener", "$schedule")
         startActivity(
             Intent(context, PersonalDetailActivity::class.java)
                 .putExtra("schedule", schedule)
@@ -204,7 +207,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     }
 
-    private fun onDetailClickListener(scheduleId: Long) {  // 그룹 기록 수정 클릭리스너
+    private fun onMoimEditClickListener(scheduleId: Long) {  // 모임 메모 수정 클릭리스너
         Log.d("onDetailClickListener", "$scheduleId")
         requireActivity().startActivity(
             Intent(context, MoimMemoDetailActivity::class.java)

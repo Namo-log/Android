@@ -57,7 +57,7 @@ class DiaryDetailViewModel @Inject constructor(
     // 개인 기록 개별 조회
     fun getExistingPersonalDiary(schedule: Schedule) {
         viewModelScope.launch {
-            val result = repository.getPersonalDiary(schedule.serverId).result
+            val result = repository.getPersonalDiary(schedule.scheduleId).result
             Log.d("PersonalDiaryViewModel getDiary", "$result")
             _diary.value = Diary(
                 diaryId = schedule.scheduleId,

@@ -30,7 +30,7 @@ class DiaryRepositoryImpl @Inject constructor(
 
     /** 개인 기록 리스트 조회 **/
     override fun getPersonalDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
-        return DiaryPersonalPagingSource(diaryDao, date)
+        return DiaryPersonalPagingSource(apiService, date, networkChecker)
     }
 
     /** 개인 기록 개별 조회 **/
