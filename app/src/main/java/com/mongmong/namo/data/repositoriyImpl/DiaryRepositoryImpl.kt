@@ -11,7 +11,10 @@ import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.data.remote.DiaryApiService
+import com.mongmong.namo.domain.model.DiaryAddResponse
+import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.GetMoimMemoResponse
+import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.presentation.config.RoomState
@@ -29,25 +32,21 @@ class DiaryRepositoryImpl @Inject constructor(
     override fun getPersonalDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
         return DiaryPersonalPagingSource(diaryDao, date)
     }
-    /** 모임 기록 리스트 조회 **/
-    override fun getMoimDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
-        return DiaryMoimPagingSource(apiService, date, networkChecker)
-    }
 
     /** 개인 기록 개별 조회 **/
-    override suspend fun getDiary(localId: Long): Diary {
-        Log.d("DiaryRepositoryImpl getDiary", "$localId")
-        return localDiaryDataSource.getDiary(diaryId = localId)
+    override suspend fun getPersonalDiary(scheduleId: Long): GetPersonalDiaryResponse {
+        Log.d("DiaryRepositoryImpl getDiary", "$scheduleId")
+        return remoteDiaryDataSource.getPersonalDiary(scheduleId)
     }
 
     /** 개인 기록 추가 **/
-    override suspend fun addDiary(
+    override suspend fun addPersonalDiary(
         diary: Diary,
         images: List<String>?
-    ) {
+    ): DiaryAddResponse {
         Log.d("DiaryRepositoryImpl addDiary", "$diary")
-        localDiaryDataSource.addDiary(diary)
-        if (networkChecker.isOnline()) {
+        return remoteDiaryDataSource.addPersonalDiary(diary.images, diary.scheduleServerId, diary.content)
+        /*if (networkChecker.isOnline()) {
             val addResponse = remoteDiaryDataSource.addDiaryToServer(diary, images)
             if (addResponse.code == SUCCESS_CODE) {
                 localDiaryDataSource.updateDiaryAfterUpload(
@@ -59,17 +58,17 @@ class DiaryRepositoryImpl @Inject constructor(
             } else {
                 Log.d("DiaryRepositoryImpl addDiary Fail", "$diary")
             }
-        }
+        }*/
     }
 
     /** 개인 기록 수정 **/
-    override suspend fun editDiary(
+    override suspend fun editPersonalDiary(
         diary: Diary,
         images: List<String>?
-    ) {
+    ): DiaryResponse {
         Log.d("DiaryRepositoryImpl editDiary", "$diary")
-        localDiaryDataSource.editDiary(diary)
-        if (networkChecker.isOnline()) {
+        return remoteDiaryDataSource.editPersonalDiary(diary.images, diary.scheduleServerId, diary.content)
+        /*if (networkChecker.isOnline()) {
             val editResponse = remoteDiaryDataSource.editDiaryToServer(diary, images)
             if (editResponse.code == SUCCESS_CODE) {
                 localDiaryDataSource.updateDiaryAfterUpload(
@@ -81,28 +80,32 @@ class DiaryRepositoryImpl @Inject constructor(
             } else {
                 // 서버 업로드 실패 시 로직
             }
-        }
+        }*/
     }
 
     /** 개인 기록 삭제 **/
-    override suspend fun deleteDiary(localId: Long, scheduleServerId: Long) {
+    override suspend fun deletePersonalDiary(localId: Long, scheduleServerId: Long): DiaryResponse {
         // room db에 삭제 상태로 변경
-        localDiaryDataSource.updateDiaryAfterUpload(
+        /*localDiaryDataSource.updateDiaryAfterUpload(
             localId,
             scheduleServerId,
             IS_NOT_UPLOAD,
             RoomState.DELETED.state
-        )
-        if (networkChecker.isOnline()) {
+        )*/
+        //if (networkChecker.isOnline()) {
             // 서버 db에서 삭제
-            val deleteResponse = remoteDiaryDataSource.deleteDiary(scheduleServerId)
-            if(deleteResponse.code == SUCCESS_CODE) {
+            return remoteDiaryDataSource.deletePersonalDiary(scheduleServerId)
+            /*if(deleteResponse.code == SUCCESS_CODE) {
                 // room db에서 삭제
                 localDiaryDataSource.deleteDiary(localId)
             } else {
                 // 서버 업로드 실패 시 로직
-            }
-        }
+            }*/
+        //}
+    }
+    /** 모임 기록 리스트 조회 **/
+    override fun getMoimDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
+        return DiaryMoimPagingSource(apiService, date, networkChecker)
     }
 
     /** 모임 기록 개별 조회 **/

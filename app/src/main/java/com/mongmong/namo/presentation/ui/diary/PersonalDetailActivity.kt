@@ -90,7 +90,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
             }
             binding.diaryDeleteIv.visibility = View.GONE
         } else {  // 기록 있을 때, 수정
-            viewModel.getExistingPersonalDiary(schedule.scheduleId)
+            viewModel.getExistingPersonalDiary(schedule)
             binding.diaryEditBtnTv.apply {
                 text = resources.getString(R.string.diary_edit)
                 setTextColor(getColor(R.color.MainOrange))
@@ -143,8 +143,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         } else {
             viewModel.setNewPersonalDiary(schedule, content)
             viewModel.addPersonalDiary()
-
-            finish()
         }
     }
 
@@ -153,7 +151,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         viewModel.editPersonalDiary(binding.diaryContentsEt.text.toString())
 
         Toast.makeText(this, "수정되었습니다", Toast.LENGTH_SHORT).show()
-        finish()
     }
 
     /** 다이어리 삭제 **/
@@ -169,9 +166,19 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
         viewModel.imgList.observe(this) {
             galleryAdapter.addImages(it)
         }
-        viewModel.deleteDiaryResult.observe(this) { isComplete ->
+        viewModel.addDiaryResult.observe(this) { response ->
+            if(response.code == OK) {
+                //finish()
+            }
+        }
+        viewModel.editDiaryResult.observe(this) { response ->
+            if(response.code == OK) {
+                //finish()
+            }
+        }
+        viewModel.deleteDiaryResult.observe(this) { response ->
             // 다이어리 삭제 작업이 완료되었을 때 finish() 호출
-            if (isComplete) {
+            if (response.code == OK) {
                 Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
                 finish()
             }
@@ -311,6 +318,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     companion object {
         const val NO_PLACE = "장소 없음"
+        const val OK = 200
     }
 }
 
