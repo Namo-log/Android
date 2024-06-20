@@ -170,6 +170,7 @@ class CalendarMonthFragment : Fragment() {
             override fun onDiaryIconClicked(schedule: Schedule) { // 기록 아이콘 클릭
                 val intent = Intent(context, PersonalDetailActivity::class.java)
                 intent.putExtra("schedule", schedule)
+                Log.d("CalendarMonthFragment onDiaryIconClicked", "$schedule")
                 requireActivity().startActivity(intent)
             }
         })

@@ -45,7 +45,7 @@ class DiaryRepositoryImpl @Inject constructor(
         images: List<String>?
     ): DiaryAddResponse {
         Log.d("DiaryRepositoryImpl addDiary", "$diary")
-        return remoteDiaryDataSource.addPersonalDiary(diary.images, diary.scheduleServerId, diary.content)
+        return remoteDiaryDataSource.addPersonalDiary(diary.images, diary.diaryId, diary.content)
         /*if (networkChecker.isOnline()) {
             val addResponse = remoteDiaryDataSource.addDiaryToServer(diary, images)
             if (addResponse.code == SUCCESS_CODE) {
@@ -67,7 +67,7 @@ class DiaryRepositoryImpl @Inject constructor(
         images: List<String>?
     ): DiaryResponse {
         Log.d("DiaryRepositoryImpl editDiary", "$diary")
-        return remoteDiaryDataSource.editPersonalDiary(diary.images, diary.scheduleServerId, diary.content)
+        return remoteDiaryDataSource.editPersonalDiary(diary.images, diary.diaryId, diary.content)
         /*if (networkChecker.isOnline()) {
             val editResponse = remoteDiaryDataSource.editDiaryToServer(diary, images)
             if (editResponse.code == SUCCESS_CODE) {
@@ -94,6 +94,7 @@ class DiaryRepositoryImpl @Inject constructor(
         )*/
         //if (networkChecker.isOnline()) {
             // 서버 db에서 삭제
+            Log.d("DiaryRepositoryImpl deletePersonalDiary", "$scheduleServerId")
             return remoteDiaryDataSource.deletePersonalDiary(scheduleServerId)
             /*if(deleteResponse.code == SUCCESS_CODE) {
                 // room db에서 삭제

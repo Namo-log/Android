@@ -155,7 +155,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  //
 
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
-        viewModel.deletePersonalDiary(schedule.scheduleId, schedule.serverId)
+        viewModel.deletePersonalDiary(schedule.scheduleId, schedule.scheduleId)
     }
 
     private fun initObserve() {
