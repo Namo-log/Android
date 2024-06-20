@@ -60,6 +60,8 @@ class MapActivity : AppCompatActivity() {
     private val markerList : ArrayList<Label> = arrayListOf()
     private var selectedPlace : Place = Place()
     private var prevPlace : Place = Place()
+    private lateinit var prevLabel: Label
+    private var prevPosition = -1 // 이전에 선택된 장소 저장을 위함
 
     private var uLatitude : Double = 0.0
     private var uLongitude : Double = 0.0
@@ -188,17 +190,19 @@ class MapActivity : AppCompatActivity() {
                 val place : Place = placeList[position]
                 Log.d("SELECTED_PLACE", place.toString())
                 selectedPlace = place // 선택 장소 설정
-
                 val latLng = LatLng.from(place.y, place.x)
                 Log.d("MapActivity", "selectedPlace: $selectedPlace\n$latLng")
                 // 카메라를 마커의 위치로 이동
                 moveCamera(latLng, null)
+                // 이전에 선택한 장소 핀 색상은 파란색으로 돌려놓기
+                if (prevLabel != markerList[position]) {
+                    prevLabel.changeStyles(LabelStyles.from(setPinStyle(false)))
+                }
                 // 핀 스타일 변경
-                //TODO: 이전에 선택한 장소 핀 색상은 파란색으로 돌려놓기
                 markerList[position].changeStyles(LabelStyles.from(setPinStyle(true)))
+                prevLabel = markerList[position]
                 // 장소 취소 & 확인 버튼 표시
                 binding.mapBtnLayout.visibility = View.VISIBLE
-                markerList
             }
         })
 
@@ -272,6 +276,7 @@ class MapActivity : AppCompatActivity() {
             // 첫 번째 장소로 카메라 표시
             if (i == placeList[0]) {
                 moveCamera(latLng, ZOOM_LEVEL - 3) // 지도를 조금 더 넓게 표시
+                prevLabel = point!!
             }
             markerList.add(point!!)
         }
@@ -326,12 +331,12 @@ class MapActivity : AppCompatActivity() {
         const val API_KEY = BuildConfig.KAKAO_REST_KEY
         const val ZOOM_LEVEL = 18
         fun setPinStyle(isSelected: Boolean): LabelStyle {
-            if (isSelected) {
-                LabelStyle.from(
+            if (isSelected) { // 선택된 핀
+                return LabelStyle.from(
                     R.drawable.ic_pin_selected
                 ).setTextStyles(20, R.color.black)
             }
-            return LabelStyle.from(
+            return LabelStyle.from( // 기본 핀
                 R.drawable.ic_pin_default
             )
         }
