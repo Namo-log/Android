@@ -5,15 +5,12 @@ import android.content.SharedPreferences
 import com.google.firebase.FirebaseApp
 import com.mongmong.namo.BuildConfig
 import com.kakao.sdk.common.KakaoSdk
+import com.kakao.vectormap.KakaoMapSdk
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.di.NetworkModule
 import com.navercorp.nid.NaverIdLoginSDK
 import dagger.hilt.android.HiltAndroidApp
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -70,6 +67,7 @@ class ApplicationClass: Application() {
         FirebaseApp.initializeApp(this)
         // SDK 초기화
         KakaoSdk.init(this, BuildConfig.KAKAO_API_KEY)
+        KakaoMapSdk.init(this, BuildConfig.KAKAO_API_KEY)
         NaverIdLoginSDK.initialize(this, BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, getString(R.string.app_name))
     }
 }

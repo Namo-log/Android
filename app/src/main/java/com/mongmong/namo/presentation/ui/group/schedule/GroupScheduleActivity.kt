@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -21,6 +20,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.ContextCompat
+import com.kakao.vectormap.KakaoMap
+import com.kakao.vectormap.KakaoMapReadyCallback
+import com.kakao.vectormap.LatLng
+import com.kakao.vectormap.MapLifeCycleCallback
+import com.kakao.vectormap.MapView
+import com.kakao.vectormap.camera.CameraUpdateFactory
+import com.kakao.vectormap.label.LabelOptions
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.GROUP_MEMBER_INTENT_KEY
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_NAME_INTENT_KEY
@@ -43,9 +49,8 @@ import com.mongmong.namo.presentation.utils.PickerConverter.parseDateTimeToDateT
 import com.mongmong.namo.presentation.utils.PickerConverter.parseDateTimeToTimeText
 import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedTime
 import dagger.hilt.android.AndroidEntryPoint
-import net.daum.mf.map.api.MapPOIItem
-import net.daum.mf.map.api.MapPoint
-import net.daum.mf.map.api.MapView
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.joda.time.DateTime
 import java.lang.NullPointerException
 
@@ -57,8 +62,9 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
     private var isPostOrEdit : Boolean = true
 
     private lateinit var getLocationResult : ActivityResultLauncher<Intent>
-    lateinit var mapView: MapView
-    var mapViewContainer: RelativeLayout? = null
+
+    private var kakaoMap: KakaoMap? = null
+    private lateinit var mapView: MapView
     private var place_name : String = "없음"
     private var place_x : Double = 0.0
     private var place_y : Double = 0.0
@@ -84,6 +90,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
 
         setContentView(binding.root)
 
+        initMapView()
         setInit()
         setResultLocation()
         setResultMember()
@@ -93,12 +100,17 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     override fun onResume() {
         super.onResume()
-        initMapView()
+        mapView.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapViewContainer?.removeView(mapView)
+        mapView.pause()
+    }
+
+    override fun finish() {
+        super.finish()
+        mapView.finish()
     }
 
     private fun setInit() {
@@ -113,6 +125,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
             binding.scheduleDeleteBtn.visibility = View.VISIBLE
             binding.dialogGroupScheduleHeaderTv.text = "일정 편집"
             setContent()
+            setMapContent()
         } else { // 모임 일정 생성
             binding.scheduleDeleteBtn.visibility = View.GONE
             binding.dialogGroupScheduleHeaderTv.text = "새 일정"
@@ -128,10 +141,6 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
             }
             setMembers()
         }
-
-        binding.dialogGroupSchedulePlaceKakaoBtn.visibility = View.GONE
-        binding.dialogGroupSchedulePlaceKakaoBtn.visibility = View.GONE
-        mapViewContainer?.visibility = View.GONE
 
         val slideAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up)
         binding.scheduleContainerLayout.startAnimation(slideAnimation)
@@ -188,6 +197,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
             getLoctionPermission()
         }
 
+        // 길찾기 버튼
         binding.dialogGroupSchedulePlaceKakaoBtn.setOnClickListener {
             hideKeyboard()
 
@@ -278,16 +288,16 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private fun setPicker(clicked: TextView) {
         hideKeyboard()
-        if (prevClicked != clicked) {
+        prevClicked = if (prevClicked != clicked) {
             prevClicked?.setTextColor(resources.getColor(R.color.textGray))
             clicked.setTextColor(resources.getColor(R.color.MainOrange))
             togglePicker(prevClicked, false)
             togglePicker(clicked, true)
-            prevClicked = clicked // prevClicked 값을 현재 clicked로 업데이트
+            clicked // prevClicked 값을 현재 clicked로 업데이트
         } else {
             clicked.setTextColor(resources.getColor(R.color.textGray))
             togglePicker(clicked, false)
-            prevClicked = null
+            null
         }
     }
 
@@ -442,7 +452,6 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
                     editGroupSchedule.x = place_x
                     editGroupSchedule.y = place_y
                 }
-
                 if (place_x != 0.0 || place_y != 0.0) {
                     setMapContent()
                 }
@@ -451,37 +460,45 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun initMapView() {
-        mapView = MapView(this).also {
-            mapViewContainer = RelativeLayout(this)
-            mapViewContainer?.layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            binding.dialogGroupSchedulePlaceContainer.addView(mapViewContainer)
-            mapViewContainer?.addView(it)
-        }
-        Log.d("InitMapView", "InitMapView 실행")
+        mapView = binding.dialogGroupSchedulePlaceContainer
+        mapView.start(object : MapLifeCycleCallback() {
+            override fun onMapDestroy() {
+                // 지도 API 가 정상적으로 종료될 때 호출됨
+            }
 
+            override fun onMapError(error: Exception) {
+                // 인증 실패 및 지도 사용 중 에러가 발생할 때 호출됨
+            }
+        }, object : KakaoMapReadyCallback() {
+            override fun onMapReady(map: KakaoMap) {
+                // 인증 후 API 가 정상적으로 실행될 때 호출됨
+                kakaoMap = map
+                setMapContent()
+            }
 
-        if (place_x != 0.0 || place_y != 0.0) {
-            setMapContent()
-        }
+            override fun getPosition(): LatLng {
+                return LatLng.from(place_y, place_x)
+            }
+
+            override fun getZoomLevel(): Int {
+                // 지도 시작 시 확대/축소 줌 레벨 설정
+                return MapActivity.ZOOM_LEVEL
+            }
+        })
     }
 
+    // 모임 위치 표시
     private fun setMapContent() {
         binding.dialogGroupSchedulePlaceNameTv.text = place_name
-        binding.dialogGroupSchedulePlaceKakaoBtn.visibility = View.VISIBLE
+//        binding.dialogGroupSchedulePlaceKakaoBtn.visibility = View.VISIBLE
         binding.dialogGroupSchedulePlaceContainer.visibility = ViewGroup.VISIBLE
-        mapViewContainer?.visibility = View.VISIBLE
 
-        var mapPoint = MapPoint.mapPointWithGeoCoord(place_y, place_x)
-        mapView.setMapCenterPointAndZoomLevel(mapPoint, 1, true)
+        // 지도 위치 조정
+        val latLng = LatLng.from(place_y, place_x)
+        // 카메라를 마커의 위치로 이동
+        kakaoMap?.moveCamera(CameraUpdateFactory.newCenterPosition(latLng, MapActivity.ZOOM_LEVEL))
 
-        var marker = MapPOIItem()
-        marker.itemName = place_name
-        marker.tag = 0
-        marker.mapPoint = mapPoint
-        marker.markerType = MapPOIItem.MarkerType.BluePin
-        marker.selectedMarkerType = MapPOIItem.MarkerType.RedPin
-
-        mapView.addPOIItem(marker)
+        kakaoMap?.labelManager?.layer?.addLabel(LabelOptions.from(latLng).setStyles(MapActivity.setPinStyle(false)))
     }
 
     private fun showDialog() {
