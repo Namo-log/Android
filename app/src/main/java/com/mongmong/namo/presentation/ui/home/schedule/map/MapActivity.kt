@@ -61,7 +61,6 @@ class MapActivity : AppCompatActivity() {
     private var selectedPlace : Place = Place()
     private var prevPlace : Place = Place()
     private lateinit var prevLabel: Label
-    private var prevPosition = -1 // 이전에 선택된 장소 저장을 위함
 
     private var uLatitude : Double = 0.0
     private var uLongitude : Double = 0.0
@@ -140,13 +139,11 @@ class MapActivity : AppCompatActivity() {
             adapter = mapRVAdapter
         }
 
-        setRVData()
+//        setRVData()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun setRVData() {
+    private fun setPlaceData() {
         mapRVAdapter.addPlaces(placeList)
-        mapRVAdapter.notifyDataSetChanged()
     }
 
     // 장소 검색
@@ -180,7 +177,7 @@ class MapActivity : AppCompatActivity() {
 
         // 검색 버튼
         binding.mapSearchBtn.setOnClickListener {
-            searchPlace()
+            searchPlace() // 장소 검색
         }
 
         // 검색 리스트에서 선택한 장소
@@ -194,15 +191,15 @@ class MapActivity : AppCompatActivity() {
                 Log.d("MapActivity", "selectedPlace: $selectedPlace\n$latLng")
                 // 카메라를 마커의 위치로 이동
                 moveCamera(latLng, null)
+                // 핀 스타일 변경
+                markerList[position].changeStyles(LabelStyles.from(setPinStyle(true)))
+                // 장소 취소 & 확인 버튼 표시
+                binding.mapBtnLayout.visibility = View.VISIBLE
                 // 이전에 선택한 장소 핀 색상은 파란색으로 돌려놓기
                 if (prevLabel != markerList[position]) {
                     prevLabel.changeStyles(LabelStyles.from(setPinStyle(false)))
                 }
-                // 핀 스타일 변경
-                markerList[position].changeStyles(LabelStyles.from(setPinStyle(true)))
                 prevLabel = markerList[position]
-                // 장소 취소 & 확인 버튼 표시
-                binding.mapBtnLayout.visibility = View.VISIBLE
             }
         })
 
@@ -246,7 +243,7 @@ class MapActivity : AppCompatActivity() {
 
                 placeList.clear()
                 placeList.addAll(response.body()!!.documents as ArrayList<Place>)
-                setRVData() // 장소 리스트 표시
+                setPlaceData() // 장소 리스트 표시
                 addMarkers() // 지도 핀 표시
             }
 
@@ -261,7 +258,6 @@ class MapActivity : AppCompatActivity() {
         // 기존 핀 삭제
         kakaoMap?.labelManager?.removeAllLabelLayer()
         markerList.clear()
-        // 추가
         if (placeList.isEmpty()) { // 검색 결과가 없을 경우
             Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
             return
@@ -273,12 +269,13 @@ class MapActivity : AppCompatActivity() {
                 .setStyles(setPinStyle(false))
                 .setTexts(i.place_name) // 장소 이름 표시
             )
+            point!!.isClickable = true
             // 첫 번째 장소로 카메라 표시
             if (i == placeList[0]) {
                 moveCamera(latLng, ZOOM_LEVEL - 3) // 지도를 조금 더 넓게 표시
-                prevLabel = point!!
+                prevLabel = point // 임의로 최초 핀을 선택된 핀으로 설정
             }
-            markerList.add(point!!)
+            markerList.add(point)
         }
     }
 
@@ -295,16 +292,17 @@ class MapActivity : AppCompatActivity() {
         moveCamera(latLng, null)
     }
 
-
+    // 카메라를 현재 위치로 이동
     private fun setCurrentLocation() {
-        // 카메라를 현재 위치로 이동
         moveCamera(LatLng.from(uLatitude, uLongitude), null)
     }
 
+    // 카메라 이동
     private fun moveCamera(latLng: LatLng, zoomLevel: Int?) {
         kakaoMap?.moveCamera(CameraUpdateFactory.newCenterPosition(latLng, zoomLevel ?: ZOOM_LEVEL))
     }
 
+    // 위치 권한 확인
     private fun getLocationPermission() {
         val permissionCheck = ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION)
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -336,7 +334,7 @@ class MapActivity : AppCompatActivity() {
                     R.drawable.ic_pin_selected
                 ).setTextStyles(20, R.color.black)
             }
-            return LabelStyle.from( // 기본 핀
+            return LabelStyle.from( // 기본 정
                 R.drawable.ic_pin_default
             )
         }

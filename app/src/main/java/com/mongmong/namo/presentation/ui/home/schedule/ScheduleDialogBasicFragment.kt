@@ -53,6 +53,7 @@ import com.kakao.vectormap.label.LabelOptions
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
+import com.mongmong.namo.presentation.ui.home.schedule.map.data.Place
 import com.mongmong.namo.presentation.utils.PickerConverter.getDefaultDate
 import com.mongmong.namo.presentation.utils.PickerConverter.parseDateTimeToDateText
 import com.mongmong.namo.presentation.utils.PickerConverter.parseDateTimeToTimeText
@@ -84,9 +85,10 @@ class ScheduleDialogBasicFragment : Fragment() {
     private var kakaoMap: KakaoMap? = null
     private lateinit var mapView: MapView
 
-    private var place_name : String = "없음"
-    private var place_x : Double = 0.0
-    private var place_y : Double = 0.0
+    private var place = Place()
+//    private var place_name : String = "없음"
+//    private var place_x : Double = 0.0
+//    private var place_y : Double = 0.0
 
     private var date = DateTime(System.currentTimeMillis())
 
@@ -125,19 +127,19 @@ class ScheduleDialogBasicFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if (it.resultCode == Activity.RESULT_OK) {
-                place_name = it.data?.getStringExtra(MainActivity.PLACE_NAME_INTENT_KEY)!!
-                place_x = it.data?.getDoubleExtra(MainActivity.PLACE_X_INTENT_KEY, 0.0)!!
-                place_y = it.data?.getDoubleExtra(MainActivity.PLACE_Y_INTENT_KEY, 0.0)!!
-                Log.d("PLACE_INFO", "name : $place_name , x : $place_x , y : $place_y")
+                place.place_name = it.data?.getStringExtra(MainActivity.PLACE_NAME_INTENT_KEY)!!
+                place.x = it.data?.getDoubleExtra(MainActivity.PLACE_X_INTENT_KEY, 0.0)!!
+                place.y = it.data?.getDoubleExtra(MainActivity.PLACE_Y_INTENT_KEY, 0.0)!!
+                Log.d("PLACE_INFO", "$place")
 
-                schedule.placeName = place_name
-                schedule.placeX = place_x
-                schedule.placeY = place_y
+                schedule.placeName = place.place_name
+                schedule.placeX = place.x
+                schedule.placeY = place.y
 
-                if (place_x != 0.0 || place_y != 0.0) {
+                if (place.x != 0.0 || place.y != 0.0) {
                     setMapContent()
                 }
-                Log.d("PLACE_INTENT", place_name)
+                Log.d("PLACE_INTENT", place.place_name)
             }
         }
     }
@@ -296,7 +298,7 @@ class ScheduleDialogBasicFragment : Fragment() {
         binding.dialogSchedulePlaceKakaoBtn.setOnClickListener {
             hidekeyboard()
 
-            val url = "kakaomap://route?sp=&ep=${place_y},${place_x}&by=PUBLICTRANSIT"
+            val url = "kakaomap://route?sp=&ep=${place.y},${place.x}&by=PUBLICTRANSIT"
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
         }
@@ -590,7 +592,7 @@ class ScheduleDialogBasicFragment : Fragment() {
             }
 
             override fun getPosition(): LatLng {
-                return LatLng.from(place_y, place_x)
+                return LatLng.from(place.y, place.x)
             }
 
             override fun getZoomLevel(): Int {
@@ -601,12 +603,12 @@ class ScheduleDialogBasicFragment : Fragment() {
     }
 
     private fun setMapContent() {
-        binding.dialogSchedulePlaceNameTv.text = place_name
+        binding.dialogSchedulePlaceNameTv.text = place.place_name
 //        binding.dialogSchedulePlaceKakaoBtn.visibility = View.VISIBLE
         binding.dialogSchedulePlaceContainer.visibility = View.VISIBLE
 
         // 지도 위치 조정
-        val latLng = LatLng.from(place_y, place_x)
+        val latLng = LatLng.from(place.y, place.x)
         Log.d("ScheduleBasicFragment", latLng.toString())
         // 카메라를 마커의 위치로 이동
         kakaoMap?.moveCamera(CameraUpdateFactory.newCenterPosition(latLng, MapActivity.ZOOM_LEVEL))
@@ -673,9 +675,7 @@ class ScheduleDialogBasicFragment : Fragment() {
         binding.dialogScheduleAlarmTv.text = alarmText
 
         //장소
-        place_name = schedule.placeName
-        place_x = schedule.placeX
-        place_y = schedule.placeY
+        place = Place(place_name = schedule.placeName, x = schedule.placeX, y = schedule.placeY)
 
         if (schedule.placeX != 0.0 || schedule.placeY != 0.0) {
             setMapContent()

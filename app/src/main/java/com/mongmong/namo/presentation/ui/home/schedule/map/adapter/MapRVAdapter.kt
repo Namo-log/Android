@@ -3,17 +3,19 @@ package com.mongmong.namo.presentation.ui.home.schedule.map.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.Place
 import com.mongmong.namo.databinding.ItemMapPlaceBinding
 
-class MapRVAdapter() : RecyclerView.Adapter<MapRVAdapter.ViewHolder>() {
+class MapRVAdapter : RecyclerView.Adapter<MapRVAdapter.ViewHolder>() {
 
     private val places = ArrayList<Place>()
     private lateinit var context : Context
 
     private lateinit var itemClickListener : OnItemClickListener
+    private var selectedPosition = RecyclerView.NO_POSITION // 선택된 아이템의 포지션을 저장
 
     interface OnItemClickListener {
         fun onClick(position: Int)
@@ -24,10 +26,12 @@ class MapRVAdapter() : RecyclerView.Adapter<MapRVAdapter.ViewHolder>() {
     }
 
     inner class ViewHolder(val binding : ItemMapPlaceBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(place : Place) {
+        fun bind(place : Place, isSelected: Boolean) {
             binding.itemMapPlaceTitleTv.text = place.place_name
             binding.itemMapPlaceRoadAddressTv.text = place.road_address_name
             binding.itemMapPlaceOldAddressTv.text = place.address_name
+            // 체크 표시 업데이트
+            binding.itemMapPlaceSelectIv.visibility = if (isSelected) View.VISIBLE else View.GONE
         }
     }
 
@@ -39,9 +43,15 @@ class MapRVAdapter() : RecyclerView.Adapter<MapRVAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(places[position])
+        val isSelected = position == selectedPosition
+        holder.bind(places[position], isSelected)
 
         holder.itemView.setOnClickListener {
+            // 클릭된 아이템 포지션을 업데이트하고 노티파이
+            val previousPosition = selectedPosition
+            selectedPosition = holder.absoluteAdapterPosition
+            notifyItemChanged(previousPosition) // 이전 선택된 아이템 업데이트
+            notifyItemChanged(selectedPosition) // 현재 선택된 아이템 업데이트
             itemClickListener.onClick(position)
         }
     }
@@ -52,5 +62,6 @@ class MapRVAdapter() : RecyclerView.Adapter<MapRVAdapter.ViewHolder>() {
     fun addPlaces(places : ArrayList<Place>) {
         this.places.clear()
         this.places.addAll(places)
+        notifyDataSetChanged()
     }
 }
