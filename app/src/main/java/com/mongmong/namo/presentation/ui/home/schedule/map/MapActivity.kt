@@ -115,6 +115,12 @@ class MapActivity : AppCompatActivity() {
                     uLatitude = cameraPosition.position.latitude
                     uLongitude = cameraPosition.position.longitude
                 }
+                // 라벨 스타일 변경
+                kakaoMap?.setOnLabelClickListener { kakaoMap, labelLayer, label ->
+                    prevLabel.changeStyles(LabelStyles.from(setPinStyle(false)))
+                    label.changeStyles(LabelStyles.from(setPinStyle(true)))
+                    prevLabel = label
+                }
             }
 
             override fun getZoomLevel(): Int {
@@ -282,10 +288,10 @@ class MapActivity : AppCompatActivity() {
         selectedPlace.y = intent.getDoubleExtra("PREV_PLACE_Y", 0.0)
         selectedPlace.place_name = intent.getStringExtra("PREV_PLACE_NAME").toString()
         val latLng = LatLng.from(selectedPlace.y, selectedPlace.x) // 위치
-        kakaoMap?.labelManager?.layer?.addLabel(LabelOptions.from(latLng)
+        prevLabel = kakaoMap?.labelManager?.layer?.addLabel(LabelOptions.from(latLng)
             .setStyles(setPinStyle(true))
             .setTexts(selectedPlace.place_name) // 장소 이름 표시
-        )
+        )!!
         moveCamera(latLng, null)
         // 아이템 표시
         setPreLocationItem(selectedPlace.x, selectedPlace.y)
