@@ -174,7 +174,7 @@
                 android:background="@drawable/bg_diary_preview_base_corner"
                 android:gravity="start"
                 android:hint="@string/diary_put"
-                android:inputType="text"
+                android:inputType="textMultiLine"
                 android:padding="10dp"
                 android:textColorHint="@color/editTextGray"
                 android:textColor="@color/textGray"/>
