@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -111,6 +110,11 @@ class MapActivity : AppCompatActivity() {
                 // 인증 후 API 가 정상적으로 실행될 때 호출됨
                 kakaoMap = map
                 setLocation() // 위치 표시
+                // 가준 위치 업데이트
+                kakaoMap?.setOnCameraMoveEndListener { kakaoMap, cameraPosition, gestureType ->
+                    uLatitude = cameraPosition.position.latitude
+                    uLongitude = cameraPosition.position.longitude
+                }
             }
 
             override fun getZoomLevel(): Int {
@@ -340,9 +344,9 @@ class MapActivity : AppCompatActivity() {
         val lm = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         try {
             val userNowLocation : Location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
-            uLatitude = userNowLocation.latitude
-            uLongitude = userNowLocation.longitude
-            Log.d("MapActivity", "userLocation: ($uLatitude, $uLongitude)")
+            uLatitude = userNowLocation.latitude // y
+            uLongitude = userNowLocation.longitude // x
+            Log.d("MapActivity", "userLocation: ($uLongitude, $uLatitude)")
         } catch (e : NullPointerException) {
             Log.e("LOCATION_ERROR", e.toString())
             ActivityCompat.finishAffinity(this)
