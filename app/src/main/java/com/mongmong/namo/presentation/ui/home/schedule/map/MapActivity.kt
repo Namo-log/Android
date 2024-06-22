@@ -192,7 +192,6 @@ class MapActivity : AppCompatActivity() {
                 Log.d("SELECTED_PLACE", place.toString())
                 selectedPlace = place // 선택 장소 설정
                 val latLng = LatLng.from(place.y, place.x)
-                Log.d("MapActivity", "selectedPlace: $selectedPlace\n$latLng")
                 // 카메라를 마커의 위치로 이동
                 moveCamera(latLng, null)
                 // 핀 스타일 변경
@@ -292,6 +291,7 @@ class MapActivity : AppCompatActivity() {
             .setStyles(setPinStyle(true))
             .setTexts(selectedPlace.place_name) // 장소 이름 표시
         )!!
+        markerList.add(prevLabel)
         moveCamera(latLng, null)
         // 아이템 표시
         setPreLocationItem(selectedPlace.x, selectedPlace.y)
