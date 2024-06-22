@@ -9,7 +9,6 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -164,13 +163,9 @@ class MapActivity : AppCompatActivity() {
             else -> ScheduleActivity::class.java
         }
 
-        binding.mapSearchEt.setOnKeyListener { _, keyCode, event ->
-            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-                searchPlace()
-                true
-            } else {
-                false
-            }
+        // 뒤로가기 버튼
+        binding.mapBackCv.setOnClickListener {
+            finish()
         }
 
         // 검색 버튼
