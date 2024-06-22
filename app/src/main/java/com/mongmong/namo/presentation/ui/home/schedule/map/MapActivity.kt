@@ -39,6 +39,7 @@ import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.map.adapter.MapRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.KakaoAPI
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.Place
+import com.mongmong.namo.presentation.ui.home.schedule.map.data.ResultCoord2Address
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.ResultSearchPlace
 import dagger.hilt.android.AndroidEntryPoint
 import retrofit2.Call
@@ -59,7 +60,6 @@ class MapActivity : AppCompatActivity() {
     private val placeList : ArrayList<Place> = arrayListOf()
     private val markerList : ArrayList<Label> = arrayListOf()
     private var selectedPlace : Place = Place()
-    private var prevPlace : Place = Place()
     private lateinit var prevLabel: Label
 
     private var uLatitude : Double = 0.0
@@ -138,8 +138,6 @@ class MapActivity : AppCompatActivity() {
                 LinearLayoutManager(this@MapActivity, LinearLayoutManager.VERTICAL, false)
             adapter = mapRVAdapter
         }
-
-//        setRVData()
     }
 
     private fun setPlaceData() {
@@ -203,16 +201,14 @@ class MapActivity : AppCompatActivity() {
             }
         })
 
-        //TODO: 핀 클릭 시 해당 핀 빨간색 + 장소 이름 표시
-
         // 취소 버튼
         binding.cancelBtn.setOnClickListener {
             //TODO: 선택된 핀을 다시 파란색으로 바꾸기 + 취소 & 확인 버튼 없애기
             if (hasPreLocation()) {
                 val intent = Intent(this, targetActivityClass)
-                intent.putExtra(PLACE_NAME_INTENT_KEY, prevPlace.place_name)
-                intent.putExtra(PLACE_X_INTENT_KEY, prevPlace.x)
-                intent.putExtra(PLACE_Y_INTENT_KEY, prevPlace.y)
+                intent.putExtra(PLACE_NAME_INTENT_KEY, selectedPlace.place_name)
+                intent.putExtra(PLACE_X_INTENT_KEY, selectedPlace.x)
+                intent.putExtra(PLACE_Y_INTENT_KEY, selectedPlace.y)
                 setResult(RESULT_OK, intent)
             }
             finish()
@@ -281,15 +277,48 @@ class MapActivity : AppCompatActivity() {
 
     // 기존에 선택된 장소 표시
     private fun setPreLocation() {
-        prevPlace.x = intent.getDoubleExtra("PREV_PLACE_X", 0.0)
-        prevPlace.y = intent.getDoubleExtra("PREV_PLACE_Y", 0.0)
-        prevPlace.place_name = intent.getStringExtra("PREV_PLACE_NAME").toString()
-        val latLng = LatLng.from(prevPlace.y, prevPlace.x) // 위치
+        selectedPlace.x = intent.getDoubleExtra("PREV_PLACE_X", 0.0)
+        selectedPlace.y = intent.getDoubleExtra("PREV_PLACE_Y", 0.0)
+        selectedPlace.place_name = intent.getStringExtra("PREV_PLACE_NAME").toString()
+        val latLng = LatLng.from(selectedPlace.y, selectedPlace.x) // 위치
         kakaoMap?.labelManager?.layer?.addLabel(LabelOptions.from(latLng)
             .setStyles(setPinStyle(true))
-            .setTexts(prevPlace.place_name) // 장소 이름 표시
+            .setTexts(selectedPlace.place_name) // 장소 이름 표시
         )
         moveCamera(latLng, null)
+        // 아이템 표시
+        setPreLocationItem(selectedPlace.x, selectedPlace.y)
+        Log.d("PlaceInfo", "selectedPlace: $selectedPlace")
+    }
+
+    private fun setPreLocationItem(placeX: Double, placeY: Double) {
+        // 카카오 API를 이용해 좌표로 주소 정보 가져오기
+        val call = kakaoService.getPlaceInfo("KakaoAK $API_KEY", placeX.toString(), placeY.toString())
+
+        call.enqueue(object : Callback<ResultCoord2Address> {
+            override fun onResponse(
+                call: Call<ResultCoord2Address>,
+                response: Response<ResultCoord2Address>
+            ) {
+                if (response.isSuccessful) {
+                    val placeInfo = response.body()?.documents?.firstOrNull()
+                    Log.d("PlaceInfo", placeInfo.toString())
+                    if (placeInfo != null) {
+                        selectedPlace.address_name = placeInfo.address.address_name
+                        selectedPlace.road_address_name = placeInfo.road_address?.address_name.toString()
+                        // 선택된 장소를 리사이클러뷰 아이템에 표시
+                        placeList.clear()
+                        placeList.add(selectedPlace)
+                        setPlaceData()
+                        mapRVAdapter.setSelectedPosition(0) // 첫 번째 아이템에 체크 표시
+                        }
+                }
+            }
+
+            override fun onFailure(call: Call<ResultCoord2Address>, t: Throwable) {
+                Log.d("MapActivity", "좌표로 주소 정보 불러오기 실패\n${t.message}")
+            }
+        })
     }
 
     // 카메라를 현재 위치로 이동

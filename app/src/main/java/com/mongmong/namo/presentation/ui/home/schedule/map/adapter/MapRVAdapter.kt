@@ -25,6 +25,19 @@ class MapRVAdapter : RecyclerView.Adapter<MapRVAdapter.ViewHolder>() {
         this.itemClickListener = onItemClickListener
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    fun addPlaces(places : ArrayList<Place>) {
+        this.places.clear()
+        this.places.addAll(places)
+        selectedPosition = -1
+        notifyDataSetChanged()
+    }
+
+    fun setSelectedPosition(position: Int) {
+        selectedPosition = position
+        notifyItemChanged(position)
+    }
+
     inner class ViewHolder(val binding : ItemMapPlaceBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(place : Place, isSelected: Boolean) {
             binding.itemMapPlaceTitleTv.text = place.place_name
@@ -57,11 +70,4 @@ class MapRVAdapter : RecyclerView.Adapter<MapRVAdapter.ViewHolder>() {
     }
 
     override fun getItemCount(): Int = places.size
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun addPlaces(places : ArrayList<Place>) {
-        this.places.clear()
-        this.places.addAll(places)
-        notifyDataSetChanged()
-    }
 }
