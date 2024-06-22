@@ -7,10 +7,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -18,22 +16,31 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.kakao.vectormap.KakaoMap
+import com.kakao.vectormap.KakaoMapReadyCallback
+import com.kakao.vectormap.LatLng
+import com.kakao.vectormap.MapLifeCycleCallback
+import com.kakao.vectormap.MapView
+import com.kakao.vectormap.camera.CameraUpdateFactory
+import com.kakao.vectormap.label.Label
+import com.kakao.vectormap.label.LabelOptions
+import com.kakao.vectormap.label.LabelStyle
+import com.kakao.vectormap.label.LabelStyles
+import com.mongmong.namo.BuildConfig
+import com.mongmong.namo.R
+import com.mongmong.namo.databinding.ActivityMapBinding
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_NAME_INTENT_KEY
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_X_INTENT_KEY
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_Y_INTENT_KEY
-import com.mongmong.namo.databinding.ActivityMapBinding
-import com.mongmong.namo.BuildConfig
 import com.mongmong.namo.presentation.ui.group.schedule.GroupScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.map.adapter.MapRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.KakaoAPI
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.Place
+import com.mongmong.namo.presentation.ui.home.schedule.map.data.ResultCoord2Address
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.ResultSearchPlace
 import dagger.hilt.android.AndroidEntryPoint
-import net.daum.mf.map.api.MapPOIItem
-import net.daum.mf.map.api.MapPoint
-import net.daum.mf.map.api.MapView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -41,16 +48,18 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MapActivity() : AppCompatActivity() {
+class MapActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMapBinding
-    private lateinit var mapView : MapView
+
+    private var kakaoMap: KakaoMap? = null
+    private lateinit var mapView: MapView
 
     private val mapRVAdapter : MapRVAdapter = MapRVAdapter()
 
     private val placeList : ArrayList<Place> = arrayListOf()
-    private val markerList : ArrayList<MapPOIItem> = arrayListOf()
+    private val markerList : ArrayList<Label> = arrayListOf()
     private var selectedPlace : Place = Place()
-    private var prevPlace : Place = Place()
+    private lateinit var prevLabel: Label
 
     private var uLatitude : Double = 0.0
     private var uLongitude : Double = 0.0
@@ -64,21 +73,73 @@ class MapActivity() : AppCompatActivity() {
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        mapView = MapView(this)
-        binding.mapView.addView(mapView)
-
         getLocationPermission()
 
-        val hasPreLocation = if (intent.getStringExtra("PREV_PLACE_NAME").isNullOrEmpty()) {
-            setCurrentLocation()
-            false
-        } else {
-            setPreLocation()
-            true
-        }
-
         setAdapter()
-        setClickListener(hasPreLocation)
+        initClickListeners()
+        initMapView()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView.pause()
+    }
+
+    override fun finish() {
+        super.finish()
+        mapView.finish()
+    }
+
+    private fun initMapView() {
+        mapView = binding.mapView
+        mapView.start(object : MapLifeCycleCallback() {
+            override fun onMapDestroy() {
+                // 지도 API 가 정상적으로 종료될 때 호출됨
+            }
+
+            override fun onMapError(error: Exception) {
+                // 인증 실패 및 지도 사용 중 에러가 발생할 때 호출됨
+            }
+        }, object : KakaoMapReadyCallback() {
+            override fun onMapReady(map: KakaoMap) {
+                // 인증 후 API 가 정상적으로 실행될 때 호출됨
+                kakaoMap = map
+                setLocation() // 위치 표시
+                // 가준 위치 업데이트
+                kakaoMap?.setOnCameraMoveEndListener { kakaoMap, cameraPosition, gestureType ->
+                    uLatitude = cameraPosition.position.latitude
+                    uLongitude = cameraPosition.position.longitude
+                }
+                // 라벨 스타일 변경
+                kakaoMap?.setOnLabelClickListener { kakaoMap, labelLayer, label ->
+                    prevLabel.changeStyles(LabelStyles.from(setPinStyle(false)))
+                    label.changeStyles(LabelStyles.from(setPinStyle(true)))
+                    prevLabel = label
+                }
+            }
+
+            override fun getZoomLevel(): Int {
+                // 지도 시작 시 확대/축소 줌 레벨 설정
+                return ZOOM_LEVEL
+            }
+        })
+    }
+
+    private fun hasPreLocation(): Boolean {
+        return !intent.getStringExtra("PREV_PLACE_NAME").isNullOrEmpty()
+    }
+
+    private fun setLocation() {
+        if (hasPreLocation()) {
+            setPreLocation() // 이전 위치로 지도 표시
+            return
+        }
+        setCurrentLocation() // 현재 위치로 지도 표시
     }
 
     private fun setAdapter() {
@@ -87,17 +148,14 @@ class MapActivity() : AppCompatActivity() {
                 LinearLayoutManager(this@MapActivity, LinearLayoutManager.VERTICAL, false)
             adapter = mapRVAdapter
         }
-
-        setRVData()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun setRVData() {
+    private fun setPlaceData() {
         mapRVAdapter.addPlaces(placeList)
-        mapRVAdapter.notifyDataSetChanged()
     }
 
-    private fun searchStartDate() {
+    // 장소 검색
+    private fun searchPlace() {
         val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
 
@@ -109,66 +167,70 @@ class MapActivity() : AppCompatActivity() {
         }
     }
 
-    private fun setClickListener(hasPreLocation: Boolean) {
+    private fun initClickListeners() {
         val targetActivityClass = when(intent.getStringExtra(ORIGIN_ACTIVITY_INTENT_KEY)) {
             "GroupSchedule" -> GroupScheduleActivity::class.java
             "Schedule" -> ScheduleActivity::class.java
             else -> ScheduleActivity::class.java
         }
 
-        binding.mapSearchEt.setOnKeyListener { _, keyCode, event ->
-            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-                searchStartDate()
-                true
-            } else {
-                false
-            }
+        // 뒤로가기 버튼
+        binding.mapBackCv.setOnClickListener {
+            finish()
         }
 
+        // 검색 버튼
         binding.mapSearchBtn.setOnClickListener {
-            searchStartDate()
+            searchPlace() // 장소 검색
         }
 
+        // 검색 리스트에서 선택한 장소
         mapRVAdapter.setItemClickListener( object :
             MapRVAdapter.OnItemClickListener {
             override fun onClick(position: Int) {
                 val place : Place = placeList[position]
                 Log.d("SELECTED_PLACE", place.toString())
-                selectedPlace = place
-
-                val mapPoint = MapPoint.mapPointWithGeoCoord(place.y, place.x)
-                mapView.setMapCenterPointAndZoomLevel(mapPoint, 1, true)
-                mapView.selectPOIItem(markerList[position], true)
+                selectedPlace = place // 선택 장소 설정
+                val latLng = LatLng.from(place.y, place.x)
+                // 카메라를 마커의 위치로 이동
+                moveCamera(latLng, null)
+                // 핀 스타일 변경
+                markerList[position].changeStyles(LabelStyles.from(setPinStyle(true)))
+                // 장소 취소 & 확인 버튼 표시
                 binding.mapBtnLayout.visibility = View.VISIBLE
+                // 이전에 선택한 장소 핀 색상은 파란색으로 돌려놓기
+                if (prevLabel != markerList[position]) {
+                    prevLabel.changeStyles(LabelStyles.from(setPinStyle(false)))
+                }
+                prevLabel = markerList[position] // 마커 업데이트
             }
         })
 
+        // 취소 버튼
         binding.cancelBtn.setOnClickListener {
-            if (hasPreLocation) {
-                val intent = Intent(this, targetActivityClass)
-                intent.putExtra(PLACE_NAME_INTENT_KEY, prevPlace.place_name)
-                intent.putExtra(PLACE_X_INTENT_KEY, prevPlace.x)
-                intent.putExtra(PLACE_Y_INTENT_KEY, prevPlace.y)
-                setResult(RESULT_OK, intent)
-            }
-            finish()
+            // 선택된 핀 다시 파란색으로 표시
+            prevLabel.changeStyles(LabelStyles.from(setPinStyle(false)))
+            // 줌 레벨 살짝 낮추기
+            moveCamera(LatLng.from(uLatitude, uLongitude), ZOOM_LEVEL - 3)
+            // 아이템 체크 표시 삭제
+            mapRVAdapter.setSelectedPosition(-1)
+            // 취소 & 확인 버튼 없애기
+            binding.mapBtnLayout.visibility = View.GONE
         }
-
+        // 확인 버튼
         binding.selectBtn.setOnClickListener {
             val intent = Intent(this, targetActivityClass)
-            intent.putExtra(PLACE_NAME_INTENT_KEY, selectedPlace.place_name)
-            intent.putExtra(PLACE_X_INTENT_KEY, selectedPlace.x)
-            intent.putExtra(PLACE_Y_INTENT_KEY, selectedPlace.y)
+            intent.apply {
+                putExtra(PLACE_NAME_INTENT_KEY, selectedPlace.place_name)
+                putExtra(PLACE_X_INTENT_KEY, selectedPlace.x)
+                putExtra(PLACE_Y_INTENT_KEY, selectedPlace.y)
+            }
             setResult(RESULT_OK, intent)
             finish()
         }
     }
 
-    override fun finish() {
-        binding.mapView.removeView(mapView)
-        super.finish()
-    }
-
+    // 장소 검색
     private fun searchPlace(keyword : String) {
         val call = kakaoService.getSearchPlace("KakaoAK $API_KEY", keyword, uLongitude.toString(), uLatitude.toString(), "distance")
 
@@ -183,8 +245,8 @@ class MapActivity() : AppCompatActivity() {
 
                 placeList.clear()
                 placeList.addAll(response.body()!!.documents as ArrayList<Place>)
-                setRVData()
-                addMarkers()
+                setPlaceData() // 장소 리스트 표시
+                addMarkers() // 지도 핀 표시
             }
 
             override fun onFailure(call: Call<ResultSearchPlace>, t: Throwable) {
@@ -193,62 +255,90 @@ class MapActivity() : AppCompatActivity() {
         })
     }
 
+    // 검색해서 나온 장소에 핀 표시
     private fun addMarkers() {
-        mapView.removeAllPOIItems()
+        // 기존 핀 삭제
+        kakaoMap?.labelManager?.removeAllLabelLayer()
         markerList.clear()
-
-        if (placeList.isNullOrEmpty()) {
+        if (placeList.isEmpty()) { // 검색 결과가 없을 경우
             Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
+            return
         }
-        else {
-            for (i in placeList) {
-                val point = MapPOIItem()
-                point.apply {
-                    itemName = i.place_name
-                    mapPoint = MapPoint.mapPointWithGeoCoord(i.y.toDouble(), i.x.toDouble())
-                    markerType = MapPOIItem.MarkerType.BluePin
-                    selectedMarkerType = MapPOIItem.MarkerType.RedPin
-                }
+        for (i in placeList) { // 핀 추가
+            val latLng = LatLng.from(i.y, i.x) // 위치
 
-                if (i == placeList[0]) {
-                    mapView.setMapCenterPointAndZoomLevel(point.mapPoint, 1, true)
-                }
-
-                mapView.addPOIItem(point)
-                markerList.add(point)
+            val point = kakaoMap?.labelManager?.layer?.addLabel(LabelOptions.from(latLng)
+                .setStyles(setPinStyle(false))
+                .setTexts(i.place_name) // 장소 이름 표시
+            )
+            point!!.isClickable = true
+            // 첫 번째 장소로 카메라 표시
+            if (i == placeList[0]) {
+                moveCamera(latLng, ZOOM_LEVEL - 3) // 지도를 조금 더 넓게 표시
+                prevLabel = point // 임의로 최초 핀을 선택된 핀으로 설정
             }
+            markerList.add(point)
         }
     }
 
+    // 기존에 선택된 장소 표시
     private fun setPreLocation() {
-        prevPlace.x = intent.getDoubleExtra("PREV_PLACE_X", 0.0)
-        prevPlace.y = intent.getDoubleExtra("PREV_PLACE_Y", 0.0)
-        prevPlace.place_name = intent.getStringExtra("PREV_PLACE_NAME").toString()
-
-        val prevPosition = MapPoint.mapPointWithGeoCoord(prevPlace.y, prevPlace.x)
-        mapView.setMapCenterPoint(prevPosition, true)
-
-        val point = MapPOIItem()
-        point.apply {
-            itemName = prevPlace.place_name
-            mapPoint = MapPoint.mapPointWithGeoCoord(prevPlace.y, prevPlace.x)
-            markerType = MapPOIItem.MarkerType.BluePin
-            selectedMarkerType = MapPOIItem.MarkerType.RedPin
-        }
-
-        mapView.addPOIItem(point)
-        mapView.selectPOIItem(point, true)
-
-//        binding.mapSearchEt.setText(name)
-
+        selectedPlace.x = intent.getDoubleExtra("PREV_PLACE_X", 0.0)
+        selectedPlace.y = intent.getDoubleExtra("PREV_PLACE_Y", 0.0)
+        selectedPlace.place_name = intent.getStringExtra("PREV_PLACE_NAME").toString()
+        val latLng = LatLng.from(selectedPlace.y, selectedPlace.x) // 위치
+        prevLabel = kakaoMap?.labelManager?.layer?.addLabel(LabelOptions.from(latLng)
+            .setStyles(setPinStyle(true))
+            .setTexts(selectedPlace.place_name) // 장소 이름 표시
+        )!!
+        markerList.add(prevLabel)
+        moveCamera(latLng, null)
+        // 아이템 표시
+        setPreLocationItem(selectedPlace.x, selectedPlace.y)
+        Log.d("PlaceInfo", "selectedPlace: $selectedPlace")
     }
 
+    private fun setPreLocationItem(placeX: Double, placeY: Double) {
+        // 카카오 API를 이용해 좌표로 주소 정보 가져오기
+        val call = kakaoService.getPlaceInfo("KakaoAK $API_KEY", placeX.toString(), placeY.toString())
 
+        call.enqueue(object : Callback<ResultCoord2Address> {
+            override fun onResponse(
+                call: Call<ResultCoord2Address>,
+                response: Response<ResultCoord2Address>
+            ) {
+                if (response.isSuccessful) {
+                    val placeInfo = response.body()?.documents?.firstOrNull()
+                    Log.d("PlaceInfo", placeInfo.toString())
+                    if (placeInfo != null) {
+                        selectedPlace.address_name = placeInfo.address.address_name
+                        selectedPlace.road_address_name = placeInfo.road_address?.address_name.toString()
+                        // 선택된 장소를 리사이클러뷰 아이템에 표시
+                        placeList.clear()
+                        placeList.add(selectedPlace)
+                        setPlaceData()
+                        mapRVAdapter.setSelectedPosition(0) // 첫 번째 아이템에 체크 표시
+                        }
+                }
+            }
+
+            override fun onFailure(call: Call<ResultCoord2Address>, t: Throwable) {
+                Log.d("MapActivity", "좌표로 주소 정보 불러오기 실패\n${t.message}")
+            }
+        })
+    }
+
+    // 카메라를 현재 위치로 이동
     private fun setCurrentLocation() {
-        val uNowPosition = MapPoint.mapPointWithGeoCoord(uLatitude, uLongitude)
-        mapView.setMapCenterPoint(uNowPosition, true)
+        moveCamera(LatLng.from(uLatitude, uLongitude), null)
     }
 
+    // 카메라 이동
+    private fun moveCamera(latLng: LatLng, zoomLevel: Int?) {
+        kakaoMap?.moveCamera(CameraUpdateFactory.newCenterPosition(latLng, zoomLevel ?: ZOOM_LEVEL))
+    }
+
+    // 위치 권한 확인
     private fun getLocationPermission() {
         val permissionCheck = ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION)
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -260,15 +350,12 @@ class MapActivity() : AppCompatActivity() {
         val lm = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         try {
             val userNowLocation : Location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
-            uLatitude = userNowLocation.latitude
-            uLongitude = userNowLocation.longitude
+            uLatitude = userNowLocation.latitude // y
+            uLongitude = userNowLocation.longitude // x
+            Log.d("MapActivity", "userLocation: ($uLongitude, $uLatitude)")
         } catch (e : NullPointerException) {
             Log.e("LOCATION_ERROR", e.toString())
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                ActivityCompat.finishAffinity(this)
-            } else {
-                ActivityCompat.finishAffinity(this)
-            }
+            ActivityCompat.finishAffinity(this)
 
             finish()
         }
@@ -276,5 +363,16 @@ class MapActivity() : AppCompatActivity() {
 
     companion object {
         const val API_KEY = BuildConfig.KAKAO_REST_KEY
+        const val ZOOM_LEVEL = 18 // 선택 장소를 보여줄 때의 줌레벨
+        fun setPinStyle(isSelected: Boolean): LabelStyle {
+            if (isSelected) { // 선택된 핀
+                return LabelStyle.from(
+                    R.drawable.ic_pin_selected
+                ).setTextStyles(20, R.color.black)
+            }
+            return LabelStyle.from( // 기본 정
+                R.drawable.ic_pin_default
+            )
+        }
     }
 }

@@ -1,75 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:fitsSystemWindows="true">
 
-    <RelativeLayout
-        android:id="@+id/map_view"
-        android:layout_width="match_parent"
-        android:layout_height="430dp"
-        app:layout_constraintTop_toTopOf="parent" />
-
+    <!-- 지도 쪽 -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/map_btn_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="350dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="0dp"
+        android:layout_weight="4.7"
+        android:layout_marginBottom="-20dp">
 
-        <TextView
-            android:id="@+id/cancel_btn"
-            android:layout_width="140dp"
-            android:layout_height="30dp"
-            android:background="@drawable/border_round_all_stroke_main_orange"
-            android:gravity="center"
-            android:text="취소"
-            android:textColor="@color/MainOrange"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/select_btn"
+        <com.kakao.vectormap.MapView
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:background="@color/notyetGray"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/map_back_cv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/white"
+            app:cardCornerRadius="40dp"
+            app:cardElevation="5dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="4dp"
+                android:src="@drawable/ic_back"
+                android:layout_gravity="center"/>
+        </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:id="@+id/select_btn"
-            android:layout_width="140dp"
-            android:layout_height="30dp"
-            android:background="@drawable/border_round_all_stroke_main_orange"
+
+        <LinearLayout
+            android:id="@+id/map_btn_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:gravity="center"
-            android:text="확인"
-            android:textColor="@color/MainOrange"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/cancel_btn"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/cancel_btn"
+                android:layout_marginEnd="15dp"
+                android:text="@string/dialog_cancel"
+                style="@style/map_common_btn" />
+
+            <TextView
+                android:id="@+id/select_btn"
+                android:layout_marginStart="15dp"
+                android:text="@string/dialog_confirm"
+                style="@style/map_common_btn" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- 검색창 쪽 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/map_content_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="400dp"
-        android:background="@drawable/border_round_top_border_gray"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_weight="5.3"
+        android:background="@drawable/border_round_top_border_gray">
 
         <LinearLayout
             android:id="@+id/map_search_layout"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
+            android:paddingVertical="12dp"
+            android:paddingHorizontal="30dp"
             android:gravity="center"
             android:orientation="horizontal"
-            android:paddingHorizontal="30dp"
             android:weightSum="5"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -79,9 +94,9 @@
                 android:layout_height="50dp"
                 android:layout_weight="4"
                 android:backgroundTint="@color/editTextGray"
-                android:drawableLeft="@drawable/ic_search"
+                android:drawableStart="@drawable/ic_search"
                 android:drawablePadding="10dp"
-                android:hint="장소 입력"
+                android:hint="@string/map_search_hint"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:maxLines="1"
@@ -96,10 +111,10 @@
                 android:layout_marginStart="30dp"
                 android:layout_weight="1"
                 android:background="@drawable/border_round_all_fill_mainorange"
-                android:text="검색"
+                android:text="@string/map_search"
                 android:textColor="@color/white"
                 android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
         </LinearLayout>
 
@@ -114,4 +129,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

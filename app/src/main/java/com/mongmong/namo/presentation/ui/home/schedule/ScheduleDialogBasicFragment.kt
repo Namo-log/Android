@@ -21,7 +21,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.DatePicker
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -44,9 +43,17 @@ import com.mongmong.namo.presentation.ui.home.notify.PushNotificationReceiver
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.getInterval
 import com.google.android.material.chip.Chip
+import com.kakao.vectormap.KakaoMap
+import com.kakao.vectormap.KakaoMapReadyCallback
+import com.kakao.vectormap.LatLng
+import com.kakao.vectormap.MapLifeCycleCallback
+import com.kakao.vectormap.MapView
+import com.kakao.vectormap.camera.CameraUpdateFactory
+import com.kakao.vectormap.label.LabelOptions
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
+import com.mongmong.namo.presentation.ui.home.schedule.map.data.Place
 import com.mongmong.namo.presentation.utils.PickerConverter.getDefaultDate
 import com.mongmong.namo.presentation.utils.PickerConverter.parseDateTimeToDateText
 import com.mongmong.namo.presentation.utils.PickerConverter.parseDateTimeToTimeText
@@ -55,9 +62,6 @@ import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedDate
 import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedTime
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import net.daum.mf.map.api.MapPOIItem
-import net.daum.mf.map.api.MapPoint
-import net.daum.mf.map.api.MapView
 import org.joda.time.DateTime
 
 @AndroidEntryPoint
@@ -78,12 +82,13 @@ class ScheduleDialogBasicFragment : Fragment() {
     private var endDateTime = DateTime(System.currentTimeMillis())
     private var selectedDate = DateTime(System.currentTimeMillis())
 
-    lateinit var mapView: MapView
-    var mapViewContainer: RelativeLayout? = null
+    private var kakaoMap: KakaoMap? = null
+    private lateinit var mapView: MapView
 
-    private var place_name : String = "없음"
-    private var place_x : Double = 0.0
-    private var place_y : Double = 0.0
+    private var place = Place()
+//    private var place_name : String = "없음"
+//    private var place_x : Double = 0.0
+//    private var place_y : Double = 0.0
 
     private var date = DateTime(System.currentTimeMillis())
 
@@ -105,15 +110,12 @@ class ScheduleDialogBasicFragment : Fragment() {
     ): View? {
         binding = FragmentScheduleDialogBasicBinding.inflate(inflater, container, false)
 
-        binding.dialogSchedulePlaceKakaoBtn.visibility = View.GONE
-        binding.dialogSchedulePlaceContainer.visibility = View.GONE
-        mapViewContainer?.visibility = View.GONE
-
         if (args.nowDay != 0L) {
             date = DateTime(args.nowDay)
         }
 
         initObservers()
+        initMapView()
         getCategoryList()
 
         initClickListeners()
@@ -125,22 +127,26 @@ class ScheduleDialogBasicFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if (it.resultCode == Activity.RESULT_OK) {
-                place_name = it.data?.getStringExtra(MainActivity.PLACE_NAME_INTENT_KEY)!!
-                place_x = it.data?.getDoubleExtra(MainActivity.PLACE_X_INTENT_KEY, 0.0)!!
-                place_y = it.data?.getDoubleExtra(MainActivity.PLACE_Y_INTENT_KEY, 0.0)!!
-                Log.d("PLACE_INFO", "name : $place_name , x : $place_x , y : $place_y")
+                place.place_name = it.data?.getStringExtra(MainActivity.PLACE_NAME_INTENT_KEY)!!
+                place.x = it.data?.getDoubleExtra(MainActivity.PLACE_X_INTENT_KEY, 0.0)!!
+                place.y = it.data?.getDoubleExtra(MainActivity.PLACE_Y_INTENT_KEY, 0.0)!!
+                Log.d("PLACE_INFO", "$place")
 
-                schedule.placeName = place_name
-                schedule.placeX = place_x
-                schedule.placeY = place_y
+                schedule.placeName = place.place_name
+                schedule.placeX = place.x
+                schedule.placeY = place.y
 
-                initMapView()
-                if (place_x != 0.0 || place_y != 0.0) {
+                if (place.x != 0.0 || place.y != 0.0) {
                     setMapContent()
                 }
-                Log.d("PLACE_INTENT", place_name)
+                Log.d("PLACE_INTENT", place.place_name)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView.resume()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -156,8 +162,7 @@ class ScheduleDialogBasicFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        mapViewContainer?.removeView(mapView)
-        Log.d("OnPause", "Map remove")
+        mapView.pause()
     }
 
     private fun setInit() {
@@ -289,10 +294,11 @@ class ScheduleDialogBasicFragment : Fragment() {
             getLocationPermission()
         }
 
+        // 길찾기 버튼
         binding.dialogSchedulePlaceKakaoBtn.setOnClickListener {
             hidekeyboard()
 
-            val url = "kakaomap://route?sp=&ep=${place_y},${place_x}&by=PUBLICTRANSIT"
+            val url = "kakaomap://route?sp=&ep=${place.y},${place.x}&by=PUBLICTRANSIT"
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             startActivity(intent)
         }
@@ -501,17 +507,12 @@ class ScheduleDialogBasicFragment : Fragment() {
             PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Log.d("ALARM","setExactAndAllowWhileIdle")
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                desiredTimestamp,
-                pendingIntent
-            )
-        } else {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, desiredTimestamp, pendingIntent)
-            Log.d("ALARM","setExact")
-        }
+        Log.d("ALARM","setExactAndAllowWhileIdle")
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            desiredTimestamp,
+            pendingIntent
+        )
         Log.d("ALARM", "Set puth notification : $id, $desiredTimestamp")
     }
 
@@ -574,31 +575,45 @@ class ScheduleDialogBasicFragment : Fragment() {
 
     //Location Map Zone
     private fun initMapView() {
-        mapView = MapView(requireActivity()).also {
-            mapViewContainer = RelativeLayout(requireActivity())
-            mapViewContainer?.layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-            binding.dialogSchedulePlaceContainer.addView(mapViewContainer)
-            mapViewContainer?.addView(it)
-        }
+        mapView = binding.dialogSchedulePlaceContainer
+        mapView.start(object : MapLifeCycleCallback() {
+            override fun onMapDestroy() {
+                // 지도 API 가 정상적으로 종료될 때 호출됨
+            }
+
+            override fun onMapError(error: Exception) {
+                // 인증 실패 및 지도 사용 중 에러가 발생할 때 호출됨
+            }
+        }, object : KakaoMapReadyCallback() {
+            override fun onMapReady(map: KakaoMap) {
+                // 인증 후 API 가 정상적으로 실행될 때 호출됨
+                kakaoMap = map
+                setMapContent()
+            }
+
+            override fun getPosition(): LatLng {
+                return LatLng.from(place.y, place.x)
+            }
+
+            override fun getZoomLevel(): Int {
+                // 지도 시작 시 확대/축소 줌 레벨 설정
+                return MapActivity.ZOOM_LEVEL
+            }
+        })
     }
 
     private fun setMapContent() {
-        binding.dialogSchedulePlaceNameTv.text = place_name
-        binding.dialogSchedulePlaceKakaoBtn.visibility = View.VISIBLE
-        binding.dialogSchedulePlaceContainer.visibility = ViewGroup.VISIBLE
-        mapViewContainer?.visibility = View.VISIBLE
+        binding.dialogSchedulePlaceNameTv.text = place.place_name
+//        binding.dialogSchedulePlaceKakaoBtn.visibility = View.VISIBLE
+        binding.dialogSchedulePlaceContainer.visibility = View.VISIBLE
 
-        var mapPoint = MapPoint.mapPointWithGeoCoord(place_y, place_x)
-        mapView.setMapCenterPointAndZoomLevel(mapPoint, 1, true)
+        // 지도 위치 조정
+        val latLng = LatLng.from(place.y, place.x)
+        Log.d("ScheduleBasicFragment", latLng.toString())
+        // 카메라를 마커의 위치로 이동
+        kakaoMap?.moveCamera(CameraUpdateFactory.newCenterPosition(latLng, MapActivity.ZOOM_LEVEL))
 
-        var marker = MapPOIItem()
-        marker.itemName = place_name
-        marker.tag = 0
-        marker.mapPoint = mapPoint
-        marker.markerType = MapPOIItem.MarkerType.BluePin
-        marker.selectedMarkerType = MapPOIItem.MarkerType.RedPin
-
-        mapView.addPOIItem(marker)
+        kakaoMap?.labelManager?.layer?.addLabel(LabelOptions.from(latLng).setStyles(MapActivity.setPinStyle(false)))
     }
 
     private fun getLocationPermission() {
@@ -621,11 +636,7 @@ class ScheduleDialogBasicFragment : Fragment() {
 
             } catch (e : NullPointerException) {
                 Log.e("LOCATION_ERROR", e.toString())
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    ActivityCompat.finishAffinity(requireActivity())
-                } else {
-                    ActivityCompat.finishAffinity(requireActivity())
-                }
+                ActivityCompat.finishAffinity(requireActivity())
             }
 
         } else {
@@ -664,12 +675,9 @@ class ScheduleDialogBasicFragment : Fragment() {
         binding.dialogScheduleAlarmTv.text = alarmText
 
         //장소
-        place_name = schedule.placeName
-        place_x = schedule.placeX
-        place_y = schedule.placeY
+        place = Place(place_name = schedule.placeName, x = schedule.placeX, y = schedule.placeY)
 
         if (schedule.placeX != 0.0 || schedule.placeY != 0.0) {
-            initMapView()
             setMapContent()
         }
     }
