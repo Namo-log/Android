@@ -34,7 +34,12 @@ class MapRVAdapter : RecyclerView.Adapter<MapRVAdapter.ViewHolder>() {
     }
 
     fun setSelectedPosition(position: Int) {
+        val prevPosition = selectedPosition
         selectedPosition = position
+        if (prevPosition != RecyclerView.NO_POSITION) {
+            notifyItemChanged(prevPosition)
+            return
+        }
         notifyItemChanged(position)
     }
 

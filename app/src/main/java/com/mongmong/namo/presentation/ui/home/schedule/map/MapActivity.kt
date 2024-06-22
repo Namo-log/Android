@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -192,28 +193,29 @@ class MapActivity : AppCompatActivity() {
                 if (prevLabel != markerList[position]) {
                     prevLabel.changeStyles(LabelStyles.from(setPinStyle(false)))
                 }
-                prevLabel = markerList[position]
+                prevLabel = markerList[position] // 마커 업데이트
             }
         })
 
         // 취소 버튼
         binding.cancelBtn.setOnClickListener {
-            //TODO: 선택된 핀을 다시 파란색으로 바꾸기 + 취소 & 확인 버튼 없애기
-            if (hasPreLocation()) {
-                val intent = Intent(this, targetActivityClass)
-                intent.putExtra(PLACE_NAME_INTENT_KEY, selectedPlace.place_name)
-                intent.putExtra(PLACE_X_INTENT_KEY, selectedPlace.x)
-                intent.putExtra(PLACE_Y_INTENT_KEY, selectedPlace.y)
-                setResult(RESULT_OK, intent)
-            }
-            finish()
+            // 선택된 핀 다시 파란색으로 표시
+            prevLabel.changeStyles(LabelStyles.from(setPinStyle(false)))
+            //TODO: 줌 레벨 살짝 낮추기
+            
+            // 아이템 체크 표시 삭제
+            mapRVAdapter.setSelectedPosition(-1)
+            // 취소 & 확인 버튼 없애기
+            binding.mapBtnLayout.visibility = View.GONE
         }
         // 확인 버튼
         binding.selectBtn.setOnClickListener {
             val intent = Intent(this, targetActivityClass)
-            intent.putExtra(PLACE_NAME_INTENT_KEY, selectedPlace.place_name)
-            intent.putExtra(PLACE_X_INTENT_KEY, selectedPlace.x)
-            intent.putExtra(PLACE_Y_INTENT_KEY, selectedPlace.y)
+            intent.apply {
+                putExtra(PLACE_NAME_INTENT_KEY, selectedPlace.place_name)
+                putExtra(PLACE_X_INTENT_KEY, selectedPlace.x)
+                putExtra(PLACE_Y_INTENT_KEY, selectedPlace.y)
+            }
             setResult(RESULT_OK, intent)
             finish()
         }
