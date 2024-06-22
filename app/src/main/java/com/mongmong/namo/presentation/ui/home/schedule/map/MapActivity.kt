@@ -205,8 +205,8 @@ class MapActivity : AppCompatActivity() {
         binding.cancelBtn.setOnClickListener {
             // 선택된 핀 다시 파란색으로 표시
             prevLabel.changeStyles(LabelStyles.from(setPinStyle(false)))
-            //TODO: 줌 레벨 살짝 낮추기
-            
+            // 줌 레벨 살짝 낮추기
+            moveCamera(LatLng.from(uLatitude, uLongitude), ZOOM_LEVEL - 3)
             // 아이템 체크 표시 삭제
             mapRVAdapter.setSelectedPosition(-1)
             // 취소 & 확인 버튼 없애기
@@ -357,7 +357,7 @@ class MapActivity : AppCompatActivity() {
 
     companion object {
         const val API_KEY = BuildConfig.KAKAO_REST_KEY
-        const val ZOOM_LEVEL = 18
+        const val ZOOM_LEVEL = 18 // 선택 장소를 보여줄 때의 줌레벨
         fun setPinStyle(isSelected: Boolean): LabelStyle {
             if (isSelected) { // 선택된 핀
                 return LabelStyle.from(
