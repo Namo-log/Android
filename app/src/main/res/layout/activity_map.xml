@@ -46,7 +46,7 @@
             android:id="@+id/map_btn_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="36dp"
             android:gravity="center"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
