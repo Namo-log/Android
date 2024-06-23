@@ -217,32 +217,6 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
         return (eventTop + (_eventBetweenPadding * idx) + (_eventLineHeight * (idx + 1)))
     }
 
-    private fun drawPrevMonthRect(prev: Int, canvas: Canvas?) {
-        val topHeight = if (prev <= 7) cellHeight else 2 * cellHeight
-        canvas!!.drawRect(
-            RectF(
-                0f,
-                0f,
-                (prev % DAYS_PER_WEEK).toFloat() * cellWidth,
-                topHeight
-            ),
-            alphaPaint
-        )
-    }
-
-    private fun drawNextMonthRect(next: Int, canvas: Canvas?) {
-        val bottomHeight = if (next <= 7) 6 * cellHeight else 5 * cellHeight
-        canvas!!.drawRect(
-            RectF(
-                ((42 - next) % DAYS_PER_WEEK).toFloat() * cellWidth,
-                ((42 - next) / DAYS_PER_WEEK).toFloat() * cellHeight,
-                (7 * cellWidth),
-                bottomHeight,
-            ),
-            alphaPaint
-        )
-    }
-
     fun splitWeek(startIdx: Int, endIdx: Int): ArrayList<StartEnd> {
         val result = ArrayList<StartEnd>()
         var start = if (startIdx == -1) 0 else startIdx
@@ -379,14 +353,47 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
     }
 
     private fun drawRestDays(canvas: Canvas) {
-        // 이전달, 다음달은 불투명하게
+        // 이전 달의 날짜를 불투명하게 그리기
         var prev = 0
-        var next = 0
         while (!isSameMonth(days[prev])) prev++
-        while (!isSameMonth(days[41 - next])) next++
         drawPrevMonthRect(prev, canvas)
+
+        // 다음 달의 날짜를 불투명하게 그리기
+        var next = 0
+        while (!isSameMonth(days[41 - next])) next++
         drawNextMonthRect(next, canvas)
     }
+
+    private fun drawPrevMonthRect(prev: Int, canvas: Canvas?) {
+        val topHeight = if (prev <= 7) cellHeight else 2 * cellHeight
+        canvas!!.drawRect(
+            RectF(
+                0f,
+                0f,
+                (prev % DAYS_PER_WEEK) * cellWidth,
+                topHeight
+            ),
+            alphaPaint
+        )
+    }
+
+    private fun drawNextMonthRect(next: Int, canvas: Canvas?) {
+        val bottomHeight = if (next <= 7) 6 * cellHeight else 5 * cellHeight
+        for (i in 42 - next until 42) {
+            val x = (i % DAYS_PER_WEEK) * cellWidth
+            val y = (i / DAYS_PER_WEEK) * cellHeight
+            canvas!!.drawRect(
+                RectF(
+                    x,
+                    y,
+                    x + cellWidth,
+                    y + cellHeight
+                ),
+                alphaPaint
+            )
+        }
+    }
+
 
     abstract fun drawSchedules(canvas: Canvas)
 }
