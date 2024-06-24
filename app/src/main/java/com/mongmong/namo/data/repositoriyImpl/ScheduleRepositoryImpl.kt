@@ -23,8 +23,8 @@ class ScheduleRepositoryImpl @Inject constructor(
 ) : ScheduleRepository {
 
     /** 개인 */
-    override suspend fun getMonthSchedules(monthStart: Long, monthEnd: Long): List<Schedule> {
-        return localScheduleDataSource.getMonthSchedule(monthStart, monthEnd)
+    override suspend fun getMonthSchedules(yearMonth: String): List<GetMonthScheduleResult> {
+        return remoteScheduleDataSource.getMonthSchedules(yearMonth)
     }
 
     override suspend fun getDailySchedules(startDate: Long, endDate: Long): List<Schedule> {
@@ -107,14 +107,6 @@ class ScheduleRepositoryImpl @Inject constructor(
                 )
             }
         }
-    }
-
-    override suspend fun uploadScheduleToServer() {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun postScheduleToServer(scheduleServerId: Long, scheduleId: Long) {
-        TODO("Not yet implemented")
     }
 
     // 모임

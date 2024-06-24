@@ -29,8 +29,8 @@ class PersonalScheduleViewModel @Inject constructor(
     private val _personalDailyScheduleList = MutableLiveData<List<Schedule>>(emptyList())
     val personalDailyScheduleList: LiveData<List<Schedule>?> = _personalDailyScheduleList
 
-    private val _personalScheduleList = MutableLiveData<List<Schedule>>(emptyList())
-    val personalScheduleList: LiveData<List<Schedule>?> = _personalScheduleList
+    private val _scheduleList = MutableLiveData<List<GetMonthScheduleResult>>(emptyList())
+    val scheduleList: LiveData<List<GetMonthScheduleResult>?> = _scheduleList
 
     private val _moimScheduleList = MutableLiveData<List<GetMonthScheduleResult>>(emptyList())
     val moimScheduleList: LiveData<List<GetMonthScheduleResult>?> = _moimScheduleList
@@ -45,10 +45,10 @@ class PersonalScheduleViewModel @Inject constructor(
     val categoryList: LiveData<List<Category>> = _categoryList
 
     /** 월별 일정 리스트 조회 */
-    fun getMonthSchedules(monthStart: Long, monthEnd: Long) {
+    fun getMonthSchedules(yearMonth: String) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "getMonthSchedules")
-            _personalScheduleList.value = repository.getMonthSchedules(monthStart, monthEnd)
+            _scheduleList.value = repository.getMonthSchedules(yearMonth)
         }
     }
 

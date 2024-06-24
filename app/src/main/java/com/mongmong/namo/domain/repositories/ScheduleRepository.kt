@@ -11,9 +11,8 @@ import com.mongmong.namo.domain.model.group.MoimScheduleBody
 interface ScheduleRepository {
     /** 개인 */
     suspend fun getMonthSchedules(
-        monthStart: Long,
-        monthEnd: Long
-    ): List<Schedule>
+        yearMonth: String
+    ): List<GetMonthScheduleResult>
 
     suspend fun getDailySchedules(
         startDate: Long,
@@ -33,10 +32,6 @@ interface ScheduleRepository {
         serverId: Long,
         isGroup: Boolean
     )
-
-    suspend fun uploadScheduleToServer()
-
-    suspend fun postScheduleToServer(scheduleServerId: Long, scheduleId: Long)
 
     // 모임
     suspend fun getMonthMoimSchedule(
