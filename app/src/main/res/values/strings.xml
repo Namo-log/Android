@@ -124,5 +124,9 @@
     <!-- event 관련 String   -->
     <string name="more_view">더보기</string>
 
+    <!-- map 관련 String -->
+    <string name="map_search_hint">장소 입력</string>
+    <string name="map_search">검색</string>
+
 
 </resources>
