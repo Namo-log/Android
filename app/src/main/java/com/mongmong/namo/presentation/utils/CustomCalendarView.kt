@@ -25,41 +25,41 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
     var onDateClickListener: OnDateClickListener? = null
     var selectedDate: DateTime? = null
     var millis: Long = 0
-    var startX = 0f
-    var startY = 0f
-    var endX = 0f
-    var endY = 0f
-    var isScroll = false
+    private var startX = 0f
+    private var startY = 0f
+    private var endX = 0f
+    private var endY = 0f
+    private var isScroll = false
 
     var cellWidth = 0f
     var cellHeight = 0f
-    val bounds = Rect()
-    val today = DateTime.now().withTimeAtStartOfDay().millis
+    private val bounds = Rect()
+    private val today = DateTime.now().withTimeAtStartOfDay().millis
 
     val days = mutableListOf<DateTime>()
     val categoryList = mutableListOf<Category>()
-    val orderList = mutableListOf<Int>()
+    private val orderList = mutableListOf<Int>()
     val moreList = mutableListOf<Int>()
-    val otherRect: ArrayList<RectF> = arrayListOf()
+    private val otherRect: ArrayList<RectF> = arrayListOf()
 
-    val bounds2 = Rect()
+    private val bounds2 = Rect()
     val eventBounds = Rect()
     val moreBounds = Rect()
     var showTitle: Boolean = false
-    var cellPaint: Paint = Paint()
-    var alphaPaint: Paint = Paint()
-    var datePaint: Paint = Paint()
-    var todayPaint: Paint = Paint()
-    var selectedPaint: Paint = Paint()
-    var clickPaint: Paint = Paint()
+    private var cellPaint: Paint = Paint()
+    private var alphaPaint: Paint = Paint()
+    private var datePaint: Paint = Paint()
+    private var todayPaint: Paint = Paint()
+    private var selectedPaint: Paint = Paint()
+    private var clickPaint: Paint = Paint()
     var bgPaint: Paint = Paint()
     var eventPaint: TextPaint = TextPaint()
     var morePaint: Paint = Paint()
 
-    var todayNoticePaint: Paint = Paint()
-    var radius: Float = 34f
+    private var todayNoticePaint: Paint = Paint()
+    private var radius: Float = 34f
 
-    var path = Path()
+    private var path = Path()
     var rect = RectF()
     var corners: FloatArray = floatArrayOf()
     var eventPos: Int = 0
@@ -94,73 +94,70 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
             _eventCornerRadius = getDimension(R.styleable.CalendarView_eventCornerRadius, 0f)
             _eventLineHeight = getDimension(R.styleable.CalendarView_eventLineHeight, 0f)
 
-            cellPaint = Paint().apply {
-                style = Paint.Style.STROKE
-                color = Color.BLACK
-                strokeWidth = dpToPx(context, 0.5f)
-                isAntiAlias = true
-            }
-
-            alphaPaint = Paint().apply {
-                style = Paint.Style.FILL
-                color = Color.WHITE
-                alpha = 180
-                isAntiAlias = true
-            }
-
-            datePaint = TextPaint().apply {
-                isAntiAlias = true
-                textSize = dayTextSize
-                typeface = Typeface.DEFAULT_BOLD
-                color = context.getColor(R.color.black)
-            }
-
-            todayPaint = TextPaint().apply {
-                isAntiAlias = true
-                textSize = dayTextSize
-                typeface = Typeface.DEFAULT_BOLD
-                color = context.getColor(R.color.white)
-            }
-
-            todayNoticePaint.color = context.getColor(R.color.MainOrange)
-
-            selectedPaint = TextPaint().apply {
-                isAntiAlias = true
-                textSize = dayTextSize
-                typeface = Typeface.DEFAULT_BOLD
-                color = context.getColor(R.color.MainOrange)
-            }
-
-            bgPaint.apply {
-                color = context.getColor(R.color.palette3)
-//                if (!CalendarUtils.isSameMonth(date, firstDayOfMonth)) {
-//                    alpha = 50
-//                }
-            }
-
-            eventPaint = TextPaint().apply {
-                isAntiAlias = true
-                textSize = eventTextSize
-                color = Color.WHITE
-                typeface = Typeface.DEFAULT_BOLD
-//                if (!isSameMonth(date, firstDayOfMonth)) {
-//                    alpha = 50
-//                }
-            }
-
-            morePaint = TextPaint().apply {
-                isAntiAlias = true
-                textSize = eventTextSize
-                color = Color.BLACK
-                typeface = Typeface.DEFAULT_BOLD
-            }
-
+            initPaints(dayTextSize, eventTextSize)
             corners = floatArrayOf(
                 _eventCornerRadius, _eventCornerRadius, //Top left
                 _eventCornerRadius, _eventCornerRadius, //Top right
                 _eventCornerRadius, _eventCornerRadius, //Bottom right
                 _eventCornerRadius, _eventCornerRadius //Bottom left
             )
+        }
+    }
+
+    private fun initPaints(dayTextSize: Float, eventTextSize: Float) {
+        cellPaint = Paint().apply {
+            style = Paint.Style.STROKE
+            color = Color.BLACK
+            strokeWidth = dpToPx(context, 0.5f)
+            isAntiAlias = true
+        }
+
+        alphaPaint = Paint().apply {
+            style = Paint.Style.FILL
+            color = Color.WHITE
+            alpha = 180
+            isAntiAlias = true
+        }
+
+        datePaint = TextPaint().apply {
+            isAntiAlias = true
+            textSize = dayTextSize
+            typeface = Typeface.DEFAULT_BOLD
+            color = context.getColor(R.color.black)
+        }
+
+        todayPaint = TextPaint().apply {
+            isAntiAlias = true
+            textSize = dayTextSize
+            typeface = Typeface.DEFAULT_BOLD
+            color = context.getColor(R.color.white)
+        }
+
+        todayNoticePaint.color = context.getColor(R.color.MainOrange)
+
+        selectedPaint = TextPaint().apply {
+            isAntiAlias = true
+            textSize = dayTextSize
+            typeface = Typeface.DEFAULT_BOLD
+            color = context.getColor(R.color.MainOrange)
+        }
+
+        bgPaint.apply {
+            color = context.getColor(R.color.palette3)
+        }
+
+        eventPaint = TextPaint().apply {
+            isAntiAlias = true
+            textSize = eventTextSize
+            color = Color.WHITE
+            typeface = Typeface.DEFAULT_BOLD
+        }
+
+        morePaint = TextPaint().apply {
+            isAntiAlias = true
+            textSize = eventTextSize
+            color = Color.BLACK
+            typeface = Typeface.DEFAULT_BOLD
         }
     }
 
@@ -185,26 +182,25 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
                 isScroll = !(abs(endX - startX) < 10 && abs(endY - startY) < 10)
 
                 if (!isScroll) {
-                    val row = (event.y / cellHeight).toInt()
-                    val col = (event.x / cellWidth).toInt()
-                    if (row in 0..5 && col in 0..6) {
-                        val day = days[row * 7 + col]
-                        onDateClickListener?.onDateClick(day, row * 7 + col)
-                        return true
-                    }
+                    handleDateClick(event)
+                    return true
                 }
             }
         }
         return super.onTouchEvent(event)
     }
 
-    fun findMaxOrderInSchedule(startIdx: Int, endIdx: Int): Int {
-        var maxOrder = 0
-        for (i in startIdx..endIdx) {
-            if (orderList[i] > maxOrder) maxOrder = orderList[i]
+    private fun handleDateClick(event: MotionEvent) {
+        val row = (event.y / cellHeight).toInt()
+        val col = (event.x / cellWidth).toInt()
+        if (row in 0..5 && col in 0..6) {
+            val day = days[row * 7 + col]
+            onDateClickListener?.onDateClick(day, row * 7 + col)
         }
+    }
 
-        return maxOrder
+    fun findMaxOrderInSchedule(startIdx: Int, endIdx: Int): Int {
+        return orderList.subList(startIdx, endIdx + 1).maxOrNull() ?: 0
     }
 
     fun setOrder(order: Int, startIdx: Int, endIdx: Int) {
@@ -212,7 +208,6 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
             orderList[i] = order + 1
         }
     }
-
 
     fun getScheduleBottom(idx: Int): Float {
         return (eventTop + (_eventBetweenPadding * idx) + (_eventHeight * (idx + 1)))
@@ -222,87 +217,16 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
         return (eventTop + (_eventBetweenPadding * idx) + (_eventLineHeight * (idx + 1)))
     }
 
-    private fun drawPrevMonthRect(prev: Int, canvas: Canvas?) {
-        if (prev <= 7) {
-            canvas!!.drawRect(
-                RectF(
-                    0f,
-                    0f,
-                    (prev % DAYS_PER_WEEK).toFloat() * cellWidth,
-                    cellHeight
-                ),
-                alphaPaint
-            )
-        } else {
-            canvas!!.drawRect(
-                RectF(
-                    0f,
-                    0f,
-                    (7 * cellWidth),
-                    cellHeight
-                ),
-                alphaPaint
-            )
-            canvas!!.drawRect(
-                RectF(
-                    0f,
-                    cellHeight,
-                    (prev % DAYS_PER_WEEK).toFloat() * cellWidth,
-                    (2 * cellHeight)
-                ),
-                alphaPaint
-            )
-        }
-    }
-
-    private fun drawNextMonthRect(next: Int, canvas: Canvas?) {
-        if (next <= 7) {
-            canvas!!.drawRect(
-                RectF(
-                    ((42 - next) % DAYS_PER_WEEK).toFloat() * cellWidth,
-                    ((42 - next) / DAYS_PER_WEEK).toFloat() * cellHeight,
-                    (7 * cellWidth),
-                    (6 * cellHeight),
-                ),
-                alphaPaint
-            )
-        } else {
-            canvas!!.drawRect(
-                RectF(
-                    ((42 - next) % DAYS_PER_WEEK).toFloat() * cellWidth,
-                    ((42 - next) / DAYS_PER_WEEK).toFloat() * cellHeight,
-                    (7 * cellWidth),
-                    (5 * cellHeight),
-                ),
-                alphaPaint
-            )
-            canvas!!.drawRect(
-                RectF(
-                    0f,
-                    (5 * cellHeight),
-                    (7 * cellWidth),
-                    (6 * cellHeight),
-                ),
-                alphaPaint
-            )
-        }
-    }
-
-    fun splitWeek(startIdx: Int, endIdx: Int) : ArrayList<StartEnd> {
-        val result  = ArrayList<StartEnd>()
-        result.clear()
+    fun splitWeek(startIdx: Int, endIdx: Int): ArrayList<StartEnd> {
+        val result = ArrayList<StartEnd>()
         var start = if (startIdx == -1) 0 else startIdx
-        var end = if (endIdx == -1) 41 else endIdx
-        var mid = 0
+        val end = if (endIdx == -1) 41 else endIdx
 
         while (start <= end) {
-            mid = (start / 7) * 7 + 6
-            if (mid > end) mid = end
-            result.add(StartEnd(start, mid))
+            val mid = (start / 7) * 7 + 6
+            result.add(StartEnd(start, mid.coerceAtMost(end)))
             start = mid + 1
         }
-
-
         return result
     }
 
@@ -326,23 +250,18 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
         )
     }
 
-
     fun getScheduleTextStart(startIdx: Int): Float {
         val startX = (startIdx % DAYS_PER_WEEK) * cellWidth + _eventHorizontalPadding
         val additionalMargin = dpToPx(context, 7f)
         return startX + additionalMargin
     }
 
-
     fun getScheduleTextBottom(title: String, startIdx: Int, endIdx: Int, order: Int): Float {
         return (((startIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding + _eventHeight) * order) + ((endIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding * order) + (_eventHeight * (order + 1)))) / 2 + eventBounds.height() / 2
     }
 
     private fun isSameMonth(date: DateTime): Boolean {
-        if (date.monthOfYear != DateTime(millis).monthOfYear) {
-            return false
-        }
-        return true
+        return date.monthOfYear == DateTime(millis).monthOfYear
     }
 
     fun setDays(millis: Long) {
@@ -397,7 +316,6 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
         }
     }
 
-
     private fun drawSelected(canvas: Canvas) {
         val padding = dpToPx(context, 5f)  // 5dp를 픽셀로 변환
 
@@ -435,13 +353,47 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
     }
 
     private fun drawRestDays(canvas: Canvas) {
-        // 이전달, 다음달은 불투명하게
+        // 이전 달의 날짜를 불투명하게 그리기
         var prev = 0
-        var next = 0
         while (!isSameMonth(days[prev])) prev++
-        while (!isSameMonth(days[41 - next])) next++
         drawPrevMonthRect(prev, canvas)
+
+        // 다음 달의 날짜를 불투명하게 그리기
+        var next = 0
+        while (!isSameMonth(days[41 - next])) next++
         drawNextMonthRect(next, canvas)
     }
+
+    private fun drawPrevMonthRect(prev: Int, canvas: Canvas?) {
+        val topHeight = if (prev <= 7) cellHeight else 2 * cellHeight
+        canvas!!.drawRect(
+            RectF(
+                0f,
+                0f,
+                (prev % DAYS_PER_WEEK) * cellWidth,
+                topHeight
+            ),
+            alphaPaint
+        )
+    }
+
+    private fun drawNextMonthRect(next: Int, canvas: Canvas?) {
+        val bottomHeight = if (next <= 7) 6 * cellHeight else 5 * cellHeight
+        for (i in 42 - next until 42) {
+            val x = (i % DAYS_PER_WEEK) * cellWidth
+            val y = (i / DAYS_PER_WEEK) * cellHeight
+            canvas!!.drawRect(
+                RectF(
+                    x,
+                    y,
+                    x + cellWidth,
+                    y + cellHeight
+                ),
+                alphaPaint
+            )
+        }
+    }
+
+
     abstract fun drawSchedules(canvas: Canvas)
 }

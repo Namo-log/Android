@@ -17,8 +17,8 @@ android {
         applicationId "com.mongmong.namo"
         minSdk 23
         targetSdk 33
-        versionCode 4
-        versionName "1.0.3"
+        versionCode 5
+        versionName "1.0.4"
 
         buildConfigField "String", "KAKAO_API_KEY", properties['kakao_api_key']
         buildConfigField "String", "KAKAO_REST_KEY", properties['kakao_rest_key']
@@ -71,8 +71,8 @@ dependencies {
     //kakao Login
     implementation 'com.kakao.sdk:v2-user:2.12.1'
 
-    //카카오맵 API
-    implementation fileTree(dir: 'src\\main\\jniLibs', include: ['*.aar', '*.jar'], exclude: [])
+    //kakaoMap API
+    implementation 'com.kakao.maps.open:android:2.9.7'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
