@@ -198,7 +198,6 @@ class CalendarMonthFragment : Fragment() {
     // 캘린더에 표시할 월별 일정
     private fun setMonthCalendarSchedule() {
         viewModel.getMonthSchedules(yearMonthDate(millis))
-//        viewModel.getMonthMoimSchedule(yearMonthDate(millis))
     }
 
     // 일정 상세보기

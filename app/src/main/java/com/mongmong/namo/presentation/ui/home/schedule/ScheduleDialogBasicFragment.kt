@@ -86,9 +86,6 @@ class ScheduleDialogBasicFragment : Fragment() {
     private lateinit var mapView: MapView
 
     private var place = Place()
-//    private var place_name : String = "없음"
-//    private var place_x : Double = 0.0
-//    private var place_y : Double = 0.0
 
     private var date = DateTime(System.currentTimeMillis())
 
@@ -386,7 +383,7 @@ class ScheduleDialogBasicFragment : Fragment() {
         schedule.serverId = 0
 
         // 새 일정 등록
-        viewModel.addSchedule(schedule)
+        viewModel.addSchedule(schedule.convertLocalScheduleToServer())
     }
 
     /** 일정 수정 **/
@@ -404,7 +401,7 @@ class ScheduleDialogBasicFragment : Fragment() {
 //        setAlarm(schedule.startLong)
 
         // 일정 편집
-        viewModel.editSchedule(schedule)
+        viewModel.editSchedule(schedule.scheduleId, schedule.convertLocalScheduleToServer())
 
         Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
         // 뒤로가기

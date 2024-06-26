@@ -10,6 +10,7 @@ import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.domain.model.ScheduleRequestBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecase.FindCategoryUseCase
 import com.mongmong.namo.domain.usecase.GetCategoriesUseCase
@@ -61,7 +62,7 @@ class PersonalScheduleViewModel @Inject constructor(
     }
 
     /** 일정 추가 */
-    fun addSchedule(schedule: Schedule) {
+    fun addSchedule(schedule: ScheduleRequestBody) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "addSchedule $schedule")
             repository.addSchedule(
@@ -72,22 +73,22 @@ class PersonalScheduleViewModel @Inject constructor(
     }
 
     /** 일정 수정 */
-    fun editSchedule(schedule: Schedule) {
+    fun editSchedule(scheduleId: Long, schedule: ScheduleRequestBody) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "editSchedule $schedule")
             repository.editSchedule(
+                scheduleId = scheduleId,
                 schedule = schedule
             )
         }
     }
 
     /** 일정 삭제 */
-    fun deleteSchedule(localId: Long, serverId: Long, isGroup: Boolean) {
+    fun deleteSchedule(scheduleId: Long, isGroup: Boolean) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "deleteSchedule $schedule")
             repository.deleteSchedule(
-                localId = localId,
-                serverId = serverId,
+                scheduleId = scheduleId,
                 isGroup = isGroup
             )
         }
