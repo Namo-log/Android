@@ -46,8 +46,9 @@ data class DiarySchedule(
     var place: String = "없음",
     var content: String?,
     var images: List<String>? = null,
-    var serverId: Long = 0L, // eventServerId
+    var serverId: Long = 0L, // scheduleServerId
     var categoryServerId : Long = 0L,
+    var color: Int = 1,
     var isHeader: Boolean = false
 )
 
@@ -86,6 +87,7 @@ data class MoimDiary(
     @SerializedName("contents") var content: String?,
     @SerializedName("urls") var imgUrl: List<String>,
     @SerializedName("categoryId") var categoryId: Long,
+    @SerializedName("color") var color: Int,
     @SerializedName("placeName") var placeName: String
 ) : java.io.Serializable
 

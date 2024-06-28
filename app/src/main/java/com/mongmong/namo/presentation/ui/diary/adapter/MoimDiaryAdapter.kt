@@ -2,6 +2,7 @@ package com.mongmong.namo.presentation.ui.diary.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,12 +12,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.domain.model.DiarySchedule
-import com.mongmong.namo.data.remote.diary.DiaryRepository
 import com.mongmong.namo.databinding.ItemDiaryItemListBinding
 import com.mongmong.namo.databinding.ItemDiaryListBinding
 import com.mongmong.namo.presentation.config.CategoryColor
 import java.text.SimpleDateFormat
-import kotlin.reflect.KFunction1
 
 class MoimDiaryAdapter(  // 월 별 모임 다이어리 리스트 어댑터
     val detailClickListener: (Long) -> Unit,
@@ -103,12 +102,8 @@ class MoimDiaryAdapter(  // 월 별 모임 다이어리 리스트 어댑터
 
                 setViewMore(itemDiaryContentTv, viewMore)
 
-                val repo = DiaryRepository(context)
-
-                val category =
-                    repo.getCategory(item.categoryId, item.categoryId)
-
-                binding.itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
+                binding.itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(item.color)
+                Log.d("MoimDiaryAdapter", "${item.title}: ${item.color}")
 
                 val adapter =
                     DiaryGalleryRVAdapter(context, item.images, imageClickListener)

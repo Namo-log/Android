@@ -12,18 +12,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.R
-import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.databinding.FragmentCategorySettingBinding
 import com.mongmong.namo.presentation.ui.category.adapter.SetCategoryRVAdapter
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.data.remote.category.CategorySettingView
-import com.mongmong.namo.domain.model.GetCategoryResponse
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CategorySettingFragment: Fragment(), CategorySettingView {
+class CategorySettingFragment: Fragment() {
 
     lateinit var binding: FragmentCategorySettingBinding //플로팅 카테고리 설정 화면
 
@@ -143,14 +140,6 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
             .apply()
 
         Log.d("debug", "Category Data saved")
-    }
-
-    override fun onGetAllCategorySuccess(response: GetCategoryResponse) {
-        Log.d("CategorySettingFrag", "onGetAllCategorySuccess")
-    }
-
-    override fun onGetAllCategoryFailure(message: String) {
-        Log.d("CategorySettingFrag", "onGetAllCategoryFailure")
     }
 
     companion object {
