@@ -39,16 +39,13 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val item = getItem(position) as DiarySchedule
         when (holder) {
-            is DiaryHeaderViewHolder -> {
-                val diaryItem = getItem(position) as DiarySchedule
-                holder.bind(diaryItem)
-            }
+            is DiaryHeaderViewHolder -> holder.bind(item)
             is DiaryContentViewHolder -> {
-                val diaryItems = getItem(position) as DiarySchedule
-                holder.bind(diaryItems)
+                holder.bind(item)
                 holder.onclick.setOnClickListener {
-                    editClickListener(diaryItems)
+                    editClickListener(item)
                 }
             }
         }
@@ -100,28 +97,18 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
         val onclick = binding.editLy
 
         fun bind(item: DiarySchedule) {
-            binding.apply {
+            setViewMore(binding.itemDiaryContentTv, binding.viewMore)
+            binding.diary = item
 
-                itemDiaryContentTv.text = item.content
-                itemDiaryTitleTv.text = item.title
+            val repo = DiaryRepository(context)
+            val category = repo.getCategory(item.categoryId, item.categoryServerId)
 
-                setViewMore(itemDiaryContentTv, viewMore)
+            binding.itemDiaryCategoryColorIv.backgroundTintList =
+                CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
 
-                val repo = DiaryRepository(context)
-
-                val category =
-                    repo.getCategory(item.categoryId, item.categoryServerId)
-
-                itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
-
-                val adapter =
-                    DiaryGalleryRVAdapter(context, item.images, imageClickListener)
-                diaryGalleryRv.adapter = adapter
-                diaryGalleryRv.layoutManager =
-                    LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-
-                if (itemDiaryContentTv.text.isNullOrEmpty()) itemDiaryContentTv.visibility =
-                    View.GONE
+            binding.diaryGalleryRv.apply {
+                adapter = DiaryGalleryRVAdapter(context, item.images, imageClickListener)
+                layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             }
         }
 
@@ -152,7 +139,6 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
                         }
                     }
                 }
-
             }
         }
     }

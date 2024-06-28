@@ -96,29 +96,19 @@ class MoimDiaryAdapter(  // 월 별 모임 다이어리 리스트 어댑터
 
         @SuppressLint("ResourceAsColor")
         fun bind(item: DiarySchedule) {
-            binding.apply {
+            binding.diary = item
+            setViewMore(binding.itemDiaryContentTv, binding.viewMore)
 
-                itemDiaryContentTv.text = item.content
-                itemDiaryTitleTv.text = item.title
+            val repo = DiaryRepository(context)
+            val category = repo.getCategory(item.categoryId, item.categoryId)
+            binding.itemDiaryCategoryColorIv.backgroundTintList =
+                CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
 
-                setViewMore(itemDiaryContentTv, viewMore)
-
-                val repo = DiaryRepository(context)
-
-                val category =
-                    repo.getCategory(item.categoryId, item.categoryId)
-
-                binding.itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
-
-                val adapter =
-                    DiaryGalleryRVAdapter(context, item.images, imageClickListener)
-                diaryGalleryRv.adapter = adapter
-                diaryGalleryRv.layoutManager =
-                    LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-
-                if (itemDiaryContentTv.text.isNullOrEmpty()) itemDiaryContentTv.visibility =
-                    View.GONE
+            binding.diaryGalleryRv.apply {
+                adapter = DiaryGalleryRVAdapter(context, item.images, imageClickListener)
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             }
+
         }
 
         companion object {
