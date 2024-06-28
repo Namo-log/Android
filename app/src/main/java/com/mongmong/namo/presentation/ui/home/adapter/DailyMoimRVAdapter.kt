@@ -12,6 +12,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
+import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.utils.ScheduleTimeConverter
@@ -19,7 +20,7 @@ import org.joda.time.DateTime
 
 class DailyMoimRVAdapter : RecyclerView.Adapter<DailyMoimRVAdapter.ViewHolder>() {
 
-    private val schedules = ArrayList<Schedule>()
+    private val schedules = ArrayList<GetMonthScheduleResult>()
     private val categoryList = ArrayList<Category>()
     private val moimDiary = ArrayList<MoimDiary>()
     private lateinit var context : Context
@@ -27,7 +28,7 @@ class DailyMoimRVAdapter : RecyclerView.Adapter<DailyMoimRVAdapter.ViewHolder>()
     private lateinit var timeConverter: ScheduleTimeConverter
 
     interface MoimScheduleClickListener {
-        fun onContentClicked(schedule: Schedule)
+        fun onContentClicked(schedule: GetMonthScheduleResult)
         fun onDiaryIconClicked(scheduleId: Long)
     }
 
@@ -55,7 +56,7 @@ class DailyMoimRVAdapter : RecyclerView.Adapter<DailyMoimRVAdapter.ViewHolder>()
         // 기록 아이콘 클릭
         holder.binding.itemCalendarScheduleRecord.setOnClickListener {
             if (schedules[position].hasDiary != null) {
-                moimScheduleClickListener.onDiaryIconClicked(schedules[position].serverId)
+                moimScheduleClickListener.onDiaryIconClicked(schedules[position].scheduleId)
             }
         }
     }
@@ -63,7 +64,7 @@ class DailyMoimRVAdapter : RecyclerView.Adapter<DailyMoimRVAdapter.ViewHolder>()
     override fun getItemCount(): Int = schedules.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addGroup(group : ArrayList<Schedule>) {
+    fun addGroup(group : ArrayList<GetMonthScheduleResult>) {
         this.schedules.clear()
         this.schedules.addAll(group)
 
@@ -87,14 +88,14 @@ class DailyMoimRVAdapter : RecyclerView.Adapter<DailyMoimRVAdapter.ViewHolder>()
     }
 
     inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(schedule : Schedule) {
+        fun bind(schedule : GetMonthScheduleResult) {
             val category = categoryList.find {
-                if (it.serverId != 0L) it.serverId == schedule.categoryServerId
+                if (it.serverId != 0L) it.serverId == schedule.categoryId
                 else it.categoryId == schedule.categoryId }
 
-            binding.itemCalendarTitle.text = schedule.title
+            binding.itemCalendarTitle.text = schedule.name
             binding.itemCalendarTitle.isSelected = true
-            binding.itemCalendarScheduleTime.text = timeConverter.getScheduleTimeText(schedule.startLong, schedule.endLong)
+            binding.itemCalendarScheduleTime.text = timeConverter.getScheduleTimeText(schedule.startDate, schedule.endDate)
             if (category != null) {
                 binding.itemCalendarScheduleColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
             }

@@ -110,7 +110,7 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
                 val repo = DiaryRepository(context)
 
                 val category =
-                    repo.getCategory(item.categoryId, item.categoryServerId)
+                    repo.getCategory(item.categoryId, item.categoryId)
 
                 itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
 

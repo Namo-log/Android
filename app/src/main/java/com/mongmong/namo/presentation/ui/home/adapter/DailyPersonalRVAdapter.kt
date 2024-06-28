@@ -10,20 +10,21 @@ import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
+import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.utils.ScheduleTimeConverter
 import org.joda.time.DateTime
 
 class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewHolder>() {
-    private val personal = ArrayList<Schedule>()
+    private val personal = ArrayList<GetMonthScheduleResult>()
     private val categoryList = ArrayList<Category>()
     private lateinit var context : Context
     private lateinit var personalScheduleClickListener : PersonalScheduleClickListener
     private lateinit var timeConverter: ScheduleTimeConverter
 
     interface PersonalScheduleClickListener {
-        fun onContentClicked(schedule : Schedule)
-        fun onDiaryIconClicked(schedule: Schedule)
+        fun onContentClicked(schedule: GetMonthScheduleResult)
+        fun onDiaryIconClicked(schedule: GetMonthScheduleResult)
     }
 
     fun setPersonalScheduleClickListener(personalScheduleClickListener : PersonalScheduleClickListener) {
@@ -58,7 +59,7 @@ class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewH
     override fun getItemCount(): Int = personal.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addPersonal(personal : ArrayList<Schedule>) {
+    fun addPersonal(personal : ArrayList<GetMonthScheduleResult>) {
         this.personal.clear()
         this.personal.addAll(personal)
 
@@ -79,19 +80,19 @@ class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewH
     }
 
     inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(schedule : Schedule) {
+        fun bind(schedule : GetMonthScheduleResult) {
             val category = categoryList.find {
-                if (it.serverId != 0L) it.serverId == schedule.categoryServerId
+                if (it.serverId != 0L) it.serverId == schedule.categoryId
                 else it.categoryId == schedule.categoryId }!!
 
-            binding.itemCalendarTitle.text = schedule.title
+            binding.itemCalendarTitle.text = schedule.name
             binding.itemCalendarTitle.isSelected = true
-            binding.itemCalendarScheduleTime.text = timeConverter.getScheduleTimeText(schedule.startLong, schedule.endLong)
+            binding.itemCalendarScheduleTime.text = timeConverter.getScheduleTimeText(schedule.startDate, schedule.endDate)
             binding.itemCalendarScheduleColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
             binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
 
             /** 기록 아이콘 색깔 **/
-            if(schedule.hasDiary != false)
+            if (schedule.hasDiary != false)
                 binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context , R.color.MainOrange))
         }
     }

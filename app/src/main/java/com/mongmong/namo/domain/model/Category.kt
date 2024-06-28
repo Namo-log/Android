@@ -2,6 +2,7 @@ package com.mongmong.namo.domain.model
 
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
+import com.mongmong.namo.data.local.entity.home.Category
 
 /** 카테고리 생성 */
 class PostCategoryResponse (
@@ -34,7 +35,7 @@ data class DeleteCategoryResponse (
 
 /** 모든 카테고리 조회 */
 class GetCategoryResponse (
-    val result: ArrayList<GetCategoryResult>
+    val result: List<GetCategoryResult>
 ) : BaseResponse()
 
 class GetCategoryResult (
@@ -42,4 +43,14 @@ class GetCategoryResult (
     val name: String,
     val paletteId: Int,
     val isShare: Boolean
-)
+) {
+    fun convertToCategory(): Category {
+        return Category(
+            categoryId = this.categoryId,
+            name = this.name,
+            paletteId = this.paletteId,
+            isShare = this.isShare,
+            serverId = this.categoryId
+        )
+    }
+}

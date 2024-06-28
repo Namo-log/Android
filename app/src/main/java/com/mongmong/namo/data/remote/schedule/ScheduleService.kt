@@ -111,27 +111,27 @@ class ScheduleService {
     }
 
     fun getMonthSchedule(yearMonth : String) {
-        eventRetrofitInterface.getMonthSchedule(yearMonth)
-            .enqueue(object : Callback<GetMonthScheduleResponse> {
-                override fun onResponse(
-                    call: Call<GetMonthScheduleResponse>,
-                    response: Response<GetMonthScheduleResponse>
-                ) {
-                    when (response.code()) {
-                        200 -> getMonthScheduleView.onGetMonthScheduleSuccess(response.body() as GetMonthScheduleResponse)
-                        else -> {
-                            Log.d("GetMonthSchedule", "Success but error")
-                            getMonthScheduleView.onGetMonthScheduleFailure("통신 중 200 외 기타 코드")
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<GetMonthScheduleResponse>, t: Throwable) {
-                    Log.d("GetMonthSchedule", "OnFailure")
-                    getMonthScheduleView.onGetMonthScheduleFailure(t.message ?: "통신 오류")
-                }
-
-            })
+//        eventRetrofitInterface.getMonthSchedule(yearMonth)
+//            .enqueue(object : Callback<GetMonthScheduleResponse> {
+//                override fun onResponse(
+//                    call: Call<GetMonthScheduleResponse>,
+//                    response: Response<GetMonthScheduleResponse>
+//                ) {
+//                    when (response.code()) {
+//                        200 -> getMonthScheduleView.onGetMonthScheduleSuccess(response.body() as GetMonthScheduleResponse)
+//                        else -> {
+//                            Log.d("GetMonthSchedule", "Success but error")
+//                            getMonthScheduleView.onGetMonthScheduleFailure("통신 중 200 외 기타 코드")
+//                        }
+//                    }
+//                }
+//
+//                override fun onFailure(call: Call<GetMonthScheduleResponse>, t: Throwable) {
+//                    Log.d("GetMonthSchedule", "OnFailure")
+//                    getMonthScheduleView.onGetMonthScheduleFailure(t.message ?: "통신 오류")
+//                }
+//
+//            })
     }
 
     fun getAllSchedule() {
