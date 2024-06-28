@@ -35,7 +35,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     private var _binding: FragmentDiaryBinding? = null
     private val binding get() = _binding!!
-    private val viewModel : DiaryViewModel by viewModels()
+    private val viewModel: DiaryViewModel by viewModels()
 
     private var isInitialLoad = true
 
@@ -97,9 +97,11 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
             addTab(newTab().setText(getString(R.string.diary_group)))
         }
     }
+
     private fun setMonthSelector() {
         binding.diaryMonthLl.setOnClickListener {
-            val currentDateTime = convertYearMonthToMillis(viewModel.currentDate.value!!) // 화면에 표시된 텍스트를 밀리초로 받음
+            val currentDateTime =
+                convertYearMonthToMillis(viewModel.currentDate.value!!) // 화면에 표시된 텍스트를 밀리초로 받음
             SetMonthDialog(requireContext(), currentDateTime) { selectedYearMonth ->
                 viewModel.setCurrentDate(DateTime(selectedYearMonth).toString("yyyy.MM"))
             }.show()
@@ -114,11 +116,11 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
 
     private fun setDiaryList(isMoim: Boolean) {
         val adapter = if (!isMoim)
-            DiaryAdapter(::onEditClickListener,
+            DiaryAdapter(::onPersonalEditClickListener,
                 imageClickListener = { ImageDialog(it).show(parentFragmentManager, "test") })
         else
-            MoimDiaryAdapter(::onDetailClickListener
-            ) { ImageDialog(it).show(parentFragmentManager, "test") }
+            MoimDiaryAdapter(::onMoimEditClickListener)
+            { ImageDialog(it).show(parentFragmentManager, "test") }
 
         setRecyclerView(isMoim, adapter)
         setDataFlow(isMoim, adapter)
@@ -169,7 +171,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         }
     }
 
-    private fun onEditClickListener(item: DiarySchedule) {  // 개인 기록 수정 클릭리스너
+    private fun onPersonalEditClickListener(item: DiarySchedule) {  // 개인 기록 수정 클릭리스너
         val schedule = Schedule(
             item.scheduleId,
             item.title,
@@ -182,12 +184,15 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
             true
         )
 
-        startActivity(Intent(context, PersonalDetailActivity::class.java)
-            .putExtra("schedule", schedule))
+        Log.d("DiaryFragment onPersonalEditClickListener", "$schedule")
+        startActivity(
+            Intent(context, PersonalDetailActivity::class.java)
+                .putExtra("schedule", schedule)
+        )
 
     }
 
-    private fun onDetailClickListener(scheduleId: Long) {  // 그룹 기록 수정 클릭리스너
+    private fun onMoimEditClickListener(scheduleId: Long) {  // 모임 메모 수정 클릭리스너
         Log.d("onDetailClickListener", "$scheduleId")
         startActivity(Intent(context, MoimMemoDetailActivity::class.java)
                 .putExtra("moimScheduleId", scheduleId))

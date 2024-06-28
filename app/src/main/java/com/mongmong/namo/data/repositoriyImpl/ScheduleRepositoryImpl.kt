@@ -8,6 +8,7 @@ import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.domain.model.ScheduleRequestBody
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
@@ -23,17 +24,19 @@ class ScheduleRepositoryImpl @Inject constructor(
 ) : ScheduleRepository {
 
     /** 개인 */
-    override suspend fun getMonthSchedules(monthStart: Long, monthEnd: Long): List<Schedule> {
-        return localScheduleDataSource.getMonthSchedule(monthStart, monthEnd)
+    override suspend fun getMonthSchedules(yearMonth: String): List<GetMonthScheduleResult> {
+        return remoteScheduleDataSource.getMonthSchedules(yearMonth)
     }
 
     override suspend fun getDailySchedules(startDate: Long, endDate: Long): List<Schedule> {
         return localScheduleDataSource.getDailySchedules(startDate, endDate)
     }
 
-    override suspend fun addSchedule(schedule: Schedule) {
+    override suspend fun addSchedule(schedule: ScheduleRequestBody) {
+        Log.d("ScheduleRepositoryImpl", "addSchedule $schedule")
+        remoteScheduleDataSource.addScheduleToServer(schedule)
+        /*
         schedule.scheduleId = localScheduleDataSource.addSchedule(schedule) // 로컬에서 일정 생성후 받아온 scheduleId 업데이트
-        Log.d("ScheduleRepositoryImpl", "addSchedule scheduleId: ${schedule.scheduleId}\n$schedule")
         if (networkChecker.isOnline()) {
             val addResponse =
                 remoteScheduleDataSource.addScheduleToServer(schedule.convertLocalScheduleToServer())
@@ -52,9 +55,15 @@ class ScheduleRepositoryImpl @Inject constructor(
                 )
             }
         }
+         */
     }
 
-    override suspend fun editSchedule(schedule: Schedule) {
+    override suspend fun editSchedule(scheduleId: Long, schedule: ScheduleRequestBody) {
+        remoteScheduleDataSource.editScheduleToServer(
+            scheduleId,
+            schedule
+        )
+        /*
         Log.d("ScheduleRepositoryImpl", "editSchedule $schedule")
         localScheduleDataSource.editSchedule(schedule)
         if (networkChecker.isOnline()) {
@@ -77,9 +86,12 @@ class ScheduleRepositoryImpl @Inject constructor(
                 )
             }
         }
+         */
     }
 
-    override suspend fun deleteSchedule(localId: Long, serverId: Long, isGroup: Boolean) {
+    override suspend fun deleteSchedule(scheduleId: Long, isGroup: Boolean) {
+        remoteScheduleDataSource.deleteScheduleToServer(scheduleId, isGroup)
+        /*
         // 모임 일정
         if (isGroup) {
             remoteScheduleDataSource.deleteScheduleToServer(serverId, isGroup)
@@ -107,14 +119,7 @@ class ScheduleRepositoryImpl @Inject constructor(
                 )
             }
         }
-    }
-
-    override suspend fun uploadScheduleToServer() {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun postScheduleToServer(scheduleServerId: Long, scheduleId: Long) {
-        TODO("Not yet implemented")
+         */
     }
 
     // 모임

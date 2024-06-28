@@ -4,6 +4,7 @@ import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.domain.model.ScheduleRequestBody
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
@@ -11,9 +12,8 @@ import com.mongmong.namo.domain.model.group.MoimScheduleBody
 interface ScheduleRepository {
     /** 개인 */
     suspend fun getMonthSchedules(
-        monthStart: Long,
-        monthEnd: Long
-    ): List<Schedule>
+        yearMonth: String
+    ): List<GetMonthScheduleResult>
 
     suspend fun getDailySchedules(
         startDate: Long,
@@ -21,22 +21,18 @@ interface ScheduleRepository {
     ): List<Schedule>
 
     suspend fun addSchedule(
-        schedule: Schedule
+        schedule: ScheduleRequestBody
     )
 
     suspend fun editSchedule(
-        schedule: Schedule
+        scheduleId: Long,
+        schedule: ScheduleRequestBody
     )
 
     suspend fun deleteSchedule(
-        localId: Long,
-        serverId: Long,
+        scheduleId: Long,
         isGroup: Boolean
     )
-
-    suspend fun uploadScheduleToServer()
-
-    suspend fun postScheduleToServer(scheduleServerId: Long, scheduleId: Long)
 
     // 모임
     suspend fun getMonthMoimSchedule(

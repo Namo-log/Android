@@ -3,6 +3,16 @@ package com.mongmong.namo.domain.model
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 
+data class GetPersonalDiaryResponse(
+    val result: GetPersonalDiaryResult
+): BaseResponse()
+
+data class GetPersonalDiaryResult(
+    val contents: String,
+    val urls: List<String>
+)
+
+
 data class DiaryResponse(
     val result: String
 ) : BaseResponse() // 기본 string
@@ -10,10 +20,10 @@ data class DiaryResponse(
 
 /** 기록 추가 **/
 data class DiaryAddResponse(
-    val result: GetScheduleId
+    val result: DiaryAddResult
 ) : BaseResponse()
 
-data class GetScheduleId(
+data class DiaryAddResult(
     val scheduleId: Long
 )
 

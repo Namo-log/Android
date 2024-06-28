@@ -27,6 +27,23 @@ class RemoteScheduleDataSource @Inject constructor(
     private val groupScheduleApiService: GroupScheduleApiService,
 ) {
     /** 개인 */
+    suspend fun getMonthSchedules(
+        yearMonth: String
+    ): List<GetMonthScheduleResult> {
+        var scheduleResponse = GetMonthScheduleResponse(result = emptyList())
+        withContext(Dispatchers.IO) {
+            runCatching {
+                scheduleApiService.getMonthSchedule(yearMonth)
+            }.onSuccess {
+                Log.d("RemoteScheduleDataSource", "getMonthSchedules Success $it")
+                scheduleResponse = it
+            }.onFailure {
+                Log.d("RemoteScheduleDataSource", "getMonthSchedules Success $it")
+            }
+        }
+        return scheduleResponse.result
+    }
+
     suspend fun addScheduleToServer(
         schedule: ScheduleRequestBody,
     ): PostScheduleResponse {

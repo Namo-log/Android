@@ -102,7 +102,7 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
             }
 
             // 일정 삭제
-            viewModel.deleteSchedule(schedule.scheduleId, schedule.serverId, schedule.moimSchedule)
+            viewModel.deleteSchedule(schedule.scheduleId, schedule.moimSchedule)
 
             Toast.makeText(this, "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
             finish()

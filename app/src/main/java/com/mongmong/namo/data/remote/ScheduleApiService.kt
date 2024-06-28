@@ -18,6 +18,17 @@ import retrofit2.http.Path
 
 interface ScheduleApiService {
     /** 개인 일정 */
+    // 월별 일정 조회
+    @GET("schedules/{yearMonth}")
+    suspend fun getMonthSchedule(
+        @Path("yearMonth") yearMonth : String,
+    ) : GetMonthScheduleResponse
+
+    // 일정 전체 조회
+    @GET("schedules/all")
+    fun getAllSchedule(
+    ) : Call<GetMonthScheduleResponse>
+
     // 일정 생성
     @POST("schedules")
     suspend fun postSchedule(
@@ -37,17 +48,6 @@ interface ScheduleApiService {
         @Path("scheduleId") serverId : Long,
         @Path("kind") isMoimSchedule: Int,
     ) : DeleteScheduleResponse
-
-    // 월별 일정 조회
-    @GET("schedules/{yearMonth}")
-    fun getMonthSchedule(
-        @Path("yearMonth") yearMonth : String,
-    ) : Call<GetMonthScheduleResponse>
-
-    // 일정 전체 조회
-    @GET("schedules/all")
-    fun getAllSchedule(
-    ) : Call<GetMonthScheduleResponse>
 
     /** 모임 일정 */
     // 모임 일정 전체 조회

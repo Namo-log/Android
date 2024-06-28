@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.mongmong.namo.data.local.dao.DiaryDao
+import com.mongmong.namo.data.remote.DiaryApiService
+import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.presentation.ui.diary.DiaryViewModel
 import kotlinx.coroutines.Dispatchers
@@ -13,11 +15,65 @@ import java.util.Calendar
 import java.util.Locale
 
 class DiaryPersonalPagingSource(
-    private val diaryDao: DiaryDao,
-    private val date: String
+    private val apiService: DiaryApiService,
+    private val date: String,
+    private val networkChecker: NetworkChecker
 ) : PagingSource<Int, DiarySchedule>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DiarySchedule> {
+        return try {
+            if(!networkChecker.isOnline()){
+                Log.d("dd", "network")
+                return LoadResult.Error(Exception("Network unavailable"))
+            }
+
+
+            val page = params.key ?: 0// 다음 페이지 번호, 초기 값은 0
+
+            var diaryItems = listOf<DiarySchedule>()
+
+            withContext(Dispatchers.IO) {
+                runCatching {
+                    apiService.getPersonalMonthDiary(date, page, DiaryMoimPagingSource.PAGE_SIZE)
+                }.onSuccess { response ->
+                    Log.d("MoimPagingSource load success", "${params.key} : $response")
+                    val diarySchedules = mutableListOf<DiarySchedule>()
+                    response.result.content.forEach {
+                        diarySchedules.add(
+                            DiarySchedule(
+                                it.scheduleId,
+                                it.title,
+                                it.startDate,
+                                it.categoryId,
+                                it.placeName,
+                                it.content,
+                                it.imgUrl
+                            )
+                        )
+                    }
+                    diaryItems = diarySchedules
+                }.onFailure {
+                    Log.d("MoimPagingSource load fail", "${params.key} : $it")
+                }
+
+            }
+
+
+            LoadResult.Page(
+                data = diaryItems,
+                prevKey = if (page == 0) null else page - 1,
+                nextKey = if (diaryItems.size < PAGE_SIZE) null else page + 1
+            )
+        } catch (e: Exception) {
+            LoadResult.Error(e)
+        }
+    }
+
+    override fun getRefreshKey(state: PagingState<Int, DiarySchedule>): Int? {
+        return null
+    }
+
+    /*override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DiarySchedule> {
         return try {
             val page = params.key ?: 0
             val result = withContext(Dispatchers.IO) {
@@ -32,10 +88,6 @@ class DiaryPersonalPagingSource(
         } catch (e: Exception) {
             LoadResult.Error(e)
         }
-    }
-
-    override fun getRefreshKey(state: PagingState<Int, DiarySchedule>): Int? {
-        return null
     }
 
     // 피커 날짜를 Long 타입으로 변환
@@ -61,7 +113,7 @@ class DiaryPersonalPagingSource(
         // 다음 달로 이동
         calendar.add(Calendar.MONTH, 1)
         return calendar.timeInMillis
-    }
+    }*/
 
 
     companion object {

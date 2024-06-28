@@ -6,6 +6,8 @@ import com.mongmong.namo.domain.model.CategoryRequestBody
 import com.mongmong.namo.domain.model.DeleteCategoryResponse
 import com.mongmong.namo.domain.model.EditCategoryResponse
 import com.mongmong.namo.domain.model.EditCategoryResult
+import com.mongmong.namo.domain.model.GetCategoryResponse
+import com.mongmong.namo.domain.model.GetCategoryResult
 import com.mongmong.namo.domain.model.PostCategoryResponse
 import com.mongmong.namo.domain.model.PostCategoryResult
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +17,21 @@ import javax.inject.Inject
 class RemoteCategoryDataSource @Inject constructor(
     private val apiService: CategoryApiService
 ) {
+    suspend fun getCategories(): List<GetCategoryResult> {
+        var categoryResponse = GetCategoryResponse(result = emptyList())
+        withContext(Dispatchers.IO) {
+            runCatching {
+                apiService.getCategories()
+            }.onSuccess {
+                Log.d("RemoteCategoryDataSource", "getCategories Success $it")
+                categoryResponse = it
+            }.onFailure {
+                Log.d("RemoteCategoryDataSource", "getCategories Failure $it")
+            }
+        }
+        return categoryResponse.result
+    }
+
     suspend fun addCategoryToServer(
         category: CategoryRequestBody,
     ): PostCategoryResponse {

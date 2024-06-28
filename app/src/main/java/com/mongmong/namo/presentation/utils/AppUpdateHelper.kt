@@ -52,18 +52,21 @@ class AppUpdateHelper(private val context: Context) {
                             )
                             return@addOnSuccessListener
                         } else {
+                            autoLogin()
                             Log.d("checkForUpdate", "즉시 업데이트 불가능")
                         }
                     }.addOnFailureListener { exception ->
+                        autoLogin()
                         Log.e("checkForUpdate", "업데이트 체크 실패", exception)
                     }
                 } else {
+                    autoLogin()
                     Log.d("checkForUpdate", "업데이트 필요 없음")
                 }
             } else {
+                autoLogin()
                 Log.e("checkForUpdate", "Failed to fetch remote config", task.exception)
             }
-            autoLogin()
         }
     }
 

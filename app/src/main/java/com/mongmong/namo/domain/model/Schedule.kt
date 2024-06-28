@@ -28,7 +28,7 @@ data class GetMonthScheduleResult (
 ) {
     fun convertServerScheduleResponseToLocal(): Schedule {
         return Schedule(
-            0, // localId
+            this.scheduleId, // localId
             this.name,
             this.startDate,
             this.endDate,
