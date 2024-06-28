@@ -51,19 +51,19 @@ class CategorySettingService(val view: CategorySettingView) {
     val retrofitInterface = ApplicationClass.sRetrofit.create(CategoryApiService::class.java)
 
     fun tryGetAllCategory() {
-        retrofitInterface.getCategories().enqueue(object : Callback<GetCategoryResponse> {
-
-            override fun onResponse(call: Call<GetCategoryResponse>, response: Response<GetCategoryResponse>) {
-                when(response.code()) {
-                    200 -> view.onGetAllCategorySuccess(response.body() as GetCategoryResponse)
-                }
-            }
-
-            override fun onFailure(call: Call<GetCategoryResponse>, t: Throwable) {
-                Log.d("GetCategory", "onFailure")
-                view.onGetAllCategoryFailure(t.message ?: "통신 오류")
-            }
-        })
+//        retrofitInterface.getCategories().enqueue(object : Callback<GetCategoryResponse> {
+//
+//            override fun onResponse(call: Call<GetCategoryResponse>, response: Response<GetCategoryResponse>) {
+//                when(response.code()) {
+//                    200 -> view.onGetAllCategorySuccess(response.body() as GetCategoryResponse)
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<GetCategoryResponse>, t: Throwable) {
+//                Log.d("GetCategory", "onFailure")
+//                view.onGetAllCategoryFailure(t.message ?: "통신 오류")
+//            }
+//        })
     }
 }
 

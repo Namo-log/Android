@@ -378,9 +378,9 @@ class ScheduleDialogBasicFragment : Fragment() {
     /** 일정 추가 **/
     private fun insertData() {
         // 현재 일정의 상태가 추가 상태임을 나타냄
-        schedule.state = RoomState.ADDED.state
-        schedule.isUpload = UploadState.IS_NOT_UPLOAD.state
-        schedule.serverId = 0
+//        schedule.state = RoomState.ADDED.state
+//        schedule.isUpload = UploadState.IS_NOT_UPLOAD.state
+//        schedule.serverId = 0
 
         // 새 일정 등록
         viewModel.addSchedule(schedule.convertLocalScheduleToServer())
@@ -389,8 +389,8 @@ class ScheduleDialogBasicFragment : Fragment() {
     /** 일정 수정 **/
     private fun updateData() {
         // 현재 일정의 상태가 수정 상태임을 나타냄
-        schedule.state = RoomState.EDITED.state
-        schedule.isUpload = UploadState.IS_NOT_UPLOAD.state
+//        schedule.state = RoomState.EDITED.state
+//        schedule.isUpload = UploadState.IS_NOT_UPLOAD.state
 
         // 이전 알람 삭제 후 변경 알람 저장
         for (i in prevAlarmList!!) {
