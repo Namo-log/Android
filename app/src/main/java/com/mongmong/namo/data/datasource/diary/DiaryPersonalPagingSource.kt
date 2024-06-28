@@ -47,7 +47,8 @@ class DiaryPersonalPagingSource(
                                 it.categoryId,
                                 it.placeName,
                                 it.content,
-                                it.imgUrl
+                                it.imgUrl,
+                                color = it.color
                             )
                         )
                     }

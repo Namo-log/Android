@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.domain.model.DiarySchedule
-import com.mongmong.namo.data.remote.diary.DiaryRepository
 import com.mongmong.namo.databinding.ItemDiaryItemListBinding
 import com.mongmong.namo.databinding.ItemDiaryListBinding
 import com.mongmong.namo.presentation.config.CategoryColor
@@ -107,12 +106,7 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
 
                 setViewMore(itemDiaryContentTv, viewMore)
 
-                val repo = DiaryRepository(context)
-
-                val category =
-                    repo.getCategory(item.categoryId, item.categoryId)
-
-                itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
+                itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(item.color)
 
                 val adapter =
                     DiaryGalleryRVAdapter(context, item.images, imageClickListener)

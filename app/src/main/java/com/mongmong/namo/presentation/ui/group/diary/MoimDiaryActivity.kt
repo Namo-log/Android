@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
-import com.mongmong.namo.data.remote.diary.*
 import com.mongmong.namo.databinding.ActivityMoimDiaryBinding
 import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
@@ -58,7 +57,7 @@ class MoimDiaryActivity : AppCompatActivity(),
     private var groupData = MoimDiaryResult("", 0L, "", emptyList(), emptyList())
 
     private lateinit var memberIntList: List<Long>
-    private lateinit var repo: DiaryRepository
+
     private lateinit var moimScheduleBody: MoimScheduleBody
 
     private var preActivities = emptyList<MoimActivity>()
@@ -80,8 +79,6 @@ class MoimDiaryActivity : AppCompatActivity(),
         setContentView(binding.root)
 
         Log.d("GROUP_DIARY_CLICK", "onCreate")
-
-        repo = DiaryRepository(this)
 
         moimScheduleId = intent.getLongExtra("moimScheduleId", 0L)  // 그룹 스케줄 아이디
 
