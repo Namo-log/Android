@@ -62,12 +62,12 @@ class CustomSettingFragment: Fragment(), ConfirmDialogInterface {
 
     private fun initObserve() {
         viewModel.isLogoutComplete.observe(viewLifecycleOwner) {
-            deleteAllRoomDatas()
+//            deleteAllRoomDatas()
             Toast.makeText(requireContext(), "로그아웃에 성공하셨습니다.", Toast.LENGTH_SHORT).show()
             moveToLoginFragment() // 화면 이동
         }
         viewModel.isQuitComplete.observe(viewLifecycleOwner) {
-            deleteAllRoomDatas()
+//            deleteAllRoomDatas()
             Toast.makeText(requireContext(), "회원탈퇴에 성공하셨습니다.", Toast.LENGTH_SHORT).show()
             moveToLoginFragment() // 화면 이동
         }
