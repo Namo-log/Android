@@ -18,7 +18,6 @@ data class Diary(
     var isUpload: Boolean = false,
     var isHeader: Boolean = false
 ) : BaseObservable() {
-
     @get:Bindable
     var content: String?
         get() = _content

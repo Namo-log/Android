@@ -10,7 +10,7 @@ import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.domain.model.GetMoimMemoResponse
+import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.usecase.FindCategoryUseCase
 import com.mongmong.namo.presentation.config.RoomState
@@ -31,6 +31,14 @@ class DiaryDetailViewModel @Inject constructor(
     private val _schedule = MutableLiveData<Schedule>(Schedule().getDefaultSchedule())
     val schedule: LiveData<Schedule> = _schedule
 
+    private val _moimDiary = MutableLiveData<MoimDiary>()
+    val moimDiary: LiveData<MoimDiary> = _moimDiary
+
+    private val _isEdit = MutableLiveData<Boolean>(false)
+    val isEdit: LiveData<Boolean> = _isEdit
+
+    private var isInitialLoad = true
+
     private val _imgList = MutableLiveData<List<String>>(emptyList())
     val imgList: LiveData<List<String>> = _imgList
 
@@ -49,14 +57,10 @@ class DiaryDetailViewModel @Inject constructor(
     private val _patchMemoResult = MutableLiveData<Boolean>()
     val patchMemoResult : LiveData<Boolean> = _patchMemoResult
 
-    private val _memo = MutableLiveData<String>()
-    val memo: LiveData<String> = _memo
-
     private val _category = MutableLiveData<Category>()
     val category: LiveData<Category> = _category
 
-    private val _getMoimMemoResponse = MutableLiveData<GetMoimMemoResponse>()
-    val getMoimMemoResponse: LiveData<GetMoimMemoResponse> = _getMoimMemoResponse
+
 
     /** 개인 기록 **/
     // 개인 기록 개별 조회
@@ -124,14 +128,21 @@ class DiaryDetailViewModel @Inject constructor(
     // 모임 메모 조회
     fun getMoimMemo(scheduleId: Long) {
         viewModelScope.launch {
-            _getMoimMemoResponse.postValue(repository.getMoimMemo(scheduleId))
+            _moimDiary.postValue(repository.getMoimMemo(scheduleId))
         }
     }
 
+    fun isEditMode() {
+        if(isInitialLoad) {
+            _isEdit.value = !_moimDiary.value?.content.isNullOrEmpty()
+            isInitialLoad = false
+            Log.d("getMoimMemo", "${_isEdit.value} , $isInitialLoad")
+        }
+    }
     // 모임 메모 수정
-    fun patchMoimMemo(scheduleId: Long, content: String) {
+    fun patchMoimMemo(scheduleId: Long) {
         viewModelScope.launch {
-            _patchMemoResult.postValue(repository.patchMoimMemo(scheduleId, content))
+            _patchMemoResult.postValue(repository.patchMoimMemo(scheduleId, _moimDiary.value?.content ?: ""))
         }
     }
 
@@ -157,18 +168,15 @@ class DiaryDetailViewModel @Inject constructor(
         _diary.value?.images = _imgList.value
     }
 
-    fun setMemo(memo: String) { _memo.value = memo }
-    fun getMemo() = _memo.value
-
-    fun getFormattedMonth(): String =
-        _schedule.value?.let { DateTime(_schedule.value!!.startLong * 1000).toString("MMM", Locale.ENGLISH) }
+    fun getFormattedMonth(date: Long): String =
+        _schedule.value?.let { DateTime(date * 1000).toString("MMM", Locale.ENGLISH) }
             .orEmpty()
 
-    fun getFormattedDay(): String =
-        _schedule.value.let { DateTime(_schedule.value!!.startLong * 1000).toString("dd") }
+    fun getFormattedDay(date: Long): String =
+        _schedule.value.let { DateTime(date * 1000).toString("dd") }
             .orEmpty()
 
-    fun getFormattedDate(): String =
-        _schedule.value.let { DateTime(_schedule.value!!.startLong * 1000).toString("yyyy.MM.dd (EE) hh:mm") }
+    fun getFormattedDate(date: Long): String =
+        _schedule.value.let { DateTime(date * 1000).toString("yyyy.MM.dd (EE) hh:mm") }
             .orEmpty()
 }

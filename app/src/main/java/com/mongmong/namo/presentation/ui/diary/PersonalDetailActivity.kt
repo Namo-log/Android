@@ -62,7 +62,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     private fun setSchedule() {
         val schedule = (intent.getSerializableExtra("schedule") as? Schedule)!!
         hasDiary(schedule)
-        findCategory()
+        viewModel.findCategoryById()
     }
 
     private fun hasDiary(schedule: Schedule) {
@@ -70,12 +70,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
             viewModel.setNewPersonalDiary(schedule)
         } else {  // 기록 있을 때, 수정
             viewModel.getExistingPersonalDiary(schedule)
-        }
-    }
-
-    private fun findCategory() {
-        lifecycleScope.launch {
-            viewModel.findCategoryById()
         }
     }
 
@@ -126,7 +120,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     private fun initObserve() {
         viewModel.diary.observe(this) { diary ->
             viewModel.updateImgList(diary.images?: emptyList())
-            binding.diaryContentsEt.setText(diary.content)
         }
         viewModel.imgList.observe(this) {
             galleryAdapter.addImages(it)
@@ -147,9 +140,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
                 Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
                 finish()
             }
-        }
-        viewModel.category.observe(this) {
-            binding.itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(it.paletteId)
         }
     }
 
@@ -243,7 +233,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     companion object {
-        const val NO_PLACE = "장소 없음"
         const val OK = 200
     }
 }

@@ -7,6 +7,7 @@ import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.model.GetMoimMemoResponse
 import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
+import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 
 
@@ -37,7 +38,7 @@ interface DiaryRepository {
 
     suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult
 
-    suspend fun getMoimMemo(scheduleId: Long): GetMoimMemoResponse
+    suspend fun getMoimMemo(scheduleId: Long): MoimDiary
 
     suspend fun patchMoimMemo(scheduleId: Long, content: String): Boolean
 

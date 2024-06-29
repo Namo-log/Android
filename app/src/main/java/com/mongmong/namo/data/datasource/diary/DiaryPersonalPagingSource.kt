@@ -3,16 +3,11 @@ package com.mongmong.namo.data.datasource.diary
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.domain.model.DiarySchedule
-import com.mongmong.namo.presentation.ui.diary.DiaryViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 class DiaryPersonalPagingSource(
     private val apiService: DiaryApiService,
@@ -46,8 +41,8 @@ class DiaryPersonalPagingSource(
                                 it.startDate,
                                 it.categoryId,
                                 it.placeName,
-                                it.content,
-                                it.imgUrl,
+                                it._content,
+                                it.urls,
                                 color = it.color
                             )
                         )

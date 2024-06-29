@@ -8,16 +8,15 @@ import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.remote.NetworkChecker
-import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.data.remote.DiaryApiService
+import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.domain.model.GetMoimMemoResponse
+import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
+import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
-import com.mongmong.namo.presentation.config.RoomState
 import javax.inject.Inject
 
 class DiaryRepositoryImpl @Inject constructor(
@@ -115,7 +114,7 @@ class DiaryRepositoryImpl @Inject constructor(
     }
 
     /** 모임 메모 개별 조회 **/
-    override suspend fun getMoimMemo(scheduleId: Long): GetMoimMemoResponse {
+    override suspend fun getMoimMemo(scheduleId: Long): MoimDiary {
         // 개인 기록 개별 조회 api 사용
         return remoteDiaryDataSource.getMoimMemo(scheduleId)
     }

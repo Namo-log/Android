@@ -51,6 +51,7 @@ enum class CategoryColor(val paletteType: PaletteType, val paletteId: Int, val h
         }
 
         // 카테고리 색상뷰 배경색 바꾸기 용도
+        @JvmStatic
         fun convertPaletteIdToColorStateList(paletteId: Int) : ColorStateList {
             return ColorStateList.valueOf(convertHexToInt(convertPaletteIdToHexColor(paletteId)))
         }

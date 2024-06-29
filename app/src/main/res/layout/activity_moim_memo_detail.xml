@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <import type="com.mongmong.namo.presentation.config.CategoryColor"/>
+        <variable
+            name="viewModel"
+            type="com.mongmong.namo.presentation.ui.diary.DiaryDetailViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/diary_date_layout"
         android:layout_width="match_parent"
@@ -40,7 +47,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/diary_back_iv"
-                tools:text="그룹 기록"
+                android:text="@{viewModel.moimDiary.title}"
                 style="@style/title_text"/>
             <ImageView
                 android:id="@+id/diary_delete_iv"
@@ -72,6 +79,7 @@
             android:textSize="15sp"
             android:textStyle="bold"
             android:textColor="@color/textGray"
+            android:text="@{viewModel.getFormattedMonth(viewModel.moimDiary.startDate)}"
             android:elevation="10dp"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintBottom_toTopOf="@id/diary_today_num_tv"
@@ -86,6 +94,7 @@
             android:textStyle="bold"
             android:textColor="@color/textGray"
             android:elevation="10dp"
+            android:text="@{viewModel.getFormattedDay(viewModel.moimDiary.startDate)}"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintTop_toBottomOf="@id/diary_today_month_tv"
             app:layout_constraintStart_toStartOf="@id/date_circle_iv"
@@ -112,6 +121,7 @@
             android:layout_marginStart="15dp"
             android:textSize="17sp"
             android:textColor="@color/textGray"
+            android:text="@{viewModel.getFormattedDate(viewModel.moimDiary.startDate)}"
             app:layout_constraintStart_toEndOf="@id/diary_date_tv"
             app:layout_constraintTop_toTopOf="@id/diary_date_tv" />
 
@@ -137,6 +147,7 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:textSize="17sp"
+            android:text="@{viewModel.moimDiary.placeName}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/diary_place_tv"
             app:layout_constraintTop_toTopOf="@id/diary_place_tv" />
@@ -161,6 +172,7 @@
                     android:layout_width="15dp"
                     android:layout_height="0dp"
                     android:background="@drawable/bg_diary_preview_category_color_corner"
+                    android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(viewModel.category.paletteId)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -174,6 +186,7 @@
                 android:background="@drawable/bg_diary_preview_base_corner"
                 android:gravity="start"
                 android:hint="@string/diary_put"
+                android:text="@={viewModel.moimDiary.content}"
                 android:inputType="textMultiLine"
                 android:padding="10dp"
                 android:textColorHint="@color/editTextGray"
@@ -186,6 +199,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:textColor="@color/notyetGray"
+            android:text="@{viewModel.moimDiary.content + @string/diary_max_num}"
             app:layout_constraintEnd_toEndOf="@id/linear_corner"
             app:layout_constraintTop_toBottomOf="@id/linear_corner" />
 
@@ -238,13 +252,15 @@
             android:id="@+id/diary_edit_btn_tv"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@color/mainOrange"
+            android:background="@{viewModel.isEdit ? @color/white : @color/mainOrange}"
+            android:elevation="@{viewModel.isEdit ? 10f : 0f}"
             android:padding="15dp"
-            android:text="@string/diary_add"
+            android:text="@{viewModel.isEdit ? @string/diary_edit : @string/diary_add}"
             android:textAlignment="center"
-            android:textColor="@color/white"
+            android:textColor="@{viewModel.isEdit ? @color/mainOrange : @color/white}"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

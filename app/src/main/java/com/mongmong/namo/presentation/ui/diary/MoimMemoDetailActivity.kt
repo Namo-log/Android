@@ -10,10 +10,11 @@ import android.util.TypedValue
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMoimMemoDetailBinding
-import com.mongmong.namo.domain.model.GetMoimMemoResult
+import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.ui.diary.adapter.GalleryListAdapter
 import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryActivity
@@ -35,21 +36,20 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
         binding =  ActivityMoimMemoDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.apply {
+            viewModel = this@MoimMemoDetailActivity.viewModel
+            lifecycleOwner = this@MoimMemoDetailActivity
+        }
+
         moimScheduleId = intent.getLongExtra("moimScheduleId", 0L)
 
         initObserve()
         initClickListener()
-        charCnt()
     }
 
     override fun onResume() {
         super.onResume()
         viewModel.getMoimMemo(moimScheduleId)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        viewModel.setMemo(binding.diaryContentsEt.text.toString())
     }
 
     private fun initClickListener() {
@@ -65,29 +65,21 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
                 )
             }
             diaryEditBtnTv.setOnClickListener {
-                viewModel.patchMoimMemo(
-                    moimScheduleId,
-                    binding.diaryContentsEt.text.toString()
-                )
+                this@MoimMemoDetailActivity.viewModel.patchMoimMemo(moimScheduleId)
             }
         }
     }
     private fun initObserve() {
         // 모임 메모 가져오기
-        viewModel.getMoimMemoResponse.observe(this) { diary ->
+        viewModel.moimDiary.observe(this) { diary ->
             Log.d("getMoimMemoResponse", "$diary")
             diary?.let{
-                initView(diary.result)
+                initView(diary)
             }
         }
         // 모임 기록 메모 추가/수정
         viewModel.patchMemoResult.observe(this) { isSuccess ->
             if(isSuccess) finish()
-        }
-
-        // 카테고리 찾기
-        viewModel.category.observe(this) {
-            binding.itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(it.paletteId)
         }
 
         // 모임 기록 메모 삭제
@@ -98,43 +90,10 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
         }
     }
 
-    private fun initView(moimDiary: GetMoimMemoResult) {
-        with(binding) {
-            if(viewModel.getMemo() == null) viewModel.setMemo(moimDiary.contents ?: "")
-            diaryContentsEt.setText(viewModel.getMemo())
-
-            findCategory()
-            val scheduleDate = moimDiary.startDate * 1000
-
-            diaryTodayMonthTv.text = DateTime(scheduleDate).toString("MMM", Locale.ENGLISH)
-            diaryTodayNumTv.text = DateTime(scheduleDate).toString("dd")
-            diaryTitleTv.text = moimDiary.name
-            diaryInputDateTv.text = DateTime(scheduleDate).toString("yyyy.MM.dd (EE) hh:mm")
-            diaryInputPlaceTv.text = moimDiary.placeName
-
-            setImgList(moimDiary.urls)
-
-            diaryEditBtnTv.apply {
-                if (moimDiary.contents.isNullOrEmpty()) { // 그룹 기록 내용이 없으면, 기록 저장
-                    text = resources.getString(R.string.diary_add)
-                    setTextColor(getColor(R.color.white))
-                    setBackgroundResource(R.color.mainOrange)
-                    elevation = 0f
-                } else {  // 내용이 있으면, 기록 수정
-                    text = resources.getString(R.string.diary_edit)
-                    setTextColor(getColor(R.color.mainOrange))
-                    setBackgroundResource(R.color.white)
-                    elevation = TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP,
-                        10f,
-                        resources.displayMetrics
-                    )
-                }
-            }
-        }
-    }
-    private fun findCategory() {
+    private fun initView(moimDiary: MoimDiary) {
+        viewModel.isEditMode()
         viewModel.findCategoryById()
+        setImgList(moimDiary.urls)
     }
 
     private fun setImgList(imgList: List<String>) {
@@ -158,47 +117,6 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
 
     override fun onClickYesButton(id: Int) {
         viewModel.deleteMoimMemo(moimScheduleId)
-    }
-
-    /** 글자 수 반환 **/
-    @SuppressLint("SetTextI18n")
-    private fun charCnt() {
-        with(binding) {
-            textNumTv.text = "${binding.diaryContentsEt.text.length} / 200"
-            diaryContentsEt.addTextChangedListener(object : TextWatcher {
-                var maxText = ""
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-                    maxText = s.toString()
-                }
-
-                @SuppressLint("SetTextI18n")
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    if (diaryContentsEt.length() > 200) {
-                        Toast.makeText(
-                            this@MoimMemoDetailActivity, "최대 200자까지 입력 가능합니다",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        diaryContentsEt.setText(maxText)
-                        diaryContentsEt.setSelection(diaryContentsEt.length())
-                        if (s != null) {
-                            textNumTv.text = "${s.length} / 200"
-                        }
-                    } else {
-                        textNumTv.text = "${s.toString().length} / 200"
-                    }
-                }
-
-                override fun afterTextChanged(s: Editable?) {
-                }
-
-            })
-        }
     }
 
 }
