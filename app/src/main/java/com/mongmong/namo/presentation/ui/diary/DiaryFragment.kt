@@ -141,8 +141,8 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     private fun setDataFlow(isMoim: Boolean, adapter: PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>) {
         // 데이터 로딩 및 어댑터 데이터 설정
         viewLifecycleOwner.lifecycleScope.launch {
-            val pagingDataFlow = if (!isMoim) viewModel.getPersonalPaging(viewModel.currentDate.value!!)
-            else viewModel.getMoimPaging(viewModel.currentDate.value!!.split(".").let { "${it[0]},${it[1].removePrefix("0")}" })
+            val pagingDataFlow = if (!isMoim) viewModel.getPersonalPaging(viewModel.getFormattedDate())
+            else viewModel.getMoimPaging(viewModel.getFormattedDate())
 
             pagingDataFlow.collectLatest { pagingData ->
                 adapter.submitData(pagingData)

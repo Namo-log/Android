@@ -37,7 +37,7 @@ import org.joda.time.DateTime
 import java.util.Locale
 
 @AndroidEntryPoint
-class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {  // 개인 다이어리 추가,수정,삭제 화면
+class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     private lateinit var binding: ActivityPersonalDiaryDetailBinding
     private lateinit var galleryAdapter: GalleryListAdapter
 

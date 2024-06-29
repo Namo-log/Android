@@ -43,7 +43,7 @@ class DiaryViewModel @Inject constructor(
 
     /** 개인 기록 리스트 조회 **/
     fun getPersonalPaging(date: String): Flow<PagingData<DiarySchedule>> {
-        Log.d("Diary", "date: $date")
+        Log.d("getPersonalPaging", "date: $date")
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
@@ -56,6 +56,7 @@ class DiaryViewModel @Inject constructor(
 
     /** 모임 기록 리스트 조회 **/
     fun getMoimPaging(date: String): Flow<PagingData<DiarySchedule>> {
+        Log.d("getMoimPaging", "date: $date")
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
@@ -87,9 +88,10 @@ class DiaryViewModel @Inject constructor(
     }
 
     /** 선택한 피커 날짜 **/
-    fun setCurrentDate(yearMonth: String) {
-        _currentDate.value = yearMonth
+    fun setCurrentDate(date: String) {
+        _currentDate.value = date
     }
+    fun getFormattedDate() = currentDate.value!!.split(".").let { "${it[0]},${it[1].removePrefix("0")}" }
 
     /** 개인/그룹 여부 토글 **/
     fun getIsMoim(): Int = _isMoim.value ?: 0

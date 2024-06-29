@@ -10,33 +10,21 @@ import android.util.TypedValue
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
-import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.remote.diary.*
 import com.mongmong.namo.databinding.ActivityMoimMemoDetailBinding
-import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.GetMoimMemoResult
-import com.mongmong.namo.domain.model.MoimDiary
-import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.ui.diary.adapter.GalleryListAdapter
 import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.joda.time.DateTime
 import java.util.Locale
 
 @AndroidEntryPoint
-class MoimMemoDetailActivity: AppCompatActivity(),
-    ConfirmDialogInterface {   // 그룹 기록에 대한 텍스트 추가, 삭제
-
+class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
     private lateinit var binding: ActivityMoimMemoDetailBinding
 
     private var moimScheduleId: Long = 0L
