@@ -103,7 +103,7 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
             if(viewModel.getMemo() == null) viewModel.setMemo(moimDiary.contents ?: "")
             diaryContentsEt.setText(viewModel.getMemo())
 
-            findCategory(moimDiary.categoryId, moimDiary.categoryId)
+            findCategory()
             val scheduleDate = moimDiary.startDate * 1000
 
             diaryTodayMonthTv.text = DateTime(scheduleDate).toString("MMM", Locale.ENGLISH)
@@ -118,11 +118,11 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
                 if (moimDiary.contents.isNullOrEmpty()) { // 그룹 기록 내용이 없으면, 기록 저장
                     text = resources.getString(R.string.diary_add)
                     setTextColor(getColor(R.color.white))
-                    setBackgroundResource(R.color.MainOrange)
+                    setBackgroundResource(R.color.mainOrange)
                     elevation = 0f
                 } else {  // 내용이 있으면, 기록 수정
                     text = resources.getString(R.string.diary_edit)
-                    setTextColor(getColor(R.color.MainOrange))
+                    setTextColor(getColor(R.color.mainOrange))
                     setBackgroundResource(R.color.white)
                     elevation = TypedValue.applyDimension(
                         TypedValue.COMPLEX_UNIT_DIP,
@@ -133,14 +133,14 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
             }
         }
     }
-    private fun findCategory(localId: Long, serverId: Long) {
-        viewModel.findCategoryById(localId, serverId)
+    private fun findCategory() {
+        viewModel.findCategoryById()
     }
 
     private fun setImgList(imgList: List<String>) {
         val galleryViewRVAdapter = GalleryListAdapter(this)
-        binding.diaryGallerySavedRy.adapter = galleryViewRVAdapter
-        binding.diaryGallerySavedRy.layoutManager =
+        binding.diaryGallerySavedRv.adapter = galleryViewRVAdapter
+        binding.diaryGallerySavedRv.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         galleryViewRVAdapter.addImages(imgList)

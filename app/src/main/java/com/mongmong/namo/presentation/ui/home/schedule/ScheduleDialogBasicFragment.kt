@@ -51,8 +51,6 @@ import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.config.RoomState
-import com.mongmong.namo.presentation.config.UploadState
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.Place
 import com.mongmong.namo.presentation.utils.PickerConverter.getDefaultDate
 import com.mongmong.namo.presentation.utils.PickerConverter.parseDateTimeToDateText
@@ -771,7 +769,7 @@ class ScheduleDialogBasicFragment : Fragment() {
                 }
             }
 
-            clicked.setTextColor(resources.getColor(R.color.MainOrange))
+            clicked.setTextColor(resources.getColor(R.color.mainOrange))
 
         } else {
             togglePicker(binding.dialogScheduleDateLayout, false)

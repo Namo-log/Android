@@ -6,7 +6,7 @@
         android:topRightRadius="3dp"
         android:bottomRightRadius="3dp"/>
 
-    <solid android:color="@color/MainOrange"/>
+    <solid android:color="@color/mainOrange"/>
 
 <!--    <stroke android:color="@color/todo_housework" android:width="1dp"/>-->
 </shape>

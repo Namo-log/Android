@@ -9,7 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="transGray">#33000000</color>
-    <color name="MainOrange">#DA6022</color>
+    <color name="mainOrange">#DA6022</color>
     <color name="beforeOrange">#D68359</color>
     <color name="textGray">#555555</color>
     <color name="realGray">#737373</color>

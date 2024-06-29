@@ -74,4 +74,6 @@ data class Schedule(
             categoryId = this.categoryServerId,
         )
     }
+
+    fun getDefaultSchedule() = Schedule()
 }

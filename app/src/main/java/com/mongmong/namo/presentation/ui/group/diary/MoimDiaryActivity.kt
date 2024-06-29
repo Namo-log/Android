@@ -99,7 +99,7 @@ class MoimDiaryActivity : AppCompatActivity(),
             binding.groupSaveTv.apply {
                 text = resources.getString(R.string.diary_add)
                 setTextColor(getColor(R.color.white))
-                setBackgroundResource(R.color.MainOrange)
+                setBackgroundResource(R.color.mainOrange)
                 elevation = 0f
             }
             binding.diaryDeleteIv.visibility = View.GONE
@@ -107,7 +107,7 @@ class MoimDiaryActivity : AppCompatActivity(),
             viewModel.getMoimDiary(moimScheduleId)
             binding.groupSaveTv.apply {
                 text = resources.getString(R.string.diary_edit)
-                setTextColor(getColor(R.color.MainOrange))
+                setTextColor(getColor(R.color.mainOrange))
                 setBackgroundResource(R.color.white)
                 elevation = TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP,

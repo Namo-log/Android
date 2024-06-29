@@ -102,7 +102,7 @@
                 android:layout_width="13dp"
                 android:layout_height="13dp"
                 android:background="@drawable/border_round_all_circle"
-                android:src="@color/MainOrange"/>
+                android:src="@color/mainOrange"/>
 
             <TextView
                 android:id="@+id/dialog_schedule_category_name_tv"

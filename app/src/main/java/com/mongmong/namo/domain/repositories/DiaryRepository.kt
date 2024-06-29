@@ -24,8 +24,7 @@ interface DiaryRepository {
     ): DiaryResponse
 
     suspend fun deletePersonalDiary(
-        localId: Long,
-        scheduleServerId: Long
+        scheduleId: Long
     ): DiaryResponse
 
     suspend fun uploadDiaryToServer()

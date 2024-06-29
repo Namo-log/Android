@@ -33,15 +33,11 @@ import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import org.joda.time.DateTime
-import java.util.Locale
 
 @AndroidEntryPoint
 class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     private lateinit var binding: ActivityPersonalDiaryDetailBinding
     private lateinit var galleryAdapter: GalleryListAdapter
-
-    private lateinit var schedule: Schedule
 
     private val viewModel : DiaryDetailViewModel by viewModels()
 
@@ -50,64 +46,36 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
         binding = ActivityPersonalDiaryDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.apply {
+            viewModel = this@PersonalDetailActivity.viewModel
+            lifecycleOwner = this@PersonalDetailActivity
+        }
+
         galleryAdapter = GalleryListAdapter(this)
 
         setSchedule()
-        charCnt()
         onClickListener()
         initRecyclerView()
         initObserve()
     }
 
     private fun setSchedule() {
-        schedule = (intent.getSerializableExtra("schedule") as? Schedule)!!
-        hasDiary()
-
-        findCategory(schedule)
-
-        binding.apply {
-            val formatDate = DateTime(schedule.startLong * 1000).toString("yyyy.MM.dd (EE) hh:mm")
-            diaryTodayMonthTv.text = DateTime(schedule.startLong * 1000).toString("MMM", Locale.ENGLISH)
-            diaryTodayNumTv.text = DateTime(schedule.startLong * 1000).toString("dd")
-            diaryTitleTv.isSelected = true  // marquee
-            diaryTitleTv.text = schedule.title
-
-            if (schedule.placeName.isEmpty()) diaryInputPlaceTv.text = NO_PLACE
-            else diaryInputPlaceTv.text = schedule.placeName
-
-            diaryInputDateTv.text = formatDate
-        }
+        val schedule = (intent.getSerializableExtra("schedule") as? Schedule)!!
+        hasDiary(schedule)
+        findCategory()
     }
 
-    private fun hasDiary() {
+    private fun hasDiary(schedule: Schedule) {
         if (schedule.hasDiary == false) {  // 기록 없을 때, 추가
-            viewModel.setNewPersonalDiary(schedule, "")
-            binding.diaryEditBtnTv.apply {
-                text = resources.getString(R.string.diary_add)
-                setTextColor(getColor(R.color.white))
-                setBackgroundResource(R.color.MainOrange)
-                elevation = 0f
-            }
-            binding.diaryDeleteIv.visibility = View.GONE
+            viewModel.setNewPersonalDiary(schedule)
         } else {  // 기록 있을 때, 수정
             viewModel.getExistingPersonalDiary(schedule)
-            binding.diaryEditBtnTv.apply {
-                text = resources.getString(R.string.diary_edit)
-                setTextColor(getColor(R.color.MainOrange))
-                setBackgroundResource(R.color.white)
-                elevation = TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    10f,
-                    resources.displayMetrics
-                )
-            }
-            binding.diaryDeleteIv.visibility = View.VISIBLE
         }
     }
 
-    private fun findCategory(schedule: Schedule) {
+    private fun findCategory() {
         lifecycleScope.launch {
-            viewModel.findCategoryById(schedule.categoryId, schedule.categoryId)
+            viewModel.findCategoryById()
         }
     }
 
@@ -117,7 +85,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
             diaryGalleryClickIv.setOnClickListener { getGallery() }
             diaryEditBtnTv.setOnClickListener {
                 lifecycleScope.launch {
-                    if(schedule.hasDiary == false) insertData()
+                    if(this@PersonalDetailActivity.viewModel.schedule.value?.hasDiary == true) insertData()
                     else updateDiary()
                 }
             }
@@ -129,33 +97,30 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private fun initRecyclerView() {
         val galleryViewRVAdapter = galleryAdapter
-        binding.diaryGallerySavedRy.adapter = galleryViewRVAdapter
-        binding.diaryGallerySavedRy.layoutManager =
+        binding.diaryGallerySavedRv.adapter = galleryViewRVAdapter
+        binding.diaryGallerySavedRv.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
     }
 
     /** 다이어리 추가 **/
     private fun insertData() {
-        val content = binding.diaryContentsEt.text.toString()
-        if (content.isEmpty() && viewModel.getImgList().isNullOrEmpty()) {
+        if (viewModel.diary.value?.content.isNullOrEmpty() && viewModel.getImgList().isNullOrEmpty()) {
             Snackbar.make(binding.root, "내용이나 이미지를 추가해주세요!", Snackbar.LENGTH_SHORT).show()
             return
         } else {
-            viewModel.setNewPersonalDiary(schedule, content)
             viewModel.addPersonalDiary()
         }
     }
 
     /** 다이어리 수정 **/
     private fun updateDiary() {
-        viewModel.editPersonalDiary(binding.diaryContentsEt.text.toString())
-
+        viewModel.editPersonalDiary()
         Toast.makeText(this, "수정되었습니다", Toast.LENGTH_SHORT).show()
     }
 
     /** 다이어리 삭제 **/
     private fun deleteDiary() {
-        viewModel.deletePersonalDiary(schedule.scheduleId, schedule.scheduleId)
+        viewModel.deletePersonalDiary()
     }
 
     private fun initObserve() {
@@ -253,45 +218,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
         } ?: emptyList() // 결과 데이터가 null인 경우 빈 리스트 반환
     }
 
-
-    /** 글자 수 반환 **/
-    @SuppressLint("SetTextI18n")
-    private fun charCnt() {
-        with(binding) {
-            textNumTv.text = "${binding.diaryContentsEt.text.length} / 200"
-            diaryContentsEt.addTextChangedListener(object : TextWatcher {
-                var maxText = ""
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-                    maxText = s.toString()
-                }
-
-                @SuppressLint("SetTextI18n")
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    if (diaryContentsEt.length() > 200) {
-                        Toast.makeText(
-                            this@PersonalDetailActivity,
-                            "최대 200자까지 입력 가능합니다",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        diaryContentsEt.setText(maxText)
-                        diaryContentsEt.setSelection(diaryContentsEt.length())
-                        if (s != null) {
-                            textNumTv.text = "${s.length} / 200"
-                        }
-                    } else {
-                        textNumTv.text = "${s.toString().length} / 200"
-                    }
-                }
-
-                override fun afterTextChanged(s: Editable?) {}
-            })
-        }
-    }
 
     /** editText 외 터치 시 키보드 내리는 이벤트 **/
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {  //

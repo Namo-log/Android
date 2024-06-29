@@ -190,7 +190,7 @@
             app:layout_constraintTop_toBottomOf="@id/linear_corner" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/diary_gallery_saved_ry"
+            android:id="@+id/diary_gallery_saved_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -238,7 +238,7 @@
             android:id="@+id/diary_edit_btn_tv"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@color/MainOrange"
+            android:background="@color/mainOrange"
             android:padding="15dp"
             android:text="@string/diary_add"
             android:textAlignment="center"

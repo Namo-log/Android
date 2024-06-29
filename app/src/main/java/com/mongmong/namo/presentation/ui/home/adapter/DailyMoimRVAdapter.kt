@@ -2,7 +2,6 @@ package com.mongmong.namo.presentation.ui.home.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.MoimDiary
@@ -104,7 +102,7 @@ class DailyMoimRVAdapter : RecyclerView.Adapter<DailyMoimRVAdapter.ViewHolder>()
                 if (schedule.hasDiary != null) { // 그룹에서 추가한 모임 기록이 있을 때
                     this.visibility = View.VISIBLE
                     if (schedule.hasDiary == false) this.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
-                    else this.setColorFilter(ContextCompat.getColor(context,R.color.MainOrange)) // 개인이 메모를 추가했을 떄
+                    else this.setColorFilter(ContextCompat.getColor(context,R.color.mainOrange)) // 개인이 메모를 추가했을 떄
                 }
                 else this.visibility = View.GONE
             }

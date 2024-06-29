@@ -11,12 +11,13 @@ import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.GetMoimMemoResponse
-import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.usecase.FindCategoryUseCase
 import com.mongmong.namo.presentation.config.RoomState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import org.joda.time.DateTime
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,6 +27,9 @@ class DiaryDetailViewModel @Inject constructor(
 ) : ViewModel() {
     private val _diary = MutableLiveData<Diary>()
     val diary: LiveData<Diary> = _diary
+
+    private val _schedule = MutableLiveData<Schedule>(Schedule().getDefaultSchedule())
+    val schedule: LiveData<Schedule> = _schedule
 
     private val _imgList = MutableLiveData<List<String>>(emptyList())
     val imgList: LiveData<List<String>> = _imgList
@@ -46,6 +50,7 @@ class DiaryDetailViewModel @Inject constructor(
     val patchMemoResult : LiveData<Boolean> = _patchMemoResult
 
     private val _memo = MutableLiveData<String>()
+    val memo: LiveData<String> = _memo
 
     private val _category = MutableLiveData<Category>()
     val category: LiveData<Category> = _category
@@ -59,21 +64,23 @@ class DiaryDetailViewModel @Inject constructor(
         viewModelScope.launch {
             val result = repository.getPersonalDiary(schedule.scheduleId).result
             Log.d("DiaryDetailViewModel getDiary", "$result")
+            _schedule.value = schedule
             _diary.value = Diary(
                 diaryId = schedule.scheduleId,
                 scheduleServerId = schedule.serverId,
-                content = result.contents,
+                _content = result.contents,
                 images = result.urls,
                 state = RoomState.ADDED.state
             )
         }
     }
     // 개인 기록 추가시 데이터 초기화
-    fun setNewPersonalDiary(schedule: Schedule, content: String) {
+    fun setNewPersonalDiary(schedule: Schedule) {
+        _schedule.value = schedule
         _diary.value = Diary(
             diaryId = schedule.serverId,
             scheduleServerId = schedule.serverId,
-            content = content,
+            _content = "",
             images = _imgList.value,
             state = RoomState.ADDED.state
         )
@@ -92,10 +99,9 @@ class DiaryDetailViewModel @Inject constructor(
         }
     }
     // 개인 기록 수정
-    fun editPersonalDiary(content: String) {
+    fun editPersonalDiary() {
         viewModelScope.launch {
             _diary.value?.let {
-                it.content = content
                 it.state = RoomState.EDITED.state
             }
             Log.d("PersonalDiaryViewModel editDiary", "${_diary.value}")
@@ -108,9 +114,9 @@ class DiaryDetailViewModel @Inject constructor(
         }
     }
     // 개인 기록 삭제
-    fun deletePersonalDiary(localId: Long, scheduleServerId: Long) {
+    fun deletePersonalDiary() {
         viewModelScope.launch {
-            _deleteDiaryResult.postValue(repository.deletePersonalDiary(localId, scheduleServerId))
+            _deleteDiaryResult.postValue(schedule.value?.let { repository.deletePersonalDiary(it.scheduleId) })
         }
     }
 
@@ -138,9 +144,10 @@ class DiaryDetailViewModel @Inject constructor(
     }
 
     /** 카테고리 id로 카테고리 조회 */
-    fun findCategoryById(localId: Long, serverId: Long) {
+    fun findCategoryById() {
         viewModelScope.launch {
-            _category.value = findCategoryUseCase.invoke(localId, serverId)
+            _category.value =
+                schedule.value?.let { findCategoryUseCase.invoke(it.categoryId, it.categoryId) }
         }
     }
 
@@ -152,4 +159,16 @@ class DiaryDetailViewModel @Inject constructor(
 
     fun setMemo(memo: String) { _memo.value = memo }
     fun getMemo() = _memo.value
+
+    fun getFormattedMonth(): String =
+        _schedule.value?.let { DateTime(_schedule.value!!.startLong * 1000).toString("MMM", Locale.ENGLISH) }
+            .orEmpty()
+
+    fun getFormattedDay(): String =
+        _schedule.value.let { DateTime(_schedule.value!!.startLong * 1000).toString("dd") }
+            .orEmpty()
+
+    fun getFormattedDate(): String =
+        _schedule.value.let { DateTime(_schedule.value!!.startLong * 1000).toString("yyyy.MM.dd (EE) hh:mm") }
+            .orEmpty()
 }

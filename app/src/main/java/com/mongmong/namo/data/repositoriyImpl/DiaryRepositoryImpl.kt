@@ -84,7 +84,7 @@ class DiaryRepositoryImpl @Inject constructor(
     }
 
     /** 개인 기록 삭제 **/
-    override suspend fun deletePersonalDiary(localId: Long, scheduleServerId: Long): DiaryResponse {
+    override suspend fun deletePersonalDiary(scheduleId: Long): DiaryResponse {
         // room db에 삭제 상태로 변경
         /*localDiaryDataSource.updateDiaryAfterUpload(
             localId,
@@ -94,8 +94,8 @@ class DiaryRepositoryImpl @Inject constructor(
         )*/
         //if (networkChecker.isOnline()) {
             // 서버 db에서 삭제
-            Log.d("DiaryRepositoryImpl deletePersonalDiary", "$scheduleServerId")
-            return remoteDiaryDataSource.deletePersonalDiary(scheduleServerId)
+            Log.d("DiaryRepositoryImpl deletePersonalDiary", "$scheduleId")
+            return remoteDiaryDataSource.deletePersonalDiary(scheduleId)
             /*if(deleteResponse.code == SUCCESS_CODE) {
                 // room db에서 삭제
                 localDiaryDataSource.deleteDiary(localId)

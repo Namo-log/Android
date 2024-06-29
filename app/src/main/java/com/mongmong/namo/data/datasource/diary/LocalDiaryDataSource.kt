@@ -13,7 +13,7 @@ class LocalDiaryDataSource @Inject constructor(private val diaryDao: DiaryDao) {
         var diaryResult = Diary( // 기본 또는 오류 시 반환할 Diary 객체
             diaryId = 0L,
             scheduleServerId = 0L,
-            content = "",
+            _content = "",
             images = listOf(""),
             state = RoomState.DEFAULT.state,
             isUpload = false,

@@ -7,7 +7,7 @@
     <gradient
         android:angle="90"
         android:endColor="#FFA849"
-        android:startColor="@color/MainOrange" /> //#F2922A, #DA662B
+        android:startColor="@color/mainOrange" /> //#F2922A, #DA662B
 
     <!--    android:angle="0"-->
     <!-- angle 0 으로 맞추면 가로 90 은 세로-->

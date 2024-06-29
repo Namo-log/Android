@@ -49,8 +49,6 @@ import com.mongmong.namo.presentation.utils.PickerConverter.parseDateTimeToDateT
 import com.mongmong.namo.presentation.utils.PickerConverter.parseDateTimeToTimeText
 import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedTime
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.joda.time.DateTime
 import java.lang.NullPointerException
 
@@ -290,7 +288,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         hideKeyboard()
         prevClicked = if (prevClicked != clicked) {
             prevClicked?.setTextColor(resources.getColor(R.color.textGray))
-            clicked.setTextColor(resources.getColor(R.color.MainOrange))
+            clicked.setTextColor(resources.getColor(R.color.mainOrange))
             togglePicker(prevClicked, false)
             togglePicker(clicked, true)
             clicked // prevClicked 값을 현재 clicked로 업데이트

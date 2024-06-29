@@ -128,7 +128,7 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@color/MainOrange" />
+                    android:src="@color/mainOrange" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"

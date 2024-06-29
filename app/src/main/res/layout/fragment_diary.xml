@@ -50,7 +50,7 @@
             android:layout_marginEnd="20dp"
             android:background="@drawable/tab_corner_bg"
             app:tabIndicator="@drawable/tab_indicator_corner_bg"
-            app:tabIndicatorColor="@color/MainOrange"
+            app:tabIndicatorColor="@color/mainOrange"
             app:tabIndicatorHeight="30dp"
             app:tabMode="auto"
             app:tabIndicatorAnimationMode="elastic"
