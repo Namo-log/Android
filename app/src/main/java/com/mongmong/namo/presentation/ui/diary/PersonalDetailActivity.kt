@@ -31,6 +31,7 @@ import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.snackbar.Snackbar
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
+import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -209,27 +210,15 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
 
-    /** editText 외 터치 시 키보드 내리는 이벤트 **/
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {  //
-        val focusView = currentFocus
-        if (focusView != null && ev != null) {
-            val rect = Rect()
-            focusView.getGlobalVisibleRect(rect)
-            val x = ev.x.toInt()
-            val y = ev.y.toInt()
-
-            if (!rect.contains(x, y)) {
-                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(focusView.windowToken, 0)
-                focusView.clearFocus()
-            }
-        }
-        return super.dispatchTouchEvent(ev)
-    }
-
     override fun onClickYesButton(id: Int) {
         // 삭제 버튼 누르면 삭제 진행
         deleteDiary()
+    }
+
+    /** editText 외 터치 시 키보드 내리는 이벤트 **/
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        hideKeyboardOnTouchOutside(ev)
+        return super.dispatchTouchEvent(ev)
     }
 
     companion object {

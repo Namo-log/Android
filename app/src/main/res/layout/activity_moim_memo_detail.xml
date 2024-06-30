@@ -199,7 +199,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:textColor="@color/notyetGray"
-            android:text="@{viewModel.moimDiary.content + @string/diary_max_num}"
+            android:text="@{viewModel.moimDiary.content.length + @string/diary_max_num}"
             app:layout_constraintEnd_toEndOf="@id/linear_corner"
             app:layout_constraintTop_toBottomOf="@id/linear_corner" />
 

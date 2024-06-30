@@ -36,6 +36,7 @@ import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.dpToPx
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.PermissionChecker
+import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import org.joda.time.DateTime
@@ -45,8 +46,7 @@ import java.util.*
 
 
 @AndroidEntryPoint
-class MoimDiaryActivity : AppCompatActivity(),
-    ConfirmDialogInterface {  // 그룹 다이어리 추가, 수정, 삭제 화면
+class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그룹 다이어리 추가, 수정, 삭제 화면
 
     private lateinit var binding: ActivityMoimDiaryBinding
 
@@ -60,8 +60,8 @@ class MoimDiaryActivity : AppCompatActivity(),
 
     private lateinit var moimScheduleBody: MoimScheduleBody
 
-    private var preActivities = emptyList<MoimActivity>()
-    private var activities = ArrayList<MoimActivity>()
+    private var preActivities = emptyList<MoimActivity>() // 이전 활동
+    private var activities = ArrayList<MoimActivity>() // 활동 리스트
 
     private var imgList: ArrayList<String>? = ArrayList() // 장소별 이미지
     private var positionForGallery: Int = -1
@@ -385,20 +385,9 @@ class MoimDiaryActivity : AppCompatActivity(),
         }
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {  // editText 외 터치 시 키보드 내려감
-        val focusView = currentFocus
-        if (focusView != null && ev != null) {
-            val rect = Rect()
-            focusView.getGlobalVisibleRect(rect)
-            val x = ev.x.toInt()
-            val y = ev.y.toInt()
-
-            if (!rect.contains(x, y)) {
-                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(focusView.windowToken, 0)
-                focusView.clearFocus()
-            }
-        }
+    /** editText 외 터치 시 키보드 내리는 이벤트 **/
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        hideKeyboardOnTouchOutside(ev)
         return super.dispatchTouchEvent(ev)
     }
 }
