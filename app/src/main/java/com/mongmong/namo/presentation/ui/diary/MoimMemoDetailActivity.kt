@@ -1,32 +1,21 @@
 package com.mongmong.namo.presentation.ui.diary
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Rect
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
-import android.util.TypedValue
 import android.view.MotionEvent
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMoimMemoDetailBinding
 import com.mongmong.namo.domain.model.MoimDiary
-import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.ui.diary.adapter.GalleryListAdapter
 import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
-import org.joda.time.DateTime
-import java.util.Locale
 
 @AndroidEntryPoint
 class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {

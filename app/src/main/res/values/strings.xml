@@ -76,7 +76,7 @@
     <string name="diary_max_num">&#160;/ 200</string>
     <string name="diary_personal">개인</string>
     <string name="diary_group">모임</string>
-    <string name="diary_attendee">참석자</string>
+    <string name="diary_attendee">참석자&#160;</string>
     <string name="diary_add_activity">활동 추가</string>
     <string name="diary_detail_click">모임 기록 보러가기</string>
 

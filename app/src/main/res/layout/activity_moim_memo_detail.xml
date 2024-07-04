@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="com.mongmong.namo.presentation.utils.DiaryDateConverter"/>
+        <import type="android.view.View"/>
         <import type="com.mongmong.namo.presentation.config.CategoryColor"/>
         <variable
             name="viewModel"
@@ -55,6 +57,7 @@
                 android:layout_height="47dp"
                 android:contentDescription="@string/diary_title"
                 android:src="@drawable/ic_delete_schedule"
+                android:visibility="@{viewModel.isEdit ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@id/diary_back_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/diary_back_iv" />
@@ -79,7 +82,7 @@
             android:textSize="15sp"
             android:textStyle="bold"
             android:textColor="@color/textGray"
-            android:text="@{viewModel.getFormattedMonth(viewModel.moimDiary.startDate)}"
+            android:text="@{DiaryDateConverter.getFormattedMonth(viewModel.moimDiary.startDate)}"
             android:elevation="10dp"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintBottom_toTopOf="@id/diary_today_num_tv"
@@ -94,7 +97,7 @@
             android:textStyle="bold"
             android:textColor="@color/textGray"
             android:elevation="10dp"
-            android:text="@{viewModel.getFormattedDay(viewModel.moimDiary.startDate)}"
+            android:text="@{DiaryDateConverter.getFormattedDay(viewModel.moimDiary.startDate)}"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintTop_toBottomOf="@id/diary_today_month_tv"
             app:layout_constraintStart_toStartOf="@id/date_circle_iv"
@@ -121,7 +124,7 @@
             android:layout_marginStart="15dp"
             android:textSize="17sp"
             android:textColor="@color/textGray"
-            android:text="@{viewModel.getFormattedDate(viewModel.moimDiary.startDate)}"
+            android:text="@{DiaryDateConverter.getFormattedDate(viewModel.moimDiary.startDate)}"
             app:layout_constraintStart_toEndOf="@id/diary_date_tv"
             app:layout_constraintTop_toTopOf="@id/diary_date_tv" />
 

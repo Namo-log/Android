@@ -4,6 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <import type="com.mongmong.namo.presentation.utils.DiaryDateConverter"/>
+        <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="com.mongmong.namo.presentation.ui.group.diary.MoimDiaryViewModel" />
+    </data>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -41,6 +48,7 @@
                 android:textColor="@color/textGray"
                 android:textSize="15sp"
                 android:textStyle="bold"
+                android:text="@{DiaryDateConverter.getFormattedMonth(viewModel.moimDiary.startDate)}"
                 app:layout_constraintBottom_toTopOf="@id/diary_today_num_tv"
                 app:layout_constraintEnd_toEndOf="@id/date_circle_iv"
                 app:layout_constraintStart_toStartOf="@id/date_circle_iv"
@@ -55,6 +63,7 @@
                 android:textColor="@color/textGray"
                 android:textSize="35sp"
                 android:textStyle="bold"
+                android:text="@{DiaryDateConverter.getFormattedDay(viewModel.moimDiary.startDate)}"
                 app:layout_constraintBottom_toBottomOf="@id/date_circle_iv"
                 app:layout_constraintEnd_toEndOf="@id/date_circle_iv"
                 app:layout_constraintStart_toStartOf="@id/date_circle_iv"
@@ -85,6 +94,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:text="@{viewModel.moimDiary.name}"
                     app:layout_constraintBottom_toBottomOf="@id/group_add_back_iv"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -95,6 +105,7 @@
                     android:layout_width="40dp"
                     android:layout_height="47dp"
                     android:src="@drawable/ic_delete_schedule"
+                    android:visibility="@{viewModel.isEdit ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toBottomOf="@id/group_add_back_iv"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/group_add_back_iv" />
@@ -121,6 +132,7 @@
                 android:layout_marginStart="30dp"
                 android:textColor="@color/textGray"
                 android:textSize="17sp"
+                android:text="@{DiaryDateConverter.getFormattedDate(viewModel.moimDiary.startDate)}"
                 app:layout_constraintStart_toEndOf="@id/group_add_date_tv"
                 app:layout_constraintTop_toTopOf="@id/group_add_date_tv" />
 
@@ -147,6 +159,7 @@
                 android:maxLines="1"
                 android:textColor="@color/textGray"
                 android:textSize="17sp"
+                android:text="@{viewModel.moimDiary.locationName}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/group_add_place_tv"
                 app:layout_constraintTop_toTopOf="@id/group_add_place_tv" />
@@ -157,40 +170,32 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="25dp"
-                android:text="@string/diary_attendee"
+                android:text='@{@string/diary_attendee + "("+ viewModel.moimDiary.users.size + ")"}'
                 android:textColor="@color/textGray"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/date_circle_iv" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/bottom_arrow"
+            <ImageView
+                android:id="@+id/moim_participant_hide_btn"
                 android:layout_width="15dp"
                 android:layout_height="20dp"
-                android:rotation="90"
+                android:rotation="@{viewModel.isParticipantVisible ? 270 : 90}"
                 android:src="@drawable/ic_arrow_right_gray"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="@id/group_add_top"
-                app:layout_constraintTop_toTopOf="@+id/group_add_people_tv" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/up_arrow"
-                android:layout_width="15dp"
-                android:layout_height="20dp"
-                android:rotation="270"
-                android:src="@drawable/ic_arrow_right_gray"
+                android:onClick="@{() -> viewModel.toggleIsParticipantVisible()}"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="@id/group_add_top"
                 app:layout_constraintTop_toTopOf="@+id/group_add_people_tv" />
 
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/moim_people_rv"
+                android:id="@+id/moim_participant_rv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:orientation="horizontal"
+                android:visibility="@{viewModel.isParticipantVisible ? View.VISIBLE : View.GONE}"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintStart_toStartOf="@id/group_add_people_tv"
                 app:layout_constraintTop_toBottomOf="@id/group_add_people_tv"
@@ -203,7 +208,7 @@
                 android:layout_marginTop="5dp"
                 app:layout_constraintBottom_toTopOf="@id/group_save_tv"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/moim_people_rv">
+                app:layout_constraintTop_toBottomOf="@id/moim_participant_rv">
 
                 <LinearLayout
                     android:id="@+id/add_place_linear_layout"
@@ -224,7 +229,7 @@
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/moim_people_rv"
+                        app:layout_constraintTop_toBottomOf="@id/moim_participant_rv"
                         tools:itemCount="1"
                         tools:listitem="@layout/item_diary_group_event" />
 
@@ -250,9 +255,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:padding="15dp"
-                android:text="@string/diary_add"
+                android:background="@{viewModel.isEdit ? @color/white : @color/mainOrange}"
+                android:elevation="@{viewModel.isEdit ? 10f : 0f}"
+                android:text="@{viewModel.isEdit ? @string/diary_edit : @string/diary_add}"
+                android:textColor="@{viewModel.isEdit ? @color/mainOrange : @color/white}"
                 android:textAlignment="center"
-                android:textColor="@color/white"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />

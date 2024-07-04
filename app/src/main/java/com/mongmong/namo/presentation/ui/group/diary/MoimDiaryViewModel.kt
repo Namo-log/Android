@@ -1,133 +1,124 @@
 package com.mongmong.namo.presentation.ui.group.diary
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
+import com.mongmong.namo.domain.model.group.MoimScheduleBody
+import com.mongmong.namo.domain.model.group.convertToGroupMembers
 import com.mongmong.namo.domain.repositories.DiaryRepository
-import com.mongmong.namo.domain.usecase.FindCategoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class MoimDiaryViewModel @Inject constructor(
     private val repository: DiaryRepository
 ) : ViewModel() {
-    private val _getMoimDiaryResult = MutableLiveData<MoimDiaryResult>()
-    val getMoimDiaryResult : LiveData<MoimDiaryResult> = _getMoimDiaryResult
+    private val _moimDiary = MutableLiveData<MoimDiaryResult>()
+    val moimDiary: LiveData<MoimDiaryResult> = _moimDiary
 
+    private val _activities = MutableLiveData<MutableList<MoimActivity>>(mutableListOf())
+    val activities: LiveData<MutableList<MoimActivity>> = _activities
 
     private val _patchActivitiesComplete = MutableLiveData<Boolean>()
-    val patchActivitiesComplete : LiveData<Boolean> = _patchActivitiesComplete
+    val patchActivitiesComplete: LiveData<Boolean> = _patchActivitiesComplete
 
     private val _deleteDiaryComplete = MutableLiveData<Boolean>()
-    val deleteDiaryComplete : LiveData<Boolean> = _deleteDiaryComplete
+    val deleteDiaryComplete: LiveData<Boolean> = _deleteDiaryComplete
 
-    private val _category = MutableLiveData<Category>()
-    val category: LiveData<Category> = _category
+    val isEdit = MutableLiveData<Boolean>(false)
+    val isParticipantVisible = MutableLiveData<Boolean>(false)
+    var moimScheduleId: Long = 0L
+    private val deleteItems = mutableListOf<Long>()  // 삭제할 항목 저장
 
     /** 모임 기록 개별 조회 **/
     fun getMoimDiary(scheduleId: Long) {
         viewModelScope.launch {
-            Log.d("MoimDiaryViewModel getMoimDiary", "$scheduleId")
-            _getMoimDiaryResult.postValue(repository.getMoimDiary(scheduleId))
+            val result = repository.getMoimDiary(scheduleId)
+            _moimDiary.postValue(result)
+            _activities.postValue(result.moimActivities.toMutableList())
         }
     }
 
-    fun patchMoimActivities(
-        preActivities: List<MoimActivity>,
-        memberIntList: List<Long>,
-        scheduleId: Long,
-        placeSchedule: List<MoimActivity>,
-        deleteItems: List<Long>
-    ) {
+    fun setNewMoimDiary(schedule: MoimScheduleBody) {
+        val newDiary = MoimDiaryResult(
+            name = schedule.name,
+            startDate = schedule.startDate,
+            locationName = schedule.locationName,
+            users = convertToGroupMembers(schedule.users),
+            moimActivities = arrayListOf(MoimActivity(0L, "", 0L, arrayListOf(), arrayListOf()))
+        )
+        _moimDiary.value = newDiary
+        _activities.value = arrayListOf(MoimActivity(0L, "", 0L, arrayListOf(), arrayListOf()))
+    }
+
+    fun addActivity(activity: MoimActivity) {
+        _activities.value?.add(activity)
+        _activities.postValue(_activities.value)
+    }
+
+    fun updateActivityName(position: Int, name: String) {
+        _activities.value?.get(position)?.name = name
+    }
+
+    fun updateActivityPay(position: Int, pay: Long) {
+        _activities.value?.get(position)?.pay = pay
+    }
+
+    fun updateActivityMembers(position: Int, members: List<Long>) {
+        _activities.value?.get(position)?.members = members
+    }
+
+    fun updateActivityImages(position: Int, images: List<String>) {
+        _activities.value?.get(position)?.imgs = images
+        _activities.postValue(_activities.value)
+    }
+
+    fun updateDeleteItems(deleteItems: List<Long>) {
+        this.deleteItems.clear()
+        this.deleteItems.addAll(deleteItems)
+    }
+
+    fun patchMoimActivities() {
         viewModelScope.launch {
-            placeSchedule.map { activity ->
-                addOrEditMoimActivities(preActivities, activity, memberIntList, scheduleId)
+            val activities = _activities.value ?: return@launch
+            activities.forEach { activity ->
+                if (activity.moimActivityId == 0L) {
+                    addMoimActivity(activity)
+                } else {
+                    editMoimActivity(activity)
+                }
             }
-            deleteItems.map { activityId ->
-               deleteMoimActivity(activityId)
+            deleteItems.forEach { activityId ->
+                deleteMoimActivity(activityId)
             }
-            // 모든 작업이 완료된 후에 상태 업데이트
-            _patchActivitiesComplete.value = true
+            _patchActivitiesComplete.postValue(true)
         }
     }
 
-    private suspend fun addOrEditMoimActivities(
-        preActivities: List<MoimActivity>,
-        activity: MoimActivity,
-        memberIntList: List<Long>,
-        scheduleId: Long
-    ) {
-        val hasDiffer = preActivities.any { preActivity ->
-            preActivity.place == activity.place &&
-                    preActivity.pay == activity.pay &&
-                    preActivity.members == activity.members &&
-                    preActivity.imgs == activity.imgs
-        }
-        val members = activity.members.ifEmpty { memberIntList }
-        if (!hasDiffer) {
-            if (activity.moimActivityId == 0L) {
-                addMoimActivity(
-                    scheduleId,
-                    activity.place,
-                    activity.pay,
-                    members,
-                    activity.imgs
-                )
-            } else {
-                editMoimActivity(
-                    activity.moimActivityId,
-                    activity.place,
-                    activity.pay,
-                    members,
-                    activity.imgs
-                )
-            }
-
-        }
+    private suspend fun addMoimActivity(activity: MoimActivity) {
+        val members = activity.members.ifEmpty { _moimDiary.value?.users?.map { it.userId } }
+        repository.addMoimActivity(moimScheduleId, activity.name, activity.pay, members, activity.imgs)
     }
 
-    /** 모임 기록 활동 추가 **/
-    private suspend fun addMoimActivity(
-        moimScheduleId: Long,
-        place: String,
-        money: Long,
-        members: List<Long>?,
-        images: List<String>?
-    ) {
-        Log.d("MoimActivity", "viewModel addMoimActivity")
-        repository.addMoimActivity(moimScheduleId, place, money, members, images)
+    private suspend fun editMoimActivity(activity: MoimActivity) {
+        val members = activity.members.ifEmpty { _moimDiary.value?.users?.map { it.userId } }
+        repository.editMoimActivity(activity.moimActivityId, activity.name, activity.pay, members, activity.imgs)
     }
-
-    /** 모임 기록 활동 수정 **/
-    private suspend fun editMoimActivity(
-        moimScheduleId: Long,
-        place: String,
-        money: Long,
-        members: List<Long>?,
-        images: List<String>?
-    ) {
-        Log.d("MoimActivity", "viewModel editMoimActivity")
-        repository.editMoimActivity(moimScheduleId, place, money, members, images)
-    }
-
-    /** 모임 기록 활동 삭제 **/
     private suspend fun deleteMoimActivity(activityId: Long) {
-        Log.d("MoimActivity", "viewModel deleteMoimActivity")
         repository.deleteMoimActivity(activityId)
     }
 
     /** 모임 기록 삭제 (그룹에서) **/
-    fun deleteMoimDiary(scheduleId: Long) {
+    fun deleteMoimDiary() {
         viewModelScope.launch {
-            _deleteDiaryComplete.postValue(repository.deleteMoimDiary(scheduleId))
+            _deleteDiaryComplete.postValue(repository.deleteMoimDiary(moimScheduleId))
         }
+    }
+    fun toggleIsParticipantVisible() {
+        isParticipantVisible.value = !isParticipantVisible.value!!
     }
 }

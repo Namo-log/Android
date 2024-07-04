@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,55 +15,47 @@ import com.mongmong.namo.domain.model.group.MoimActivity
 import java.text.NumberFormat
 import java.util.*
 
-
 class MoimActivityRVAdapter(
-    // 그룹 다이어리 장소 추가, 정산, 이미지
-    val context: Context,
-    private val listData: MutableList<MoimActivity>,
+    private val context: Context,
     val payClickListener: (pay: Long, position: Int, payText: TextView) -> Unit,
-    val imageClickListener: (imgLists: List<String>?, position: Int) -> Unit,
+    val imageClickListener: (position: Int) -> Unit,
     val activityClickListener: (text: String, position: Int) -> Unit,
     val deleteItemList: (deleteItems: MutableList<Long>) -> Unit
-) : RecyclerView.Adapter<MoimActivityRVAdapter.Holder>() {
+) : RecyclerView.Adapter<MoimActivityRVAdapter.ViewHolder>() {
 
-    private val items = arrayListOf<ArrayList<String>?>()
-    private var deleteItems = arrayListOf<Long>()
+    private val listData = mutableListOf<MoimActivity>()
+    private val deleteItems = mutableListOf<Long>()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addImageItem(image: ArrayList<String>?) {
-        this.items.add(image)
+    fun submitList(newActivities: List<MoimActivity>) {
+        listData.clear()
+        listData.addAll(newActivities)
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
             ItemDiaryGroupEventBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return Holder(binding)
+        return ViewHolder(binding)
     }
 
     @SuppressLint("NotifyDataSetChanged", "ClickableViewAccessibility")
-    override fun onBindViewHolder(holder: Holder, position: Int) {
-
-        val event = listData[position]
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val updatedPosition = holder.bindingAdapterPosition
 
         with(holder.binding) {
             // 정산 다이얼로그
-            itemPlaceMoneyTv.text =
-                NumberFormat.getNumberInstance(Locale.US).format(event.pay)
+            itemPlaceMoneyTv.text = NumberFormat.getNumberInstance(Locale.US).format(listData[position].pay)
             clickMoneyLy.setOnClickListener {
-                payClickListener(event.pay, updatedPosition, holder.binding.itemPlaceMoneyTv)
+                payClickListener(listData[position].pay, updatedPosition, holder.binding.itemPlaceMoneyTv)
             }
 
             // 장소별 이미지 가져오기
             val adapter = MoimActivityGalleryAdapter(context)
             groupAddGalleryRv.apply {
                 this.adapter = adapter.apply {
-                    itemClickListener = if (event.imgs?.size == 3) {
-                        {
-                            imageClickListener(event.imgs, updatedPosition)
-                            Log.d("dd","dd")
-                        }
+                    itemClickListener = if (listData[position].imgs?.size == 3) {
+                        { imageClickListener(updatedPosition) }
                     } else {
                         null
                     }
@@ -72,11 +63,12 @@ class MoimActivityRVAdapter(
                 layoutManager =
                     LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             }
-            if (event.imgs?.size == 3) {
+
+            if (listData[position].imgs?.size == 3) {
                 img1.visibility = View.GONE
                 img2.visibility = View.GONE
                 img3.visibility = View.GONE
-            } else if (event.imgs?.isNotEmpty() == true) {
+            } else if (listData[position].imgs?.isNotEmpty() == true) {
                 img1.visibility = View.VISIBLE
                 img2.visibility = View.GONE
                 img3.visibility = View.GONE
@@ -87,27 +79,23 @@ class MoimActivityRVAdapter(
             }
 
             holder.binding.groupGalleryLv.setOnClickListener {
-                imageClickListener(event.imgs, updatedPosition)
+                imageClickListener(updatedPosition)
             }
 
             holder.binding.itemPlaceNameTv.hint = "활동"
-            event.imgs?.let { adapter.addItem(it) }
+            listData[position].imgs?.let { adapter.addItem(it) }
         }
 
-        holder.bind(event)
-
+        holder.bind(listData[position])
     }
 
     override fun getItemCount(): Int = listData.size
 
-
-    inner class Holder(val binding: ItemDiaryGroupEventBinding) :
+    inner class ViewHolder(val binding: ItemDiaryGroupEventBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
         @SuppressLint("NotifyDataSetChanged")
         fun bind(item: MoimActivity) {
-
-            binding.itemPlaceNameTv.setText(item.place)
+            binding.itemPlaceNameTv.setText(item.name)
 
             binding.itemPlaceNameTv.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -117,10 +105,8 @@ class MoimActivityRVAdapter(
                 }
             })
 
-            binding.groupLayout.translationX = 0f
-
             binding.onclickDeleteItem.setOnClickListener {
-                deleteItems.add(item.moimActivityId)
+                if (item.moimActivityId != 0L) deleteItems.add(item.moimActivityId)
                 deleteItemList(deleteItems)
                 listData.remove(item)
                 notifyDataSetChanged()
@@ -128,3 +114,4 @@ class MoimActivityRVAdapter(
         }
     }
 }
+

@@ -167,16 +167,4 @@ class DiaryDetailViewModel @Inject constructor(
         _imgList.value = newImgList
         _diary.value?.images = _imgList.value
     }
-
-    fun getFormattedMonth(date: Long): String =
-        _schedule.value?.let { DateTime(date * 1000).toString("MMM", Locale.ENGLISH) }
-            .orEmpty()
-
-    fun getFormattedDay(date: Long): String =
-        _schedule.value.let { DateTime(date * 1000).toString("dd") }
-            .orEmpty()
-
-    fun getFormattedDate(date: Long): String =
-        _schedule.value.let { DateTime(date * 1000).toString("yyyy.MM.dd (EE) hh:mm") }
-            .orEmpty()
 }

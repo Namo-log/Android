@@ -23,8 +23,12 @@ data class MoimScheduleMember(
 
 data class MoimActivity(
     @SerializedName("moimActivityId") val moimActivityId: Long = 0L,
-    @SerializedName("name") var place: String = "",
+    var name: String = "",
     @SerializedName("money") var pay: Long = 0L,
     @SerializedName("participants") var members: List<Long>,
     @SerializedName("urls") var imgs: List<String>?
-) : java.io.Serializable
+) : java.io.Serializable {
+    companion object {
+        fun getDefault() = MoimActivity(0L, "", 0L, arrayListOf(), arrayListOf())
+    }
+}

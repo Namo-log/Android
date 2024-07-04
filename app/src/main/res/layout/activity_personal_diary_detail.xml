@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="org.joda.time.DateTime"/>
+        <import type="com.mongmong.namo.presentation.utils.DiaryDateConverter"/>
         <import type="android.view.View"/>
         <import type="com.mongmong.namo.presentation.config.CategoryColor"/>
         <import type="android.text.TextUtils"/>
@@ -88,7 +88,7 @@
             android:textStyle="bold"
             android:textColor="@color/textGray"
             android:elevation="10dp"
-            android:text="@{viewModel.getFormattedMonth(viewModel.schedule.startLong)}"
+            android:text="@{DiaryDateConverter.getFormattedMonth(viewModel.schedule.startLong)}"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintBottom_toTopOf="@id/diary_today_num_tv"
             app:layout_constraintTop_toTopOf="@id/date_circle_iv"
@@ -102,7 +102,7 @@
             android:textStyle="bold"
             android:textColor="@color/textGray"
             android:elevation="10dp"
-            android:text="@{viewModel.getFormattedDay(viewModel.schedule.startLong)}"
+            android:text="@{DiaryDateConverter.getFormattedDay(viewModel.schedule.startLong)}"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintTop_toBottomOf="@id/diary_today_month_tv"
             app:layout_constraintStart_toStartOf="@id/date_circle_iv"
@@ -128,7 +128,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="@{viewModel.getFormattedDate(viewModel.schedule.startLong)}"
+            android:text="@{DiaryDateConverter.getFormattedDate(viewModel.schedule.startLong)}"
             android:textSize="17sp"
             android:textColor="@color/textGray"
             app:layout_constraintStart_toEndOf="@id/diary_date_tv"
