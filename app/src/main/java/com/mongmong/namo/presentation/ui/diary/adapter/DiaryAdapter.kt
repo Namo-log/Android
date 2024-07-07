@@ -38,16 +38,13 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val item = getItem(position) as DiarySchedule
         when (holder) {
-            is DiaryHeaderViewHolder -> {
-                val diaryItem = getItem(position) as DiarySchedule
-                holder.bind(diaryItem)
-            }
+            is DiaryHeaderViewHolder -> holder.bind(item)
             is DiaryContentViewHolder -> {
-                val diaryItems = getItem(position) as DiarySchedule
-                holder.bind(diaryItems)
+                holder.bind(item)
                 holder.onclick.setOnClickListener {
-                    editClickListener(diaryItems)
+                    editClickListener(item)
                 }
             }
         }
@@ -93,29 +90,19 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
 
     class DiaryContentViewHolder private constructor(
         private val binding: ItemDiaryItemListBinding,
-        private val context: Context,
         private val imageClickListener: (String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         val onclick = binding.editLy
 
         fun bind(item: DiarySchedule) {
-            binding.apply {
+            setViewMore(binding.itemDiaryContentTv, binding.viewMore)
+            binding.diary = item
 
-                itemDiaryContentTv.text = item.content
-                itemDiaryTitleTv.text = item.title
+            binding.itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(item.color)
 
-                setViewMore(itemDiaryContentTv, viewMore)
-
-                itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(item.color)
-
-                val adapter =
-                    DiaryGalleryRVAdapter(context, item.images, imageClickListener)
-                diaryGalleryRv.adapter = adapter
-                diaryGalleryRv.layoutManager =
-                    LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-
-                if (itemDiaryContentTv.text.isNullOrEmpty()) itemDiaryContentTv.visibility =
-                    View.GONE
+            binding.diaryGalleryRv.apply {
+                adapter = DiaryGalleryRVAdapter(context, item.images, imageClickListener)
+                layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             }
         }
 
@@ -126,7 +113,7 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
             ): RecyclerView.ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = ItemDiaryItemListBinding.inflate(layoutInflater, parent, false)
-                return DiaryContentViewHolder(binding, parent.context, imageClickListener)
+                return DiaryContentViewHolder(binding, imageClickListener)
             }
         }
 
@@ -146,7 +133,6 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
                         }
                     }
                 }
-
             }
         }
     }

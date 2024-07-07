@@ -8,16 +8,15 @@ import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.remote.NetworkChecker
-import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.data.remote.DiaryApiService
+import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.domain.model.GetMoimMemoResponse
+import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
+import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
-import com.mongmong.namo.presentation.config.RoomState
 import javax.inject.Inject
 
 class DiaryRepositoryImpl @Inject constructor(
@@ -84,7 +83,7 @@ class DiaryRepositoryImpl @Inject constructor(
     }
 
     /** 개인 기록 삭제 **/
-    override suspend fun deletePersonalDiary(localId: Long, scheduleServerId: Long): DiaryResponse {
+    override suspend fun deletePersonalDiary(scheduleId: Long): DiaryResponse {
         // room db에 삭제 상태로 변경
         /*localDiaryDataSource.updateDiaryAfterUpload(
             localId,
@@ -94,8 +93,8 @@ class DiaryRepositoryImpl @Inject constructor(
         )*/
         //if (networkChecker.isOnline()) {
             // 서버 db에서 삭제
-            Log.d("DiaryRepositoryImpl deletePersonalDiary", "$scheduleServerId")
-            return remoteDiaryDataSource.deletePersonalDiary(scheduleServerId)
+            Log.d("DiaryRepositoryImpl deletePersonalDiary", "$scheduleId")
+            return remoteDiaryDataSource.deletePersonalDiary(scheduleId)
             /*if(deleteResponse.code == SUCCESS_CODE) {
                 // room db에서 삭제
                 localDiaryDataSource.deleteDiary(localId)
@@ -115,7 +114,7 @@ class DiaryRepositoryImpl @Inject constructor(
     }
 
     /** 모임 메모 개별 조회 **/
-    override suspend fun getMoimMemo(scheduleId: Long): GetMoimMemoResponse {
+    override suspend fun getMoimMemo(scheduleId: Long): MoimDiary {
         // 개인 기록 개별 조회 api 사용
         return remoteDiaryDataSource.getMoimMemo(scheduleId)
     }

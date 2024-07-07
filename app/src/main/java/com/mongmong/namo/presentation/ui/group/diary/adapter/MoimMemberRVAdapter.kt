@@ -1,16 +1,21 @@
 package com.mongmong.namo.presentation.ui.group.diary.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemDiaryGroupMembersBinding
+import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.model.group.MoimScheduleMember
 
-class MoimMemberRVAdapter(  // 그룹 다이어리 화면 멤버 이름
-    private val members: List<MoimScheduleMember>
-) :
-    RecyclerView.Adapter<MoimMemberRVAdapter.ViewHolder>() {
-
+class MoimMemberRVAdapter() : RecyclerView.Adapter<MoimMemberRVAdapter.ViewHolder>() {
+    private val members = mutableListOf<MoimScheduleMember>()
+    @SuppressLint("NotifyDataSetChanged")
+    fun submitList(newMembers: List<MoimScheduleMember>) {
+        members.clear()
+        members.addAll(newMembers)
+        notifyDataSetChanged()
+    }
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemDiaryGroupMembersBinding = ItemDiaryGroupMembersBinding.inflate(
             LayoutInflater.from(viewGroup.context), viewGroup, false

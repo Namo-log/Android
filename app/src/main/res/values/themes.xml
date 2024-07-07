@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.NaMo" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/MainOrange</item>
+        <item name="colorPrimary">@color/mainOrange</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
@@ -20,7 +20,7 @@
     </style>
     <!-- Splash theme. -->
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/MainOrange</item>
+        <item name="windowSplashScreenBackground">@color/mainOrange</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/logo_namo</item>
         <item name="postSplashScreenTheme">@style/Theme.NaMo</item>
     </style>
@@ -103,7 +103,7 @@
 
     <style name="MyDatePicker">
         <item name="android:textColorPrimary">@color/textGray</item>
-        <item name="colorControlNormal">@color/MainOrange</item>
+        <item name="colorControlNormal">@color/mainOrange</item>
     </style>
     <style name="SlideAnimation" parent="Theme.MaterialTransparent">
         <item name="android:windowBackground">@android:color/transparent</item>

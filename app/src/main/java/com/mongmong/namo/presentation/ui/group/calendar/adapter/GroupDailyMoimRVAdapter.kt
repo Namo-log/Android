@@ -73,10 +73,10 @@ class GroupDailyMoimRVAdapter : RecyclerView.Adapter<GroupDailyMoimRVAdapter.Vie
             binding.itemCalendarTitle.text = groupSchedule.name
             binding.itemCalendarTitle.isSelected = true
             binding.itemCalendarScheduleTime.text = timeConverter.getScheduleTimeText(groupSchedule.startDate, groupSchedule.endDate)
-            binding.itemCalendarScheduleColorView.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.MainOrange))
+            binding.itemCalendarScheduleColorView.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.mainOrange))
 
             if (groupSchedule.hasDiaryPlace)
-                binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.MainOrange))
+                binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.mainOrange))
             else
                 binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
         }

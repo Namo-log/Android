@@ -2,6 +2,7 @@ package com.mongmong.namo.domain.model.group
 
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
+import com.mongmong.namo.data.local.entity.home.Schedule
 import java.io.Serializable
 
 /** 그룹 리스트 조회 */
@@ -63,3 +64,12 @@ data class MoimScheduleBody(
     @SerializedName("curMoimSchedule") var curMoimSchedule : Boolean = false
 ) : Serializable
 
+
+fun convertToGroupMembers(members: List<GroupMember>): List<MoimScheduleMember> {
+    return members.map { groupMember ->
+        MoimScheduleMember(
+            userId = groupMember.userId,
+            userName = groupMember.userName
+        )
+    }
+}

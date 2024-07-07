@@ -1,7 +1,10 @@
 package com.mongmong.namo.domain.model
 
+import androidx.databinding.BaseObservable
+import androidx.databinding.Bindable
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
+import com.mongmong.namo.BR
 
 data class GetPersonalDiaryResponse(
     val result: GetPersonalDiaryResult
@@ -53,19 +56,8 @@ data class DiarySchedule(
 )
 
 data class GetMoimMemoResponse(
-    val result: GetMoimMemoResult
+    val result: MoimDiary
 ): BaseResponse()
-
-data class GetMoimMemoResult(
-    val scheduleId: Long,
-    val name: String,
-    val startDate: Long,
-    val contents: String?,
-    val urls: List<String>,
-    val categoryId: Long,
-    val color: Long,
-    val placeName: String
-)
 
 /** 모임 기록 월 별 조회 **/
 data class DiaryGetMonthResponse(
@@ -81,14 +73,22 @@ data class GroupResult(
 )
 
 data class MoimDiary(
-    @SerializedName("scheduleId") var scheduleId: Long,
+    var scheduleId: Long,
     @SerializedName("name") var title: String,
-    @SerializedName("startDate") var startDate: Long,
-    @SerializedName("contents") var content: String?,
-    @SerializedName("urls") var imgUrl: List<String>,
-    @SerializedName("categoryId") var categoryId: Long,
-    @SerializedName("color") var color: Int,
-    @SerializedName("placeName") var placeName: String
-) : java.io.Serializable
+    var startDate: Long,
+    @SerializedName("contents") var _content: String?,
+    var urls: List<String>,
+    var categoryId: Long,
+    var color: Int,
+    var placeName: String
+) : java.io.Serializable, BaseObservable() {
+    @get:Bindable
+    var content: String?
+        get() = _content
+        set(value) {
+            _content = value
+            notifyPropertyChanged(BR.content)
+        }
+}
 
 

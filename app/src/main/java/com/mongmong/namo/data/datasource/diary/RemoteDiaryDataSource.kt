@@ -2,18 +2,16 @@ package com.mongmong.namo.data.datasource.diary
 
 import android.content.Context
 import android.util.Log
-import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
-import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
 import com.mongmong.namo.data.utils.RequestConverter.imageToMultipart
 import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryAddResult
-import com.mongmong.namo.domain.model.GetMoimMemoResponse
-import com.mongmong.namo.domain.model.GetMoimMemoResult
+import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
 import com.mongmong.namo.domain.model.GetPersonalDiaryResult
+import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import kotlinx.coroutines.Dispatchers
@@ -180,29 +178,27 @@ class RemoteDiaryDataSource @Inject constructor(
     }
 
     /** 모임 메모 조회 */
-    suspend fun getMoimMemo(scheduleId: Long): GetMoimMemoResponse = withContext(Dispatchers.IO) {
-        var response =
-            GetMoimMemoResponse(
-                GetMoimMemoResult(
-                    0L,
-                    "",
-                    0L,
-                    "",
-                    emptyList(),
-                    0L,
-                    0L,
-                    "")
+    suspend fun getMoimMemo(scheduleId: Long): MoimDiary = withContext(Dispatchers.IO) {
+        var result = MoimDiary(
+                scheduleId = 0L,
+                title = "",
+                startDate = 0L,
+                _content = "",
+                urls = emptyList(),
+                categoryId = 0L,
+                color = 0,
+                placeName = ""
             )
 
         runCatching {
             diaryApiService.getMoimMemo(scheduleId)
         }.onSuccess {
             Log.d("RemoteDiaryDataSource getMoimMemo Success", "$it")
-            response = it
+            result = it.result
         }.onFailure {
             Log.d("RemoteDiaryDataSource getMoimMemo Failure", "$it")
         }
-        return@withContext response
+        return@withContext result
     }
 
     /** 모임 메모 수정 */

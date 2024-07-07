@@ -3,6 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="diary"
+            type="com.mongmong.namo.domain.model.DiarySchedule">
+        </variable>
+    </data>
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -53,6 +62,7 @@
                     android:textColor="#555555"
                     android:textSize="16sp"
                     android:textStyle="bold"
+                    android:text="@{diary.title}"
                     android:maxLines="2"
                     android:ellipsize="end"
                     app:layout_constraintStart_toStartOf="parent"
@@ -100,6 +110,8 @@
                     android:maxLines="3"
                     android:textColor="@color/textGray"
                     android:textSize="16sp"
+                    android:text="@{diary.content}"
+                    android:visibility="@{diary.content.length() == 0 || diary.content != null ? View.GONE : View.VISIBLE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/item_diary_title_tv"
                     app:layout_constraintTop_toTopOf="@id/item_diary_title_tv" />

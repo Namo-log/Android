@@ -3,6 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <import type="com.mongmong.namo.presentation.utils.DiaryDateConverter"/>
+        <import type="android.view.View"/>
+        <import type="com.mongmong.namo.presentation.config.CategoryColor"/>
+        <import type="android.text.TextUtils"/>
+        <variable
+            name="viewModel"
+            type="com.mongmong.namo.presentation.ui.diary.DiaryDetailViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/diary_date_layout"
         android:layout_width="match_parent"
@@ -35,6 +45,7 @@
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
                 android:focusable="true"
                 android:gravity="center"
                 android:singleLine="true"
@@ -42,7 +53,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/diary_back_iv"
-                tools:text="개인 기록"
+                android:text="@{viewModel.schedule.title}"
                 style="@style/title_text"/>
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -50,6 +61,7 @@
                 android:layout_width="40dp"
                 android:layout_height="47dp"
                 android:src="@drawable/ic_delete_schedule"
+                android:visibility="@{viewModel.schedule.hasDiary ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@id/diary_back_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/diary_back_iv" />
@@ -76,6 +88,7 @@
             android:textStyle="bold"
             android:textColor="@color/textGray"
             android:elevation="10dp"
+            android:text="@{DiaryDateConverter.getFormattedMonth(viewModel.schedule.startLong)}"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintBottom_toTopOf="@id/diary_today_num_tv"
             app:layout_constraintTop_toTopOf="@id/date_circle_iv"
@@ -89,6 +102,7 @@
             android:textStyle="bold"
             android:textColor="@color/textGray"
             android:elevation="10dp"
+            android:text="@{DiaryDateConverter.getFormattedDay(viewModel.schedule.startLong)}"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintTop_toBottomOf="@id/diary_today_month_tv"
             app:layout_constraintStart_toStartOf="@id/date_circle_iv"
@@ -114,6 +128,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
+            android:text="@{DiaryDateConverter.getFormattedDate(viewModel.schedule.startLong)}"
             android:textSize="17sp"
             android:textColor="@color/textGray"
             app:layout_constraintStart_toEndOf="@id/diary_date_tv"
@@ -141,6 +156,7 @@
             android:textSize="17sp"
             android:maxLines="2"
             android:ellipsize="end"
+            android:text="@{TextUtils.isEmpty(viewModel.schedule.placeName) ? @string/diary_no_place : viewModel.schedule.placeName}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/diary_place_tv"
             app:layout_constraintTop_toTopOf="@id/diary_place_tv" />
@@ -166,6 +182,7 @@
                     android:layout_width="15dp"
                     android:layout_height="0dp"
                     android:background="@drawable/bg_diary_preview_category_color_corner"
+                    android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(viewModel.category.paletteId)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -179,6 +196,7 @@
                 android:background="@drawable/bg_diary_preview_base_corner"
                 android:gravity="start"
                 android:hint="@string/diary_put"
+                android:text="@={viewModel.diary.content}"
                 android:textColor="@color/textGray"
                 android:textColorHint="@color/editTextGray"
                 android:inputType="textMultiLine"
@@ -191,6 +209,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:textColor="@color/notyetGray"
+            android:text='@{viewModel.diary.content.length() + @string/diary_max_num}'
             app:layout_constraintEnd_toEndOf="@id/linear_corner"
             app:layout_constraintTop_toBottomOf="@id/linear_corner" />
 
@@ -198,11 +217,12 @@
             android:id="@+id/diary_edit_btn_tv"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@color/MainOrange"
+            android:background="@{viewModel.schedule.hasDiary ? @color/white : @color/mainOrange}"
+            android:elevation="@{viewModel.schedule.hasDiary ? 10f : 0f}"
+            android:text="@{viewModel.schedule.hasDiary ? @string/diary_edit : @string/diary_add}"
+            android:textColor="@{viewModel.schedule.hasDiary ? @color/mainOrange : @color/white}"
             android:padding="15dp"
-            android:text="@string/diary_add"
             android:textAlignment="center"
-            android:textColor="@color/white"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -223,7 +243,7 @@
                 android:orientation="horizontal">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/diary_gallery_saved_ry"
+                    android:id="@+id/diary_gallery_saved_rv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"

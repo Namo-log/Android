@@ -10,13 +10,14 @@ import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.domain.model.GetMoimMemoResponse
-import com.mongmong.namo.domain.model.group.MoimDiaryResult
+import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.usecase.FindCategoryUseCase
 import com.mongmong.namo.presentation.config.RoomState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import org.joda.time.DateTime
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,6 +27,17 @@ class DiaryDetailViewModel @Inject constructor(
 ) : ViewModel() {
     private val _diary = MutableLiveData<Diary>()
     val diary: LiveData<Diary> = _diary
+
+    private val _schedule = MutableLiveData<Schedule>(Schedule().getDefaultSchedule())
+    val schedule: LiveData<Schedule> = _schedule
+
+    private val _moimDiary = MutableLiveData<MoimDiary>()
+    val moimDiary: LiveData<MoimDiary> = _moimDiary
+
+    private val _isEdit = MutableLiveData<Boolean>(false)
+    val isEdit: LiveData<Boolean> = _isEdit
+
+    private var isInitialLoad = true
 
     private val _imgList = MutableLiveData<List<String>>(emptyList())
     val imgList: LiveData<List<String>> = _imgList
@@ -45,13 +57,10 @@ class DiaryDetailViewModel @Inject constructor(
     private val _patchMemoResult = MutableLiveData<Boolean>()
     val patchMemoResult : LiveData<Boolean> = _patchMemoResult
 
-    private val _memo = MutableLiveData<String>()
-
     private val _category = MutableLiveData<Category>()
     val category: LiveData<Category> = _category
 
-    private val _getMoimMemoResponse = MutableLiveData<GetMoimMemoResponse>()
-    val getMoimMemoResponse: LiveData<GetMoimMemoResponse> = _getMoimMemoResponse
+
 
     /** 개인 기록 **/
     // 개인 기록 개별 조회
@@ -59,21 +68,23 @@ class DiaryDetailViewModel @Inject constructor(
         viewModelScope.launch {
             val result = repository.getPersonalDiary(schedule.scheduleId).result
             Log.d("DiaryDetailViewModel getDiary", "$result")
+            _schedule.value = schedule
             _diary.value = Diary(
                 diaryId = schedule.scheduleId,
                 scheduleServerId = schedule.serverId,
-                content = result.contents,
+                _content = result.contents,
                 images = result.urls,
                 state = RoomState.ADDED.state
             )
         }
     }
     // 개인 기록 추가시 데이터 초기화
-    fun setNewPersonalDiary(schedule: Schedule, content: String) {
+    fun setNewPersonalDiary(schedule: Schedule) {
+        _schedule.value = schedule
         _diary.value = Diary(
             diaryId = schedule.serverId,
             scheduleServerId = schedule.serverId,
-            content = content,
+            _content = "",
             images = _imgList.value,
             state = RoomState.ADDED.state
         )
@@ -92,10 +103,9 @@ class DiaryDetailViewModel @Inject constructor(
         }
     }
     // 개인 기록 수정
-    fun editPersonalDiary(content: String) {
+    fun editPersonalDiary() {
         viewModelScope.launch {
             _diary.value?.let {
-                it.content = content
                 it.state = RoomState.EDITED.state
             }
             Log.d("PersonalDiaryViewModel editDiary", "${_diary.value}")
@@ -108,9 +118,9 @@ class DiaryDetailViewModel @Inject constructor(
         }
     }
     // 개인 기록 삭제
-    fun deletePersonalDiary(localId: Long, scheduleServerId: Long) {
+    fun deletePersonalDiary() {
         viewModelScope.launch {
-            _deleteDiaryResult.postValue(repository.deletePersonalDiary(localId, scheduleServerId))
+            _deleteDiaryResult.postValue(schedule.value?.let { repository.deletePersonalDiary(it.scheduleId) })
         }
     }
 
@@ -118,14 +128,21 @@ class DiaryDetailViewModel @Inject constructor(
     // 모임 메모 조회
     fun getMoimMemo(scheduleId: Long) {
         viewModelScope.launch {
-            _getMoimMemoResponse.postValue(repository.getMoimMemo(scheduleId))
+            _moimDiary.postValue(repository.getMoimMemo(scheduleId))
         }
     }
 
+    fun isEditMode() {
+        if(isInitialLoad) {
+            _isEdit.value = !_moimDiary.value?.content.isNullOrEmpty()
+            isInitialLoad = false
+            Log.d("getMoimMemo", "${_isEdit.value} , $isInitialLoad")
+        }
+    }
     // 모임 메모 수정
-    fun patchMoimMemo(scheduleId: Long, content: String) {
+    fun patchMoimMemo(scheduleId: Long) {
         viewModelScope.launch {
-            _patchMemoResult.postValue(repository.patchMoimMemo(scheduleId, content))
+            _patchMemoResult.postValue(repository.patchMoimMemo(scheduleId, _moimDiary.value?.content ?: ""))
         }
     }
 
@@ -138,9 +155,10 @@ class DiaryDetailViewModel @Inject constructor(
     }
 
     /** 카테고리 id로 카테고리 조회 */
-    fun findCategoryById(localId: Long, serverId: Long) {
+    fun findCategoryById() {
         viewModelScope.launch {
-            _category.value = findCategoryUseCase.invoke(localId, serverId)
+            _category.value =
+                schedule.value?.let { findCategoryUseCase.invoke(it.categoryId, it.categoryId) }
         }
     }
 
@@ -149,7 +167,4 @@ class DiaryDetailViewModel @Inject constructor(
         _imgList.value = newImgList
         _diary.value?.images = _imgList.value
     }
-
-    fun setMemo(memo: String) { _memo.value = memo }
-    fun getMemo() = _memo.value
 }

@@ -11,7 +11,7 @@
             android:id="@+id/item_calendar_event_color_view"
             android:layout_width="30dp"
             android:layout_height="0dp"
-            android:backgroundTint="@color/MainOrange"
+            android:backgroundTint="@color/mainOrange"
             android:background="@drawable/bg_schedule_preview_catory_color_corner"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
