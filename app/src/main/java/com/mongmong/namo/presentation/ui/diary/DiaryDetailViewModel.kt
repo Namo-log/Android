@@ -162,7 +162,6 @@ class DiaryDetailViewModel @Inject constructor(
         }
     }
 
-    fun getImgList() = _imgList.value
     fun updateImgList(newImgList: List<String>) {
         _imgList.value = newImgList
         _diary.value?.images = _imgList.value

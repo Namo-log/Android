@@ -90,7 +90,7 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun setImgList(imgList: List<String>) {
-        val galleryViewRVAdapter = GalleryListAdapter(this)
+        val galleryViewRVAdapter = GalleryListAdapter(true, {}, {startActivity(Intent())})
         binding.diaryGallerySavedRv.adapter = galleryViewRVAdapter
         binding.diaryGallerySavedRv.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)

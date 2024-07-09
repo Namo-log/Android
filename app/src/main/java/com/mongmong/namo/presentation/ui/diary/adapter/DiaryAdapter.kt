@@ -98,8 +98,6 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
             setViewMore(binding.itemDiaryContentTv, binding.viewMore)
             binding.diary = item
 
-            binding.itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(item.color)
-
             binding.diaryGalleryRv.apply {
                 adapter = DiaryGalleryRVAdapter(context, item.images, imageClickListener)
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)

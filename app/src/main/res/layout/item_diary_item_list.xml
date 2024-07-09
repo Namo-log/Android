@@ -5,6 +5,7 @@
 
     <data>
         <import type="android.view.View"/>
+        <import type="com.mongmong.namo.presentation.config.CategoryColor" />
         <variable
             name="diary"
             type="com.mongmong.namo.domain.model.DiarySchedule">
@@ -38,6 +39,7 @@
                     android:layout_width="15dp"
                     android:layout_height="0dp"
                     android:background="@drawable/bg_diary_preview_category_color_corner"
+                    android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(diary.color)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
