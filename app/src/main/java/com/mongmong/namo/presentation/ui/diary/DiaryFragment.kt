@@ -61,6 +61,10 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     override fun onResume() {
         super.onResume()
         initObserve() // 화면이 다시 보일 때 관찰 시작
+        if (isInitialLoad) {
+            getList()
+            isInitialLoad = false
+        }
     }
 
     override fun onPause() {
@@ -115,12 +119,11 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     }
 
     private fun setDiaryList(isMoim: Boolean) {
-        val adapter = if (!isMoim)
-            DiaryAdapter(::onPersonalEditClickListener,
-                imageClickListener = { ImageDialog(it).show(parentFragmentManager, "test") })
-        else
-            MoimDiaryAdapter(::onMoimEditClickListener)
-            { ImageDialog(it).show(parentFragmentManager, "test") }
+        val adapter = DiaryAdapter(
+            personalEditClickListener = if (!isMoim) ::onPersonalEditClickListener else null,
+            moimEditClickListener = if (isMoim) ::onMoimEditClickListener else null,
+            imageClickListener = { ImageDialog(it).show(parentFragmentManager, "test") }
+        )
 
         setRecyclerView(isMoim, adapter)
         setDataFlow(isMoim, adapter)
@@ -139,7 +142,6 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     }
 
     private fun setDataFlow(isMoim: Boolean, adapter: PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>) {
-        // 데이터 로딩 및 어댑터 데이터 설정
         viewLifecycleOwner.lifecycleScope.launch {
             val pagingDataFlow = if (!isMoim) viewModel.getPersonalPaging(viewModel.getFormattedDate())
             else viewModel.getMoimPaging(viewModel.getFormattedDate())
@@ -150,7 +152,6 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
             }
         }
 
-        // 어댑터의 로드 상태 리스너 설정
         adapter.addLoadStateListener { loadState ->
             when {
                 loadState.refresh is LoadState.Error && isMoim ->
@@ -165,22 +166,21 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
                         imageResId = R.drawable.ic_diary_empty,
                     )
                 loadState.refresh is LoadState.NotLoading && adapter.itemCount > 0 -> {
-                    viewModel.setIsListEmpty(false)  // 데이터가 있을 경우 isListEmpty를 false로 설정
+                    viewModel.setIsListEmpty(false)
                 }
             }
         }
     }
 
-    private fun onPersonalEditClickListener(item: DiarySchedule) {  // 개인 기록 수정 클릭리스너
+    private fun onPersonalEditClickListener(item: DiarySchedule) {
         startActivity(
             Intent(context, PersonalDetailActivity::class.java)
                 .putExtra("schedule", item.convertToSchedule())
                 .putExtra("paletteId", item.color)
         )
-
     }
 
-    private fun onMoimEditClickListener(scheduleId: Long, paletteId: Int) {  // 모임 메모 수정 클릭리스너
+    private fun onMoimEditClickListener(scheduleId: Long, paletteId: Int) {
         Log.d("onDetailClickListener", "$scheduleId")
         startActivity(
             Intent(context, MoimMemoDetailActivity::class.java)

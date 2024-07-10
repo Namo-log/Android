@@ -42,9 +42,6 @@ class MoimDiaryAdapter(  // 월 별 모임 다이어리 리스트 어댑터
             is DiaryContentViewHolder -> {
                 val diaryItems = getItem(position) as DiarySchedule
                 holder.bind(diaryItems)
-                holder.onclick.setOnClickListener {
-                    detailClickListener(diaryItems.scheduleId, diaryItems.color)
-                }
             }
         }
 
@@ -52,8 +49,8 @@ class MoimDiaryAdapter(  // 월 별 모임 다이어리 리스트 어댑터
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            ITEM_VIEW_TYPE_HEADER -> DiaryHeaderViewHolder.from(parent)
-            ITEM_VIEW_TYPE_ITEM -> DiaryContentViewHolder.from(parent, imageClickListener)
+            ITEM_VIEW_TYPE_HEADER -> DiaryHeaderViewHolder(ItemDiaryListBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            ITEM_VIEW_TYPE_ITEM -> DiaryContentViewHolder(ItemDiaryItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false), imageClickListener)
             else -> throw ClassCastException("Unknown viewType $viewType")
         }
     }
@@ -65,35 +62,18 @@ class MoimDiaryAdapter(  // 월 별 모임 다이어리 리스트 어댑터
         }
     }
 
-    class DiaryHeaderViewHolder
-    private constructor(private val binding: ItemDiaryListBinding) :
+    inner class DiaryHeaderViewHolder (val binding: ItemDiaryListBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
-        @SuppressLint("SimpleDateFormat")
         fun bind(item: DiarySchedule) {
-            binding.apply {
-                val formattedDate = SimpleDateFormat("yyyy.MM.dd").format(item.startDate)
-                diaryDayTv.text = formattedDate
-            }
-        }
-
-        companion object {
-            fun from(parent: ViewGroup): RecyclerView.ViewHolder {
-                val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = ItemDiaryListBinding.inflate(layoutInflater, parent, false)
-                return DiaryHeaderViewHolder(binding)
-            }
+            binding.date = SimpleDateFormat("yyyy.MM.dd").format(item.startDate)
         }
     }
 
-    class DiaryContentViewHolder private constructor(
-        private val binding: ItemDiaryItemListBinding,
-        private val context: Context,
+    inner class DiaryContentViewHolder (
+        val binding: ItemDiaryItemListBinding,
         private val imageClickListener: (String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        val onclick = binding.editLy
 
-        @SuppressLint("ResourceAsColor")
         fun bind(item: DiarySchedule) {
             binding.diary = item
             setViewMore(binding.itemDiaryContentTv, binding.viewMore)
@@ -104,16 +84,9 @@ class MoimDiaryAdapter(  // 월 별 모임 다이어리 리스트 어댑터
                 adapter = DiaryGalleryRVAdapter(context, item.images, imageClickListener)
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             }
-        }
 
-        companion object {
-            fun from(
-                parent: ViewGroup,
-                imageClickListener: (String) -> Unit
-            ): RecyclerView.ViewHolder {
-                val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = ItemDiaryItemListBinding.inflate(layoutInflater, parent, false)
-                return DiaryContentViewHolder(binding, parent.context, imageClickListener)
+            binding.editLy.setOnClickListener {
+                detailClickListener(item.scheduleId, item.color)
             }
         }
 

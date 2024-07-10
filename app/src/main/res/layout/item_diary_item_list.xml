@@ -113,7 +113,7 @@
                     android:textColor="@color/textGray"
                     android:textSize="16sp"
                     android:text="@{diary.content}"
-                    android:visibility="@{diary.content.length() == 0 || diary.content != null ? View.GONE : View.VISIBLE}"
+                    android:visibility="@{diary.content.length() == 0 || diary.content == null ? View.GONE : View.VISIBLE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/item_diary_title_tv"
                     app:layout_constraintTop_toTopOf="@id/item_diary_title_tv" />

@@ -1,7 +1,6 @@
 package com.mongmong.namo.presentation.ui.diary.adapter
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,13 +13,12 @@ import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.databinding.ItemDiaryItemListBinding
 import com.mongmong.namo.databinding.ItemDiaryListBinding
 import com.mongmong.namo.presentation.config.CategoryColor
-
 import java.text.SimpleDateFormat
 
-
-class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
-    val editClickListener: (DiarySchedule) -> Unit,
-    val imageClickListener: (String) -> Unit
+class DiaryAdapter(
+    val personalEditClickListener: ((DiarySchedule) -> Unit)? = null,
+    val moimEditClickListener: ((Long, Int) -> Unit)? = null,
+    private val imageClickListener: (String) -> Unit
 ) : PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
 
     class DiaryDiffCallback : DiffUtil.ItemCallback<DiarySchedule>() {
@@ -34,22 +32,25 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
         }
     }
 
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position) as DiarySchedule
         when (holder) {
             is DiaryHeaderViewHolder -> holder.bind(item)
-            is DiaryContentViewHolder -> {
-                holder.bind(item)
-            }
+            is DiaryContentViewHolder -> holder.bind(item)
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            ITEM_VIEW_TYPE_HEADER -> DiaryHeaderViewHolder(ItemDiaryListBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            ITEM_VIEW_TYPE_ITEM -> DiaryContentViewHolder(ItemDiaryItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false), imageClickListener)
+            ITEM_VIEW_TYPE_HEADER -> DiaryHeaderViewHolder(
+                ItemDiaryListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+            ITEM_VIEW_TYPE_ITEM -> DiaryContentViewHolder(
+                ItemDiaryItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                imageClickListener,
+                personalEditClickListener,
+                moimEditClickListener
+            )
             else -> throw ClassCastException("Unknown viewType $viewType")
         }
     }
@@ -61,19 +62,26 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
         }
     }
 
-    inner class DiaryHeaderViewHolder(val binding: ItemDiaryListBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class DiaryHeaderViewHolder(val binding: ItemDiaryListBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: DiarySchedule) {
             binding.date = SimpleDateFormat("yyyy.MM.dd").format(item.startDate)
         }
     }
 
-    inner class DiaryContentViewHolder (
+    inner class DiaryContentViewHolder(
         private val binding: ItemDiaryItemListBinding,
-        private val imageClickListener: (String) -> Unit
+        private val imageClickListener: (String) -> Unit,
+        private val personalEditClickListener: ((DiarySchedule) -> Unit)?,
+        private val moimEditClickListener: ((Long, Int) -> Unit)?
     ) : RecyclerView.ViewHolder(binding.root) {
+
         fun bind(item: DiarySchedule) {
             setViewMore(binding.itemDiaryContentTv, binding.viewMore)
             binding.diary = item
+
+            binding.itemDiaryCategoryColorIv.backgroundTintList =
+                CategoryColor.convertPaletteIdToColorStateList(item.color)
 
             binding.diaryGalleryRv.apply {
                 adapter = DiaryGalleryRVAdapter(context, item.images, imageClickListener)
@@ -81,20 +89,18 @@ class DiaryAdapter( // 월 별 개인 다이어리 리스트 어댑터
             }
 
             binding.editLy.setOnClickListener {
-                editClickListener(item)
+                personalEditClickListener?.invoke(item)
+                moimEditClickListener?.invoke(item.scheduleId, item.color)
             }
         }
 
         private fun setViewMore(contentTextView: TextView, viewMoreTextView: TextView) {
-            // getEllipsisCount()을 통한 더보기 표시 및 구현
             contentTextView.post {
                 val lineCount = contentTextView.layout?.lineCount ?: 0
                 if (lineCount > 0) {
                     if ((contentTextView.layout?.getEllipsisCount(lineCount - 1) ?: 0) > 0) {
-                        // 더보기 표시
                         viewMoreTextView.visibility = View.VISIBLE
 
-                        // 더보기 클릭 이벤트
                         viewMoreTextView.setOnClickListener {
                             contentTextView.maxLines = Int.MAX_VALUE
                             viewMoreTextView.visibility = View.GONE
