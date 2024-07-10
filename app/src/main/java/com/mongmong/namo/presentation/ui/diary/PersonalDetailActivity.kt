@@ -51,8 +51,8 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
         binding.apply {
             viewModel = this@PersonalDetailActivity.viewModel
             lifecycleOwner = this@PersonalDetailActivity
+            paletteId = intent.getIntExtra("paletteId", 0)
         }
-
         setSchedule()
         onClickListener()
         initRecyclerView()
@@ -62,7 +62,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     private fun setSchedule() {
         val schedule = (intent.getSerializableExtra("schedule") as? Schedule)!!
         hasDiary(schedule)
-        viewModel.findCategoryById()
     }
 
     private fun hasDiary(schedule: Schedule) {

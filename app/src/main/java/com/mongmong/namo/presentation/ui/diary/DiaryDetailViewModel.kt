@@ -158,7 +158,11 @@ class DiaryDetailViewModel @Inject constructor(
     fun findCategoryById() {
         viewModelScope.launch {
             _category.value =
-                schedule.value?.let { findCategoryUseCase.invoke(it.categoryId, it.categoryId) }
+                schedule.value?.let {
+                    Log.d("findCategoryById", "${_schedule.value}")
+                    findCategoryUseCase.invoke(it.categoryId, it.categoryId)
+                }
+            Log.d("findCategoryById", "${_category.value}")
         }
     }
 

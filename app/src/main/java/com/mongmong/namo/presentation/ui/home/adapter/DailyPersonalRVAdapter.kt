@@ -23,7 +23,7 @@ class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewH
 
     interface PersonalScheduleClickListener {
         fun onContentClicked(schedule: GetMonthScheduleResult)
-        fun onDiaryIconClicked(schedule: GetMonthScheduleResult)
+        fun onDiaryIconClicked(schedule: GetMonthScheduleResult, paletteId: Int)
     }
 
     fun setPersonalScheduleClickListener(personalScheduleClickListener : PersonalScheduleClickListener) {
@@ -46,12 +46,6 @@ class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewH
         // 아이템 전체 클릭
         holder.itemView.setOnClickListener {
             personalScheduleClickListener.onContentClicked(personal[position])
-        }
-        // 기록 아이콘 클릭
-        if (!personal[position].moimSchedule) { // 개인 기록
-            holder.binding.itemCalendarScheduleRecord.setOnClickListener {
-                personalScheduleClickListener.onDiaryIconClicked(personal[position])
-            }
         }
     }
 
@@ -93,6 +87,13 @@ class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewH
             /** 기록 아이콘 색깔 **/
             if (schedule.hasDiary != false)
                 binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context , R.color.mainOrange))
+
+            // 기록 아이콘 클릭
+            if (!schedule.moimSchedule) { // 개인 기록
+                binding.itemCalendarScheduleRecord.setOnClickListener {
+                    personalScheduleClickListener.onDiaryIconClicked(schedule, category.paletteId)
+                }
+            }
         }
     }
 }

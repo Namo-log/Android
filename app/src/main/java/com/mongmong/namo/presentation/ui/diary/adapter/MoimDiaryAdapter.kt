@@ -18,7 +18,7 @@ import com.mongmong.namo.presentation.config.CategoryColor
 import java.text.SimpleDateFormat
 
 class MoimDiaryAdapter(  // 월 별 모임 다이어리 리스트 어댑터
-    val detailClickListener: (Long) -> Unit,
+    val detailClickListener: (Long, Int) -> Unit,
     private val imageClickListener: (String) -> Unit
 ) : PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
 
@@ -43,7 +43,7 @@ class MoimDiaryAdapter(  // 월 별 모임 다이어리 리스트 어댑터
                 val diaryItems = getItem(position) as DiarySchedule
                 holder.bind(diaryItems)
                 holder.onclick.setOnClickListener {
-                    detailClickListener(diaryItems.scheduleId)
+                    detailClickListener(diaryItems.scheduleId, diaryItems.color)
                 }
             }
         }

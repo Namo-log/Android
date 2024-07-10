@@ -32,6 +32,7 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
         binding.apply {
             viewModel = this@MoimMemoDetailActivity.viewModel
             lifecycleOwner = this@MoimMemoDetailActivity
+            paletteId = intent.getIntExtra("paletteId", 0)
         }
 
         moimScheduleId = intent.getLongExtra("moimScheduleId", 0L)

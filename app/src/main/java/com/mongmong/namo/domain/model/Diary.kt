@@ -5,6 +5,9 @@ import androidx.databinding.Bindable
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 import com.mongmong.namo.BR
+import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.config.UploadState
 
 data class GetPersonalDiaryResponse(
     val result: GetPersonalDiaryResult
@@ -50,10 +53,25 @@ data class DiarySchedule(
     var content: String?,
     var images: List<String>? = null,
     var serverId: Long = 0L, // scheduleServerId
-    var categoryServerId : Long = 0L,
+    var categoryServerId: Long = 0L,
     var color: Int = 1,
     var isHeader: Boolean = false
-)
+) {
+    fun convertToSchedule() = Schedule(
+        this.scheduleId,
+        this.title,
+        this.startDate,
+        0L, 0,
+        this.categoryId,
+        this.place,
+        0.0, 0.0, 0, null,
+        UploadState.IS_UPLOAD.state,
+        RoomState.DEFAULT.state,
+        this.serverId,
+        this.categoryServerId,
+        true
+    )
+}
 
 data class GetMoimMemoResponse(
     val result: MoimDiary

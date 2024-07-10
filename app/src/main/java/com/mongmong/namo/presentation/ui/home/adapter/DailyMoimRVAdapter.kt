@@ -27,7 +27,7 @@ class DailyMoimRVAdapter : RecyclerView.Adapter<DailyMoimRVAdapter.ViewHolder>()
 
     interface MoimScheduleClickListener {
         fun onContentClicked(schedule: GetMonthScheduleResult)
-        fun onDiaryIconClicked(scheduleId: Long)
+        fun onDiaryIconClicked(scheduleId: Long, paletteId: Int)
     }
 
     fun setMoimScheduleClickListener(moimScheduleClickListener: MoimScheduleClickListener) {
@@ -50,12 +50,6 @@ class DailyMoimRVAdapter : RecyclerView.Adapter<DailyMoimRVAdapter.ViewHolder>()
         // 아이템 전체 클릭
         holder.itemView.setOnClickListener {
             moimScheduleClickListener.onContentClicked(schedules[position])
-        }
-        // 기록 아이콘 클릭
-        holder.binding.itemCalendarScheduleRecord.setOnClickListener {
-            if (schedules[position].hasDiary != null) {
-                moimScheduleClickListener.onDiaryIconClicked(schedules[position].scheduleId)
-            }
         }
     }
 
@@ -105,6 +99,15 @@ class DailyMoimRVAdapter : RecyclerView.Adapter<DailyMoimRVAdapter.ViewHolder>()
                     else this.setColorFilter(ContextCompat.getColor(context,R.color.mainOrange)) // 개인이 메모를 추가했을 떄
                 }
                 else this.visibility = View.GONE
+            }
+
+            // 기록 아이콘 클릭
+            binding.itemCalendarScheduleRecord.setOnClickListener {
+                if (schedule.hasDiary != null) {
+                    if (category != null) {
+                        moimScheduleClickListener.onDiaryIconClicked(schedule.scheduleId, category.paletteId)
+                    }
+                }
             }
         }
     }

@@ -172,30 +172,21 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
     }
 
     private fun onPersonalEditClickListener(item: DiarySchedule) {  // 개인 기록 수정 클릭리스너
-        val schedule = Schedule(
-            item.scheduleId,
-            item.title,
-            item.startDate, 0L, 0,
-            item.categoryId, item.place,
-            0.0, 0.0, 0, null, UploadState.IS_UPLOAD.state,
-            RoomState.DEFAULT.state,
-            item.serverId,
-            item.categoryServerId,
-            true
-        )
-
-        Log.d("DiaryFragment onPersonalEditClickListener", "$schedule")
         startActivity(
             Intent(context, PersonalDetailActivity::class.java)
-                .putExtra("schedule", schedule)
+                .putExtra("schedule", item.convertToSchedule())
+                .putExtra("paletteId", item.color)
         )
 
     }
 
-    private fun onMoimEditClickListener(scheduleId: Long) {  // 모임 메모 수정 클릭리스너
+    private fun onMoimEditClickListener(scheduleId: Long, paletteId: Int) {  // 모임 메모 수정 클릭리스너
         Log.d("onDetailClickListener", "$scheduleId")
-        startActivity(Intent(context, MoimMemoDetailActivity::class.java)
-                .putExtra("moimScheduleId", scheduleId))
+        startActivity(
+            Intent(context, MoimMemoDetailActivity::class.java)
+                .putExtra("moimScheduleId", scheduleId)
+                .putExtra("paletteId", paletteId)
+        )
     }
 
 

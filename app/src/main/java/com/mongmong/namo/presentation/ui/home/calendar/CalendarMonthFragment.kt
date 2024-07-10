@@ -155,7 +155,7 @@ class CalendarMonthFragment : Fragment() {
                 requireActivity().startActivity(intent)
             }
 
-            override fun onDiaryIconClicked(schedule: GetMonthScheduleResult) { // 기록 아이콘 클릭
+            override fun onDiaryIconClicked(schedule: GetMonthScheduleResult, paletteId: Int) { // 기록 아이콘 클릭
                 val intent = Intent(context, PersonalDetailActivity::class.java)
                 intent.putExtra("schedule", schedule.convertServerScheduleResponseToLocal())
                 Log.d("CalendarMonthFragment onDiaryIconClicked", "$schedule")
@@ -175,10 +175,11 @@ class CalendarMonthFragment : Fragment() {
                 requireActivity().startActivity(intent)
             }
 
-            override fun onDiaryIconClicked(scheduleId: Long) { // 기록 아이콘 클릭
+            override fun onDiaryIconClicked(scheduleId: Long, paletteId: Int) { // 기록 아이콘 클릭
                 requireActivity().startActivity(
                     Intent(context, MoimMemoDetailActivity::class.java)
                         .putExtra("moimScheduleId", scheduleId)
+                        .putExtra("paletteId", paletteId)
                 )
             }
         })

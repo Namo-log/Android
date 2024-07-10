@@ -2,7 +2,11 @@
 <!-- 다이어리 멀티뷰 타입 Header, DiaryMultiAdapter -->
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <data>
+        <variable
+            name="date"
+            type="String" />
+    </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
