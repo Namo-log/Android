@@ -80,13 +80,13 @@ class ItemTouchHelperCallback : ItemTouchHelper.SimpleCallback(
 
     // 삭제버튼 width 구하는 함수
     private fun getViewWidth(viewHolder: RecyclerView.ViewHolder): Float {
-        val viewWidth = (viewHolder as MoimActivityRVAdapter.ViewHolder).binding.removeView.width
+        val viewWidth = (viewHolder as MoimActivityRVAdapter.ViewHolder).binding.activityDeleteLl.width
         return viewWidth.toFloat()
     }
 
     // swipe될 뷰 (우리가 스와이프할 시 움직일 화면)
     private fun getView(viewHolder: RecyclerView.ViewHolder): View {
-        return (viewHolder as MoimActivityRVAdapter.ViewHolder).binding.groupLayout
+        return (viewHolder as MoimActivityRVAdapter.ViewHolder).binding.activityLayout
     }
 
     // view의 tag로 스와이프 고정됐는지 안됐는지 확인 (고정 == true)

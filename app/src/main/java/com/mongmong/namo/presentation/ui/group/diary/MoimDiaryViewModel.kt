@@ -82,6 +82,15 @@ class MoimDiaryViewModel @Inject constructor(
         this.deleteItems.addAll(deleteItems)
     }
 
+    fun deleteActivityImage(position: Int, image: String) {
+        val updatedActivities = _activities.value?.toMutableList() ?: mutableListOf()
+        val updatedImages = updatedActivities[position].imgs?.toMutableList() ?: mutableListOf()
+        updatedImages.remove(image)
+        updatedActivities[position].imgs = updatedImages
+        _activities.postValue(updatedActivities)
+    }
+
+
     fun patchMoimActivities() {
         viewModelScope.launch {
             val activities = _activities.value ?: return@launch

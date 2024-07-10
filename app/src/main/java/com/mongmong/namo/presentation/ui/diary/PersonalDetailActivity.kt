@@ -31,6 +31,7 @@ import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.snackbar.Snackbar
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.ui.diary.adapter.DiaryImageItemDecoration
+import com.mongmong.namo.presentation.ui.group.diary.DiaryImageDetailActivity
 import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
 import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
@@ -94,7 +95,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
                 viewModel.updateImgList(newImages)
             },
             imageClickListener = {
-                startActivity(Intent())
+                startActivity(Intent(this, DiaryImageDetailActivity::class.java))
             }
         )
 

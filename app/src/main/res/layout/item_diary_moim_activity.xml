@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
    <LinearLayout
-       android:id="@+id/remove_view"
+       android:id="@+id/activity_delete_ll"
        android:layout_width="80dp"
        android:layout_height="0dp"
        app:layout_constraintBottom_toBottomOf="parent"
@@ -15,7 +15,7 @@
        app:layout_constraintEnd_toEndOf="parent">
 
        <androidx.appcompat.widget.AppCompatImageView
-           android:id="@+id/onclick_delete_item"
+           android:id="@+id/activity_delete_iv"
            android:layout_width="match_parent"
            android:layout_height="40dp"
            android:layout_gravity="center"
@@ -25,7 +25,7 @@
    </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/group_layout"
+        android:id="@+id/activity_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -38,6 +38,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginHorizontal="8dp"
             android:orientation="horizontal">
 
             <EditText
@@ -50,7 +51,7 @@
                 android:maxLength="15"
                 android:minWidth="48dp"
                 android:minHeight="32dp"
-                android:hint="장소"
+                android:hint="활동"
                 android:textColorHint="@color/editTextGray"
                 android:textColor="@color/textGray"
                 android:textSize="17sp" />
@@ -109,52 +110,27 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/group_add_gallery_rv"
+                android:id="@+id/moim_gallery_rv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_gallery_list" />
 
-            <LinearLayout
-                android:id="@+id/group_gallery_lv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center">
-
-                <ImageView
-                    android:id="@+id/img1"
-                    android:layout_width="105dp"
-                    android:layout_height="105dp"
-                    android:layout_marginEnd="13dp"
-                    android:background="@drawable/gallery_background"
-                    android:layerType="software"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_gallery" />
-
-                <ImageView
-                    android:id="@+id/img2"
-                    android:layout_width="105dp"
-                    android:layout_height="105dp"
-                    android:layout_marginEnd="13dp"
-                    android:background="@drawable/gallery_background"
-                    android:layerType="software"
-                    android:scaleType="centerInside" />
-
-                <ImageView
-                    android:id="@+id/img3"
-                    android:layout_width="105dp"
-                    android:layout_height="105dp"
-                    android:background="@drawable/gallery_background"
-                    android:layerType="software"
-                    android:scaleType="centerInside" />
-
-            </LinearLayout>
-
+            <ImageView
+                android:id="@+id/update_image_iv"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/gallery_background"
+                android:layout_marginStart="8dp"
+                android:layout_gravity="center"
+                android:layerType="software"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_gallery" />
         </LinearLayout>
     </LinearLayout>
 

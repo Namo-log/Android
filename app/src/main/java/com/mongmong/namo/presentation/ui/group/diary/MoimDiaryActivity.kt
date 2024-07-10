@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MotionEvent
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -141,29 +142,20 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
         }
         // 장소 추가 리사이클러뷰
         activityAdapter = MoimActivityRVAdapter(
-            context = applicationContext,
-            payClickListener = { _, position, payText ->
-                GroupPayDialog(
-                    viewModel.moimDiary.value?.users ?: emptyList(),
-                    viewModel.activities.value?.get(position)!!,
-                    {
-                        viewModel.updateActivityPay(position, it)
-                        payText.text = NumberFormat.getNumberInstance(Locale.US).format(it)
-                    },
-                    {
-                        viewModel.updateActivityMembers(position, it)
-                    }).show(supportFragmentManager, "show")
-                binding.diaryGroupAddPlaceRv.smoothScrollToPosition(position)
-            },
-            imageClickListener = { position ->
+            payClickListener = ::onPayClickListener,
+            imageDetailClickListener = { startActivity(Intent(this, DiaryImageDetailActivity::class.java)) },
+            updateImageClickListener = { position ->
                 positionForGallery = position
                 getGallery()
             },
-            activityClickListener = { text, position ->
+            activityNameTextWatcher = { text, position ->
                 viewModel.updateActivityName(position, text)
             },
             deleteItemList = { deleteItems ->
                 viewModel.updateDeleteItems(deleteItems)
+            },
+            deleteImageClickListener = { position, image ->
+                viewModel.deleteActivityImage(position, image)
             }
         )
 
@@ -189,6 +181,21 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
             false
         }
 
+    }
+
+    private fun onPayClickListener(pay: Long, position: Int, payText: TextView) {
+        GroupPayDialog(
+            viewModel.moimDiary.value?.users ?: emptyList(),
+            viewModel.activities.value?.get(position)!!,
+            { updatedPay ->
+                viewModel.updateActivityPay(position, updatedPay)
+                payText.text = NumberFormat.getNumberInstance(Locale.US).format(updatedPay)
+            },
+            { updatedMembers ->
+                viewModel.updateActivityMembers(position, updatedMembers)
+            }
+        ).show(supportFragmentManager, "show")
+        binding.diaryGroupAddPlaceRv.smoothScrollToPosition(position)
     }
 
     private fun showDeleteDialog() {
