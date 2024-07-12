@@ -1,19 +1,12 @@
 package com.mongmong.namo.presentation.ui.diary
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.TypedValue
 import android.view.MotionEvent
-import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,27 +15,33 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.ActivityPersonalDiaryDetailBinding
-import com.mongmong.namo.presentation.ui.diary.adapter.GalleryListAdapter
+import com.mongmong.namo.presentation.ui.diary.adapter.GalleryImageRVAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
-import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.google.android.material.snackbar.Snackbar
-import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.ui.diary.adapter.DiaryImageItemDecoration
-import com.mongmong.namo.presentation.ui.group.diary.DiaryImageDetailActivity
 import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
 import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.ArrayList
 
 @AndroidEntryPoint
 class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     private lateinit var binding: ActivityPersonalDiaryDetailBinding
-    private lateinit var galleryAdapter: GalleryListAdapter
+    private lateinit var galleryAdapter: GalleryImageRVAdapter
 
     private val viewModel : DiaryDetailViewModel by viewModels()
+
+    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val updatedImgs = result.data?.getStringArrayListExtra("imgs")
+            updatedImgs?.let {
+                viewModel.updateImgList(it)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,12 +89,16 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun initRecyclerView() {
-        galleryAdapter = GalleryListAdapter(false,
+        galleryAdapter = GalleryImageRVAdapter(false,
             deleteClickListener = { newImages ->
                 viewModel.updateImgList(newImages)
             },
             imageClickListener = {
-                startActivity(Intent(this, DiaryImageDetailActivity::class.java))
+                startForResult.launch(
+                    Intent(this, DiaryImageDetailActivity::class.java).apply {
+                        putStringArrayListExtra("imgs", viewModel.imgList.value as ArrayList<String>)
+                    }
+                )
             }
         )
 

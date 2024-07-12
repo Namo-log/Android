@@ -1,6 +1,5 @@
 package com.mongmong.namo.presentation.ui.diary.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,12 +9,12 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.mongmong.namo.databinding.ItemGalleryListBinding
 
-class GalleryListAdapter(  // 다이어리 추가, 수정 화면의 이미지(점선 테두리 O)
+class GalleryImageRVAdapter(  // 다이어리 추가, 수정 화면의 이미지(점선 테두리 O)
     private val isMoimMemo: Boolean,
     val deleteClickListener: (newImages: List<String>) -> Unit,
     val imageClickListener: () -> Unit
 ):
-    RecyclerView.Adapter<GalleryListAdapter.ViewHolder>(){
+    RecyclerView.Adapter<GalleryImageRVAdapter.ViewHolder>(){
 
     private val items = ArrayList<String?>()
 

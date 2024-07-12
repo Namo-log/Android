@@ -17,7 +17,7 @@ import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
 import com.mongmong.namo.presentation.utils.ConfirmDialog
-import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.NetworkManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

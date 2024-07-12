@@ -10,10 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.databinding.ActivityMoimMemoDetailBinding
 import com.mongmong.namo.domain.model.MoimDiary
-import com.mongmong.namo.presentation.ui.diary.adapter.GalleryListAdapter
+import com.mongmong.namo.presentation.ui.diary.adapter.GalleryImageRVAdapter
 import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
-import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -50,7 +50,7 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
         with(binding) {
             diaryDeleteIv.setOnClickListener { showDeleteDialog() } // 삭제
             diaryBackIv.setOnClickListener { finish() } // 뒤로 가기
-            groupDiaryDetailLy.setOnClickListener {// 그룹 다이어리 장소 아이템 추가 화면으로 이동
+            groupDiaryDetailLy.setOnClickListener {// 모임 기록으로 이동
                 startActivity(
                     Intent(this@MoimMemoDetailActivity, MoimDiaryActivity::class.java)
                         .putExtra("from", "moimMemo")
@@ -91,7 +91,7 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun setImgList(imgList: List<String>) {
-        val galleryViewRVAdapter = GalleryListAdapter(true, {}, {startActivity(Intent())})
+        val galleryViewRVAdapter = GalleryImageRVAdapter(true, {}, {})
         binding.diaryGallerySavedRv.adapter = galleryViewRVAdapter
         binding.diaryGallerySavedRv.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)

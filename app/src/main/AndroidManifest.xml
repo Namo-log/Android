@@ -36,7 +36,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.ui.group.diary.DiaryImageDetailActivity"
+            android:name=".presentation.ui.diary.DiaryImageDetailActivity"
             android:exported="false" />
         <activity
             android:name=".presentation.ui.onBoarding.OnBoardingActivity"

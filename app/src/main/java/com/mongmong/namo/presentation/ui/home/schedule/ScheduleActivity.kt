@@ -18,7 +18,7 @@ import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.ActivityScheduleBinding
 import com.mongmong.namo.presentation.ui.home.notify.PushNotificationReceiver
 import com.mongmong.namo.presentation.utils.ConfirmDialog
-import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 

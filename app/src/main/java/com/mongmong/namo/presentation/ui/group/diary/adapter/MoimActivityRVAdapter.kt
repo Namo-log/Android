@@ -15,7 +15,7 @@ import java.util.*
 
 class MoimActivityRVAdapter(
     val payClickListener: (pay: Long, position: Int, payText: TextView) -> Unit,
-    val imageDetailClickListener: () -> Unit,
+    val imageDetailClickListener: (position: Int) -> Unit,
     val updateImageClickListener: (position: Int) -> Unit,
     val activityNameTextWatcher: (text: String, position: Int) -> Unit,
     val deleteItemList: (deleteItems: MutableList<Long>) -> Unit,
@@ -63,7 +63,7 @@ class MoimActivityRVAdapter(
 
             // 활동별 이미지 RecyclerView
             val adapter = MoimActivityGalleryAdapter(
-                itemClickListener = imageDetailClickListener,
+                itemClickListener = { imageDetailClickListener(position) },
                 deleteImageClickListener = { image ->
                     deleteImageClickListener(position, image)
                 }

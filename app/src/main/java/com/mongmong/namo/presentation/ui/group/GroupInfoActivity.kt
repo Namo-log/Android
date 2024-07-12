@@ -16,7 +16,7 @@ import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.databinding.ActivityGroupInfoBinding
 import com.mongmong.namo.presentation.ui.group.adapter.GroupInfoMemberRVAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
-import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

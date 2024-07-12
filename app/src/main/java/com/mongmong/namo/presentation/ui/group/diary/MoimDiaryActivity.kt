@@ -11,6 +11,7 @@ import android.provider.MediaStore
 import android.view.MotionEvent
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -21,12 +22,13 @@ import com.mongmong.namo.databinding.ActivityMoimDiaryBinding
 import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.presentation.ui.MainActivity
+import com.mongmong.namo.presentation.ui.diary.DiaryImageDetailActivity
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityItemDecoration
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityRVAdapter
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimMemberRVAdapter
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.dpToPx
 import com.mongmong.namo.presentation.utils.ConfirmDialog
-import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.PermissionChecker
 import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,6 +50,15 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
 
     private val itemTouchSimpleCallback = ItemTouchHelperCallback()  // 아이템 밀어서 삭제
     private val itemTouchHelper = ItemTouchHelper(itemTouchSimpleCallback)
+
+    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val updatedImgs = result.data?.getStringArrayListExtra("imgs")
+            updatedImgs?.let {
+                viewModel.updateActivityImages(positionForGallery, it)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,7 +154,14 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
         // 장소 추가 리사이클러뷰
         activityAdapter = MoimActivityRVAdapter(
             payClickListener = ::onPayClickListener,
-            imageDetailClickListener = { startActivity(Intent(this, DiaryImageDetailActivity::class.java)) },
+            imageDetailClickListener = { position ->
+                positionForGallery = position
+                startForResult.launch(
+                    Intent(this, DiaryImageDetailActivity::class.java).apply {
+                        putStringArrayListExtra("imgs", viewModel.activities.value?.get(position)?.imgs as ArrayList<String>?)
+                    }
+                )
+            },
             updateImageClickListener = { position ->
                 positionForGallery = position
                 getGallery()

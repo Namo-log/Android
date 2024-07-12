@@ -9,13 +9,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.mongmong.namo.databinding.DialogConfirmBinding
 
-interface ConfirmDialogInterface {
-    fun onClickYesButton(id: Int)
-}
 class ConfirmDialog(
     confirmDialogInterface: ConfirmDialogInterface,
     title: String, content: String?, buttonText: String, id: Int
 ) : DialogFragment() {
+
+    interface ConfirmDialogInterface {
+        fun onClickYesButton(id: Int)
+    }
 
     // 뷰 바인딩 정의
     private var _binding: DialogConfirmBinding? = null

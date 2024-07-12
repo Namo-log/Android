@@ -15,7 +15,7 @@ import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.databinding.FragmentCustomSettingBinding
 
 import com.mongmong.namo.presentation.utils.ConfirmDialog
-import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.presentation.ui.login.AuthViewModel
