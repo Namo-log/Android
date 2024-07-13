@@ -5,20 +5,31 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/gallery_img_iv"
-                android:layout_width="110dp"
-                android:layout_height="110dp"
-                android:scaleType="centerCrop"
-                android:padding="1dp"
-                android:src="@drawable/ic_app_logo_square"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
-
+        android:layout_height="wrap_content">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/gallery_delete_btn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_diary_image_delete_btn"
+            app:civ_circle_background_color="@color/white"
+            app:civ_border_color="@color/white"
+            app:civ_border_width="2dp"
+            android:elevation="3dp"
+            android:layout_marginTop="-5dp"
+            android:layout_marginEnd="-5dp"
+            app:layout_constraintTop_toTopOf="@id/gallery_img_iv"
+            app:layout_constraintEnd_toEndOf="@id/gallery_img_iv"/>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/gallery_img_iv"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_app_logo_square"
+            android:layout_margin="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

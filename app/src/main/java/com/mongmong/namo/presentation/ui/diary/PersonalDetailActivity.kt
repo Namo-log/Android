@@ -30,6 +30,7 @@ import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import com.google.android.material.snackbar.Snackbar
 import com.mongmong.namo.presentation.config.CategoryColor
+import com.mongmong.namo.presentation.ui.diary.adapter.DiaryImageItemDecoration
 import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
 import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,10 +51,8 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
         binding.apply {
             viewModel = this@PersonalDetailActivity.viewModel
             lifecycleOwner = this@PersonalDetailActivity
+            paletteId = intent.getIntExtra("paletteId", 0)
         }
-
-        galleryAdapter = GalleryListAdapter(this)
-
         setSchedule()
         onClickListener()
         initRecyclerView()
@@ -63,7 +62,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     private fun setSchedule() {
         val schedule = (intent.getSerializableExtra("schedule") as? Schedule)!!
         hasDiary(schedule)
-        viewModel.findCategoryById()
     }
 
     private fun hasDiary(schedule: Schedule) {
@@ -80,7 +78,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
             diaryGalleryClickIv.setOnClickListener { getGallery() }
             diaryEditBtnTv.setOnClickListener {
                 lifecycleScope.launch {
-                    if(this@PersonalDetailActivity.viewModel.schedule.value?.hasDiary == true) insertData()
+                    if(this@PersonalDetailActivity.viewModel.schedule.value?.hasDiary == false) insertData()
                     else updateDiary()
                 }
             }
@@ -91,15 +89,24 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun initRecyclerView() {
-        val galleryViewRVAdapter = galleryAdapter
-        binding.diaryGallerySavedRv.adapter = galleryViewRVAdapter
-        binding.diaryGallerySavedRv.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        galleryAdapter = GalleryListAdapter(false,
+            deleteClickListener = { newImages ->
+                viewModel.updateImgList(newImages)
+            },
+            imageClickListener = {
+                startActivity(Intent())
+            }
+        )
+
+        binding.diaryGallerySavedRv.apply {
+            adapter = galleryAdapter.apply { addItemDecoration(DiaryImageItemDecoration(this@PersonalDetailActivity, IMAGE_MARGIN)) }
+            layoutManager = LinearLayoutManager(this@PersonalDetailActivity, LinearLayoutManager.HORIZONTAL, false)
+        }
     }
 
     /** 다이어리 추가 **/
     private fun insertData() {
-        if (viewModel.diary.value?.content.isNullOrEmpty() && viewModel.getImgList().isNullOrEmpty()) {
+        if (viewModel.diary.value?.content.isNullOrEmpty() && viewModel.imgList.value.isNullOrEmpty()) {
             Snackbar.make(binding.root, "내용이나 이미지를 추가해주세요!", Snackbar.LENGTH_SHORT).show()
             return
         } else {
@@ -223,6 +230,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     companion object {
         const val OK = 200
+        const val IMAGE_MARGIN = 2
     }
 }
 
