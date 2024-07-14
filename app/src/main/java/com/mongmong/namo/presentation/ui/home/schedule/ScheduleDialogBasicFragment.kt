@@ -7,9 +7,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
-import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -76,8 +77,9 @@ class ScheduleDialogBasicFragment : Fragment() {
 
         initObservers()
         initMapView()
-        setInit()
         initClickListeners()
+        setInit()
+        setEditTextChangeListener()
 
         return binding.root
     }
@@ -147,11 +149,15 @@ class ScheduleDialogBasicFragment : Fragment() {
         Log.d("ScheduleDialogFrag", "schedule: ${viewModel.schedule.value}")
     }
 
+    private fun setEditTextChangeListener() {
+        val watcher = MyEditTextWatcher()
+        binding.dialogScheduleTitleEt.addTextChangedListener(watcher)
+    }
+
     private fun initClickListeners() {
-        //카테고리 클릭
+        // 카테고리 클릭
         binding.dialogScheduleCategoryLayout.setOnClickListener {
             hidekeyboard()
-            storeContent()
 
             val action = viewModel.schedule.value?.let { schedule ->
                 ScheduleDialogBasicFragmentDirections.actionScheduleDialogBasicFragmentToScheduleDialogCategoryFragment(
@@ -166,7 +172,6 @@ class ScheduleDialogBasicFragment : Fragment() {
         // 장소 클릭
         binding.dialogSchedulePlaceLayout.setOnClickListener {
             hidekeyboard()
-            storeContent()
             getLocationPermission()
         }
 
@@ -187,7 +192,6 @@ class ScheduleDialogBasicFragment : Fragment() {
         // 저장 클릭
         binding.dialogScheduleSaveBtn.setOnClickListener {
             if (!isValidInput()) return@setOnClickListener
-            storeContent()
 
             // 모임 일정일 경우
             if (viewModel.isMoimSchedule()) {
@@ -404,10 +408,6 @@ class ScheduleDialogBasicFragment : Fragment() {
         setMapContent()
     }
 
-    private fun storeContent() {
-        viewModel.updateTitle(binding.dialogScheduleTitleEt.text.toString())
-    }
-
 
     // Picker Zone
     private val startDatePickerListener = DatePicker.OnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
@@ -519,6 +519,16 @@ class ScheduleDialogBasicFragment : Fragment() {
                 requireActivity().finish()
             }
         }
+    }
+
+    inner class MyEditTextWatcher: TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { // 값 변경 시 실행되는 함수
+            // 일정 제목 업데이트
+            viewModel.updateTitle(binding.dialogScheduleTitleEt.text.toString())
+        }
+        override fun afterTextChanged(s: Editable?) { }
     }
 
     companion object {
