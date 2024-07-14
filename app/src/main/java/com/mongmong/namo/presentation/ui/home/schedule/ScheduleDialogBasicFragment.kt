@@ -1,7 +1,6 @@
 package com.mongmong.namo.presentation.ui.home.schedule
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -10,7 +9,6 @@ import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
@@ -35,7 +33,6 @@ import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
-import com.google.android.material.chip.Chip
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.MapLifeCycleCallback
@@ -55,22 +52,13 @@ class ScheduleDialogBasicFragment : Fragment() {
     private lateinit var binding : FragmentScheduleDialogBasicBinding
     private val args : ScheduleDialogBasicFragmentArgs by navArgs()
 
-    private var isAlarm : Boolean = false
-
     private var prevClicked : TextView? = null
     private var selectedDate = DateTime(System.currentTimeMillis())
 
     private var kakaoMap: KakaoMap? = null
     private lateinit var mapView: MapView
 
-    private var date = DateTime(System.currentTimeMillis())
-
     private lateinit var getResult : ActivityResultLauncher<Intent>
-
-    private var prevChecked : MutableList<Int> = mutableListOf()
-    private var alarmList : MutableList<Int> = mutableListOf()
-    private var prevAlarmList : List<Int>? = null
-    private var alarmText : String = ""
 
     private val viewModel : PersonalScheduleViewModel by viewModels()
 
@@ -80,10 +68,6 @@ class ScheduleDialogBasicFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_schedule_dialog_basic, container, false)
-
-        if (args.nowDay != 0L) {
-            date = DateTime(args.nowDay)
-        }
 
         binding.apply {
             viewModel = this@ScheduleDialogBasicFragment.viewModel
@@ -160,8 +144,7 @@ class ScheduleDialogBasicFragment : Fragment() {
                 )
             )
         }
-//        viewModel.findCategoryById()
-        Log.e("ScheduleDialogFrag", "schedule: ${viewModel.schedule.value}")
+        Log.d("ScheduleDialogFrag", "schedule: ${viewModel.schedule.value}")
     }
 
     private fun initClickListeners() {
@@ -178,59 +161,6 @@ class ScheduleDialogBasicFragment : Fragment() {
             if (action != null) {
                 findNavController().navigate(action)
             }
-        }
-
-        // 알림 클릭
-        binding.dialogScheduleAlarmLayout.setOnClickListener {
-            hidekeyboard()
-            if (!isAlarm) binding.dialogScheduleAlarmContentLayout.visibility = View.VISIBLE
-            else binding.dialogScheduleAlarmContentLayout.visibility = View.GONE
-            isAlarm = !isAlarm
-        }
-
-        binding.alarmGroup.setOnCheckedStateChangeListener { group, checkedIds ->
-            Log.d("CHIP_GROUP", "Now : $checkedIds")
-            Log.d("CHIP_GROUP", "Prev : $prevChecked")
-            if (checkedIds.size == 0) {
-                val child : Chip = group.getChildAt(0) as Chip
-                child.isChecked = true
-                child.isCheckable = false
-                alarmText = "없음, "
-                prevChecked.clear()
-                prevChecked.add(child.id)
-            } else if (checkedIds.size > 1 && prevChecked.size == 1 && prevChecked[0] == binding.alarmNone.id) {
-                val child : Chip = group.getChildAt(0) as Chip
-                child.isCheckable = true
-                child.isChecked = false
-                Log.d("CHIP_GROUP", "none out")
-                prevChecked.remove(child.id)
-                alarmText = getChipText(checkedIds[1])
-            } else if (checkedIds.size > 0 && checkedIds[0] == binding.alarmNone.id) {
-                prevChecked = checkedIds
-                for (i in 1 until group.childCount) {
-                    val child : Chip = group.getChildAt(i) as Chip
-                    child.isChecked = false
-                    prevChecked.remove(child.id)
-                }
-                val none : Chip = group.getChildAt(0) as Chip
-                none.isChecked = true
-                none.isCheckable = false
-                alarmText = "없음, "
-                prevChecked.clear()
-                prevChecked.add(none.id)
-                Log.d("CHIP_GROUP", "others out")
-            } else {
-                prevChecked = checkedIds
-                alarmText = ""
-                for (i in checkedIds) {
-                    alarmText += getChipText(i)
-                }
-            }
-
-            if (alarmText.length > 2) {
-                alarmText = alarmText.substring(0, alarmText.length - 2)
-            }
-            binding.dialogScheduleAlarmTv.text = alarmText
         }
 
         // 장소 클릭
@@ -263,8 +193,6 @@ class ScheduleDialogBasicFragment : Fragment() {
             if (viewModel.isMoimSchedule()) {
                 // 카테고리 수정
                 editMoimScheduleCategory()
-                // 알람 수정
-                editMoimScheduleAlert()
                 return@setOnClickListener
             }
             // 개인 일정일 경우
@@ -377,14 +305,6 @@ class ScheduleDialogBasicFragment : Fragment() {
 //        schedule.state = RoomState.EDITED.state
 //        schedule.isUpload = UploadState.IS_NOT_UPLOAD.state
 
-        // 이전 알람 삭제 후 변경 알람 저장
-//        for (i in prevAlarmList!!) {
-//            deleteNotification(
-//                schedule.scheduleId.toInt() + DateTime(schedule.startLong).minusMinutes(i).millis.toInt()
-//            )
-//        }
-//        setAlarm(schedule.startLong)
-
         // 일정 편집
         viewModel.editSchedule()
         Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
@@ -397,162 +317,10 @@ class ScheduleDialogBasicFragment : Fragment() {
         viewModel.editMoimScheduleCategory()
     }
 
-    /** 모임 일정 알림 수정 */
-    private fun editMoimScheduleAlert() {
-//        Log.d("alertList", "${schedule.alarmList}")
-//        viewModel.editMoimScheduleAlert(schedule.serverId, schedule.alarmList!!)
-        // 뒤로가기
-        requireActivity().finish()
-    }
-
     private fun hidekeyboard() {
         val inputManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(binding.dialogScheduleTitleEt.windowToken, 0)
     }
-
-
-    // Alarm Zone
-    private fun setAlarmList() {
-        val checkedAlarm = binding.alarmGroup.checkedChipIds
-        alarmList.clear()
-        for (i in checkedAlarm) {
-            when (i) {
-                binding.alarmNone.id -> {
-                    Log.d("ALARM", "None selected")
-                }
-                binding.alarmMin60.id -> {
-                    alarmList.add(60)
-                    Log.d("ALARM", "60 min selected")
-                }
-                binding.alarmMin30.id -> {
-                    alarmList.add(30)
-                    Log.d("ALARM", "30 min selected")
-                }
-                binding.alarmMin10.id -> {
-                    alarmList.add(10)
-                    Log.d("ALARM", "10 min selected")
-                }
-                binding.alarmMin5.id -> {
-                    alarmList.add(5)
-                    Log.d("ALARM", "5 min selected")
-                }
-                binding.alarmMin0.id -> {
-                    alarmList.add(0)
-                    Log.d("ALARM", "0 min selected")
-                }
-            }
-        }
-    }
-
-    private fun setAlarm(desiredTime: Long) {
-//        var early = false
-//        for (i in alarmList) {
-//            val time = DateTime(desiredTime).minusMinutes(i).millis
-//            if (time <= System.currentTimeMillis()) {
-//                early = true
-//                continue
-//            }
-//            val id = scheduleId.toInt() + time.toInt()
-//            checkNotificationPermission(requireActivity(), time, id)
-//        }
-//        if (early) {
-//            Toast.makeText(context, "현재 시간보다 이른 알림을 제외하고 알림을 등록하였습니다.", Toast.LENGTH_SHORT).show()
-//        }
-    }
-
-    private fun checkNotificationPermission(activity: Activity, desiredTime: Long, id : Int) {
-        if (!NotificationManagerCompat.from(activity).areNotificationsEnabled()) {
-            Toast.makeText(requireContext(), "설정에서 알림 권한을 허용 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
-            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-            val uri = Uri.fromParts("package", activity.packageName, null)
-            intent.data = uri
-            activity.startActivity(intent)
-        } else {
-            schedulePushNotification(desiredTime, id)
-        }
-    }
-
-    @SuppressLint("ScheduleExactAlarm")
-    private fun schedulePushNotification(desiredTimestamp : Long, id : Int) {
-//        val context = requireContext()
-//        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//
-//        val intent = Intent(context, PushNotificationReceiver::class.java)
-//        intent.putExtra("notification_id", id)
-////        intent.putExtra("notification_title", schedule.title)
-//        intent.putExtra("notification_content", startDateTime.toString("MM-dd") + " ~ " + endDateTime.toString("MM-dd"))
-//
-//        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-//            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_IMMUTABLE)
-//        } else {
-//            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-//        }
-//
-//        Log.d("ALARM","setExactAndAllowWhileIdle")
-//        alarmManager.setExactAndAllowWhileIdle(
-//            AlarmManager.RTC_WAKEUP,
-//            desiredTimestamp,
-//            pendingIntent
-//        )
-//        Log.d("ALARM", "Set puth notification : $id, $desiredTimestamp")
-    }
-
-    private fun setAlarmClicked(alarmList : List<Int>) {
-        if (alarmList.isEmpty()) {
-            binding.alarmNone.isChecked = true
-        } else {
-            for (i in alarmList) {
-                when (i) {
-                    60 -> {
-                        binding.alarmMin60.isChecked = true
-                    }
-                    30 -> {
-                        binding.alarmMin30.isChecked = true
-                    }
-                    10 -> {
-                        binding.alarmMin10.isChecked = true
-                    }
-                    5 -> {
-                        binding.alarmMin5.isChecked = true
-                    }
-                    0 -> {
-                        binding.alarmMin0.isChecked = true
-                    }
-                }
-            }
-        }
-    }
-
-    private fun getChipText(id : Int) : String {
-        return when (id) {
-            binding.alarmMin60.id -> "1시간 전, "
-            binding.alarmMin30.id -> "30분 전, "
-            binding.alarmMin10.id -> "10분 전, "
-            binding.alarmMin5.id -> "5분 전, "
-            binding.alarmMin0.id -> "정시, "
-            binding.alarmNone.id -> "없음, "
-            else -> ""
-        }
-    }
-
-    private fun deleteNotification(id : Int) {
-//        val context = requireContext()
-//        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//
-//        val intent = Intent(context, PushNotificationReceiver::class.java)
-//        intent.putExtra("notification_id", id)
-////        intent.putExtra("notification_title", schedule.title)
-//        intent.putExtra("notification_content", startDateTime.toString("MM-dd") + " ~ " + endDateTime.toString("MM-dd"))
-//
-//        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-//            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_IMMUTABLE)
-//        } else {
-//            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-//        }
-//
-//        alarmManager.cancel(pendingIntent)
-    }
-
 
     //Location Map Zone
     private fun initMapView() {
@@ -632,25 +400,12 @@ class ScheduleDialogBasicFragment : Fragment() {
     private fun setContent() {
         // 시작일, 종료일
         initPicker()
-
-        // 알람
-//        setAlarmClicked(schedule.alarmList!!)
-//        val checkedIds = binding.alarmGroup.checkedChipIds
-//        prevChecked = checkedIds
-//        for (i in checkedIds) {
-//            alarmText += getChipText(i)
-//        }
-//        alarmText = alarmText.substring(0, alarmText.length - 2)
-//        binding.dialogScheduleAlarmTv.text = alarmText
-
         // 장소
         setMapContent()
     }
 
     private fun storeContent() {
         viewModel.updateTitle(binding.dialogScheduleTitleEt.text.toString())
-//        setAlarmList()
-//        schedule.alarmList = alarmList
     }
 
 
