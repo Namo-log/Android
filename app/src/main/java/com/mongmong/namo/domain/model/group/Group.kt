@@ -2,7 +2,6 @@ package com.mongmong.namo.domain.model.group
 
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
-import com.mongmong.namo.data.local.entity.home.Schedule
 import java.io.Serializable
 
 /** 그룹 리스트 조회 */
@@ -51,18 +50,31 @@ data class GetMoimScheduleResponse (
 
 data class MoimScheduleBody(
     @SerializedName("name") var name : String = "",
-    @SerializedName("startDate") var startDate : Long = 0L,
-    @SerializedName("endDate") var endDate : Long = 0L,
+    @SerializedName("startDate") var startLong : Long = 0L,
+    @SerializedName("endDate") var endLong : Long = 0L,
     @SerializedName("interval") var interval : Int = 0,
+    @SerializedName("x") var placeX : Double = 0.0,
+    @SerializedName("y") var placeY : Double = 0.0,
+    @SerializedName("locationName") var placeName : String = "",
     @SerializedName("users") var users : List<GroupMember> = listOf(),
-    @SerializedName("groupId") var moimId : Long = 0L,
+    @SerializedName("groupId") var groupId : Long = 0L,
     @SerializedName("moimScheduleId") var moimScheduleId : Long = 0L,
-    @SerializedName("x") var x : Double = 0.0,
-    @SerializedName("y") var y : Double = 0.0,
-    @SerializedName("locationName") var locationName : String = "",
     @SerializedName("hasDiaryPlace") var hasDiaryPlace : Boolean = false,
     @SerializedName("curMoimSchedule") var curMoimSchedule : Boolean = false
-) : Serializable
+) : Serializable {
+    fun convertMoimScheduleToBaseRequest(): BaseMoimScheduleRequestBody {
+        return BaseMoimScheduleRequestBody(
+            this.name,
+            this.startLong,
+            this.endLong,
+            this.interval,
+            this.placeX,
+            this.placeY,
+            this.placeName,
+            this.users.map { user -> user.userId } as ArrayList<Long>,
+        )
+    }
+}
 
 
 fun convertToGroupMembers(members: List<GroupMember>): List<MoimScheduleMember> {

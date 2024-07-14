@@ -3,7 +3,6 @@ package com.mongmong.namo.presentation.ui.group.calendar.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -63,7 +62,7 @@ class GroupDailyPersonalRVAdapter : RecyclerView.Adapter<GroupDailyPersonalRVAda
 
             binding.itemCalendarTitle.text = personal.name
             binding.itemCalendarTitle.isSelected = true
-            binding.itemCalendarEventTime.text = timeConverter.getScheduleTimeText(personal.startDate, personal.endDate)
+            binding.itemCalendarEventTime.text = timeConverter.getScheduleTimeText(personal.startLong, personal.endLong)
             binding.itemCalendarEventColorView.background.setTint(Color.parseColor(colorArray[paletteId - 1]))
             binding.itemCalendarUserName.text = userName
         }
