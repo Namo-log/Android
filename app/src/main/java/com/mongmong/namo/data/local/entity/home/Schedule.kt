@@ -71,7 +71,7 @@ data class Schedule(
             x = this.placeX,
             y = this.placeY,
             locationName = this.placeName,
-            categoryId = this.categoryServerId,
+            categoryId = this.categoryId,
         )
     }
 

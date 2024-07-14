@@ -370,7 +370,7 @@ class MapActivity : AppCompatActivity() {
                     R.drawable.ic_pin_selected
                 ).setTextStyles(20, R.color.black)
             }
-            return LabelStyle.from( // 기본 정
+            return LabelStyle.from( // 기본 핀
                 R.drawable.ic_pin_default
             )
         }

@@ -3,15 +3,12 @@ package com.mongmong.namo.presentation.ui.home.schedule
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.InputType
@@ -29,37 +26,27 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.R
-import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.FragmentScheduleDialogBasicBinding
-import com.mongmong.namo.presentation.ui.home.notify.PushNotificationReceiver
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
-import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.getInterval
 import com.google.android.material.chip.Chip
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
-import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
-import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.ui.home.schedule.map.data.Place
-import com.mongmong.namo.presentation.utils.PickerConverter.getDefaultDate
-import com.mongmong.namo.presentation.utils.PickerConverter.parseDateTimeToDateText
-import com.mongmong.namo.presentation.utils.PickerConverter.parseDateTimeToTimeText
-import com.mongmong.namo.presentation.utils.PickerConverter.parseLongToDateTime
+import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.presentation.utils.PickerConverter
 import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedDate
 import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedTime
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 
 @AndroidEntryPoint
@@ -68,28 +55,17 @@ class ScheduleDialogBasicFragment : Fragment() {
     private lateinit var binding : FragmentScheduleDialogBasicBinding
     private val args : ScheduleDialogBasicFragmentArgs by navArgs()
 
-    private var schedule : Schedule = Schedule()
-
     private var isAlarm : Boolean = false
 
-    private var categoryList : List<Category> = arrayListOf()
-    private lateinit var selectedCategory : Category
-
     private var prevClicked : TextView? = null
-    private var startDateTime = DateTime(System.currentTimeMillis())
-    private var endDateTime = DateTime(System.currentTimeMillis())
     private var selectedDate = DateTime(System.currentTimeMillis())
 
     private var kakaoMap: KakaoMap? = null
     private lateinit var mapView: MapView
 
-    private var place = Place()
-
     private var date = DateTime(System.currentTimeMillis())
 
     private lateinit var getResult : ActivityResultLauncher<Intent>
-
-    private var scheduleId : Long = 0
 
     private var prevChecked : MutableList<Int> = mutableListOf()
     private var alarmList : MutableList<Int> = mutableListOf()
@@ -103,16 +79,20 @@ class ScheduleDialogBasicFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentScheduleDialogBasicBinding.inflate(inflater, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_schedule_dialog_basic, container, false)
 
         if (args.nowDay != 0L) {
             date = DateTime(args.nowDay)
         }
 
+        binding.apply {
+            viewModel = this@ScheduleDialogBasicFragment.viewModel
+            lifecycleOwner = this@ScheduleDialogBasicFragment
+        }
+
         initObservers()
         initMapView()
-        getCategoryList()
-
+        setInit()
         initClickListeners()
 
         return binding.root
@@ -122,19 +102,12 @@ class ScheduleDialogBasicFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if (it.resultCode == Activity.RESULT_OK) {
-                place.place_name = it.data?.getStringExtra(MainActivity.PLACE_NAME_INTENT_KEY)!!
-                place.x = it.data?.getDoubleExtra(MainActivity.PLACE_X_INTENT_KEY, 0.0)!!
-                place.y = it.data?.getDoubleExtra(MainActivity.PLACE_Y_INTENT_KEY, 0.0)!!
-                Log.d("PLACE_INFO", "$place")
-
-                schedule.placeName = place.place_name
-                schedule.placeX = place.x
-                schedule.placeY = place.y
-
-                if (place.x != 0.0 || place.y != 0.0) {
-                    setMapContent()
-                }
-                Log.d("PLACE_INTENT", place.place_name)
+                viewModel.updatePlace(
+                    it.data?.getStringExtra(MainActivity.PLACE_NAME_INTENT_KEY)!!,
+                    it.data?.getDoubleExtra(MainActivity.PLACE_X_INTENT_KEY, 0.0)!!,
+                    it.data?.getDoubleExtra(MainActivity.PLACE_Y_INTENT_KEY, 0.0)!!
+                )
+                setMapContent()
             }
         }
     }
@@ -142,6 +115,16 @@ class ScheduleDialogBasicFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         mapView.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView.pause()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mapView.finish()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -155,29 +138,30 @@ class ScheduleDialogBasicFragment : Fragment() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        mapView.pause()
-    }
-
     private fun setInit() {
+        viewModel.getCategories()
+        // 정보 세팅
         if (args.schedule != null) {
-            schedule = args.schedule!!
-            findCategory(schedule)
-            prevAlarmList = schedule.alarmList
+            viewModel.setSchedule(args.schedule)
+            // 텍스트 변경
+            if (args.schedule?.scheduleId != 0L) {
+                binding.dialogScheduleHeaderTv.text = "일정 편집"
+            }
+            if (args.schedule?.moimSchedule == true) {
+                binding.dialogScheduleHeaderTv.text = "모임 일정 편집"
+                inactivateMoimScheduleEdit() // 비활성화 처리
+            }
         } else {
             binding.dialogScheduleHeaderTv.text = "새 일정"
-            setDateTime(getDefaultDate(date, true), getDefaultDate(date, false))
+            viewModel.setSchedule(
+                Schedule(
+                    startLong = PickerConverter.getDefaultDate(DateTime(args.nowDay), true),
+                    endLong = PickerConverter.getDefaultDate(DateTime(args.nowDay), false)
+                )
+            )
         }
-        if (schedule.scheduleId != 0L) {
-            binding.dialogScheduleHeaderTv.text = "일정 편집"
-        }
-        if (schedule.moimSchedule) {
-            binding.dialogScheduleHeaderTv.text = "모임 일정 편집"
-            inactivateMoimScheduleEdit() // 비활성화 처리
-        }
-        initCategory()
-        Log.e("ScheduleDialogFrag", "schedule: $schedule")
+//        viewModel.findCategoryById()
+        Log.e("ScheduleDialogFrag", "schedule: ${viewModel.schedule.value}")
     }
 
     private fun initClickListeners() {
@@ -186,48 +170,14 @@ class ScheduleDialogBasicFragment : Fragment() {
             hidekeyboard()
             storeContent()
 
-            val action = ScheduleDialogBasicFragmentDirections.actionScheduleDialogBasicFragmentToScheduleDialogCategoryFragment(schedule)
-            findNavController().navigate(action)
-        }
-
-        /** picker 클릭 */
-        // 시작 시간
-        with(binding.dialogScheduleStartTimeTp) {
-            this.hour = startDateTime.hourOfDay
-            this.minute = startDateTime.minuteOfHour
-            this.setOnTimeChangedListener { _, hourOfDay, minute ->
-                startDateTime = setSelectedTime(startDateTime, hourOfDay, minute)
-                binding.dialogScheduleStartTimeTv.text = parseDateTimeToTimeText(startDateTime)
+            val action = viewModel.schedule.value?.let { schedule ->
+                ScheduleDialogBasicFragmentDirections.actionScheduleDialogBasicFragmentToScheduleDialogCategoryFragment(
+                    schedule
+                )
             }
-        }
-        // 종료 시간
-        with(binding.dialogScheduleEndTimeTp) {
-            this.hour = endDateTime.hourOfDay
-            this.minute = endDateTime.minuteOfHour
-            this.setOnTimeChangedListener { _, hourOfDay, minute ->
-                endDateTime = setSelectedTime(endDateTime, hourOfDay, minute)
-                binding.dialogScheduleEndTimeTv.text = parseDateTimeToTimeText(endDateTime)
+            if (action != null) {
+                findNavController().navigate(action)
             }
-        }
-        // 시작일 - 날짜
-        binding.dialogScheduleStartDateTv.setOnClickListener {
-            hidekeyboard()
-            showPicker(binding.dialogScheduleStartDateTv, binding.dialogScheduleDateLayout)
-        }
-        // 종료일 - 날짜
-        binding.dialogScheduleEndDateTv.setOnClickListener {
-            hidekeyboard()
-            showPicker(binding.dialogScheduleEndDateTv, binding.dialogScheduleDateLayout)
-        }
-        // 시작일 - 시간
-        binding.dialogScheduleStartTimeTv.setOnClickListener {
-            hidekeyboard()
-            showPicker(binding.dialogScheduleStartTimeTv, binding.dialogScheduleStartTimeLayout)
-        }
-        // 종료일 - 시간
-        binding.dialogScheduleEndTimeTv.setOnClickListener {
-            hidekeyboard()
-            showPicker(binding.dialogScheduleEndTimeTv, binding.dialogScheduleEndTimeLayout)
         }
 
         // 알림 클릭
@@ -286,6 +236,7 @@ class ScheduleDialogBasicFragment : Fragment() {
         // 장소 클릭
         binding.dialogSchedulePlaceLayout.setOnClickListener {
             hidekeyboard()
+            storeContent()
             getLocationPermission()
         }
 
@@ -293,9 +244,9 @@ class ScheduleDialogBasicFragment : Fragment() {
         binding.dialogSchedulePlaceKakaoBtn.setOnClickListener {
             hidekeyboard()
 
-            val url = "kakaomap://route?sp=&ep=${place.y},${place.x}&by=PUBLICTRANSIT"
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            startActivity(intent)
+//            val url = "kakaomap://route?sp=&ep=${place.y},${place.x}&by=PUBLICTRANSIT"
+//            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+//            startActivity(intent)
         }
 
         // 닫기 클릭
@@ -309,21 +260,64 @@ class ScheduleDialogBasicFragment : Fragment() {
             storeContent()
 
             // 모임 일정일 경우
-            if (schedule.moimSchedule) {
+            if (viewModel.isMoimSchedule()) {
                 // 카테고리 수정
                 editMoimScheduleCategory()
                 // 알람 수정
                 editMoimScheduleAlert()
+                return@setOnClickListener
             }
             // 개인 일정일 경우
-            else {
-                if (schedule.scheduleId == 0L) {
-                    insertData()
-                } else {
-                    // 일정 수정
-                    updateData()
-                }
+            if (viewModel.isCreateMode()) {
+                // 일정 생성
+                Log.e("ScheduleDialogFrag", "생성 모드")
+                insertData()
+            } else {
+                // 일정 수정
+                Log.e("ScheduleDialogFrag", "수정 모드")
+                updateData()
             }
+        }
+    }
+
+    private fun initPickerClickListeners() {
+        // 시작 시간
+        with(binding.dialogScheduleStartTimeTp) {
+            val startDateTime = viewModel.getDateTime()?.first!!
+            this.hour = startDateTime.hourOfDay
+            this.minute = startDateTime.minuteOfHour
+            this.setOnTimeChangedListener { _, hourOfDay, minute ->
+                viewModel.updateTime(setSelectedTime(startDateTime, hourOfDay, minute), null)
+            }
+        }
+        // 종료 시간
+        with(binding.dialogScheduleEndTimeTp) {
+            val endDateTime = viewModel.getDateTime()?.second!!
+            this.hour = endDateTime.hourOfDay
+            this.minute = endDateTime.minuteOfHour
+            this.setOnTimeChangedListener { _, hourOfDay, minute ->
+                viewModel.updateTime(null, setSelectedTime(endDateTime, hourOfDay, minute))
+            }
+        }
+        // 시작일 - 날짜
+        binding.dialogScheduleStartDateTv.setOnClickListener {
+            hidekeyboard()
+            showPicker(binding.dialogScheduleStartDateTv, binding.dialogScheduleDateLayout)
+        }
+        // 종료일 - 날짜
+        binding.dialogScheduleEndDateTv.setOnClickListener {
+            hidekeyboard()
+            showPicker(binding.dialogScheduleEndDateTv, binding.dialogScheduleDateLayout)
+        }
+        // 시작일 - 시간
+        binding.dialogScheduleStartTimeTv.setOnClickListener {
+            hidekeyboard()
+            showPicker(binding.dialogScheduleStartTimeTv, binding.dialogScheduleStartTimeLayout)
+        }
+        // 종료일 - 시간
+        binding.dialogScheduleEndTimeTv.setOnClickListener {
+            hidekeyboard()
+            showPicker(binding.dialogScheduleEndTimeTv, binding.dialogScheduleEndTimeLayout)
         }
     }
 
@@ -334,7 +328,7 @@ class ScheduleDialogBasicFragment : Fragment() {
             return false
         }
         // 시작일 > 종료일
-        if (startDateTime.millis > endDateTime.millis) {
+        if (viewModel.isInvalidDate()) {
             Toast.makeText(context, "시작일이 종료일보다 느릴 수 없습니다.", Toast.LENGTH_SHORT).show()
             return false
         }
@@ -366,13 +360,6 @@ class ScheduleDialogBasicFragment : Fragment() {
         }
     }
 
-    /** 카테고리 조회 */
-    private fun getCategoryList() {
-        lifecycleScope.launch{
-            viewModel.getCategories()
-        }
-    }
-
     /** 일정 추가 **/
     private fun insertData() {
         // 현재 일정의 상태가 추가 상태임을 나타냄
@@ -381,7 +368,7 @@ class ScheduleDialogBasicFragment : Fragment() {
 //        schedule.serverId = 0
 
         // 새 일정 등록
-        viewModel.addSchedule(schedule.convertLocalScheduleToServer())
+        viewModel.addSchedule()
     }
 
     /** 일정 수정 **/
@@ -391,16 +378,15 @@ class ScheduleDialogBasicFragment : Fragment() {
 //        schedule.isUpload = UploadState.IS_NOT_UPLOAD.state
 
         // 이전 알람 삭제 후 변경 알람 저장
-        for (i in prevAlarmList!!) {
-            deleteNotification(
-                schedule.scheduleId.toInt() + DateTime(schedule.startLong).minusMinutes(i).millis.toInt()
-            )
-        }
+//        for (i in prevAlarmList!!) {
+//            deleteNotification(
+//                schedule.scheduleId.toInt() + DateTime(schedule.startLong).minusMinutes(i).millis.toInt()
+//            )
+//        }
 //        setAlarm(schedule.startLong)
 
         // 일정 편집
-        viewModel.editSchedule(schedule.scheduleId, schedule.convertLocalScheduleToServer())
-
+        viewModel.editSchedule()
         Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
         // 뒤로가기
         requireActivity().finish()
@@ -408,13 +394,13 @@ class ScheduleDialogBasicFragment : Fragment() {
 
     /** 모임 일정 카테고리 수정 */
     private fun editMoimScheduleCategory() {
-        viewModel.editMoimScheduleCategory(schedule.serverId, schedule.categoryServerId)
+        viewModel.editMoimScheduleCategory()
     }
 
     /** 모임 일정 알림 수정 */
     private fun editMoimScheduleAlert() {
-        Log.d("alertList", "${schedule.alarmList}")
-        viewModel.editMoimScheduleAlert(schedule.serverId, schedule.alarmList!!)
+//        Log.d("alertList", "${schedule.alarmList}")
+//        viewModel.editMoimScheduleAlert(schedule.serverId, schedule.alarmList!!)
         // 뒤로가기
         requireActivity().finish()
     }
@@ -459,19 +445,19 @@ class ScheduleDialogBasicFragment : Fragment() {
     }
 
     private fun setAlarm(desiredTime: Long) {
-        var early = false
-        for (i in alarmList) {
-            val time = DateTime(desiredTime).minusMinutes(i).millis
-            if (time <= System.currentTimeMillis()) {
-                early = true
-                continue
-            }
-            val id = scheduleId.toInt() + time.toInt()
-            checkNotificationPermission(requireActivity(), time, id)
-        }
-        if (early) {
-            Toast.makeText(context, "현재 시간보다 이른 알림을 제외하고 알림을 등록하였습니다.", Toast.LENGTH_SHORT).show()
-        }
+//        var early = false
+//        for (i in alarmList) {
+//            val time = DateTime(desiredTime).minusMinutes(i).millis
+//            if (time <= System.currentTimeMillis()) {
+//                early = true
+//                continue
+//            }
+//            val id = scheduleId.toInt() + time.toInt()
+//            checkNotificationPermission(requireActivity(), time, id)
+//        }
+//        if (early) {
+//            Toast.makeText(context, "현재 시간보다 이른 알림을 제외하고 알림을 등록하였습니다.", Toast.LENGTH_SHORT).show()
+//        }
     }
 
     private fun checkNotificationPermission(activity: Activity, desiredTime: Long, id : Int) {
@@ -488,27 +474,27 @@ class ScheduleDialogBasicFragment : Fragment() {
 
     @SuppressLint("ScheduleExactAlarm")
     private fun schedulePushNotification(desiredTimestamp : Long, id : Int) {
-        val context = requireContext()
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        val intent = Intent(context, PushNotificationReceiver::class.java)
-        intent.putExtra("notification_id", id)
-        intent.putExtra("notification_title", schedule.title)
-        intent.putExtra("notification_content", startDateTime.toString("MM-dd") + " ~ " + endDateTime.toString("MM-dd"))
-
-        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_IMMUTABLE)
-        } else {
-            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        }
-
-        Log.d("ALARM","setExactAndAllowWhileIdle")
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            desiredTimestamp,
-            pendingIntent
-        )
-        Log.d("ALARM", "Set puth notification : $id, $desiredTimestamp")
+//        val context = requireContext()
+//        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//
+//        val intent = Intent(context, PushNotificationReceiver::class.java)
+//        intent.putExtra("notification_id", id)
+////        intent.putExtra("notification_title", schedule.title)
+//        intent.putExtra("notification_content", startDateTime.toString("MM-dd") + " ~ " + endDateTime.toString("MM-dd"))
+//
+//        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_IMMUTABLE)
+//        } else {
+//            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+//        }
+//
+//        Log.d("ALARM","setExactAndAllowWhileIdle")
+//        alarmManager.setExactAndAllowWhileIdle(
+//            AlarmManager.RTC_WAKEUP,
+//            desiredTimestamp,
+//            pendingIntent
+//        )
+//        Log.d("ALARM", "Set puth notification : $id, $desiredTimestamp")
     }
 
     private fun setAlarmClicked(alarmList : List<Int>) {
@@ -550,21 +536,21 @@ class ScheduleDialogBasicFragment : Fragment() {
     }
 
     private fun deleteNotification(id : Int) {
-        val context = requireContext()
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        val intent = Intent(context, PushNotificationReceiver::class.java)
-        intent.putExtra("notification_id", id)
-        intent.putExtra("notification_title", schedule.title)
-        intent.putExtra("notification_content", startDateTime.toString("MM-dd") + " ~ " + endDateTime.toString("MM-dd"))
-
-        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_IMMUTABLE)
-        } else {
-            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        }
-
-        alarmManager.cancel(pendingIntent)
+//        val context = requireContext()
+//        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//
+//        val intent = Intent(context, PushNotificationReceiver::class.java)
+//        intent.putExtra("notification_id", id)
+////        intent.putExtra("notification_title", schedule.title)
+//        intent.putExtra("notification_content", startDateTime.toString("MM-dd") + " ~ " + endDateTime.toString("MM-dd"))
+//
+//        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_IMMUTABLE)
+//        } else {
+//            PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+//        }
+//
+//        alarmManager.cancel(pendingIntent)
     }
 
 
@@ -586,10 +572,6 @@ class ScheduleDialogBasicFragment : Fragment() {
                 setMapContent()
             }
 
-            override fun getPosition(): LatLng {
-                return LatLng.from(place.y, place.x)
-            }
-
             override fun getZoomLevel(): Int {
                 // 지도 시작 시 확대/축소 줌 레벨 설정
                 return MapActivity.ZOOM_LEVEL
@@ -598,16 +580,18 @@ class ScheduleDialogBasicFragment : Fragment() {
     }
 
     private fun setMapContent() {
-        binding.dialogSchedulePlaceNameTv.text = place.place_name
+        kakaoMap?.labelManager?.layer?.removeAll()
+        val mapData = viewModel.getPlace() ?: return
+        Log.d("ScheduleBasicFragment", mapData.toString())
 //        binding.dialogSchedulePlaceKakaoBtn.visibility = View.VISIBLE
         binding.dialogSchedulePlaceContainer.visibility = View.VISIBLE
 
         // 지도 위치 조정
-        val latLng = LatLng.from(place.y, place.x)
+        val latLng = mapData.second
         Log.d("ScheduleBasicFragment", latLng.toString())
         // 카메라를 마커의 위치로 이동
         kakaoMap?.moveCamera(CameraUpdateFactory.newCenterPosition(latLng, MapActivity.ZOOM_LEVEL))
-
+        // 마커 추가
         kakaoMap?.labelManager?.layer?.addLabel(LabelOptions.from(latLng).setStyles(MapActivity.setPinStyle(false)))
     }
 
@@ -622,10 +606,13 @@ class ScheduleDialogBasicFragment : Fragment() {
 
                 val intent = Intent(requireActivity(), MapActivity::class.java)
                 intent.putExtra(MainActivity.ORIGIN_ACTIVITY_INTENT_KEY, "Schedule")
-                if (schedule.placeX != 0.0 && schedule.placeY != 0.0) {
-                    intent.putExtra("PREV_PLACE_NAME", schedule.placeName)
-                    intent.putExtra("PREV_PLACE_X", schedule.placeX)
-                    intent.putExtra("PREV_PLACE_Y", schedule.placeY)
+                val placeData = viewModel.getPlace()
+                if (placeData != null) {
+                    intent.apply {
+                        putExtra("PREV_PLACE_NAME", placeData.first)
+                        putExtra("PREV_PLACE_X", placeData.second.longitude)
+                        putExtra("PREV_PLACE_Y", placeData.second.latitude)
+                    }
                 }
                 getResult.launch(intent)
 
@@ -643,93 +630,57 @@ class ScheduleDialogBasicFragment : Fragment() {
 
     // Content Zone
     private fun setContent() {
-        //제목
-        binding.dialogScheduleTitleEt.setText(schedule.title)
+        // 시작일, 종료일
+        initPicker()
 
-        //카테고리
-        Log.d("TEST_CATEGORY", categoryList.toString())
-        schedule.categoryId = selectedCategory.categoryId
-        schedule.categoryServerId = selectedCategory.serverId
-        setCategory()
+        // 알람
+//        setAlarmClicked(schedule.alarmList!!)
+//        val checkedIds = binding.alarmGroup.checkedChipIds
+//        prevChecked = checkedIds
+//        for (i in checkedIds) {
+//            alarmText += getChipText(i)
+//        }
+//        alarmText = alarmText.substring(0, alarmText.length - 2)
+//        binding.dialogScheduleAlarmTv.text = alarmText
 
-        //시작일, 종료일
-        setDateTime(parseLongToDateTime(schedule.startLong), parseLongToDateTime(schedule.endLong))
-
-        //시작 시간, 종료 시간
-        binding.dialogScheduleStartTimeTv.text = parseDateTimeToTimeText(startDateTime)
-        binding.dialogScheduleEndTimeTv.text = parseDateTimeToTimeText(endDateTime)
-
-        //알람
-        setAlarmClicked(schedule.alarmList!!)
-        val checkedIds = binding.alarmGroup.checkedChipIds
-        prevChecked = checkedIds
-        for (i in checkedIds) {
-            alarmText += getChipText(i)
-        }
-        alarmText = alarmText.substring(0, alarmText.length - 2)
-        binding.dialogScheduleAlarmTv.text = alarmText
-
-        //장소
-        place = Place(place_name = schedule.placeName, x = schedule.placeX, y = schedule.placeY)
-
-        if (schedule.placeX != 0.0 || schedule.placeY != 0.0) {
-            setMapContent()
-        }
+        // 장소
+        setMapContent()
     }
 
     private fun storeContent() {
-        schedule.title = binding.dialogScheduleTitleEt.text.toString()
-        schedule.startLong = startDateTime.millis / 1000
-        schedule.endLong = endDateTime.millis / 1000
-        schedule.dayInterval = getInterval(schedule.startLong, schedule.endLong)
-
-        setAlarmList()
-        schedule.alarmList = alarmList
-
-        Log.d("STORE_CONTENT", schedule.toString())
+        viewModel.updateTitle(binding.dialogScheduleTitleEt.text.toString())
+//        setAlarmList()
+//        schedule.alarmList = alarmList
     }
 
 
     // Picker Zone
     private val startDatePickerListener = DatePicker.OnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
-        selectedDate = setSelectedDate(year, monthOfYear, dayOfMonth, startDateTime)
-        if (selectedDate.isAfter(endDateTime)) { // 시작일 > 종료일
-            endDateTime = selectedDate
-            binding.dialogScheduleEndDateTv.text = parseDateTimeToDateText(selectedDate)
-        }
-        binding.dialogScheduleStartDateTv.text = parseDateTimeToDateText(selectedDate)
-        startDateTime = selectedDate
+        selectedDate = setSelectedDate(year, monthOfYear, dayOfMonth, viewModel.getDateTime()?.first!!)
+        Log.d("ScheduleDialogFrag", "selectedDate(start): $selectedDate")
+        viewModel.updateTime(selectedDate, null)
     }
     private val endDatePickerListener = DatePicker.OnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
-        selectedDate = setSelectedDate(year, monthOfYear, dayOfMonth, endDateTime)
-        if (startDateTime.isAfter(selectedDate)) { // 시작일 > 종료일
-            startDateTime = selectedDate
-            binding.dialogScheduleStartDateTv.text = parseDateTimeToDateText(selectedDate)
+        selectedDate = setSelectedDate(year, monthOfYear, dayOfMonth, viewModel.getDateTime()?.second!!)
+        Log.d("ScheduleDialogFrag", "selectedDate(end): $selectedDate")
+        viewModel.updateTime(null, selectedDate)
+    }
+
+    private fun initPicker(){
+        val dateTimePair = viewModel.getDateTime() ?: return
+        Log.d("INIT_PICKER_TEXT", "start: ${dateTimePair.first}\nend: ${dateTimePair.second}")
+        initTimePicker(dateTimePair.first, dateTimePair.second)
+    }
+
+    private fun initTimePicker(startDateTime: DateTime, endDateTime: DateTime) {
+        binding.dialogScheduleStartTimeTp.apply { // 시작 시간
+            hour = startDateTime.hourOfDay
+            minute = startDateTime.minuteOfHour
         }
-        binding.dialogScheduleEndDateTv.text = parseDateTimeToDateText(selectedDate)
-        endDateTime = selectedDate
-    }
-
-    private fun setDateTime(start: DateTime, end: DateTime) {
-        Log.d("INIT_DATE_TIME", "start: $start\nend: $end")
-        startDateTime = start
-        endDateTime = end
-
-        initPickerText(start, end)
-    }
-
-    private fun initPickerText(start: DateTime, end: DateTime){
-        // 텍스트
-        binding.dialogScheduleStartDateTv.text = parseDateTimeToDateText(start)
-        binding.dialogScheduleStartTimeTv.text = parseDateTimeToTimeText(start)
-        binding.dialogScheduleEndDateTv.text = parseDateTimeToDateText(end)
-        binding.dialogScheduleEndTimeTv.text = parseDateTimeToTimeText(end)
-        // 시간
-        binding.dialogScheduleStartTimeTp.hour = start.hourOfDay
-        binding.dialogScheduleStartTimeTp.minute = start.minuteOfHour
-        binding.dialogScheduleEndTimeTp.hour = end.hourOfDay
-        binding.dialogScheduleEndTimeTp.minute = end.minuteOfHour
-        Log.d("INIT_PICKER_TEXT", "start: $startDateTime\nend: $endDateTime")
+        binding.dialogScheduleEndTimeTp.apply { // 종료 시간
+            hour = endDateTime.hourOfDay
+            minute = endDateTime.minuteOfHour
+        }
     }
 
     private fun showPicker(clicked : TextView, pickerLayout : MotionLayout) {
@@ -741,26 +692,28 @@ class ScheduleDialogBasicFragment : Fragment() {
         binding.dialogScheduleStartTimeTv.setTextColor(resources.getColor(R.color.textGray))
         binding.dialogScheduleEndTimeTv.setTextColor(resources.getColor(R.color.textGray))
 
+        val dateTimePair = viewModel.getDateTime() ?: return
+
         if (prevClicked != clicked) {
             togglePicker(pickerLayout, true)
             prevClicked = clicked
 
             when (clicked) {
-                binding.dialogScheduleStartDateTv -> {
+                binding.dialogScheduleStartDateTv -> { // 시작일
                     togglePicker(binding.dialogScheduleDateLayout, true)
                     binding.dialogScheduleDateDp.init(
-                        startDateTime.year,
-                        startDateTime.monthOfYear - 1,
-                        startDateTime.dayOfMonth,
+                        dateTimePair.first.year,
+                        dateTimePair.first.monthOfYear - 1,
+                        dateTimePair.first.dayOfMonth,
                         startDatePickerListener
                     )
                 }
-                binding.dialogScheduleEndDateTv -> {
+                binding.dialogScheduleEndDateTv -> { // 종료일
                     togglePicker(binding.dialogScheduleDateLayout, true)
                     binding.dialogScheduleDateDp.init(
-                        endDateTime.year,
-                        endDateTime.monthOfYear - 1,
-                        endDateTime.dayOfMonth,
+                        dateTimePair.second.year,
+                        dateTimePair.second.monthOfYear - 1,
+                        dateTimePair.second.dayOfMonth,
                         endDatePickerListener
                     )
                 }
@@ -791,46 +744,26 @@ class ScheduleDialogBasicFragment : Fragment() {
 
     private fun initObservers() {
         viewModel.schedule.observe(requireActivity()) { schedule ->
-            binding.dialogScheduleTitleEt.setText(schedule.title)
+            setContent()
+            if (schedule != null) {
+                initPickerClickListeners()
+            }
         }
+
+        viewModel.categoryList.observe(requireActivity()) {categoryList ->
+            if (categoryList.isNotEmpty()) viewModel.findCategoryById()
+        }
+
+        viewModel.category.observe(requireActivity()) { category ->
+            if (category.categoryId != 0L && viewModel.getScheduleCategoryId() == 0L) viewModel.setCategory()
+        }
+
         viewModel.isComplete.observe(requireActivity()) { isComplete ->
             // 추가 작업이 완료된 후 뒤로가기
             if (isComplete) {
                 requireActivity().finish()
             }
         }
-        viewModel.categoryList.observe(viewLifecycleOwner) {
-            if (!it.isNullOrEmpty()) {
-                categoryList = it
-                setInit()
-            }
-        }
-        // 카테고리 id로 카테고리 조회
-        viewModel.category.observe(viewLifecycleOwner) {
-            selectedCategory = it
-            setContent()
-        }
-    }
-
-    // Category Zone
-    private fun findCategory(schedule: Schedule) {
-        lifecycleScope.launch {
-            viewModel.findCategoryById(schedule.categoryId, schedule.categoryServerId)
-        }
-    }
-
-    private fun initCategory() {
-        selectedCategory = categoryList[0]
-        schedule.categoryId = selectedCategory.categoryId
-        schedule.categoryServerId = selectedCategory.serverId
-
-        setCategory()
-    }
-
-    private fun setCategory() {
-        schedule.categoryServerId = selectedCategory.serverId
-        binding.dialogScheduleCategoryNameTv.text = selectedCategory.name
-        binding.dialogScheduleCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(selectedCategory.paletteId)
     }
 
     companion object {
