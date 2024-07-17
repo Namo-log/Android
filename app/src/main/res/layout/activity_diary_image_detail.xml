@@ -20,13 +20,14 @@
             android:layout_height="60dp"
             android:background="@color/transBlack"
             app:layout_constraintTop_toTopOf="parent">
+
             <ImageView
                 android:id="@+id/back_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
-                android:layout_marginTop="14dp"
                 android:src="@drawable/ic_diary_image_detail_back"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/white" />
@@ -70,18 +71,11 @@
                 android:id="@+id/download_btn_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
+                android:layout_marginEnd="20dp"
                 android:src="@drawable/ic_download"
-                app:layout_constraintTop_toTopOf="@id/back_btn"
-                app:layout_constraintEnd_toStartOf="@id/delete_btn_iv" />
-            <ImageView
-                android:id="@+id/delete_btn_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="25dp"
-                android:src="@drawable/ic_delete"
-                app:layout_constraintTop_toTopOf="@id/back_btn"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

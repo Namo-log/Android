@@ -36,15 +36,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private val viewModel : DiaryDetailViewModel by viewModels()
 
-    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val updatedImgs = result.data?.getStringArrayListExtra("imgs")
-            updatedImgs?.let {
-                viewModel.updateImgList(it)
-            }
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPersonalDiaryDetailBinding.inflate(layoutInflater)
@@ -106,7 +97,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
                 viewModel.updateImgList(newImages)
             },
             imageClickListener = {
-                startForResult.launch(
+                startActivity(
                     Intent(this, DiaryImageDetailActivity::class.java).apply {
                         putStringArrayListExtra("imgs", viewModel.imgList.value as ArrayList<String>)
                     }

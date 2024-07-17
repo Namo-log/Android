@@ -58,7 +58,7 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
                 }
             })
             diaryBackIv.setOnClickListener {
-                if (this@MoimMemoDetailActivity.viewModel.isMoimDiaryChanged()) {
+                if (this@MoimMemoDetailActivity.viewModel.isDiaryChanged()) {
                     showBackDialog()
                 } else finish()
             }

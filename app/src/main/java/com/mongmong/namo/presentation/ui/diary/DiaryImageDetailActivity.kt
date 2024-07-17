@@ -28,10 +28,10 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 
-class DiaryImageDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
+class DiaryImageDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDiaryImageDetailBinding
     private lateinit var imagePagerAdapter: ImageDetailVPAdapter
-    private lateinit var imgs: MutableList<String>
+    private lateinit var imgs: List<String>
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -48,7 +48,7 @@ class DiaryImageDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
         binding = ActivityDiaryImageDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        imgs = intent.getStringArrayListExtra("imgs") as MutableList<String>
+        imgs = intent.getStringArrayListExtra("imgs") as List<String>
         setViewPager()
         initClickListener()
         updatePosition()
@@ -70,29 +70,17 @@ class DiaryImageDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun initClickListener() {
-        // Use OnBackPressedDispatcher to handle back press
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                finishWithResult()
-            }
-        })
-
-        binding.backBtn.setOnClickListener { finishWithResult() }
+        binding.backBtn.setOnClickListener { finish() }
         binding.downloadBtnIv.setOnClickListener { checkPermissionAndDownload() }
-        binding.deleteBtnIv.setOnClickListener { showDeleteDialog() }
     }
 
     private fun checkPermissionAndDownload() {
         when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
-                downloadImage()
-            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> { downloadImage() }
             ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == android.content.pm.PackageManager.PERMISSION_GRANTED -> {
                 downloadImage()
             }
-            else -> {
-                requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            }
+            else -> { requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE) }
         }
     }
 
@@ -135,21 +123,7 @@ class DiaryImageDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
 
         fos?.use {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
-            Toast.makeText(this, "이미지가 저장되었습니다.", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun showDeleteDialog() {
-        val dialog = ConfirmDialog(this, "사진을 정말 삭제하시겠어요?", null, "삭제", 0)
-        dialog.show(this.supportFragmentManager, "ConfirmDialog")
-    }
-
-    private fun deleteImage(image: String) {
-        val position = imgs.indexOf(image)
-        if (position != -1) {
-            imgs.removeAt(position)
-            imagePagerAdapter.notifyItemRemoved(position)
-            updatePosition()
+            Snackbar.make(binding.root, "이미지가 저장되었습니다.", Snackbar.LENGTH_SHORT).show()
         }
     }
 
@@ -164,19 +138,6 @@ class DiaryImageDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
                 }
                 else -> currentPosition.text = "0"
             }
-        }
-    }
-
-    private fun finishWithResult() {
-        setResult(Activity.RESULT_OK, Intent().putStringArrayListExtra("imgs", ArrayList(imgs)))
-        finish()
-    }
-
-    override fun onClickYesButton(id: Int) {
-        val currentItem = binding.diaryImageVp.currentItem
-        if (currentItem >= 0 && currentItem < imgs.size) {
-            val imageToDelete = imgs[currentItem]
-            deleteImage(imageToDelete)
         }
     }
 }

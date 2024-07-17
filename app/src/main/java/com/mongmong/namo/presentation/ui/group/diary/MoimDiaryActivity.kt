@@ -54,15 +54,6 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
     private val itemTouchSimpleCallback = ItemTouchHelperCallback()  // 아이템 밀어서 삭제
     private val itemTouchHelper = ItemTouchHelper(itemTouchSimpleCallback)
 
-    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val updatedImgs = result.data?.getStringArrayListExtra("imgs")
-            updatedImgs?.let {
-                viewModel.updateActivityImages(positionForGallery, it)
-            }
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMoimDiaryBinding.inflate(layoutInflater)
@@ -170,7 +161,7 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
             payClickListener = ::onPayClickListener,
             imageDetailClickListener = { position ->
                 positionForGallery = position
-                startForResult.launch(
+                startActivity(
                     Intent(this, DiaryImageDetailActivity::class.java).apply {
                         putStringArrayListExtra("imgs", viewModel.activities.value?.get(position)?.imgs as ArrayList<String>?)
                     }
