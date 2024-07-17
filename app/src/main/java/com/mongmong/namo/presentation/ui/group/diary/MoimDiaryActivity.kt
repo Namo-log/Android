@@ -8,9 +8,11 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.MotionEvent
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -23,6 +25,7 @@ import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.presentation.ui.diary.DiaryImageDetailActivity
+import com.mongmong.namo.presentation.ui.diary.PersonalDetailActivity
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityItemDecoration
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityRVAdapter
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimMemberRVAdapter
@@ -89,7 +92,18 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
 
     private fun onClickListener() {
         // 뒤로가기
-        binding.groupAddBackIv.setOnClickListener { finish() }
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (viewModel.isDiaryChanged()) {
+                    showBackDialog()
+                } else finish()
+            }
+        })
+        binding.groupAddBackIv.setOnClickListener {
+            if (viewModel.isDiaryChanged()) {
+                showBackDialog()
+            } else finish()
+        }
 
         //  장소 추가 버튼 클릭리스너
         binding.groudPlaceAddTv.setOnClickListener {
@@ -220,15 +234,28 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
         // 삭제 확인 다이얼로그
         val title = "모임 기록을 정말 삭제하시겠어요?"
         val content = "삭제한 모든 모임 기록은\n개인 기록 페이지에서도 삭제됩니다."
-        val dialog = ConfirmDialog(this, title, content, "삭제", 0)
+        val dialog = ConfirmDialog(this, title, content, "삭제", DELETE_BUTTON_ACTION)
         dialog.isCancelable = false
         dialog.show(this.supportFragmentManager, "ConfirmDialog")
     }
 
-    // 삭제 다이얼로그 확인 버튼
+    /** 뒤로가기 확인 다이얼로그 */
+    private fun showBackDialog() {
+        val title = "편집한 내용이 저장되지 않습니다."
+        val content = "정말 나가시겠어요?"
+
+        val dialog = ConfirmDialog(this, title, content, "확인",
+            PersonalDetailActivity.BACK_BUTTON_ACTION
+        )
+        dialog.isCancelable = false
+        dialog.show(supportFragmentManager, "")
+    }
+
     override fun onClickYesButton(id: Int) {
-        // 모임 기록 전체 삭제
-        viewModel.deleteMoimDiary()
+        when(id) {
+            PersonalDetailActivity.DELETE_BUTTON_ACTION -> viewModel.deleteMoimDiary() // 삭제
+            PersonalDetailActivity.BACK_BUTTON_ACTION -> finish() // 뒤로가기
+        }
     }
 
     private fun getGallery() {
@@ -288,6 +315,11 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         hideKeyboardOnTouchOutside(ev)
         return super.dispatchTouchEvent(ev)
+    }
+
+    companion object {
+        const val DELETE_BUTTON_ACTION = 1
+        const val BACK_BUTTON_ACTION = 2
     }
 }
 

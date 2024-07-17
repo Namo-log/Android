@@ -60,7 +60,8 @@ class DiaryDetailViewModel @Inject constructor(
     private val _category = MutableLiveData<Category>()
     val category: LiveData<Category> = _category
 
-
+    private var initialDiaryContent: String? = null
+    private var initialImgList: List<String> = emptyList()
 
     /** 개인 기록 **/
     // 개인 기록 개별 조회
@@ -76,6 +77,7 @@ class DiaryDetailViewModel @Inject constructor(
                 images = result.urls,
                 state = RoomState.ADDED.state
             )
+            initDiaryState(result.contents, result.urls) // 초기 상태 저장
         }
     }
     // 개인 기록 추가시 데이터 초기화
@@ -88,6 +90,7 @@ class DiaryDetailViewModel @Inject constructor(
             images = _imgList.value,
             state = RoomState.ADDED.state
         )
+        initDiaryState("", _imgList.value ?: emptyList()) // 초기 상태 저장
     }
 
     // 개인 기록 추가
@@ -122,6 +125,22 @@ class DiaryDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _deleteDiaryResult.postValue(schedule.value?.let { repository.deletePersonalDiary(it.scheduleId) })
         }
+    }
+
+    fun updateImgList(newImgList: List<String>) {
+        _imgList.value = newImgList
+        _diary.value?.images = _imgList.value
+    }
+
+    // 초기 상태 저장 메서드
+    private fun initDiaryState(content: String?, images: List<String>) {
+        initialDiaryContent = content
+        initialImgList = images
+    }
+
+    // 변경 여부 확인 메서드
+    fun isDiaryChanged(): Boolean {
+        return _diary.value?.content != initialDiaryContent || _imgList.value != initialImgList
     }
 
     /** 모임 기록*/
@@ -166,8 +185,4 @@ class DiaryDetailViewModel @Inject constructor(
         }
     }
 
-    fun updateImgList(newImgList: List<String>) {
-        _imgList.value = newImgList
-        _diary.value?.images = _imgList.value
-    }
 }

@@ -34,12 +34,16 @@ class MoimDiaryViewModel @Inject constructor(
     var moimScheduleId: Long = 0L
     private val deleteItems = mutableListOf<Long>()  // 삭제할 항목 저장
 
+    private var initialDiaryState: MoimDiaryResult? = null
+    private var initialActivitiesState: List<MoimActivity> = listOf()
+
     /** 모임 기록 개별 조회 **/
     fun getMoimDiary(scheduleId: Long) {
         viewModelScope.launch {
             val result = repository.getMoimDiary(scheduleId)
             _moimDiary.postValue(result)
             _activities.postValue(result.moimActivities.toMutableList())
+            initDiaryState(result, result.moimActivities)
         }
     }
 
@@ -53,6 +57,7 @@ class MoimDiaryViewModel @Inject constructor(
         )
         _moimDiary.value = newDiary
         _activities.value = arrayListOf(MoimActivity(0L, "", 0L, arrayListOf(), arrayListOf()))
+        initDiaryState(newDiary, arrayListOf(MoimActivity(0L, "", 0L, arrayListOf(), arrayListOf())))
     }
 
     fun addActivity(activity: MoimActivity) {
@@ -90,7 +95,6 @@ class MoimDiaryViewModel @Inject constructor(
         _activities.postValue(updatedActivities)
     }
 
-
     fun patchMoimActivities() {
         viewModelScope.launch {
             val activities = _activities.value ?: return@launch
@@ -127,7 +131,19 @@ class MoimDiaryViewModel @Inject constructor(
             _deleteDiaryComplete.postValue(repository.deleteMoimDiary(moimScheduleId))
         }
     }
+
     fun toggleIsParticipantVisible() {
         isParticipantVisible.value = !isParticipantVisible.value!!
+    }
+
+    // 초기 상태 저장 메서드
+    private fun initDiaryState(diary: MoimDiaryResult, activities: List<MoimActivity>) {
+        initialDiaryState = diary.copy()
+        initialActivitiesState = activities.map { it.copy() }
+    }
+
+    // 변경 여부 확인 메서드
+    fun isDiaryChanged(): Boolean {
+        return _moimDiary.value != initialDiaryState || _activities.value != initialActivitiesState
     }
 }

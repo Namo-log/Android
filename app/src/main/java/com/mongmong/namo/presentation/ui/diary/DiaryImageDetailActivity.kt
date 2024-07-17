@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -84,7 +85,6 @@ class DiaryImageDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     private fun checkPermissionAndDownload() {
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
-                // No need to request permission for Android Q and above
                 downloadImage()
             }
             ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == android.content.pm.PackageManager.PERMISSION_GRANTED -> {
@@ -135,7 +135,7 @@ class DiaryImageDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
 
         fos?.use {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
-            Snackbar.make(binding.root, "이미지가 갤러리에 저장되었습니다.", Snackbar.LENGTH_SHORT).show()
+            Toast.makeText(this, "이미지가 저장되었습니다.", Toast.LENGTH_LONG).show()
         }
     }
 

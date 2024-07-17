@@ -6,8 +6,10 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -73,8 +75,18 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun onClickListener() {
-        binding.apply {
-            diaryBackIv.setOnClickListener { finish() }
+        with(binding) {
+            onBackPressedDispatcher.addCallback(this@PersonalDetailActivity, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if(this@PersonalDetailActivity.viewModel.isDiaryChanged()) { showBackDialog() }
+                    else finish()
+                }
+            })
+
+            diaryBackIv.setOnClickListener {
+                if (this@PersonalDetailActivity.viewModel.isDiaryChanged()) { showBackDialog() }
+                else finish()
+            }
             diaryGalleryClickIv.setOnClickListener { getGallery() }
             diaryEditBtnTv.setOnClickListener {
                 lifecycleScope.launch {
@@ -83,7 +95,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
                 }
             }
             diaryDeleteIv.setOnClickListener {
-                showDialog()
+                showDeleteDialog()
             }
         }
     }
@@ -155,13 +167,30 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
     }
 
-    private fun showDialog() {
-        // 삭제 확인 다이얼로그
+    /** 삭제 확인 다이얼로그 */
+    private fun showDeleteDialog() {
         val title = "가록을 정말 삭제하시겠습니까?"
 
-        val dialog = ConfirmDialog(this, title, null, "삭제", 0)
+        val dialog = ConfirmDialog(this, title, null, "삭제", DELETE_BUTTON_ACTION)
         dialog.isCancelable = false
         dialog.show(supportFragmentManager, "")
+    }
+
+    /** 뒤로가기 확인 다이얼로그 */
+    private fun showBackDialog() {
+        val title = "편집한 내용이 저장되지 않습니다."
+        val content = "정말 나가시겠어요?"
+
+        val dialog = ConfirmDialog(this, title, content, "확인", BACK_BUTTON_ACTION)
+        dialog.isCancelable = false
+        dialog.show(supportFragmentManager, "")
+    }
+
+    override fun onClickYesButton(id: Int) {
+        when(id) {
+            DELETE_BUTTON_ACTION -> deleteDiary() // 삭제
+            BACK_BUTTON_ACTION -> finish() // 뒤로가기
+        }
     }
 
     /** 갤러리에서 이미지 가져오기 **/
@@ -188,7 +217,8 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
             ActivityCompat.requestPermissions(this, permissions, 200)
         }
     }
-    //
+
+
     private val getImage = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -201,7 +231,8 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
         viewModel.updateImgList(imageUris)
     }
-    //
+
+
     private fun getImageUrisFromResult(result: ActivityResult): List<String> {
         if (result.resultCode != Activity.RESULT_OK) return emptyList()
 
@@ -221,11 +252,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
 
-    override fun onClickYesButton(id: Int) {
-        // 삭제 버튼 누르면 삭제 진행
-        deleteDiary()
-    }
-
     /** editText 외 터치 시 키보드 내리는 이벤트 **/
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         hideKeyboardOnTouchOutside(ev)
@@ -235,6 +261,8 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
     companion object {
         const val OK = 200
         const val IMAGE_MARGIN = 2
+        const val DELETE_BUTTON_ACTION = 1
+        const val BACK_BUTTON_ACTION = 2
     }
 }
 
