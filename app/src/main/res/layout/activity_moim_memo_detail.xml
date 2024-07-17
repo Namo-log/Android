@@ -26,8 +26,9 @@
             android:id="@+id/diary_top"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginEnd="25dp"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -42,18 +43,19 @@
 
             <TextView
                 android:id="@+id/diary_title_tv"
+                style="@style/title_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:gravity="center"
                 android:singleLine="true"
+                android:text="@{viewModel.moimDiary.title}"
                 app:layout_constraintBottom_toBottomOf="@id/diary_back_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/diary_back_iv"
-                android:text="@{viewModel.moimDiary.title}"
-                style="@style/title_text"/>
+                app:layout_constraintTop_toTopOf="@id/diary_back_iv" />
+
             <ImageView
                 android:id="@+id/diary_delete_iv"
                 android:layout_width="40dp"

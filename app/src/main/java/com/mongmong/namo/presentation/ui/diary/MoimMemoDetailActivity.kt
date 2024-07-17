@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,7 +39,7 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
         moimScheduleId = intent.getLongExtra("moimScheduleId", 0L)
 
         initObserve()
-        initClickListener()
+        onClickListener()
     }
 
     override fun onResume() {
@@ -46,10 +47,24 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
         viewModel.getMoimMemo(moimScheduleId)
     }
 
-    private fun initClickListener() {
+    private fun onClickListener() {
         with(binding) {
+            // 뒤로 가기
+            onBackPressedDispatcher.addCallback(this@MoimMemoDetailActivity, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (this@MoimMemoDetailActivity.viewModel.isMoimDiaryChanged()) {
+                        showBackDialog()
+                    } else finish()
+                }
+            })
+            diaryBackIv.setOnClickListener {
+                if (this@MoimMemoDetailActivity.viewModel.isMoimDiaryChanged()) {
+                    showBackDialog()
+                } else finish()
+            }
+
             diaryDeleteIv.setOnClickListener { showDeleteDialog() } // 삭제
-            diaryBackIv.setOnClickListener { finish() } // 뒤로 가기
+
             groupDiaryDetailLy.setOnClickListener {// 모임 기록으로 이동
                 startActivity(
                     Intent(this@MoimMemoDetailActivity, MoimDiaryActivity::class.java)
@@ -109,8 +124,20 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
         dialog.show(supportFragmentManager, "ConfirmDialog")
     }
 
+    private fun showBackDialog() {
+        val title = "편집한 내용이 저장되지 않습니다."
+        val content = "정말 나가시겠어요?"
+
+        val dialog = ConfirmDialog(this, title, content, "확인", MoimDiaryActivity.BACK_BUTTON_ACTION)
+        dialog.isCancelable = false
+        dialog.show(supportFragmentManager, "")
+    }
+
     override fun onClickYesButton(id: Int) {
-        viewModel.deleteMoimMemo(moimScheduleId)
+        when(id) {
+            PersonalDetailActivity.DELETE_BUTTON_ACTION -> viewModel.deleteMoimMemo(moimScheduleId) // 삭제
+            PersonalDetailActivity.BACK_BUTTON_ACTION -> finish() // 뒤로가기
+        }
     }
 
     /** editText 외 터치 시 키보드 내리는 이벤트 **/

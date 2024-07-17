@@ -62,6 +62,7 @@ class DiaryDetailViewModel @Inject constructor(
 
     private var initialDiaryContent: String? = null
     private var initialImgList: List<String> = emptyList()
+    private var initialMoimDiaryContent: String? = null
 
     /** 개인 기록 **/
     // 개인 기록 개별 조회
@@ -80,6 +81,7 @@ class DiaryDetailViewModel @Inject constructor(
             initDiaryState(result.contents, result.urls) // 초기 상태 저장
         }
     }
+
     // 개인 기록 추가시 데이터 초기화
     fun setNewPersonalDiary(schedule: Schedule) {
         _schedule.value = schedule
@@ -105,6 +107,7 @@ class DiaryDetailViewModel @Inject constructor(
             }
         }
     }
+
     // 개인 기록 수정
     fun editPersonalDiary() {
         viewModelScope.launch {
@@ -120,6 +123,7 @@ class DiaryDetailViewModel @Inject constructor(
             }
         }
     }
+
     // 개인 기록 삭제
     fun deletePersonalDiary() {
         viewModelScope.launch {
@@ -147,17 +151,20 @@ class DiaryDetailViewModel @Inject constructor(
     // 모임 메모 조회
     fun getMoimMemo(scheduleId: Long) {
         viewModelScope.launch {
-            _moimDiary.postValue(repository.getMoimMemo(scheduleId))
+            val moimMemo = repository.getMoimMemo(scheduleId)
+            _moimDiary.postValue(moimMemo)
+            initMoimDiaryState(moimMemo.content) // 초기 상태 저장
         }
     }
 
     fun isEditMode() {
-        if(isInitialLoad) {
+        if (isInitialLoad) {
             _isEdit.value = !_moimDiary.value?.content.isNullOrEmpty()
             isInitialLoad = false
             Log.d("getMoimMemo", "${_isEdit.value} , $isInitialLoad")
         }
     }
+
     // 모임 메모 수정
     fun patchMoimMemo(scheduleId: Long) {
         viewModelScope.launch {
@@ -171,6 +178,16 @@ class DiaryDetailViewModel @Inject constructor(
             Log.d("MoimDiaryViewModel deleteMoimMemo", "$scheduleId")
             _deleteMemoResult.value = repository.deleteMoimMemo(scheduleId)
         }
+    }
+
+    // 초기 상태 저장 메서드
+    private fun initMoimDiaryState(content: String?) {
+        initialMoimDiaryContent = content
+    }
+
+    // 변경 여부 확인 메서드
+    fun isMoimDiaryChanged(): Boolean {
+        return _moimDiary.value?.content != initialMoimDiaryContent
     }
 
     /** 카테고리 id로 카테고리 조회 */

@@ -106,7 +106,7 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
         }
 
         //  장소 추가 버튼 클릭리스너
-        binding.groudPlaceAddTv.setOnClickListener {
+        binding.moimActivityAddLy.setOnClickListener {
             if (viewModel.activities.value?.size ?: 0 >= 3)
                 Toast.makeText(this, "장소 추가는 3개까지 가능합니다", Toast.LENGTH_SHORT).show()
             else {
@@ -239,14 +239,11 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
         dialog.show(this.supportFragmentManager, "ConfirmDialog")
     }
 
-    /** 뒤로가기 확인 다이얼로그 */
     private fun showBackDialog() {
         val title = "편집한 내용이 저장되지 않습니다."
         val content = "정말 나가시겠어요?"
 
-        val dialog = ConfirmDialog(this, title, content, "확인",
-            PersonalDetailActivity.BACK_BUTTON_ACTION
-        )
+        val dialog = ConfirmDialog(this, title, content, "확인", BACK_BUTTON_ACTION)
         dialog.isCancelable = false
         dialog.show(supportFragmentManager, "")
     }
