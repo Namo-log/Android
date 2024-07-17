@@ -80,7 +80,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         setResultMember()
         initClickListeners()
         initObservers()
-        setEditTextChangeListener()
+        setEditTextChangedListener()
     }
 
     override fun onResume() {
@@ -117,9 +117,15 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         binding.scheduleContainerLayout.startAnimation(slideAnimation)
     }
 
-    private fun setEditTextChangeListener() {
-        val watcher = MyEditTextWatcher()
-        binding.dialogGroupScheduleTitleEt.addTextChangedListener(watcher)
+    private fun setEditTextChangedListener() {
+        binding.dialogGroupScheduleTitleEt.addTextChangedListener(object: TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
+            override fun afterTextChanged(p0: Editable?) {
+                // 일정 제목 업데이트
+                viewModel.updateTitle(binding.dialogGroupScheduleTitleEt.text.toString())
+            }
+        })
     }
 
     private fun initClickListeners() {
@@ -133,22 +139,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
             getMemberResult.launch(intent)
         }
 
-        /** time & date 클릭 */
-        binding.dialogGroupScheduleStartDateTv.setOnClickListener {
-            setPicker(binding.dialogGroupScheduleStartDateTv)
-        }
-        // 종료일 - 날짜
-        binding.dialogGroupScheduleEndDateTv.setOnClickListener {
-            setPicker(binding.dialogGroupScheduleEndDateTv)
-        }
-        // 시작일 - 시간
-        binding.dialogGroupScheduleStartTimeTv.setOnClickListener {
-            setPicker(binding.dialogGroupScheduleStartTimeTv)
-        }
-        // 종료일 - 시간
-        binding.dialogGroupScheduleEndTimeTv.setOnClickListener {
-            setPicker(binding.dialogGroupScheduleEndTimeTv)
-        }
+        initPickerClickListeners()
 
         // 장소 클릭
         binding.dialogGroupSchedulePlaceLayout.setOnClickListener {
@@ -216,9 +207,6 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
     private fun initObservers() {
         viewModel.schedule.observe(this) { schedule ->
             setContent()
-            if (schedule != null) {
-                initPickerClickListeners()
-            }
         }
     }
 
@@ -406,16 +394,6 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         kakaoMap?.moveCamera(CameraUpdateFactory.newCenterPosition(latLng, MapActivity.ZOOM_LEVEL))
         // 마커 추가
         kakaoMap?.labelManager?.layer?.addLabel(LabelOptions.from(latLng).setStyles(MapActivity.setPinStyle(false)))
-    }
-
-    inner class MyEditTextWatcher: TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { // 값 변경 시 실행되는 함수
-            // 일정 제목 업데이트
-            viewModel.updateTitle(binding.dialogGroupScheduleTitleEt.text.toString())
-        }
-        override fun afterTextChanged(s: Editable?) { }
     }
 
     private fun showDialog() {

@@ -171,4 +171,22 @@
         <item name="android:textSize">14sp</item>
         <item name="android:visibility">gone</item>
     </style>
+
+    <style name="schedule_date_picker">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:calendarTextColor">@color/black</item>
+        <item name="android:calendarViewShown">false</item>
+        <item name="android:datePickerMode">spinner</item>
+        <item name="android:theme">@style/MyDatePicker</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="schedule_time_picker">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:theme">@style/MyDatePicker</item>
+        <item name="android:timePickerMode">spinner</item>
+        <item name="android:visibility">gone</item>
+    </style>
 </resources>

@@ -275,23 +275,16 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <!-- MotionLayout -->
                 <androidx.constraintlayout.motion.widget.MotionLayout
                     android:id="@+id/dialog_group_schedule_start_date_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layoutDescription="@xml/activity_group_schedule_start_date_layout_scene">
-
                     <DatePicker
                         android:id="@+id/dialog_group_schedule_start_date_dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:calendarTextColor="@color/black"
-                        android:calendarViewShown="false"
-                        android:datePickerMode="spinner"
-                        android:theme="@style/MyDatePicker"
-                        android:visibility="gone"
-                        app:layout_constraintTop_toTopOf="parent" />
-
+                        app:layout_constraintTop_toTopOf="parent"
+                        style="@style/schedule_date_picker" />
                 </androidx.constraintlayout.motion.widget.MotionLayout>
 
                 <androidx.constraintlayout.motion.widget.MotionLayout
@@ -299,18 +292,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layoutDescription="@xml/activity_group_schedule_end_date_layout_scene">
-
                     <DatePicker
                         android:id="@+id/dialog_group_schedule_end_date_dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:calendarTextColor="@color/black"
-                        android:calendarViewShown="false"
-                        android:datePickerMode="spinner"
-                        android:theme="@style/MyDatePicker"
-                        android:visibility="gone"
-                        app:layout_constraintTop_toTopOf="parent" />
-
+                        app:layout_constraintTop_toTopOf="parent"
+                        style="@style/schedule_date_picker"/>
                 </androidx.constraintlayout.motion.widget.MotionLayout>
 
                 <androidx.constraintlayout.motion.widget.MotionLayout
@@ -318,16 +303,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layoutDescription="@xml/activity_group_schedule_start_time_layout_scene">
-
                     <TimePicker
                         android:id="@+id/dialog_group_schedule_start_time_tp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:theme="@style/MyDatePicker"
-                        android:timePickerMode="spinner"
-                        android:visibility="gone"
-                        app:layout_constraintTop_toTopOf="parent" />
-
+                        app:layout_constraintTop_toTopOf="parent"
+                        style="@style/schedule_time_picker"/>
                 </androidx.constraintlayout.motion.widget.MotionLayout>
 
                 <androidx.constraintlayout.motion.widget.MotionLayout
@@ -335,16 +314,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layoutDescription="@xml/activity_group_schedule_end_time_layout_scene">
-
                     <TimePicker
                         android:id="@+id/dialog_group_schedule_end_time_tp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:theme="@style/MyDatePicker"
-                        android:timePickerMode="spinner"
-                        android:visibility="gone"
-                        app:layout_constraintTop_toTopOf="parent" />
-
+                        app:layout_constraintTop_toTopOf="parent"
+                        style="@style/schedule_time_picker" />
                 </androidx.constraintlayout.motion.widget.MotionLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout

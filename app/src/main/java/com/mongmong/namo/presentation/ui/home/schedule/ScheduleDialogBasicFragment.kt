@@ -9,14 +9,12 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputType
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.DatePicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -54,7 +52,6 @@ class ScheduleDialogBasicFragment : Fragment() {
     private val args : ScheduleDialogBasicFragmentArgs by navArgs()
 
     private var prevClicked : TextView? = null
-    private var selectedDate = DateTime(System.currentTimeMillis())
 
     private var kakaoMap: KakaoMap? = null
     private lateinit var mapView: MapView
@@ -79,7 +76,7 @@ class ScheduleDialogBasicFragment : Fragment() {
         initMapView()
         initClickListeners()
         setInit()
-        setEditTextChangeListener()
+        setEditTextChangedListener()
 
         return binding.root
     }
@@ -129,16 +126,7 @@ class ScheduleDialogBasicFragment : Fragment() {
         // 정보 세팅
         if (args.schedule != null) {
             viewModel.setSchedule(args.schedule)
-            // 텍스트 변경
-            if (args.schedule?.scheduleId != 0L) {
-                binding.dialogScheduleHeaderTv.text = "일정 편집"
-            }
-            if (args.schedule?.moimSchedule == true) {
-                binding.dialogScheduleHeaderTv.text = "모임 일정 편집"
-                inactivateMoimScheduleEdit() // 비활성화 처리
-            }
         } else {
-            binding.dialogScheduleHeaderTv.text = "새 일정"
             viewModel.setSchedule(
                 Schedule(
                     startLong = PickerConverter.getDefaultDate(DateTime(args.nowDay), true),
@@ -149,15 +137,21 @@ class ScheduleDialogBasicFragment : Fragment() {
         Log.d("ScheduleDialogFrag", "schedule: ${viewModel.schedule.value}")
     }
 
-    private fun setEditTextChangeListener() {
-        val watcher = MyEditTextWatcher()
-        binding.dialogScheduleTitleEt.addTextChangedListener(watcher)
+    private fun setEditTextChangedListener() {
+        binding.dialogScheduleTitleEt.addTextChangedListener(object: TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
+            override fun afterTextChanged(p0: Editable?) {
+                // 일정 제목 업데이트
+                viewModel.updateTitle(binding.dialogScheduleTitleEt.text.toString())
+            }
+        })
     }
 
     private fun initClickListeners() {
         // 카테고리 클릭
         binding.dialogScheduleCategoryLayout.setOnClickListener {
-            hidekeyboard()
+            hideKeyBoard()
 
             val action = viewModel.schedule.value?.let { schedule ->
                 ScheduleDialogBasicFragmentDirections.actionScheduleDialogBasicFragmentToScheduleDialogCategoryFragment(
@@ -171,13 +165,13 @@ class ScheduleDialogBasicFragment : Fragment() {
 
         // 장소 클릭
         binding.dialogSchedulePlaceLayout.setOnClickListener {
-            hidekeyboard()
+            hideKeyBoard()
             getLocationPermission()
         }
 
         // 길찾기 버튼
         binding.dialogSchedulePlaceKakaoBtn.setOnClickListener {
-            hidekeyboard()
+            hideKeyBoard()
 
 //            val url = "kakaomap://route?sp=&ep=${place.y},${place.x}&by=PUBLICTRANSIT"
 //            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -202,11 +196,9 @@ class ScheduleDialogBasicFragment : Fragment() {
             // 개인 일정일 경우
             if (viewModel.isCreateMode()) {
                 // 일정 생성
-                Log.e("ScheduleDialogFrag", "생성 모드")
                 insertData()
             } else {
                 // 일정 수정
-                Log.e("ScheduleDialogFrag", "수정 모드")
                 updateData()
             }
         }
@@ -233,23 +225,19 @@ class ScheduleDialogBasicFragment : Fragment() {
         }
         // 시작일 - 날짜
         binding.dialogScheduleStartDateTv.setOnClickListener {
-            hidekeyboard()
-            showPicker(binding.dialogScheduleStartDateTv, binding.dialogScheduleDateLayout)
+            showPicker(it as TextView)
         }
         // 종료일 - 날짜
         binding.dialogScheduleEndDateTv.setOnClickListener {
-            hidekeyboard()
-            showPicker(binding.dialogScheduleEndDateTv, binding.dialogScheduleDateLayout)
+            showPicker(it as TextView)
         }
         // 시작일 - 시간
         binding.dialogScheduleStartTimeTv.setOnClickListener {
-            hidekeyboard()
-            showPicker(binding.dialogScheduleStartTimeTv, binding.dialogScheduleStartTimeLayout)
+            showPicker(it as TextView)
         }
         // 종료일 - 시간
         binding.dialogScheduleEndTimeTv.setOnClickListener {
-            hidekeyboard()
-            showPicker(binding.dialogScheduleEndTimeTv, binding.dialogScheduleEndTimeLayout)
+            showPicker(it as TextView)
         }
     }
 
@@ -265,31 +253,6 @@ class ScheduleDialogBasicFragment : Fragment() {
             return false
         }
         return true
-    }
-
-    private fun setTextViewsInactive(vararg textViews: TextView) {
-        textViews.forEach {
-            // 클릭 비활성화
-            it.inputType = InputType.TYPE_NULL
-            it.setOnClickListener(null)
-            // 색상 비활성화
-            it.setTextColor(ContextCompat.getColor(requireContext(), R.color.disableTextGray))
-        }
-    }
-
-    private fun inactivateMoimScheduleEdit() {
-        binding.apply {
-            setTextViewsInactive(
-                dialogScheduleTitleEt,
-                dialogScheduleStartDateTv,
-                dialogScheduleEndDateTv,
-                dialogScheduleStartTimeTv,
-                dialogScheduleEndTimeTv,
-                dialogSchedulePlaceNameTv
-            )
-            dialogSchedulePlaceLayout.setOnClickListener { null }
-            dialogSchedulePlaceBtn.visibility = View.GONE
-        }
     }
 
     /** 일정 추가 **/
@@ -321,7 +284,7 @@ class ScheduleDialogBasicFragment : Fragment() {
         viewModel.editMoimScheduleCategory()
     }
 
-    private fun hidekeyboard() {
+    private fun hideKeyBoard() {
         val inputManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(binding.dialogScheduleTitleEt.windowToken, 0)
     }
@@ -408,92 +371,57 @@ class ScheduleDialogBasicFragment : Fragment() {
         setMapContent()
     }
 
-
-    // Picker Zone
-    private val startDatePickerListener = DatePicker.OnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
-        selectedDate = setSelectedDate(year, monthOfYear, dayOfMonth, viewModel.getDateTime()?.first!!)
-        Log.d("ScheduleDialogFrag", "selectedDate(start): $selectedDate")
-        viewModel.updateTime(selectedDate, null)
-    }
-    private val endDatePickerListener = DatePicker.OnDateChangedListener { _, year, monthOfYear, dayOfMonth ->
-        selectedDate = setSelectedDate(year, monthOfYear, dayOfMonth, viewModel.getDateTime()?.second!!)
-        Log.d("ScheduleDialogFrag", "selectedDate(end): $selectedDate")
-        viewModel.updateTime(null, selectedDate)
-    }
-
     private fun initPicker(){
         val dateTimePair = viewModel.getDateTime() ?: return
         Log.d("INIT_PICKER_TEXT", "start: ${dateTimePair.first}\nend: ${dateTimePair.second}")
-        initTimePicker(dateTimePair.first, dateTimePair.second)
-    }
-
-    private fun initTimePicker(startDateTime: DateTime, endDateTime: DateTime) {
         binding.dialogScheduleStartTimeTp.apply { // 시작 시간
-            hour = startDateTime.hourOfDay
-            minute = startDateTime.minuteOfHour
+            hour = dateTimePair.first.hourOfDay
+            minute = dateTimePair.first.minuteOfHour
         }
         binding.dialogScheduleEndTimeTp.apply { // 종료 시간
-            hour = endDateTime.hourOfDay
-            minute = endDateTime.minuteOfHour
+            hour = dateTimePair.second.hourOfDay
+            minute = dateTimePair.second.minuteOfHour
+        }
+        binding.dialogScheduleStartDateDp.init(dateTimePair.first.year, dateTimePair.first.monthOfYear - 1, dateTimePair.first.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
+            viewModel.updateTime(dateTimePair.first.withDate(year, monthOfYear + 1, dayOfMonth), null)
+        }
+        binding.dialogScheduleEndDateDp.init(dateTimePair.second.year, dateTimePair.second.monthOfYear - 1, dateTimePair.second.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
+            viewModel.updateTime(null, dateTimePair.second.withDate(year, monthOfYear + 1, dayOfMonth))
         }
     }
 
-    private fun showPicker(clicked : TextView, pickerLayout : MotionLayout) {
-        togglePicker(binding.dialogScheduleStartTimeLayout, false)
-        togglePicker(binding.dialogScheduleEndTimeLayout, false)
+    private fun showPicker(clicked : TextView) {
+        hideKeyBoard()
+        prevClicked = if (prevClicked != clicked) {
+            prevClicked?.setTextColor(resources.getColor(R.color.textGray))
+            clicked.setTextColor(resources.getColor(R.color.mainOrange))
+            togglePicker(prevClicked, false)
+            togglePicker(clicked, true)
+            clicked // prevClicked 값을 현재 clicked로 업데이트
+        } else {
+            clicked.setTextColor(resources.getColor(R.color.textGray))
+            togglePicker(clicked, false)
+            null
+        }
+    }
 
-        binding.dialogScheduleStartDateTv.setTextColor(resources.getColor(R.color.textGray))
-        binding.dialogScheduleEndDateTv.setTextColor(resources.getColor(R.color.textGray))
-        binding.dialogScheduleStartTimeTv.setTextColor(resources.getColor(R.color.textGray))
-        binding.dialogScheduleEndTimeTv.setTextColor(resources.getColor(R.color.textGray))
-
-        val dateTimePair = viewModel.getDateTime() ?: return
-
-        if (prevClicked != clicked) {
-            togglePicker(pickerLayout, true)
-            prevClicked = clicked
-
-            when (clicked) {
-                binding.dialogScheduleStartDateTv -> { // 시작일
-                    togglePicker(binding.dialogScheduleDateLayout, true)
-                    binding.dialogScheduleDateDp.init(
-                        dateTimePair.first.year,
-                        dateTimePair.first.monthOfYear - 1,
-                        dateTimePair.first.dayOfMonth,
-                        startDatePickerListener
-                    )
-                }
-                binding.dialogScheduleEndDateTv -> { // 종료일
-                    togglePicker(binding.dialogScheduleDateLayout, true)
-                    binding.dialogScheduleDateDp.init(
-                        dateTimePair.second.year,
-                        dateTimePair.second.monthOfYear - 1,
-                        dateTimePair.second.dayOfMonth,
-                        endDatePickerListener
-                    )
-                }
-                else -> {
-                    togglePicker(binding.dialogScheduleDateLayout, false)
-                }
+    private fun togglePicker(pickerText: TextView?, open: Boolean) {
+        pickerText?.let { pickerTextView ->
+            val picker: MotionLayout = when (pickerTextView) {
+                binding.dialogScheduleStartDateTv -> binding.dialogScheduleStartDateLayout
+                binding.dialogScheduleEndDateTv -> binding.dialogScheduleEndDateLayout
+                binding.dialogScheduleStartTimeTv -> binding.dialogScheduleStartTimeLayout
+                binding.dialogScheduleEndTimeTv -> binding.dialogScheduleEndTimeLayout
+                else -> binding.dialogScheduleStartTimeLayout
             }
 
-            clicked.setTextColor(resources.getColor(R.color.mainOrange))
-
-        } else {
-            togglePicker(binding.dialogScheduleDateLayout, false)
-            prevClicked = null
-        }
-    }
-
-    private fun togglePicker(pickerLayout: MotionLayout, open : Boolean) {
-        val isClosed = pickerLayout.currentState == pickerLayout.startState
-
-        if (isClosed && open) {
-            pickerLayout.transitionToEnd()
-        } else if (!isClosed && !open) {
-            pickerLayout.transitionToStart()
-        } else {
-            return
+            picker.let {
+                if (open) {
+                    it.transitionToEnd()
+                } else {
+                    it.transitionToStart()
+                }
+            }
         }
     }
 
@@ -519,16 +447,6 @@ class ScheduleDialogBasicFragment : Fragment() {
                 requireActivity().finish()
             }
         }
-    }
-
-    inner class MyEditTextWatcher: TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { // 값 변경 시 실행되는 함수
-            // 일정 제목 업데이트
-            viewModel.updateTitle(binding.dialogScheduleTitleEt.text.toString())
-        }
-        override fun afterTextChanged(s: Editable?) { }
     }
 
     companion object {
