@@ -127,7 +127,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         binding.dialogGroupScheduleMemberTv.setOnClickListener {
             val intent = Intent(this, GroupScheduleMemberActivity::class.java)
             intent.apply {
-                putExtra("members", MoimSchduleMemberList(viewModel.getMembers()))
+                putExtra("members", MoimSchduleMemberList(viewModel.schedule.value!!.members))
                 putExtra("selectedIds", viewModel.getSelectedMemberId().toLongArray())
             }
             getMemberResult.launch(intent)
@@ -206,7 +206,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private fun showPicker(clicked: TextView) {
         hideKeyboard()
-        val prevClickedPicker = viewModel.getPrevClickedPicker()
+        val prevClickedPicker = viewModel.prevClickedPicker.value
         if (prevClickedPicker != clicked) {
             prevClickedPicker?.setTextColor(ContextCompat.getColor(this, R.color.textGray))
             clicked.setTextColor(ContextCompat.getColor(this, R.color.mainOrange))

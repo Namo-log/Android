@@ -36,7 +36,7 @@ class MoimScheduleViewModel @Inject constructor(
     val groupScheduleList: LiveData<List<MoimScheduleBody>?> = _groupScheduleList
 
     private val _prevClickedPicker = MutableLiveData<TextView?>()
-    private var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
+    var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
 
     /** 그룹의 모든 일정 조회 */
     fun getGroupAllSchedules(groupId: Long) {
@@ -88,7 +88,7 @@ class MoimScheduleViewModel @Inject constructor(
     }
 
     private fun setDefaultGroupMembers() {
-        _schedule.value!!.users = _group.value!!.groupMembers
+        _schedule.value!!.members = _group.value!!.groupMembers
     }
 
     fun updateTitle(title: String) {
@@ -107,7 +107,7 @@ class MoimScheduleViewModel @Inject constructor(
 
     fun updateMembers(selectedMember: MoimSchduleMemberList) {
         _schedule.value = _schedule.value!!.copy(
-            users = selectedMember.memberList
+            members = selectedMember.memberList
         )
     }
 
@@ -125,14 +125,10 @@ class MoimScheduleViewModel @Inject constructor(
         _prevClickedPicker.value = clicked
     }
 
-    fun getPrevClickedPicker() = prevClickedPicker.value
-
 
     fun isCreateMode() = schedule.value!!.moimScheduleId == 0L
 
-    fun getMembers() = schedule.value!!.users
-
-    fun getSelectedMemberId() = schedule.value!!.users.map { it.userId }
+    fun getSelectedMemberId() = schedule.value!!.members.map { it.userId }
 
     fun getDateTime(): Pair<DateTime, DateTime>? {
         if (_schedule.value != null) {

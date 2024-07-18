@@ -48,7 +48,7 @@ class MoimDiaryViewModel @Inject constructor(
             name = schedule.name,
             startDate = schedule.startLong,
             locationName = schedule.placeName,
-            users = convertToGroupMembers(schedule.users),
+            users = convertToGroupMembers(schedule.members),
             moimActivities = arrayListOf(MoimActivity(0L, "", 0L, arrayListOf(), arrayListOf()))
         )
         _moimDiary.value = newDiary

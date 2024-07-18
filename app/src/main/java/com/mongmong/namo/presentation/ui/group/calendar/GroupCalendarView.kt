@@ -143,7 +143,7 @@ class GroupCalendarView(context: Context, attrs: AttributeSet) :
     }
 
     private fun setBgPaintColor(event: MoimScheduleBody) {
-        val paletteId = if (event.curMoimSchedule) 4 else event.users[0].color
+        val paletteId = if (event.curMoimSchedule) 4 else event.members[0].color
         bgPaint.color = Color.parseColor(CategoryColor.getAllColors()[paletteId - 1])
     }
 }

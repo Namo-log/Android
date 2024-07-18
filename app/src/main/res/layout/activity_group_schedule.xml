@@ -156,7 +156,7 @@
                             android:id="@+id/dialog_group_schedule_member_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{StringConverter.getMembersText(viewModel.schedule.users)}"
+                            android:text="@{StringConverter.getMembersText(viewModel.schedule.members)}"
                             android:textColor="@color/black"
                             android:textSize="15sp"
                             tools:text="코코아, 앨리, 지니"/>

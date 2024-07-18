@@ -204,11 +204,6 @@ class PersonalScheduleViewModel @Inject constructor(
     fun updatePrevClickedPicker(clicked: TextView?) {
         _prevClickedPicker.value = clicked
     }
-
-    fun getPrevClickedPicker() = prevClickedPicker.value
-
-    fun getScheduleCategoryId() = schedule.value!!.categoryId
-
     fun isMoimSchedule() = schedule.value!!.moimSchedule
 
     fun isCreateMode() = (schedule.value!!.scheduleId == 0L)

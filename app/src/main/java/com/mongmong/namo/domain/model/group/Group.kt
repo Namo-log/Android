@@ -56,7 +56,7 @@ data class MoimScheduleBody(
     @SerializedName("x") var placeX : Double = 0.0,
     @SerializedName("y") var placeY : Double = 0.0,
     @SerializedName("locationName") var placeName : String = "",
-    @SerializedName("users") var users : List<GroupMember> = listOf(),
+    @SerializedName("users") var members : List<GroupMember> = listOf(),
     @SerializedName("groupId") var groupId : Long = 0L,
     @SerializedName("moimScheduleId") var moimScheduleId : Long = 0L,
     @SerializedName("hasDiaryPlace") var hasDiaryPlace : Boolean = false,
@@ -71,7 +71,7 @@ data class MoimScheduleBody(
             this.placeX,
             this.placeY,
             this.placeName,
-            this.users.map { user -> user.userId } as ArrayList<Long>,
+            this.members.map { user -> user.userId } as ArrayList<Long>,
         )
     }
 }

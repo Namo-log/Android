@@ -30,7 +30,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.R
-import com.mongmong.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -39,6 +38,7 @@ import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.mongmong.namo.presentation.utils.PickerConverter
 import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedTime
 import dagger.hilt.android.AndroidEntryPoint
@@ -386,7 +386,7 @@ class ScheduleDialogBasicFragment : Fragment() {
 
     private fun showPicker(clicked: TextView) {
         hideKeyBoard()
-        val prevClickedPicker = viewModel.getPrevClickedPicker()
+        val prevClickedPicker = viewModel.prevClickedPicker.value
         if (prevClickedPicker != clicked) {
             prevClickedPicker?.setTextColor(ContextCompat.getColor(requireContext(), R.color.textGray))
             clicked.setTextColor(ContextCompat.getColor(requireContext(), R.color.mainOrange))
@@ -434,7 +434,7 @@ class ScheduleDialogBasicFragment : Fragment() {
         }
 
         viewModel.category.observe(requireActivity()) { category ->
-            if (category.categoryId != 0L && viewModel.getScheduleCategoryId() == 0L) viewModel.setCategory()
+            if (category.categoryId != 0L && viewModel.schedule.value?.categoryId == 0L) viewModel.setCategory()
         }
 
         viewModel.isComplete.observe(requireActivity()) { isComplete ->
