@@ -212,20 +212,20 @@ class PersonalScheduleViewModel @Inject constructor(
         _prevClickedPicker.value = clicked
     }
 
-    fun getPrevClickedPicker() = _prevClickedPicker.value
+    fun getPrevClickedPicker() = prevClickedPicker.value
 
-    fun getScheduleCategoryId() = _schedule.value!!.categoryId
+    fun getScheduleCategoryId() = schedule.value!!.categoryId
 
-    fun isMoimSchedule() = _schedule.value!!.moimSchedule
+    fun isMoimSchedule() = schedule.value!!.moimSchedule
 
-    fun isCreateMode() = (_schedule.value!!.scheduleId == 0L)
+    fun isCreateMode() = (schedule.value!!.scheduleId == 0L)
 
     fun getDateTime(): Pair<DateTime, DateTime>? {
         Log.d("ScheduleViewModel", "getDateTime()")
         if (_schedule.value != null) {
             return Pair(
-                PickerConverter.parseLongToDateTime(_schedule.value!!.startLong),
-                PickerConverter.parseLongToDateTime(_schedule.value!!.endLong)
+                PickerConverter.parseLongToDateTime(schedule.value!!.startLong),
+                PickerConverter.parseLongToDateTime(schedule.value!!.endLong)
             )
         }
         return null
@@ -236,8 +236,8 @@ class PersonalScheduleViewModel @Inject constructor(
         if (_schedule.value != null) {
             if (_schedule.value!!.placeX == 0.0 && _schedule.value!!.placeY == 0.0) return null
             return Pair(
-                _schedule.value!!.placeName,
-                LatLng.from(_schedule.value!!.placeY, _schedule.value!!.placeX)
+                schedule.value!!.placeName,
+                LatLng.from(schedule.value!!.placeY, schedule.value!!.placeX)
             )
         }
         return null
@@ -245,6 +245,6 @@ class PersonalScheduleViewModel @Inject constructor(
 
     fun isInvalidDate(): Boolean {
         // 시작일 > 종료일
-        return _schedule.value!!.startLong > _schedule.value!!.endLong
+        return schedule.value!!.startLong > schedule.value!!.endLong
     }
 }

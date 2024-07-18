@@ -36,7 +36,7 @@ class MoimScheduleViewModel @Inject constructor(
     val groupScheduleList: LiveData<List<MoimScheduleBody>?> = _groupScheduleList
 
     private val _prevClickedPicker = MutableLiveData<TextView?>()
-    var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
+    private var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
 
     /** 그룹의 모든 일정 조회 */
     fun getGroupAllSchedules(groupId: Long) {
@@ -128,21 +128,21 @@ class MoimScheduleViewModel @Inject constructor(
         _prevClickedPicker.value = clicked
     }
 
-    fun getPrevClickedPicker() = _prevClickedPicker.value
+    fun getPrevClickedPicker() = prevClickedPicker.value
 
 
-    fun isCreateMode() = _schedule.value!!.moimScheduleId == 0L
+    fun isCreateMode() = schedule.value!!.moimScheduleId == 0L
 
-    fun getMembers() = _schedule.value!!.users
+    fun getMembers() = schedule.value!!.users
 
-    fun getSelectedMemberId() = _schedule.value!!.users.map { it.userId }
+    fun getSelectedMemberId() = schedule.value!!.users.map { it.userId }
 
     fun getDateTime(): Pair<DateTime, DateTime>? {
         Log.d("ScheduleViewModel", "getDateTime()")
         if (_schedule.value != null) {
             return Pair(
-                PickerConverter.parseLongToDateTime(_schedule.value!!.startLong),
-                PickerConverter.parseLongToDateTime(_schedule.value!!.endLong)
+                PickerConverter.parseLongToDateTime(schedule.value!!.startLong),
+                PickerConverter.parseLongToDateTime(schedule.value!!.endLong)
             )
         }
         return null
@@ -153,8 +153,8 @@ class MoimScheduleViewModel @Inject constructor(
         if (_schedule.value != null) {
             if (_schedule.value!!.placeX == 0.0 && _schedule.value!!.placeY == 0.0) return null
             return Pair(
-                _schedule.value!!.placeName,
-                LatLng.from(_schedule.value!!.placeY, _schedule.value!!.placeX)
+                schedule.value!!.placeName,
+                LatLng.from(schedule.value!!.placeY, schedule.value!!.placeX)
             )
         }
         return null
