@@ -9,7 +9,7 @@
         motion:duration="200">
        <KeyFrameSet>
            <KeyAttribute
-               motion:motionTarget="@+id/dialog_schedule_date_dp"
+               motion:motionTarget="@+id/dialog_schedule_start_date_dp"
                motion:framePosition="0"
                android:alpha="0.5" />
        </KeyFrameSet>
@@ -17,7 +17,7 @@
 
     <ConstraintSet android:id="@+id/start">
         <Constraint
-            android:id="@+id/dialog_schedule_date_dp"
+            android:id="@+id/dialog_schedule_start_date_dp"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:visibility="invisible"
@@ -26,7 +26,7 @@
 
     <ConstraintSet android:id="@+id/end">
         <Constraint
-            android:id="@+id/dialog_schedule_date_dp"
+            android:id="@+id/dialog_schedule_start_date_dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="visible"

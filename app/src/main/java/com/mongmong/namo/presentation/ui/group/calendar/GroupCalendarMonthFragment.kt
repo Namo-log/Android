@@ -209,7 +209,7 @@ class GroupCalendarMonthFragment : Fragment() {
 
         tempSchedule.clear()
         tempSchedule.addAll(scheduleList.filter { schedule ->
-            schedule.startDate <= todayEnd / 1000 && schedule.endDate >= todayStart / 1000
+            schedule.startLong <= todayEnd / 1000 && schedule.endLong >= todayStart / 1000
         })
 
         dailySchedules.clear()
@@ -245,7 +245,7 @@ class GroupCalendarMonthFragment : Fragment() {
         val monthStart = monthDayList[0].withTimeAtStartOfDay().millis / 1000
         val monthEnd = monthDayList[41].plusDays(1).withTimeAtStartOfDay().millis / 1000
         return scheduleList.filter { schedule ->
-            schedule.startDate <= monthEnd && schedule.endDate >= monthStart
+            schedule.startLong <= monthEnd && schedule.endLong >= monthStart
         }
     }
 

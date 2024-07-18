@@ -2,7 +2,6 @@ package com.mongmong.namo.presentation.ui.group.calendar
 
 import android.content.Context
 import android.graphics.*
-import android.text.TextUtils
 import android.util.AttributeSet
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.presentation.config.CategoryColor
@@ -27,8 +26,8 @@ class GroupCalendarView(context: Context, attrs: AttributeSet) :
 
     private fun drawDetailedSchedules(canvas: Canvas) {
         for (i in scheduleList.indices) {
-            val startIdx = days.indexOf(DateTime(scheduleList[i].startDate * 1000L).withTimeAtStartOfDay())
-            val endIdx = days.indexOf(DateTime(scheduleList[i].endDate * 1000L).withTimeAtStartOfDay())
+            val startIdx = days.indexOf(DateTime(scheduleList[i].startLong * 1000L).withTimeAtStartOfDay())
+            val endIdx = days.indexOf(DateTime(scheduleList[i].endLong * 1000L).withTimeAtStartOfDay())
 
             for (splitSchedule in splitWeek(startIdx, endIdx)) {
                 val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
@@ -46,8 +45,8 @@ class GroupCalendarView(context: Context, attrs: AttributeSet) :
 
     private fun drawCompactSchedules(canvas: Canvas) {
         for (i in scheduleList.indices) {
-            val startIdx = days.indexOf(DateTime(scheduleList[i].startDate * 1000L).withTimeAtStartOfDay())
-            val endIdx = days.indexOf(DateTime(scheduleList[i].endDate * 1000L).withTimeAtStartOfDay())
+            val startIdx = days.indexOf(DateTime(scheduleList[i].startLong * 1000L).withTimeAtStartOfDay())
+            val endIdx = days.indexOf(DateTime(scheduleList[i].endLong * 1000L).withTimeAtStartOfDay())
 
             for (splitSchedule in splitWeek(startIdx, endIdx)) {
                 val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
@@ -132,9 +131,9 @@ class GroupCalendarView(context: Context, attrs: AttributeSet) :
 
     fun setScheduleList(events: List<MoimScheduleBody>) {
         val sortedEvents = events.sortedWith(compareByDescending<MoimScheduleBody> {
-            DateTime(it.endDate * 1000L).millis - DateTime(it.startDate * 1000L).millis
+            DateTime(it.endLong * 1000L).millis - DateTime(it.startLong * 1000L).millis
         }.thenBy {
-            it.startDate
+            it.startLong
         })
 
         scheduleList.clear()
@@ -144,7 +143,7 @@ class GroupCalendarView(context: Context, attrs: AttributeSet) :
     }
 
     private fun setBgPaintColor(event: MoimScheduleBody) {
-        val paletteId = if (event.curMoimSchedule) 4 else event.users[0].color
+        val paletteId = if (event.curMoimSchedule) 4 else event.members[0].color
         bgPaint.color = Color.parseColor(CategoryColor.getAllColors()[paletteId - 1])
     }
 }
