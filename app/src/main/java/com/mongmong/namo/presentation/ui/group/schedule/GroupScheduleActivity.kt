@@ -388,7 +388,6 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
 
         // 지도 위치 조정
         val latLng = mapData.second
-        Log.d("ScheduleBasicFragment", latLng.toString())
         // 카메라를 마커의 위치로 이동
         kakaoMap?.moveCamera(CameraUpdateFactory.newCenterPosition(latLng, MapActivity.ZOOM_LEVEL))
         // 마커 추가

@@ -103,7 +103,6 @@ class MoimScheduleViewModel @Inject constructor(
             placeX = x,
             placeY = y
         )
-        Log.d("MoimScheduleViewModel", "updatePlace() - $placeName, $x, $y")
     }
 
     fun updateMembers(selectedMember: MoimSchduleMemberList) {
@@ -114,16 +113,11 @@ class MoimScheduleViewModel @Inject constructor(
 
     // 시간 변경
     fun updateTime(startDateTime: DateTime?, endDateTime: DateTime?) {
-        Log.d("MoimScheduleViewModel", "setTime()\nstart: $startDateTime\nend: $endDateTime")
         _schedule.value = _schedule.value?.copy(
             startLong = startDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
                 ?: _schedule.value!!.startLong,
             endLong = endDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
                 ?: _schedule.value!!.endLong
-        )
-        Log.d(
-            "MoimScheduleViewModel",
-            "startLong: ${_schedule.value!!.startLong}\nendLong: ${_schedule.value!!.endLong}"
         )
     }
 
@@ -141,7 +135,6 @@ class MoimScheduleViewModel @Inject constructor(
     fun getSelectedMemberId() = schedule.value!!.users.map { it.userId }
 
     fun getDateTime(): Pair<DateTime, DateTime>? {
-        Log.d("ScheduleViewModel", "getDateTime()")
         if (_schedule.value != null) {
             return Pair(
                 PickerConverter.parseLongToDateTime(schedule.value!!.startLong),
@@ -152,7 +145,6 @@ class MoimScheduleViewModel @Inject constructor(
     }
 
     fun getPlace(): Pair<String, LatLng>? {
-        Log.d("ScheduleViewModel", "getPlace()")
         if (_schedule.value != null) {
             if (_schedule.value!!.placeX == 0.0 && _schedule.value!!.placeY == 0.0) return null
             return Pair(

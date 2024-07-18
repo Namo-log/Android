@@ -137,28 +137,26 @@ class PersonalScheduleViewModel @Inject constructor(
     fun getCategories() {
         viewModelScope.launch {
             _categoryList.value = getCategoriesUseCase.invoke()
-            Log.d("ScheduleViewModel", "getCategories() - categoryList: ${categoryList.value}")
         }
     }
 
     /** 카테고리 id로 카테고리 조회 */
     fun findCategoryById() {
         viewModelScope.launch {
-            Log.d("ScheduleViewModel", "findCategoryById()")
             // 카테고리 찾기
             _category.value = schedule.value?.let { schedule ->
                 if (schedule.scheduleId == 0L && schedule.categoryId == 0L) { // 새 일정인 경우
-                    Log.d(
-                        "ScheduleViewModel",
-                        "findCategoryById() - categoryList:  ${_categoryList.value}"
-                    )
+//                    Log.d(
+//                        "ScheduleViewModel",
+//                        "findCategoryById() - categoryList:  ${_categoryList.value}"
+//                    )
                     _categoryList.value?.first()
                 } else {
                     findCategoryUseCase.invoke(schedule.categoryId, schedule.categoryId)
                 }
             }
             setCategory()
-            Log.e("ScheduleViewModel", "findCategoryById() - category: ${_category.value}")
+//            Log.e("ScheduleViewModel", "findCategoryById() - category: ${_category.value}")
         }
     }
 
@@ -187,16 +185,11 @@ class PersonalScheduleViewModel @Inject constructor(
 
     // 시간 변경
     fun updateTime(startDateTime: DateTime?, endDateTime: DateTime?) {
-        Log.d("ScheduleViewModel", "setTime()\nstart: $startDateTime\nend: $endDateTime")
         _schedule.value = _schedule.value?.copy(
             startLong = startDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
                 ?: _schedule.value!!.startLong,
             endLong = endDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
                 ?: _schedule.value!!.endLong
-        )
-        Log.d(
-            "ScheduleViewModel",
-            "startLong: ${_schedule.value!!.startLong}\nendLong: ${_schedule.value!!.endLong}"
         )
     }
 
@@ -206,7 +199,6 @@ class PersonalScheduleViewModel @Inject constructor(
             placeX = x,
             placeY = y
         )
-        Log.d("ScheduleViewModel", "updatePlace() - $placeName, $x, $y")
     }
 
     fun updatePrevClickedPicker(clicked: TextView?) {
@@ -222,7 +214,6 @@ class PersonalScheduleViewModel @Inject constructor(
     fun isCreateMode() = (schedule.value!!.scheduleId == 0L)
 
     fun getDateTime(): Pair<DateTime, DateTime>? {
-        Log.d("ScheduleViewModel", "getDateTime()")
         if (_schedule.value != null) {
             return Pair(
                 PickerConverter.parseLongToDateTime(schedule.value!!.startLong),
@@ -233,7 +224,6 @@ class PersonalScheduleViewModel @Inject constructor(
     }
 
     fun getPlace(): Pair<String, LatLng>? {
-        Log.d("ScheduleViewModel", "getPlace()")
         if (_schedule.value != null) {
             if (_schedule.value!!.placeX == 0.0 && _schedule.value!!.placeY == 0.0) return null
             return Pair(

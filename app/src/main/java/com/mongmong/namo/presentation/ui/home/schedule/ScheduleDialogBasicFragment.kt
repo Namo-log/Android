@@ -132,7 +132,6 @@ class ScheduleDialogBasicFragment : Fragment() {
                 )
             )
         }
-        Log.d("ScheduleDialogFrag", "schedule: ${viewModel.schedule.value}")
     }
 
     private fun setEditTextChangedListener() {
@@ -321,7 +320,6 @@ class ScheduleDialogBasicFragment : Fragment() {
 
         // 지도 위치 조정
         val latLng = mapData.second
-        Log.d("ScheduleBasicFragment", latLng.toString())
         // 카메라를 마커의 위치로 이동
         kakaoMap?.moveCamera(CameraUpdateFactory.newCenterPosition(latLng, MapActivity.ZOOM_LEVEL))
         // 마커 추가
@@ -371,7 +369,6 @@ class ScheduleDialogBasicFragment : Fragment() {
 
     private fun initPicker(){
         val dateTimePair = viewModel.getDateTime() ?: return
-        Log.d("INIT_PICKER_TEXT", "start: ${dateTimePair.first}\nend: ${dateTimePair.second}")
         binding.dialogScheduleStartTimeTp.apply { // 시작 시간
             hour = dateTimePair.first.hourOfDay
             minute = dateTimePair.first.minuteOfHour
