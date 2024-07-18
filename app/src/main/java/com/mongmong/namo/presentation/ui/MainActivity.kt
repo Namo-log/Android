@@ -159,9 +159,6 @@ class MainActivity : AppCompatActivity() {
         const val NOTIFICATION_PERMISSION_REQUEST_CODE= 777
 
         const val ORIGIN_ACTIVITY_INTENT_KEY: String = "original_activity"
-        const val PLACE_NAME_INTENT_KEY: String = "place_name"
-        const val PLACE_X_INTENT_KEY: String = "place_x"
-        const val PLACE_Y_INTENT_KEY: String = "place_y"
         const val GROUP_MEMBER_INTENT_KEY : String = "group_member"
         var IS_MOIM_EVENT_SUCCESS : Boolean = false
     }

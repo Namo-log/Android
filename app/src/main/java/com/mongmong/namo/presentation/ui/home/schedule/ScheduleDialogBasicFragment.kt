@@ -48,7 +48,6 @@ import org.joda.time.DateTime
 class ScheduleDialogBasicFragment : Fragment() {
 
     private lateinit var binding : FragmentScheduleDialogBasicBinding
-//    private val args : ScheduleDialogBasicFragmentArgs by navArgs()
 
     private var kakaoMap: KakaoMap? = null
     private lateinit var mapView: MapView
@@ -83,9 +82,9 @@ class ScheduleDialogBasicFragment : Fragment() {
         getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if (it.resultCode == Activity.RESULT_OK) {
                 viewModel.updatePlace(
-                    it.data?.getStringExtra(MainActivity.PLACE_NAME_INTENT_KEY)!!,
-                    it.data?.getDoubleExtra(MainActivity.PLACE_X_INTENT_KEY, 0.0)!!,
-                    it.data?.getDoubleExtra(MainActivity.PLACE_Y_INTENT_KEY, 0.0)!!
+                    it.data?.getStringExtra(MapActivity.PLACE_NAME_KEY)!!,
+                    it.data?.getDoubleExtra(MapActivity.PLACE_X_KEY, 0.0)!!,
+                    it.data?.getDoubleExtra(MapActivity.PLACE_Y_KEY, 0.0)!!
                 )
                 setMapContent()
             }
@@ -340,9 +339,9 @@ class ScheduleDialogBasicFragment : Fragment() {
                 val placeData = viewModel.getPlace()
                 if (placeData != null) {
                     intent.apply {
-                        putExtra("PREV_PLACE_NAME", placeData.first)
-                        putExtra("PREV_PLACE_X", placeData.second.longitude)
-                        putExtra("PREV_PLACE_Y", placeData.second.latitude)
+                        putExtra(MapActivity.PLACE_NAME_KEY, placeData.first)
+                        putExtra(MapActivity.PLACE_X_KEY, placeData.second.longitude)
+                        putExtra(MapActivity.PLACE_Y_KEY, placeData.second.latitude)
                     }
                 }
                 getResult.launch(intent)

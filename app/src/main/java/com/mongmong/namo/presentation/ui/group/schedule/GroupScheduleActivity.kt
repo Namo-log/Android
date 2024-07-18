@@ -28,9 +28,6 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.GROUP_MEMBER_INTENT_KEY
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
-import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_NAME_INTENT_KEY
-import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_X_INTENT_KEY
-import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_Y_INTENT_KEY
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
@@ -338,9 +335,9 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         getLocationResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 viewModel.updatePlace(
-                    result.data?.getStringExtra(PLACE_NAME_INTENT_KEY)!!,
-                    result.data?.getDoubleExtra(PLACE_X_INTENT_KEY, 0.0)!!,
-                    result.data?.getDoubleExtra(PLACE_Y_INTENT_KEY, 0.0)!!
+                    result.data?.getStringExtra(MapActivity.PLACE_NAME_KEY)!!,
+                    result.data?.getDoubleExtra(MapActivity.PLACE_X_KEY, 0.0)!!,
+                    result.data?.getDoubleExtra(MapActivity.PLACE_Y_KEY, 0.0)!!
                 )
                 setMapContent()
             }
