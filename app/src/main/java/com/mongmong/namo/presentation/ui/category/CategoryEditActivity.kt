@@ -27,13 +27,10 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     lateinit var binding: ActivityCategoryEditBinding
 
-    private lateinit var db: NamoDatabase
     private lateinit var category: Category
 
     var categoryId: Long = -1
     var serverId: Long = 0
-
-    private val failList = ArrayList<Category>()
 
     private val viewModel: CategoryViewModel by viewModels()
 
@@ -41,8 +38,6 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
         super.onCreate(savedInstanceState)
         binding = ActivityCategoryEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        db = NamoDatabase.getInstance(this)
 
         loadPref()
         onClickListener()
@@ -87,8 +82,6 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
         } catch (e: JsonParseException) { // 파싱이 안 될 경우
             e.printStackTrace()
         }
-//        categoryId = spf.getLong(CategorySettingFragment.CATEGORY_ID, -1)
-//        serverId = spf.getLong(CategorySettingFragment.CATEGORY_SERVER_ID, -1)
     }
 
     private fun initObservers() {
@@ -98,7 +91,6 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun deleteCategory() {
-
         if (categoryId == 1L || categoryId == 2L) {
             Toast.makeText(this, "기본 카테고리는 삭제할 수 없습니다", Toast.LENGTH_SHORT).show()
         } else {
@@ -111,30 +103,6 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
             // 서버 통신
 //            uploadToServer(RoomState.DELETED.state)
         }
-    }
-
-    private fun uploadToServer(state : String) {
-        // 룸디비에 isUpload, serverId, state 업데이트하기
-        val thread = Thread {
-            category = db.categoryDao.getCategoryWithId(categoryId)
-            viewModel.updateCategoryAfterUpload(categoryId, UploadState.IS_NOT_UPLOAD.state, category.categoryId, RoomState.DEFAULT.state)
-            failList.clear()
-            failList.addAll(db.categoryDao.getNotUploadedCategory() as ArrayList<Category>)
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch ( e: InterruptedException) {
-            e.printStackTrace()
-        }
-
-        if (!NetworkManager.checkNetworkState(this)) {
-            // 인터넷 연결 안 됨
-            Log.d("CategoryEditActivity", "WIFI ERROR : $failList")
-            return
-        }
-
-//        CategoryDeleteService(this).tryDeleteCategory(serverId, categoryId)
     }
 
     override fun onClickYesButton(id: Int) {

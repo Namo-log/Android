@@ -38,11 +38,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
 
     private lateinit var paletteAdapter: CategoryPaletteRVAdapter
 
-    private lateinit var db: NamoDatabase
     private lateinit var category: Category
-
-    private val failList = ArrayList<Category>()
-
     private var clickable = true // 중복 생성을 방지하기 위함
 
     private val viewModel : CategoryViewModel by viewModels()
@@ -69,8 +65,6 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
     ): View? {
 
         _binding = FragmentCategoryDetailBinding.inflate(inflater, container, false)
-
-        db = NamoDatabase.getInstance(requireContext())
 
         initBasicColor()
 
@@ -128,46 +122,6 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
         if (isEditMode) {
             // 이전 화면에서 저장한 spf 받아오기
             loadPref()
-        }
-    }
-
-    private fun uploadToServer(state : String) {
-        if (!NetworkManager.checkNetworkState(requireContext())) {
-            // 인터넷 연결 안 됨
-            // 룸디비에 isUpload, serverId, state 업데이트하기
-            val thread = Thread {
-                category = db.categoryDao.getCategoryWithId(categoryId)
-                viewModel.updateCategoryAfterUpload(categoryId, UploadState.IS_NOT_UPLOAD.state, category.serverId, state)
-                failList.clear()
-                failList.addAll(db.categoryDao.getNotUploadedCategory() as ArrayList<Category>)
-            }
-            thread.start()
-            try {
-                thread.join()
-            } catch ( e: InterruptedException) {
-                e.printStackTrace()
-            }
-
-            Log.d("CategoryDetailFrag", "WIFI ERROR : $failList")
-
-            // 화면 이동
-            moveToSettingFrag(isEditMode)
-
-            return
-        }
-
-        when(state) {
-            RoomState.ADDED.state -> {
-                // 카테고리 생성
-//                CategoryService(this@CategoryDetailFragment).tryPostCategory(CategoryForUpload(name, paletteId, share), categoryId)
-            }
-            RoomState.EDITED.state -> {
-                // 카테고리 수정
-//                CategoryService(this@CategoryDetailFragment).tryPatchCategory(serverId, CategoryForUpload(name, paletteId, share), categoryId)
-            }
-            else -> {
-                Log.d("CategoryDetailFrag", "서버 업로드 중 state 오류")
-            }
         }
     }
 
@@ -341,43 +295,5 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
             requireActivity().supportFragmentManager
                 .popBackStack() // 뒤로가기
         }
-    }
-    private fun updateCategoryAfterUpload(response: PostCategoryResponse?, state: String) {
-        val result = response?.result
-
-        when (state) {
-            // 서버 통신 성공
-            RoomState.DEFAULT.state -> {
-                val thread = Thread {
-                    viewModel.updateCategoryAfterUpload(categoryId, UploadState.IS_UPLOAD.state, result!!.categoryId, state)
-                    db.categoryDao.updateCategory(category.copy(serverId = result.categoryId))
-                }
-                thread.start()
-                try {
-                    thread.join()
-                } catch ( e: InterruptedException) {
-                    e.printStackTrace()
-                }
-//                Log.e("CategoryDetailFrag", "serverId 업데이트 성공, 업데이트 serverId: ${category.serverId}, 실제: ${result!!.categoryId}")
-            }
-            // 서버 업로드 실패
-            else -> {
-                val thread = Thread {
-                    viewModel.updateCategoryAfterUpload(categoryId, UploadState.IS_NOT_UPLOAD.state, serverId, state)
-                    failList.clear()
-                    failList.addAll(db.categoryDao.getNotUploadedCategory() as ArrayList<Category>)
-                }
-                thread.start()
-                try {
-                    thread.join()
-                } catch ( e: InterruptedException) {
-                    e.printStackTrace()
-                }
-                Log.d("CategoryDetailFrag", "Server Fail : $failList")
-            }
-        }
-
-        // 화면 이동
-        moveToSettingFrag(isEditMode)
     }
 }
