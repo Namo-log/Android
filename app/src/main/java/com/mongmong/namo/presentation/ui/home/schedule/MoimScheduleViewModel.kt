@@ -78,6 +78,9 @@ class MoimScheduleViewModel @Inject constructor(
             setDefaultGroupMembers()
             _schedule.value?.groupId = _group.value!!.groupId
         }
+        if (schedule.placeName.isBlank()) {
+            _schedule.value?.placeName = "없음"
+        }
     }
 
     fun setGroup(group: Group) {

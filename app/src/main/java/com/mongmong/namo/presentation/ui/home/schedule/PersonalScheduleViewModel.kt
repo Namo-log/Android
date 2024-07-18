@@ -164,9 +164,10 @@ class PersonalScheduleViewModel @Inject constructor(
 
     /** 일정 정보 세팅 */
     fun setSchedule(schedule: Schedule?) {
-        viewModelScope.launch {
-            _schedule.value = schedule
-            Log.d("ScheduleViewModel", "schedule: ${_schedule.value}")
+        _schedule.value = schedule
+        Log.d("ScheduleViewModel", "schedule: ${_schedule.value}")
+        if (schedule?.placeName!!.isBlank()) {
+            _schedule.value?.placeName = "없음"
         }
     }
 
