@@ -1,6 +1,7 @@
 package com.mongmong.namo.presentation.ui.home.schedule
 
 import android.util.Log
+import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -46,6 +47,9 @@ class PersonalScheduleViewModel @Inject constructor(
 
     private val _categoryList = MutableLiveData<List<Category>>(emptyList())
     val categoryList: LiveData<List<Category>> = _categoryList
+
+    private val _prevClickedPicker = MutableLiveData<TextView?>()
+    var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
 
     /** 월별 일정 리스트 조회 */
     fun getMonthSchedules(yearMonth: String) {
@@ -203,6 +207,12 @@ class PersonalScheduleViewModel @Inject constructor(
         )
         Log.d("ScheduleViewModel", "updatePlace() - $placeName, $x, $y")
     }
+
+    fun updatePrevClickedPicker(clicked: TextView?) {
+        _prevClickedPicker.value = clicked
+    }
+
+    fun getPrevClickedPicker() = _prevClickedPicker.value
 
     fun getScheduleCategoryId() = _schedule.value!!.categoryId
 

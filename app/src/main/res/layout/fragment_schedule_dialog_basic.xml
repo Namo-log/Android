@@ -264,7 +264,7 @@
             android:id="@+id/dialog_schedule_end_date_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layoutDescription="@xml/fragment_schedule_dialog_basic_xml_start_date_scene">
+            app:layoutDescription="@xml/fragment_schedule_dialog_basic_xml_end_date_scene">
             <DatePicker
                 android:id="@+id/dialog_schedule_end_date_dp"
                 app:layout_constraintTop_toTopOf="parent"

@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
@@ -58,8 +57,6 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
     private lateinit var mapView: MapView
 
     private lateinit var getMemberResult : ActivityResultLauncher<Intent>
-
-    private var prevClicked : TextView? = null
 
     private val viewModel : MoimScheduleViewModel by viewModels()
 
@@ -210,19 +207,21 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
     }
 
-    private fun setPicker(clicked: TextView) {
+    private fun showPicker(clicked: TextView) {
         hideKeyboard()
-        prevClicked = if (prevClicked != clicked) {
-            prevClicked?.setTextColor(resources.getColor(R.color.textGray))
-            clicked.setTextColor(resources.getColor(R.color.mainOrange))
-            togglePicker(prevClicked, false)
+        val prevClickedPicker = viewModel.getPrevClickedPicker()
+        if (prevClickedPicker != clicked) {
+            prevClickedPicker?.setTextColor(ContextCompat.getColor(this, R.color.textGray))
+            clicked.setTextColor(ContextCompat.getColor(this, R.color.mainOrange))
+            togglePicker(prevClickedPicker, false)
             togglePicker(clicked, true)
-            clicked // prevClicked 값을 현재 clicked로 업데이트
-        } else {
-            clicked.setTextColor(resources.getColor(R.color.textGray))
-            togglePicker(clicked, false)
-            null
+            viewModel.updatePrevClickedPicker(clicked) // prevClickedPicker 값을 현재 clicked로 업데이트
+            return
         }
+        // 피커 닫기 진행
+        clicked.setTextColor(ContextCompat.getColor(this, R.color.textGray))
+        togglePicker(clicked, false)
+        viewModel.updatePrevClickedPicker(null)
     }
 
     private fun initPicker() {
@@ -264,19 +263,19 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
         // 시작일 - 날짜
         binding.dialogGroupScheduleStartDateTv.setOnClickListener {
-            setPicker(it as TextView)
+            showPicker(it as TextView)
         }
         // 종료일 - 날짜
         binding.dialogGroupScheduleEndDateTv.setOnClickListener {
-            setPicker(it as TextView)
+            showPicker(it as TextView)
         }
         // 시작일 - 시간
         binding.dialogGroupScheduleStartTimeTv.setOnClickListener {
-            setPicker(it as TextView)
+            showPicker(it as TextView)
         }
         // 종료일 - 시간
         binding.dialogGroupScheduleEndTimeTv.setOnClickListener {
-            setPicker(it as TextView)
+            showPicker(it as TextView)
         }
     }
 

@@ -1,6 +1,7 @@
 package com.mongmong.namo.presentation.ui.home.schedule
 
 import android.util.Log
+import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -33,6 +34,9 @@ class MoimScheduleViewModel @Inject constructor(
 
     private val _groupScheduleList = MutableLiveData<List<MoimScheduleBody>>(emptyList())
     val groupScheduleList: LiveData<List<MoimScheduleBody>?> = _groupScheduleList
+
+    private val _prevClickedPicker = MutableLiveData<TextView?>()
+    var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
 
     /** 그룹의 모든 일정 조회 */
     fun getGroupAllSchedules(groupId: Long) {
@@ -119,6 +123,13 @@ class MoimScheduleViewModel @Inject constructor(
             "startLong: ${_schedule.value!!.startLong}\nendLong: ${_schedule.value!!.endLong}"
         )
     }
+
+    fun updatePrevClickedPicker(clicked: TextView?) {
+        _prevClickedPicker.value = clicked
+    }
+
+    fun getPrevClickedPicker() = _prevClickedPicker.value
+
 
     fun isCreateMode() = _schedule.value!!.moimScheduleId == 0L
 

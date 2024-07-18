@@ -40,7 +40,6 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.presentation.utils.PickerConverter
-import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedDate
 import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedTime
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
@@ -49,9 +48,7 @@ import org.joda.time.DateTime
 class ScheduleDialogBasicFragment : Fragment() {
 
     private lateinit var binding : FragmentScheduleDialogBasicBinding
-    private val args : ScheduleDialogBasicFragmentArgs by navArgs()
-
-    private var prevClicked : TextView? = null
+//    private val args : ScheduleDialogBasicFragmentArgs by navArgs()
 
     private var kakaoMap: KakaoMap? = null
     private lateinit var mapView: MapView
@@ -123,6 +120,7 @@ class ScheduleDialogBasicFragment : Fragment() {
 
     private fun setInit() {
         viewModel.getCategories()
+        val args: ScheduleDialogBasicFragmentArgs by navArgs()
         // 정보 세팅
         if (args.schedule != null) {
             viewModel.setSchedule(args.schedule)
@@ -390,19 +388,21 @@ class ScheduleDialogBasicFragment : Fragment() {
         }
     }
 
-    private fun showPicker(clicked : TextView) {
+    private fun showPicker(clicked: TextView) {
         hideKeyBoard()
-        prevClicked = if (prevClicked != clicked) {
-            prevClicked?.setTextColor(resources.getColor(R.color.textGray))
-            clicked.setTextColor(resources.getColor(R.color.mainOrange))
-            togglePicker(prevClicked, false)
+        val prevClickedPicker = viewModel.getPrevClickedPicker()
+        if (prevClickedPicker != clicked) {
+            prevClickedPicker?.setTextColor(ContextCompat.getColor(requireContext(), R.color.textGray))
+            clicked.setTextColor(ContextCompat.getColor(requireContext(), R.color.mainOrange))
+            togglePicker(prevClickedPicker, false)
             togglePicker(clicked, true)
-            clicked // prevClicked 값을 현재 clicked로 업데이트
-        } else {
-            clicked.setTextColor(resources.getColor(R.color.textGray))
-            togglePicker(clicked, false)
-            null
+            viewModel.updatePrevClickedPicker(clicked) // prevClickedPicker 값을 현재 clicked로 업데이트
+            return
         }
+        // 피커 닫기 진행
+        clicked.setTextColor(ContextCompat.getColor(requireContext(), R.color.textGray))
+        togglePicker(clicked, false)
+        viewModel.updatePrevClickedPicker(null)
     }
 
     private fun togglePicker(pickerText: TextView?, open: Boolean) {
