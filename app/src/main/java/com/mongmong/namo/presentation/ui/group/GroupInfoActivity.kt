@@ -44,7 +44,8 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private fun setAdapter() {
         binding.groupInfoMemberRv.layoutManager = GridLayoutManager(this, 2)
-        groupInfoMemberRVAdapter = GroupInfoMemberRVAdapter(viewModel.getGroup().groupMembers)
+        groupInfoMemberRVAdapter = GroupInfoMemberRVAdapter(
+            viewModel.groupInfo.value?.groupMembers ?: emptyList())
         binding.groupInfoMemberRv.adapter = groupInfoMemberRVAdapter
     }
 
@@ -72,7 +73,7 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun setGroupInfo() {
-        val group = viewModel.getGroup()
+        val group = viewModel.groupInfo.value
         with(binding) {
             groupInfoGroupNameContentEt.setText(group?.groupName)
             groupInfoMemberHeaderContentTv.text = group?.groupMembers?.size.toString()
@@ -111,7 +112,7 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
         viewModel.deleteMemberResult.observe(this) {
             if(it == 200) {
-                Toast.makeText(this, "${viewModel.getGroup().groupName} 모임에서 탈퇴하였습니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "${viewModel.groupInfo.value?.groupMembers} 모임에서 탈퇴하였습니다.", Toast.LENGTH_SHORT).show()
 
                 val resultIntent = Intent(this, GroupCalendarActivity::class.java).apply {
                     putExtra("leave", true) // 사용자가 탈퇴했음을 알려줌
