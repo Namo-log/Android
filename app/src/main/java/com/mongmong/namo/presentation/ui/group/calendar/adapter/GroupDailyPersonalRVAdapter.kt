@@ -3,7 +3,6 @@ package com.mongmong.namo.presentation.ui.group.calendar.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -55,15 +54,15 @@ class GroupDailyPersonalRVAdapter : RecyclerView.Adapter<GroupDailyPersonalRVAda
         fun bind(personal: MoimScheduleBody) {
             val colorArray = CategoryColor.getAllColors()
 
-            val paletteId = personal.users[0].color
+            val paletteId = personal.members[0].color
 
             val userName =
-                if (personal.users.size < 2) personal.users[0].userName
-                else personal.users.size.toString() + "명"
+                if (personal.members.size < 2) personal.members[0].userName
+                else personal.members.size.toString() + "명"
 
             binding.itemCalendarTitle.text = personal.name
             binding.itemCalendarTitle.isSelected = true
-            binding.itemCalendarEventTime.text = timeConverter.getScheduleTimeText(personal.startDate, personal.endDate)
+            binding.itemCalendarEventTime.text = timeConverter.getScheduleTimeText(personal.startLong, personal.endLong)
             binding.itemCalendarEventColorView.background.setTint(Color.parseColor(colorArray[paletteId - 1]))
             binding.itemCalendarUserName.text = userName
         }

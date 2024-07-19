@@ -50,9 +50,9 @@ class MoimDiaryViewModel @Inject constructor(
     fun setNewMoimDiary(schedule: MoimScheduleBody) {
         val newDiary = MoimDiaryResult(
             name = schedule.name,
-            startDate = schedule.startDate,
-            locationName = schedule.locationName,
-            users = convertToGroupMembers(schedule.users),
+            startDate = schedule.startLong,
+            locationName = schedule.placeName,
+            users = convertToGroupMembers(schedule.members),
             moimActivities = arrayListOf(MoimActivity(0L, "", 0L, arrayListOf(), arrayListOf()))
         )
         _moimDiary.value = newDiary

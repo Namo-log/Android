@@ -30,9 +30,6 @@ import com.mongmong.namo.BuildConfig
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMapBinding
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
-import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_NAME_INTENT_KEY
-import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_X_INTENT_KEY
-import com.mongmong.namo.presentation.ui.MainActivity.Companion.PLACE_Y_INTENT_KEY
 import com.mongmong.namo.presentation.ui.group.schedule.GroupScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.map.adapter.MapRVAdapter
@@ -131,7 +128,7 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun hasPreLocation(): Boolean {
-        return !intent.getStringExtra("PREV_PLACE_NAME").isNullOrEmpty()
+        return !intent.getStringExtra(PLACE_NAME_KEY).isNullOrEmpty()
     }
 
     private fun setLocation() {
@@ -221,9 +218,9 @@ class MapActivity : AppCompatActivity() {
         binding.selectBtn.setOnClickListener {
             val intent = Intent(this, targetActivityClass)
             intent.apply {
-                putExtra(PLACE_NAME_INTENT_KEY, selectedPlace.place_name)
-                putExtra(PLACE_X_INTENT_KEY, selectedPlace.x)
-                putExtra(PLACE_Y_INTENT_KEY, selectedPlace.y)
+                putExtra(PLACE_NAME_KEY, selectedPlace.place_name)
+                putExtra(PLACE_X_KEY, selectedPlace.x)
+                putExtra(PLACE_Y_KEY, selectedPlace.y)
             }
             setResult(RESULT_OK, intent)
             finish()
@@ -283,9 +280,9 @@ class MapActivity : AppCompatActivity() {
 
     // 기존에 선택된 장소 표시
     private fun setPreLocation() {
-        selectedPlace.x = intent.getDoubleExtra("PREV_PLACE_X", 0.0)
-        selectedPlace.y = intent.getDoubleExtra("PREV_PLACE_Y", 0.0)
-        selectedPlace.place_name = intent.getStringExtra("PREV_PLACE_NAME").toString()
+        selectedPlace.x = intent.getDoubleExtra(PLACE_X_KEY, 0.0)
+        selectedPlace.y = intent.getDoubleExtra(PLACE_Y_KEY, 0.0)
+        selectedPlace.place_name = intent.getStringExtra(PLACE_NAME_KEY).toString()
         val latLng = LatLng.from(selectedPlace.y, selectedPlace.x) // 위치
         prevLabel = kakaoMap?.labelManager?.layer?.addLabel(LabelOptions.from(latLng)
             .setStyles(setPinStyle(true))
@@ -370,9 +367,12 @@ class MapActivity : AppCompatActivity() {
                     R.drawable.ic_pin_selected
                 ).setTextStyles(20, R.color.black)
             }
-            return LabelStyle.from( // 기본 정
+            return LabelStyle.from( // 기본 핀
                 R.drawable.ic_pin_default
             )
         }
+        const val PLACE_NAME_KEY = "PLACE_NAME"
+        const val PLACE_X_KEY = "PLACE_X"
+        const val PLACE_Y_KEY = "PLACE_Y"
     }
 }
