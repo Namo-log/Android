@@ -2,12 +2,33 @@ package com.mongmong.namo.domain.model
 
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
+import androidx.room.PrimaryKey
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 import com.mongmong.namo.BR
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
+import java.io.Serializable
+
+data class PersonalDiary(
+    @PrimaryKey(autoGenerate = true)
+    val diaryId: Long = 0L,  // roomDB scheduleId
+    var scheduleServerId: Long = 0L, // server scheduleId
+    private var _content: String? = null,
+    var images: List<DiaryImage>? = null,
+    var state: String = RoomState.DEFAULT.state,
+    var isUpload: Boolean = false,
+    var isHeader: Boolean = false
+) : BaseObservable() {
+    @get:Bindable
+    var content: String?
+        get() = _content
+        set(value) {
+            _content = value
+            notifyPropertyChanged(BR.content)
+        }
+}
 
 data class GetPersonalDiaryResponse(
     val result: GetPersonalDiaryResult
@@ -15,9 +36,16 @@ data class GetPersonalDiaryResponse(
 
 data class GetPersonalDiaryResult(
     val contents: String,
-    val urls: List<String>
-)
+    val images: List<DiaryImage>
+) {
+    fun getUrlList() = this.images.map { it.url }
+}
 
+data class DiaryImage(
+    val id: Int,
+    val url: String
+) : Serializable {
+}
 
 data class DiaryResponse(
     val result: String

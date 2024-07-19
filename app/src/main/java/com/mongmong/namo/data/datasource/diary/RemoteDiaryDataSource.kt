@@ -115,7 +115,8 @@ class RemoteDiaryDataSource @Inject constructor(
     suspend fun editPersonalDiary(
         images: List<String>?,
         scheduleId: Long,
-        content: String?
+        content: String?,
+        deleteImageIds: List<Int>?
     ): DiaryResponse {
         var response = DiaryResponse("")
         withContext(Dispatchers.IO) {
@@ -123,7 +124,8 @@ class RemoteDiaryDataSource @Inject constructor(
                 diaryApiService.editPersonalDiary(
                     scheduleId.toString().convertTextRequest(),
                     content?.toRequestBody(),
-                    imageToMultipart(images, context)
+                    imageToMultipart(images, context),
+                    deleteImageIds
                 )
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource editPersonalDiary Success", "$it")

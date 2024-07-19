@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.databinding.ActivityMoimMemoDetailBinding
+import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.presentation.ui.diary.adapter.GalleryImageRVAdapter
 import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryActivity
@@ -106,12 +107,13 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun setImgList(imgList: List<String>) {
+        val diaryImages = imgList.map { DiaryImage(id = 0, url = it) }
         val galleryViewRVAdapter = GalleryImageRVAdapter(true, {}, {})
         binding.diaryGallerySavedRv.adapter = galleryViewRVAdapter
         binding.diaryGallerySavedRv.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        galleryViewRVAdapter.addImages(imgList)
+        galleryViewRVAdapter.addImages(diaryImages)
     }
 
     private fun showDeleteDialog() {

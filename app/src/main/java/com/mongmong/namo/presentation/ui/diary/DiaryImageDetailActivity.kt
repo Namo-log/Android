@@ -1,17 +1,13 @@
 package com.mongmong.namo.presentation.ui.diary
 
 import android.Manifest
-import android.app.Activity
 import android.content.ContentValues
-import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -21,9 +17,8 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.snackbar.Snackbar
 import com.mongmong.namo.databinding.ActivityDiaryImageDetailBinding
+import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.presentation.ui.diary.adapter.ImageDetailVPAdapter
-import com.mongmong.namo.presentation.utils.ConfirmDialog
-import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -31,7 +26,7 @@ import java.io.OutputStream
 class DiaryImageDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDiaryImageDetailBinding
     private lateinit var imagePagerAdapter: ImageDetailVPAdapter
-    private lateinit var imgs: List<String>
+    private lateinit var imgs: List<DiaryImage>
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -48,14 +43,14 @@ class DiaryImageDetailActivity : AppCompatActivity() {
         binding = ActivityDiaryImageDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        imgs = intent.getStringArrayListExtra("imgs") as List<String>
+        imgs = intent.getSerializableExtra("imgs") as List<DiaryImage>
         setViewPager()
         initClickListener()
         updatePosition()
     }
 
     private fun setViewPager() {
-        imagePagerAdapter = ImageDetailVPAdapter(imgs)
+        imagePagerAdapter = ImageDetailVPAdapter(imgs.map { it.url })
 
         binding.diaryImageVp.apply {
             adapter = imagePagerAdapter
@@ -87,7 +82,7 @@ class DiaryImageDetailActivity : AppCompatActivity() {
     private fun downloadImage() {
         val currentItem = binding.diaryImageVp.currentItem
         if (currentItem >= 0 && currentItem < imgs.size) {
-            val imageUrl = imgs[currentItem]
+            val imageUrl = imgs[currentItem].url
             Glide.with(this)
                 .asBitmap()
                 .load(imageUrl)

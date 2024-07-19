@@ -99,7 +99,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
             imageClickListener = {
                 startActivity(
                     Intent(this, DiaryImageDetailActivity::class.java).apply {
-                        putStringArrayListExtra("imgs", viewModel.imgList.value as ArrayList<String>)
+                        putExtra("imgs", ArrayList(viewModel.imgList.value))
                     }
                 )
             }
@@ -134,7 +134,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private fun initObserve() {
         viewModel.diary.observe(this) { diary ->
-            viewModel.updateImgList(diary.images?: emptyList())
+            viewModel.updateImgList(diary.images ?: emptyList())
         }
         viewModel.imgList.observe(this) {
             galleryAdapter.addImages(it)
@@ -160,7 +160,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     /** 삭제 확인 다이얼로그 */
     private fun showDeleteDialog() {
-        val title = "가록을 정말 삭제하시겠습니까?"
+        val title = "기록을 정말 삭제하시겠습니까?"
 
         val dialog = ConfirmDialog(this, title, null, "삭제", DELETE_BUTTON_ACTION)
         dialog.isCancelable = false
@@ -209,20 +209,21 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
     }
 
-
     private val getImage = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         val imageUris = getImageUrisFromResult(result)
-        if(imageUris.isNullOrEmpty()) return@registerForActivityResult
-        if (imageUris.size > 3) { // 사진 3장 이상 선택 시
-            Toast.makeText(this, "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT)
-                .show()
-            return@registerForActivityResult
+        val currentImageCount = viewModel.imgList.value?.size ?: 0
+        if (imageUris.isNullOrEmpty()) return@registerForActivityResult
+        if (currentImageCount + imageUris.size > 3) { // 사진 3장 이상 선택 시
+            val availableSlots = 3 - currentImageCount
+            val limitedImageUris = imageUris.take(availableSlots)
+            viewModel.addCreateImages(limitedImageUris)
+            Toast.makeText(this, "사진은 총 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT).show()
+        } else {
+            viewModel.addCreateImages(imageUris)
         }
-        viewModel.updateImgList(imageUris)
     }
-
 
     private fun getImageUrisFromResult(result: ActivityResult): List<String> {
         if (result.resultCode != Activity.RESULT_OK) return emptyList()
@@ -242,7 +243,6 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
         } ?: emptyList() // 결과 데이터가 null인 경우 빈 리스트 반환
     }
 
-
     /** editText 외 터치 시 키보드 내리는 이벤트 **/
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         hideKeyboardOnTouchOutside(ev)
@@ -256,4 +256,3 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
         const val BACK_BUTTON_ACTION = 2
     }
 }
-

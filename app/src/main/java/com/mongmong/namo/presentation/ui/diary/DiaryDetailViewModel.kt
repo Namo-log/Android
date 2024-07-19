@@ -5,10 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mongmong.namo.data.local.entity.diary.Diary
+import com.mongmong.namo.domain.model.PersonalDiary
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.DiaryAddResponse
+import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.repositories.DiaryRepository
@@ -16,8 +17,6 @@ import com.mongmong.namo.domain.usecase.FindCategoryUseCase
 import com.mongmong.namo.presentation.config.RoomState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import org.joda.time.DateTime
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,8 +24,8 @@ class DiaryDetailViewModel @Inject constructor(
     private val repository: DiaryRepository,
     private val findCategoryUseCase: FindCategoryUseCase
 ) : ViewModel() {
-    private val _diary = MutableLiveData<Diary>()
-    val diary: LiveData<Diary> = _diary
+    private val _diary = MutableLiveData<PersonalDiary>()
+    val diary: LiveData<PersonalDiary> = _diary
 
     private val _schedule = MutableLiveData<Schedule>(Schedule().getDefaultSchedule())
     val schedule: LiveData<Schedule> = _schedule
@@ -39,8 +38,8 @@ class DiaryDetailViewModel @Inject constructor(
 
     private var isInitialLoad = true
 
-    private val _imgList = MutableLiveData<List<String>>(emptyList())
-    val imgList: LiveData<List<String>> = _imgList
+    private val _imgList = MutableLiveData<List<DiaryImage>>(emptyList())
+    val imgList: LiveData<List<DiaryImage>> = _imgList
 
     private val _addDiaryResult = MutableLiveData<DiaryAddResponse>()
     val addDiaryResult: LiveData<DiaryAddResponse> = _addDiaryResult
@@ -60,8 +59,14 @@ class DiaryDetailViewModel @Inject constructor(
     private val _category = MutableLiveData<Category>()
     val category: LiveData<Category> = _category
 
+    private val _createImages = MutableLiveData<List<String>>(emptyList())
+    val createImages: LiveData<List<String>> = _createImages
+
+    private val _deleteImageIds = MutableLiveData<List<Int>>(emptyList())
+    val deleteImageIds: LiveData<List<Int>> = _deleteImageIds
+
     private var initialDiaryContent: String? = null
-    private var initialImgList: List<String> = emptyList()
+    private var initialImgList: List<DiaryImage> = emptyList()
     private var initialMoimDiaryContent: String? = null
 
     /** 개인 기록 **/
@@ -71,28 +76,29 @@ class DiaryDetailViewModel @Inject constructor(
             val result = repository.getPersonalDiary(schedule.scheduleId).result
             Log.d("DiaryDetailViewModel getDiary", "$result")
             _schedule.value = schedule
-            _diary.value = Diary(
+            _diary.value = PersonalDiary(
                 diaryId = schedule.scheduleId,
                 scheduleServerId = schedule.serverId,
                 _content = result.contents,
-                images = result.urls,
+                images = result.images,
                 state = RoomState.ADDED.state
             )
-            initDiaryState(result.contents, result.urls) // 초기 상태 저장
+            _imgList.value = result.images // 기존 이미지 설정
+            initDiaryState(result.contents, result.images) // 초기 상태 저장
         }
     }
 
     // 개인 기록 추가시 데이터 초기화
     fun setNewPersonalDiary(schedule: Schedule) {
         _schedule.value = schedule
-        _diary.value = Diary(
+        _diary.value = PersonalDiary(
             diaryId = schedule.serverId,
             scheduleServerId = schedule.serverId,
             _content = "",
-            images = _imgList.value,
+            images = emptyList(),
             state = RoomState.ADDED.state
         )
-        initDiaryState("", _imgList.value ?: emptyList()) // 초기 상태 저장
+        initDiaryState("", emptyList()) // 초기 상태 저장
     }
 
     // 개인 기록 추가
@@ -102,7 +108,7 @@ class DiaryDetailViewModel @Inject constructor(
             _diary.value?.let {
                 _addDiaryResult.postValue(repository.addPersonalDiary(
                     diary = it,
-                    images = _imgList.value
+                    images = _createImages.value
                 ))
             }
         }
@@ -118,7 +124,8 @@ class DiaryDetailViewModel @Inject constructor(
             _diary.value?.let {
                 _editDiaryResult.postValue(repository.editPersonalDiary(
                     diary = it,
-                    images = _imgList.value
+                    images = _createImages.value,
+                    deleteImageIds = _deleteImageIds.value
                 ))
             }
         }
@@ -131,13 +138,25 @@ class DiaryDetailViewModel @Inject constructor(
         }
     }
 
-    fun updateImgList(newImgList: List<String>) {
+    fun updateImgList(newImgList: List<DiaryImage>) {
         _imgList.value = newImgList
-        _diary.value?.images = _imgList.value
+        _diary.value?.images = newImgList
+    }
+
+    fun addCreateImages(newImages: List<String>) {
+        val currentImages = _imgList.value ?: emptyList()
+        val newImagesToAdd = newImages.take(3 - currentImages.size)
+        _createImages.value = (_createImages.value ?: emptyList()) + newImagesToAdd
+        _imgList.value = currentImages + newImagesToAdd.map { DiaryImage(id = 0, url = it) }
+    }
+
+    fun addDeleteImageId(imageId: Int) {
+        _deleteImageIds.value = (_deleteImageIds.value ?: emptyList()) + imageId
+        _imgList.value = _imgList.value?.filterNot { it.id == imageId }
     }
 
     // 초기 상태 저장 메서드
-    private fun initDiaryState(content: String?, images: List<String>) {
+    private fun initDiaryState(content: String?, images: List<DiaryImage>) {
         initialDiaryContent = content
         initialImgList = images
     }
@@ -201,5 +220,4 @@ class DiaryDetailViewModel @Inject constructor(
             Log.d("findCategoryById", "${_category.value}")
         }
     }
-
 }

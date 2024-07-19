@@ -1,11 +1,10 @@
 package com.mongmong.namo.domain.repositories
 
 import androidx.paging.PagingSource
-import com.mongmong.namo.data.local.entity.diary.Diary
+import com.mongmong.namo.domain.model.PersonalDiary
 import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.DiarySchedule
-import com.mongmong.namo.domain.model.GetMoimMemoResponse
 import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
@@ -15,13 +14,14 @@ interface DiaryRepository {
     suspend fun getPersonalDiary(localId: Long): GetPersonalDiaryResponse
 
     suspend fun addPersonalDiary(
-        diary: Diary,
+        diary: PersonalDiary,
         images: List<String>?
     ): DiaryAddResponse
 
     suspend fun editPersonalDiary(
-        diary: Diary,
-        images: List<String>?
+        diary: PersonalDiary,
+        images: List<String>?,
+        deleteImageIds: List<Int>?
     ): DiaryResponse
 
     suspend fun deletePersonalDiary(
