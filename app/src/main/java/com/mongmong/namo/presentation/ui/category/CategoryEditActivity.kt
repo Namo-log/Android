@@ -2,7 +2,6 @@ package com.mongmong.namo.presentation.ui.category
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -11,14 +10,10 @@ import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
 import com.mongmong.namo.R
-import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.databinding.ActivityCategoryEditBinding
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.presentation.config.RoomState
-import com.mongmong.namo.presentation.config.UploadState
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
-import com.mongmong.namo.presentation.utils.NetworkManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -26,11 +21,6 @@ import kotlinx.coroutines.launch
 class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     lateinit var binding: ActivityCategoryEditBinding
-
-    private lateinit var category: Category
-
-    var categoryId: Long = -1
-    var serverId: Long = 0
 
     private val viewModel: CategoryViewModel by viewModels()
 
@@ -40,16 +30,15 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
         setContentView(binding.root)
 
         loadPref()
-        onClickListener()
+        initClickListeners()
+        initObservers()
 
         supportFragmentManager.beginTransaction()
             .replace(R.id.category_edit_frm, CategoryDetailFragment(true))
             .commitAllowingStateLoss()
-
-        initObservers()
     }
 
-    private fun onClickListener() {
+    private fun initClickListeners() {
 
         // 다크뷰 클릭 시 화면 종료
 //        binding.categoryDarkView.setOnClickListener {
@@ -58,7 +47,6 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
 
         // 카테고리 삭제 진행
         binding.categoryDeleteIv.setOnClickListener {
-            Log.d("CategoryEditActivity", "카테고리삭제 클릭")
             // 다이얼로그
             val title = "카테고리를 삭제하시겠어요?"
             val content = "삭제하더라도 카테고리에\n포함된 일정은 사라지지 않습니다."
@@ -78,7 +66,7 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
             // 데이터에 타입을 부여하기 위한 typeToken
             val typeToken = object : TypeToken<Category>() {}.type
             // 데이터 받기
-            category = gson.fromJson(json, typeToken)
+            viewModel.setCategory(gson.fromJson(json, typeToken))
         } catch (e: JsonParseException) { // 파싱이 안 될 경우
             e.printStackTrace()
         }
@@ -91,18 +79,15 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun deleteCategory() {
-        if (categoryId == 1L || categoryId == 2L) {
-            Toast.makeText(this, "기본 카테고리는 삭제할 수 없습니다", Toast.LENGTH_SHORT).show()
-        } else {
-            category.isUpload = UploadState.IS_NOT_UPLOAD.state
-            category.state = RoomState.DELETED.state
-            viewModel.deleteCategory(category)
-            Toast.makeText(this, "카테고리가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-            finish()
+        //TODO: 기본 카테고리 삭제 불가 처리
+//        category.isUpload = UploadState.IS_NOT_UPLOAD.state
+//        category.state = RoomState.DELETED.state
+        viewModel.deleteCategory()
+        Toast.makeText(this, "카테고리가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+        finish()
 
-            // 서버 통신
+        // 서버 통신
 //            uploadToServer(RoomState.DELETED.state)
-        }
     }
 
     override fun onClickYesButton(id: Int) {
