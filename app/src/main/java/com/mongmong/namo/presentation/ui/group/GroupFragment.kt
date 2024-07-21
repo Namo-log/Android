@@ -12,7 +12,6 @@ import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.databinding.FragmentGroupListBinding
 import com.mongmong.namo.presentation.ui.group.adapter.GroupListRVAdapter
-import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,6 +27,10 @@ class GroupFragment : Fragment(), CreateGroupDialog.GroupCreationListener {
 
     ): View? {
         binding = FragmentGroupListBinding.inflate(inflater, container, false)
+        binding.apply {
+            viewModel = this@GroupFragment.viewModel
+            lifecycleOwner = this@GroupFragment
+        }
 
         initObserve()
         onClickMenu()
@@ -38,40 +41,15 @@ class GroupFragment : Fragment(), CreateGroupDialog.GroupCreationListener {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getGroups()
+        viewModel.getGroupList()
     }
 
     private fun initObserve() {
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
-            setGroupView(groups)
-        }
-    }
-    private fun setGroupView(groups: List<Group>?) {
-        when {
-            groups == null -> showEmptyView(
-                R.string.network_group_msg,
-                R.drawable.ic_network_disconnect
-            )
-            groups.isEmpty() -> showEmptyView(
-                R.string.add_group_msg,
-                R.drawable.ic_group_empty
-            )
-            else -> {
-                groupAdapter.updateGroups(groups)
-                binding.groupListEmptyLayout.visibility = View.GONE
-                binding.groupListRv.visibility = View.VISIBLE
-            }
+            groups?.let { groupAdapter.updateGroups(groups) }
         }
     }
 
-    private fun showEmptyView(messageResId: Int, imageResId: Int) {
-        with(binding) {
-            groupListEmptyTv.text = getText(messageResId)
-            groupListEmptyIv.setImageResource(imageResId)
-            groupListEmptyLayout.visibility = View.VISIBLE
-            groupListRv.visibility = View.GONE
-        }
-    }
 
     private fun setRecyclerView() {
         groupAdapter.setMyItemClickListener(object : GroupListRVAdapter.ItemClickListener {
@@ -115,7 +93,7 @@ class GroupFragment : Fragment(), CreateGroupDialog.GroupCreationListener {
         dialog.show(parentFragmentManager, "CreateGroupDialog")
     }
     override fun onGroupCreated() {
-        viewModel.getGroups()
+        viewModel.getGroupList()
     }
 
     // 그룹 코드

@@ -26,7 +26,8 @@ class GroupViewModel @Inject constructor(
     private val _joinGroupResult = MutableLiveData<JoinGroupResponse>()
     val joinGroupResult: LiveData<JoinGroupResponse> = _joinGroupResult
 
-    private val groupInfo = MutableLiveData<Group>()
+    private val _groupInfo = MutableLiveData<Group>()
+    val groupInfo: LiveData<Group> = _groupInfo
 
     private val _updateGroupNameResult = MutableLiveData<JoinGroupResponse>()
     val updateGroupNameResult: LiveData<JoinGroupResponse> = _updateGroupNameResult
@@ -34,7 +35,7 @@ class GroupViewModel @Inject constructor(
     private val _deleteMemberResult = MutableLiveData<Int>()
     val deleteMemberResult: LiveData<Int> = _deleteMemberResult
 
-    fun getGroups() {
+    fun getGroupList() {
         viewModelScope.launch {
             _groups.value = repository.getGroups()
         }
@@ -69,8 +70,6 @@ class GroupViewModel @Inject constructor(
     }
 
     fun setGroup(group: Group) {
-        groupInfo.value = group
+        _groupInfo.value = group
     }
-
-    fun getGroup(): Group = groupInfo.value ?: Group()
 }
