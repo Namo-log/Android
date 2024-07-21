@@ -103,9 +103,10 @@ class CategorySettingFragment: Fragment() {
                 // 데이터 저장
                 saveClickedData(category)
                 categoryRVAdapter.notifyItemChanged(position)
-
                 // 편집 화면으로 이동
-                startActivity(Intent(requireActivity(), CategoryEditActivity()::class.java))
+                val intent = Intent(requireActivity(), CategoryEditActivity()::class.java)
+                intent.putExtra("canDelete", (position != 0 && position != 1)) // 기본 카테고리는 삭제 불가
+                startActivity(intent)
             }
         })
     }

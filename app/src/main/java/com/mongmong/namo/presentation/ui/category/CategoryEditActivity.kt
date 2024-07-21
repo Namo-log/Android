@@ -30,6 +30,11 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
         binding = ActivityCategoryEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.apply {
+            viewModel = this@CategoryEditActivity.viewModel
+            lifecycleOwner = this@CategoryEditActivity
+        }
+
         loadPref()
         initClickListeners()
         initObservers()
@@ -40,14 +45,17 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun initClickListeners() {
-
         // 다크뷰 클릭 시 화면 종료
 //        binding.categoryDarkView.setOnClickListener {
 //            finish()
 //        }
 
         // 카테고리 삭제 진행
-        binding.categoryDeleteIv.setOnClickListener {
+        binding.categoryDeleteBtn.setOnClickListener {
+            if (viewModel.canDeleteCategory.value == false) {
+                Toast.makeText(this, "기본 카테고리는 삭제할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             // 다이얼로그
             val title = "카테고리를 삭제하시겠어요?"
             val content = "삭제하더라도 카테고리에\n포함된 일정은 사라지지 않습니다."
@@ -59,6 +67,8 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun loadPref() {
+        // 삭제 여부 체크
+        viewModel.setDeliable(intent.getBooleanExtra("canDelete", false))
         // roomDB
         val spf = getSharedPreferences(CategorySettingFragment.CATEGORY_KEY_PREFS, Context.MODE_PRIVATE)
         val gson = Gson()

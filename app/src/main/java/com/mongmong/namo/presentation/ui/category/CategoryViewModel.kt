@@ -37,6 +37,9 @@ class CategoryViewModel @Inject constructor(
     private val _selectedPalettePosition = MutableLiveData<Int?>() // 팔레트 -> 기본 색상 선택 시 사용될 변수
     val selectedPalettePosition: LiveData<Int?> = _selectedPalettePosition
 
+    private val _canDeleteCategory = MutableLiveData<Boolean>(true)
+    val canDeleteCategory: LiveData<Boolean> = _canDeleteCategory
+
     /** 카테고리 조회 */
     fun getCategories() {
         viewModelScope.launch {
@@ -81,6 +84,10 @@ class CategoryViewModel @Inject constructor(
     fun setCategory(category: Category) {
         _category.value = category
         _color.value = CategoryColor.findCategoryColorByPaletteId(category.paletteId)
+    }
+
+    fun setDeliable(canDelete: Boolean) {
+        _canDeleteCategory.value = canDelete
     }
 
     fun updateTitle(title: String) {
