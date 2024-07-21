@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -28,9 +29,7 @@ class CategorySettingFragment: Fragment() {
 
     private var categoryList: ArrayList<Category> = arrayListOf() // arrayListOf<Category>()
 
-    private var gson: Gson = Gson()
-    private val viewModel : CategoryViewModel by viewModels()
-
+    private val viewModel: CategoryViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +37,12 @@ class CategorySettingFragment: Fragment() {
         savedInstanceState: Bundle?
 
     ): View {
-        binding = FragmentCategorySettingBinding.inflate(inflater, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_category_setting, container, false)
+
+        binding.apply {
+            viewModel = this@CategorySettingFragment.viewModel
+            lifecycleOwner = this@CategorySettingFragment
+        }
 
         initObserve()
         onClickSchedule()
@@ -65,7 +69,7 @@ class CategorySettingFragment: Fragment() {
             activity?.finish()
         }
 
-        //팔레트 설정
+        // 팔레트 설정
         binding.categoryCalendarPaletteSetting.setOnClickListener {
 
         }
@@ -112,7 +116,6 @@ class CategorySettingFragment: Fragment() {
             if (!it.isNullOrEmpty()) {
                 categoryList = it as ArrayList<Category>
                 categoryRVAdapter.addCategory(categoryList)
-                Log.d("getCategories", "initObserve")
             }
         }
     }
