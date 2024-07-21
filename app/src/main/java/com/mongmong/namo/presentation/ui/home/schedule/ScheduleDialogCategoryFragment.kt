@@ -33,7 +33,6 @@ class ScheduleDialogCategoryFragment : Fragment() {
     private var schedule: Schedule = Schedule()
 
     private lateinit var categoryRVAdapter: DialogCategoryRVAdapter
-    private var selectedCategory: Long = 0
 
     private val viewModel: CategoryViewModel by viewModels()
 
@@ -50,7 +49,6 @@ class ScheduleDialogCategoryFragment : Fragment() {
         }
 
         schedule = args.schedule
-        selectedCategory = schedule.categoryId
 
         onClickCategoryEdit()
         initObserve()
@@ -72,7 +70,7 @@ class ScheduleDialogCategoryFragment : Fragment() {
 
     private fun setAdapter(categoryList: List<Category>) {
         categoryRVAdapter = DialogCategoryRVAdapter(categoryList)
-        categoryRVAdapter.setSelectedId(selectedCategory)
+        categoryRVAdapter.setSelectedId(schedule.categoryId)
         categoryRVAdapter.setMyItemClickListener(object: DialogCategoryRVAdapter.MyItemClickListener {
             // 아이템 클릭
             override fun onSendId(category: Category) {

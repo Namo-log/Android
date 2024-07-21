@@ -9,6 +9,7 @@ import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.domain.repositories.CategoryRepository
 import com.mongmong.namo.domain.usecase.GetCategoriesUseCase
 import com.mongmong.namo.presentation.config.CategoryColor
+import com.mongmong.namo.presentation.config.RoomState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,8 +25,11 @@ class CategoryViewModel @Inject constructor(
     private val _categoryList = MutableLiveData<List<Category>>(emptyList())
     val categoryList: LiveData<List<Category>> = _categoryList
 
-    private val _isPostComplete = MutableLiveData<Boolean>()
-    val isPostComplete: LiveData<Boolean> = _isPostComplete
+    private val _isComplete = MutableLiveData<Boolean>()
+    val isComplete: LiveData<Boolean> = _isComplete
+
+    private val _completeState = MutableLiveData<RoomState>()
+    val completeState: LiveData<RoomState> = _completeState
 
     private val _color = MutableLiveData<CategoryColor?>()
     val color: LiveData<CategoryColor?> = _color
@@ -45,10 +49,10 @@ class CategoryViewModel @Inject constructor(
     fun addCategory() {
         viewModelScope.launch {
             Log.d("CategoryViewModel", "addCategory ${_category.value}")
-            repository.addCategory(
+            _isComplete.postValue(repository.addCategory(
                 category = _category.value!!
-            )
-            _isPostComplete.postValue(true)
+            ))
+            _completeState.value = RoomState.ADDED
         }
     }
 
@@ -56,10 +60,10 @@ class CategoryViewModel @Inject constructor(
     fun editCategory() {
         viewModelScope.launch {
             Log.d("CategoryViewModel", "editCategory ${_category.value}")
-            repository.editCategory(
+            _isComplete.postValue(repository.editCategory(
                 category = _category.value!!
-            )
-            _isPostComplete.postValue(true)
+            ))
+            _completeState.value = RoomState.EDITED
         }
     }
 
@@ -67,9 +71,10 @@ class CategoryViewModel @Inject constructor(
     fun deleteCategory() {
         viewModelScope.launch {
             Log.d("CategoryViewModel", "deleteCategory ${_category.value}")
-            repository.deleteCategory(
+            _isComplete.postValue(repository.deleteCategory(
                 category = _category.value!!
-            )
+            ))
+            _completeState.value = RoomState.DELETED
         }
     }
 

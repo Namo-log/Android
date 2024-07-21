@@ -27,6 +27,7 @@ import com.google.gson.reflect.TypeToken
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.config.PaletteType
 import com.mongmong.namo.presentation.config.CategoryColor
+import com.mongmong.namo.presentation.config.RoomState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -108,9 +109,16 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
     }
 
     private fun initObservers() {
-        viewModel.isPostComplete.observe(requireActivity()) { isComplete ->
+        viewModel.isComplete.observe(requireActivity()) { isComplete ->
             // 추가 작업이 완료된 후 뒤로가기
             if (isComplete) {
+                viewModel.completeState.observe(viewLifecycleOwner) { state ->
+                    when(state) {
+                        RoomState.ADDED -> Toast.makeText(requireContext(), "카테고리가 생성되었습니다.", Toast.LENGTH_SHORT).show()
+                        RoomState.EDITED -> Toast.makeText(requireContext(), "카테고리가 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                        else -> {}
+                    }
+                }
                 moveToSettingFrag(isEditMode)
             }
         }
@@ -136,8 +144,6 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
 
         // 카테고리 편집
         viewModel.editCategory()
-
-        Toast.makeText(requireContext(), "카테고리가 수정되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
     private fun initBasicColor() {

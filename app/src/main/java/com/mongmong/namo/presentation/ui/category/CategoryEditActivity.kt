@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityCategoryEditBinding
 import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import dagger.hilt.android.AndroidEntryPoint
@@ -73,8 +74,17 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun initObservers() {
-        viewModel.category.observe(this) {
-            //
+        viewModel.isComplete.observe(this) { isComplete ->
+            // 삭제 작업이 완료된 후 뒤로가기
+            if (isComplete) {
+                viewModel.completeState.observe(this) { state ->
+                    when(state) {
+                        RoomState.DELETED -> Toast.makeText(this, "카테고리가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                        else -> {}
+                    }
+                }
+                finish()
+            }
         }
     }
 
@@ -83,8 +93,6 @@ class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
 //        category.isUpload = UploadState.IS_NOT_UPLOAD.state
 //        category.state = RoomState.DELETED.state
         viewModel.deleteCategory()
-        Toast.makeText(this, "카테고리가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-        finish()
 
         // 서버 통신
 //            uploadToServer(RoomState.DELETED.state)
