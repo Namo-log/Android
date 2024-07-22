@@ -31,7 +31,7 @@ class CategoryViewModel @Inject constructor(
     private val _completeState = MutableLiveData<RoomState>()
     val completeState: LiveData<RoomState> = _completeState
 
-    private val _color = MutableLiveData<CategoryColor?>()
+    private val _color = MutableLiveData<CategoryColor?>(null)
     val color: LiveData<CategoryColor?> = _color
 
     private val _selectedPalettePosition = MutableLiveData<Int?>() // 팔레트 -> 기본 색상 선택 시 사용될 변수
@@ -83,7 +83,9 @@ class CategoryViewModel @Inject constructor(
 
     fun setCategory(category: Category) {
         _category.value = category
-        _color.value = CategoryColor.findCategoryColorByPaletteId(category.paletteId)
+        if (category.paletteId != 0) {
+            _color.value = CategoryColor.findCategoryColorByPaletteId(category.paletteId)
+        }
     }
 
     fun setDeliable(canDelete: Boolean) {
@@ -107,6 +109,10 @@ class CategoryViewModel @Inject constructor(
 
     fun updateSelectedPalettePosition(pos: Int?) {
         _selectedPalettePosition.value = pos
+    }
+
+    fun isValidInput(): Boolean {
+        return (!category.value?.name.isNullOrEmpty()) && (color.value != null)
     }
 
     fun updateCategoryAfterUpload(localId: Long, isUpload: Boolean, serverId: Long, state: String) {

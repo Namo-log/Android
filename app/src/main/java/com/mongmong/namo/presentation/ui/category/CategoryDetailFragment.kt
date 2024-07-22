@@ -82,7 +82,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
 
             // 저장하기
             categoryDetailSaveTv.setOnClickListener {
-                if (categoryDetailTitleEt.text.toString().isEmpty() || this@CategoryDetailFragment.viewModel.color.value == null) {
+                if (!this@CategoryDetailFragment.viewModel.isValidInput()) {
                     Toast.makeText(requireContext(), "카테고리를 입력해주세요", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
