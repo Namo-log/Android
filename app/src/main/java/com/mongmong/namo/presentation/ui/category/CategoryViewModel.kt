@@ -112,7 +112,7 @@ class CategoryViewModel @Inject constructor(
     }
 
     fun isValidInput(): Boolean {
-        return (!category.value?.name.isNullOrEmpty()) && (color.value != null)
+        return (!_category.value?.name.isNullOrEmpty()) && (_color.value != null)
     }
 
     fun updateCategoryAfterUpload(localId: Long, isUpload: Boolean, serverId: Long, state: String) {

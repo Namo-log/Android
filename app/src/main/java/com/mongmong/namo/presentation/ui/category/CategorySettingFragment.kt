@@ -27,8 +27,6 @@ class CategorySettingFragment: Fragment() {
 
     private lateinit var categoryRVAdapter: SetCategoryRVAdapter
 
-    private var categoryList: ArrayList<Category> = arrayListOf() // arrayListOf<Category>()
-
     private val viewModel: CategoryViewModel by viewModels()
 
     override fun onCreateView(
@@ -113,10 +111,8 @@ class CategorySettingFragment: Fragment() {
 
     private fun initObserve() {
         viewModel.categoryList.observe(viewLifecycleOwner) {
-            categoryList.clear()
             if (!it.isNullOrEmpty()) {
-                categoryList = it as ArrayList<Category>
-                categoryRVAdapter.addCategory(categoryList)
+                categoryRVAdapter.addCategory(it as ArrayList<Category>)
             }
         }
     }
