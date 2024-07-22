@@ -59,7 +59,6 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
         switchToggle()
         onClickListener()
         clickCategoryItem()
-        setEditTextChangedListener()
 
         initObservers()
 
@@ -248,17 +247,6 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
             }
             Log.d("debug", "Category Data loaded")
         }
-    }
-
-    private fun setEditTextChangedListener() {
-        binding.categoryDetailTitleEt.addTextChangedListener(object: TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
-            override fun afterTextChanged(p0: Editable?) {
-                // 카테고리 제목 업데이트
-                viewModel.updateTitle(binding.categoryDetailTitleEt.text.toString())
-            }
-        })
     }
 
     private fun moveToSettingFrag(isEditMode: Boolean) {

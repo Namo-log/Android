@@ -84,7 +84,7 @@
                     android:textColorHint="@color/editTextGray"
                     android:paddingVertical="5dp"
                     android:singleLine="true"
-                    android:text="@{viewModel.category.name}"
+                    android:text="@={viewModel.category.name}"
                     android:textColor="@color/textGray"
                     android:textSize="22sp"
                     android:background="@null"
