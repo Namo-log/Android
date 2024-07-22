@@ -15,7 +15,11 @@ data class Group(
     @SerializedName("groupImgUrl") var groupImgUrl : String = "",
     @SerializedName("groupCode") var groupCode : String = "",
     @SerializedName("groupUsers") var groupMembers : List<GroupMember> = emptyList()
-) : Serializable
+) : Serializable {
+    fun getMemberNames(): String {
+        return groupMembers.joinToString { it.userName }
+    }
+}
 
 data class GroupMember (
     @SerializedName("userId") var userId : Long,
