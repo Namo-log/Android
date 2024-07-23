@@ -120,6 +120,7 @@
     <string name="category_palette">팔레트</string>
     <string name="palette_normal">기본 팔레트</string>
     <string name="category_new">새 카테고리</string>
+    <string name="category_hint">카테고리 이름</string>
     <string name="category_detail_normal_color">기본 색상</string>
     <string name="category_detail_isShare">공유 설정</string>
     <string name="category_detail_setting">카테고리 설정</string>

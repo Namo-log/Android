@@ -12,8 +12,6 @@ import com.mongmong.namo.databinding.ItemGroupListBinding
 
 class GroupListRVAdapter(private var groups: List<Group>):  RecyclerView.Adapter<GroupListRVAdapter.ViewHolder>() {
 
-    private lateinit var context : Context
-
     interface ItemClickListener{
         fun onItemClick(moim : Group)
     }
@@ -26,8 +24,6 @@ class GroupListRVAdapter(private var groups: List<Group>):  RecyclerView.Adapter
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemGroupListBinding = ItemGroupListBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
-        context = viewGroup.context
-
         return ViewHolder(binding)
     }
 
@@ -48,16 +44,15 @@ class GroupListRVAdapter(private var groups: List<Group>):  RecyclerView.Adapter
 
     inner class ViewHolder(val binding: ItemGroupListBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(moim: Group) {
-            binding.itemGroupTitleTv.text = moim.groupName
+            binding.group = moim
 
-            Glide.with(context)
+            Glide.with(binding.itemGroupCoverImgIv)
                 .load(moim.groupImgUrl)
                 .placeholder(R.color.notyetGray)
                 .error(R.drawable.ic_mongi_default)
                 .fallback(R.drawable.ic_mongi_default)
                 .into(binding.itemGroupCoverImgIv)
 
-            binding.itemGroupTotalPeopleNumTv.text = moim.groupMembers.size.toString()
 
             val userNameList: List<String> = moim.groupMembers.map { it.userName }
             binding.itemGroupTotalPeopleNameTv.text = userNameList.joinToString()

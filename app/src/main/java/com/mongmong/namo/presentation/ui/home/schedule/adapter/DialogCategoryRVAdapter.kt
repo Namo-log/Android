@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.databinding.ItemDialogScheduleCategoryBinding
-import com.mongmong.namo.presentation.config.CategoryColor
 
 class DialogCategoryRVAdapter(
     private val categoryList: List<Category>
@@ -28,11 +27,9 @@ class DialogCategoryRVAdapter(
         this.selectedId = id
     }
 
-    inner class ViewHolder(val binding : ItemDialogScheduleCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemDialogScheduleCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(category : Category) {
-            binding.categoryColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
-            binding.categoryNameTv.text = category.name
-
+            binding.category = category
             if (category.categoryId == selectedId) {
                 binding.categorySelectedIv.visibility = View.VISIBLE
             } else {
@@ -58,5 +55,4 @@ class DialogCategoryRVAdapter(
     }
 
     override fun getItemCount(): Int = categoryList.size
-
 }

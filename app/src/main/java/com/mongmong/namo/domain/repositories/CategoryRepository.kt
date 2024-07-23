@@ -9,15 +9,15 @@ interface CategoryRepository {
 
     suspend fun addCategory(
         category: Category
-    )
+    ): Boolean
 
     suspend fun editCategory(
         category: Category
-    )
+    ): Boolean
 
     suspend fun deleteCategory(
         category: Category
-    )
+    ): Boolean
 
     suspend fun updateCategoryAfterUpload(
         localId: Long,

@@ -9,13 +9,13 @@ import java.io.Serializable
 @Entity(tableName="category_table")
 data class Category(
     @PrimaryKey(autoGenerate = true) var categoryId: Long = 0,
-    var name : String = "",
-    var paletteId : Int = 0,
-    var isShare : Boolean = false,
-    var active : Boolean = true,
-    var isUpload : Boolean = false,
-    var state : String = RoomState.DEFAULT.state,
-    var serverId : Long = 0L
+    var name: String = "",
+    var paletteId: Int = 0,
+    var isShare: Boolean = false,
+    var active: Boolean = true,
+    var isUpload: Boolean = false,
+    var state: String = RoomState.DEFAULT.state,
+    var serverId: Long = 0L
 ) : Serializable {
     fun convertLocalCategoryToServer() : CategoryRequestBody {
         return CategoryRequestBody(

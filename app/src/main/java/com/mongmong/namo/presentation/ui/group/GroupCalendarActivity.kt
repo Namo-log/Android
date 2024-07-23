@@ -18,18 +18,14 @@ import org.joda.time.DateTime
 
 @AndroidEntryPoint
 class GroupCalendarActivity : AppCompatActivity() {
-
     private lateinit var binding : ActivityGroupCalendarBinding
-    private lateinit var db : NamoDatabase
     private lateinit var group : Group
     private lateinit var calendarAdapter : GroupCalendarAdapter
 
     private var millis = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
-    private var toadyPos = Int.MAX_VALUE / 2
     private var pos = Int.MAX_VALUE / 2
 
     private var prevIdx = -1
-    private var nowIdx = 0
 
     private val getResultValue = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -51,7 +47,6 @@ class GroupCalendarActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGroupCalendarBinding.inflate(layoutInflater)
-        db = NamoDatabase.getInstance(this)
         setContentView(binding.root)
 
         group = intent.getSerializableExtra("moim") as Group
@@ -59,20 +54,22 @@ class GroupCalendarActivity : AppCompatActivity() {
         setGroupInfo()
 
         calendarAdapter = GroupCalendarAdapter(this)
-        binding.groupCalendarVp.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-        binding.groupCalendarVp.adapter = calendarAdapter
-        binding.groupCalendarVp.setCurrentItem(GroupCalendarAdapter.START_POSITION, false)
-        binding.groupCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
+        binding.groupCalendarVp.apply{
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            adapter = calendarAdapter
+            setCurrentItem(GroupCalendarAdapter.START_POSITION, false)
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    pos = position
+                    prevIdx = -1
+                    millis = binding.groupCalendarVp.adapter!!.getItemId(position)
+                    binding.groupCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
+                    super.onPageSelected(position)
+                }
+            })
+        }
 
-        binding.groupCalendarVp.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                pos = position
-                prevIdx = -1
-                millis = binding.groupCalendarVp.adapter!!.getItemId(position)
-                binding.groupCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
-                super.onPageSelected(position)
-            }
-        })
+        binding.groupCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
     }
 
     override fun onStart() {
@@ -104,9 +101,7 @@ class GroupCalendarActivity : AppCompatActivity() {
         binding.groupCalendarGroupTitleTv.text = group.groupName
     }
 
-    fun getGroup() : Group {
-        return group
-    }
+    fun getGroup() = group
 
     companion object{
         var currentFragment : Fragment? = null
