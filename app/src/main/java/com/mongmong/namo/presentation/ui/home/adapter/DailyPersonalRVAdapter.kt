@@ -74,15 +74,17 @@ class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewH
 
     inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(schedule : GetMonthScheduleResult) {
+            //TODO: 카테고리를 찾지 못했을 때의 처리
             val category = categoryList.find {
                 if (it.serverId != 0L) it.serverId == schedule.categoryId
-                else it.categoryId == schedule.categoryId }!!
+                else it.categoryId == schedule.categoryId
+            } ?: categoryList.first()
 
             binding.itemCalendarTitle.text = schedule.name
             binding.itemCalendarTitle.isSelected = true
             binding.itemCalendarScheduleTime.text = timeConverter.getScheduleTimeText(schedule.startDate, schedule.endDate)
             binding.itemCalendarScheduleColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
-            binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
+            binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context, R.color.realGray))
 
             /** 기록 아이콘 색깔 **/
             if (schedule.hasDiary != false)

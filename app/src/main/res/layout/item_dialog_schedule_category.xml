@@ -1,43 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginBottom="5dp"
-    android:paddingVertical="5dp">
-    
-    <View
-        android:id="@+id/category_color_view"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:background="@drawable/border_round_all_circle"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/category_selected_iv"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/ic_selected_check"
-        app:layout_constraintTop_toTopOf="@id/category_color_view"
-        app:layout_constraintBottom_toBottomOf="@id/category_color_view"
-        app:layout_constraintStart_toStartOf="@id/category_color_view"
-        app:layout_constraintEnd_toEndOf="@id/category_color_view"
-        android:padding="5dp"
-        android:visibility="gone"/>
+    <data>
+        <import type="com.mongmong.namo.presentation.config.CategoryColor"/>
+        <variable
+            name="category"
+            type="com.mongmong.namo.data.local.entity.home.Category" />
+    </data>
 
-    <TextView
-        android:id="@+id/category_name_tv"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:textSize="15sp"
-        android:textColor="@color/textGray"
-        app:layout_constraintTop_toTopOf="@id/category_color_view"
-        app:layout_constraintBottom_toBottomOf="@id/category_color_view"
-        app:layout_constraintStart_toEndOf="@id/category_color_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:text="일정(기본)"/>
+        android:layout_marginBottom="5dp"
+        android:paddingVertical="5dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <View
+            android:id="@+id/category_color_view"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(category.paletteId)}"
+            android:background="@drawable/border_round_all_circle"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:backgroundTint="@color/schedule"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/category_selected_iv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/ic_selected_check"
+            app:layout_constraintTop_toTopOf="@id/category_color_view"
+            app:layout_constraintBottom_toBottomOf="@id/category_color_view"
+            app:layout_constraintStart_toStartOf="@id/category_color_view"
+            app:layout_constraintEnd_toEndOf="@id/category_color_view"
+            android:padding="5dp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/category_name_tv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="@{category.name}"
+            android:textSize="15sp"
+            android:textColor="@color/textGray"
+            app:layout_constraintTop_toTopOf="@id/category_color_view"
+            app:layout_constraintBottom_toBottomOf="@id/category_color_view"
+            app:layout_constraintStart_toEndOf="@id/category_color_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="일정(기본)"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

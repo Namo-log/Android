@@ -1,17 +1,15 @@
 package com.mongmong.namo.presentation.ui.category.adapter
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemCategoryBinding
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.presentation.config.CategoryColor
 
 class SetCategoryRVAdapter:  RecyclerView.Adapter<SetCategoryRVAdapter.ViewHolder>(){
 
-    private val categoryList = ArrayList<Category>()
+    private var categoryList = ArrayList<Category>()
     private lateinit var mItemClickListener: MyItemClickListener
 
     fun setCategoryClickListener(itemClickListener: MyItemClickListener) {
@@ -20,8 +18,7 @@ class SetCategoryRVAdapter:  RecyclerView.Adapter<SetCategoryRVAdapter.ViewHolde
 
     @SuppressLint("NotifyDataSetChanged")
     fun addCategory(categories: ArrayList<Category>) {
-        this.categoryList.clear()
-        this.categoryList.addAll(categories)
+        this.categoryList = categories
         notifyDataSetChanged()
     }
 
@@ -50,12 +47,8 @@ class SetCategoryRVAdapter:  RecyclerView.Adapter<SetCategoryRVAdapter.ViewHolde
     inner class ViewHolder(val binding: ItemCategoryBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(category : Category) {
-            binding.itemCategoryColorIv.background.setTint(Color.parseColor(CategoryColor.convertPaletteIdToHexColor(category.paletteId)))
-            binding.itemCategoryNameTv.text = category.name
+            binding.category = category
         }
-
-//        val name : TextView = binding.itemCategoryNameTv
-//        val color = binding.itemCategoryColorIv
     }
 
 }

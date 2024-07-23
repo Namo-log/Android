@@ -6,12 +6,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mongmong.namo.R
 import com.mongmong.namo.presentation.ui.home.schedule.adapter.DialogCategoryRVAdapter
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
@@ -26,28 +28,27 @@ class ScheduleDialogCategoryFragment : Fragment() {
 
     private lateinit var binding : FragmentScheduleDialogCategoryBinding
 
-    private val args : ScheduleDialogCategoryFragmentArgs by navArgs()
+    private val args: ScheduleDialogCategoryFragmentArgs by navArgs()
 
-    private var schedule : Schedule = Schedule()
+    private var schedule: Schedule = Schedule()
 
-    private lateinit var categoryRVAdapter : DialogCategoryRVAdapter
-    private var categoryList : List<Category> = arrayListOf()
-    private var selectedCategory : Long = 0
+    private lateinit var categoryRVAdapter: DialogCategoryRVAdapter
 
-    private val viewModel : CategoryViewModel by viewModels()
+    private val viewModel: CategoryViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_schedule_dialog_category, container, false)
 
-        binding = FragmentScheduleDialogCategoryBinding.inflate(inflater, container, false)
-        Log.d("DIALOG_CATEGORY", "카테고리 다이얼로그")
+        binding.apply {
+            viewModel = this@ScheduleDialogCategoryFragment.viewModel
+            lifecycleOwner = this@ScheduleDialogCategoryFragment
+        }
 
         schedule = args.schedule
-
-        selectedCategory = schedule.categoryId
 
         onClickCategoryEdit()
         initObserve()
@@ -67,9 +68,9 @@ class ScheduleDialogCategoryFragment : Fragment() {
         }
     }
 
-    private fun setAdapter() {
+    private fun setAdapter(categoryList: List<Category>) {
         categoryRVAdapter = DialogCategoryRVAdapter(categoryList)
-        categoryRVAdapter.setSelectedId(selectedCategory)
+        categoryRVAdapter.setSelectedId(schedule.categoryId)
         categoryRVAdapter.setMyItemClickListener(object: DialogCategoryRVAdapter.MyItemClickListener {
             // 아이템 클릭
             override fun onSendId(category: Category) {
@@ -92,8 +93,7 @@ class ScheduleDialogCategoryFragment : Fragment() {
     private fun initObserve() {
         viewModel.categoryList.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
-                categoryList = it
-                setAdapter()
+                setAdapter(it)
             }
         }
     }

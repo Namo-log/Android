@@ -1,8 +1,6 @@
 package com.mongmong.namo.presentation.ui.category.adapter
 
 import android.content.Context
-import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,20 +31,16 @@ class CategoryPaletteRVAdapter(
         val binding: ItemPaletteColorBinding = ItemPaletteColorBinding.inflate(
             LayoutInflater.from(viewGroup.context), viewGroup, false)
 
-//        Log.d("bori", "최초 initColor: $currentSelectPosition")
-
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(colorList[position])
         holder.apply {
-
             itemView.setOnClickListener {
                 currentSelectPosition = position.toInt()
                 // 팔레트 색상 내에서 단일 선택
                 if (previousSelectPosition != -1) {
-//                    Log.d("shine", "currentPosition: ${currentSelectPosition}, prevPosition: $previousSelectPosition")
                     holder.bind(colorList[position])
                     notifyItemChanged(previousSelectPosition)
                 }
@@ -56,7 +50,6 @@ class CategoryPaletteRVAdapter(
                 mItemClickListener.onItemClick(position, colorList[position])
 
                 previousSelectPosition = currentSelectPosition
-//                Log.d("CategoryPaletteRVA", "selectedPosition: $position")
             }
         }
     }
@@ -64,7 +57,7 @@ class CategoryPaletteRVAdapter(
     override fun getItemCount(): Int = colorList.size
 
     inner class ViewHolder(val binding: ItemPaletteColorBinding): RecyclerView.ViewHolder(binding.root) {
-        val selectIv = binding.itemPaletteSelectIv
+        private val selectIv = binding.itemPaletteSelectIv
 
         fun bind(color : CategoryColor) {
             // 카테고리 색 확인
