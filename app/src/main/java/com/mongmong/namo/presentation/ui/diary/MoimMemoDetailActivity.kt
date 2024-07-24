@@ -103,7 +103,7 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
     private fun initView(moimDiary: MoimDiary) {
         viewModel.isEditMode()
         viewModel.findCategoryById()
-        setImgList(moimDiary.urls)
+        setImgList(moimDiary.getImageUrls())
     }
 
     private fun setImgList(imgList: List<String>) {

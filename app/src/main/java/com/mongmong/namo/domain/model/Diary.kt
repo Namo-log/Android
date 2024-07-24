@@ -2,7 +2,6 @@ package com.mongmong.namo.domain.model
 
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
-import androidx.room.PrimaryKey
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 import com.mongmong.namo.BR
@@ -71,6 +70,44 @@ data class DiaryGetAllResult(
     val urls: List<String>,
 )
 
+data class GetMoimMemoResponse(
+    val result: MoimDiary
+): BaseResponse()
+
+/** 기록 월 별 조회 **/
+data class DiaryGetMonthResponse(
+    val result: DiaryGetMonthResult
+) : BaseResponse()
+
+data class DiaryGetMonthResult(
+    val content: List<MoimDiary>,
+    val currentPage: Int,
+    val size: Int,
+    val first: Boolean,
+    val last: Boolean
+)
+
+data class MoimDiary(
+    var scheduleId: Long,
+    @SerializedName("name") var title: String,
+    var startDate: Long,
+    @SerializedName("contents") var _content: String?,
+    var images: List<DiaryImage>,
+    var categoryId: Long,
+    var color: Int,
+    var placeName: String
+) : java.io.Serializable, BaseObservable() {
+    @get:Bindable
+    var content: String?
+        get() = _content
+        set(value) {
+            _content = value
+            notifyPropertyChanged(BR.content)
+        }
+
+    fun getImageUrls() = this.images.map { it.url }
+}
+
 data class DiarySchedule(
     var scheduleId: Long = 0L,
     var title: String = "",
@@ -99,41 +136,3 @@ data class DiarySchedule(
         true
     )
 }
-
-data class GetMoimMemoResponse(
-    val result: MoimDiary
-): BaseResponse()
-
-/** 기록 월 별 조회 **/
-data class DiaryGetMonthResponse(
-    val result: GroupResult
-) : BaseResponse()
-
-data class GroupResult(
-    val content: List<MoimDiary>,
-    val currentPage: Int,
-    val size: Int,
-    val first: Boolean,
-    val last: Boolean
-)
-
-data class MoimDiary(
-    var scheduleId: Long,
-    @SerializedName("name") var title: String,
-    var startDate: Long,
-    @SerializedName("contents") var _content: String?,
-    var urls: List<String>,
-    var categoryId: Long,
-    var color: Int,
-    var placeName: String
-) : java.io.Serializable, BaseObservable() {
-    @get:Bindable
-    var content: String?
-        get() = _content
-        set(value) {
-            _content = value
-            notifyPropertyChanged(BR.content)
-        }
-}
-
-

@@ -44,7 +44,7 @@ class DiaryMoimPagingSource(
                                 it.categoryId,
                                 it.placeName,
                                 it._content,
-                                it.urls,
+                                it.getImageUrls(),
                                 color = it.color
                             )
                         )

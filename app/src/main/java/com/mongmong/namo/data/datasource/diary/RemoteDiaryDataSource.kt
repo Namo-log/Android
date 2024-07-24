@@ -192,7 +192,7 @@ class RemoteDiaryDataSource @Inject constructor(
                 title = "",
                 startDate = 0L,
                 _content = "",
-                urls = emptyList(),
+                images = emptyList(),
                 categoryId = 0L,
                 color = 0,
                 placeName = ""
