@@ -16,6 +16,8 @@ import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
@@ -113,7 +115,7 @@ class RemoteDiaryDataSource @Inject constructor(
     }
     /** 개인 기록 수정 */
     suspend fun editPersonalDiary(
-        images: List<String>?,
+        images: List<String>,
         scheduleId: Long,
         content: String?,
         deleteImageIds: List<Int>?
@@ -121,10 +123,15 @@ class RemoteDiaryDataSource @Inject constructor(
         var response = DiaryResponse("")
         withContext(Dispatchers.IO) {
             runCatching {
+                val createImagesParts = if (images.isNotEmpty()) {
+                    imageToMultipart(images, context)
+                } else {
+                    listOf(MultipartBody.Part.createFormData("empty", "", "".convertTextRequest()))
+                }
                 diaryApiService.editPersonalDiary(
-                    scheduleId.toString().convertTextRequest(),
-                    content?.toRequestBody(),
-                    imageToMultipart(images, context),
+                    scheduleId.toString(),
+                    content,
+                    createImagesParts,
                     deleteImageIds
                 )
             }.onSuccess {
@@ -136,9 +143,8 @@ class RemoteDiaryDataSource @Inject constructor(
         }
         return response
     }
-    /** 개인 기록 삭제 */
 
-    /** 기록 삭제 */
+    /** 개인 기록 삭제 */
     suspend fun deletePersonalDiary(scheduleServerId: Long): DiaryResponse {
         var diaryResponse = DiaryResponse("")
         withContext(Dispatchers.IO) {

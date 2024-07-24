@@ -20,7 +20,7 @@ interface DiaryRepository {
 
     suspend fun editPersonalDiary(
         diary: PersonalDiary,
-        images: List<String>?,
+        images: List<String>,
         deleteImageIds: List<Int>?
     ): DiaryResponse
 

@@ -10,9 +10,9 @@ import com.bumptech.glide.request.RequestOptions
 import com.mongmong.namo.databinding.ItemGalleryListBinding
 import com.mongmong.namo.domain.model.DiaryImage
 
-class GalleryImageRVAdapter(  // 다이어리 추가, 수정 화면의 이미지(점선 테두리 O)
+class GalleryImageRVAdapter(
     private val isMoimMemo: Boolean,
-    val deleteClickListener: (newImages: List<DiaryImage>) -> Unit,
+    val deleteClickListener: (diaryImage: DiaryImage) -> Unit,
     val imageClickListener: () -> Unit
 ) : RecyclerView.Adapter<GalleryImageRVAdapter.ViewHolder>() {
 
@@ -24,9 +24,10 @@ class GalleryImageRVAdapter(  // 다이어리 추가, 수정 화면의 이미지
         notifyDataSetChanged()
     }
 
-    fun removeImage(position: Int) {
-        items.removeAt(position)
+    private fun removeImage(position: Int) {
+        val removedImage = items.removeAt(position)
         notifyItemRemoved(position)
+        deleteClickListener(removedImage)
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
@@ -46,9 +47,7 @@ class GalleryImageRVAdapter(  // 다이어리 추가, 수정 화면의 이미지
         holder.binding.galleryDeleteBtn.visibility = if (isMoimMemo) View.GONE else View.VISIBLE
 
         holder.binding.galleryDeleteBtn.setOnClickListener {
-            val imageId = items[position].id
             removeImage(position)
-            deleteClickListener(items)
         }
 
         holder.binding.galleryImgIv.setOnClickListener {

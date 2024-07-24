@@ -31,7 +31,7 @@ object RequestConverter {
             val file = uriToFile(uri, context)
             file?.let {
                 val requestFile = it.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                if(isList) MultipartBody.Part.createFormData("imgs", it.name, requestFile)
+                if(isList) MultipartBody.Part.createFormData("createImages", it.name, requestFile)
                 else MultipartBody.Part.createFormData("img", it.name, requestFile)
             }
         } catch (e: Exception) {

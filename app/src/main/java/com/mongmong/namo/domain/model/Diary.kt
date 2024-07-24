@@ -12,7 +12,6 @@ import com.mongmong.namo.presentation.config.UploadState
 import java.io.Serializable
 
 data class PersonalDiary(
-    @PrimaryKey(autoGenerate = true)
     val diaryId: Long = 0L,  // roomDB scheduleId
     var scheduleServerId: Long = 0L, // server scheduleId
     private var _content: String? = null,
@@ -61,7 +60,7 @@ data class DiaryAddResult(
     val scheduleId: Long
 )
 
-/** 기록 월 별 조회 **/
+/** 기록 전체 조회 **/
 data class DiaryGetAllResponse(
     val result: List<DiaryGetAllResult>
 ) : BaseResponse()
@@ -105,7 +104,7 @@ data class GetMoimMemoResponse(
     val result: MoimDiary
 ): BaseResponse()
 
-/** 모임 기록 월 별 조회 **/
+/** 기록 월 별 조회 **/
 data class DiaryGetMonthResponse(
     val result: GroupResult
 ) : BaseResponse()

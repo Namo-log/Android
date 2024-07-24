@@ -63,7 +63,7 @@ class DiaryRepositoryImpl @Inject constructor(
     /** 개인 기록 수정 **/
     override suspend fun editPersonalDiary(
         diary: PersonalDiary,
-        images: List<String>?,
+        images: List<String>,
         deleteImageIds: List<Int>?
     ): DiaryResponse {
         Log.d("DiaryRepositoryImpl editDiary", "$diary")

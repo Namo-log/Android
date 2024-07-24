@@ -93,8 +93,8 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private fun initRecyclerView() {
         galleryAdapter = GalleryImageRVAdapter(false,
-            deleteClickListener = { newImages ->
-                viewModel.updateImgList(newImages)
+            deleteClickListener = { removedImage ->
+                viewModel.removeImage(removedImage)
             },
             imageClickListener = {
                 startActivity(
@@ -215,10 +215,7 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
         val imageUris = getImageUrisFromResult(result)
         val currentImageCount = viewModel.imgList.value?.size ?: 0
         if (imageUris.isNullOrEmpty()) return@registerForActivityResult
-        if (currentImageCount + imageUris.size > 3) { // 사진 3장 이상 선택 시
-            val availableSlots = 3 - currentImageCount
-            val limitedImageUris = imageUris.take(availableSlots)
-            viewModel.addCreateImages(limitedImageUris)
+        if (currentImageCount + imageUris.size > 3) {
             Toast.makeText(this, "사진은 총 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT).show()
         } else {
             viewModel.addCreateImages(imageUris)

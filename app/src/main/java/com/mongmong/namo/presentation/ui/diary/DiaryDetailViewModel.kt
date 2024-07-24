@@ -59,11 +59,8 @@ class DiaryDetailViewModel @Inject constructor(
     private val _category = MutableLiveData<Category>()
     val category: LiveData<Category> = _category
 
-    private val _createImages = MutableLiveData<List<String>>(emptyList())
-    val createImages: LiveData<List<String>> = _createImages
-
-    private val _deleteImageIds = MutableLiveData<List<Int>>(emptyList())
-    val deleteImageIds: LiveData<List<Int>> = _deleteImageIds
+    private var createImages = mutableListOf<String>()
+    private var deleteImageIds = mutableListOf<Int>()
 
     private var initialDiaryContent: String? = null
     private var initialImgList: List<DiaryImage> = emptyList()
@@ -108,7 +105,7 @@ class DiaryDetailViewModel @Inject constructor(
             _diary.value?.let {
                 _addDiaryResult.postValue(repository.addPersonalDiary(
                     diary = it,
-                    images = _createImages.value
+                    images = createImages
                 ))
             }
         }
@@ -124,8 +121,8 @@ class DiaryDetailViewModel @Inject constructor(
             _diary.value?.let {
                 _editDiaryResult.postValue(repository.editPersonalDiary(
                     diary = it,
-                    images = _createImages.value,
-                    deleteImageIds = _deleteImageIds.value
+                    images = createImages,
+                    deleteImageIds = deleteImageIds
                 ))
             }
         }
@@ -138,6 +135,15 @@ class DiaryDetailViewModel @Inject constructor(
         }
     }
 
+    // 이미지 삭제 관련 메서드
+    fun removeImage(diaryImage: DiaryImage) {
+        // 이미지 ID가 0이 아니면 삭제할 이미지, 아니라면 createImages에서 제거
+        if (diaryImage.id != 0) deleteImageIds.add(diaryImage.id)
+        else createImages = createImages?.filterNot { it == diaryImage.url }.toMutableList()
+        // 이미지 리스트 업데이트
+        _imgList.value = _imgList.value?.filterNot { it.url == diaryImage.url }
+    }
+
     fun updateImgList(newImgList: List<DiaryImage>) {
         _imgList.value = newImgList
         _diary.value?.images = newImgList
@@ -146,12 +152,12 @@ class DiaryDetailViewModel @Inject constructor(
     fun addCreateImages(newImages: List<String>) {
         val currentImages = _imgList.value ?: emptyList()
         val newImagesToAdd = newImages.take(3 - currentImages.size)
-        _createImages.value = (_createImages.value ?: emptyList()) + newImagesToAdd
+        createImages.addAll(newImagesToAdd)
         _imgList.value = currentImages + newImagesToAdd.map { DiaryImage(id = 0, url = it) }
     }
 
     fun addDeleteImageId(imageId: Int) {
-        _deleteImageIds.value = (_deleteImageIds.value ?: emptyList()) + imageId
+        deleteImageIds += imageId
         _imgList.value = _imgList.value?.filterNot { it.id == imageId }
     }
 
