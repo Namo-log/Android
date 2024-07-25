@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.databinding.FragmentDiaryBinding
+import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.presentation.ui.diary.adapter.DiaryRVAdapter
 import com.mongmong.namo.presentation.utils.SetMonthDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+import java.util.ArrayList
 
 @AndroidEntryPoint
 class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
@@ -118,7 +120,11 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         val adapter = DiaryRVAdapter(
             personalEditClickListener = if (!isMoim) ::onPersonalEditClickListener else null,
             moimEditClickListener = if (isMoim) ::onMoimEditClickListener else null,
-            imageClickListener = { ImageDialog(it).show(parentFragmentManager, "test") }
+            imageClickListener = {
+                startActivity(
+                    Intent(context, DiaryImageDetailActivity::class.java).putExtra("imgs", it as ArrayList<DiaryImage>)
+                )
+            }
         )
 
         setRecyclerView(isMoim, adapter)

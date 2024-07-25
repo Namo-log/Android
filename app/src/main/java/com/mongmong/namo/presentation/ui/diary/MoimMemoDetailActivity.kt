@@ -18,6 +18,7 @@ import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.ArrayList
 
 @AndroidEntryPoint
 class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
@@ -108,7 +109,11 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
 
     private fun setImgList(imgList: List<String>) {
         val diaryImages = imgList.map { DiaryImage(id = 0, url = it) }
-        val galleryViewRVAdapter = GalleryImageRVAdapter(true, {}, {})
+        val galleryViewRVAdapter = GalleryImageRVAdapter(true, {}, {
+            startActivity(
+                Intent(this, DiaryImageDetailActivity::class.java).putExtra("imgs", it as ArrayList<DiaryImage>)
+            )
+        })
         binding.diaryGallerySavedRv.adapter = galleryViewRVAdapter
         binding.diaryGallerySavedRv.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)

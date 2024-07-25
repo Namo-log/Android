@@ -114,7 +114,7 @@ data class DiarySchedule(
     var categoryId: Long = 0L,
     var place: String = "없음",
     var content: String?,
-    var images: List<String>? = null,
+    var images: List<DiaryImage>?,
     var serverId: Long = 0L, // scheduleServerId
     var categoryServerId: Long = 0L,
     var color: Int = 1,

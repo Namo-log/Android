@@ -13,7 +13,7 @@ import com.mongmong.namo.domain.model.DiaryImage
 class GalleryImageRVAdapter(
     private val isMoimMemo: Boolean,
     val deleteClickListener: (diaryImage: DiaryImage) -> Unit,
-    val imageClickListener: () -> Unit
+    val imageClickListener: (List<DiaryImage>) -> Unit
 ) : RecyclerView.Adapter<GalleryImageRVAdapter.ViewHolder>() {
 
     private val items = ArrayList<DiaryImage>()
@@ -51,7 +51,7 @@ class GalleryImageRVAdapter(
         }
 
         holder.binding.galleryImgIv.setOnClickListener {
-            imageClickListener()
+            imageClickListener(items)
         }
     }
 

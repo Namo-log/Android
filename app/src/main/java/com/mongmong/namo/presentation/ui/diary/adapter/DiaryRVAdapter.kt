@@ -12,13 +12,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.databinding.ItemDiaryItemListBinding
 import com.mongmong.namo.databinding.ItemDiaryListBinding
+import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.presentation.config.CategoryColor
 import java.text.SimpleDateFormat
 
 class DiaryRVAdapter(
     val personalEditClickListener: ((DiarySchedule) -> Unit)? = null,
     val moimEditClickListener: ((Long, Int) -> Unit)? = null,
-    private val imageClickListener: (String) -> Unit
+    private val imageClickListener: (List<DiaryImage>) -> Unit
 ) : PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
 
     class DiaryDiffCallback : DiffUtil.ItemCallback<DiarySchedule>() {
@@ -71,7 +72,7 @@ class DiaryRVAdapter(
 
     inner class DiaryContentViewHolder(
         private val binding: ItemDiaryItemListBinding,
-        private val imageClickListener: (String) -> Unit,
+        private val imageClickListener: (List<DiaryImage>) -> Unit,
         private val personalEditClickListener: ((DiarySchedule) -> Unit)?,
         private val moimEditClickListener: ((Long, Int) -> Unit)?
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -84,7 +85,7 @@ class DiaryRVAdapter(
                 CategoryColor.convertPaletteIdToColorStateList(item.color)
 
             binding.diaryGalleryRv.apply {
-                adapter = DiaryGalleryRVAdapter(context, item.images, imageClickListener)
+                adapter = DiaryGalleryRVAdapter(item.images, imageClickListener)
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             }
 
