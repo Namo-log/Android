@@ -1,7 +1,6 @@
 package com.mongmong.namo.presentation.ui.group.diary.adapter
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -9,28 +8,20 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.mongmong.namo.databinding.ItemGalleryListBinding
-import com.mongmong.namo.generated.callback.OnClickListener
+import com.mongmong.namo.domain.model.DiaryImage
 import kotlinx.coroutines.*
 
 class MoimActivityGalleryAdapter(
     private val itemClickListener: () -> Unit,
-    private val deleteImageClickListener: (String) -> Unit
-) :
-    RecyclerView.Adapter<MoimActivityGalleryAdapter.ViewHolder>() {
+    private val deleteImageClickListener: (DiaryImage) -> Unit
+) : RecyclerView.Adapter<MoimActivityGalleryAdapter.ViewHolder>() {
 
-
-    private val items: ArrayList<String> = arrayListOf()
+    private val items: MutableList<DiaryImage> = mutableListOf()
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addItem(image: List<String>) {
+    fun addItem(image: List<DiaryImage>) {
         this.items.clear()
         this.items.addAll(image)
-        notifyDataSetChanged()
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun deleteItem(image: String) {
-        this.items.remove(image)
         notifyDataSetChanged()
     }
 
@@ -40,7 +31,6 @@ class MoimActivityGalleryAdapter(
         )
         return ViewHolder(binding)
     }
-
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(items[position])
@@ -53,19 +43,18 @@ class MoimActivityGalleryAdapter(
 
     inner class ViewHolder(val binding: ItemGalleryListBinding) :
         RecyclerView.ViewHolder(binding.root) {
-            fun bind(item: String) {
-                val requestOptions = RequestOptions()
-                    .diskCacheStrategy(DiskCacheStrategy.DATA)
+        fun bind(item: DiaryImage) {
+            val requestOptions = RequestOptions()
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
 
-                Glide.with(binding.galleryImgIv)
-                    .load(item)
-                    .apply(requestOptions)
-                    .into(binding.galleryImgIv)
+            Glide.with(binding.galleryImgIv)
+                .load(item.url)
+                .apply(requestOptions)
+                .into(binding.galleryImgIv)
 
-                binding.galleryDeleteBtn.setOnClickListener {
-                    deleteItem(item)
-                    deleteImageClickListener(item)
-                }
+            binding.galleryDeleteBtn.setOnClickListener {
+                deleteImageClickListener(item)
             }
+        }
     }
 }

@@ -60,7 +60,7 @@ class DiaryDetailViewModel @Inject constructor(
     val category: LiveData<Category> = _category
 
     private var createImages = mutableListOf<String>()
-    private var deleteImageIds = mutableListOf<Int>()
+    private var deleteImageIds = mutableListOf<Long>()
 
     private var initialDiaryContent: String? = null
     private var initialImgList: List<DiaryImage> = emptyList()
@@ -122,7 +122,7 @@ class DiaryDetailViewModel @Inject constructor(
                 _editDiaryResult.postValue(repository.editPersonalDiary(
                     diary = it,
                     images = createImages,
-                    deleteImageIds = deleteImageIds
+                    deleteImageIds = deleteImageIds.toList()
                 ))
             }
         }
@@ -138,7 +138,7 @@ class DiaryDetailViewModel @Inject constructor(
     // 이미지 삭제 관련 메서드
     fun removeImage(diaryImage: DiaryImage) {
         // 이미지 ID가 0이 아니면 삭제할 이미지, 아니라면 createImages에서 제거
-        if (diaryImage.id != 0) deleteImageIds.add(diaryImage.id)
+        if (diaryImage.id != 0L) deleteImageIds.add(diaryImage.id)
         else createImages = createImages?.filterNot { it == diaryImage.url }.toMutableList()
         // 이미지 리스트 업데이트
         _imgList.value = _imgList.value?.filterNot { it.url == diaryImage.url }
@@ -156,8 +156,8 @@ class DiaryDetailViewModel @Inject constructor(
         _imgList.value = currentImages + newImagesToAdd.map { DiaryImage(id = 0, url = it) }
     }
 
-    fun addDeleteImageId(imageId: Int) {
-        deleteImageIds += imageId
+    fun addDeleteImageId(imageId: Long) {
+        deleteImageIds.add(imageId)
         _imgList.value = _imgList.value?.filterNot { it.id == imageId }
     }
 

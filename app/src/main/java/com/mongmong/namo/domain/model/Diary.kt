@@ -40,10 +40,9 @@ data class GetPersonalDiaryResult(
 }
 
 data class DiaryImage(
-    val id: Int,
+    val id: Long,
     val url: String
-) : Serializable {
-}
+) : Serializable
 
 data class DiaryResponse(
     val result: String

@@ -64,7 +64,7 @@ class DiaryRepositoryImpl @Inject constructor(
     override suspend fun editPersonalDiary(
         diary: PersonalDiary,
         images: List<String>,
-        deleteImageIds: List<Int>?
+        deleteImageIds: List<Long>?
     ): DiaryResponse {
         Log.d("DiaryRepositoryImpl editDiary", "$diary")
         return remoteDiaryDataSource.editPersonalDiary(images, diary.diaryId, diary.content, deleteImageIds)
@@ -133,25 +133,26 @@ class DiaryRepositoryImpl @Inject constructor(
     /** 모임 기록 활동 추가 **/
     override suspend fun addMoimActivity(
         moimScheduleId: Long,
-        place: String,
-        money: Long,
-        members: List<Long>?,
-        images: List<String>?
+        activityName: String,
+        activityMoney: Long,
+        participantUserIds: List<Long>,
+        createImages: List<String>?
     ) {
         Log.d("MoimActivity", "impl addMoimActivity")
-        remoteDiaryDataSource.addMoimActivity(moimScheduleId, place, money, members, images)
+        remoteDiaryDataSource.addMoimActivity(moimScheduleId, activityName, activityMoney, participantUserIds, createImages)
     }
 
     /** 모임 기록 활동 수정 **/
     override suspend fun editMoimActivity(
-        moimScheduleId: Long,
-        place: String,
-        money: Long,
-        members: List<Long>?,
-        images: List<String>?
+        activityId: Long,
+        deleteImageIds: List<Long>?,
+        activityName: String,
+        activityMoney: Long,
+        participantUserIds: List<Long>,
+        createImages: List<String>?
     ) {
         Log.d("MoimActivity", "impl editMoimActivity")
-        remoteDiaryDataSource.editMoimActivity(moimScheduleId, place, money, members, images)
+        remoteDiaryDataSource.editMoimActivity(activityId, deleteImageIds, activityName, activityMoney, participantUserIds, createImages)
     }
 
     /** 모임 기록 활동 삭제**/

@@ -21,7 +21,7 @@ interface DiaryRepository {
     suspend fun editPersonalDiary(
         diary: PersonalDiary,
         images: List<String>,
-        deleteImageIds: List<Int>?
+        deleteImageIds: List<Long>?
     ): DiaryResponse
 
     suspend fun deletePersonalDiary(
@@ -46,18 +46,19 @@ interface DiaryRepository {
 
     suspend fun addMoimActivity(
         moimScheduleId: Long,
-        place: String,
-        money: Long,
-        members: List<Long>?,
-        images: List<String>?
+        activityName: String,
+        activityMoney: Long,
+        participantUserIds: List<Long>,
+        createImages: List<String>?
     )
 
     suspend fun editMoimActivity(
-        moimScheduleId: Long,
-        place: String,
-        money: Long,
-        members: List<Long>?,
-        images: List<String>?
+        activityId: Long,
+        deleteImageIds: List<Long>?,
+        activityName: String,
+        activityMoney: Long,
+        participantUserIds: List<Long>,
+        createImages: List<String>?
     )
 
     suspend fun deleteMoimActivity(activityId: Long)

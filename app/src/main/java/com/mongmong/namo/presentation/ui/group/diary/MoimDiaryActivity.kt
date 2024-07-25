@@ -1,19 +1,16 @@
 package com.mongmong.namo.presentation.ui.group.diary
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.MotionEvent
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.databinding.ActivityMoimDiaryBinding
+import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.presentation.ui.MainActivity
@@ -35,9 +33,8 @@ import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.PermissionChecker
 import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
 import java.text.NumberFormat
-import java.util.*
+import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -163,7 +160,7 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
                 positionForGallery = position
                 startActivity(
                     Intent(this, DiaryImageDetailActivity::class.java).apply {
-                        putStringArrayListExtra("imgs", viewModel.activities.value?.get(position)?.imgs as ArrayList<String>?)
+                        putStringArrayListExtra("imgs", viewModel.activities.value?.get(position)?.getImageUrls() as ArrayList<String>?)
                     }
                 )
             },
@@ -174,8 +171,8 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
             activityNameTextWatcher = { text, position ->
                 viewModel.updateActivityName(position, text)
             },
-            deleteItemList = { deleteItems ->
-                viewModel.updateDeleteItems(deleteItems)
+            deleteActivityClickListener = { activityId ->
+                viewModel.deleteActivity(activityId)
             },
             deleteImageClickListener = { position, image ->
                 viewModel.deleteActivityImage(position, image)
@@ -270,34 +267,34 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private val getImage = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val imgList = arrayListOf<String>()
-            if (result.data?.clipData != null) { // 사진 여러개 선택한 경우
-                val count = result.data?.clipData!!.itemCount
-                if (count > 3) {
-                    Toast.makeText(applicationContext, "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT)
-                        .show()
-                } else {
+            val newImages = mutableListOf<String>()
+            result.data?.let { data ->
+                if (data.clipData != null) { // 여러 개의 이미지를 선택한 경우
+                    val count = data.clipData!!.itemCount
                     for (i in 0 until count) {
-                        val imageUri = result.data?.clipData!!.getItemAt(i).uri
-                        imgList.add(imageUri.toString())
+                        val imageUri = data.clipData!!.getItemAt(i).uri
+                        newImages.add(imageUri.toString())
                     }
-                }
-            } else { // 단일 선택
-                result.data?.data?.let {
-                    val imageUri: Uri? = result.data!!.data
-                    if (imageUri != null) {
-                        imgList.add(imageUri.toString())
-                    }
+                } else { // 단일 이미지 선택
+                    val imageUri: Uri? = data.data
+                    imageUri?.let { newImages.add(it.toString()) }
                 }
             }
-            viewModel.updateActivityImages(positionForGallery, imgList)
+
+            val currentImagesCount = viewModel.activities.value?.get(positionForGallery)?.images?.size ?: 0
+            if (currentImagesCount + newImages.size > 3) {
+                Toast.makeText(this, "이미지는 최대 3개까지 추가할 수 있습니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                viewModel.updateActivityImages(positionForGallery, newImages.map { DiaryImage(id = 0, url = it) })
+            }
         }
     }
+
+
 
     /** editText 외 터치 시 키보드 내리는 이벤트 **/
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {

@@ -46,10 +46,10 @@ interface DiaryApiService {
     @Multipart
     @PATCH("diaries")
     suspend fun editPersonalDiary(
-        @Query("scheduleId") scheduleId: String,
+        @Query("scheduleId") scheduleId: Long,
         @Query("content") content: String?,
         @Part createImages: List<MultipartBody.Part>?,
-        @Query("deleteImageIds") deleteImageIds: List<Int>?
+        @Query("deleteImageIds") deleteImageIds: List<Long>?
     ): DiaryResponse
 
     // 개인 기록 삭제
