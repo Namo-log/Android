@@ -160,7 +160,7 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // ê·¸ë
                 positionForGallery = position
                 startActivity(
                     Intent(this, DiaryImageDetailActivity::class.java).apply {
-                        putStringArrayListExtra("imgs", viewModel.activities.value?.get(position)?.getImageUrls() as ArrayList<String>?)
+                        putExtra("imgs", viewModel.activities.value?.get(position)?.images as ArrayList<DiaryImage>?)
                     }
                 )
             },
