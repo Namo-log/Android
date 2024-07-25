@@ -17,7 +17,7 @@ import com.mongmong.namo.presentation.ui.group.schedule.GroupScheduleActivity
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupCalendarAdapter.Companion.GROUP_ID
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupDailyMoimRVAdapter
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupDailyPersonalRVAdapter
-import com.mongmong.namo.presentation.ui.home.schedule.MoimScheduleViewModel
+import com.mongmong.namo.presentation.ui.group.schedule.MoimScheduleViewModel
 import com.mongmong.namo.presentation.utils.CustomCalendarView
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime

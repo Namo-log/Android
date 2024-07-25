@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.home.schedule
+package com.mongmong.namo.presentation.ui.group.schedule
 
 import android.util.Log
 import android.widget.TextView
