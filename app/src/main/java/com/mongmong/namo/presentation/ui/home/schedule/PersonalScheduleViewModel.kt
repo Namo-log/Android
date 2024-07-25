@@ -177,12 +177,6 @@ class PersonalScheduleViewModel @Inject constructor(
         )
     }
 
-    fun updateTitle(title: String) {
-        _schedule.value = _schedule.value?.copy(
-            title = title
-        )
-    }
-
     // 시간 변경
     fun updateTime(startDateTime: DateTime?, endDateTime: DateTime?) {
         _schedule.value = _schedule.value?.copy(

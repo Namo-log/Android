@@ -72,7 +72,6 @@ class ScheduleDialogBasicFragment : Fragment() {
         initMapView()
         initClickListeners()
         setInit()
-        setEditTextChangedListener()
 
         return binding.root
     }
@@ -131,17 +130,6 @@ class ScheduleDialogBasicFragment : Fragment() {
                 )
             )
         }
-    }
-
-    private fun setEditTextChangedListener() {
-        binding.dialogScheduleTitleEt.addTextChangedListener(object: TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
-            override fun afterTextChanged(p0: Editable?) {
-                // 일정 제목 업데이트
-                viewModel.updateTitle(binding.dialogScheduleTitleEt.text.toString())
-            }
-        })
     }
 
     private fun initClickListeners() {

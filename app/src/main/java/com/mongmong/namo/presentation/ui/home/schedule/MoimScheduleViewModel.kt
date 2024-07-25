@@ -91,12 +91,6 @@ class MoimScheduleViewModel @Inject constructor(
         _schedule.value!!.members = _group.value!!.groupMembers
     }
 
-    fun updateTitle(title: String) {
-        _schedule.value = _schedule.value?.copy(
-            name = title
-        )
-    }
-
     fun updatePlace(placeName: String, x: Double, y: Double) {
         _schedule.value = _schedule.value?.copy(
             placeName = placeName,

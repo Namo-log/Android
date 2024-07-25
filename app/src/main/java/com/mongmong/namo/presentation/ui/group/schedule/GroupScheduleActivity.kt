@@ -74,7 +74,6 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         setResultMember()
         initClickListeners()
         initObservers()
-        setEditTextChangedListener()
     }
 
     override fun onResume() {
@@ -109,17 +108,6 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
 
         val slideAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up)
         binding.scheduleContainerLayout.startAnimation(slideAnimation)
-    }
-
-    private fun setEditTextChangedListener() {
-        binding.dialogGroupScheduleTitleEt.addTextChangedListener(object: TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
-            override fun afterTextChanged(p0: Editable?) {
-                // 일정 제목 업데이트
-                viewModel.updateTitle(binding.dialogGroupScheduleTitleEt.text.toString())
-            }
-        })
     }
 
     private fun initClickListeners() {
