@@ -26,8 +26,6 @@ import org.joda.time.DateTime
 class GroupCalendarMonthFragment : Fragment() {
 
     private lateinit var binding : FragmentGroupCalendarMonthBinding
-    private var groupId : Long = 0L
-    private var yearMonth : String = ""
 
     private var millis : Long = 0L
 
@@ -63,15 +61,6 @@ class GroupCalendarMonthFragment : Fragment() {
         initAdapter()
 
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        groupId = GROUP_ID
-        yearMonth = DateTime(millis).toString("yyyy,MM")
-        Log.d("GroupCalMonFrag", "Group ID : $groupId")
-        Log.d("GroupCalMonFrag", "YearMonth : ${DateTime(millis).toString("yyyy,MM")} ")
     }
 
     override fun onResume() {
@@ -211,7 +200,8 @@ class GroupCalendarMonthFragment : Fragment() {
 
     /** 그룹의 일정 전체 조회 (그룹원 개인 및 모임 일정) */
     private fun getGroupSchedules() {
-        viewModel.getGroupAllSchedules(groupId)
+        viewModel.getGroupAllSchedules(GROUP_ID)
+        Log.d("GroupCalMonFrag", "Group ID : $GROUP_ID")
     }
 
     companion object {
