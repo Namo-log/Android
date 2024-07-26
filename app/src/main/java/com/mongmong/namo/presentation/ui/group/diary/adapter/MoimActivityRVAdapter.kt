@@ -78,14 +78,20 @@ class MoimActivityRVAdapter(
     inner class ViewHolder(val binding: ItemDiaryMoimActivityBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MoimActivity) {
-            binding.itemPlaceNameTv.setText(item.name)
-            binding.itemPlaceNameTv.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-                override fun afterTextChanged(p0: Editable?) {
-                    activityNameTextWatcher(p0.toString(), absoluteAdapterPosition)
-                }
-            })
+            binding.activityDeleteLl.apply {
+                isClickable = false
+                isEnabled = false
+            }
+            binding.itemPlaceNameTv.apply {
+                setText(item.name)
+                addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+                    override fun afterTextChanged(p0: Editable?) {
+                        activityNameTextWatcher(p0.toString(), absoluteAdapterPosition)
+                    }
+                })
+            }
             binding.itemPlaceMoneyTv.text = NumberFormat.getNumberInstance(Locale.US).format(item.pay)
         }
     }
