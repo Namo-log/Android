@@ -16,8 +16,7 @@ import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.presentation.ui.diary.MoimMemoDetailActivity
 import com.mongmong.namo.presentation.ui.diary.PersonalDetailActivity
 import com.mongmong.namo.presentation.ui.home.HomeFragment
-import com.mongmong.namo.presentation.ui.home.adapter.DailyMoimRVAdapter
-import com.mongmong.namo.presentation.ui.home.adapter.DailyPersonalRVAdapter
+import com.mongmong.namo.presentation.ui.home.schedule.adapter.DailyScheduleRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.PersonalScheduleViewModel
 import com.mongmong.namo.presentation.utils.CustomCalendarView
@@ -32,8 +31,8 @@ class CalendarMonthFragment : Fragment() {
 
     private var millis: Long = 0L
 
-    private val personalScheduleRVAdapter = DailyPersonalRVAdapter()
-    private val groupScheduleRVAdapter = DailyMoimRVAdapter()
+    private val personalDailyScheduleAdapter = DailyScheduleRVAdapter()
+    private val groupDailyScheduleAdapter = DailyScheduleRVAdapter()
 
     private val viewModel: PersonalScheduleViewModel by viewModels()
 
@@ -108,8 +107,8 @@ class CalendarMonthFragment : Fragment() {
 
                     if (date != null && pos != null) {
                         // 클릭 처리
-                        personalScheduleRVAdapter.setClickedDate(date)
-                        groupScheduleRVAdapter.setClickedDate(date)
+                        personalDailyScheduleAdapter.setClickedDate(date)
+                        groupDailyScheduleAdapter.setClickedDate(date)
 
                         viewModel.clickDate(pos)
                         setDailySchedule()
@@ -133,17 +132,17 @@ class CalendarMonthFragment : Fragment() {
     }
 
     private fun initAdapter() {
-        personalScheduleRVAdapter.initScheduleTimeConverter()
-        groupScheduleRVAdapter.initScheduleTimeConverter()
+        personalDailyScheduleAdapter.initScheduleTimeConverter()
+        groupDailyScheduleAdapter.initScheduleTimeConverter()
     }
 
     private fun setAdapter() {
         /** 개인 */
         binding.homeDailyPersonalScheduleRv.apply {
-            adapter = personalScheduleRVAdapter
+            adapter = personalDailyScheduleAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
-        personalScheduleRVAdapter.setPersonalScheduleClickListener(object : DailyPersonalRVAdapter.PersonalScheduleClickListener {
+        personalDailyScheduleAdapter.setDailyScheduleClickListener(object : DailyScheduleRVAdapter.PersonalScheduleClickListener {
             override fun onContentClicked(schedule: GetMonthScheduleResult) { // 아이템 전체 클릭
                 val intent = Intent(context, ScheduleActivity::class.java)
                 intent.putExtra("schedule", schedule.convertServerScheduleResponseToLocal())
@@ -151,6 +150,7 @@ class CalendarMonthFragment : Fragment() {
             }
 
             override fun onDiaryIconClicked(schedule: GetMonthScheduleResult, paletteId: Int) { // 기록 아이콘 클릭
+                if (schedule.moimSchedule) return
                 val intent = Intent(context, PersonalDetailActivity::class.java)
                 intent.putExtra("schedule", schedule.convertServerScheduleResponseToLocal())
                 Log.d("CalendarMonthFragment onDiaryIconClicked", "$schedule")
@@ -160,20 +160,22 @@ class CalendarMonthFragment : Fragment() {
 
         /** 모임 */
         binding.homeDailyMoimScheduleRv.apply {
-            adapter = groupScheduleRVAdapter
+            adapter = groupDailyScheduleAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
-        groupScheduleRVAdapter.setMoimScheduleClickListener(object : DailyMoimRVAdapter.MoimScheduleClickListener {
+
+        groupDailyScheduleAdapter.setDailyScheduleClickListener(object : DailyScheduleRVAdapter.PersonalScheduleClickListener {
             override fun onContentClicked(schedule: GetMonthScheduleResult) { // 아이템 전체 클릭
                 val intent = Intent(context, ScheduleActivity::class.java)
                 intent.putExtra("schedule", schedule.convertServerScheduleResponseToLocal())
                 requireActivity().startActivity(intent)
             }
 
-            override fun onDiaryIconClicked(scheduleId: Long, paletteId: Int) { // 기록 아이콘 클릭
+            override fun onDiaryIconClicked(schedule: GetMonthScheduleResult, paletteId: Int) { // 기록 아이콘 클릭
+                if (!schedule.moimSchedule) return
                 requireActivity().startActivity(
                     Intent(context, MoimMemoDetailActivity::class.java)
-                        .putExtra("moimScheduleId", scheduleId)
+                        .putExtra("moimScheduleId", schedule.scheduleId)
                         .putExtra("paletteId", paletteId)
                 )
             }
@@ -186,8 +188,8 @@ class CalendarMonthFragment : Fragment() {
 
     private fun setCategoryList(categoryList: List<Category>) {
         binding.calendarMonthView.setCategoryList(categoryList)
-        personalScheduleRVAdapter.setCategory(categoryList)
-        groupScheduleRVAdapter.setCategory(categoryList)
+        personalDailyScheduleAdapter.setCategoryList(categoryList)
+        groupDailyScheduleAdapter.setCategoryList(categoryList)
     }
 
     // 캘린더에 표시할 월별 일정
@@ -199,8 +201,8 @@ class CalendarMonthFragment : Fragment() {
     private fun setDailySchedule() {
         binding.dailyScrollSv.scrollTo(0, 0)
         // 일정 아이템 표시
-        personalScheduleRVAdapter.addPersonal(viewModel.getDailySchedules(false))
-        groupScheduleRVAdapter.addGroup(viewModel.getDailySchedules(true))
+        personalDailyScheduleAdapter.addSchedules(viewModel.getDailySchedules(false))
+        groupDailyScheduleAdapter.addSchedules(viewModel.getDailySchedules(true))
     }
 
     private fun initObserve() {
