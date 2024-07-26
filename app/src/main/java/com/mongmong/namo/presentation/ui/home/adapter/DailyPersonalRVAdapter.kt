@@ -1,12 +1,9 @@
 package com.mongmong.namo.presentation.ui.home.adapter
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
@@ -17,7 +14,7 @@ import org.joda.time.DateTime
 class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewHolder>() {
     private val personal = ArrayList<GetMonthScheduleResult>()
     private val categoryList = ArrayList<Category>()
-    private lateinit var context : Context
+
     private lateinit var personalScheduleClickListener : PersonalScheduleClickListener
     private lateinit var timeConverter: ScheduleTimeConverter
 
@@ -36,7 +33,6 @@ class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewH
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
         val binding : ItemSchedulePreviewBinding = ItemSchedulePreviewBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
-        context = viewGroup.context
 
         return ViewHolder(binding)
     }
@@ -74,25 +70,20 @@ class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewH
 
     inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(schedule : GetMonthScheduleResult) {
+            binding.scheule = schedule
+
             //TODO: 카테고리를 찾지 못했을 때의 처리
             val category = categoryList.find {
                 if (it.serverId != 0L) it.serverId == schedule.categoryId
                 else it.categoryId == schedule.categoryId
             } ?: categoryList.first()
 
-            binding.itemCalendarTitle.text = schedule.name
-            binding.itemCalendarTitle.isSelected = true
-            binding.itemCalendarScheduleTime.text = timeConverter.getScheduleTimeText(schedule.startDate, schedule.endDate)
-            binding.itemCalendarScheduleColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
-            binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context, R.color.realGray))
-
-            /** 기록 아이콘 색깔 **/
-            if (schedule.hasDiary != false)
-                binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context , R.color.mainOrange))
+            binding.itemSchedulePreviewTimeTv.text = timeConverter.getScheduleTimeText(schedule.startDate, schedule.endDate)
+            binding.itemSchedulePreviewColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
 
             // 기록 아이콘 클릭
             if (!schedule.moimSchedule) { // 개인 기록
-                binding.itemCalendarScheduleRecord.setOnClickListener {
+                binding.itemSchedulePreviewDiaryIv.setOnClickListener {
                     personalScheduleClickListener.onDiaryIconClicked(schedule, category.paletteId)
                 }
             }

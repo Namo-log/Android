@@ -5,5 +5,5 @@
     <corners android:bottomLeftRadius="15dp"
         android:topLeftRadius="15dp"/>
     <solid
-        android:color="@color/palette3"/>
+        android:color="@color/schedule"/>
 </shape>

@@ -45,7 +45,7 @@ class GroupDailyMoimRVAdapter : RecyclerView.Adapter<GroupDailyMoimRVAdapter.Vie
             moimScheduleClickListener.onContentClicked(groupSchedule[position])
         }
         // 기록 아이콘 클릭
-        holder.binding.itemCalendarScheduleRecord.setOnClickListener { // 모임 기록
+        holder.binding.itemSchedulePreviewDiaryIv.setOnClickListener { // 모임 기록
             moimScheduleClickListener.onDiaryIconClicked(groupSchedule[position])
         }
     }
@@ -70,15 +70,15 @@ class GroupDailyMoimRVAdapter : RecyclerView.Adapter<GroupDailyMoimRVAdapter.Vie
 
     inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(groupSchedule: MoimScheduleBody) {
-            binding.itemCalendarTitle.text = groupSchedule.name
-            binding.itemCalendarTitle.isSelected = true
-            binding.itemCalendarScheduleTime.text = timeConverter.getScheduleTimeText(groupSchedule.startLong, groupSchedule.endLong)
-            binding.itemCalendarScheduleColorView.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.mainOrange))
+            binding.itemSchedulePreviewTitleTv.text = groupSchedule.name
+            binding.itemSchedulePreviewTitleTv.isSelected = true
+            binding.itemSchedulePreviewTimeTv.text = timeConverter.getScheduleTimeText(groupSchedule.startLong, groupSchedule.endLong)
+            binding.itemSchedulePreviewColorView.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.mainOrange))
 
             if (groupSchedule.hasDiaryPlace)
-                binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.mainOrange))
+                binding.itemSchedulePreviewDiaryIv.setColorFilter(ContextCompat.getColor(context,R.color.mainOrange))
             else
-                binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
+                binding.itemSchedulePreviewDiaryIv.setColorFilter(ContextCompat.getColor(context,R.color.realGray))
         }
     }
 

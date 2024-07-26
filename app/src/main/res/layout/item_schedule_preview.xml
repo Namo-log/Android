@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="com.mongmong.namo.presentation.config.CategoryColor"/>
+        <import type="android.view.View"/>
+        <variable
+            name="scheule"
+            type="com.mongmong.namo.domain.model.GetMonthScheduleResult"/>
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -8,75 +17,73 @@
         android:layout_marginBottom="15dp">
 
         <View
-            android:id="@+id/item_calendar_schedule_color_view"
+            android:id="@+id/item_schedule_preview_color_view"
             android:layout_width="30dp"
             android:layout_height="0dp"
             android:background="@drawable/bg_schedule_preview_catory_color_corner"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/item_calendar_schedule_base_layout"
+            app:layout_constraintEnd_toStartOf="@id/item_schedule_preview_base_layout"
             app:layout_constraintHorizontal_chainStyle="packed"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/item_calendar_schedule_base_layout"
+            android:id="@+id/item_schedule_preview_base_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_schedule_preview_base_corner"
-            app:layout_constraintStart_toEndOf="@id/item_calendar_schedule_color_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/item_calendar_schedule_color_view"
-            app:layout_constraintBottom_toBottomOf="@id/item_calendar_schedule_color_view"
             android:paddingVertical="9dp"
-            android:paddingHorizontal="15dp">
+            android:paddingHorizontal="15dp"
+            android:background="@drawable/bg_schedule_preview_base_corner"
+            app:layout_constraintStart_toEndOf="@id/item_schedule_preview_color_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/item_schedule_preview_color_view"
+            app:layout_constraintBottom_toBottomOf="@id/item_schedule_preview_color_view">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/item_calendar_schedule_content_layout"
+            <LinearLayout
+                android:id="@+id/item_schedule_preview_content_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/item_calendar_schedule_record">
+                app:layout_constraintEnd_toStartOf="@id/item_schedule_preview_diary_iv">
 
                 <TextView
-                    android:id="@+id/item_calendar_schedule_time"
+                    android:id="@+id/item_schedule_preview_time_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="11:00 - 13:00"
                     android:textColor="@color/textGray"
                     android:textSize="12sp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"/>
+                    tools:text="11:00 - 13:00"/>
 
                 <TextView
-                    android:id="@+id/item_calendar_title"
+                    android:id="@+id/item_schedule_preview_title_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="코딩스터디"
+                    android:text="@{scheule.name}"
                     android:ellipsize="marquee"
                     android:focusable="true"
                     android:singleLine="true"
                     android:textStyle="bold"
                     android:textColor="@color/black"
                     android:textSize="15sp"
-                    app:layout_constraintTop_toBottomOf="@id/item_calendar_schedule_time"
-                    app:layout_constraintStart_toStartOf="@id/item_calendar_schedule_time"/>
+                    tools:text="일정 이름"/>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/item_calendar_schedule_record"
+                android:id="@+id/item_schedule_preview_diary_iv"
                 android:layout_width="34dp"
                 android:layout_height="34dp"
-                android:src="@drawable/ic_add_record"
+                android:src="@drawable/ic_record"
+                android:backgroundTint="@{scheule.hasDiary ? @color/mainOrange : @color/categoryGray}"
+                android:visibility="@{scheule.hasDiary == null ? View.GONE : View.VISIBLE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

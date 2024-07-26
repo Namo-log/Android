@@ -240,7 +240,7 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:background="@drawable/ic_add_record"
+                android:background="@drawable/ic_record"
                 android:backgroundTint="@color/textGray" />
 
             <TextView
