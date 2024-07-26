@@ -33,7 +33,7 @@ import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.databinding.ActivityGroupScheduleBinding
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
-import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.PickerConverter
 import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedTime
 import dagger.hilt.android.AndroidEntryPoint

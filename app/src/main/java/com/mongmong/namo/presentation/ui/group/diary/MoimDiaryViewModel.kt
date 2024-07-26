@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
@@ -34,12 +35,21 @@ class MoimDiaryViewModel @Inject constructor(
     var moimScheduleId: Long = 0L
     private val deleteItems = mutableListOf<Long>()  // 삭제할 항목 저장
 
+    private var initialDiaryState: MoimDiaryResult? = null
+    private var initialActivitiesState: List<MoimActivity> = listOf()
+
+    private val deleteImageIdsMap: MutableMap<Long, MutableList<Long>> = mutableMapOf()
+
+    // 추가한 activity 임시 id
+    private var tempIdCounter = -1L
+
     /** 모임 기록 개별 조회 **/
     fun getMoimDiary(scheduleId: Long) {
         viewModelScope.launch {
             val result = repository.getMoimDiary(scheduleId)
             _moimDiary.postValue(result)
             _activities.postValue(result.moimActivities.toMutableList())
+            initDiaryState(result, result.moimActivities)
         }
     }
 
@@ -53,9 +63,11 @@ class MoimDiaryViewModel @Inject constructor(
         )
         _moimDiary.value = newDiary
         _activities.value = arrayListOf(MoimActivity(0L, "", 0L, arrayListOf(), arrayListOf()))
+        initDiaryState(newDiary, arrayListOf(MoimActivity(0L, "", 0L, arrayListOf(), arrayListOf())))
     }
 
     fun addActivity(activity: MoimActivity) {
+        activity.moimActivityId = tempIdCounter--
         _activities.value?.add(activity)
         _activities.postValue(_activities.value)
     }
@@ -72,27 +84,40 @@ class MoimDiaryViewModel @Inject constructor(
         _activities.value?.get(position)?.members = members
     }
 
-    fun updateActivityImages(position: Int, images: List<String>) {
-        _activities.value?.get(position)?.imgs = images
+
+    fun deleteActivity(activityId: Long) {
+        if (activityId > 0) deleteItems.add(activityId)
+        _activities.value = _activities.value?.filterNot { it.moimActivityId == activityId }?.toMutableList()
+        deleteImageIdsMap.remove(activityId)
         _activities.postValue(_activities.value)
     }
 
-    fun updateDeleteItems(deleteItems: List<Long>) {
-        this.deleteItems.clear()
-        this.deleteItems.addAll(deleteItems)
+
+    fun updateActivityImages(position: Int, images: List<DiaryImage>) {
+        _activities.value?.get(position)?.images?.addAll(images)
+        _activities.postValue(_activities.value)
+    }
+
+    fun deleteActivityImage(position: Int, diaryImage: DiaryImage) {
+        val activity = _activities.value?.get(position) ?: return
+
+        if (activity.moimActivityId != 0L && diaryImage.id != 0L) {
+            // deleteImageIdsMap에 activityId를 키로 사용하여 imageId를 추가
+            deleteImageIdsMap.getOrPut(activity.moimActivityId) { mutableListOf() }.add(diaryImage.id)
+        }
+
+        activity.images?.remove(diaryImage)
+        _activities.postValue(_activities.value)
     }
 
     fun patchMoimActivities() {
         viewModelScope.launch {
             val activities = _activities.value ?: return@launch
             activities.forEach { activity ->
-                if (activity.moimActivityId == 0L) {
-                    addMoimActivity(activity)
-                } else {
-                    editMoimActivity(activity)
-                }
+                if (activity.moimActivityId > 0L) editMoimActivity(activity)
+                else addMoimActivity(activity)
             }
-            deleteItems.forEach { activityId ->
+            deleteItems.filter { it != 0L }.forEach { activityId ->
                 deleteMoimActivity(activityId)
             }
             _patchActivitiesComplete.postValue(true)
@@ -101,12 +126,14 @@ class MoimDiaryViewModel @Inject constructor(
 
     private suspend fun addMoimActivity(activity: MoimActivity) {
         val members = activity.members.ifEmpty { _moimDiary.value?.users?.map { it.userId } }
-        repository.addMoimActivity(moimScheduleId, activity.name, activity.pay, members, activity.imgs)
+        repository.addMoimActivity(moimScheduleId, activity.name, activity.pay, members ?: emptyList(), activity.getImageUrls())
     }
 
     private suspend fun editMoimActivity(activity: MoimActivity) {
         val members = activity.members.ifEmpty { _moimDiary.value?.users?.map { it.userId } }
-        repository.editMoimActivity(activity.moimActivityId, activity.name, activity.pay, members, activity.imgs)
+        val createImages = activity.images?.filter { it.id == 0L }?.map { it.url }
+        val deleteImageIds = deleteImageIdsMap[activity.moimActivityId]
+        repository.editMoimActivity(activity.moimActivityId, deleteImageIds,activity.name, activity.pay, members ?: emptyList(), createImages)
     }
     private suspend fun deleteMoimActivity(activityId: Long) {
         repository.deleteMoimActivity(activityId)
@@ -118,7 +145,19 @@ class MoimDiaryViewModel @Inject constructor(
             _deleteDiaryComplete.postValue(repository.deleteMoimDiary(moimScheduleId))
         }
     }
+
     fun toggleIsParticipantVisible() {
         isParticipantVisible.value = !isParticipantVisible.value!!
+    }
+
+    // 초기 상태 저장 메서드
+    private fun initDiaryState(diary: MoimDiaryResult, activities: List<MoimActivity>) {
+        initialDiaryState = diary.copy()
+        initialActivitiesState = activities.map { it.copy() }
+    }
+
+    // 변경 여부 확인 메서드
+    fun isDiaryChanged(): Boolean {
+        return _moimDiary.value != initialDiaryState || _activities.value != initialActivitiesState
     }
 }

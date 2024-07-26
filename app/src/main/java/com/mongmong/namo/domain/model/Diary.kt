@@ -8,6 +8,25 @@ import com.mongmong.namo.BR
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
+import java.io.Serializable
+
+data class PersonalDiary(
+    val diaryId: Long = 0L,  // roomDB scheduleId
+    var scheduleServerId: Long = 0L, // server scheduleId
+    private var _content: String? = null,
+    var images: List<DiaryImage>? = null,
+    var state: String = RoomState.DEFAULT.state,
+    var isUpload: Boolean = false,
+    var isHeader: Boolean = false
+) : BaseObservable() {
+    @get:Bindable
+    var content: String?
+        get() = _content
+        set(value) {
+            _content = value
+            notifyPropertyChanged(BR.content)
+        }
+}
 
 data class GetPersonalDiaryResponse(
     val result: GetPersonalDiaryResult
@@ -15,9 +34,15 @@ data class GetPersonalDiaryResponse(
 
 data class GetPersonalDiaryResult(
     val contents: String,
-    val urls: List<String>
-)
+    val images: List<DiaryImage>
+) {
+    fun getUrlList() = this.images.map { it.url }
+}
 
+data class DiaryImage(
+    val id: Long,
+    val url: String
+) : Serializable
 
 data class DiaryResponse(
     val result: String
@@ -33,7 +58,7 @@ data class DiaryAddResult(
     val scheduleId: Long
 )
 
-/** 기록 월 별 조회 **/
+/** 기록 전체 조회 **/
 data class DiaryGetAllResponse(
     val result: List<DiaryGetAllResult>
 ) : BaseResponse()
@@ -44,6 +69,44 @@ data class DiaryGetAllResult(
     val urls: List<String>,
 )
 
+data class GetMoimMemoResponse(
+    val result: MoimDiary
+): BaseResponse()
+
+/** 기록 월 별 조회 **/
+data class DiaryGetMonthResponse(
+    val result: DiaryGetMonthResult
+) : BaseResponse()
+
+data class DiaryGetMonthResult(
+    val content: List<MoimDiary>,
+    val currentPage: Int,
+    val size: Int,
+    val first: Boolean,
+    val last: Boolean
+)
+
+data class MoimDiary(
+    var scheduleId: Long,
+    @SerializedName("name") var title: String,
+    var startDate: Long,
+    @SerializedName("contents") var _content: String?,
+    var images: List<DiaryImage>,
+    var categoryId: Long,
+    var color: Int,
+    var placeName: String
+) : java.io.Serializable, BaseObservable() {
+    @get:Bindable
+    var content: String?
+        get() = _content
+        set(value) {
+            _content = value
+            notifyPropertyChanged(BR.content)
+        }
+
+    fun getImageUrls() = this.images.map { it.url }
+}
+
 data class DiarySchedule(
     var scheduleId: Long = 0L,
     var title: String = "",
@@ -51,7 +114,7 @@ data class DiarySchedule(
     var categoryId: Long = 0L,
     var place: String = "없음",
     var content: String?,
-    var images: List<String>? = null,
+    var images: List<DiaryImage>?,
     var serverId: Long = 0L, // scheduleServerId
     var categoryServerId: Long = 0L,
     var color: Int = 1,
@@ -72,41 +135,3 @@ data class DiarySchedule(
         true
     )
 }
-
-data class GetMoimMemoResponse(
-    val result: MoimDiary
-): BaseResponse()
-
-/** 모임 기록 월 별 조회 **/
-data class DiaryGetMonthResponse(
-    val result: GroupResult
-) : BaseResponse()
-
-data class GroupResult(
-    val content: List<MoimDiary>,
-    val currentPage: Int,
-    val size: Int,
-    val first: Boolean,
-    val last: Boolean
-)
-
-data class MoimDiary(
-    var scheduleId: Long,
-    @SerializedName("name") var title: String,
-    var startDate: Long,
-    @SerializedName("contents") var _content: String?,
-    var urls: List<String>,
-    var categoryId: Long,
-    var color: Int,
-    var placeName: String
-) : java.io.Serializable, BaseObservable() {
-    @get:Bindable
-    var content: String?
-        get() = _content
-        set(value) {
-            _content = value
-            notifyPropertyChanged(BR.content)
-        }
-}
-
-

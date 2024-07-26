@@ -1,7 +1,6 @@
 package com.mongmong.namo.presentation.ui.group.diary
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -9,7 +8,9 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MotionEvent
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -17,21 +18,23 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.databinding.ActivityMoimDiaryBinding
+import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.presentation.ui.MainActivity
+import com.mongmong.namo.presentation.ui.diary.DiaryImageDetailActivity
+import com.mongmong.namo.presentation.ui.diary.PersonalDetailActivity
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityItemDecoration
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityRVAdapter
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimMemberRVAdapter
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.dpToPx
 import com.mongmong.namo.presentation.utils.ConfirmDialog
-import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.PermissionChecker
 import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
 import java.text.NumberFormat
-import java.util.*
+import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -77,10 +80,21 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
 
     private fun onClickListener() {
         // 뒤로가기
-        binding.groupAddBackIv.setOnClickListener { finish() }
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (viewModel.isDiaryChanged()) {
+                    showBackDialog()
+                } else finish()
+            }
+        })
+        binding.groupAddBackIv.setOnClickListener {
+            if (viewModel.isDiaryChanged()) {
+                showBackDialog()
+            } else finish()
+        }
 
         //  장소 추가 버튼 클릭리스너
-        binding.groudPlaceAddTv.setOnClickListener {
+        binding.moimActivityAddLy.setOnClickListener {
             if (viewModel.activities.value?.size ?: 0 >= 3)
                 Toast.makeText(this, "장소 추가는 3개까지 가능합니다", Toast.LENGTH_SHORT).show()
             else {
@@ -141,29 +155,27 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
         }
         // 장소 추가 리사이클러뷰
         activityAdapter = MoimActivityRVAdapter(
-            context = applicationContext,
-            payClickListener = { _, position, payText ->
-                GroupPayDialog(
-                    viewModel.moimDiary.value?.users ?: emptyList(),
-                    viewModel.activities.value?.get(position)!!,
-                    {
-                        viewModel.updateActivityPay(position, it)
-                        payText.text = NumberFormat.getNumberInstance(Locale.US).format(it)
-                    },
-                    {
-                        viewModel.updateActivityMembers(position, it)
-                    }).show(supportFragmentManager, "show")
-                binding.diaryGroupAddPlaceRv.smoothScrollToPosition(position)
+            payClickListener = ::onPayClickListener,
+            imageDetailClickListener = { position ->
+                positionForGallery = position
+                startActivity(
+                    Intent(this, DiaryImageDetailActivity::class.java).apply {
+                        putExtra("imgs", viewModel.activities.value?.get(position)?.images as ArrayList<DiaryImage>?)
+                    }
+                )
             },
-            imageClickListener = { position ->
+            updateImageClickListener = { position ->
                 positionForGallery = position
                 getGallery()
             },
-            activityClickListener = { text, position ->
+            activityNameTextWatcher = { text, position ->
                 viewModel.updateActivityName(position, text)
             },
-            deleteItemList = { deleteItems ->
-                viewModel.updateDeleteItems(deleteItems)
+            deleteActivityClickListener = { activityId ->
+                viewModel.deleteActivity(activityId)
+            },
+            deleteImageClickListener = { position, image ->
+                viewModel.deleteActivityImage(position, image)
             }
         )
 
@@ -191,19 +203,44 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
 
     }
 
+    private fun onPayClickListener(pay: Long, position: Int, payText: TextView) {
+        GroupPayDialog(
+            viewModel.moimDiary.value?.users ?: emptyList(),
+            viewModel.activities.value?.get(position)!!,
+            { updatedPay ->
+                viewModel.updateActivityPay(position, updatedPay)
+                payText.text = NumberFormat.getNumberInstance(Locale.US).format(updatedPay)
+            },
+            { updatedMembers ->
+                viewModel.updateActivityMembers(position, updatedMembers)
+            }
+        ).show(supportFragmentManager, "show")
+        binding.diaryGroupAddPlaceRv.smoothScrollToPosition(position)
+    }
+
     private fun showDeleteDialog() {
         // 삭제 확인 다이얼로그
         val title = "모임 기록을 정말 삭제하시겠어요?"
         val content = "삭제한 모든 모임 기록은\n개인 기록 페이지에서도 삭제됩니다."
-        val dialog = ConfirmDialog(this, title, content, "삭제", 0)
+        val dialog = ConfirmDialog(this, title, content, "삭제", DELETE_BUTTON_ACTION)
         dialog.isCancelable = false
         dialog.show(this.supportFragmentManager, "ConfirmDialog")
     }
 
-    // 삭제 다이얼로그 확인 버튼
+    private fun showBackDialog() {
+        val title = "편집한 내용이 저장되지 않습니다."
+        val content = "정말 나가시겠어요?"
+
+        val dialog = ConfirmDialog(this, title, content, "확인", BACK_BUTTON_ACTION)
+        dialog.isCancelable = false
+        dialog.show(supportFragmentManager, "")
+    }
+
     override fun onClickYesButton(id: Int) {
-        // 모임 기록 전체 삭제
-        viewModel.deleteMoimDiary()
+        when(id) {
+            PersonalDetailActivity.DELETE_BUTTON_ACTION -> viewModel.deleteMoimDiary() // 삭제
+            PersonalDetailActivity.BACK_BUTTON_ACTION -> finish() // 뒤로가기
+        }
     }
 
     private fun getGallery() {
@@ -230,39 +267,44 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private val getImage = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val imgList = arrayListOf<String>()
-            if (result.data?.clipData != null) { // 사진 여러개 선택한 경우
-                val count = result.data?.clipData!!.itemCount
-                if (count > 3) {
-                    Toast.makeText(applicationContext, "사진은 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT)
-                        .show()
-                } else {
+            val newImages = mutableListOf<String>()
+            result.data?.let { data ->
+                if (data.clipData != null) { // 여러 개의 이미지를 선택한 경우
+                    val count = data.clipData!!.itemCount
                     for (i in 0 until count) {
-                        val imageUri = result.data?.clipData!!.getItemAt(i).uri
-                        imgList.add(imageUri.toString())
+                        val imageUri = data.clipData!!.getItemAt(i).uri
+                        newImages.add(imageUri.toString())
                     }
-                }
-            } else { // 단일 선택
-                result.data?.data?.let {
-                    val imageUri: Uri? = result.data!!.data
-                    if (imageUri != null) {
-                        imgList.add(imageUri.toString())
-                    }
+                } else { // 단일 이미지 선택
+                    val imageUri: Uri? = data.data
+                    imageUri?.let { newImages.add(it.toString()) }
                 }
             }
-            viewModel.updateActivityImages(positionForGallery, imgList)
+
+            val currentImagesCount = viewModel.activities.value?.get(positionForGallery)?.images?.size ?: 0
+            if (currentImagesCount + newImages.size > 3) {
+                Toast.makeText(this, "이미지는 최대 3개까지 추가할 수 있습니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                viewModel.updateActivityImages(positionForGallery, newImages.map { DiaryImage(id = 0, url = it) })
+            }
         }
     }
+
+
 
     /** editText 외 터치 시 키보드 내리는 이벤트 **/
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         hideKeyboardOnTouchOutside(ev)
         return super.dispatchTouchEvent(ev)
+    }
+
+    companion object {
+        const val DELETE_BUTTON_ACTION = 1
+        const val BACK_BUTTON_ACTION = 2
     }
 }
 
