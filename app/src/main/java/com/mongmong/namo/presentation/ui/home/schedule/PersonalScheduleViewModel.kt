@@ -195,7 +195,7 @@ class PersonalScheduleViewModel @Inject constructor(
         }
         _isDailyScheduleEmptyPair.value = Pair(
             isDailyScheduleEmpty(false), // 개인 일정
-            isDailyScheduleEmpty(true) // 개인 일정
+            isDailyScheduleEmpty(true) // 모임 일정
         )
     }
 

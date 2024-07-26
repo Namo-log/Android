@@ -119,10 +119,9 @@ class CalendarMonthFragment : Fragment() {
                             HomeFragment.currentFragment = null
                             HomeFragment.currentSelectedPos = null
                             HomeFragment.currentSelectedDate = null
-                        } else if (viewModel.isShow.value == false) {
+                        } else if (viewModel.isShow.value == false) { // 바텀시트 닫기
                             binding.constraintLayout.transitionToEnd()
                         }
-                        // 닫기
                         viewModel.updateIsShow()
                     }
 

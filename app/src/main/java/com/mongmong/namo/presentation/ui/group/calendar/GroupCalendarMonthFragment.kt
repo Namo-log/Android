@@ -30,18 +30,9 @@ class GroupCalendarMonthFragment : Fragment() {
     private var yearMonth : String = ""
 
     private var millis : Long = 0L
-    private var isShow = false
-    private val scheduleList : ArrayList<MoimScheduleBody> = arrayListOf()
-    private val dailySchedules : ArrayList<MoimScheduleBody> = arrayListOf()
-    private val dailyGroupSchedules : ArrayList<MoimScheduleBody> = arrayListOf()
-    private lateinit var monthDayList : List<DateTime>
-    private var tempSchedule : ArrayList<MoimScheduleBody> = arrayListOf()
 
-    private var prevIdx = -1
-    private var nowIdx = 0
-
-    private val personalScheduleRVAdapter = GroupDailyPersonalRVAdapter()
-    private val groupScheduleRVAdapter = GroupDailyMoimRVAdapter()
+    private val personalDailyScheduleAdapter = GroupDailyPersonalRVAdapter()
+    private val groupDailyScheduleAdapter = GroupDailyMoimRVAdapter()
 
     private val viewModel : MoimScheduleViewModel by viewModels()
 
@@ -59,8 +50,13 @@ class GroupCalendarMonthFragment : Fragment() {
     ): View? {
         binding = FragmentGroupCalendarMonthBinding.inflate(inflater, container, false)
 
+        binding.apply {
+            viewModel = this@GroupCalendarMonthFragment.viewModel
+            lifecycleOwner = this@GroupCalendarMonthFragment
+        }
+
         binding.groupCalendarMonthView.setDays(millis)
-        monthDayList = binding.groupCalendarMonthView.days
+        viewModel.setMonthDayList(binding.groupCalendarMonthView.days)
 
         initClickListeners()
         initObserve()
@@ -90,7 +86,7 @@ class GroupCalendarMonthFragment : Fragment() {
             override fun onDateClick(date: DateTime?, pos : Int?) {
                 binding.groupCalendarMonthView.selectedDate = null
                 binding.constraintLayout2.transitionToStart()
-                isShow = false
+                viewModel.setIsShow(false)
                 binding.constraintLayout2.invalidate()
             }
         }
@@ -100,7 +96,7 @@ class GroupCalendarMonthFragment : Fragment() {
     private fun initClickListeners() {
         binding.groupFab.setOnClickListener {
             val intent = Intent(context, GroupScheduleActivity::class.java)
-            intent.putExtra("nowDay", monthDayList[nowIdx].millis)
+            intent.putExtra("nowDay", viewModel.getClickedDate().millis)
             intent.putExtra("group", (activity as GroupCalendarActivity).getGroup() )
             startActivity(intent)
         }
@@ -121,24 +117,23 @@ class GroupCalendarMonthFragment : Fragment() {
                 binding.groupCalendarMonthView.selectedDate = date
 
                 if (date != null && pos != null) {
-                    personalScheduleRVAdapter.setClickedDate(date)
-                    groupScheduleRVAdapter.setClickedDate(date)
+                    // 클릭 처리
+                    personalDailyScheduleAdapter.setClickedDate(date)
+                    groupDailyScheduleAdapter.setClickedDate(date)
 
-                    nowIdx = pos
-                    setDaily(nowIdx)
+                    viewModel.clickDate(pos)
+                    setDailySchedule()
 
-                    if (isShow && prevIdx == nowIdx) {
+                    if (viewModel.isCloseScheduleDetailBottomSheet()) {
                         binding.constraintLayout2.transitionToStart()
                         binding.groupCalendarMonthView.selectedDate = null
                         GroupCalendarActivity.currentFragment = null
                         GroupCalendarActivity.currentSelectedPos = null
                         GroupCalendarActivity.currentSelectedDate = null
-                    }
-                    else if (!isShow) {
+                    } else if (viewModel.isShow.value == false) { // 바텀시트 닫기
                         binding.constraintLayout2.transitionToEnd()
                     }
-                    isShow = !isShow
-                    prevIdx = nowIdx
+                    viewModel.updateIsShow()
                 }
 
                 binding.groupCalendarMonthView.invalidate()
@@ -147,22 +142,22 @@ class GroupCalendarMonthFragment : Fragment() {
     }
 
     private fun initAdapter() {
-        personalScheduleRVAdapter.initScheduleTimeConverter()
-        groupScheduleRVAdapter.initScheduleTimeConverter()
+        personalDailyScheduleAdapter.initScheduleTimeConverter()
+        groupDailyScheduleAdapter.initScheduleTimeConverter()
     }
 
     private fun setAdapter() {
         binding.groupDailyPersonalScheduleRv.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            adapter = personalScheduleRVAdapter
+            adapter = personalDailyScheduleAdapter
         }
 
         binding.groupDailyMoimScheduleRv.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            adapter = groupScheduleRVAdapter
+            adapter = groupDailyScheduleAdapter
         }
 
-        groupScheduleRVAdapter.setMoimScheduleClickListener(object : GroupDailyMoimRVAdapter.MoimScheduleClickListener {
+        groupDailyScheduleAdapter.setScheduleClickListener(object : GroupDailyMoimRVAdapter.MoimScheduleClickListener {
             override fun onContentClicked(groupSchedule: MoimScheduleBody) { // 아이템 전체 클릭
                 val intent = Intent(context, GroupScheduleActivity::class.java)
                 intent.putExtra("group", (activity as GroupCalendarActivity).getGroup())
@@ -183,69 +178,19 @@ class GroupCalendarMonthFragment : Fragment() {
         })
     }
 
-    private fun setDaily(dateId : Int) {
-        binding.groupDailyHeaderTv.text = monthDayList[dateId].toString("MM.dd (E)")
+    private fun setDailySchedule() {
         binding.groupScrollSv.scrollTo(0,0)
-        setDailyData(dateId)
-    }
-
-    private fun setDailyData(dateId : Int) {
-        getSchedule(dateId) // 오늘 일정 가져오기
-        setEmptyText()
-    }
-
-    private fun setEmptyText() {
-        with(binding) {
-            // 개인 일정
-            groupDailyPersonalScheduleNoneTv.visibility = if (dailySchedules.size == 0) View.VISIBLE else View.GONE
-            // 모임 일정
-            groupDailyMoimScheduleNoneTv.visibility = if (dailyGroupSchedules.size == 0) View.VISIBLE else View.GONE
-        }
-    }
-
-    private fun getSchedule(dateId : Int) {
-        val todayStart = monthDayList[dateId].withTimeAtStartOfDay().millis
-        val todayEnd = monthDayList[dateId].plusDays(1).withTimeAtStartOfDay().millis - 1
-
-        tempSchedule.clear()
-        tempSchedule.addAll(scheduleList.filter { schedule ->
-            schedule.startLong <= todayEnd / 1000 && schedule.endLong >= todayStart / 1000
-        })
-
-        dailySchedules.clear()
-        dailyGroupSchedules.clear()
-        dailySchedules.addAll(
-            tempSchedule.filter { event ->
-                !event.curMoimSchedule
-            }
-        )
-        dailyGroupSchedules.addAll(
-            tempSchedule.filter { event ->
-                event.curMoimSchedule
-            }
-        )
-        Log.d("GroupCalMonFrag", dailySchedules.toString())
-        Log.d("GroupCalMonFrag", "Group Schedule : " + dailyGroupSchedules.toString())
-
-        personalScheduleRVAdapter.addPersonal(dailySchedules)
-        groupScheduleRVAdapter.addGroupSchedule(dailyGroupSchedules)
+        // 일정 아이템 표시
+        personalDailyScheduleAdapter.addPersonal(viewModel.getDailySchedules(false))
+        groupDailyScheduleAdapter.addGroupSchedule(viewModel.getDailySchedules(true))
     }
 
     private fun initObserve() {
         viewModel.groupScheduleList.observe(viewLifecycleOwner) { result ->
-            scheduleList.clear()
+            viewModel.filterMonthSchedule()
             if (!result.isNullOrEmpty()) {
-                scheduleList.addAll(filterMonthSchedule(result as ArrayList))
-                drawMonthCalendar(scheduleList)
+                drawMonthCalendar(viewModel.monthScheduleList.value!! as ArrayList<MoimScheduleBody>)
             }
-        }
-    }
-
-    private fun filterMonthSchedule(scheduleList: ArrayList<MoimScheduleBody>): List<MoimScheduleBody> {
-        val monthStart = monthDayList[0].withTimeAtStartOfDay().millis / 1000
-        val monthEnd = monthDayList[41].plusDays(1).withTimeAtStartOfDay().millis / 1000
-        return scheduleList.filter { schedule ->
-            schedule.startLong <= monthEnd && schedule.endLong >= monthStart
         }
     }
 
@@ -255,17 +200,12 @@ class GroupCalendarMonthFragment : Fragment() {
 
         if (GroupCalendarActivity.currentFragment == null) {
             return
-        }
-        else if (this@GroupCalendarMonthFragment != GroupCalendarActivity.currentFragment) {
-            isShow = false
-            prevIdx = -1
-        } else {
+        } else if (this@GroupCalendarMonthFragment == GroupCalendarActivity.currentFragment) {
             binding.groupCalendarMonthView.selectedDate = GroupCalendarActivity.currentSelectedDate
-            nowIdx = GroupCalendarActivity.currentSelectedPos!!
-            setDaily(nowIdx)
+            viewModel.clickDate(GroupCalendarActivity.currentSelectedPos!!)
+            setDailySchedule()
             binding.constraintLayout2.transitionToEnd()
-            isShow = true
-            prevIdx = nowIdx
+            viewModel.updateIsShow()
         }
     }
 

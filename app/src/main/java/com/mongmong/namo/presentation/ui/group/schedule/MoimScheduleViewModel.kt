@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.LatLng
+import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.BaseMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
@@ -35,8 +36,28 @@ class MoimScheduleViewModel @Inject constructor(
     private val _groupScheduleList = MutableLiveData<List<MoimScheduleBody>>(emptyList())
     val groupScheduleList: LiveData<List<MoimScheduleBody>?> = _groupScheduleList
 
+    private val _monthScheduleList = MutableLiveData<List<MoimScheduleBody>>(emptyList())
+    val monthScheduleList: LiveData<List<MoimScheduleBody>?> = _monthScheduleList
+
     private val _prevClickedPicker = MutableLiveData<TextView?>()
     var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
+
+    private val _monthDayList = MutableLiveData<List<DateTime>>()
+
+    // 클릭한 날짜 처리
+    private val _dailyScheduleList = MutableLiveData<List<MoimScheduleBody>>(emptyList())
+    val dailyScheduleList: LiveData<List<MoimScheduleBody>> = _dailyScheduleList
+
+    private val _isShow = MutableLiveData(false)
+    var isShow: LiveData<Boolean> = _isShow
+
+    private var _prevIndex = -1 // 클릭한 날짜의 index
+    private var _nowIndex = 0 // 클릭한 날짜의 index
+
+    private val _clickedDatePair = MutableLiveData<Pair<Long, Long>>() // 클릭한 날짜의 시작, 종료 시간
+
+    private val _isDailyScheduleEmptyPair = MutableLiveData<Pair<Boolean, Boolean>>()
+    var isDailyScheduleEmptyPair: LiveData<Pair<Boolean, Boolean>> = _isDailyScheduleEmptyPair
 
     /** 그룹의 모든 일정 조회 */
     fun getGroupAllSchedules(groupId: Long) {
@@ -87,6 +108,54 @@ class MoimScheduleViewModel @Inject constructor(
         _group.value = group
     }
 
+    private fun setDailySchedule() {
+        // 선택 날짜에 해당되는 일정 필터링
+        _dailyScheduleList.value = _groupScheduleList.value!!.filter { schedule ->
+            schedule.startLong <= _clickedDatePair.value!!.second &&
+                    schedule.endLong >= _clickedDatePair.value!!.first
+        }
+        _isDailyScheduleEmptyPair.value = Pair(
+            isDailyScheduleEmpty(false), // 개인 일정
+            isDailyScheduleEmpty(true) // 모임 일정
+        )
+    }
+
+    // 캘린더의 날짜 클릭
+    fun clickDate(index: Int) {
+        _nowIndex = index
+        // 클릭한 날짜의 시작, 종료 시간 저장
+        _clickedDatePair.value = Pair(
+            (getClickedDate().withTimeAtStartOfDay().millis) / 1000, // 날짜 시작일
+            (getClickedDate().plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000, // 날짜 종료일
+        )
+        setDailySchedule()
+    }
+
+    fun updateIsShow() {
+        _isShow.value = !_isShow.value!!
+        _prevIndex = _nowIndex
+    }
+
+    // 일정 상세 바텀 시트 닫기 - 동일한 날짜를 다시 클릭했을 경우
+    fun isCloseScheduleDetailBottomSheet() = _isShow.value == true && (_prevIndex == _nowIndex)
+
+    // 캘린더에 들어갈 한달 날짜 리스트
+    fun setMonthDayList(monthDayList: List<DateTime>) {
+        _monthDayList.value = monthDayList
+    }
+
+    fun filterMonthSchedule() {
+        val monthStart = _monthDayList.value!![0].withTimeAtStartOfDay().millis / 1000
+        val monthEnd = _monthDayList.value!![41].plusDays(1).withTimeAtStartOfDay().millis / 1000
+        _monthScheduleList.value = _groupScheduleList.value?.filter { schedule ->
+            schedule.startLong <= monthEnd && schedule.endLong >= monthStart
+        }
+    }
+
+    fun setIsShow(bool: Boolean) {
+        _isShow.value = bool
+    }
+
     private fun setDefaultGroupMembers() {
         _schedule.value!!.members = _group.value!!.groupMembers
     }
@@ -121,6 +190,20 @@ class MoimScheduleViewModel @Inject constructor(
 
 
     fun isCreateMode() = schedule.value!!.moimScheduleId == 0L
+
+    private fun isDailyScheduleEmpty(isMoim: Boolean): Boolean {
+        Log.d("ScheduleViewModel", "isDailyScheduleEmpty($isMoim): ${getDailySchedules(isMoim)}")
+        return getDailySchedules(isMoim).isEmpty()
+    }
+
+    // 선택한 날짜
+    fun getClickedDate() = _monthDayList.value!![_nowIndex]
+
+    fun getDailySchedules(isMoim: Boolean): ArrayList<MoimScheduleBody> {
+        return _dailyScheduleList.value!!.filter { schedule ->
+            schedule.curMoimSchedule == isMoim
+        } as ArrayList<MoimScheduleBody>
+    }
 
     fun getSelectedMemberId() = schedule.value!!.members.map { it.userId }
 
