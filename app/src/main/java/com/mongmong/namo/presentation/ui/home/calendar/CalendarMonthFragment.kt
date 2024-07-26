@@ -70,16 +70,6 @@ class CalendarMonthFragment : Fragment() {
         getCategoryList()
         setMonthCalendarSchedule()
         setAdapter()
-
-        if (HomeFragment.currentFragment == null) {
-            return
-        } else if (this@CalendarMonthFragment == HomeFragment.currentFragment) {
-            binding.calendarMonthView.selectedDate = HomeFragment.currentSelectedDate
-            viewModel.clickDate(HomeFragment.currentSelectedPos!!)
-            setDailySchedule()
-            binding.constraintLayout.transitionToEnd()
-            viewModel.updateIsShow()
-        }
     }
 
     private fun initClickListeners() {
@@ -214,8 +204,22 @@ class CalendarMonthFragment : Fragment() {
         // 일정 리스트
         viewModel.scheduleList.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
-                binding.calendarMonthView.setScheduleList(it) // 달력의 일정 표시
+                // 달력의 일정 표시
+                drawMonthCalendar(it)
             }
+        }
+    }
+
+    private fun drawMonthCalendar(scheduleList: List<GetMonthScheduleResult>) {
+        binding.calendarMonthView.setScheduleList(scheduleList)
+        if (HomeFragment.currentFragment == null) {
+            return
+        } else if (this@CalendarMonthFragment == HomeFragment.currentFragment) {
+            binding.calendarMonthView.selectedDate = HomeFragment.currentSelectedDate
+            viewModel.clickDate(HomeFragment.currentSelectedPos!!)
+            setDailySchedule()
+            binding.constraintLayout.transitionToEnd()
+            viewModel.updateIsShow()
         }
     }
 
