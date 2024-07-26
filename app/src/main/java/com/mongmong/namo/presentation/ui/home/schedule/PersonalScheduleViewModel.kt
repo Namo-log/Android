@@ -46,7 +46,6 @@ class PersonalScheduleViewModel @Inject constructor(
     var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
 
     private val _monthDayList = MutableLiveData<List<DateTime>>()
-    var monthDayList: LiveData<List<DateTime>> = _monthDayList
 
     // 클릭한 날짜 처리
     private val _dailyScheduleList = MutableLiveData<List<GetMonthScheduleResult>>(emptyList())
@@ -55,14 +54,10 @@ class PersonalScheduleViewModel @Inject constructor(
     private val _isShow = MutableLiveData(false)
     var isShow: LiveData<Boolean> = _isShow
 
-    private val _prevIndex = MutableLiveData(-1) // 클릭한 날짜의 index
-    var prevIndex: LiveData<Int> = _prevIndex
-
-    private val _nowIndex = MutableLiveData(0) // 클릭한 날짜의 index
-    var nowIndex: LiveData<Int> = _nowIndex
+    private var _prevIndex = -1 // 클릭한 날짜의 index
+    private var _nowIndex = 0 // 클릭한 날짜의 index
 
     private val _clickedDatePair = MutableLiveData<Pair<Long, Long>>() // 클릭한 날짜의 시작, 종료 시간
-    var clickedDatePair: LiveData<Pair<Long, Long>> = _clickedDatePair
 
     private val _isDailyScheduleEmptyPair = MutableLiveData<Pair<Boolean, Boolean>>()
     var isDailyScheduleEmptyPair: LiveData<Pair<Boolean, Boolean>> = _isDailyScheduleEmptyPair
@@ -206,7 +201,7 @@ class PersonalScheduleViewModel @Inject constructor(
 
     // 캘린더의 날짜 클릭
     fun clickDate(index: Int) {
-        _nowIndex.value = index
+        _nowIndex = index
         // 클릭한 날짜의 시작, 종료 시간 저장
         _clickedDatePair.value = Pair(
             (getClickedDate().withTimeAtStartOfDay().millis) / 1000, // 날짜 시작일
@@ -217,11 +212,11 @@ class PersonalScheduleViewModel @Inject constructor(
 
     fun updateIsShow() {
         _isShow.value = !_isShow.value!!
-        _prevIndex.value = _nowIndex.value
+        _prevIndex = _nowIndex
     }
 
     // 일정 상세 바텀 시트 닫기 - 동일한 날짜를 다시 클릭했을 경우
-    fun isCloseScheduleDetailBottomSheet() = _isShow.value == true && (_prevIndex.value == _nowIndex.value)
+    fun isCloseScheduleDetailBottomSheet() = _isShow.value == true && (_prevIndex == _nowIndex)
 
     // 캘린더에 들어갈 한달 날짜 리스트
     fun setMonthDayList(monthDayList: List<DateTime>) {
@@ -259,7 +254,7 @@ class PersonalScheduleViewModel @Inject constructor(
     }
 
     // 선택한 날짜
-    fun getClickedDate() = _monthDayList.value!![_nowIndex.value!!]
+    fun getClickedDate() = _monthDayList.value!![_nowIndex]
 
     fun getDailySchedules(isMoim: Boolean): ArrayList<GetMonthScheduleResult> {
         return _dailyScheduleList.value!!.filter { schedule ->
