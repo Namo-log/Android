@@ -5,6 +5,7 @@ import com.mongmong.namo.data.datasource.group.GroupDataSource
 import com.mongmong.namo.domain.model.group.AddGroupResult
 import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.domain.model.group.JoinGroupResponse
+import com.mongmong.namo.domain.model.group.UpdateGroupNameResponse
 import com.mongmong.namo.domain.repositories.GroupRepository
 import javax.inject.Inject
 
@@ -23,7 +24,7 @@ class GroupRepositoryImpl @Inject constructor(
         return dataSource.joinGroup(groupCode)
     }
 
-    override suspend fun updateGroupName(groupId: Long, name: String): JoinGroupResponse {
+    override suspend fun updateGroupName(groupId: Long, name: String): UpdateGroupNameResponse {
         return dataSource.updateGroupName(groupId, name)
     }
 

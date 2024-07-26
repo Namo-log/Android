@@ -42,10 +42,12 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun setAdapter() {
-        binding.groupInfoMemberRv.layoutManager = GridLayoutManager(this, 2)
         val groupMembers = viewModel.groupInfo.value?.groupMembers ?: emptyList()
         val groupInfoMemberRVAdapter = GroupInfoMemberRVAdapter(groupMembers)
-        binding.groupInfoMemberRv.adapter = groupInfoMemberRVAdapter
+        binding.groupInfoMemberRv.apply {
+            layoutManager = GridLayoutManager(this@GroupInfoActivity, 2)
+            adapter = groupInfoMemberRVAdapter
+        }
     }
 
     private fun setClickListener() {

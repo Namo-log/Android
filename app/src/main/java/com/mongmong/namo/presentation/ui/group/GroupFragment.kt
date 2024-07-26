@@ -15,7 +15,7 @@ import com.mongmong.namo.presentation.ui.group.adapter.GroupListRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class GroupFragment : Fragment(), CreateGroupDialog.GroupCreationListener {
+class GroupFragment : Fragment(), CreateGroupDialog.GroupCreationListener, GroupCodeDialog.GroupCodeListener {
     lateinit var binding: FragmentGroupListBinding
     private val viewModel : GroupViewModel by viewModels()
     private val groupAdapter = GroupListRVAdapter(emptyList())
@@ -82,8 +82,6 @@ class GroupFragment : Fragment(), CreateGroupDialog.GroupCreationListener {
         }
     }
 
-
-
     // 그룹 생성
     private fun showCreateGroupDialog() {
         val dialog = CreateGroupDialog().apply {
@@ -98,9 +96,15 @@ class GroupFragment : Fragment(), CreateGroupDialog.GroupCreationListener {
 
     // 그룹 코드
     private fun showGroupCodeDialog() {
-        val dialog = GroupCodeDialog()
+        val dialog = GroupCodeDialog().apply {
+            setGroupCodeListener(this@GroupFragment)
+        }
         // 알림창이 띄워져있는 동안 배경 클릭 허용
         dialog.isCancelable = true
         dialog.show(parentFragmentManager, "GroupCodeDialog")
+    }
+
+    override fun onGroupParticipate() {
+        viewModel.getGroupList()
     }
 }

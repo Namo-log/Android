@@ -3,6 +3,7 @@ package com.mongmong.namo.presentation.ui.group
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,15 @@ class GroupCodeDialog() : DialogFragment() { // 뷰를 띄워야하므로 Dialog
     private lateinit var binding: DialogGroupCodeBinding
 
     private val viewModel : GroupViewModel by viewModels()
+
+    interface GroupCodeListener {
+        fun onGroupParticipate()
+    }
+    private var listener: GroupCodeListener? = null
+
+    fun setGroupCodeListener(listener: GroupCodeListener) {
+        this.listener = listener
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,8 +60,10 @@ class GroupCodeDialog() : DialogFragment() { // 뷰를 띄워야하므로 Dialog
 
     private fun initObserve() {
         viewModel.joinGroupResult.observe(viewLifecycleOwner) {
-            if(it.result != 0L) {
+            Log.d("joinGroupResult", "$it")
+            if(it.result.groupId != 0L) {
                 Toast.makeText(context, "모임 참여에 성공했습니다.", Toast.LENGTH_SHORT).show()
+                listener?.onGroupParticipate()
             } else {
                 Toast.makeText(context, extractMessageFromResponse(it.message), Toast.LENGTH_SHORT).show()
             }

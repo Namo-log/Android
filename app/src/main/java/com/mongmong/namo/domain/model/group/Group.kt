@@ -38,14 +38,23 @@ data class AddGroupResult (
 
 /** 그룹 참여 **/
 data class JoinGroupResponse(
-    @SerializedName("result") val result : Long = 0L
+    val result : JoinGroupResult
 ) : BaseResponse()
+
+data class JoinGroupResult(
+    val groupId: Long,
+    @SerializedName("code") val groupCode: String
+)
 
 /** 그룹명 변경 */
 data class UpdateGroupNameRequestBody(
     @SerializedName("groupId") val groupId: Long,
     @SerializedName("groupName") val groupName: String
 )
+
+data class UpdateGroupNameResponse(
+    val result : Long = 0L
+) : BaseResponse()
 
 /** 그룹의 일정 조회 */
 data class GetMoimScheduleResponse (

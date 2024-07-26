@@ -96,6 +96,7 @@
                     android:textColor="@color/textGray"
                     android:textColorHint="@color/editTextGray"
                     android:textSize="15sp"
+                    android:text="@{viewModel.groupInfo.groupName}"
                     android:layout_marginEnd="4dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/group_info_edit_iv"
