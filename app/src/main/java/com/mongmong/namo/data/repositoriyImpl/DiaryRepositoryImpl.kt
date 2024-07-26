@@ -7,7 +7,7 @@ import com.mongmong.namo.data.datasource.diary.DiaryPersonalPagingSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
-import com.mongmong.namo.data.local.entity.diary.Diary
+import com.mongmong.namo.domain.model.PersonalDiary
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.domain.model.DiaryAddResponse
@@ -40,11 +40,11 @@ class DiaryRepositoryImpl @Inject constructor(
 
     /** 개인 기록 추가 **/
     override suspend fun addPersonalDiary(
-        diary: Diary,
-        images: List<String>?
+        diary: PersonalDiary,
+        images: List<String>?,
     ): DiaryAddResponse {
         Log.d("DiaryRepositoryImpl addDiary", "$diary")
-        return remoteDiaryDataSource.addPersonalDiary(diary.images, diary.diaryId, diary.content)
+        return remoteDiaryDataSource.addPersonalDiary(images, diary.diaryId, diary.content)
         /*if (networkChecker.isOnline()) {
             val addResponse = remoteDiaryDataSource.addDiaryToServer(diary, images)
             if (addResponse.code == SUCCESS_CODE) {
@@ -62,11 +62,12 @@ class DiaryRepositoryImpl @Inject constructor(
 
     /** 개인 기록 수정 **/
     override suspend fun editPersonalDiary(
-        diary: Diary,
-        images: List<String>?
+        diary: PersonalDiary,
+        images: List<String>,
+        deleteImageIds: List<Long>?
     ): DiaryResponse {
         Log.d("DiaryRepositoryImpl editDiary", "$diary")
-        return remoteDiaryDataSource.editPersonalDiary(diary.images, diary.diaryId, diary.content)
+        return remoteDiaryDataSource.editPersonalDiary(images, diary.diaryId, diary.content, deleteImageIds)
         /*if (networkChecker.isOnline()) {
             val editResponse = remoteDiaryDataSource.editDiaryToServer(diary, images)
             if (editResponse.code == SUCCESS_CODE) {
@@ -132,25 +133,26 @@ class DiaryRepositoryImpl @Inject constructor(
     /** 모임 기록 활동 추가 **/
     override suspend fun addMoimActivity(
         moimScheduleId: Long,
-        place: String,
-        money: Long,
-        members: List<Long>?,
-        images: List<String>?
+        activityName: String,
+        activityMoney: Long,
+        participantUserIds: List<Long>,
+        createImages: List<String>?
     ) {
         Log.d("MoimActivity", "impl addMoimActivity")
-        remoteDiaryDataSource.addMoimActivity(moimScheduleId, place, money, members, images)
+        remoteDiaryDataSource.addMoimActivity(moimScheduleId, activityName, activityMoney, participantUserIds, createImages)
     }
 
     /** 모임 기록 활동 수정 **/
     override suspend fun editMoimActivity(
-        moimScheduleId: Long,
-        place: String,
-        money: Long,
-        members: List<Long>?,
-        images: List<String>?
+        activityId: Long,
+        deleteImageIds: List<Long>?,
+        activityName: String,
+        activityMoney: Long,
+        participantUserIds: List<Long>,
+        createImages: List<String>?
     ) {
         Log.d("MoimActivity", "impl editMoimActivity")
-        remoteDiaryDataSource.editMoimActivity(moimScheduleId, place, money, members, images)
+        remoteDiaryDataSource.editMoimActivity(activityId, deleteImageIds, activityName, activityMoney, participantUserIds, createImages)
     }
 
     /** 모임 기록 활동 삭제**/

@@ -5,17 +5,20 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.databinding.ActivityMoimMemoDetailBinding
+import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.MoimDiary
-import com.mongmong.namo.presentation.ui.diary.adapter.GalleryListAdapter
+import com.mongmong.namo.presentation.ui.diary.adapter.GalleryImageRVAdapter
 import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
-import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.ArrayList
 
 @AndroidEntryPoint
 class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
@@ -38,7 +41,7 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
         moimScheduleId = intent.getLongExtra("moimScheduleId", 0L)
 
         initObserve()
-        initClickListener()
+        onClickListener()
     }
 
     override fun onResume() {
@@ -46,11 +49,25 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
         viewModel.getMoimMemo(moimScheduleId)
     }
 
-    private fun initClickListener() {
+    private fun onClickListener() {
         with(binding) {
+            // 뒤로 가기
+            onBackPressedDispatcher.addCallback(this@MoimMemoDetailActivity, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (this@MoimMemoDetailActivity.viewModel.isMoimDiaryChanged()) {
+                        showBackDialog()
+                    } else finish()
+                }
+            })
+            diaryBackIv.setOnClickListener {
+                if (this@MoimMemoDetailActivity.viewModel.isDiaryChanged()) {
+                    showBackDialog()
+                } else finish()
+            }
+
             diaryDeleteIv.setOnClickListener { showDeleteDialog() } // 삭제
-            diaryBackIv.setOnClickListener { finish() } // 뒤로 가기
-            groupDiaryDetailLy.setOnClickListener {// 그룹 다이어리 장소 아이템 추가 화면으로 이동
+
+            groupDiaryDetailLy.setOnClickListener {// 모임 기록으로 이동
                 startActivity(
                     Intent(this@MoimMemoDetailActivity, MoimDiaryActivity::class.java)
                         .putExtra("from", "moimMemo")
@@ -87,16 +104,21 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
     private fun initView(moimDiary: MoimDiary) {
         viewModel.isEditMode()
         viewModel.findCategoryById()
-        setImgList(moimDiary.urls)
+        setImgList(moimDiary.getImageUrls())
     }
 
     private fun setImgList(imgList: List<String>) {
-        val galleryViewRVAdapter = GalleryListAdapter(true, {}, {startActivity(Intent())})
+        val diaryImages = imgList.map { DiaryImage(id = 0, url = it) }
+        val galleryViewRVAdapter = GalleryImageRVAdapter(true, {}, {
+            startActivity(
+                Intent(this, DiaryImageDetailActivity::class.java).putExtra("imgs", it as ArrayList<DiaryImage>)
+            )
+        })
         binding.diaryGallerySavedRv.adapter = galleryViewRVAdapter
         binding.diaryGallerySavedRv.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        galleryViewRVAdapter.addImages(imgList)
+        galleryViewRVAdapter.addImages(diaryImages)
     }
 
     private fun showDeleteDialog() {
@@ -109,8 +131,20 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
         dialog.show(supportFragmentManager, "ConfirmDialog")
     }
 
+    private fun showBackDialog() {
+        val title = "편집한 내용이 저장되지 않습니다."
+        val content = "정말 나가시겠어요?"
+
+        val dialog = ConfirmDialog(this, title, content, "확인", MoimDiaryActivity.BACK_BUTTON_ACTION)
+        dialog.isCancelable = false
+        dialog.show(supportFragmentManager, "")
+    }
+
     override fun onClickYesButton(id: Int) {
-        viewModel.deleteMoimMemo(moimScheduleId)
+        when(id) {
+            PersonalDetailActivity.DELETE_BUTTON_ACTION -> viewModel.deleteMoimMemo(moimScheduleId) // 삭제
+            PersonalDetailActivity.BACK_BUTTON_ACTION -> finish() // 뒤로가기
+        }
     }
 
     /** editText 외 터치 시 키보드 내리는 이벤트 **/

@@ -14,12 +14,11 @@ import com.mongmong.namo.databinding.ActivityCategoryEditBinding
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.utils.ConfirmDialog
-import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CategoryEditActivity : AppCompatActivity(), ConfirmDialogInterface {
+class CategoryEditActivity : AppCompatActivity(), ConfirmDialog.ConfirmDialogInterface {
 
     lateinit var binding: ActivityCategoryEditBinding
 

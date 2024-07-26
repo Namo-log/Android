@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.diary.adapter
+package com.mongmong.namo.presentation.ui.diary
 
 import android.content.Context
 import android.graphics.Rect

@@ -1,11 +1,10 @@
 package com.mongmong.namo.domain.repositories
 
 import androidx.paging.PagingSource
-import com.mongmong.namo.data.local.entity.diary.Diary
+import com.mongmong.namo.domain.model.PersonalDiary
 import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.DiarySchedule
-import com.mongmong.namo.domain.model.GetMoimMemoResponse
 import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
@@ -15,13 +14,14 @@ interface DiaryRepository {
     suspend fun getPersonalDiary(localId: Long): GetPersonalDiaryResponse
 
     suspend fun addPersonalDiary(
-        diary: Diary,
+        diary: PersonalDiary,
         images: List<String>?
     ): DiaryAddResponse
 
     suspend fun editPersonalDiary(
-        diary: Diary,
-        images: List<String>?
+        diary: PersonalDiary,
+        images: List<String>,
+        deleteImageIds: List<Long>?
     ): DiaryResponse
 
     suspend fun deletePersonalDiary(
@@ -46,18 +46,19 @@ interface DiaryRepository {
 
     suspend fun addMoimActivity(
         moimScheduleId: Long,
-        place: String,
-        money: Long,
-        members: List<Long>?,
-        images: List<String>?
+        activityName: String,
+        activityMoney: Long,
+        participantUserIds: List<Long>,
+        createImages: List<String>?
     )
 
     suspend fun editMoimActivity(
-        moimScheduleId: Long,
-        place: String,
-        money: Long,
-        members: List<Long>?,
-        images: List<String>?
+        activityId: Long,
+        deleteImageIds: List<Long>?,
+        activityName: String,
+        activityMoney: Long,
+        participantUserIds: List<Long>,
+        createImages: List<String>?
     )
 
     suspend fun deleteMoimActivity(activityId: Long)
