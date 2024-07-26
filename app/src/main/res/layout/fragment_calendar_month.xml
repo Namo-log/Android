@@ -3,6 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <import type="com.mongmong.namo.presentation.utils.ScheduleDateConverter"/>
+        <import type="android.view.View"/>
+        <import type="kotlin.Pair"/>
+        <variable
+            name="viewModel"
+            type="com.mongmong.namo.presentation.ui.home.schedule.PersonalScheduleViewModel" />
+    </data>
+
     <androidx.constraintlayout.motion.widget.MotionLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
@@ -39,7 +48,7 @@
                 android:id="@+id/home_daily_header_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/home_daily_date"
+                android:text="@{ScheduleDateConverter.parseDateTimeToClickedDateText(viewModel.getClickedDate)}"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="25sp"
@@ -85,6 +94,7 @@
                         android:id="@+id/home_daily_personal_schedule_none_tv"
                         android:text="@string/schedule_personal_empty"
                         android:layout_marginBottom="45dp"
+                        android:visibility="@{viewModel.isDailyScheduleEmptyPair.first ? View.VISIBLE : View.GONE}"
                         style="@style/schedule_empty_text" />
 
                     <TextView
@@ -109,6 +119,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
+                        android:visibility="@{viewModel.isDailyScheduleEmptyPair.second ? View.VISIBLE : View.GONE}"
                         android:text="@string/schedule_moim_empty"
                         style="@style/schedule_empty_text" />
 

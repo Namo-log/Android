@@ -31,18 +31,11 @@ class CalendarMonthFragment : Fragment() {
     private lateinit var binding: FragmentCalendarMonthBinding
 
     private var millis: Long = 0L
-    var isShow = false
-    private lateinit var monthDayList: List<DateTime>
-    private var calendarSchedules: ArrayList<GetMonthScheduleResult> = arrayListOf() // 캘린더 일정 표시
 
-    private var prevIdx = -1
-    private var nowIdx = 0
-    private var schedulePersonal: ArrayList<GetMonthScheduleResult> = arrayListOf()
-    private var scheduleMoim: ArrayList<GetMonthScheduleResult> = arrayListOf()
     private val personalScheduleRVAdapter = DailyPersonalRVAdapter()
     private val groupScheduleRVAdapter = DailyMoimRVAdapter()
 
-    private val viewModel : PersonalScheduleViewModel by viewModels()
+    private val viewModel: PersonalScheduleViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +50,13 @@ class CalendarMonthFragment : Fragment() {
     ): View? {
         binding = FragmentCalendarMonthBinding.inflate(inflater, container, false)
 
+        binding.apply {
+            viewModel = this@CalendarMonthFragment.viewModel
+            lifecycleOwner = this@CalendarMonthFragment
+        }
+
         binding.calendarMonthView.setDays(millis)
-        monthDayList = binding.calendarMonthView.days
+        viewModel.setMonthDayList(binding.calendarMonthView.days)
 
         initClickListeners()
         initAdapter()
@@ -76,16 +74,12 @@ class CalendarMonthFragment : Fragment() {
 
         if (HomeFragment.currentFragment == null) {
             return
-        } else if (this@CalendarMonthFragment != HomeFragment.currentFragment) {
-            isShow = false
-            prevIdx = -1
-        } else {
+        } else if (this@CalendarMonthFragment == HomeFragment.currentFragment) {
             binding.calendarMonthView.selectedDate = HomeFragment.currentSelectedDate
-            nowIdx = HomeFragment.currentSelectedPos!!
-            setDaily(nowIdx)
+            viewModel.clickDate(HomeFragment.currentSelectedPos!!)
+            setDailySchedule()
             binding.constraintLayout.transitionToEnd()
-            isShow = true
-            prevIdx = nowIdx
+            viewModel.updateIsShow()
         }
     }
 
@@ -93,7 +87,7 @@ class CalendarMonthFragment : Fragment() {
         // 새 일정 추가
         binding.homeFab.setOnClickListener {
             val intent = Intent(context, ScheduleActivity::class.java)
-            intent.putExtra("nowDay", monthDayList[nowIdx].millis)
+            intent.putExtra("nowDay", viewModel.getClickedDate().millis)
             requireActivity().startActivity(intent)
         }
         // 캘린더 날짜 클릭
@@ -113,23 +107,24 @@ class CalendarMonthFragment : Fragment() {
                     binding.calendarMonthView.selectedDate = date
 
                     if (date != null && pos != null) {
+                        // 클릭 처리
                         personalScheduleRVAdapter.setClickedDate(date)
                         groupScheduleRVAdapter.setClickedDate(date)
 
-                        nowIdx = pos
-                        setDaily(nowIdx)
+                        viewModel.clickDate(pos)
+                        setDailySchedule()
 
-                        if (isShow && prevIdx == nowIdx) {
+                        if (viewModel.isCloseScheduleDetailBottomSheet()) {
                             binding.constraintLayout.transitionToStart()
                             binding.calendarMonthView.selectedDate = null
                             HomeFragment.currentFragment = null
                             HomeFragment.currentSelectedPos = null
                             HomeFragment.currentSelectedDate = null
-                        } else if (!isShow) {
+                        } else if (viewModel.isShow.value == false) {
                             binding.constraintLayout.transitionToEnd()
                         }
-                        isShow = !isShow
-                        prevIdx = nowIdx
+                        // 닫기
+                        viewModel.updateIsShow()
                     }
 
                 binding.calendarMonthView.invalidate()
@@ -190,7 +185,6 @@ class CalendarMonthFragment : Fragment() {
     }
 
     private fun setCategoryList(categoryList: List<Category>) {
-//        Log.d("CalendarMonthFrag", "categoryList: $categoryList")
         binding.calendarMonthView.setCategoryList(categoryList)
         personalScheduleRVAdapter.setCategory(categoryList)
         groupScheduleRVAdapter.setCategory(categoryList)
@@ -202,50 +196,11 @@ class CalendarMonthFragment : Fragment() {
     }
 
     // 일정 상세보기
-    private fun setDaily(dateId: Int) {
-        binding.homeDailyHeaderTv.text = monthDayList[dateId].toString("MM.dd (E)")
+    private fun setDailySchedule() {
         binding.dailyScrollSv.scrollTo(0, 0)
         // 일정 아이템 표시
-        getSchedule(dateId) // 일정 내용
-    }
-
-    private fun setPersonalEmptyText(isEmpty: Boolean) {
-        binding.homeDailyPersonalScheduleNoneTv.visibility = if (isEmpty) View.VISIBLE else View.GONE
-    }
-
-    private fun setMoimEmptyText(isEmpty: Boolean) {
-        binding.homeDailyMoimScheduleNoneTv.visibility = if (isEmpty) View.VISIBLE else View.GONE
-    }
-
-    private fun getSchedule(dateId: Int) {
-        val todayStart = (monthDayList[dateId].withTimeAtStartOfDay().millis) / 1000
-        val todayEnd = (monthDayList[dateId].plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000
-
-        schedulePersonal.clear()
-        scheduleMoim.clear()
-        setDailyPersonalSchedule(todayStart, todayEnd) // 개인 일정 표시
-        setDailyMoimSchedule(todayStart, todayEnd) // 그룹 일정 표시
-    }
-
-    private fun setDailyPersonalSchedule(todayStart: Long, todayEnd: Long) {
-        // 선택한 날짜의 개인 일정
-//        viewModel.getDailySchedules(todayStart, todayEnd)
-        schedulePersonal = calendarSchedules.filter { item ->
-            item.startDate <= todayEnd && item.endDate >= todayStart
-                    && !item.moimSchedule
-        } as ArrayList<GetMonthScheduleResult>
-        personalScheduleRVAdapter.addPersonal(schedulePersonal)
-        setPersonalEmptyText(schedulePersonal.isEmpty())
-    }
-
-    private fun setDailyMoimSchedule(todayStart: Long, todayEnd: Long) {
-        // 선택한 날짜의 모임 일정
-        scheduleMoim = calendarSchedules.filter { item ->
-            item.startDate <= todayEnd && item.endDate >= todayStart
-                    && item.moimSchedule
-        } as ArrayList<GetMonthScheduleResult>
-        groupScheduleRVAdapter.addGroup(scheduleMoim)
-        setMoimEmptyText(scheduleMoim.isEmpty())
+        personalScheduleRVAdapter.addPersonal(viewModel.getDailySchedules(false))
+        groupScheduleRVAdapter.addGroup(viewModel.getDailySchedules(true))
     }
 
     private fun initObserve() {
@@ -257,12 +212,9 @@ class CalendarMonthFragment : Fragment() {
         }
         // 일정 리스트
         viewModel.scheduleList.observe(viewLifecycleOwner) {
-            calendarSchedules.clear()
             if (!it.isNullOrEmpty()) {
-                calendarSchedules.addAll(it)
+                binding.calendarMonthView.setScheduleList(it) // 달력의 일정 표시
             }
-            getSchedule(nowIdx)
-            binding.calendarMonthView.setScheduleList(calendarSchedules) // 달력 표시
         }
     }
 

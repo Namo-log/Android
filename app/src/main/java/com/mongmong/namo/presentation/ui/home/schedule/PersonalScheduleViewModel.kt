@@ -30,12 +30,6 @@ class PersonalScheduleViewModel @Inject constructor(
     private val _schedule = MutableLiveData<Schedule?>()
     val schedule: LiveData<Schedule?> = _schedule
 
-    private val _personalDailyScheduleList = MutableLiveData<List<Schedule>>(emptyList())
-    val personalDailyScheduleList: LiveData<List<Schedule>?> = _personalDailyScheduleList
-
-    private val _moimScheduleList = MutableLiveData<List<GetMonthScheduleResult>>(emptyList())
-    val moimScheduleList: LiveData<List<GetMonthScheduleResult>?> = _moimScheduleList
-
     private val _scheduleList = MutableLiveData<List<GetMonthScheduleResult>>(emptyList())
     val scheduleList: LiveData<List<GetMonthScheduleResult>?> = _scheduleList
 
@@ -51,6 +45,28 @@ class PersonalScheduleViewModel @Inject constructor(
     private val _prevClickedPicker = MutableLiveData<TextView?>()
     var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
 
+    private val _monthDayList = MutableLiveData<List<DateTime>>()
+    var monthDayList: LiveData<List<DateTime>> = _monthDayList
+
+    // 클릭한 날짜 처리
+    private val _dailyScheduleList = MutableLiveData<List<GetMonthScheduleResult>>(emptyList())
+    val dailyScheduleList: LiveData<List<GetMonthScheduleResult>> = _dailyScheduleList
+
+    private val _isShow = MutableLiveData(false)
+    var isShow: LiveData<Boolean> = _isShow
+
+    private val _prevIndex = MutableLiveData(-1) // 클릭한 날짜의 index
+    var prevIndex: LiveData<Int> = _prevIndex
+
+    private val _nowIndex = MutableLiveData(0) // 클릭한 날짜의 index
+    var nowIndex: LiveData<Int> = _nowIndex
+
+    private val _clickedDatePair = MutableLiveData<Pair<Long, Long>>() // 클릭한 날짜의 시작, 종료 시간
+    var clickedDatePair: LiveData<Pair<Long, Long>> = _clickedDatePair
+
+    private val _isDailyScheduleEmptyPair = MutableLiveData<Pair<Boolean, Boolean>>()
+    var isDailyScheduleEmptyPair: LiveData<Pair<Boolean, Boolean>> = _isDailyScheduleEmptyPair
+
     /** 월별 일정 리스트 조회 */
     fun getMonthSchedules(yearMonth: String) {
         viewModelScope.launch {
@@ -59,13 +75,13 @@ class PersonalScheduleViewModel @Inject constructor(
         }
     }
 
-    /** 선택한 날짜의 일정 조회 */
-    fun getDailySchedules(startDate: Long, endDate: Long) {
-        viewModelScope.launch {
-            Log.d("ScheduleViewModel", "getDailySchedules")
-            _personalDailyScheduleList.value = repository.getDailySchedules(startDate, endDate)
-        }
-    }
+//    /** 선택한 날짜의 일정 조회 */
+//    fun getDailySchedules(startDate: Long, endDate: Long) {
+//        viewModelScope.launch {
+//            Log.d("ScheduleViewModel", "getDailySchedules")
+//            _personalDailyScheduleList.value = repository.getDailySchedules(startDate, endDate)
+//        }
+//    }
 
     /** 일정 추가 */
     fun addSchedule() {
@@ -101,14 +117,6 @@ class PersonalScheduleViewModel @Inject constructor(
     }
 
     // 모임
-    /** 월별 모임 일정 조회 */
-    fun getMonthMoimSchedule(yearMonth: String) {
-        viewModelScope.launch {
-            Log.d("ScheduleViewModel", "getMonthMoimSchedule")
-            _moimScheduleList.value = repository.getMonthMoimSchedule(yearMonth)
-        }
-    }
-
     /** 모임 일정 카테고리 수정 */
     fun editMoimScheduleCategory() {
         viewModelScope.launch {
@@ -177,6 +185,42 @@ class PersonalScheduleViewModel @Inject constructor(
         )
     }
 
+    private fun setDailySchedule() {
+        // 선택 날짜에 해당되는 일정 필터링
+        _dailyScheduleList.value = _scheduleList.value!!.filter { schedule ->
+            schedule.startDate <= _clickedDatePair.value!!.second &&
+                    schedule.endDate >= _clickedDatePair.value!!.first
+        }
+        _isDailyScheduleEmptyPair.value = Pair(
+            isDailyScheduleEmpty(false), // 개인 일정
+            isDailyScheduleEmpty(true) // 개인 일정
+        )
+    }
+
+    // 캘린더의 날짜 클릭
+    fun clickDate(index: Int) {
+        _nowIndex.value = index
+        // 클릭한 날짜의 시작, 종료 시간 저장
+        _clickedDatePair.value = Pair(
+            (getClickedDate().withTimeAtStartOfDay().millis) / 1000, // 날짜 시작일
+            (getClickedDate().plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000, // 날짜 종료일
+        )
+        setDailySchedule()
+    }
+
+    fun updateIsShow() {
+        _isShow.value = !_isShow.value!!
+        _prevIndex.value = _nowIndex.value
+    }
+
+    // 일정 상세 바텀 시트 닫기 - 동일한 날짜를 다시 클릭했을 경우
+    fun isCloseScheduleDetailBottomSheet() = _isShow.value == true && (_prevIndex.value == _nowIndex.value)
+
+    // 캘린더에 들어갈 한달 날짜 리스트
+    fun setMonthDayList(monthDayList: List<DateTime>) {
+        _monthDayList.value = monthDayList
+    }
+
     // 시간 변경
     fun updateTime(startDateTime: DateTime?, endDateTime: DateTime?) {
         _schedule.value = _schedule.value?.copy(
@@ -201,6 +245,20 @@ class PersonalScheduleViewModel @Inject constructor(
     fun isMoimSchedule() = schedule.value!!.moimSchedule
 
     fun isCreateMode() = (schedule.value!!.scheduleId == 0L)
+
+    private fun isDailyScheduleEmpty(isMoim: Boolean): Boolean {
+        Log.d("ScheduleViewModel", "isDailyScheduleEmpty($isMoim): ${getDailySchedules(isMoim)}")
+        return getDailySchedules(isMoim).isEmpty()
+    }
+
+    // 선택한 날짜
+    fun getClickedDate() = _monthDayList.value!![_nowIndex.value!!]
+
+    fun getDailySchedules(isMoim: Boolean): ArrayList<GetMonthScheduleResult> {
+        return _dailyScheduleList.value!!.filter { schedule ->
+            schedule.moimSchedule == isMoim
+        } as ArrayList<GetMonthScheduleResult>
+    }
 
     fun getDateTime(): Pair<DateTime, DateTime>? {
         if (_schedule.value != null) {
