@@ -35,9 +35,12 @@ class GroupViewModel @Inject constructor(
     private val _deleteMemberResult = MutableLiveData<Int>()
     val deleteMemberResult: LiveData<Int> = _deleteMemberResult
 
+    val isDataLoaded: MutableLiveData<Boolean> = MutableLiveData(false)
+
     fun getGroupList() {
         viewModelScope.launch {
             _groups.value = repository.getGroups()
+            isDataLoaded.value = true
         }
     }
 
