@@ -13,6 +13,7 @@ import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
+import com.mongmong.namo.presentation.config.Constants.SUCCESS_CODE
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
 import javax.inject.Inject
@@ -32,9 +33,9 @@ class ScheduleRepositoryImpl @Inject constructor(
         return localScheduleDataSource.getDailySchedules(startDate, endDate)
     }
 
-    override suspend fun addSchedule(schedule: ScheduleRequestBody) {
+    override suspend fun addSchedule(schedule: ScheduleRequestBody): Boolean {
         Log.d("ScheduleRepositoryImpl", "addSchedule $schedule")
-        remoteScheduleDataSource.addScheduleToServer(schedule)
+        return remoteScheduleDataSource.addScheduleToServer(schedule).code == SUCCESS_CODE
         /*
         schedule.scheduleId = localScheduleDataSource.addSchedule(schedule) // 로컬에서 일정 생성후 받아온 scheduleId 업데이트
         if (networkChecker.isOnline()) {
@@ -58,11 +59,11 @@ class ScheduleRepositoryImpl @Inject constructor(
          */
     }
 
-    override suspend fun editSchedule(scheduleId: Long, schedule: ScheduleRequestBody) {
-        remoteScheduleDataSource.editScheduleToServer(
+    override suspend fun editSchedule(scheduleId: Long, schedule: ScheduleRequestBody): Boolean {
+        return remoteScheduleDataSource.editScheduleToServer(
             scheduleId,
             schedule
-        )
+        ).code == SUCCESS_CODE
         /*
         Log.d("ScheduleRepositoryImpl", "editSchedule $schedule")
         localScheduleDataSource.editSchedule(schedule)
@@ -89,8 +90,8 @@ class ScheduleRepositoryImpl @Inject constructor(
          */
     }
 
-    override suspend fun deleteSchedule(scheduleId: Long, isGroup: Boolean) {
-        remoteScheduleDataSource.deleteScheduleToServer(scheduleId, isGroup)
+    override suspend fun deleteSchedule(scheduleId: Long, isGroup: Boolean): Boolean {
+        return remoteScheduleDataSource.deleteScheduleToServer(scheduleId, isGroup).code == SUCCESS_CODE
         /*
         // 모임 일정
         if (isGroup) {
@@ -127,12 +128,12 @@ class ScheduleRepositoryImpl @Inject constructor(
         return remoteScheduleDataSource.getMonthMoimSchedule(yearMonth)
     }
 
-    override suspend fun editMoimScheduleCategory(category: PatchMoimScheduleCategoryRequestBody) {
-        return remoteScheduleDataSource.editMoimScheduleCategory(category)
+    override suspend fun editMoimScheduleCategory(category: PatchMoimScheduleCategoryRequestBody): Boolean {
+        return remoteScheduleDataSource.editMoimScheduleCategory(category).code == SUCCESS_CODE
     }
 
-    override suspend fun editMoimScheduleAlert(alert: PatchMoimScheduleAlarmRequestBody) {
-        return remoteScheduleDataSource.editMoimScheduleAlert(alert)
+    override suspend fun editMoimScheduleAlert(alert: PatchMoimScheduleAlarmRequestBody): Boolean {
+        return remoteScheduleDataSource.editMoimScheduleAlert(alert).code == SUCCESS_CODE
     }
 
     /** 그룹 */
@@ -150,10 +151,6 @@ class ScheduleRepositoryImpl @Inject constructor(
 
     override suspend fun deleteMoimSchedule(moimScheduleId: Long) {
         return remoteScheduleDataSource.deleteMoimSchedule(moimScheduleId)
-    }
-
-    companion object {
-        const val SUCCESS_CODE = 200
     }
 
 }

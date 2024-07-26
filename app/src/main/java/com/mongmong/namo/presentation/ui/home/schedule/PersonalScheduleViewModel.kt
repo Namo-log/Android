@@ -87,10 +87,11 @@ class PersonalScheduleViewModel @Inject constructor(
     fun addSchedule() {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "addSchedule ${_schedule.value}")
-            repository.addSchedule(
-                schedule = _schedule.value!!.convertLocalScheduleToServer()
+            _isComplete.postValue(
+                repository.addSchedule(
+                    schedule = _schedule.value!!.convertLocalScheduleToServer()
+                )
             )
-            _isComplete.postValue(true)
         }
     }
 
@@ -98,9 +99,11 @@ class PersonalScheduleViewModel @Inject constructor(
     fun editSchedule() {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "editSchedule ${_schedule.value}")
-            repository.editSchedule(
-                scheduleId = _schedule.value!!.scheduleId,
-                schedule = _schedule.value!!.convertLocalScheduleToServer()
+            _isComplete.postValue(
+                repository.editSchedule(
+                    scheduleId = _schedule.value!!.scheduleId,
+                    schedule = _schedule.value!!.convertLocalScheduleToServer()
+                )
             )
         }
     }
@@ -109,9 +112,11 @@ class PersonalScheduleViewModel @Inject constructor(
     fun deleteSchedule(scheduleId: Long, isGroup: Boolean) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "deleteSchedule $schedule")
-            repository.deleteSchedule(
-                scheduleId = scheduleId,
-                isGroup = isGroup
+            _isComplete.postValue(
+                repository.deleteSchedule(
+                    scheduleId = scheduleId,
+                    isGroup = isGroup
+                )
             )
         }
     }
@@ -120,10 +125,12 @@ class PersonalScheduleViewModel @Inject constructor(
     /** 모임 일정 카테고리 수정 */
     fun editMoimScheduleCategory() {
         viewModelScope.launch {
-            repository.editMoimScheduleCategory(
-                PatchMoimScheduleCategoryRequestBody(
-                    _schedule.value!!.scheduleId,
-                    _schedule.value!!.categoryId
+            _isComplete.postValue(
+                repository.editMoimScheduleCategory(
+                    PatchMoimScheduleCategoryRequestBody(
+                        _schedule.value!!.scheduleId,
+                        _schedule.value!!.categoryId
+                    )
                 )
             )
         }

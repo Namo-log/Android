@@ -18,6 +18,8 @@ import com.mongmong.namo.domain.model.PostScheduleResult
 import com.mongmong.namo.domain.model.ScheduleRequestBody
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
+import com.mongmong.namo.presentation.config.BaseResponse
+import com.mongmong.namo.presentation.config.Constants.SUCCESS_CODE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -123,30 +125,36 @@ class RemoteScheduleDataSource @Inject constructor(
 
     suspend fun editMoimScheduleCategory(
         category: PatchMoimScheduleCategoryRequestBody
-    ) {
+    ): BaseResponse {
+        var scheduleResponse = BaseResponse()
         withContext(Dispatchers.IO) {
             runCatching {
                 scheduleApiService.patchMoimScheduleCategory(category)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleCategory Success $it")
+                scheduleResponse = it
             }.onFailure {
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleCategory Fail")
             }
         }
+        return scheduleResponse
     }
 
     suspend fun editMoimScheduleAlert(
         alert: PatchMoimScheduleAlarmRequestBody
-    ) {
+    ): BaseResponse {
+        var scheduleResponse = BaseResponse()
         withContext(Dispatchers.IO) {
             runCatching {
                 scheduleApiService.patchMoimScheduleAlarm(alert)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleAlert Success $it")
+                scheduleResponse = it
             }.onFailure {
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleAlert Fail $it")
             }
         }
+        return scheduleResponse
     }
 
     /** 그룹 */
