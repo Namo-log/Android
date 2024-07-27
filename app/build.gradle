@@ -11,12 +11,12 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 def kakaoApiKey = properties.getProperty('kakao_native_key')
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.mongmong.namo"
         minSdk 23
-        targetSdk 33
+        targetSdk 34
         versionCode 5
         versionName "1.0.4"
 
@@ -122,7 +122,7 @@ dependencies {
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.4'
 
     // paging
-    implementation "androidx.paging:paging-runtime:3.0.0"
+    implementation "androidx.paging:paging-runtime-ktx:3.3.1"
 
     // hilt
     implementation 'com.google.dagger:hilt-android:2.38.1'
@@ -134,8 +134,9 @@ dependencies {
     // firebase
     implementation platform('com.google.firebase:firebase-bom:32.1.0')
     implementation 'com.google.firebase:firebase-config'
-    apply plugin: 'com.google.gms.google-services'
 
     // reflection
     implementation 'org.jetbrains.kotlin:kotlin-reflect:1.7.10'
 }
+
+apply plugin: 'com.google.gms.google-services'
