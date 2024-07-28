@@ -148,10 +148,10 @@ class GroupCalendarMonthFragment : Fragment() {
 
         groupDailyScheduleAdapter.setScheduleClickListener(object : GroupDailyMoimRVAdapter.MoimScheduleClickListener {
             override fun onContentClicked(groupSchedule: MoimScheduleBody) { // 아이템 전체 클릭
-                val intent = Intent(context, GroupScheduleActivity::class.java)
-                intent.putExtra("group", (activity as GroupCalendarActivity).getGroup())
-                intent.putExtra("moimSchedule", groupSchedule)
-                requireActivity().startActivity(intent)
+                requireActivity().startActivity(Intent(context, GroupScheduleActivity::class.java)
+                    .putExtra("group", (activity as GroupCalendarActivity).getGroup())
+                    .putExtra("moimSchedule", groupSchedule)
+                )
             }
 
             override fun onDiaryIconClicked(groupSchedule: MoimScheduleBody) { // 기록 아이콘 클릭

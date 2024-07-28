@@ -155,9 +155,9 @@ class CalendarMonthFragment : Fragment() {
 
         groupDailyScheduleAdapter.setDailyScheduleClickListener(object : DailyScheduleRVAdapter.PersonalScheduleClickListener {
             override fun onContentClicked(schedule: GetMonthScheduleResult) { // 아이템 전체 클릭
-                val intent = Intent(context, ScheduleActivity::class.java)
-                intent.putExtra("schedule", schedule.convertServerScheduleResponseToLocal())
-                requireActivity().startActivity(intent)
+                requireActivity().startActivity(Intent(context, ScheduleActivity::class.java)
+                    .putExtra("schedule", schedule.convertServerScheduleResponseToLocal())
+                )
             }
 
             override fun onDiaryIconClicked(schedule: GetMonthScheduleResult, paletteId: Int) { // 기록 아이콘 클릭
