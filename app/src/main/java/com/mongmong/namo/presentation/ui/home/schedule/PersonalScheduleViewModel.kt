@@ -48,8 +48,7 @@ class PersonalScheduleViewModel @Inject constructor(
     private val _monthDayList = MutableLiveData<List<DateTime>>()
 
     // 클릭한 날짜 처리
-    private val _dailyScheduleList = MutableLiveData<List<GetMonthScheduleResult>>(emptyList())
-    val dailyScheduleList: LiveData<List<GetMonthScheduleResult>> = _dailyScheduleList
+    private lateinit var _dailyScheduleList: List<GetMonthScheduleResult>
 
     private val _isShow = MutableLiveData(false)
     var isShow: LiveData<Boolean> = _isShow
@@ -189,7 +188,7 @@ class PersonalScheduleViewModel @Inject constructor(
 
     private fun setDailySchedule() {
         // 선택 날짜에 해당되는 일정 필터링
-        _dailyScheduleList.value = _scheduleList.value!!.filter { schedule ->
+        _dailyScheduleList = _scheduleList.value!!.filter { schedule ->
             schedule.startDate <= _clickedDatePair.value!!.second &&
                     schedule.endDate >= _clickedDatePair.value!!.first
         }
@@ -257,7 +256,7 @@ class PersonalScheduleViewModel @Inject constructor(
     fun getClickedDate() = _monthDayList.value!![_nowIndex]
 
     fun getDailySchedules(isMoim: Boolean): ArrayList<GetMonthScheduleResult> {
-        return _dailyScheduleList.value!!.filter { schedule ->
+        return _dailyScheduleList.filter { schedule ->
             schedule.moimSchedule == isMoim
         } as ArrayList<GetMonthScheduleResult>
     }

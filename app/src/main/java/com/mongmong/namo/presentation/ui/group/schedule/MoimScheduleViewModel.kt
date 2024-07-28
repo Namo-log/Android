@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.LatLng
-import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.BaseMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
@@ -45,8 +44,7 @@ class MoimScheduleViewModel @Inject constructor(
     private val _monthDayList = MutableLiveData<List<DateTime>>()
 
     // 클릭한 날짜 처리
-    private val _dailyScheduleList = MutableLiveData<List<MoimScheduleBody>>(emptyList())
-    val dailyScheduleList: LiveData<List<MoimScheduleBody>> = _dailyScheduleList
+    private lateinit var _dailyScheduleList: List<MoimScheduleBody>
 
     private val _isShow = MutableLiveData(false)
     var isShow: LiveData<Boolean> = _isShow
@@ -110,7 +108,7 @@ class MoimScheduleViewModel @Inject constructor(
 
     private fun setDailySchedule() {
         // 선택 날짜에 해당되는 일정 필터링
-        _dailyScheduleList.value = _groupScheduleList.value!!.filter { schedule ->
+        _dailyScheduleList = _groupScheduleList.value!!.filter { schedule ->
             schedule.startLong <= _clickedDatePair.value!!.second &&
                     schedule.endLong >= _clickedDatePair.value!!.first
         }
@@ -200,7 +198,7 @@ class MoimScheduleViewModel @Inject constructor(
     fun getClickedDate() = _monthDayList.value!![_nowIndex]
 
     fun getDailySchedules(isMoim: Boolean): ArrayList<MoimScheduleBody> {
-        return _dailyScheduleList.value!!.filter { schedule ->
+        return _dailyScheduleList.filter { schedule ->
             schedule.curMoimSchedule == isMoim
         } as ArrayList<MoimScheduleBody>
     }
