@@ -73,7 +73,7 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
         val title = "정말 모임에서 탈퇴하시겠어요?"
         val content = "탈퇴하더라도\n이전 모임 일정은 사라지지 않습니다."
 
-        val dialog = ConfirmDialog(this, title, content, "삭제", 0)
+        val dialog = ConfirmDialog(this, title, content, "확인", 0)
         dialog.isCancelable = false
         dialog.show(this.supportFragmentManager, "ConfirmDialog")
     }
@@ -102,7 +102,7 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
         viewModel.deleteMemberResult.observe(this) {
             if (it == 200) {
-                Toast.makeText(this, "${viewModel.groupInfo.value?.groupMembers} 모임에서 탈퇴하였습니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "${viewModel.groupInfo.value?.groupName} 모임에서 탈퇴하였습니다.", Toast.LENGTH_SHORT).show()
                 val resultIntent = Intent().apply {
                     putExtra("leave", true)
                 }
