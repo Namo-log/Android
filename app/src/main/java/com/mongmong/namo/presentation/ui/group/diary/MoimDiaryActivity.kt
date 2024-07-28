@@ -59,6 +59,10 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // ê·¸ë
         binding.apply {
             viewModel = this@MoimDiaryActivity.viewModel
             lifecycleOwner = this@MoimDiaryActivity
+
+            // marquee focus
+            groupTitleTv.requestFocus()
+            groupTitleTv.isSelected = true
         }
 
         viewModel.moimScheduleId = intent.getLongExtra("moimScheduleId", 0L)

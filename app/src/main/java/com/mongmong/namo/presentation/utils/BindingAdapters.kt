@@ -24,7 +24,6 @@ object BindingAdapters {
             in 1..CategoryColor.getAllColors().size -> CategoryColor.getAllColors()[color - 1]
             else -> CategoryColor.DEFAULT_PALETTE_COLOR1.hexColor
         }
-
         view.backgroundTintList = ColorStateList.valueOf(Color.parseColor(hexColor))
     }
 }

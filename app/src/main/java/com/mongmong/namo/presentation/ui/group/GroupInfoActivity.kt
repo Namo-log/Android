@@ -30,10 +30,17 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
         binding = ActivityGroupInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = this
+        binding.apply {
+            // 데이터바인딩 뷰모델 초기화
+            viewModel = this@GroupInfoActivity.viewModel
+            lifecycleOwner = this@GroupInfoActivity
+            // marquee focus
+            groupInfoCodeTv.requestFocus()
+            groupInfoCodeTv.isSelected = true
+        }
 
         viewModel.setGroup(intent.getSerializableExtra("group") as Group)
+
 
         setAdapter()
         setClickListener()
