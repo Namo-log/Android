@@ -16,7 +16,7 @@ class GroupRepositoryImpl @Inject constructor(
         return dataSource.getGroups()
     }
 
-    override suspend fun addGroups(img: Uri, name: String): AddGroupResult {
+    override suspend fun addGroups(img: Uri?, name: String): AddGroupResult {
         return dataSource.addGroup(img, name)
     }
 

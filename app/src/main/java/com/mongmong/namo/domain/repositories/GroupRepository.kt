@@ -8,7 +8,7 @@ import com.mongmong.namo.domain.model.group.UpdateGroupNameResponse
 
 interface GroupRepository {
     suspend fun getGroups(): List<Group>?
-    suspend fun addGroups(img: Uri, name: String): AddGroupResult
+    suspend fun addGroups(img: Uri?, name: String): AddGroupResult
     suspend fun joinGroup(groupCode: String): JoinGroupResponse
     suspend fun updateGroupName(groupId: Long, name: String): UpdateGroupNameResponse
     suspend fun deleteMember(groupId: Long): Int

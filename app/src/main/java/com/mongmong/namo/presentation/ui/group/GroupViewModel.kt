@@ -45,7 +45,7 @@ class GroupViewModel @Inject constructor(
         }
     }
 
-    fun addGroup(img: Uri, name: String) {
+    fun addGroup(img: Uri?, name: String) {
         viewModelScope.launch {
             _addGroupResult.value = repository.addGroups(img, name)
         }

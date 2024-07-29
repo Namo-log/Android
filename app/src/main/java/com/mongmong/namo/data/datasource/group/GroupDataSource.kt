@@ -15,6 +15,7 @@ import com.mongmong.namo.domain.model.group.UpdateGroupNameResponse
 import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 class GroupDataSource @Inject constructor(
@@ -39,11 +40,16 @@ class GroupDataSource @Inject constructor(
         return groups
     }
 
-    suspend fun addGroup(img: Uri, name: String): AddGroupResult {
+    suspend fun addGroup(img: Uri?, name: String): AddGroupResult {
         var result = AddGroupResult(groupId = 0L)
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.addGroup(uriToMultipart(img, context, false), name.convertTextRequest())
+                val createImagesParts = if(img == null) {
+                    MultipartBody.Part.createFormData("empty", "", "".convertTextRequest())
+                } else uriToMultipart(img, context, false)
+
+                apiService.addGroup(createImagesParts, name.convertTextRequest())
+
             }.onSuccess {
                 Log.d("GroupDataSource addGroup Success", "$it")
                 result = it.result
