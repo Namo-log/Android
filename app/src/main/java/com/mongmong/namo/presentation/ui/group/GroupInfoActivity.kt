@@ -70,7 +70,7 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun showLeaveDialog() {
-        val title = "정말 모임에서 탈퇴하시겠어요?"
+        val title = "정말 그룹에서 탈퇴하시겠어요?"
         val content = "탈퇴하더라도\n이전 모임 일정은 사라지지 않습니다."
 
         val dialog = ConfirmDialog(this, title, content, "확인", 0)
