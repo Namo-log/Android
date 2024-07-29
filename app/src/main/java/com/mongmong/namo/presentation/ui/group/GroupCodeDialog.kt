@@ -62,7 +62,7 @@ class GroupCodeDialog() : DialogFragment() { // 뷰를 띄워야하므로 Dialog
         viewModel.joinGroupResult.observe(viewLifecycleOwner) {
             Log.d("joinGroupResult", "$it")
             if(it.result.groupId != 0L) {
-                Toast.makeText(context, "모임 참여에 성공했습니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "그룹 참여에 성공했습니다.", Toast.LENGTH_SHORT).show()
                 listener?.onGroupParticipate()
             } else {
                 Toast.makeText(context, extractMessageFromResponse(it.message), Toast.LENGTH_SHORT).show()

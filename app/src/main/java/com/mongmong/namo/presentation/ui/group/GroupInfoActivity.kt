@@ -92,7 +92,7 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
     private fun initObserve() {
         viewModel.updateGroupNameResult.observe(this) {
             if (it.result != 0L) {
-                Toast.makeText(this, "모임 이름이 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "그룹 이름이 변경되었습니다.", Toast.LENGTH_SHORT).show()
                 val resultIntent = Intent().apply {
                     putExtra("groupName", binding.groupInfoGroupNameContentEt.text.toString())
                 }
@@ -102,7 +102,7 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
         viewModel.deleteMemberResult.observe(this) {
             if (it == 200) {
-                Toast.makeText(this, "${viewModel.groupInfo.value?.groupName} 모임에서 탈퇴하였습니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "${viewModel.groupInfo.value?.groupName} 그룹에서 탈퇴하였습니다.", Toast.LENGTH_SHORT).show()
                 val resultIntent = Intent().apply {
                     putExtra("leave", true)
                 }
