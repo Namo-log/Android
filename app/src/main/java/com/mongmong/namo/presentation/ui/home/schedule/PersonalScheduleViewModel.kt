@@ -56,7 +56,7 @@ class PersonalScheduleViewModel @Inject constructor(
     private var _prevIndex = -1 // 클릭한 날짜의 index
     private var _nowIndex = 0 // 클릭한 날짜의 index
 
-    private val _clickedDatePair = MutableLiveData<Pair<Long, Long>>() // 클릭한 날짜의 시작, 종료 시간
+    private lateinit var _clickedDatePair: Pair<Long, Long> // 클릭한 날짜의 시작, 종료 시간
 
     private val _isDailyScheduleEmptyPair = MutableLiveData<Pair<Boolean, Boolean>>()
     var isDailyScheduleEmptyPair: LiveData<Pair<Boolean, Boolean>> = _isDailyScheduleEmptyPair
@@ -189,8 +189,8 @@ class PersonalScheduleViewModel @Inject constructor(
     private fun setDailySchedule() {
         // 선택 날짜에 해당되는 일정 필터링
         _dailyScheduleList = _scheduleList.value!!.filter { schedule ->
-            schedule.startDate <= _clickedDatePair.value!!.second &&
-                    schedule.endDate >= _clickedDatePair.value!!.first
+            schedule.startDate <= _clickedDatePair.second &&
+                    schedule.endDate >= _clickedDatePair.first
         }
         _isDailyScheduleEmptyPair.value = Pair(
             isDailyScheduleEmpty(false), // 개인 일정
@@ -202,7 +202,7 @@ class PersonalScheduleViewModel @Inject constructor(
     fun clickDate(index: Int) {
         _nowIndex = index
         // 클릭한 날짜의 시작, 종료 시간 저장
-        _clickedDatePair.value = Pair(
+        _clickedDatePair = Pair(
             (getClickedDate().withTimeAtStartOfDay().millis) / 1000, // 날짜 시작일
             (getClickedDate().plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000, // 날짜 종료일
         )
