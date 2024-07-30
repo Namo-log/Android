@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.domain.model.group.AddGroupResult
 import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.domain.model.group.JoinGroupResponse
+import com.mongmong.namo.domain.model.group.UpdateGroupNameResponse
 import com.mongmong.namo.domain.repositories.GroupRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -29,19 +30,22 @@ class GroupViewModel @Inject constructor(
     private val _groupInfo = MutableLiveData<Group>()
     val groupInfo: LiveData<Group> = _groupInfo
 
-    private val _updateGroupNameResult = MutableLiveData<JoinGroupResponse>()
-    val updateGroupNameResult: LiveData<JoinGroupResponse> = _updateGroupNameResult
+    private val _updateGroupNameResult = MutableLiveData<UpdateGroupNameResponse>()
+    val updateGroupNameResult: LiveData<UpdateGroupNameResponse> = _updateGroupNameResult
 
     private val _deleteMemberResult = MutableLiveData<Int>()
     val deleteMemberResult: LiveData<Int> = _deleteMemberResult
 
+    val isDataLoaded: MutableLiveData<Boolean> = MutableLiveData(false)
+
     fun getGroupList() {
         viewModelScope.launch {
             _groups.value = repository.getGroups()
+            isDataLoaded.value = true
         }
     }
 
-    fun addGroup(img: Uri, name: String) {
+    fun addGroup(img: Uri?, name: String) {
         viewModelScope.launch {
             _addGroupResult.value = repository.addGroups(img, name)
         }

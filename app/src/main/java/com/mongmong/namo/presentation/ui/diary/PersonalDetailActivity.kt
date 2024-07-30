@@ -45,6 +45,10 @@ class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
             viewModel = this@PersonalDetailActivity.viewModel
             lifecycleOwner = this@PersonalDetailActivity
             paletteId = intent.getIntExtra("paletteId", 0)
+
+            // marquee focus
+            diaryTitleTv.requestFocus()
+            diaryTitleTv.isSelected = true
         }
         setSchedule()
         onClickListener()

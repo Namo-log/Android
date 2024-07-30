@@ -5,6 +5,7 @@ import com.mongmong.namo.domain.model.group.AddGroupResponse
 import com.mongmong.namo.domain.model.group.GetGroupsResponse
 import com.mongmong.namo.domain.model.group.JoinGroupResponse
 import com.mongmong.namo.domain.model.group.UpdateGroupNameRequestBody
+import com.mongmong.namo.domain.model.group.UpdateGroupNameResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
@@ -45,5 +46,5 @@ interface GroupApiService {
     @PATCH("groups/name")
     suspend fun updateGroupName(
         @Body body: UpdateGroupNameRequestBody
-    ): JoinGroupResponse
+    ): UpdateGroupNameResponse
 }

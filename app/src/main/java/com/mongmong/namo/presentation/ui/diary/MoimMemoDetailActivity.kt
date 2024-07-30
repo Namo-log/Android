@@ -36,6 +36,10 @@ class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
             viewModel = this@MoimMemoDetailActivity.viewModel
             lifecycleOwner = this@MoimMemoDetailActivity
             paletteId = intent.getIntExtra("paletteId", 0)
+
+            // marquee focus
+            diaryTitleTv.requestFocus()
+            diaryTitleTv.isSelected = true
         }
 
         moimScheduleId = intent.getLongExtra("moimScheduleId", 0L)

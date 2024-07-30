@@ -70,12 +70,12 @@ class CreateGroupDialog : DialogFragment() {
         binding.createGroupBackTv.setOnClickListener { dismiss() }
         // 확인
         binding.createGroupSaveTv.setOnClickListener {
-            if (binding.createGroupTitleEt.toString().isNotEmpty() && imageUri != null) {
+            if (binding.createGroupTitleEt.toString().isNotEmpty()) {
                 if (clickable) { createGroup() }
                 clickable = false
             } else {
                 Toast.makeText(
-                    context, "그룹 이미지 또는 이름을 올바르게 등록해주세요.",
+                    context, "그룹 이름을 올바르게 등록해주세요.",
                     Toast.LENGTH_SHORT).show()
             }
         }
@@ -98,7 +98,7 @@ class CreateGroupDialog : DialogFragment() {
         if (!NetworkCheckerImpl(requireContext()).isOnline()) {
             return
         }
-        viewModel.addGroup(imageUri!!, binding.createGroupTitleEt.text.toString())
+        viewModel.addGroup(imageUri, binding.createGroupTitleEt.text.toString())
     }
 
     @SuppressLint("IntentReset")

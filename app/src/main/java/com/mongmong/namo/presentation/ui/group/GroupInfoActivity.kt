@@ -30,10 +30,17 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
         binding = ActivityGroupInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = this
+        binding.apply {
+            // 데이터바인딩 뷰모델 초기화
+            viewModel = this@GroupInfoActivity.viewModel
+            lifecycleOwner = this@GroupInfoActivity
+            // marquee focus
+            groupInfoCodeTv.requestFocus()
+            groupInfoCodeTv.isSelected = true
+        }
 
         viewModel.setGroup(intent.getSerializableExtra("group") as Group)
+
 
         setAdapter()
         setClickListener()
@@ -42,10 +49,12 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun setAdapter() {
-        binding.groupInfoMemberRv.layoutManager = GridLayoutManager(this, 2)
         val groupMembers = viewModel.groupInfo.value?.groupMembers ?: emptyList()
         val groupInfoMemberRVAdapter = GroupInfoMemberRVAdapter(groupMembers)
-        binding.groupInfoMemberRv.adapter = groupInfoMemberRVAdapter
+        binding.groupInfoMemberRv.apply {
+            layoutManager = GridLayoutManager(this@GroupInfoActivity, 2)
+            adapter = groupInfoMemberRVAdapter
+        }
     }
 
     private fun setClickListener() {
@@ -61,10 +70,10 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
     }
 
     private fun showLeaveDialog() {
-        val title = "정말 모임에서 탈퇴하시겠어요?"
+        val title = "정말 그룹에서 탈퇴하시겠어요?"
         val content = "탈퇴하더라도\n이전 모임 일정은 사라지지 않습니다."
 
-        val dialog = ConfirmDialog(this, title, content, "삭제", 0)
+        val dialog = ConfirmDialog(this, title, content, "확인", 0)
         dialog.isCancelable = false
         dialog.show(this.supportFragmentManager, "ConfirmDialog")
     }
@@ -83,7 +92,7 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
     private fun initObserve() {
         viewModel.updateGroupNameResult.observe(this) {
             if (it.result != 0L) {
-                Toast.makeText(this, "모임 이름이 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "그룹 이름이 변경되었습니다.", Toast.LENGTH_SHORT).show()
                 val resultIntent = Intent().apply {
                     putExtra("groupName", binding.groupInfoGroupNameContentEt.text.toString())
                 }
@@ -93,7 +102,7 @@ class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
         }
         viewModel.deleteMemberResult.observe(this) {
             if (it == 200) {
-                Toast.makeText(this, "${viewModel.groupInfo.value?.groupMembers} 모임에서 탈퇴하였습니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "${viewModel.groupInfo.value?.groupName} 그룹에서 탈퇴하였습니다.", Toast.LENGTH_SHORT).show()
                 val resultIntent = Intent().apply {
                     putExtra("leave", true)
                 }
