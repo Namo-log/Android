@@ -112,7 +112,7 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         binding.dialogGroupScheduleMemberTv.setOnClickListener {
             val intent = Intent(this, GroupScheduleMemberActivity::class.java)
             intent.apply {
-                putExtra("members", MoimSchduleMemberList(viewModel.schedule.value!!.members))
+                putExtra("members", MoimSchduleMemberList(viewModel.group.value!!.groupMembers))
                 putExtra("selectedIds", viewModel.getSelectedMemberId().toLongArray())
             }
             getMemberResult.launch(intent)
