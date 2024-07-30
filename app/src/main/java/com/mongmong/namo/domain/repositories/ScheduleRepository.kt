@@ -22,26 +22,26 @@ interface ScheduleRepository {
 
     suspend fun addSchedule(
         schedule: ScheduleRequestBody
-    )
+    ): Boolean
 
     suspend fun editSchedule(
         scheduleId: Long,
         schedule: ScheduleRequestBody
-    )
+    ): Boolean
 
     suspend fun deleteSchedule(
         scheduleId: Long,
         isGroup: Boolean
-    )
+    ): Boolean
 
     // 모임
     suspend fun getMonthMoimSchedule(
         yearMonth: String
     ): List<GetMonthScheduleResult>
 
-    suspend fun editMoimScheduleCategory(category: PatchMoimScheduleCategoryRequestBody)
+    suspend fun editMoimScheduleCategory(category: PatchMoimScheduleCategoryRequestBody): Boolean
 
-    suspend fun editMoimScheduleAlert(alert: PatchMoimScheduleAlarmRequestBody)
+    suspend fun editMoimScheduleAlert(alert: PatchMoimScheduleAlarmRequestBody): Boolean
 
 
     /** 그룹 */

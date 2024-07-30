@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="com.mongmong.namo.presentation.config.CategoryColor"/>
+        <variable
+            name="schedule"
+            type="com.mongmong.namo.domain.model.group.MoimScheduleBody" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -11,8 +19,8 @@
             android:id="@+id/item_calendar_event_color_view"
             android:layout_width="30dp"
             android:layout_height="0dp"
-            android:backgroundTint="@color/mainOrange"
             android:background="@drawable/bg_schedule_preview_catory_color_corner"
+            android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(schedule.members[0].color)}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -35,17 +43,17 @@
                 android:id="@+id/item_calendar_event_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="11:00 - 13:00"
                 android:textColor="@color/textGray"
                 android:textSize="12sp"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="11:00 - 13:00"/>
 
             <TextView
                 android:id="@+id/item_calendar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="코딩스터디"
+                android:text="@{schedule.name}"
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:singleLine="true"
@@ -53,14 +61,15 @@
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 app:layout_constraintTop_toBottomOf="@id/item_calendar_event_time"
-                app:layout_constraintStart_toStartOf="@id/item_calendar_event_time"/>
+                app:layout_constraintStart_toStartOf="@id/item_calendar_event_time"
+                tools:text="일정 이름"/>
 
             <TextView
                 android:id="@+id/item_calendar_user_name"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:background="@drawable/border_round_people_btn"
-                android:text="서리"
+                android:text="@{schedule.getScheduleOwnerText}"
                 android:textSize="11sp"
                 android:textColor="@color/editTextGray"
                 android:textStyle="bold"
@@ -68,12 +77,11 @@
                 android:gravity="center"
                 app:layout_constraintTop_toTopOf="@id/item_calendar_event_base_layout"
                 app:layout_constraintBottom_toBottomOf="@id/item_calendar_event_base_layout"
-                app:layout_constraintEnd_toEndOf="@id/item_calendar_event_base_layout"/>
+                app:layout_constraintEnd_toEndOf="@id/item_calendar_event_base_layout"
+                tools:text="이름"/>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,12 +1,9 @@
-package com.mongmong.namo.presentation.ui.home.adapter
+package com.mongmong.namo.presentation.ui.home.schedule.adapter
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
@@ -14,11 +11,11 @@ import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.utils.ScheduleTimeConverter
 import org.joda.time.DateTime
 
-class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewHolder>() {
-    private val personal = ArrayList<GetMonthScheduleResult>()
+class DailyScheduleRVAdapter : RecyclerView.Adapter<DailyScheduleRVAdapter.ViewHolder>() {
+    private val scheduleList = ArrayList<GetMonthScheduleResult>()
     private val categoryList = ArrayList<Category>()
-    private lateinit var context : Context
-    private lateinit var personalScheduleClickListener : PersonalScheduleClickListener
+
+    private lateinit var scheduleClickListener : PersonalScheduleClickListener
     private lateinit var timeConverter: ScheduleTimeConverter
 
     interface PersonalScheduleClickListener {
@@ -26,8 +23,8 @@ class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewH
         fun onDiaryIconClicked(schedule: GetMonthScheduleResult, paletteId: Int)
     }
 
-    fun setPersonalScheduleClickListener(personalScheduleClickListener : PersonalScheduleClickListener) {
-        this.personalScheduleClickListener = personalScheduleClickListener
+    fun setDailyScheduleClickListener(scheduleClickListener : PersonalScheduleClickListener) {
+        this.scheduleClickListener = scheduleClickListener
     }
 
     fun initScheduleTimeConverter() {
@@ -36,31 +33,30 @@ class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewH
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
         val binding : ItemSchedulePreviewBinding = ItemSchedulePreviewBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
-        context = viewGroup.context
 
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder : ViewHolder, position : Int) {
-        holder.bind(personal[position])
+        holder.bind(scheduleList[position])
         // 아이템 전체 클릭
         holder.itemView.setOnClickListener {
-            personalScheduleClickListener.onContentClicked(personal[position])
+            scheduleClickListener.onContentClicked(scheduleList[position])
         }
     }
 
-    override fun getItemCount(): Int = personal.size
+    override fun getItemCount(): Int = scheduleList.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addPersonal(personal : ArrayList<GetMonthScheduleResult>) {
-        this.personal.clear()
-        this.personal.addAll(personal)
+    fun addSchedules(personal : ArrayList<GetMonthScheduleResult>) {
+        this.scheduleList.clear()
+        this.scheduleList.addAll(personal)
 
         notifyDataSetChanged()
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setCategory(categoryList : List<Category>) {
+    fun setCategoryList(categoryList : List<Category>) {
         this.categoryList.clear()
         this.categoryList.addAll(categoryList)
 
@@ -74,27 +70,20 @@ class DailyPersonalRVAdapter : RecyclerView.Adapter<DailyPersonalRVAdapter.ViewH
 
     inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(schedule : GetMonthScheduleResult) {
+            binding.scheule = schedule
+
             //TODO: 카테고리를 찾지 못했을 때의 처리
             val category = categoryList.find {
                 if (it.serverId != 0L) it.serverId == schedule.categoryId
                 else it.categoryId == schedule.categoryId
             } ?: categoryList.first()
 
-            binding.itemCalendarTitle.text = schedule.name
-            binding.itemCalendarTitle.isSelected = true
-            binding.itemCalendarScheduleTime.text = timeConverter.getScheduleTimeText(schedule.startDate, schedule.endDate)
-            binding.itemCalendarScheduleColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
-            binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context, R.color.realGray))
-
-            /** 기록 아이콘 색깔 **/
-            if (schedule.hasDiary != false)
-                binding.itemCalendarScheduleRecord.setColorFilter(ContextCompat.getColor(context , R.color.mainOrange))
+            binding.itemSchedulePreviewTimeTv.text = timeConverter.getScheduleTimeText(schedule.startDate, schedule.endDate)
+            binding.itemSchedulePreviewColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
 
             // 기록 아이콘 클릭
-            if (!schedule.moimSchedule) { // 개인 기록
-                binding.itemCalendarScheduleRecord.setOnClickListener {
-                    personalScheduleClickListener.onDiaryIconClicked(schedule, category.paletteId)
-                }
+            binding.itemSchedulePreviewDiaryIv.setOnClickListener {
+                scheduleClickListener.onDiaryIconClicked(schedule, category.paletteId)
             }
         }
     }

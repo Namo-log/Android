@@ -8,8 +8,6 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -72,7 +70,6 @@ class ScheduleDialogBasicFragment : Fragment() {
         initMapView()
         initClickListeners()
         setInit()
-        setEditTextChangedListener()
 
         return binding.root
     }
@@ -131,17 +128,6 @@ class ScheduleDialogBasicFragment : Fragment() {
                 )
             )
         }
-    }
-
-    private fun setEditTextChangedListener() {
-        binding.dialogScheduleTitleEt.addTextChangedListener(object: TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
-            override fun afterTextChanged(p0: Editable?) {
-                // 일정 제목 업데이트
-                viewModel.updateTitle(binding.dialogScheduleTitleEt.text.toString())
-            }
-        })
     }
 
     private fun initClickListeners() {
@@ -271,8 +257,6 @@ class ScheduleDialogBasicFragment : Fragment() {
         // 일정 편집
         viewModel.editSchedule()
         Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
-        // 뒤로가기
-        requireActivity().finish()
     }
 
     /** 모임 일정 카테고리 수정 */

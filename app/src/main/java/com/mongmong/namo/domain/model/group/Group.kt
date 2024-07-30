@@ -2,6 +2,8 @@ package com.mongmong.namo.domain.model.group
 
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
+import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import java.io.Serializable
 
 /** 그룹 리스트 조회 */
@@ -75,6 +77,11 @@ data class MoimScheduleBody(
     @SerializedName("hasDiaryPlace") var hasDiaryPlace : Boolean = false,
     @SerializedName("curMoimSchedule") var curMoimSchedule : Boolean = false
 ) : Serializable {
+    fun getScheduleOwnerText(): String  {
+        return if (members.size < 2) members[0].userName
+        else members.size.toString() + "명"
+    }
+
     fun convertMoimScheduleToBaseRequest(): BaseMoimScheduleRequestBody {
         return BaseMoimScheduleRequestBody(
             this.name,
@@ -85,6 +92,23 @@ data class MoimScheduleBody(
             this.placeY,
             this.placeName,
             this.members.map { user -> user.userId } as ArrayList<Long>,
+        )
+    }
+
+    fun convertMoimScheduleToSchedule(): GetMonthScheduleResult {
+        return GetMonthScheduleResult(
+            this.moimScheduleId,
+            this.name,
+            this.startLong,
+            this.endLong,
+            listOf(),
+            this.interval,
+            this.placeX,
+            this.placeY,
+            this.placeName,
+            0L,
+            this.hasDiaryPlace,
+            this.curMoimSchedule
         )
     }
 }

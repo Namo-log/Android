@@ -6,8 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -33,7 +31,6 @@ import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.databinding.ActivityGroupScheduleBinding
-import com.mongmong.namo.presentation.ui.home.schedule.MoimScheduleViewModel
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
@@ -74,7 +71,6 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         setResultMember()
         initClickListeners()
         initObservers()
-        setEditTextChangedListener()
     }
 
     override fun onResume() {
@@ -111,23 +107,12 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
         binding.scheduleContainerLayout.startAnimation(slideAnimation)
     }
 
-    private fun setEditTextChangedListener() {
-        binding.dialogGroupScheduleTitleEt.addTextChangedListener(object: TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) { }
-            override fun afterTextChanged(p0: Editable?) {
-                // 일정 제목 업데이트
-                viewModel.updateTitle(binding.dialogGroupScheduleTitleEt.text.toString())
-            }
-        })
-    }
-
     private fun initClickListeners() {
         // 참여자 클릭
         binding.dialogGroupScheduleMemberTv.setOnClickListener {
             val intent = Intent(this, GroupScheduleMemberActivity::class.java)
             intent.apply {
-                putExtra("members", MoimSchduleMemberList(viewModel.schedule.value!!.members))
+                putExtra("members", MoimSchduleMemberList(viewModel.group.value!!.groupMembers))
                 putExtra("selectedIds", viewModel.getSelectedMemberId().toLongArray())
             }
             getMemberResult.launch(intent)
