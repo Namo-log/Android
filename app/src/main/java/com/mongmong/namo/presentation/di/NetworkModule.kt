@@ -23,12 +23,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    // 인터셉터 있는 API Retrofit
+    // 403 로직이 있는 API Retrofit
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
     annotation class BasicRetrofit
 
-    // 인터셉터 없는 API Retrofit
+    // 403 로직이 없는 API Retrofit (토큰 재발급용)
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
     annotation class ReissuanceRetrofit
