@@ -63,11 +63,11 @@
     </style>
 
     <style name="img_category_check">
-        <item name="android:layout_width">13dp</item>
-        <item name="android:layout_height">12dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:scaleType">fitCenter</item>
-        <item name="android:src">@drawable/ic_category_selected</item>
+        <item name="android:src">@drawable/ic_check</item>
         <item name="android:visibility">gone</item>
     </style>
 

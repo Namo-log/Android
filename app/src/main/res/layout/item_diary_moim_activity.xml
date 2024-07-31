@@ -23,7 +23,7 @@
            android:layout_height="40dp"
            android:layout_gravity="center"
            app:tint="@color/white"
-           android:src="@drawable/ic_delete_schedule" />
+           android:src="@drawable/ic_delete"/>
    </LinearLayout>
 
     <LinearLayout
