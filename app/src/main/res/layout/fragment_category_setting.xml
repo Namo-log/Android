@@ -121,6 +121,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal"
+                                android:gravity="center_vertical"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent">
 
@@ -133,11 +134,10 @@
                                     android:text="@string/palette_normal"/>
 
                                 <ImageView
-                                    android:layout_width="10dp"
-                                    android:layout_height="20dp"
-                                    android:padding="1dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
                                     android:layout_marginEnd="10dp"
-                                    android:src="@drawable/ic_arrow_right_gray"/>
+                                    android:src="@drawable/ic_arrow_right"/>
                             </LinearLayout>
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </LinearLayout>

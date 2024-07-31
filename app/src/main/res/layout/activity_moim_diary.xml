@@ -11,6 +11,7 @@
             name="viewModel"
             type="com.mongmong.namo.presentation.ui.group.diary.MoimDiaryViewModel" />
     </data>
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -93,11 +94,12 @@
                     android:marqueeRepeatLimit="marquee_forever"
                     android:maxLines="1"
                     android:singleLine="true"
+                    android:textAlignment="center"
                     android:text="@{viewModel.moimDiary.name}"
                     app:layout_constraintBottom_toBottomOf="@id/group_add_back_iv"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/group_add_back_iv" />
+                    app:layout_constraintTop_toTopOf="@id/group_add_back_iv"/>
 
                 <ImageView
                     android:id="@+id/diary_delete_iv"
@@ -182,11 +184,12 @@
                 android:layout_width="15dp"
                 android:layout_height="20dp"
                 android:rotation="@{viewModel.isParticipantVisible ? 270 : 90}"
-                android:src="@drawable/ic_arrow_right_gray"
+                android:src="@drawable/ic_arrow_right"
                 android:onClick="@{() -> viewModel.toggleIsParticipantVisible()}"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="@id/group_add_top"
-                app:layout_constraintTop_toTopOf="@+id/group_add_people_tv" />
+                app:layout_constraintTop_toTopOf="@+id/group_add_people_tv"
+                app:layout_constraintBottom_toBottomOf="@id/group_add_people_tv"/>
 
 
             <androidx.recyclerview.widget.RecyclerView
@@ -246,9 +249,9 @@
                         app:layout_constraintStart_toStartOf="parent">
 
                         <ImageView
-                            android:layout_width="25dp"
-                            android:layout_height="25dp"
-                            android:layout_gravity="center"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center_vertical"
                             android:src="@drawable/ic_moim_diary_activity_add"
                             android:backgroundTint="@color/textGray" />
 

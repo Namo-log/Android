@@ -211,11 +211,10 @@
 
                 <ImageView
                     android:id="@+id/group_info_code_copy_iv"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:padding="7dp"
-                    android:src="@drawable/ic_group_cord_copy"
-                    android:visibility="visible" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_copy"
+                    app:tint="@color/textGray"/>
 
             </LinearLayout>
 
