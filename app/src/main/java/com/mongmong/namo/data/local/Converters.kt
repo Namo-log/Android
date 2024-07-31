@@ -25,5 +25,4 @@ class ScheduleListConverters {
     fun listToJson(value : List<Schedule>?) = Gson().toJson(value)
 
     @TypeConverter
-    fun jsonToList(value : String?) = Gson().fromJson(value, Array<Schedule?>::class.java).toList()
-}
+    fun jsonToList(value : String?) = Gson().fromJson(value, Array<Schedule?>::class.java).toList()}

@@ -139,7 +139,7 @@ class DiaryDetailViewModel @Inject constructor(
     fun removeImage(diaryImage: DiaryImage) {
         // 이미지 ID가 0이 아니면 삭제할 이미지, 아니라면 createImages에서 제거
         if (diaryImage.id != 0L) deleteImageIds.add(diaryImage.id)
-        else createImages = createImages?.filterNot { it == diaryImage.url }.toMutableList()
+        else createImages = createImages.filterNot { it == diaryImage.url }.toMutableList()
         // 이미지 리스트 업데이트
         _imgList.value = _imgList.value?.filterNot { it.url == diaryImage.url }
     }
