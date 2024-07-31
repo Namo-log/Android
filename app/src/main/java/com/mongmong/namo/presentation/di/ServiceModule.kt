@@ -22,47 +22,47 @@ object ServiceModule {
     /** 인증 */
     @Provides
     @Singleton
-    fun provideLoginService(@NetworkModule.BasicRetrofit retrofit: Retrofit) : AuthApiService =
+    fun provideLoginService(@NetworkModule.ReissuanceRetrofit retrofit: Retrofit) : AuthApiService =
         retrofit.create(AuthApiService::class.java)
 
     /** 약관 */
     @Provides
     @Singleton
-    fun provideTermService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : TermApiService =
+    fun provideTermService(@NetworkModule.BasicRetrofit retrofit: Retrofit) : TermApiService =
         retrofit.create(TermApiService::class.java)
 
     /** 일정 */
     @Provides
     @Singleton
-    fun provideScheduleService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : ScheduleApiService =
+    fun provideScheduleService(@NetworkModule.BasicRetrofit retrofit: Retrofit) : ScheduleApiService =
         retrofit.create(ScheduleApiService::class.java)
 
     /** 기록 */
     @Provides
     @Singleton
-    fun provideDiaryService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : DiaryApiService =
+    fun provideDiaryService(@NetworkModule.BasicRetrofit retrofit: Retrofit) : DiaryApiService =
         retrofit.create(DiaryApiService::class.java)
 
     /** 카테고리 */
     @Provides
     @Singleton
-    fun provideCategoryService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit) : CategoryApiService =
+    fun provideCategoryService(@NetworkModule.BasicRetrofit retrofit: Retrofit) : CategoryApiService =
         retrofit.create(CategoryApiService::class.java)
 
     /** 그룹 **/
     @Provides
     @Singleton
-    fun provideGroupService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit): GroupApiService =
+    fun provideGroupService(@NetworkModule.BasicRetrofit retrofit: Retrofit): GroupApiService =
         retrofit.create(GroupApiService::class.java)
     // 모임 일정
     @Provides
     @Singleton
-    fun provideGroupScheduleService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit): GroupScheduleApiService =
+    fun provideGroupScheduleService(@NetworkModule.BasicRetrofit retrofit: Retrofit): GroupScheduleApiService =
         retrofit.create(GroupScheduleApiService::class.java)
     // 모임 기록
     @Provides
     @Singleton
-    fun provideGroupDiaryService(@NetworkModule.InterceptorRetrofit retrofit: Retrofit): GroupDiaryApiService =
+    fun provideGroupDiaryService(@NetworkModule.BasicRetrofit retrofit: Retrofit): GroupDiaryApiService =
         retrofit.create(GroupDiaryApiService::class.java)
 
 
