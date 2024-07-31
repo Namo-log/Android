@@ -165,7 +165,7 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
                 loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0 ->
                     viewModel.setEmptyView(
                         messageResId = R.string.diary_empty,
-                        imageResId = R.drawable.ic_diary_empty,
+                        imageResId = R.drawable.img_diary_empty,
                     )
                 loadState.refresh is LoadState.NotLoading && adapter.itemCount > 0 -> {
                     viewModel.setIsListEmpty(false)

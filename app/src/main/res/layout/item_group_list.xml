@@ -13,7 +13,7 @@
         android:id="@+id/item_group_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/category_box"
+        android:background="@drawable/bg_category_view"
         android:orientation="horizontal"
         android:layout_marginBottom="20dp"
         android:padding="15dp">
@@ -22,7 +22,7 @@
             android:id="@+id/item_group_cover_img_iv"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            tools:src="@drawable/ic_mongi_default" />
+            tools:src="@drawable/img_mongi_default" />
 
         <LinearLayout
             android:id="@+id/item_group_content_layout"

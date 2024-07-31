@@ -116,7 +116,7 @@
                     android:id="@+id/dialog_schedule_category_color_iv"
                     android:layout_width="13dp"
                     android:layout_height="13dp"
-                    android:background="@drawable/border_round_all_circle"
+                    android:background="@drawable/bg_circle"
                     android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(viewModel.category.paletteId)}"
                     android:src="@color/mainOrange"/>
 
@@ -173,7 +173,7 @@
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/border_round_all_fill_realgray"
+                    android:background="@color/textGray"
                     android:layout_marginVertical="2dp"
                     android:layout_marginHorizontal="10dp"/>
 
@@ -230,7 +230,7 @@
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/border_round_all_fill_realgray"
+                    android:background="@color/textGray"
                     android:layout_marginVertical="2dp"
                     android:layout_marginHorizontal="10dp"/>
 

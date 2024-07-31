@@ -208,7 +208,7 @@
             android:layout_marginBottom="40dp"
             android:stateListAnimator="@null"
             android:padding="15dp"
-            android:background="@drawable/login_btn_background"
+            android:background="@drawable/bg_basic_btn"
             android:backgroundTint="@color/groupCodeGray"
             android:textColor="@color/beforeOrange"
             android:text="@string/okay"

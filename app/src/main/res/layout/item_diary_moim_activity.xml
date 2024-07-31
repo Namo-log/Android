@@ -127,7 +127,7 @@
                 android:id="@+id/update_image_iv"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:background="@drawable/gallery_background"
+                android:background="@drawable/bg_gallery_dotted"
                 android:layout_marginStart="8dp"
                 android:layout_gravity="center"
                 android:layerType="software"

@@ -20,7 +20,7 @@
             android:id="@+id/item_category_background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/category_box"
+            android:background="@drawable/bg_category_view"
             android:orientation="horizontal"
             android:padding="15dp"
             app:layout_constraintBottom_toBottomOf="parent"

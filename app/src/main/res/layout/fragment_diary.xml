@@ -49,8 +49,8 @@
             android:layout_width="152dp"
             android:layout_height="30dp"
             android:layout_marginEnd="20dp"
-            android:background="@drawable/tab_corner_bg"
-            app:tabIndicator="@drawable/tab_indicator_corner_bg"
+            android:background="@drawable/bg_diary_tab"
+            app:tabIndicator="@drawable/bg_diary_tab_indicator"
             app:tabIndicatorColor="@color/mainOrange"
             app:tabIndicatorHeight="30dp"
             app:tabMode="auto"
@@ -78,7 +78,7 @@
                 android:id="@+id/diary_list_empty_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_diary_empty"
+                android:src="@drawable/img_diary_empty"
                 android:imageSource="@{viewModel.emptyImageResId}"
                 android:layout_gravity="center"/>
             <TextView

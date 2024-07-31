@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/border_round_all_10dp"
+    android:background="@drawable/bg_dialog"
     android:gravity="center"
     android:minWidth="310dp"
     android:orientation="vertical"
@@ -38,19 +38,12 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/dialog_no_btn"
-            android:layout_width="0dp"
-            android:layout_height="45dp"
             android:layout_marginEnd="8dp"
-            android:layout_weight="1"
             android:text="@string/dialog_cancel"
-            android:textStyle="bold"
             style="@style/dialog_cancel_button"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/dialog_yes_btn"
-            android:layout_width="0dp"
-            android:layout_height="45dp"
-            android:layout_weight="1"
             android:text="@string/dialog_confirm"
             style="@style/dialog_check_button"/>
 

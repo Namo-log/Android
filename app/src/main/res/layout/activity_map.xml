@@ -75,7 +75,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="5.3"
-        android:background="@drawable/border_round_top_border_gray">
+        android:background="@drawable/bg_bottomsheet">
 
         <LinearLayout
             android:id="@+id/map_search_layout"
@@ -110,7 +110,9 @@
                 android:layout_height="30dp"
                 android:layout_marginStart="30dp"
                 android:layout_weight="1"
-                android:background="@drawable/border_round_all_fill_mainorange"
+                android:shadowColor="@null"
+                android:background="@drawable/bg_radius_5"
+                android:backgroundTint="@color/mainOrange"
                 android:text="@string/map_search"
                 android:textColor="@color/white"
                 android:textSize="15sp"

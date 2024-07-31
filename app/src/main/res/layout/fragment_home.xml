@@ -51,7 +51,7 @@
                 android:id="@+id/home_calendar_today_tv"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:background="@drawable/border_round_all_stroke_black"
+                android:background="@drawable/bg_current_date_tv"
                 android:gravity="center"
                 android:text="@string/month_calendar_header_today"
                 android:textColor="@color/black"

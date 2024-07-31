@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/border_round_all_10dp">
+        android:background="@drawable/bg_dialog">
 
         <TextView
             android:id="@+id/group_code_back_tv"

@@ -4,8 +4,7 @@
     android:useLevel="false">
 
     <solid
-        android:color="@color/mainOrange"
-        />
+        android:color="@color/mainOrange"/>
 
     <corners
         android:radius="20dp"/>
