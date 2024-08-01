@@ -20,8 +20,8 @@ class ApplicationClass: Application() {
     lateinit var basicRetrofit: Retrofit
 
     @Inject
-    @NetworkModule.ReissuanceRetrofit
-    lateinit var reissuanceRetrofit: Retrofit
+    @NetworkModule.AnonymousRetrofit
+    lateinit var anonymousRetrofit: Retrofit
 
     init {
         instance = this

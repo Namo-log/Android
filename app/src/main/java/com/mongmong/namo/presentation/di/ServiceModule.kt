@@ -1,8 +1,10 @@
 package com.mongmong.namo.presentation.di
 
+import com.mongmong.namo.data.remote.AnonymousApiService
 import com.mongmong.namo.data.remote.CategoryApiService
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.AuthApiService
+import com.mongmong.namo.data.remote.ReissuanceApiService
 import com.mongmong.namo.data.remote.group.GroupApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
 import com.mongmong.namo.data.remote.group.GroupScheduleApiService
@@ -19,11 +21,23 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ServiceModule {
-    /** 인증 */
+    /** 익명 (로그인, 토큰 재발급) */
     @Provides
     @Singleton
-    fun provideLoginService(@NetworkModule.ReissuanceRetrofit retrofit: Retrofit) : AuthApiService =
+    fun provideAnonymousService(@NetworkModule.AnonymousRetrofit retrofit: Retrofit) : AnonymousApiService =
+        retrofit.create(AnonymousApiService::class.java)
+
+    /** 인증 (로그아웃, 회원탈퇴) */
+    @Provides
+    @Singleton
+    fun provideAuthService(@NetworkModule.BasicRetrofit retrofit: Retrofit) : AuthApiService =
         retrofit.create(AuthApiService::class.java)
+
+    /** 토큰 재발급 (추후 삭제 예정) */
+    @Provides
+    @Singleton
+    fun provideReissuanceService(@NetworkModule.ReissuanceRetrofit retrofit: Retrofit) : ReissuanceApiService =
+        retrofit.create(ReissuanceApiService::class.java)
 
     /** 약관 */
     @Provides

@@ -74,9 +74,9 @@ class AuthViewModel @Inject constructor(
         Log.d("SdkInfo", "quit sdk: $platform")
         viewModelScope.launch {
             val isSuccess = if (platform == LoginPlatform.KAKAO.platformName) { // 카카오
-                repository.postKakaoQuit(getBearerToken())
+                repository.postKakaoQuit()
             } else { // 네이버
-                repository.postNaverQuit(getBearerToken())
+                repository.postNaverQuit()
             }
             if (isSuccess) {
                 _isQuitComplete.postValue(true)
