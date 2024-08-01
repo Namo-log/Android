@@ -137,7 +137,7 @@ object NetworkModule {
         remoteConfigWrapper: RemoteConfigWrapper
     ): Retrofit {
         val baseUrl = remoteConfigWrapper.fetchAndActivateConfig()
-        Log.d("provideBasicRetrofit", "$baseUrl")
+        Log.d("provideReissuanceRetrofit", "$baseUrl")
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(client)
