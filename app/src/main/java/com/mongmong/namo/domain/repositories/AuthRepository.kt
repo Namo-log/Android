@@ -28,11 +28,7 @@ interface AuthRepository {
 
     /** 회원탈퇴 */
     // 카카오
-    suspend fun postKakaoQuit(
-        bearerToken: String
-    ): Boolean
+    suspend fun postKakaoQuit(): Boolean
     // 네이버
-    suspend fun postNaverQuit(
-        bearerToken: String
-    ): Boolean
+    suspend fun postNaverQuit(): Boolean
 }

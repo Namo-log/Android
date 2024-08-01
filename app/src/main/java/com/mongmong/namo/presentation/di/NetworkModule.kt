@@ -1,10 +1,15 @@
 package com.mongmong.namo.presentation.di
 
 import android.content.Context
+import android.util.Log
+import com.mongmong.namo.BuildConfig
+import com.mongmong.namo.data.remote.AnonymousApiService
 import com.mongmong.namo.data.remote.AuthApiService
 import com.mongmong.namo.data.remote.NetworkChecker
-import com.mongmong.namo.presentation.config.Constants.BASE_URL
+import com.mongmong.namo.data.remote.ReissuanceApiService
+import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.config.ReissuanceTokenInterceptor
+import com.mongmong.namo.presentation.config.RemoteConfigWrapper
 import com.mongmong.namo.presentation.config.XAccessTokenInterceptor
 import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
 import dagger.Module
@@ -17,6 +22,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Provider
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -28,7 +34,11 @@ object NetworkModule {
     @Retention(AnnotationRetention.BINARY)
     annotation class BasicRetrofit
 
-    // 403 로직이 없는 API Retrofit (토큰 재발급용)
+    // 403 로직이 없는 API Retrofit
+    @Qualifier
+    @Retention(AnnotationRetention.BINARY)
+    annotation class AnonymousRetrofit
+
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
     annotation class ReissuanceRetrofit
@@ -36,7 +46,7 @@ object NetworkModule {
     @Provides
     @Singleton
     @BasicRetrofit
-    fun provideInterceptorOkHttpClient(
+    fun provideBasicOkHttpClient(
         interceptor: HttpLoggingInterceptor,
         @BasicRetrofit authInterceptor: XAccessTokenInterceptor
     ): OkHttpClient =
@@ -50,39 +60,67 @@ object NetworkModule {
     @Provides
     @Singleton
     @BasicRetrofit
-    fun provideInterceptorRetrofit(
+    fun provideBasicRetrofit(
         gsonConverterFactory: GsonConverterFactory,
-        @BasicRetrofit client: OkHttpClient
-    ): Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(client)
-        .addConverterFactory(gsonConverterFactory)
-        .build()
+        @BasicRetrofit client: OkHttpClient,
+        remoteConfigWrapper: RemoteConfigWrapper
+    ): Retrofit {
+        val baseUrl = remoteConfigWrapper.fetchAndActivateConfig()
+        Log.d("provideBasicRetrofit", "$baseUrl")
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(client)
+            .addConverterFactory(gsonConverterFactory)
+            .build()
+    }
 
     @Provides
     @Singleton
     @BasicRetrofit
-    fun provideAuthInterceptor(apiService: AuthApiService)
-    : XAccessTokenInterceptor = XAccessTokenInterceptor(apiService)
+    fun provideBasicTokenInterceptor(
+        apiService: ReissuanceApiService /** 추후 AnonymousRetrofit으로 변경 예정 */
+    ): XAccessTokenInterceptor {
+        return XAccessTokenInterceptor(apiService)
+    }
+
 
     @Provides
     @Singleton
-    @ReissuanceRetrofit
-    fun provideBasicRetrofit(
+    @AnonymousRetrofit
+    fun provideAnonymousRetrofit(
         gsonConverterFactory: GsonConverterFactory,
-        @ReissuanceRetrofit client: OkHttpClient
-    ): Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(client)
-        .addConverterFactory(gsonConverterFactory)
-        .build()
+        @AnonymousRetrofit client: OkHttpClient,
+        remoteConfigWrapper: RemoteConfigWrapper
+    ): Retrofit {
+        val baseUrl = remoteConfigWrapper.fetchAndActivateConfig()
+        Log.d("provideAnonymousRetrofit", "$baseUrl")
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(client)
+            .addConverterFactory(gsonConverterFactory)
+            .build()
+    }
 
     @Provides
     @Singleton
-    @ReissuanceRetrofit
-    fun provideBasicOkHttpClient(
+    @AnonymousRetrofit
+    fun provideAnonymousOkHttpClient(
        interceptor: HttpLoggingInterceptor,
-       @ReissuanceRetrofit authInterceptor: ReissuanceTokenInterceptor
+    ): OkHttpClient =
+        OkHttpClient.Builder()
+            .readTimeout(5000, TimeUnit.MILLISECONDS)
+            .connectTimeout(5000, TimeUnit.MILLISECONDS)
+            .addInterceptor(interceptor)
+            .build()
+
+
+    /** 추후 ReissuanceRetrofit 삭제 예정 */
+    @Provides
+    @Singleton
+    @ReissuanceRetrofit
+    fun provideReissuanceOkHttpClient(
+        interceptor: HttpLoggingInterceptor,
+        @ReissuanceRetrofit authInterceptor: ReissuanceTokenInterceptor
     ): OkHttpClient =
         OkHttpClient.Builder()
             .readTimeout(5000, TimeUnit.MILLISECONDS)
@@ -90,12 +128,28 @@ object NetworkModule {
             .addInterceptor(interceptor)
             .addInterceptor(authInterceptor)
             .build()
-
     @Provides
     @Singleton
     @ReissuanceRetrofit
-    fun provideReissuanceTokenInterceptor()
-            : ReissuanceTokenInterceptor = ReissuanceTokenInterceptor()
+    fun provideReissuanceRetrofit(
+        gsonConverterFactory: GsonConverterFactory,
+        @ReissuanceRetrofit client: OkHttpClient,
+        remoteConfigWrapper: RemoteConfigWrapper
+    ): Retrofit {
+        val baseUrl = remoteConfigWrapper.fetchAndActivateConfig()
+        Log.d("provideBasicRetrofit", "$baseUrl")
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(client)
+            .addConverterFactory(gsonConverterFactory)
+            .build()
+    }
+    @Provides
+    @Singleton
+    @ReissuanceRetrofit
+    fun provideReissuanceTokenInterceptor(): ReissuanceTokenInterceptor {
+        return ReissuanceTokenInterceptor()
+    }
 
 
     @Provides

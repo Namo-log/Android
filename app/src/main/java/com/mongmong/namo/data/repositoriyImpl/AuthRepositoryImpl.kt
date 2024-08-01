@@ -31,11 +31,11 @@ class AuthRepositoryImpl @Inject constructor(
         return remoteAuthDataSource.postLogout(LogoutBody(accessToken))
     }
 
-    override suspend fun postKakaoQuit(bearerToken: String): Boolean {
-        return remoteAuthDataSource.postKakaoQuit(bearerToken)
+    override suspend fun postKakaoQuit(): Boolean {
+        return remoteAuthDataSource.postKakaoQuit()
     }
 
-    override suspend fun postNaverQuit(bearerToken: String): Boolean {
-        return remoteAuthDataSource.postNaverQuit(bearerToken)
+    override suspend fun postNaverQuit(): Boolean {
+        return remoteAuthDataSource.postNaverQuit()
     }
 }

@@ -1,16 +1,12 @@
 package com.mongmong.namo.presentation.config
 
 import android.util.Log
-import com.mongmong.namo.data.remote.AuthApiService
+import com.mongmong.namo.data.remote.AnonymousApiService
+import com.mongmong.namo.data.remote.ReissuanceApiService
+import com.mongmong.namo.domain.model.TokenBody
 import com.mongmong.namo.presentation.config.ApplicationClass.Companion.X_ACCESS_TOKEN
 import com.mongmong.namo.presentation.config.ApplicationClass.Companion.X_REFRESH_TOKEN
 import com.mongmong.namo.presentation.config.ApplicationClass.Companion.sSharedPreferences
-import com.mongmong.namo.domain.model.RefreshResponse
-import com.mongmong.namo.domain.model.TokenBody
-import com.mongmong.namo.domain.repositories.AuthRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -18,7 +14,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 class XAccessTokenInterceptor @Inject constructor(
-    private val apiService: AuthApiService
+    private val apiService: ReissuanceApiService
 ) : Interceptor {
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
