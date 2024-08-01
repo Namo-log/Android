@@ -18,7 +18,7 @@ class RemoteConfigWrapper @Inject constructor() {
     }
 
     fun fetchAndActivateConfig(): String {
-        remoteConfig.fetchAndActivate().addOnCompleteListener{ task ->
+        remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
             val updated = task.result
             if (task.isSuccessful){
                 val updated = task.result
@@ -27,6 +27,6 @@ class RemoteConfigWrapper @Inject constructor() {
                 Log.d("TAG", "Config params updated failed: $updated")
             }
         }
-        return remoteConfig.getString("ios_baseurl") + "/"
+        return remoteConfig.getString("android_baseurl")
     }
 }
