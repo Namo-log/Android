@@ -5,7 +5,7 @@
         <item name="android:layout_width">140dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingVertical">6dp</item>
-        <item name="android:background">@drawable/border_round_all_stroke_main_orange</item>
+        <item name="android:background">@drawable/bg_map_btn</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/mainOrange</item>
         <item name="android:textSize">15sp</item>

@@ -18,7 +18,7 @@
             android:id="@+id/item_group_member_color_view"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:background="@drawable/border_round_all_circle"
+            android:background="@drawable/bg_circle"
             app:tintColor="@{groupMember.color}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>

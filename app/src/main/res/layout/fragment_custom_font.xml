@@ -20,7 +20,7 @@
             android:id="@+id/costom_font_mong_iv"
             android:layout_width="159dp"
             android:layout_height="152dp"
-            android:src="@drawable/ic_mongi_default"
+            android:src="@drawable/img_mongi_default"
             android:scaleType="centerCrop"/>
         <TextView
             android:id="@+id/custom_font_desc_tv"

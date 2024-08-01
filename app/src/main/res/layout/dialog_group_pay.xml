@@ -17,7 +17,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="330dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/border_round_all_10dp"
+        android:background="@drawable/bg_dialog"
         android:paddingHorizontal="20dp"
         android:paddingTop="15dp"
         android:paddingBottom="22dp"
@@ -93,7 +93,8 @@
                     android:id="@+id/group_pay_total_et"
                     android:layout_width="130dp"
                     android:layout_height="25dp"
-                    android:background="@drawable/border_round_all_fill_gray_no_padding"
+                    android:background="@drawable/bg_radius_5"
+                    android:backgroundTint="@color/groupCodeGray"
                     android:gravity="center_vertical|end"
                     android:hint="금액 입력"
                     android:maxLines="1"
@@ -121,16 +122,17 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_division" />
 
                 <TextView
                     android:id="@+id/group_pay_count_tv"
-                    android:layout_width="110dp"
+                    android:layout_width="0dp"
                     android:layout_height="25dp"
+                    android:layout_weight="1"
                     android:gravity="center_vertical|end"
                     android:paddingEnd="10dp"
                     android:text="0"

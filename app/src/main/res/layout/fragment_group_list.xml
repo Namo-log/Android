@@ -36,11 +36,9 @@
                 android:layout_height="match_parent">
                 <ImageView
                     android:id="@+id/group_more_iv"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginEnd="15dp"
-                    android:padding="1dp"
-                    android:src="@drawable/ic_top_more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_more_horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"/>
@@ -61,7 +59,7 @@
                 android:id="@+id/group_list_empty_iv"
                 android:layout_width="263dp"
                 android:layout_height="wrap_content"
-                android:src="@{viewModel.groups == null ? @drawable/ic_network_disconnect : @drawable/ic_group_empty }"
+                android:src="@{viewModel.groups == null ? @drawable/ic_network_disconnect : @drawable/img_group_empty }"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"/>
             <TextView

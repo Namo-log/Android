@@ -26,9 +26,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/category_dark_view">
             <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/ic_delete_schedule"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/ic_delete"
                 android:backgroundTint="@{viewModel.canDeleteCategory ? @color/black : @color/disableTextGray}"
                 android:layout_gravity="center"/>
         </androidx.cardview.widget.CardView>

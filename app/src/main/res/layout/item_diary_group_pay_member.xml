@@ -13,10 +13,9 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:checked="false"
-        android:button="@drawable/check_selected"
-        android:buttonTint="@color/white"
+        android:button="@null"
+        android:background="@drawable/selector_checkbox"
         android:padding="6dp"
-        android:background="@drawable/checkbox_custom"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 

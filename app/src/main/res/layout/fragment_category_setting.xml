@@ -17,7 +17,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/border_round_top"
+            android:background="@drawable/bg_bottomsheet"
             android:elevation="@dimen/cardview_default_elevation"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -102,7 +102,7 @@
                         android:layout_marginTop="15dp"
                         android:layout_marginHorizontal="12dp"
                         android:padding="10dp"
-                        android:background="@drawable/category_box">
+                        android:background="@drawable/bg_category_view">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -121,6 +121,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal"
+                                android:gravity="center_vertical"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent">
 
@@ -133,11 +134,10 @@
                                     android:text="@string/palette_normal"/>
 
                                 <ImageView
-                                    android:layout_width="10dp"
-                                    android:layout_height="20dp"
-                                    android:padding="1dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
                                     android:layout_marginEnd="10dp"
-                                    android:src="@drawable/ic_arrow_right_gray"/>
+                                    android:src="@drawable/ic_arrow_right"/>
                             </LinearLayout>
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </LinearLayout>
@@ -161,7 +161,7 @@
                         android:padding="15dp"
                         android:layout_marginTop="15dp"
                         android:layout_marginHorizontal="12dp"
-                        android:background="@drawable/category_box_dotted">
+                        android:background="@drawable/bg_category_dotted">
 
                         <ImageView
                             android:layout_width="20dp"

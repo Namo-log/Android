@@ -62,9 +62,10 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/diary_delete_iv"
-                android:layout_width="40dp"
-                android:layout_height="47dp"
-                android:src="@drawable/ic_delete_schedule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:src="@drawable/ic_delete"
                 android:visibility="@{viewModel.schedule.hasDiary ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@id/diary_back_iv"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -174,7 +175,6 @@
             android:layout_marginStart="25dp"
             android:layout_marginTop="35dp"
             android:layout_marginEnd="25dp"
-            android:background="@drawable/left_round_corner"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/diary_input_place_tv">
 
@@ -186,7 +186,7 @@
                     android:id="@+id/item_diary_category_color_iv"
                     android:layout_width="15dp"
                     android:layout_height="0dp"
-                    android:background="@drawable/bg_diary_preview_category_color_corner"
+                    android:background="@drawable/bg_diary_category_color_view"
                     android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(paletteId)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -198,7 +198,7 @@
                 android:id="@+id/diary_contents_et"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:background="@drawable/bg_diary_preview_base_corner"
+                android:background="@drawable/bg_diary_content_view"
                 android:gravity="start"
                 android:hint="@string/diary_put"
                 android:inputType="textMultiLine"
@@ -256,7 +256,7 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="12dp"
                 android:visibility="@{viewModel.imgList.size() == 3 ? View.GONE : View.VISIBLE}"
-                android:background="@drawable/gallery_background"
+                android:background="@drawable/bg_gallery_dotted"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_gallery" />
 

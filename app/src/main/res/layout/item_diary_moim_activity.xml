@@ -7,7 +7,7 @@
 
    <LinearLayout
        android:id="@+id/activity_delete_ll"
-       android:layout_width="80dp"
+       android:layout_width="65dp"
        android:layout_height="0dp"
        android:elevation="-2dp"
        android:clickable="false"
@@ -20,10 +20,10 @@
        <androidx.appcompat.widget.AppCompatImageView
            android:id="@+id/activity_delete_iv"
            android:layout_width="match_parent"
-           android:layout_height="40dp"
+           android:layout_height="24dp"
            android:layout_gravity="center"
            app:tint="@color/white"
-           android:src="@drawable/ic_delete_schedule" />
+           android:src="@drawable/ic_delete"/>
    </LinearLayout>
 
     <LinearLayout
@@ -99,10 +99,10 @@
 
                 <ImageView
                     android:id="@+id/item_place_money_iv"
-                    android:layout_width="15dp"
-                    android:layout_height="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_arrow_right_gray"
+                    android:src="@drawable/ic_arrow_right"
                     android:visibility="visible" />
 
             </LinearLayout>
@@ -127,7 +127,7 @@
                 android:id="@+id/update_image_iv"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:background="@drawable/gallery_background"
+                android:background="@drawable/bg_gallery_dotted"
                 android:layout_marginStart="8dp"
                 android:layout_gravity="center"
                 android:layerType="software"

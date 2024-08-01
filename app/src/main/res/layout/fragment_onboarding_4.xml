@@ -59,7 +59,8 @@
                 android:layout_marginTop="1dp"
                 android:layout_marginStart="5dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_arrow_right_orange"/>
+                android:src="@drawable/ic_arrow_right"
+                app:tint="@color/mainOrange"/>
 
         </LinearLayout>
 
@@ -71,7 +72,7 @@
             android:layout_marginBottom="@dimen/onboarding_margin_bottom"
             android:stateListAnimator="@null"
             android:padding="@dimen/onboarding_btn_padding"
-            android:background="@drawable/login_btn_background"
+            android:background="@drawable/bg_basic_btn"
             android:backgroundTint="@color/groupCodeGray"
             android:textColor="@color/mainOrange"
             android:text="@string/onboarding_next"

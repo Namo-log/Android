@@ -9,7 +9,7 @@
         android:orientation="vertical"
         android:padding="16dp"
         android:minWidth="250dp"
-        android:background="@drawable/border_round_all_10dp">
+        android:background="@drawable/bg_dialog">
 
         <LinearLayout
             android:layout_width="300dp"
@@ -58,34 +58,18 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/cancel_btn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingVertical="11dp"
                 android:layout_marginEnd="4dp"
                 android:stateListAnimator="@null"
-                android:background="@drawable/border_round_all_fill_mainorange"
-                android:backgroundTint="@color/groupCodeGray"
-                android:textColor="@color/textGray"
                 android:text="@string/dialog_cancel"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textAlignment="center" />
+                style="@style/dialog_cancel_button"/>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/accept_btn"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:paddingVertical="11dp"
                 android:layout_marginStart="4dp"
                 android:stateListAnimator="@null"
-                android:background="@drawable/border_round_all_fill_mainorange"
-                android:textColor="@color/white"
                 android:text="@string/dialog_confirm"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textAlignment="center"/>
+                style="@style/dialog_check_button"/>
 
         </LinearLayout>
 

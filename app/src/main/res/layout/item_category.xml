@@ -20,7 +20,7 @@
             android:id="@+id/item_category_background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/category_box"
+            android:background="@drawable/bg_category_view"
             android:orientation="horizontal"
             android:padding="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -68,11 +68,10 @@
 
                     <ImageView
                         android:id="@+id/item_category_edit_iv"
-                        android:layout_width="10dp"
-                        android:layout_height="20dp"
-                        android:padding="1dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/ic_arrow_right_gray"
+                        android:src="@drawable/ic_arrow_right"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"/>

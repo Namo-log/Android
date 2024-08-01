@@ -1,7 +1,6 @@
 package com.mongmong.namo.presentation.ui.group.adapter
 
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -49,8 +48,8 @@ class GroupListRVAdapter(private var groups: List<Group>):  RecyclerView.Adapter
             Glide.with(binding.itemGroupCoverImgIv)
                 .load(moim.groupImgUrl)
                 .placeholder(R.color.notyetGray)
-                .error(R.drawable.ic_mongi_default)
-                .fallback(R.drawable.ic_mongi_default)
+                .error(R.drawable.img_mongi_default)
+                .fallback(R.drawable.img_mongi_default)
                 .into(binding.itemGroupCoverImgIv)
 
 

@@ -21,7 +21,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(category.paletteId)}"
-            android:background="@drawable/border_round_all_circle"
+            android:background="@drawable/bg_circle"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:backgroundTint="@color/schedule"/>
@@ -30,12 +30,11 @@
             android:id="@+id/category_selected_iv"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:src="@drawable/ic_selected_check"
+            android:src="@drawable/ic_check"
             app:layout_constraintTop_toTopOf="@id/category_color_view"
             app:layout_constraintBottom_toBottomOf="@id/category_color_view"
             app:layout_constraintStart_toStartOf="@id/category_color_view"
             app:layout_constraintEnd_toEndOf="@id/category_color_view"
-            android:padding="5dp"
             android:visibility="gone"/>
 
         <TextView

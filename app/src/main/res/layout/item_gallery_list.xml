@@ -10,7 +10,7 @@
             android:id="@+id/gallery_delete_btn"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/ic_diary_image_delete_btn"
+            android:src="@drawable/ic_close"
             app:civ_circle_background_color="@color/white"
             app:civ_border_color="@color/white"
             app:civ_border_width="2dp"
