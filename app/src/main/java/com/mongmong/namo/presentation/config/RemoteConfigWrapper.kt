@@ -3,6 +3,7 @@ package com.mongmong.namo.presentation.config
 import android.util.Log
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import com.mongmong.namo.BuildConfig
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,20 +14,25 @@ class RemoteConfigWrapper @Inject constructor() {
             val configSettings = FirebaseRemoteConfigSettings.Builder()
                 .build()
             setConfigSettingsAsync(configSettings)
-
         }
     }
 
     fun fetchAndActivateConfig(): String {
         remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
             val updated = task.result
-            if (task.isSuccessful){
-                val updated = task.result
-                Log.d("TAG","Config params updated success: $updated")
+            if (task.isSuccessful) {
+                Log.d("fetchAndActivateConfig", "Config params updated success: $updated")
             } else {
-                Log.d("TAG", "Config params updated failed: $updated")
+                Log.d("fetchAndActivateConfig", "Config params updated failed: $updated")
             }
         }
-        return remoteConfig.getString("android_baseurl")
+
+        val baseUrl = remoteConfig.getString("android_baseurl")
+        return if (baseUrl.startsWith("http")) {
+            baseUrl
+        } else {
+            Log.d("fetchAndActivateConfig", "baseurl is not start http")
+            BuildConfig.BASE_URL
+        }
     }
 }
