@@ -17,8 +17,8 @@ android {
         applicationId "com.mongmong.namo"
         minSdk 23
         targetSdk 34
-        versionCode 5
-        versionName "1.0.4"
+        versionCode 6
+        versionName "1.0.5"
 
         buildConfigField "String", "KAKAO_API_KEY", properties['kakao_api_key']
         buildConfigField "String", "KAKAO_REST_KEY", properties['kakao_rest_key']
