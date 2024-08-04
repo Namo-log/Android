@@ -1,8 +1,8 @@
 package com.mongmong.namo.presentation.config
 
-import com.mongmong.namo.presentation.config.ApplicationClass.Companion.X_ACCESS_TOKEN
-import com.mongmong.namo.presentation.config.ApplicationClass.Companion.X_REFRESH_TOKEN
-import com.mongmong.namo.presentation.config.ApplicationClass.Companion.sSharedPreferences
+import com.mongmong.namo.presentation.config.ApplicationClass.Companion.dsManager
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
@@ -13,8 +13,9 @@ class ReissuanceTokenInterceptor @Inject constructor(
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
-        val accessToken: String? = sSharedPreferences.getString(X_ACCESS_TOKEN, null)
-        val refreshToken: String = sSharedPreferences.getString(X_REFRESH_TOKEN, null).toString()
+
+        val accessToken: String? = runBlocking { dsManager.getAccessToken().first() }
+        val refreshToken: String? = runBlocking { dsManager.getRefreshToken().first() }
 
         val newRequest = request.newBuilder()
 

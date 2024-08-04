@@ -10,11 +10,13 @@ import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.mongmong.namo.databinding.ActivitySplashBinding
 import com.mongmong.namo.presentation.config.ApplicationClass
+import com.mongmong.namo.presentation.config.ApplicationClass.Companion.dsManager
 import com.mongmong.namo.presentation.ui.login.AuthViewModel
 import com.mongmong.namo.presentation.ui.onBoarding.OnBoardingActivity
 import com.mongmong.namo.presentation.utils.AppUpdateHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
@@ -82,10 +84,10 @@ class SplashActivity : AppCompatActivity() {
     private fun initObserve() {
         viewModel.refreshResponse.observe(this) { response ->
             if (response.code == OK_CODE) {
-                ApplicationClass.sSharedPreferences.edit()
-                    .putString(ApplicationClass.X_REFRESH_TOKEN, response.result.refreshToken)
-                    .putString(ApplicationClass.X_ACCESS_TOKEN, response.result.accessToken)
-                    .apply()
+                runBlocking {
+                    dsManager.saveAccessToken(response.result.accessToken)
+                    dsManager.saveRefreshToken(response.result.refreshToken)
+                }
 
                 startActivity(Intent(this@SplashActivity, MainActivity::class.java))
                 finish()

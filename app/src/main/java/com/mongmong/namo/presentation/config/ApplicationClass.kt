@@ -2,12 +2,14 @@ package com.mongmong.namo.presentation.config
 
 import android.app.Application
 import android.content.SharedPreferences
+import android.provider.ContactsContract.Data
 import com.google.firebase.FirebaseApp
 import com.mongmong.namo.BuildConfig
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.vectormap.KakaoMapSdk
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.di.NetworkModule
+import com.mongmong.namo.presentation.utils.DataStoreManager
 import com.navercorp.nid.NaverIdLoginSDK
 import dagger.hilt.android.HiltAndroidApp
 import retrofit2.Retrofit
@@ -36,6 +38,8 @@ class ApplicationClass: Application() {
         val sSharedPreferences: SharedPreferences
             get() = instance.getSharedPreferences("NAMO", MODE_PRIVATE)
 
+        lateinit var dsManager: DataStoreManager
+
         // 버전
         const val VERSION = "1.0.5"
 
@@ -49,6 +53,8 @@ class ApplicationClass: Application() {
     // 앱이 처음 생성되는 순간, SP를 새로 만들어주고, 레트로핏 인스턴스를 생성합니다.
     override fun onCreate() {
         super.onCreate()
+
+        dsManager = DataStoreManager(applicationContext)
 
         FirebaseApp.initializeApp(this)
         // SDK 초기화

@@ -12,8 +12,11 @@ import com.mongmong.namo.domain.model.TokenBody
 import com.mongmong.namo.domain.repositories.AuthRepository
 import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.config.LoginPlatform
+import com.mongmong.namo.presentation.config.ApplicationClass.Companion.dsManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,12 +39,13 @@ class AuthViewModel @Inject constructor(
     fun tryLogin(platform: LoginPlatform, accessToken: String, refreshToken: String) {
         Log.d("${platform.platformName}Token", "accessToken: $accessToken, refreshToken: $refreshToken")
         viewModelScope.launch {
-            if (platform == LoginPlatform.KAKAO) {
-                _loginResult.value = repository.postKakaoLogin(LoginBody(accessToken, refreshToken)).result
+            val result = if (platform == LoginPlatform.KAKAO) {
+                repository.postKakaoLogin(LoginBody(accessToken, refreshToken)).result
             } else {
-                _loginResult.value = repository.postNaverLogin(LoginBody(accessToken, refreshToken)).result
+                repository.postNaverLogin(LoginBody(accessToken, refreshToken)).result
             }
-            _loginResult.value?.let {
+            _loginResult.value = result
+            result?.let {
                 saveLoginPlatform(platform)
                 // 토큰 저장
                 saveToken(it)
@@ -51,8 +55,8 @@ class AuthViewModel @Inject constructor(
 
     /** 토큰 재발급 */
     fun tryRefreshToken() {
-        val tokenBody = getSavedToken()
         viewModelScope.launch {
+            val tokenBody = getSavedToken()
             _refreshResponse.postValue(repository.postTokenRefresh(tokenBody.accessToken, tokenBody.refreshToken))
         }
     }
@@ -91,40 +95,41 @@ class AuthViewModel @Inject constructor(
         return "Bearer ${getAccessToken()}"
     }
 
-    private fun getAccessToken(): String? {
-        return ApplicationClass.sSharedPreferences.getString(ApplicationClass.X_ACCESS_TOKEN, null)
+    private fun getAccessToken(): String? = runBlocking {
+        dsManager.getAccessToken().first()
     }
 
     // 앱 내 저장된 토큰 정보 가져오기
-    private fun getSavedToken(): TokenBody {
-        val spf = ApplicationClass.sSharedPreferences
-        return TokenBody(spf.getString(ApplicationClass.X_ACCESS_TOKEN, null).toString(), spf.getString(ApplicationClass.X_REFRESH_TOKEN, null).toString())
+    private fun getSavedToken(): TokenBody = runBlocking {
+        val accessToken = dsManager.getAccessToken().first().orEmpty()
+        val refreshToken = dsManager.getRefreshToken().first().orEmpty()
+        TokenBody(accessToken, refreshToken)
     }
 
     // 로그인 한 sdk 정보 가져오기
-    private fun getLoginPlatform(): String {
-        val spf = ApplicationClass.sSharedPreferences
-        return spf.getString(ApplicationClass.SDK_PLATFORM, LoginPlatform.KAKAO.platformName)!!
+    private fun getLoginPlatform(): String = runBlocking {
+        dsManager.getPlatform().first().orEmpty()
     }
 
     // 로그인 플랫폼 정보 앱 내에 저장
     private fun saveLoginPlatform(platform: LoginPlatform) {
-        ApplicationClass.sSharedPreferences.edit()
-            .putString(ApplicationClass.SDK_PLATFORM, platform.platformName)
-            .apply()
+        viewModelScope.launch {
+            dsManager.savePlatform(platform.platformName)
+        }
     }
 
     // 토큰 정보 앱 내에 저장
     private fun saveToken(tokenResult: LoginResult) {
-        // 토큰 저장
-        ApplicationClass.sSharedPreferences.edit()
-            .putString(ApplicationClass.X_ACCESS_TOKEN, tokenResult.accessToken)
-            .putString(ApplicationClass.X_REFRESH_TOKEN, tokenResult.refreshToken)
-            .apply()
+        viewModelScope.launch {
+            dsManager.saveAccessToken(tokenResult.accessToken)
+            dsManager.saveRefreshToken(tokenResult.refreshToken)
+        }
     }
 
     // 앱 내에 저장된 토큰 정보 삭제
     private fun deleteToken() {
-        ApplicationClass.sSharedPreferences.edit().clear().apply()
+        viewModelScope.launch {
+            dsManager.clearTokens()
+        }
     }
 }
