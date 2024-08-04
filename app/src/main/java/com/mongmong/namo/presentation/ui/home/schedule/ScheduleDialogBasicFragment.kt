@@ -56,7 +56,6 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
     override fun setup() {
         binding.viewModel = viewModel
 
-        initObservers()
         initMapView()
         initClickListeners()
         setInit()
@@ -71,6 +70,7 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
                 setMapContent()
             }
         }
+        initObservers()
     }
 
     override fun onResume() {
@@ -391,22 +391,22 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
     }
 
     private fun initObservers() {
-        viewModel.schedule.observe(requireActivity()) { schedule ->
+        viewModel.schedule.observe(viewLifecycleOwner) { schedule ->
             setContent()
             if (schedule != null) {
                 initPickerClickListeners()
             }
         }
 
-        viewModel.categoryList.observe(requireActivity()) {categoryList ->
+        viewModel.categoryList.observe(viewLifecycleOwner) {categoryList ->
             if (categoryList.isNotEmpty()) viewModel.findCategoryById()
         }
 
-        viewModel.category.observe(requireActivity()) { category ->
+        viewModel.category.observe(viewLifecycleOwner) { category ->
             if (category.categoryId != 0L && viewModel.schedule.value?.categoryId == 0L) viewModel.setCategory()
         }
 
-        viewModel.isComplete.observe(requireActivity()) { isComplete ->
+        viewModel.isComplete.observe(viewLifecycleOwner) { isComplete ->
             // 추가 작업이 완료된 후 뒤로가기
             if (isComplete) {
                 requireActivity().finish()

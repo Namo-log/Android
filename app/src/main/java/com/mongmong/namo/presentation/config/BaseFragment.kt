@@ -28,11 +28,6 @@ abstract class BaseFragment<T : ViewDataBinding>(private val layoutRes: Int) : F
         setup()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    open fun setup() { /** ChildFragment에서 override */ }
+    abstract fun setup() /** ChildFragment에서 override */
 }
 

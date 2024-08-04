@@ -5,28 +5,25 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mongmong.namo.R
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.GROUP_MEMBER_INTENT_KEY
 import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
 import com.mongmong.namo.databinding.ActivityGroupScheduleMemberBinding
+import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.group.adapter.GroupScheduleMemberRVAdapter
 
-class GroupScheduleMemberActivity : AppCompatActivity() {
+class GroupScheduleMemberActivity : BaseActivity<ActivityGroupScheduleMemberBinding>(R.layout.activity_group_schedule_member) {
 
-    private lateinit var binding : ActivityGroupScheduleMemberBinding
     private lateinit var members : MoimSchduleMemberList
     private lateinit var selectedPosition : ArrayList<Boolean>
     private lateinit var groupScheduleMemberRVAdapter : GroupScheduleMemberRVAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityGroupScheduleMemberBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun setup() {
         members = intent.getSerializableExtra("members") as MoimSchduleMemberList
         val selected = intent.getLongArrayExtra("selectedIds")
         val selectedIdsList = selected?.toMutableList() ?: ArrayList() // Long 배열을 ArrayList<Long>로 변환
 
-        Log.d("PUT_INTENT", "Result : " + members.toString())
+        Log.d("PUT_INTENT", "Result : $members")
         Log.d("PUT_INTENT", "Result : " + selected.toString())
 
         selectedPosition = ArrayList<Boolean>(members.memberList.size)
@@ -35,7 +32,7 @@ class GroupScheduleMemberActivity : AppCompatActivity() {
             val isSelected = selectedIdsList.contains(members.memberList[i].userId)
             Log.d("PUT_INTENT", "Member contains : " + (members.memberList[i].userId))
             selectedPosition.add(isSelected)
-            Log.d("PUT_INTENT", "Selected Position : " + selectedPosition.toString())
+            Log.d("PUT_INTENT", "Selected Position : $selectedPosition")
         }
 
         setAdapter()

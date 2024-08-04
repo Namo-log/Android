@@ -16,5 +16,5 @@ abstract class BaseActivity<T : ViewDataBinding>(private val layoutRes: Int) : A
         setup()
     }
 
-    open fun setup() { /** ChildActivity에서 override */ }
+    abstract fun setup() /** ChildActivity에서 override */
 }

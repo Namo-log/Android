@@ -8,10 +8,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivitySplashBinding
 import com.mongmong.namo.presentation.config.ApplicationClass
-import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.login.AuthViewModel
 import com.mongmong.namo.presentation.ui.onBoarding.OnBoardingActivity
 import com.mongmong.namo.presentation.utils.AppUpdateHelper
@@ -19,8 +17,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 
 @AndroidEntryPoint
-class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_splash) {
+class SplashActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivitySplashBinding
     private lateinit var splashScreen: SplashScreen
     private val isDataLoaded = MutableStateFlow(false)
     private val viewModel: AuthViewModel by viewModels()
@@ -41,7 +40,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
 
     private var autoLoginCalled = false
 
-    override fun setup() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         splashScreen = installSplashScreen()
         splashScreen.setKeepOnScreenCondition {
             !isDataLoaded.value
@@ -58,7 +58,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
-    
+
     override fun onResume() {
         super.onResume()
         // 백그라운드에서 포그라운드로 전환될 때 업데이트 상태 확인

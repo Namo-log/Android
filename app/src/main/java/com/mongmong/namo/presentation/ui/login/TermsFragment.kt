@@ -24,19 +24,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class TermsFragment: BaseFragment<FragmentTermsBinding>(R.layout.fragment_terms) {
     private val viewModel : TermsViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_terms, container, false)
-
+    override fun setup() {
         initObserve()
         initClickListeners()
         checkboxListener()
-
-        return binding.root
     }
 
     private fun initObserve() {

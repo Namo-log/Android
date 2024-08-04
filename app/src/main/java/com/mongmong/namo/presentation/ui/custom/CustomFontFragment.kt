@@ -10,4 +10,6 @@ import com.mongmong.namo.databinding.FragmentCustomFontBinding
 import com.mongmong.namo.presentation.config.BaseFragment
 
 class CustomFontFragment : BaseFragment<FragmentCustomFontBinding>(R.layout.fragment_custom_font) {
+    override fun setup() {
+    }
 }
