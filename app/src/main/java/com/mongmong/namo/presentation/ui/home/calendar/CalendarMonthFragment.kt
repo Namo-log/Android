@@ -10,9 +10,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
+import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.diary.MoimMemoDetailActivity
 import com.mongmong.namo.presentation.ui.diary.PersonalDetailActivity
 import com.mongmong.namo.presentation.ui.home.HomeFragment
@@ -25,10 +27,7 @@ import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 
 @AndroidEntryPoint
-class CalendarMonthFragment : Fragment() {
-
-    private lateinit var binding: FragmentCalendarMonthBinding
-
+class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layout.fragment_calendar_month) {
     private var millis: Long = 0L
 
     private val personalDailyScheduleAdapter = DailyScheduleRVAdapter()
@@ -36,37 +35,25 @@ class CalendarMonthFragment : Fragment() {
 
     private val viewModel: PersonalScheduleViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+    override fun setup() {
         arguments?.let {
             millis = it.getLong(MILLIS)
         }
-    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentCalendarMonthBinding.inflate(inflater, container, false)
-
-        binding.apply {
-            viewModel = this@CalendarMonthFragment.viewModel
-            lifecycleOwner = this@CalendarMonthFragment
-        }
+        binding.viewModel = viewModel
 
         binding.calendarMonthView.setDays(millis)
         viewModel.setMonthDayList(binding.calendarMonthView.days)
 
         initClickListeners()
         initAdapter()
-
-        return binding.root
+        initObserve()
     }
 
     override fun onResume() {
         super.onResume()
 
-        initObserve()
         getCategoryList()
         setMonthCalendarSchedule()
         setAdapter()

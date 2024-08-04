@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.databinding.FragmentGroupCalendarMonthBinding
+import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryActivity
 import com.mongmong.namo.presentation.ui.group.GroupCalendarActivity
 import com.mongmong.namo.presentation.ui.group.schedule.GroupScheduleActivity
@@ -23,10 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 
 @AndroidEntryPoint
-class GroupCalendarMonthFragment : Fragment() {
-
-    private lateinit var binding : FragmentGroupCalendarMonthBinding
-
+class GroupCalendarMonthFragment : BaseFragment<FragmentGroupCalendarMonthBinding>(R.layout.fragment_group_calendar_month) {
     private var millis : Long = 0L
 
     private val personalDailyScheduleAdapter = GroupDailyPersonalRVAdapter()
@@ -34,24 +33,12 @@ class GroupCalendarMonthFragment : Fragment() {
 
     private val viewModel : MoimScheduleViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun setup() {
         arguments?.let {
             millis = it.getLong(MILLIS)
         }
-    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentGroupCalendarMonthBinding.inflate(inflater, container, false)
-
-        binding.apply {
-            viewModel = this@GroupCalendarMonthFragment.viewModel
-            lifecycleOwner = this@GroupCalendarMonthFragment
-        }
+        binding.viewModel = viewModel
 
         binding.groupCalendarMonthView.setDays(millis)
         viewModel.setMonthDayList(binding.groupCalendarMonthView.days)
@@ -59,8 +46,6 @@ class GroupCalendarMonthFragment : Fragment() {
         initClickListeners()
         initObserve()
         initAdapter()
-
-        return binding.root
     }
 
     override fun onResume() {

@@ -11,32 +11,25 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.databinding.FragmentGroupListBinding
+import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.group.adapter.GroupListRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class GroupFragment : Fragment(), CreateGroupDialog.GroupCreationListener, GroupCodeDialog.GroupCodeListener {
-    lateinit var binding: FragmentGroupListBinding
+class GroupFragment
+    : BaseFragment<FragmentGroupListBinding>(R.layout.fragment_group_list),
+    CreateGroupDialog.GroupCreationListener,
+    GroupCodeDialog.GroupCodeListener {
+
     private val viewModel : GroupViewModel by viewModels()
     private val groupAdapter = GroupListRVAdapter(emptyList())
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-
-    ): View? {
-        binding = FragmentGroupListBinding.inflate(inflater, container, false)
-        binding.apply {
-            viewModel = this@GroupFragment.viewModel
-            lifecycleOwner = this@GroupFragment
-        }
+    override fun setup() {
+        binding.viewModel = viewModel
 
         initObserve()
         onClickMenu()
         setRecyclerView()
-
-        return binding.root
     }
 
     override fun onResume() {
@@ -49,7 +42,6 @@ class GroupFragment : Fragment(), CreateGroupDialog.GroupCreationListener, Group
             groups?.let { groupAdapter.updateGroups(groups) }
         }
     }
-
 
     private fun setRecyclerView() {
         groupAdapter.setMyItemClickListener(object : GroupListRVAdapter.ItemClickListener {

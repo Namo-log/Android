@@ -19,6 +19,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.databinding.FragmentDiaryBinding
 import com.mongmong.namo.domain.model.DiaryImage
+import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.diary.adapter.DiaryRVAdapter
 import com.mongmong.namo.presentation.utils.SetMonthDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,31 +30,16 @@ import org.joda.time.format.DateTimeFormat
 import java.util.ArrayList
 
 @AndroidEntryPoint
-class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
-
-    private var _binding: FragmentDiaryBinding? = null
-    private val binding get() = _binding!!
+class DiaryFragment : BaseFragment<FragmentDiaryBinding>(R.layout.fragment_diary) {
     private val viewModel: DiaryViewModel by viewModels()
-
     private var isInitialLoad = true
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentDiaryBinding.inflate(inflater, container, false)
-        // 데이터 바인딩
-        binding.apply {
-            viewModel = this@DiaryFragment.viewModel
-            lifecycleOwner = viewLifecycleOwner
-        }
+    override fun setup() {
+        binding.viewModel = viewModel
 
         setTabLayout()
         setMonthSelector()
         getList()
-
-        return binding.root
     }
 
     override fun onResume() {
@@ -191,11 +177,6 @@ class DiaryFragment : Fragment() {  // 다이어리 리스트 화면(bottomNavi)
         )
     }
 
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 
     // yyyy.MM 타입을 밀리초로 변경
     private fun convertYearMonthToMillis(

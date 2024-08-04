@@ -29,6 +29,7 @@ import com.kakao.vectormap.label.LabelStyles
 import com.mongmong.namo.BuildConfig
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMapBinding
+import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
 import com.mongmong.namo.presentation.ui.group.schedule.GroupScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
@@ -45,9 +46,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MapActivity : AppCompatActivity() {
-    private lateinit var binding : ActivityMapBinding
-
+class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map) {
     private var kakaoMap: KakaoMap? = null
     private lateinit var mapView: MapView
 
@@ -64,12 +63,7 @@ class MapActivity : AppCompatActivity() {
     @Inject
     lateinit var kakaoService: KakaoAPI
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        binding = ActivityMapBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun setup() {
         getLocationPermission()
 
         setAdapter()

@@ -17,43 +17,31 @@ import com.mongmong.namo.R
 import com.mongmong.namo.presentation.ui.home.schedule.adapter.DialogCategoryRVAdapter
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.mongmong.namo.databinding.FragmentScheduleDialogCategoryBinding
+import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.category.CategoryActivity
 import com.mongmong.namo.presentation.ui.category.CategoryViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ScheduleDialogCategoryFragment : Fragment() {
-
-    private lateinit var binding : FragmentScheduleDialogCategoryBinding
-
+class ScheduleDialogCategoryFragment
+    : BaseFragment<FragmentScheduleDialogCategoryBinding>(R.layout.fragment_schedule_dialog_category) {
     private val args: ScheduleDialogCategoryFragmentArgs by navArgs()
-
     private var schedule: Schedule = Schedule()
 
     private lateinit var categoryRVAdapter: DialogCategoryRVAdapter
 
     private val viewModel: CategoryViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_schedule_dialog_category, container, false)
-
-        binding.apply {
-            viewModel = this@ScheduleDialogCategoryFragment.viewModel
-            lifecycleOwner = this@ScheduleDialogCategoryFragment
-        }
+    override fun setup() {
+        binding.viewModel = viewModel
 
         schedule = args.schedule
 
         onClickCategoryEdit()
         initObserve()
-
-        return binding.root
     }
 
     override fun onResume() {

@@ -9,9 +9,11 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMoimMemoDetailBinding
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.MoimDiary
+import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.diary.adapter.GalleryImageRVAdapter
 import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
@@ -21,22 +23,16 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.ArrayList
 
 @AndroidEntryPoint
-class MoimMemoDetailActivity: AppCompatActivity(), ConfirmDialogInterface {
-    private lateinit var binding: ActivityMoimMemoDetailBinding
-
+class MoimMemoDetailActivity
+    : BaseActivity<ActivityMoimMemoDetailBinding>(R.layout.activity_moim_memo_detail),
+    ConfirmDialogInterface {
     private var moimScheduleId: Long = 0L
     private val viewModel : DiaryDetailViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding =  ActivityMoimMemoDetailBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun setup() {
         binding.apply {
             viewModel = this@MoimMemoDetailActivity.viewModel
-            lifecycleOwner = this@MoimMemoDetailActivity
             paletteId = intent.getIntExtra("paletteId", 0)
-
             // marquee focus
             diaryTitleTv.requestFocus()
             diaryTitleTv.isSelected = true

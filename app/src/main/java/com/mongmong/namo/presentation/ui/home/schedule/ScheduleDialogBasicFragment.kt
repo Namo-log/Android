@@ -37,15 +37,14 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.FragmentScheduleDialogBasicBinding
+import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.utils.PickerConverter
 import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedTime
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 
 @AndroidEntryPoint
-class ScheduleDialogBasicFragment : Fragment() {
-
-    private lateinit var binding : FragmentScheduleDialogBasicBinding
+class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBinding>(R.layout.fragment_schedule_dialog_basic) {
 
     private var kakaoMap: KakaoMap? = null
     private lateinit var mapView: MapView
@@ -54,28 +53,14 @@ class ScheduleDialogBasicFragment : Fragment() {
 
     private val viewModel : PersonalScheduleViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_schedule_dialog_basic, container, false)
-
-        binding.apply {
-            viewModel = this@ScheduleDialogBasicFragment.viewModel
-            lifecycleOwner = this@ScheduleDialogBasicFragment
-        }
+    override fun setup() {
+        binding.viewModel = viewModel
 
         initObservers()
         initMapView()
         initClickListeners()
         setInit()
 
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if (it.resultCode == Activity.RESULT_OK) {
                 viewModel.updatePlace(

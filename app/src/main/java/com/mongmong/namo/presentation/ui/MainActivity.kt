@@ -25,18 +25,14 @@ import androidx.navigation.ui.NavigationUI
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.databinding.ActivityMainBinding
+import com.mongmong.namo.presentation.config.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 
-    private lateinit var binding: ActivityMainBinding
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
+    override fun setup() {
         initNavigation()
 
         logToken()

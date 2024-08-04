@@ -16,15 +16,16 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.snackbar.Snackbar
+import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityDiaryImageDetailBinding
 import com.mongmong.namo.domain.model.DiaryImage
+import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.diary.adapter.ImageDetailVPAdapter
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 
-class DiaryImageDetailActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityDiaryImageDetailBinding
+class DiaryImageDetailActivity : BaseActivity<ActivityDiaryImageDetailBinding>(R.layout.activity_diary_image_detail) {
     private lateinit var imagePagerAdapter: ImageDetailVPAdapter
     private lateinit var imgs: List<DiaryImage>
 
@@ -38,11 +39,7 @@ class DiaryImageDetailActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityDiaryImageDetailBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun setup() {
         imgs = intent.getSerializableExtra("imgs") as List<DiaryImage>
         setViewPager()
         initClickListener()

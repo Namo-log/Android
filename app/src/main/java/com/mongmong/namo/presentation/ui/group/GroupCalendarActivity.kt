@@ -7,9 +7,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.databinding.ActivityGroupCalendarBinding
+import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupCalendarAdapter
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupCalendarAdapter.Companion.GROUP_ID
 import com.mongmong.namo.presentation.utils.SetMonthDialog
@@ -17,8 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 
 @AndroidEntryPoint
-class GroupCalendarActivity : AppCompatActivity() {
-    private lateinit var binding : ActivityGroupCalendarBinding
+class GroupCalendarActivity : BaseActivity<ActivityGroupCalendarBinding>(R.layout.activity_group_calendar) {
     private lateinit var group : Group
     private lateinit var calendarAdapter : GroupCalendarAdapter
 
@@ -44,11 +45,7 @@ class GroupCalendarActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityGroupCalendarBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun setup() {
         group = intent.getSerializableExtra("moim") as Group
         GROUP_ID = group.groupId
         setGroupInfo()
@@ -70,13 +67,10 @@ class GroupCalendarActivity : AppCompatActivity() {
         }
 
         binding.groupCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
-    }
-
-    override fun onStart() {
-        super.onStart()
 
         clickListener()
     }
+
 
     private fun clickListener() {
         binding.groupCalendarInfoIv.setOnClickListener {

@@ -12,27 +12,21 @@ import com.google.gson.reflect.TypeToken
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityCategoryEditBinding
 import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CategoryEditActivity : AppCompatActivity(), ConfirmDialog.ConfirmDialogInterface {
-
-    lateinit var binding: ActivityCategoryEditBinding
+class CategoryEditActivity
+    : BaseActivity<ActivityCategoryEditBinding>(R.layout.activity_category_edit),
+    ConfirmDialog.ConfirmDialogInterface {
 
     private val viewModel: CategoryViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityCategoryEditBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        binding.apply {
-            viewModel = this@CategoryEditActivity.viewModel
-            lifecycleOwner = this@CategoryEditActivity
-        }
+    override fun setup() {
+        binding.viewModel = viewModel
 
         loadPref()
         initClickListeners()

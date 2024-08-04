@@ -13,29 +13,21 @@ import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.databinding.FragmentHomeBinding
+import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.utils.SetMonthDialog
 import com.mongmong.namo.presentation.ui.home.calendar.CalendarAdapter
 import org.joda.time.DateTime
 
-class HomeFragment : Fragment() {
-    private lateinit var binding: FragmentHomeBinding
+class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private var millis = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
     private val todayPos = Int.MAX_VALUE / 2
     private var pos = Int.MAX_VALUE / 2
     private var prevIdx = -1
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container,false)
-
+    override fun setup() {
         setView()
         clickListener()
-
-        return binding.root
     }
 
     private fun setView() {
