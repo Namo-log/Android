@@ -27,12 +27,12 @@ class RemoteConfigWrapper @Inject constructor() {
             }
         }
 
-        /*val baseUrl = remoteConfig.getString("android_baseurl")
+        val baseUrl = remoteConfig.getString("android_baseurl")
         return if (baseUrl.startsWith("http")) {
             baseUrl
-        } else {*/
+        } else {
             Log.d("fetchAndActivateConfig", "baseurl is not start http")
-            return BuildConfig.BASE_URL
-        //}
+            BuildConfig.BASE_URL
+        }
     }
 }
