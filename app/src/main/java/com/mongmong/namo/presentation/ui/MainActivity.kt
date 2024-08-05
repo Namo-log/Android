@@ -25,8 +25,11 @@ import androidx.navigation.ui.NavigationUI
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.databinding.ActivityMainBinding
+import com.mongmong.namo.presentation.config.ApplicationClass.Companion.dsManager
 import com.mongmong.namo.presentation.config.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 
 @AndroidEntryPoint
@@ -40,8 +43,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
     }
 
     private fun logToken() {
-        val accessToken: String? =
-            ApplicationClass.sSharedPreferences.getString(ApplicationClass.X_ACCESS_TOKEN, null)
+        val accessToken: String? = runBlocking { dsManager.getAccessToken().first() }
         Log.d("Token", "$accessToken")
     }
 

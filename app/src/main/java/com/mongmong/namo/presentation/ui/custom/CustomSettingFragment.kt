@@ -18,11 +18,13 @@ import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mongmong.namo.data.local.NamoDatabase
+import com.mongmong.namo.presentation.config.ApplicationClass.Companion.dsManager
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.login.AuthViewModel
 import com.mongmong.namo.presentation.ui.onBoarding.OnBoardingActivity
 import com.mongmong.namo.presentation.config.Constants
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class CustomSettingFragment: BaseFragment<FragmentCustomSettingBinding>(R.layout.fragment_custom_setting), ConfirmDialogInterface {
@@ -136,6 +138,7 @@ class CustomSettingFragment: BaseFragment<FragmentCustomSettingBinding>(R.layout
     private fun moveToLoginFragment() {
         // 토큰 비우기
         ApplicationClass.sSharedPreferences.edit().clear().apply()
+        runBlocking { dsManager.clearAllData() }
         // 화면 이동
         activity?.finishAffinity()
         startActivity(Intent(context, OnBoardingActivity()::class.java))
