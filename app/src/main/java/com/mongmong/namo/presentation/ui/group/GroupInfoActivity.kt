@@ -12,35 +12,30 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.databinding.ActivityGroupInfoBinding
+import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.group.adapter.GroupInfoMemberRVAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class GroupInfoActivity : AppCompatActivity(), ConfirmDialogInterface {
-
-    private lateinit var binding: ActivityGroupInfoBinding
+class GroupInfoActivity : BaseActivity<ActivityGroupInfoBinding>(R.layout.activity_group_info), ConfirmDialogInterface {
     private val viewModel: GroupViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityGroupInfoBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun setup() {
         binding.apply {
             // 데이터바인딩 뷰모델 초기화
             viewModel = this@GroupInfoActivity.viewModel
-            lifecycleOwner = this@GroupInfoActivity
+
             // marquee focus
             groupInfoCodeTv.requestFocus()
             groupInfoCodeTv.isSelected = true
         }
 
         viewModel.setGroup(intent.getSerializableExtra("group") as Group)
-
 
         setAdapter()
         setClickListener()

@@ -23,6 +23,8 @@ import com.mongmong.namo.presentation.ui.diary.adapter.GalleryImageRVAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.google.android.material.snackbar.Snackbar
+import com.mongmong.namo.R
+import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
 import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,20 +32,16 @@ import kotlinx.coroutines.launch
 import java.util.ArrayList
 
 @AndroidEntryPoint
-class PersonalDetailActivity : AppCompatActivity(), ConfirmDialogInterface {
-    private lateinit var binding: ActivityPersonalDiaryDetailBinding
+class PersonalDetailActivity
+    : BaseActivity<ActivityPersonalDiaryDetailBinding>(R.layout.activity_personal_diary_detail),
+    ConfirmDialogInterface {
     private lateinit var galleryAdapter: GalleryImageRVAdapter
 
     private val viewModel : DiaryDetailViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityPersonalDiaryDetailBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun setup() {
         binding.apply {
             viewModel = this@PersonalDetailActivity.viewModel
-            lifecycleOwner = this@PersonalDetailActivity
             paletteId = intent.getIntExtra("paletteId", 0)
 
             // marquee focus

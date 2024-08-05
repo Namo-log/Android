@@ -8,25 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentOnboarding3Binding
+import com.mongmong.namo.presentation.config.BaseFragment
 
-class ThirdFragment : Fragment() {
+class OnBoardingThirdFragment : BaseFragment<FragmentOnboarding3Binding>(R.layout.fragment_onboarding_3) {
 
-    private var _binding : FragmentOnboarding3Binding? = null
-    private val binding get() = _binding!!
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentOnboarding3Binding.inflate(inflater, container, false)
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun setup() {
         val viewPager = activity?.findViewById<ViewPager2>(R.id.onboarding_viewPager_vp)
 
         binding.onboarding3NextBtn.setOnClickListener {
@@ -38,12 +24,8 @@ class ThirdFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 
     companion object {
-        fun newInstance() = ThirdFragment()
+        fun newInstance() = OnBoardingThirdFragment()
     }
 }

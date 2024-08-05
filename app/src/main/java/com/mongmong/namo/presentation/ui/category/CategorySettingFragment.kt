@@ -17,35 +17,21 @@ import com.mongmong.namo.databinding.FragmentCategorySettingBinding
 import com.mongmong.namo.presentation.ui.category.adapter.SetCategoryRVAdapter
 import com.mongmong.namo.data.local.entity.home.Category
 import com.google.gson.Gson
+import com.mongmong.namo.presentation.config.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CategorySettingFragment: Fragment() {
-
-    lateinit var binding: FragmentCategorySettingBinding //플로팅 카테고리 설정 화면
-
+class CategorySettingFragment: BaseFragment<FragmentCategorySettingBinding>(R.layout.fragment_category_setting) {
     private lateinit var categoryRVAdapter: SetCategoryRVAdapter
 
     private val viewModel: CategoryViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-
-    ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_category_setting, container, false)
-
-        binding.apply {
-            viewModel = this@CategorySettingFragment.viewModel
-            lifecycleOwner = this@CategorySettingFragment
-        }
+    override fun setup() {
+        binding.viewModel = viewModel
 
         initObserve()
         onClickSchedule()
-
-        return binding.root
     }
 
     override fun onResume() {

@@ -31,6 +31,7 @@ import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.databinding.ActivityGroupScheduleBinding
+import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
@@ -41,9 +42,9 @@ import org.joda.time.DateTime
 import java.lang.NullPointerException
 
 @AndroidEntryPoint
-class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
-
-    private lateinit var binding : ActivityGroupScheduleBinding
+class GroupScheduleActivity
+    : BaseActivity<ActivityGroupScheduleBinding>(R.layout.activity_group_schedule),
+    ConfirmDialogInterface {
 
     private lateinit var getLocationResult : ActivityResultLauncher<Intent>
 
@@ -54,16 +55,8 @@ class GroupScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private val viewModel : MoimScheduleViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityGroupScheduleBinding.inflate(layoutInflater)
-
-        binding.apply {
-            viewModel = this@GroupScheduleActivity.viewModel
-            lifecycleOwner = this@GroupScheduleActivity
-        }
-
-        setContentView(binding.root)
+    override fun setup() {
+        binding.viewModel = viewModel
 
         initMapView()
         setInit()

@@ -17,10 +17,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMoimDiaryBinding
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
+import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.presentation.ui.diary.DiaryImageDetailActivity
 import com.mongmong.namo.presentation.ui.diary.PersonalDetailActivity
@@ -38,10 +40,7 @@ import java.util.Locale
 
 
 @AndroidEntryPoint
-class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그룹 다이어리 추가, 수정, 삭제 화면
-
-    private lateinit var binding: ActivityMoimDiaryBinding
-
+class MoimDiaryActivity : BaseActivity<ActivityMoimDiaryBinding>(R.layout.activity_moim_diary), ConfirmDialogInterface {  // 그룹 다이어리 추가, 수정, 삭제 화면
     private lateinit var memberAdapter: MoimMemberRVAdapter  // 그룹 멤버 리스트 보여주기
     private lateinit var activityAdapter: MoimActivityRVAdapter // 각 장소 item
 
@@ -51,21 +50,13 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
     private val itemTouchSimpleCallback = ItemTouchHelperCallback()  // 아이템 밀어서 삭제
     private val itemTouchHelper = ItemTouchHelper(itemTouchSimpleCallback)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMoimDiaryBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun setup() {
         binding.apply {
             viewModel = this@MoimDiaryActivity.viewModel
-            lifecycleOwner = this@MoimDiaryActivity
-
             // marquee focus
             groupTitleTv.requestFocus()
             groupTitleTv.isSelected = true
         }
-
-        viewModel.moimScheduleId = intent.getLongExtra("moimScheduleId", 0L)
 
         initView()
         onClickListener()
@@ -73,6 +64,7 @@ class MoimDiaryActivity : AppCompatActivity(), ConfirmDialogInterface {  // 그�
     }
 
     private fun initView() {
+        viewModel.moimScheduleId = intent.getLongExtra("moimScheduleId", 0L)
         viewModel.isEdit.value = intent.getBooleanExtra("hasMoimActivity", false)
         if (viewModel.isEdit.value == false) {
             viewModel.setNewMoimDiary(intent?.getSerializableExtra("moimSchedule") as MoimScheduleBody)

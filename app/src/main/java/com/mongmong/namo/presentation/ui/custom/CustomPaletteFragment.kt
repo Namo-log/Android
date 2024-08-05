@@ -6,24 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.custom.Palette
 import com.mongmong.namo.databinding.FragmentCustomPaletteBinding
+import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.config.PaletteType
 import com.mongmong.namo.presentation.ui.custom.adapter.PaletteRVAdapter
 
-class CustomPaletteFragment : Fragment() {
-
-    lateinit var binding : FragmentCustomPaletteBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-
-    ): View? {
-        binding = FragmentCustomPaletteBinding.inflate(inflater, container, false)
-
+class CustomPaletteFragment : BaseFragment<FragmentCustomPaletteBinding>(R.layout.fragment_custom_palette) {
+    override fun setup() {
         // 팔레트 색 Arr 넣어주기
         val paletteDatas = arrayListOf(
             Palette("기본 팔레트", CategoryColor.findColorsByPaletteType(PaletteType.BASIC_PALETTE))
@@ -34,9 +26,5 @@ class CustomPaletteFragment : Fragment() {
             adapter = PaletteRVAdapter(requireContext()).build(paletteDatas)
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
-
-
-        return binding.root
     }
-
 }

@@ -21,31 +21,21 @@ import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentLoginBinding
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
+import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.config.LoginPlatform
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LoginFragment: Fragment() {
-    private lateinit var binding: FragmentLoginBinding
-
+class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login) {
     private val viewModel : AuthViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
-
+    override fun setup() {
         initObserve()
         initClickListeners()
         initNotification()
         onBackPressed()
-
-        return binding.root
     }
 
     private fun initNotification() {

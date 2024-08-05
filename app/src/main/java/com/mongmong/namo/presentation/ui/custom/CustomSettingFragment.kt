@@ -18,30 +18,20 @@ import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.mongmong.namo.data.local.NamoDatabase
+import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.login.AuthViewModel
 import com.mongmong.namo.presentation.ui.onBoarding.OnBoardingActivity
 import com.mongmong.namo.presentation.config.Constants
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class CustomSettingFragment: Fragment(), ConfirmDialogInterface {
-    private lateinit var binding: FragmentCustomSettingBinding
-
+class CustomSettingFragment: BaseFragment<FragmentCustomSettingBinding>(R.layout.fragment_custom_setting), ConfirmDialogInterface {
     private val viewModel : AuthViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-
-        binding = FragmentCustomSettingBinding.inflate(inflater, container, false)
-
+    override fun setup() {
         hideBottomNavigation(true)
         setVersion()
         initObserve()
-
-        return binding.root
     }
 
     override fun onResume() {
@@ -52,7 +42,6 @@ class CustomSettingFragment: Fragment(), ConfirmDialogInterface {
 
     override fun onDestroy() {
         super.onDestroy()
-
         hideBottomNavigation(false)
     }
 

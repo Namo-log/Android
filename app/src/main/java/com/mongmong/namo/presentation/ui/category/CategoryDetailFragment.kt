@@ -25,14 +25,15 @@ import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
 import com.mongmong.namo.R
+import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.config.PaletteType
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.config.RoomState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
-    private lateinit var binding: FragmentCategoryDetailBinding
+class CategoryDetailFragment(private val isEditMode: Boolean)
+    : BaseFragment<FragmentCategoryDetailBinding>(R.layout.fragment_category_detail) {
 
     private lateinit var paletteAdapter: CategoryPaletteRVAdapter
 
@@ -41,17 +42,8 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
     private lateinit var categoryList : List<CardView>
     private lateinit var checkList : List<ImageView>
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_category_detail, container, false)
-
-        binding.apply {
-            viewModel = this@CategoryDetailFragment.viewModel
-            lifecycleOwner = this@CategoryDetailFragment
-        }
+    override fun setup() {
+        binding.viewModel = this@CategoryDetailFragment.viewModel
 
         initBasicColor()
 
@@ -67,8 +59,6 @@ class CategoryDetailFragment(private val isEditMode: Boolean) : Fragment() {
         } else {
             initPaletteColorRv(viewModel.color.value!!)
         }
-
-        return binding.root
     }
 
     private fun onClickListener() {

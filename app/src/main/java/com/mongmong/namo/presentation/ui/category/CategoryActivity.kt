@@ -4,18 +4,12 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityCategoryBinding
+import com.mongmong.namo.presentation.config.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class CategoryActivity : AppCompatActivity() {
-
-    lateinit var binding: ActivityCategoryBinding
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityCategoryBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+class CategoryActivity : BaseActivity<ActivityCategoryBinding>(R.layout.activity_category) {
+    override fun setup() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.category_frm, CategorySettingFragment())
             .commitAllowingStateLoss()
@@ -24,5 +18,4 @@ class CategoryActivity : AppCompatActivity() {
             finish()
         }
     }
-
 }
