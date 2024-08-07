@@ -1,16 +1,13 @@
 package com.mongmong.namo.data.remote
 
-import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.model.GetMoimMemoResponse
 import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
 import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
 import retrofit2.Call
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.http.*
 
 interface DiaryApiService {
@@ -35,12 +32,12 @@ interface DiaryApiService {
 
     // 개인 기록 추가
     @Multipart
-    @POST("diaries")
+    @PATCH("diaries")
     suspend fun addPersonalDiary(
-        @Part("scheduleId") scheduleId: RequestBody,
-        @Part("content") content: RequestBody?,
-        @Part imgs: List<MultipartBody.Part>?
-    ): DiaryAddResponse
+        @Query("scheduleId") scheduleId: Long,
+        @Query("content") content: String?,
+        @Part createImages: List<MultipartBody.Part>?,
+    ): DiaryResponse
 
     // 개인 기록 수정
     @Multipart

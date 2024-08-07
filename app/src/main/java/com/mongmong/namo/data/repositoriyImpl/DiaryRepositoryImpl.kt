@@ -10,7 +10,6 @@ import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.domain.model.PersonalDiary
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.NetworkChecker
-import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
@@ -41,8 +40,8 @@ class DiaryRepositoryImpl @Inject constructor(
     /** 개인 기록 추가 **/
     override suspend fun addPersonalDiary(
         diary: PersonalDiary,
-        images: List<String>?,
-    ): DiaryAddResponse {
+        images: List<String>,
+    ): DiaryResponse {
         Log.d("DiaryRepositoryImpl addDiary", "$diary")
         return remoteDiaryDataSource.addPersonalDiary(images, diary.diaryId, diary.content)
         /*if (networkChecker.isOnline()) {

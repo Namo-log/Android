@@ -2,7 +2,6 @@ package com.mongmong.namo.domain.repositories
 
 import androidx.paging.PagingSource
 import com.mongmong.namo.domain.model.PersonalDiary
-import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
@@ -15,8 +14,8 @@ interface DiaryRepository {
 
     suspend fun addPersonalDiary(
         diary: PersonalDiary,
-        images: List<String>?
-    ): DiaryAddResponse
+        images: List<String>
+    ): DiaryResponse
 
     suspend fun editPersonalDiary(
         diary: PersonalDiary,
