@@ -6,8 +6,6 @@ import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
 import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
 import com.mongmong.namo.data.utils.RequestConverter.imageToMultipart
-import com.mongmong.namo.domain.model.DiaryAddResponse
-import com.mongmong.namo.domain.model.DiaryAddResult
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
 import com.mongmong.namo.domain.model.GetPersonalDiaryResult
@@ -91,17 +89,23 @@ class RemoteDiaryDataSource @Inject constructor(
 
     /** 개인 기록 추가 */
     suspend fun addPersonalDiary(
-        images: List<String>?,
+        images: List<String>,
         scheduleId: Long,
         content: String?
-    ): DiaryAddResponse {
-        var response = DiaryAddResponse(DiaryAddResult(0L))
+    ): DiaryResponse {
+        var response = DiaryResponse("")
         withContext(Dispatchers.IO) {
             runCatching {
-                diaryApiService.addPersonalDiary(
-                    scheduleId.toString().convertTextRequest(),
-                    content?.toRequestBody(),
+                val createImagesParts = if (images.isNotEmpty()) {
                     imageToMultipart(images, context)
+                } else {
+                    listOf(MultipartBody.Part.createFormData("empty", "", "".convertTextRequest()))
+                }
+
+                diaryApiService.addPersonalDiary(
+                    scheduleId,
+                    content,
+                    createImagesParts
                 )
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource addPersonalDiary Success", "$it")

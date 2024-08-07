@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.domain.model.PersonalDiary
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.domain.model.DiaryAddResponse
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
@@ -41,8 +40,8 @@ class DiaryDetailViewModel @Inject constructor(
     private val _imgList = MutableLiveData<List<DiaryImage>>(emptyList())
     val imgList: LiveData<List<DiaryImage>> = _imgList
 
-    private val _addDiaryResult = MutableLiveData<DiaryAddResponse>()
-    val addDiaryResult: LiveData<DiaryAddResponse> = _addDiaryResult
+    private val _addDiaryResult = MutableLiveData<DiaryResponse>()
+    val addDiaryResult: LiveData<DiaryResponse> = _addDiaryResult
 
     private val _editDiaryResult = MutableLiveData<DiaryResponse>()
     val editDiaryResult: LiveData<DiaryResponse> = _editDiaryResult

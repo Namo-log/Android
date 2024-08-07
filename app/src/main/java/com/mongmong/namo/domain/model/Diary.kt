@@ -49,15 +49,6 @@ data class DiaryResponse(
 ) : BaseResponse() // 기본 string
 
 
-/** 기록 추가 **/
-data class DiaryAddResponse(
-    val result: DiaryAddResult
-) : BaseResponse()
-
-data class DiaryAddResult(
-    val scheduleId: Long
-)
-
 /** 기록 전체 조회 **/
 data class DiaryGetAllResponse(
     val result: List<DiaryGetAllResult>
