@@ -10,9 +10,7 @@ import retrofit2.http.POST
 interface AuthApiService {
     // 로그아웃
     @POST("auths/logout")
-    suspend fun postLogout(
-        @Body body: LogoutBody
-    ): AuthResponse
+    suspend fun postLogout(): AuthResponse
 
     /** 회원탈퇴 */
     // 카카오 회원탈퇴
@@ -21,5 +19,5 @@ interface AuthApiService {
 
     // 네이버 회원탈퇴
     @POST("auths/naver/delete")
-    suspend fun postNaverQuit(): BaseResponse
+    suspend fun postNaverQuit(): AuthResponse
 }

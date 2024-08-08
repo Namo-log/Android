@@ -7,10 +7,8 @@ import com.mongmong.namo.data.remote.ReissuanceApiService
 import com.mongmong.namo.domain.model.LoginBody
 import com.mongmong.namo.domain.model.LoginResponse
 import com.mongmong.namo.domain.model.LoginResult
-import com.mongmong.namo.domain.model.LogoutBody
 import com.mongmong.namo.domain.model.RefreshResponse
 import com.mongmong.namo.domain.model.RefreshResult
-import com.mongmong.namo.domain.model.TokenBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -68,9 +66,7 @@ class RemoteAuthDataSource @Inject constructor(
         return loginResponse
     }
 
-    suspend fun postTokenRefresh(
-        tokenBody: TokenBody
-    ): RefreshResponse {
+    suspend fun postTokenRefresh(): RefreshResponse {
         var refreshResponse = RefreshResponse(
             result = RefreshResult(
                 accessToken = "",
@@ -79,7 +75,7 @@ class RemoteAuthDataSource @Inject constructor(
         )
         withContext(Dispatchers.IO) {
             runCatching {
-                reissuanceApiService.refreshToken(tokenBody)
+                reissuanceApiService.refreshToken()
             }.onSuccess {
                 Log.d("RemoteAuthDataSource", "postTokenRefresh Success $it")
                 refreshResponse = it
@@ -90,13 +86,11 @@ class RemoteAuthDataSource @Inject constructor(
         return refreshResponse
     }
 
-    suspend fun postLogout(
-        tokenBody: LogoutBody
-    ): Boolean {
+    suspend fun postLogout(): Boolean {
         var isSuccess = false
         withContext(Dispatchers.IO) {
             runCatching {
-                authApiService.postLogout(tokenBody)
+                authApiService.postLogout()
             }.onSuccess {
                 Log.d("RemoteAuthDataSource", "postLogout Success $it")
                 isSuccess = true
