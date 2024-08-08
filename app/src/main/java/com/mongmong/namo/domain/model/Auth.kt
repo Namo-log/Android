@@ -17,7 +17,13 @@ data class LoginResponse(
 data class LoginResult(
     val accessToken: String,
     val refreshToken: String,
-    val newUser: Boolean
+    val newUser: Boolean,
+    val terms: List<TermsResult>
+)
+
+data class TermsResult(
+    val content: String,
+    val check: Boolean
 )
 
 // 토큰 재발급

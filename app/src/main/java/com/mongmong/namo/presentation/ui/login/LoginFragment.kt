@@ -5,15 +5,9 @@ import android.app.NotificationManager
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.mongmong.namo.presentation.ui.MainActivity
@@ -56,11 +50,14 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
 
     private fun initObserve() {
         viewModel.loginResult.observe(viewLifecycleOwner) {
-            if (it?.newUser == true) {
+            if (it == null) return@observe
+
+            if (it.newUser || viewModel.checkUpdatedTerms()) {
+                // 약관 동의 화면으로 이동
                 findNavController().navigate(R.id.action_loginFragment_to_termsFragment)
                 return@observe
             }
-            if (!it?.accessToken.isNullOrEmpty()) {
+            if (it.accessToken.isNotEmpty()) {
                 Toast.makeText(requireContext(), "로그인에 성공했습니다.", Toast.LENGTH_SHORT).show()
                 setLoginFinished()
             } else {

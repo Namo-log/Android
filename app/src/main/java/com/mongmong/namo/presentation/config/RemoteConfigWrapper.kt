@@ -35,6 +35,7 @@ class RemoteConfigWrapper @Inject constructor() {
             Log.d("fetchAndActivateConfig", "baseurl is not start http")
             BuildConfig.BASE_URL
         }
-        // return BuildConfig.BASE_URL
+        // return BuildConfig.BASE_URL 
+
     }
 }
