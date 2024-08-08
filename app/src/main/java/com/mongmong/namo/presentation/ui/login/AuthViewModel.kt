@@ -10,9 +10,9 @@ import com.mongmong.namo.domain.model.LoginResult
 import com.mongmong.namo.domain.model.RefreshResponse
 import com.mongmong.namo.domain.model.TokenBody
 import com.mongmong.namo.domain.repositories.AuthRepository
-import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.config.LoginPlatform
 import com.mongmong.namo.presentation.config.ApplicationClass.Companion.dsManager
+import com.mongmong.namo.presentation.config.Constants.SUCCESS_CODE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.first
@@ -39,17 +39,18 @@ class AuthViewModel @Inject constructor(
     fun tryLogin(platform: LoginPlatform, accessToken: String, refreshToken: String) {
         Log.d("${platform.platformName}Token", "accessToken: $accessToken, refreshToken: $refreshToken")
         viewModelScope.launch {
-            val result = if (platform == LoginPlatform.KAKAO) {
-                repository.postKakaoLogin(LoginBody(accessToken, refreshToken)).result
+            val response = if (platform == LoginPlatform.KAKAO) {
+                repository.postKakaoLogin(LoginBody(accessToken, refreshToken))
             } else {
-                repository.postNaverLogin(LoginBody(accessToken, refreshToken)).result
+                repository.postNaverLogin(LoginBody(accessToken, refreshToken))
             }
-            _loginResult.value = result
-            result?.let {
-                saveLoginPlatform(platform)
-                // 토큰 저장
-                saveToken(it)
-            }
+            if (response.code != SUCCESS_CODE) return@launch
+
+            _loginResult.value = response.result
+            // 로그인 정보 저장
+            saveLoginPlatform(platform)
+            // 토큰 저장
+            saveToken(response.result)
         }
     }
 
@@ -88,6 +89,14 @@ class AuthViewModel @Inject constructor(
                 //TODO: 룸디비 데이터 삭제
             }
         }
+    }
+
+    // 약관 동의 여부 확인
+    fun checkUpdatedTerms(): Boolean {
+        for (term in _loginResult.value!!.terms) {
+            if (!term.check) return true // 하나라도 체크되어 있지 않을 경우 약관 동의 필요
+        }
+        return false
     }
 
     /** 토큰 */

@@ -27,7 +27,8 @@ class RemoteAuthDataSource @Inject constructor(
             result = LoginResult(
                 accessToken = "",
                 refreshToken = "",
-                newUser = false
+                newUser = false,
+                terms = listOf()
             )
         )
         withContext(Dispatchers.IO) {
@@ -50,7 +51,8 @@ class RemoteAuthDataSource @Inject constructor(
             result = LoginResult(
                 accessToken = "",
                 refreshToken = "",
-                newUser = false
+                newUser = false,
+                terms = listOf()
             )
         )
         withContext(Dispatchers.IO) {
