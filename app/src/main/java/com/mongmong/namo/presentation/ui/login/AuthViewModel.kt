@@ -57,8 +57,7 @@ class AuthViewModel @Inject constructor(
     /** 토큰 재발급 */
     fun tryRefreshToken() {
         viewModelScope.launch {
-            val tokenBody = getSavedToken()
-            _refreshResponse.postValue(repository.postTokenRefresh(tokenBody.accessToken, tokenBody.refreshToken))
+            _refreshResponse.postValue(repository.postTokenRefresh())
         }
     }
 

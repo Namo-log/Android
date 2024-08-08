@@ -1,10 +1,6 @@
 package com.mongmong.namo.data.remote
 
 import com.mongmong.namo.domain.model.AuthResponse
-import com.mongmong.namo.domain.model.LogoutBody
-import com.mongmong.namo.presentation.config.BaseResponse
-import retrofit2.http.Body
-import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface AuthApiService {
