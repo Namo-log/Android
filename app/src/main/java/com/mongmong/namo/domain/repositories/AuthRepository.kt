@@ -22,9 +22,7 @@ interface AuthRepository {
     ): RefreshResponse
 
     /** 로그아웃 */
-    suspend fun postLogout(
-        accessToken: String
-    ): Boolean
+    suspend fun postLogout(): Boolean
 
     /** 회원탈퇴 */
     // 카카오

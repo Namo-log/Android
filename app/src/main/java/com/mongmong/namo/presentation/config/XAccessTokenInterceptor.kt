@@ -24,6 +24,7 @@ class XAccessTokenInterceptor @Inject constructor(
 
         if (accessToken != null) {
             newRequest.addHeader("Authorization", "Bearer $accessToken")
+            newRequest.addHeader("refreshToken", refreshToken.toString())
         }
 
         val response = chain.proceed(newRequest.build())
@@ -46,7 +47,7 @@ class XAccessTokenInterceptor @Inject constructor(
 
                 // 재발급 api 호출
                 // 받은 토큰 다시 넣어서 기존 api 재호출
-                val newTokenResponse = runBlocking { apiService.refreshToken(TokenBody(accessToken.toString(), refreshToken.toString())) }
+                val newTokenResponse = runBlocking { apiService.refreshToken() }
 
                 Log.d("Token", newTokenResponse.toString())
 

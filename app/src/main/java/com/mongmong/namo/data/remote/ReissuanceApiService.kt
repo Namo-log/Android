@@ -10,6 +10,5 @@ interface ReissuanceApiService {
     // 토큰 재발급
     @POST("auths/reissuance")
     suspend fun refreshToken(
-        @Body body: TokenBody
     ): RefreshResponse
 }
