@@ -64,10 +64,9 @@ class AuthViewModel @Inject constructor(
     /** 로그아웃 */
     fun tryLogout() {
         viewModelScope.launch {
-            if (repository.postLogout(getAccessToken()!!)) {
-                _isLogoutComplete.postValue(true)
+            if (repository.postLogout()) {
+                _isLogoutComplete.value = true
                 deleteToken()
-                //TODO: 룸디비 데이터 삭제
             }
         }
     }
@@ -83,9 +82,8 @@ class AuthViewModel @Inject constructor(
                 repository.postNaverQuit()
             }
             if (isSuccess) {
-                _isQuitComplete.postValue(true)
+                _isQuitComplete.value = true
                 deleteToken()
-                //TODO: 룸디비 데이터 삭제
             }
         }
     }

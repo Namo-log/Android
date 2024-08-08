@@ -21,6 +21,7 @@ class ReissuanceTokenInterceptor @Inject constructor(
 
         if (accessToken != null) {
             newRequest.addHeader("Authorization", "Bearer $accessToken")
+            newRequest.addHeader("refreshToken", refreshToken.toString())
         }
 
         return chain.proceed(newRequest.build())
