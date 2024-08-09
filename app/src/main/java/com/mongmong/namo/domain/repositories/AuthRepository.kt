@@ -16,10 +16,7 @@ interface AuthRepository {
     ): LoginResponse
 
     /** 토큰 재발급 */
-    suspend fun postTokenRefresh(
-        accessToken: String,
-        refreshToken: String
-    ): RefreshResponse
+    suspend fun postTokenRefresh(): RefreshResponse
 
     /** 로그아웃 */
     suspend fun postLogout(): Boolean

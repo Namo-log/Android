@@ -45,7 +45,3 @@ data class LoginBody(
     val accessToken: String,
     val socialRefreshToken: String
 )
-
-data class LogoutBody(
-    val accessToken: String
-)

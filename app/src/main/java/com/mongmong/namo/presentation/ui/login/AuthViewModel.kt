@@ -37,7 +37,6 @@ class AuthViewModel @Inject constructor(
 
     /** 로그인 */
     fun tryLogin(platform: LoginPlatform, accessToken: String, refreshToken: String) {
-        Log.d("${platform.platformName}Token", "accessToken: $accessToken, refreshToken: $refreshToken")
         viewModelScope.launch {
             val response = if (platform == LoginPlatform.KAKAO) {
                 repository.postKakaoLogin(LoginBody(accessToken, refreshToken))
@@ -46,19 +45,19 @@ class AuthViewModel @Inject constructor(
             }
             if (response.code != SUCCESS_CODE) return@launch
 
-            _loginResult.value = response.result
             // 로그인 정보 저장
             saveLoginPlatform(platform)
             // 토큰 저장
             saveToken(response.result)
+
+            _loginResult.value = response.result
         }
     }
 
     /** 토큰 재발급 */
     fun tryRefreshToken() {
         viewModelScope.launch {
-            val tokenBody = getSavedToken()
-            _refreshResponse.postValue(repository.postTokenRefresh(tokenBody.accessToken, tokenBody.refreshToken))
+            _refreshResponse.postValue(repository.postTokenRefresh())
         }
     }
 
@@ -119,24 +118,18 @@ class AuthViewModel @Inject constructor(
     }
 
     // 로그인 플랫폼 정보 앱 내에 저장
-    private fun saveLoginPlatform(platform: LoginPlatform) {
-        viewModelScope.launch {
-            dsManager.savePlatform(platform.platformName)
-        }
+    private suspend fun saveLoginPlatform(platform: LoginPlatform) {
+        dsManager.savePlatform(platform.platformName)
     }
 
     // 토큰 정보 앱 내에 저장
-    private fun saveToken(tokenResult: LoginResult) {
-        viewModelScope.launch {
-            dsManager.saveAccessToken(tokenResult.accessToken)
-            dsManager.saveRefreshToken(tokenResult.refreshToken)
-        }
+    private suspend fun saveToken(tokenResult: LoginResult) {
+        dsManager.saveAccessToken(tokenResult.accessToken)
+        dsManager.saveRefreshToken(tokenResult.refreshToken)
     }
 
     // 앱 내에 저장된 토큰 정보 삭제
-    private fun deleteToken() {
-        viewModelScope.launch {
-            dsManager.clearTokens()
-        }
+    private suspend fun deleteToken() {
+        dsManager.clearTokens()
     }
 }

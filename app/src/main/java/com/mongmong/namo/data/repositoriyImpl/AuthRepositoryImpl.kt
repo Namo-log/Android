@@ -18,10 +18,7 @@ class AuthRepositoryImpl @Inject constructor(
         return remoteAuthDataSource.postNaverLogin(body)
     }
 
-    override suspend fun postTokenRefresh(
-        accessToken: String,
-        refreshToken: String
-    ): RefreshResponse {
+    override suspend fun postTokenRefresh(): RefreshResponse {
         return remoteAuthDataSource.postTokenRefresh()
     }
 
