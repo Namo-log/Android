@@ -41,7 +41,7 @@ class ApplicationClass: Application() {
         lateinit var dsManager: DataStoreManager
 
         // 버전
-        const val VERSION = "1.0.5"
+        const val VERSION = "1.0.6"
 
         // JWT Token Header 키 값
         const val X_ACCESS_TOKEN = "X_ACCESS_TOKEN"
