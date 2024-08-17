@@ -71,14 +71,8 @@ class AuthViewModel @Inject constructor(
 
     /** 회원탈퇴 */
     fun tryQuit() {
-        val platform = getLoginPlatform()
-        Log.d("SdkInfo", "quit sdk: $platform")
         viewModelScope.launch {
-            val isSuccess = if (platform == LoginPlatform.KAKAO.platformName) { // 카카오
-                repository.postKakaoQuit()
-            } else { // 네이버
-                repository.postNaverQuit()
-            }
+            val isSuccess = repository.postQuit(getLoginPlatform())
             if (isSuccess) {
                 _isQuitComplete.value = true
                 deleteToken()

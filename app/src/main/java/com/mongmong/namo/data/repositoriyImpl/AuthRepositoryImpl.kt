@@ -23,11 +23,7 @@ class AuthRepositoryImpl @Inject constructor(
         return remoteAuthDataSource.postLogout()
     }
 
-    override suspend fun postKakaoQuit(): Boolean {
-        return remoteAuthDataSource.postKakaoQuit()
-    }
-
-    override suspend fun postNaverQuit(): Boolean {
-        return remoteAuthDataSource.postNaverQuit()
+    override suspend fun postQuit(loginPlatform: String): Boolean {
+        return remoteAuthDataSource.postQuit(loginPlatform)
     }
 }

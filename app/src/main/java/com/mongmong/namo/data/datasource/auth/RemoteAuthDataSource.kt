@@ -78,32 +78,18 @@ class RemoteAuthDataSource @Inject constructor(
         return isSuccess
     }
 
-    suspend fun postKakaoQuit(): Boolean {
-        var isSuccess = false
-        withContext(Dispatchers.IO) {
-            runCatching {
-                authApiService.postKakaoQuit()
-            }.onSuccess {
-                Log.d("RemoteAuthDataSource", "postKakaoQuit Success $it")
-                isSuccess = true
-            }.onFailure {
-                Log.d("RemoteAuthDataSource", "postKakaoQuit Fail $it")
-            }
-        }
-        return isSuccess
-    }
-
-    suspend fun postNaverQuit(
+    suspend fun postQuit(
+        loginPlatform: String
     ): Boolean {
         var isSuccess = false
         withContext(Dispatchers.IO) {
             runCatching {
-                authApiService.postNaverQuit()
+                authApiService.postQuit(loginPlatform)
             }.onSuccess {
-                Log.d("RemoteAuthDataSource", "postNaverQuit Success $it")
+                Log.d("RemoteAuthDataSource", "postQuit Success $it")
                 isSuccess = true
             }.onFailure {
-                Log.d("RemoteAuthDataSource", "postNaverQuit Fail $it")
+                Log.d("RemoteAuthDataSource", "postQuit Fail $it")
             }
         }
         return isSuccess
