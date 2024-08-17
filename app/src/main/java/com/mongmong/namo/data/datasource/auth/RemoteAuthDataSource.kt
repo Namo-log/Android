@@ -18,7 +18,8 @@ class RemoteAuthDataSource @Inject constructor(
     private val anonymousApiService: AnonymousApiService,
     private val reissuanceApiService: ReissuanceApiService
 ) {
-    suspend fun postKakaoLogin(
+    suspend fun postLogin(
+        loginPlatform: String,
         tokenBody: LoginBody
     ): LoginResponse {
         var loginResponse = LoginResponse(
@@ -31,36 +32,12 @@ class RemoteAuthDataSource @Inject constructor(
         )
         withContext(Dispatchers.IO) {
             runCatching {
-                anonymousApiService.postKakaoSDK(tokenBody)
+                anonymousApiService.postLogin(loginPlatform, tokenBody)
             }.onSuccess {
-                Log.d("RemoteAuthDataSource", "postKakaoLogin Success $it")
+                Log.d("RemoteAuthDataSource", "postLogin Success $it")
                 loginResponse = it
             }.onFailure {
-                Log.d("RemoteAuthDataSource", "postKakaoLogin Fail $it")
-            }
-        }
-        return loginResponse
-    }
-
-    suspend fun postNaverLogin(
-        tokenBody: LoginBody
-    ): LoginResponse {
-        var loginResponse = LoginResponse(
-            result = LoginResult(
-                accessToken = "",
-                refreshToken = "",
-                newUser = false,
-                terms = listOf()
-            )
-        )
-        withContext(Dispatchers.IO) {
-            runCatching {
-                anonymousApiService.postNaverSDK(tokenBody)
-            }.onSuccess {
-                Log.d("RemoteAuthDataSource", "postNaverLogin Success $it")
-                loginResponse = it
-            }.onFailure {
-                Log.d("RemoteAuthDataSource", "postNaverLogin Fail $it")
+                Log.d("RemoteAuthDataSource", "postLogin Fail $it")
             }
         }
         return loginResponse

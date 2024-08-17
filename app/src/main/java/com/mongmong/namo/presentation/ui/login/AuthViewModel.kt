@@ -38,11 +38,9 @@ class AuthViewModel @Inject constructor(
     /** 로그인 */
     fun tryLogin(platform: LoginPlatform, accessToken: String, refreshToken: String) {
         viewModelScope.launch {
-            val response = if (platform == LoginPlatform.KAKAO) {
-                repository.postKakaoLogin(LoginBody(accessToken, refreshToken))
-            } else {
-                repository.postNaverLogin(LoginBody(accessToken, refreshToken))
-            }
+            // 로그인 진행
+            val response = repository.postLogin(platform.platformName, LoginBody(accessToken, refreshToken))
+
             if (response.code != SUCCESS_CODE) return@launch
 
             // 로그인 정보 저장
