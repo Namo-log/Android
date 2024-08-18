@@ -38,11 +38,9 @@ class AuthViewModel @Inject constructor(
     /** 로그인 */
     fun tryLogin(platform: LoginPlatform, accessToken: String, refreshToken: String) {
         viewModelScope.launch {
-            val response = if (platform == LoginPlatform.KAKAO) {
-                repository.postKakaoLogin(LoginBody(accessToken, refreshToken))
-            } else {
-                repository.postNaverLogin(LoginBody(accessToken, refreshToken))
-            }
+            // 로그인 진행
+            val response = repository.postLogin(platform.platformName, LoginBody(accessToken, refreshToken))
+
             if (response.code != SUCCESS_CODE) return@launch
 
             // 로그인 정보 저장
@@ -73,14 +71,8 @@ class AuthViewModel @Inject constructor(
 
     /** 회원탈퇴 */
     fun tryQuit() {
-        val platform = getLoginPlatform()
-        Log.d("SdkInfo", "quit sdk: $platform")
         viewModelScope.launch {
-            val isSuccess = if (platform == LoginPlatform.KAKAO.platformName) { // 카카오
-                repository.postKakaoQuit()
-            } else { // 네이버
-                repository.postNaverQuit()
-            }
+            val isSuccess = repository.postQuit(getLoginPlatform())
             if (isSuccess) {
                 _isQuitComplete.value = true
                 deleteToken()
@@ -97,19 +89,11 @@ class AuthViewModel @Inject constructor(
     }
 
     /** 토큰 */
-    private fun getBearerToken(): String {
-        return "Bearer ${getAccessToken()}"
-    }
-
-    private fun getAccessToken(): String? = runBlocking {
-        dsManager.getAccessToken().first()
-    }
-
     // 앱 내 저장된 토큰 정보 가져오기
     private fun getSavedToken(): TokenBody = runBlocking {
         val accessToken = dsManager.getAccessToken().first().orEmpty()
         val refreshToken = dsManager.getRefreshToken().first().orEmpty()
-        TokenBody(accessToken, refreshToken)
+        return@runBlocking TokenBody(accessToken, refreshToken)
     }
 
     // 로그인 한 sdk 정보 가져오기

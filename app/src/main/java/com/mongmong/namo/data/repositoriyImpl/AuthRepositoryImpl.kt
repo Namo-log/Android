@@ -10,12 +10,9 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val remoteAuthDataSource: RemoteAuthDataSource
 ) : AuthRepository {
-    override suspend fun postKakaoLogin(body: LoginBody): LoginResponse {
-        return remoteAuthDataSource.postKakaoLogin(body)
-    }
 
-    override suspend fun postNaverLogin(body: LoginBody): LoginResponse {
-        return remoteAuthDataSource.postNaverLogin(body)
+    override suspend fun postLogin(loginPlatform: String, body: LoginBody): LoginResponse {
+        return remoteAuthDataSource.postLogin(loginPlatform, body)
     }
 
     override suspend fun postTokenRefresh(): RefreshResponse {
@@ -26,11 +23,7 @@ class AuthRepositoryImpl @Inject constructor(
         return remoteAuthDataSource.postLogout()
     }
 
-    override suspend fun postKakaoQuit(): Boolean {
-        return remoteAuthDataSource.postKakaoQuit()
-    }
-
-    override suspend fun postNaverQuit(): Boolean {
-        return remoteAuthDataSource.postNaverQuit()
+    override suspend fun postQuit(loginPlatform: String): Boolean {
+        return remoteAuthDataSource.postQuit(loginPlatform)
     }
 }

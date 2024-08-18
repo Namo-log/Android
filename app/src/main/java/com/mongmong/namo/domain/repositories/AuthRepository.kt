@@ -6,12 +6,8 @@ import com.mongmong.namo.domain.model.RefreshResponse
 
 interface AuthRepository {
     /** 로그인 */
-    // 카카오
-    suspend fun postKakaoLogin(
-        body: LoginBody
-    ): LoginResponse
-    // 네이버
-    suspend fun postNaverLogin(
+    suspend fun postLogin(
+        loginPlatform: String,
         body: LoginBody
     ): LoginResponse
 
@@ -22,8 +18,7 @@ interface AuthRepository {
     suspend fun postLogout(): Boolean
 
     /** 회원탈퇴 */
-    // 카카오
-    suspend fun postKakaoQuit(): Boolean
-    // 네이버
-    suspend fun postNaverQuit(): Boolean
+    suspend fun postQuit(
+        loginPlatform: String
+    ): Boolean
 }
