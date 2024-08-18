@@ -89,19 +89,11 @@ class AuthViewModel @Inject constructor(
     }
 
     /** 토큰 */
-    private fun getBearerToken(): String {
-        return "Bearer ${getAccessToken()}"
-    }
-
-    private fun getAccessToken(): String? = runBlocking {
-        dsManager.getAccessToken().first()
-    }
-
     // 앱 내 저장된 토큰 정보 가져오기
     private fun getSavedToken(): TokenBody = runBlocking {
         val accessToken = dsManager.getAccessToken().first().orEmpty()
         val refreshToken = dsManager.getRefreshToken().first().orEmpty()
-        TokenBody(accessToken, refreshToken)
+        return@runBlocking TokenBody(accessToken, refreshToken)
     }
 
     // 로그인 한 sdk 정보 가져오기
