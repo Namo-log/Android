@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="9"
                 android:text="@string/bottom_custom"
-                style="@style/title_text"/>
+                style="@style/header"/>
 
             <ImageView
                 android:id="@+id/custom_setting_iv"

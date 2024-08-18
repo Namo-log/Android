@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:text="@{viewModel.currentDate}"
                 tools:text="yyyy년 MM월"
-                style="@style/title_text"/>
+                style="@style/header"/>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/diary_month_arrow_iv"

@@ -38,10 +38,67 @@
         <item name="android:textColorPrimary">@color/textGray</item>
     </style>
 
-    <style name="title_text">
+    <!-- 탭바 -->
+    <style name="TabTextStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="tabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/textGray</item>
+    </style>
+
+    <!-- 다이얼로그 -->
+    <style name="TransparentDialogTheme" parent="Theme.AppCompat.Light">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:background">@color/transparent</item>
+        <item name="android:colorBackground">@color/transparent</item>
+    </style>
+
+    <style name="CustomChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/chip_select</item>
+        <item name="android:textStyle">bold</item>
+        <item name="chipStrokeWidth">2dp</item>
+        <item name="chipBackgroundColor">@color/white</item>
+        <item name="chipStrokeColor">@color/chip_select</item>
+        <item name="chipCornerRadius">100dp</item>
+        <item name="chipStartPadding">30dp</item>
+        <item name="chipEndPadding">30dp</item>
+        <item name="chipMinHeight">35dp</item>
+    </style>
+
+    <!-- Text Style -->
+    <style name="header">
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
+    </style>
+
+    <style name="content_bold">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/textGray</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
+    </style>
+
+    <style name="content_regular">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/textGray</item>
+        <item name="fontFamily">@font/pretendard_regular</item>
+    </style>
+
+    <style name="subtext_14">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/textGray</item>
+        <item name="fontFamily">@font/pretendard_regular</item>
+    </style>
+
+    <style name="subtext_12">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/textGray</item>
+        <item name="fontFamily">@font/pretendard_regular</item>
     </style>
 
     <style name="dialog_default_btn">
@@ -57,11 +114,7 @@
         <item name="android:background">@color/notyetGray</item>
     </style>
 
-    <style name="TabTextStyle" parent="TextAppearance.Design.Tab">
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">15sp</item>
-    </style>
-
+    <!-- 카테고리 -->
     <style name="img_category_check">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -86,6 +139,7 @@
         <item name="android:textColor">@color/textGray</item>
         <item name="android:textStyle">bold</item>
     </style>
+
     <!-- 토글 -->
     <style name="category_toggle">
         <item name="thumbTint">@color/white</item>
@@ -93,23 +147,20 @@
         <item name="android:thumb">@drawable/bg_toggle_thumb</item>
         <item name="android:enabled">true</item>
     </style>
+
     <style name="custom_setting_15sp_tv">
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/textGray</item>
         <item name="android:drawableEnd">@drawable/ic_arrow_right</item>
     </style>
+
     <style name="default_underline">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1px</item>
         <item name="android:background">@color/editTextGray</item>
     </style>
-    <!-- 탭바 -->
-    <style name="tabTextAppearance" parent="TextAppearance.Design.Tab">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/textGray</item>
-    </style>
+
     <!-- 다이얼로그 버튼 -->
     <style name="dialog_cancel_button">
         <item name="android:layout_width">0dp</item>
@@ -134,25 +185,7 @@
         <item name="android:textAlignment">center</item>
     </style>
 
-    <!-- 다이얼로그 -->
-    <style name="TransparentDialogTheme" parent="Theme.AppCompat.Light">
-        <item name="android:windowIsFloating">false</item>
-        <item name="android:background">@color/transparent</item>
-        <item name="android:colorBackground">@color/transparent</item>
-    </style>
-    <style name="CustomChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/chip_select</item>
-        <item name="android:textStyle">bold</item>
-        <item name="chipStrokeWidth">2dp</item>
-        <item name="chipBackgroundColor">@color/white</item>
-        <item name="chipStrokeColor">@color/chip_select</item>
-        <item name="chipCornerRadius">100dp</item>
-        <item name="chipStartPadding">30dp</item>
-        <item name="chipEndPadding">30dp</item>
-        <item name="chipMinHeight">35dp</item>
-    </style>
-
+    <!-- 일정 -->
     <style name="empty_text">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

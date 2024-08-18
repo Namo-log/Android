@@ -44,7 +44,7 @@
 
             <TextView
                 android:id="@+id/diary_title_tv"
-                style="@style/title_text"
+                style="@style/header"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"

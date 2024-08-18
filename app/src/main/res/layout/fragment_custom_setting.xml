@@ -37,7 +37,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/custom_setting_back_iv"
                 app:layout_constraintBottom_toBottomOf="@id/custom_setting_back_iv"
-                style="@style/title_text"/>
+                style="@style/header"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
