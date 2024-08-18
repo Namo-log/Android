@@ -5,8 +5,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="main">#DA6022</color>
-    <color name="beforeOrange">#D68359</color>
     <color name="main_gray">#F7F7F7</color>
+    <color name="item_background">#FAFAFA</color>
     <color name="main_pink">#DE8989</color>
     <color name="main_yellow">#E1B000</color>
     <color name="main_blue">#5C8596</color>
@@ -15,7 +15,7 @@
     <color name="main_text">#555555</color> <!-- 기본 텍스트 -->
     <color name="text_disable">#949494</color> <!-- 클릭 이벤트가 없는 텍스트 -->
     <color name="text_placeholder">#BBBBBB</color> <!-- hint, place holder, underline 등에서 쓰이는 색 -->
-    <color name="text_unselected">#CCCCCC</color>
+    <color name="text_unselected">#CCCCCC</color> <!-- 추가된 값이 없을 경우 -->
 
     <!-- 배경 색상 -->
     <color name="dimed_light">#33000000</color>
