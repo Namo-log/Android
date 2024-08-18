@@ -18,7 +18,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@color/transBlack"
+            android:background="@color/dimed_dark"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
                     android:text="/"
-                    android:textColor="@color/editTextGray"
+                    android:textColor="@color/text_placeholder"
                     android:textSize="18sp" />
 
                 <TextView
@@ -63,7 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="3"
-                    android:textColor="@color/editTextGray"
+                    android:textColor="@color/text_placeholder"
                     android:textSize="18sp" />
             </LinearLayout>
 

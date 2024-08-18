@@ -38,7 +38,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="닫기"
-                        android:textColor="@color/textGray"
+                        android:textColor="@color/main_text"
                         android:layout_weight="1"
                         android:textSize="15sp"
                         android:textAlignment="textStart"/>
@@ -58,7 +58,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="저장"
-                        android:textColor="@color/textGray"
+                        android:textColor="@color/main_text"
                         android:layout_weight="1"
                         android:textSize="15sp"
                         android:textAlignment="textEnd"/>

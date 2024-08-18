@@ -81,7 +81,7 @@
                 android:layout_weight="1"
                 android:gravity="start"
                 android:text="@string/sunday"
-                android:textColor="@color/notyetGray"
+                android:textColor="@color/text_unselected"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -91,7 +91,7 @@
                 android:layout_weight="1"
                 android:gravity="start"
                 android:text="@string/monday"
-                android:textColor="@color/notyetGray"
+                android:textColor="@color/text_unselected"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -101,7 +101,7 @@
                 android:layout_weight="1"
                 android:gravity="start"
                 android:text="@string/tuesday"
-                android:textColor="@color/notyetGray"
+                android:textColor="@color/text_unselected"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -111,7 +111,7 @@
                 android:layout_weight="1"
                 android:gravity="start"
                 android:text="@string/wednesday"
-                android:textColor="@color/notyetGray"
+                android:textColor="@color/text_unselected"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -121,7 +121,7 @@
                 android:layout_weight="1"
                 android:gravity="start"
                 android:text="@string/thursday"
-                android:textColor="@color/notyetGray"
+                android:textColor="@color/text_unselected"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -131,7 +131,7 @@
                 android:layout_weight="1"
                 android:gravity="start"
                 android:text="@string/friday"
-                android:textColor="@color/notyetGray"
+                android:textColor="@color/text_unselected"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -141,7 +141,7 @@
                 android:layout_weight="1"
                 android:gravity="start"
                 android:text="@string/saturday"
-                android:textColor="@color/notyetGray"
+                android:textColor="@color/text_unselected"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -162,7 +162,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginBottom="10dp"
-                android:background="@color/whiteGray"
+                android:background="@color/main_gray"
                 android:elevation="5dp" />
 
         </LinearLayout>

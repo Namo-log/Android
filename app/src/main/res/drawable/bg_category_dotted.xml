@@ -3,7 +3,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
 
     <stroke
-        android:color="@color/textGray"
+        android:color="@color/main_text"
         android:width="1dp"
         android:dashWidth="8dp"
         android:dashGap="8dp"/>

@@ -7,7 +7,7 @@
         <item name="android:paddingVertical">6dp</item>
         <item name="android:background">@drawable/bg_map_btn</item>
         <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/mainOrange</item>
+        <item name="android:textColor">@color/main</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
     </style>

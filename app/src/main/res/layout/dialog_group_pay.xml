@@ -39,7 +39,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="닫기"
-                android:textColor="@color/textGray"
+                android:textColor="@color/main_text"
                 android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -60,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="저장"
-                android:textColor="@color/textGray"
+                android:textColor="@color/main_text"
                 android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -86,7 +86,7 @@
                     android:layout_width="130dp"
                     android:layout_height="wrap_content"
                     android:text="총 금액"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textStyle="bold" />
 
                 <EditText
@@ -94,7 +94,7 @@
                     android:layout_width="130dp"
                     android:layout_height="25dp"
                     android:background="@drawable/bg_radius_5"
-                    android:backgroundTint="@color/groupCodeGray"
+                    android:backgroundTint="@color/main_gray"
                     android:gravity="center_vertical|end"
                     android:hint="금액 입력"
                     android:maxLines="1"
@@ -102,8 +102,8 @@
                     android:paddingEnd="10dp"
                     android:textAlignment="textEnd"
                     android:textSize="15sp"
-                    android:textColor="@color/textGray"
-                    android:textColorHint="@color/editTextGray"
+                    android:textColor="@color/main_text"
+                    android:textColorHint="@color/text_placeholder"
                     tools:ignore="TouchTargetSizeCheck" />
 
             </LinearLayout>
@@ -118,7 +118,7 @@
                     android:layout_width="113dp"
                     android:layout_height="wrap_content"
                     android:text="인원 수"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -136,7 +136,7 @@
                     android:gravity="center_vertical|end"
                     android:paddingEnd="10dp"
                     android:text="0"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="15sp" />
 
                 <TextView
@@ -145,7 +145,7 @@
                     android:gravity="center_vertical|end"
                     android:paddingEnd="5dp"
                     android:text="명"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="15sp" />
 
             </LinearLayout>
@@ -167,7 +167,7 @@
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:text="인당 금액"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textStyle="bold" />
 
                 <TextView
@@ -176,7 +176,7 @@
                     android:layout_height="25dp"
                     android:gravity="center_vertical|end"
                     android:paddingEnd="10dp"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="15sp" />
 
                 <TextView
@@ -185,7 +185,7 @@
                     android:gravity="center_vertical|end"
                     android:paddingEnd="5dp"
                     android:text="원"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="15sp" />
 
             </LinearLayout>

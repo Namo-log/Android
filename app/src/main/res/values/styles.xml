@@ -20,7 +20,7 @@
     </style>
 
     <style name="ThemeOverlay.App.Button" parent="">
-        <item name="colorPrimary">@color/realGray</item>
+        <item name="colorPrimary">@color/main_gray</item>
     </style>
 
     <style name="ShapeAppearance.App.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
@@ -35,7 +35,7 @@
 
     <!-- Number Picker 텍스트 색상 -->
     <style name="AppTheme.Picker" parent="Theme.AppCompat.Light.NoActionBar" >
-        <item name="android:textColorPrimary">@color/textGray</item>
+        <item name="android:textColorPrimary">@color/main_text</item>
     </style>
 
     <!-- 탭바 -->
@@ -47,7 +47,7 @@
     <style name="tabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/textGray</item>
+        <item name="android:textColor">@color/main_text</item>
     </style>
 
     <!-- 다이얼로그 -->
@@ -79,25 +79,25 @@
 
     <style name="content_bold">
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/textGray</item>
+        <item name="android:textColor">@color/main_text</item>
         <item name="fontFamily">@font/pretendard_bold</item>
     </style>
 
     <style name="content_regular">
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/textGray</item>
+        <item name="android:textColor">@color/main_text</item>
         <item name="fontFamily">@font/pretendard_regular</item>
     </style>
 
     <style name="subtext_14">
         <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/textGray</item>
+        <item name="android:textColor">@color/main_text</item>
         <item name="fontFamily">@font/pretendard_regular</item>
     </style>
 
     <style name="subtext_12">
         <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/textGray</item>
+        <item name="android:textColor">@color/main_text</item>
         <item name="fontFamily">@font/pretendard_regular</item>
     </style>
 
@@ -106,12 +106,12 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">10dp</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/textGray</item>
+        <item name="android:textColor">@color/main_text</item>
     </style>
 
     <style name="dialog_underline">
         <item name="android:layout_height">1dp</item>
-        <item name="android:background">@color/notyetGray</item>
+        <item name="android:background">@color/text_unselected</item>
     </style>
 
     <!-- 카테고리 -->
@@ -129,14 +129,14 @@
         <item name="android:layout_height">25dp</item>
         <item name="cardCornerRadius">25dp</item>
         <item name="cardElevation">0dp</item>
-        <item name="cardBackgroundColor">@color/schedule</item>
+        <item name="cardBackgroundColor">@color/main_pink</item>
     </style>
 
     <style name="category_setting_tv">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/textGray</item>
+        <item name="android:textColor">@color/main_text</item>
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -151,14 +151,14 @@
     <style name="custom_setting_15sp_tv">
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/textGray</item>
+        <item name="android:textColor">@color/main_text</item>
         <item name="android:drawableEnd">@drawable/ic_arrow_right</item>
     </style>
 
     <style name="default_underline">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1px</item>
-        <item name="android:background">@color/editTextGray</item>
+        <item name="android:background">@color/text_placeholder</item>
     </style>
 
     <!-- 다이얼로그 버튼 -->
@@ -167,8 +167,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/bg_radius_5</item>
-        <item name="android:textColor">@color/textGray</item>
-        <item name="android:backgroundTint">@color/groupCodeGray</item>
+        <item name="android:textColor">@color/main_text</item>
+        <item name="android:backgroundTint">@color/main_gray</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAlignment">center</item>
@@ -192,7 +192,7 @@
         <item name="android:layout_marginTop">45dp</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/textGray</item>
+        <item name="android:textColor">@color/main_text</item>
     </style>
 
     <style name="schedule_empty_text">
@@ -202,7 +202,7 @@
         <item name="android:drawableStart">@drawable/ic_schedule_empty</item>
         <item name="android:drawablePadding">15dp</item>
         <item name="android:textAlignment">textStart</item>
-        <item name="android:textColor">@color/disableTextGray</item>
+        <item name="android:textColor">@color/text_disable</item>
         <item name="android:textSize">14sp</item>
         <item name="android:visibility">gone</item>
     </style>

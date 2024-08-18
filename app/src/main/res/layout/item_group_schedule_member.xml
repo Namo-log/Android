@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:text="지니"
         android:layout_marginStart="20dp"
-        android:textColor="@color/textGray"
+        android:textColor="@color/main_text"
         android:textSize="15sp"/>
     
 </LinearLayout>

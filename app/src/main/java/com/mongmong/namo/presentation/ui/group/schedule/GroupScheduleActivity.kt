@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -15,7 +14,6 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.ContextCompat
 import com.kakao.vectormap.KakaoMap
@@ -186,15 +184,15 @@ class GroupScheduleActivity
         hideKeyboard()
         val prevClickedPicker = viewModel.prevClickedPicker.value
         if (prevClickedPicker != clicked) {
-            prevClickedPicker?.setTextColor(ContextCompat.getColor(this, R.color.textGray))
-            clicked.setTextColor(ContextCompat.getColor(this, R.color.mainOrange))
+            prevClickedPicker?.setTextColor(ContextCompat.getColor(this, R.color.main_text))
+            clicked.setTextColor(ContextCompat.getColor(this, R.color.main))
             togglePicker(prevClickedPicker, false)
             togglePicker(clicked, true)
             viewModel.updatePrevClickedPicker(clicked) // prevClickedPicker 값을 현재 clicked로 업데이트
             return
         }
         // 피커 닫기 진행
-        clicked.setTextColor(ContextCompat.getColor(this, R.color.textGray))
+        clicked.setTextColor(ContextCompat.getColor(this, R.color.main_text))
         togglePicker(clicked, false)
         viewModel.updatePrevClickedPicker(null)
     }

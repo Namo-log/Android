@@ -7,11 +7,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
@@ -21,8 +18,6 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -357,15 +352,15 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
         hideKeyBoard()
         val prevClickedPicker = viewModel.prevClickedPicker.value
         if (prevClickedPicker != clicked) {
-            prevClickedPicker?.setTextColor(ContextCompat.getColor(requireContext(), R.color.textGray))
-            clicked.setTextColor(ContextCompat.getColor(requireContext(), R.color.mainOrange))
+            prevClickedPicker?.setTextColor(ContextCompat.getColor(requireContext(), R.color.main_text))
+            clicked.setTextColor(ContextCompat.getColor(requireContext(), R.color.main))
             togglePicker(prevClickedPicker, false)
             togglePicker(clicked, true)
             viewModel.updatePrevClickedPicker(clicked) // prevClickedPicker 값을 현재 clicked로 업데이트
             return
         }
         // 피커 닫기 진행
-        clicked.setTextColor(ContextCompat.getColor(requireContext(), R.color.textGray))
+        clicked.setTextColor(ContextCompat.getColor(requireContext(), R.color.main_text))
         togglePicker(clicked, false)
         viewModel.updatePrevClickedPicker(null)
     }

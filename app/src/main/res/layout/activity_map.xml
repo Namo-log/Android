@@ -19,7 +19,7 @@
                 android:id="@+id/map_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:background="@color/notyetGray"
+                tools:background="@color/text_unselected"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"/>
 
@@ -94,7 +94,7 @@
                     android:layout_width="0dp"
                     android:layout_height="50dp"
                     android:layout_weight="4"
-                    android:backgroundTint="@color/editTextGray"
+                    android:backgroundTint="@color/text_placeholder"
                     android:drawableStart="@drawable/ic_search"
                     android:drawablePadding="10dp"
                     android:hint="@string/map_search_hint"
@@ -102,7 +102,7 @@
                     android:inputType="text"
                     android:maxLines="1"
                     android:textColor="@color/black"
-                    android:textColorHint="@color/editTextGray"
+                    android:textColorHint="@color/text_placeholder"
                     android:textSize="15sp" />
 
                 <androidx.appcompat.widget.AppCompatButton
@@ -113,7 +113,7 @@
                     android:layout_weight="1"
                     android:shadowColor="@null"
                     android:background="@drawable/bg_radius_5"
-                    android:backgroundTint="@color/mainOrange"
+                    android:backgroundTint="@color/main"
                     android:text="@string/map_search"
                     android:textColor="@color/white"
                     android:textSize="15sp"

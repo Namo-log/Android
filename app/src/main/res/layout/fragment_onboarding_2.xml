@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/onboarding_skip"
                 android:textSize="@dimen/onboarding_skip_text_size"
-                android:textColor="@color/mainOrange"/>
+                android:textColor="@color/main"/>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/onboarding_2_skip_img_iv"
@@ -60,7 +60,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_arrow_right"
-                app:tint="@color/mainOrange"/>
+                app:tint="@color/main"/>
 
         </LinearLayout>
 
@@ -73,8 +73,8 @@
             android:stateListAnimator="@null"
             android:padding="@dimen/onboarding_btn_padding"
             android:background="@drawable/bg_basic_btn"
-            android:backgroundTint="@color/groupCodeGray"
-            android:textColor="@color/mainOrange"
+            android:backgroundTint="@color/main_gray"
+            android:textColor="@color/main"
             android:text="@string/onboarding_next"
             android:textSize="@dimen/onboarding_default_text_size"
             android:textStyle="bold"

@@ -42,7 +42,7 @@
                     app:cardBackgroundColor="@{CategoryColor.convertPaletteIdToColorStateList(category.paletteId)}"
                     app:cardCornerRadius="25dp"
                     app:cardElevation="0dp"
-                    tools:backgroundTint="@color/schedule">
+                    tools:backgroundTint="@color/main_pink">
                 </androidx.cardview.widget.CardView>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -57,7 +57,7 @@
                         android:textAlignment="textEnd"
                         android:ellipsize="end"
                         android:singleLine="true"
-                        android:textColor="@color/textGray"
+                        android:textColor="@color/main_text"
                         android:textSize="15sp"
                         android:textStyle="bold"
                         android:text="@{category.name}"

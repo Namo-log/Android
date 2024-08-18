@@ -29,7 +29,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:background="@drawable/ic_delete"
-                android:backgroundTint="@{viewModel.canDeleteCategory ? @color/black : @color/disableTextGray}"
+                android:backgroundTint="@{viewModel.canDeleteCategory ? @color/black : @color/text_disable}"
                 android:layout_gravity="center"/>
         </androidx.cardview.widget.CardView>
 

@@ -133,17 +133,17 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
             color = context.getColor(R.color.white)
         }
 
-        todayNoticePaint.color = context.getColor(R.color.mainOrange)
+        todayNoticePaint.color = context.getColor(R.color.main)
 
         selectedPaint = TextPaint().apply {
             isAntiAlias = true
             textSize = dayTextSize
             typeface = Typeface.DEFAULT_BOLD
-            color = context.getColor(R.color.mainOrange)
+            color = context.getColor(R.color.main)
         }
 
         bgPaint.apply {
-            color = context.getColor(R.color.palette3)
+            color = context.getColor(R.color.main_pink)
         }
 
         eventPaint = TextPaint().apply {
