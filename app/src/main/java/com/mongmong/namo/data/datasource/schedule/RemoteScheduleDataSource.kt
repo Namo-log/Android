@@ -18,6 +18,8 @@ import com.mongmong.namo.domain.model.PostScheduleResult
 import com.mongmong.namo.domain.model.ScheduleRequestBody
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
+import com.mongmong.namo.presentation.config.BaseResponse
+import com.mongmong.namo.presentation.config.Constants.SUCCESS_CODE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -27,6 +29,23 @@ class RemoteScheduleDataSource @Inject constructor(
     private val groupScheduleApiService: GroupScheduleApiService,
 ) {
     /** 개인 */
+    suspend fun getMonthSchedules(
+        yearMonth: String
+    ): List<GetMonthScheduleResult> {
+        var scheduleResponse = GetMonthScheduleResponse(result = emptyList())
+        withContext(Dispatchers.IO) {
+            runCatching {
+                scheduleApiService.getMonthSchedule(yearMonth)
+            }.onSuccess {
+                Log.d("RemoteScheduleDataSource", "getMonthSchedules Success $it")
+                scheduleResponse = it
+            }.onFailure {
+                Log.d("RemoteScheduleDataSource", "getMonthSchedules Success $it")
+            }
+        }
+        return scheduleResponse.result
+    }
+
     suspend fun addScheduleToServer(
         schedule: ScheduleRequestBody,
     ): PostScheduleResponse {
@@ -39,7 +58,7 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "addScheduleToServer Success $it")
                 scheduleResponse = it
             }.onFailure {
-                Log.d("RemoteScheduleDataSource", "addScheduleToServer Failure")
+                Log.d("RemoteScheduleDataSource", "addScheduleToServer Failure $it")
             }
         }
         return scheduleResponse
@@ -106,30 +125,36 @@ class RemoteScheduleDataSource @Inject constructor(
 
     suspend fun editMoimScheduleCategory(
         category: PatchMoimScheduleCategoryRequestBody
-    ) {
+    ): BaseResponse {
+        var scheduleResponse = BaseResponse()
         withContext(Dispatchers.IO) {
             runCatching {
                 scheduleApiService.patchMoimScheduleCategory(category)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleCategory Success $it")
+                scheduleResponse = it
             }.onFailure {
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleCategory Fail")
             }
         }
+        return scheduleResponse
     }
 
     suspend fun editMoimScheduleAlert(
         alert: PatchMoimScheduleAlarmRequestBody
-    ) {
+    ): BaseResponse {
+        var scheduleResponse = BaseResponse()
         withContext(Dispatchers.IO) {
             runCatching {
                 scheduleApiService.patchMoimScheduleAlarm(alert)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleAlert Success $it")
+                scheduleResponse = it
             }.onFailure {
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleAlert Fail $it")
             }
         }
+        return scheduleResponse
     }
 
     /** 그룹 */
@@ -161,7 +186,7 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "addMoimSchedule Success $it")
                 scheduleResponse = it
             }.onFailure {
-                Log.d("RemoteScheduleDataSource", "addMoimSchedule Failure")
+                Log.d("RemoteScheduleDataSource", "addMoimSchedule Failure $it")
             }
         }
 //        return scheduleResponse

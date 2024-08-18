@@ -1,57 +1,47 @@
 package com.mongmong.namo.presentation.ui.diary
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
-import android.util.TypedValue
+import android.view.MotionEvent
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
-import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.data.remote.diary.*
 import com.mongmong.namo.databinding.ActivityMoimMemoDetailBinding
-import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.domain.model.GetMoimMemoResult
+import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.MoimDiary
-import com.mongmong.namo.domain.model.group.MoimDiaryResult
-import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.config.RoomState
-import com.mongmong.namo.presentation.ui.diary.adapter.GalleryListAdapter
+import com.mongmong.namo.presentation.config.BaseActivity
+import com.mongmong.namo.presentation.ui.diary.adapter.GalleryImageRVAdapter
 import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
-import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.joda.time.DateTime
-import java.util.Locale
+import java.util.ArrayList
 
 @AndroidEntryPoint
-class MoimMemoDetailActivity: AppCompatActivity(),
-    ConfirmDialogInterface {   // 그룹 기록에 대한 텍스트 추가, 삭제
-
-    private lateinit var binding: ActivityMoimMemoDetailBinding
-
+class MoimMemoDetailActivity
+    : BaseActivity<ActivityMoimMemoDetailBinding>(R.layout.activity_moim_memo_detail),
+    ConfirmDialogInterface {
     private var moimScheduleId: Long = 0L
     private val viewModel : DiaryDetailViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding =  ActivityMoimMemoDetailBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun setup() {
+        binding.apply {
+            viewModel = this@MoimMemoDetailActivity.viewModel
+            paletteId = intent.getIntExtra("paletteId", 0)
+            // marquee focus
+            diaryTitleTv.requestFocus()
+            diaryTitleTv.isSelected = true
+        }
 
         moimScheduleId = intent.getLongExtra("moimScheduleId", 0L)
 
         initObserve()
-        initClickListener()
-        charCnt()
+        onClickListener()
     }
 
     override fun onResume() {
@@ -59,16 +49,25 @@ class MoimMemoDetailActivity: AppCompatActivity(),
         viewModel.getMoimMemo(moimScheduleId)
     }
 
-    override fun onPause() {
-        super.onPause()
-        viewModel.setMemo(binding.diaryContentsEt.text.toString())
-    }
-
-    private fun initClickListener() {
+    private fun onClickListener() {
         with(binding) {
+            // 뒤로 가기
+            onBackPressedDispatcher.addCallback(this@MoimMemoDetailActivity, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (this@MoimMemoDetailActivity.viewModel.isMoimDiaryChanged()) {
+                        showBackDialog()
+                    } else finish()
+                }
+            })
+            diaryBackIv.setOnClickListener {
+                if (this@MoimMemoDetailActivity.viewModel.isDiaryChanged()) {
+                    showBackDialog()
+                } else finish()
+            }
+
             diaryDeleteIv.setOnClickListener { showDeleteDialog() } // 삭제
-            diaryBackIv.setOnClickListener { finish() } // 뒤로 가기
-            groupDiaryDetailLy.setOnClickListener {// 그룹 다이어리 장소 아이템 추가 화면으로 이동
+
+            groupDiaryDetailLy.setOnClickListener {// 모임 기록으로 이동
                 startActivity(
                     Intent(this@MoimMemoDetailActivity, MoimDiaryActivity::class.java)
                         .putExtra("from", "moimMemo")
@@ -77,29 +76,21 @@ class MoimMemoDetailActivity: AppCompatActivity(),
                 )
             }
             diaryEditBtnTv.setOnClickListener {
-                viewModel.patchMoimMemo(
-                    moimScheduleId,
-                    binding.diaryContentsEt.text.toString()
-                )
+                this@MoimMemoDetailActivity.viewModel.patchMoimMemo(moimScheduleId)
             }
         }
     }
     private fun initObserve() {
         // 모임 메모 가져오기
-        viewModel.getMoimMemoResponse.observe(this) { diary ->
+        viewModel.moimDiary.observe(this) { diary ->
             Log.d("getMoimMemoResponse", "$diary")
             diary?.let{
-                initView(diary.result)
+                initView(diary)
             }
         }
         // 모임 기록 메모 추가/수정
         viewModel.patchMemoResult.observe(this) { isSuccess ->
             if(isSuccess) finish()
-        }
-
-        // 카테고리 찾기
-        viewModel.category.observe(this) {
-            binding.itemDiaryCategoryColorIv.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(it.paletteId)
         }
 
         // 모임 기록 메모 삭제
@@ -110,52 +101,24 @@ class MoimMemoDetailActivity: AppCompatActivity(),
         }
     }
 
-    private fun initView(moimDiary: GetMoimMemoResult) {
-        with(binding) {
-            if(viewModel.getMemo() == null) viewModel.setMemo(moimDiary.contents ?: "")
-            diaryContentsEt.setText(viewModel.getMemo())
-
-            findCategory(moimDiary.categoryId, moimDiary.categoryId)
-            val scheduleDate = moimDiary.startDate * 1000
-
-            diaryTodayMonthTv.text = DateTime(scheduleDate).toString("MMM", Locale.ENGLISH)
-            diaryTodayNumTv.text = DateTime(scheduleDate).toString("dd")
-            diaryTitleTv.text = moimDiary.name
-            diaryInputDateTv.text = DateTime(scheduleDate).toString("yyyy.MM.dd (EE) hh:mm")
-            diaryInputPlaceTv.text = moimDiary.placeName
-
-            setImgList(moimDiary.urls)
-
-            diaryEditBtnTv.apply {
-                if (moimDiary.contents.isNullOrEmpty()) { // 그룹 기록 내용이 없으면, 기록 저장
-                    text = resources.getString(R.string.diary_add)
-                    setTextColor(getColor(R.color.white))
-                    setBackgroundResource(R.color.MainOrange)
-                    elevation = 0f
-                } else {  // 내용이 있으면, 기록 수정
-                    text = resources.getString(R.string.diary_edit)
-                    setTextColor(getColor(R.color.MainOrange))
-                    setBackgroundResource(R.color.white)
-                    elevation = TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP,
-                        10f,
-                        resources.displayMetrics
-                    )
-                }
-            }
-        }
-    }
-    private fun findCategory(localId: Long, serverId: Long) {
-        viewModel.findCategoryById(localId, serverId)
+    private fun initView(moimDiary: MoimDiary) {
+        viewModel.isEditMode()
+        viewModel.findCategoryById()
+        setImgList(moimDiary.getImageUrls())
     }
 
     private fun setImgList(imgList: List<String>) {
-        val galleryViewRVAdapter = GalleryListAdapter(this)
-        binding.diaryGallerySavedRy.adapter = galleryViewRVAdapter
-        binding.diaryGallerySavedRy.layoutManager =
+        val diaryImages = imgList.map { DiaryImage(id = 0, url = it) }
+        val galleryViewRVAdapter = GalleryImageRVAdapter(true, {}, {
+            startActivity(
+                Intent(this, DiaryImageDetailActivity::class.java).putExtra("imgs", it as ArrayList<DiaryImage>)
+            )
+        })
+        binding.diaryGallerySavedRv.adapter = galleryViewRVAdapter
+        binding.diaryGallerySavedRv.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        galleryViewRVAdapter.addImages(imgList)
+        galleryViewRVAdapter.addImages(diaryImages)
     }
 
     private fun showDeleteDialog() {
@@ -168,49 +131,25 @@ class MoimMemoDetailActivity: AppCompatActivity(),
         dialog.show(supportFragmentManager, "ConfirmDialog")
     }
 
-    override fun onClickYesButton(id: Int) {
-        viewModel.deleteMoimMemo(moimScheduleId)
+    private fun showBackDialog() {
+        val title = "편집한 내용이 저장되지 않습니다."
+        val content = "정말 나가시겠어요?"
+
+        val dialog = ConfirmDialog(this, title, content, "확인", MoimDiaryActivity.BACK_BUTTON_ACTION)
+        dialog.isCancelable = false
+        dialog.show(supportFragmentManager, "")
     }
 
-    /** 글자 수 반환 **/
-    @SuppressLint("SetTextI18n")
-    private fun charCnt() {
-        with(binding) {
-            textNumTv.text = "${binding.diaryContentsEt.text.length} / 200"
-            diaryContentsEt.addTextChangedListener(object : TextWatcher {
-                var maxText = ""
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-                    maxText = s.toString()
-                }
-
-                @SuppressLint("SetTextI18n")
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    if (diaryContentsEt.length() > 200) {
-                        Toast.makeText(
-                            this@MoimMemoDetailActivity, "최대 200자까지 입력 가능합니다",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        diaryContentsEt.setText(maxText)
-                        diaryContentsEt.setSelection(diaryContentsEt.length())
-                        if (s != null) {
-                            textNumTv.text = "${s.length} / 200"
-                        }
-                    } else {
-                        textNumTv.text = "${s.toString().length} / 200"
-                    }
-                }
-
-                override fun afterTextChanged(s: Editable?) {
-                }
-
-            })
+    override fun onClickYesButton(id: Int) {
+        when(id) {
+            PersonalDetailActivity.DELETE_BUTTON_ACTION -> viewModel.deleteMoimMemo(moimScheduleId) // 삭제
+            PersonalDetailActivity.BACK_BUTTON_ACTION -> finish() // 뒤로가기
         }
     }
 
+    /** editText 외 터치 시 키보드 내리는 이벤트 **/
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        hideKeyboardOnTouchOutside(ev)
+        return super.dispatchTouchEvent(ev)
+    }
 }

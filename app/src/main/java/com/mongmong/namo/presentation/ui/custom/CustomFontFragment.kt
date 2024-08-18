@@ -6,15 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mongmong.namo.R
+import com.mongmong.namo.databinding.FragmentCustomFontBinding
+import com.mongmong.namo.presentation.config.BaseFragment
 
-class CustomFontFragment : Fragment() {
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_custom_font, container, false)
+class CustomFontFragment : BaseFragment<FragmentCustomFontBinding>(R.layout.fragment_custom_font) {
+    override fun setup() {
     }
-
 }

@@ -10,7 +10,7 @@
         android:id="@+id/circle"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:src="@drawable/border_round_people_btn"
+        android:src="@drawable/bg_person_tv"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 

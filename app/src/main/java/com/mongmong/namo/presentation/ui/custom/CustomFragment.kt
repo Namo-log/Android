@@ -9,26 +9,16 @@ import androidx.navigation.findNavController
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentCustomBinding
 import com.google.android.material.tabs.TabLayoutMediator
+import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.custom.adapter.CustomVPAdapter
 
 
-class CustomFragment : Fragment() {
-
-    lateinit var binding: FragmentCustomBinding
+class CustomFragment : BaseFragment<FragmentCustomBinding>(R.layout.fragment_custom) {
     private val information = arrayListOf("팔레트", "폰트", "MY")
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        binding = FragmentCustomBinding.inflate(inflater, container, false)
-
+    override fun setup() {
         setVPAdapter()
         onClickListener()
-
-        return binding.root
     }
 
     private fun onClickListener() {

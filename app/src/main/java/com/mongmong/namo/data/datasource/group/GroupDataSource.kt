@@ -10,9 +10,12 @@ import com.mongmong.namo.domain.model.group.JoinGroupResponse
 import com.mongmong.namo.domain.model.group.UpdateGroupNameRequestBody
 import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
 import com.mongmong.namo.data.utils.RequestConverter.uriToMultipart
+import com.mongmong.namo.domain.model.group.JoinGroupResult
+import com.mongmong.namo.domain.model.group.UpdateGroupNameResponse
 import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 class GroupDataSource @Inject constructor(
@@ -37,11 +40,16 @@ class GroupDataSource @Inject constructor(
         return groups
     }
 
-    suspend fun addGroup(img: Uri, name: String): AddGroupResult {
+    suspend fun addGroup(img: Uri?, name: String): AddGroupResult {
         var result = AddGroupResult(groupId = 0L)
         withContext(Dispatchers.IO) {
             runCatching {
-                apiService.addGroup(uriToMultipart(img, context, false), name.convertTextRequest())
+                val createImagesParts = if(img == null) {
+                    MultipartBody.Part.createFormData("empty", "", "".convertTextRequest())
+                } else uriToMultipart(img, context, false)
+
+                apiService.addGroup(createImagesParts, name.convertTextRequest())
+
             }.onSuccess {
                 Log.d("GroupDataSource addGroup Success", "$it")
                 result = it.result
@@ -53,7 +61,7 @@ class GroupDataSource @Inject constructor(
     }
 
     suspend fun joinGroup(groupCode: String): JoinGroupResponse {
-        var response = JoinGroupResponse(result = 0L)
+        var response = JoinGroupResponse(JoinGroupResult(0L, ""))
         withContext(Dispatchers.IO) {
             runCatching {
                 apiService.joinGroup(groupCode)
@@ -68,8 +76,8 @@ class GroupDataSource @Inject constructor(
         return response
     }
 
-    suspend fun updateGroupName(groupId: Long, name: String): JoinGroupResponse {
-        var response = JoinGroupResponse(result = 0L)
+    suspend fun updateGroupName(groupId: Long, name: String): UpdateGroupNameResponse {
+        var response = UpdateGroupNameResponse(result = 0L)
         withContext(Dispatchers.IO) {
             runCatching {
                 apiService.updateGroupName(UpdateGroupNameRequestBody(groupId, name))

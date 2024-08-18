@@ -37,11 +37,7 @@ class GroupInfoMemberRVAdapter(
 
     inner class ViewHolder(val binding : ItemGroupMemberBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(member : GroupMember) {
-            val color = if (member.color < 20) categoryColorArray[member.color - 1]
-                        else CategoryColor.DEFAULT_PALETTE_COLOR1.hexColor
-
-            binding.itemGroupMemberColorView.backgroundTintList = ColorStateList.valueOf(Color.parseColor(color))
-            binding.itemGroupMemberNameTv.text = member.userName
+            binding.groupMember = member
         }
     }
 

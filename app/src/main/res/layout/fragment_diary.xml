@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="com.mongmong.namo.presentation.ui.diary.DiaryViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/framelayout"
         android:layout_width="match_parent"
@@ -21,17 +28,17 @@
                 android:id="@+id/diary_month"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:text="@{viewModel.currentDate}"
+                tools:text="yyyy년 MM월"
                 style="@style/title_text"/>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/diary_month_arrow_iv"
-                android:layout_width="12dp"
-                android:layout_height="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="13dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_arrow_down_black"
+                android:src="@drawable/ic_arrow_down_bold"
+                app:tint="@color/black"
                 app:layout_constraintTop_toTopOf="@id/diary_month"
                 app:layout_constraintBottom_toBottomOf="@id/diary_month"
                 app:layout_constraintStart_toEndOf="@id/diary_month"/>
@@ -42,9 +49,9 @@
             android:layout_width="152dp"
             android:layout_height="30dp"
             android:layout_marginEnd="20dp"
-            android:background="@drawable/tab_corner_bg"
-            app:tabIndicator="@drawable/tab_indicator_corner_bg"
-            app:tabIndicatorColor="@color/MainOrange"
+            android:background="@drawable/bg_diary_tab"
+            app:tabIndicator="@drawable/bg_diary_tab_indicator"
+            app:tabIndicatorColor="@color/mainOrange"
             app:tabIndicatorHeight="30dp"
             app:tabMode="auto"
             app:tabIndicatorAnimationMode="elastic"
@@ -54,7 +61,8 @@
             app:tabRippleColor="@null"
             app:layout_constraintTop_toTopOf="@id/diary_month_ll"
             app:layout_constraintBottom_toBottomOf="@id/diary_month_ll"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:onTabSelectedListener="@{viewModel.onTabSelectedListener}"/>
 
         <LinearLayout
             android:id="@+id/diary_list_empty_layout"
@@ -65,18 +73,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="160dp"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="@{viewModel.isListEmpty ? View.VISIBLE : View.GONE}">
             <ImageView
                 android:id="@+id/diary_list_empty_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_diary_empty"
+                android:src="@drawable/img_diary_empty"
+                android:imageSource="@{viewModel.emptyImageResId}"
                 android:layout_gravity="center"/>
             <TextView
                 android:id="@+id/diary_list_empty_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="45dp"
+                android:text="@{viewModel.emptyMessageResId}"
                 android:textAlignment="center"
                 android:layout_gravity="center" />
         </LinearLayout>
@@ -90,7 +100,7 @@
             android:clipToPadding="false"
             android:background="@color/white"
             android:orientation="vertical"
-            android:visibility="gone"
+            android:visibility="@{viewModel.isMoim == viewModel.IS_NOT_MOIM &amp;&amp; !viewModel.isListEmpty ? View.VISIBLE : View.GONE}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -107,14 +117,13 @@
             android:clipToPadding="false"
             android:background="@color/white"
             android:orientation="vertical"
-            android:visibility="gone"
+            android:visibility="@{viewModel.isMoim == viewModel.IS_MOIM &amp;&amp; !viewModel.isListEmpty ? View.VISIBLE : View.GONE}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/diary_month_ll"
-            tools:listitem="@layout/item_diary_list" />
-
+            tools:listitem="@layout/item_diary_item_list" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

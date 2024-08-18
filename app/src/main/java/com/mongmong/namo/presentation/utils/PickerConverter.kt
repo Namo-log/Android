@@ -8,8 +8,18 @@ object PickerConverter {
     private const val DEFAULT_START_HOUR = 8 // 오전 8시
     private const val DEFAULT_END_HOUR = 9 // 오전 9시
 
-    fun getDefaultDate(date: DateTime, isStartTime: Boolean): DateTime {
-        return DateTime(date.year, date.monthOfYear, date.dayOfMonth, if (isStartTime) DEFAULT_START_HOUR else DEFAULT_END_HOUR, 0, 0, 0)
+    fun getDefaultDate(date: DateTime, isStartTime: Boolean): Long {
+        return parseDateTimeToLong(DateTime(date.year, date.monthOfYear, date.dayOfMonth, if (isStartTime) DEFAULT_START_HOUR else DEFAULT_END_HOUR, 0, 0, 0))
+    }
+
+    @JvmStatic
+    fun parseLongToDateText(longDate: Long): String {
+        return parseDateTimeToDateText(parseLongToDateTime(longDate))
+    }
+
+    @JvmStatic
+    fun parseLongToTimeText(longDate: Long): String {
+        return parseDateTimeToTimeText(parseLongToDateTime(longDate))
     }
 
     fun parseDateTimeToDateText(dateTime: DateTime): String {
@@ -22,6 +32,10 @@ object PickerConverter {
 
     fun parseLongToDateTime(longDate: Long): DateTime {
         return DateTime(longDate * 1000L)
+    }
+
+    fun parseDateTimeToLong(dateTime: DateTime): Long {
+        return dateTime.millis / 1000
     }
 
     fun setSelectedDate(year: Int, monthOfYear: Int, dayOfMonth: Int, dateTime: DateTime): DateTime {

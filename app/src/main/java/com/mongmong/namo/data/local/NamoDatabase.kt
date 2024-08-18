@@ -12,7 +12,7 @@ import com.mongmong.namo.data.local.entity.diary.Diary
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.local.entity.home.Category
 
-@Database(entities = [Schedule::class, Category::class, Diary::class], version = 1, exportSchema = false)
+@Database(entities = [Schedule::class, Category::class, Diary::class], version = 2, exportSchema = false)
 @TypeConverters(
     value = [
         StringListConverters::class,

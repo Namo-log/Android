@@ -1,50 +1,30 @@
 package com.mongmong.namo.presentation.ui.onBoarding
 
 import android.content.Context
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentOnboardingBinding
+import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.onBoarding.adapter.OnboardingVPAdapter
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 
-class OnBoardingFragment : Fragment() {
-
-    private var _binding : FragmentOnboardingBinding? = null
-    private val binding get() = _binding!!
-
+class OnBoardingFragment : BaseFragment<FragmentOnboardingBinding>(R.layout.fragment_onboarding) {
     private lateinit var dotsIndicator : DotsIndicator
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentOnboardingBinding.inflate(inflater, container, false)
+    override fun setup() {
         dotsIndicator = binding.onboardingDotsIndicatorDi
 
         navigateToLogin()
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         setupViewPager()
     }
 
     private fun setupViewPager(){
         val fragmentList = arrayListOf(
-            FirstFragment.newInstance(),
-            SecondFragment.newInstance(),
-            ThirdFragment.newInstance(),
-            FourthFragment.newInstance(),
-            FifthFragment.newInstance()
+            OnBoardingFirstFragment.newInstance(),
+            OnBoardingSecondFragment.newInstance(),
+            OnBoardingThirdFragment.newInstance(),
+            OnBoardingFourthFragment.newInstance(),
+            OnBoardingFifthFragment.newInstance()
         )
 
         val adapter = OnboardingVPAdapter(
@@ -57,11 +37,6 @@ class OnBoardingFragment : Fragment() {
         dotsIndicator.attachTo(binding.onboardingViewPagerVp)
 
         binding.onboardingViewPagerVp.isUserInputEnabled = false //스와이프 이동 막기
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun isOnBoardingFinished() : Boolean {

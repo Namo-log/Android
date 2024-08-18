@@ -6,6 +6,7 @@ import com.mongmong.namo.data.datasource.category.RemoteCategoryDataSource
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.domain.repositories.CategoryRepository
+import com.mongmong.namo.presentation.config.Constants.SUCCESS_CODE
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
 import javax.inject.Inject
@@ -17,7 +18,9 @@ class CategoryRepositoryImpl @Inject constructor(
 ) : CategoryRepository {
 
     override suspend fun getCategories(): List<Category> {
-        return localCategoryDataSource.getCategories()
+        return remoteCategoryDataSource.getCategories().map {
+            it.convertToCategory()
+        }
     }
 
     override suspend fun findCategoryById(localId: Long, serverId: Long): Category {
@@ -28,9 +31,11 @@ class CategoryRepositoryImpl @Inject constructor(
         } ?: Category()
     }
 
-    override suspend fun addCategory(category: Category) {
-        category.categoryId = localCategoryDataSource.addCategory(category) // 로컬에서 카테고리 생성 후 받아온 categoryId로 업데이트
+    override suspend fun addCategory(category: Category): Boolean {
         Log.d("CategoryRepositoryImpl", "addCategory categoryId: ${category.categoryId}\n$category")
+        return remoteCategoryDataSource.addCategoryToServer(category.convertLocalCategoryToServer()).code == SUCCESS_CODE
+        /*
+        category.categoryId = localCategoryDataSource.addCategory(category) // 로컬에서 카테고리 생성 후 받아온 categoryId로 업데이트
         if (networkChecker.isOnline()) {
             val addResponse = remoteCategoryDataSource.addCategoryToServer(category.convertLocalCategoryToServer())
             if (addResponse.code == ScheduleRepositoryImpl.SUCCESS_CODE) {
@@ -48,10 +53,16 @@ class CategoryRepositoryImpl @Inject constructor(
                 )
             }
         }
+         */
     }
 
-    override suspend fun editCategory(category: Category) {
+    override suspend fun editCategory(category: Category): Boolean {
         Log.d("CategoryRepositoryImpl", "editCategory $category")
+        return remoteCategoryDataSource.editCategoryToServer(
+            category.serverId,
+            category.convertLocalCategoryToServer()
+        ).code == SUCCESS_CODE
+        /*
         localCategoryDataSource.editCategory(category)
         if (networkChecker.isOnline()) {
             val editResponse = remoteCategoryDataSource.editCategoryToServer(
@@ -65,10 +76,15 @@ class CategoryRepositoryImpl @Inject constructor(
                 Log.d("CategoryRepositoryImpl", "editCategory Fail, code = ${editResponse.code}, message = ${editResponse.message}")
             }
         }
+         */
     }
 
-    override suspend fun deleteCategory(category: Category) {
+    override suspend fun deleteCategory(category: Category): Boolean {
         Log.d("CategoryRepositoryImpl", "deleteCategory $category")
+        return remoteCategoryDataSource.deleteCategoryToServer(
+            category.serverId
+        ).code == SUCCESS_CODE
+        /*
         // room db에서 삭제 상태로 변경
         localCategoryDataSource.deleteCategory(category)
         if (networkChecker.isOnline()) {
@@ -83,6 +99,7 @@ class CategoryRepositoryImpl @Inject constructor(
                 Log.d("CategoryRepositoryImpl", "deleteCategory Fail, code = ${deleteResponse.code}, message = ${deleteResponse.message}")
             }
         }
+         */
     }
 
     override suspend fun updateCategoryAfterUpload(

@@ -11,65 +11,35 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.databinding.FragmentGroupListBinding
+import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.group.adapter.GroupListRVAdapter
-import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class GroupFragment : Fragment(), CreateGroupDialog.GroupCreationListener {
-    lateinit var binding: FragmentGroupListBinding
+class GroupFragment
+    : BaseFragment<FragmentGroupListBinding>(R.layout.fragment_group_list),
+    CreateGroupDialog.GroupCreationListener,
+    GroupCodeDialog.GroupCodeListener {
+
     private val viewModel : GroupViewModel by viewModels()
     private val groupAdapter = GroupListRVAdapter(emptyList())
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-
-    ): View? {
-        binding = FragmentGroupListBinding.inflate(inflater, container, false)
+    override fun setup() {
+        binding.viewModel = viewModel
 
         initObserve()
         onClickMenu()
         setRecyclerView()
-
-        return binding.root
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.getGroups()
+        viewModel.getGroupList()
     }
 
     private fun initObserve() {
         viewModel.groups.observe(viewLifecycleOwner) { groups ->
-            setGroupView(groups)
-        }
-    }
-    private fun setGroupView(groups: List<Group>?) {
-        when {
-            groups == null -> showEmptyView(
-                R.string.network_group_msg,
-                R.drawable.ic_network_disconnect
-            )
-            groups.isEmpty() -> showEmptyView(
-                R.string.add_group_msg,
-                R.drawable.ic_group_empty
-            )
-            else -> {
-                groupAdapter.updateGroups(groups)
-                binding.groupListEmptyLayout.visibility = View.GONE
-                binding.groupListRv.visibility = View.VISIBLE
-            }
-        }
-    }
-
-    private fun showEmptyView(messageResId: Int, imageResId: Int) {
-        with(binding) {
-            groupListEmptyTv.text = getText(messageResId)
-            groupListEmptyIv.setImageResource(imageResId)
-            groupListEmptyLayout.visibility = View.VISIBLE
-            groupListRv.visibility = View.GONE
+            groups?.let { groupAdapter.updateGroups(groups) }
         }
     }
 
@@ -104,8 +74,6 @@ class GroupFragment : Fragment(), CreateGroupDialog.GroupCreationListener {
         }
     }
 
-
-
     // 그룹 생성
     private fun showCreateGroupDialog() {
         val dialog = CreateGroupDialog().apply {
@@ -115,14 +83,20 @@ class GroupFragment : Fragment(), CreateGroupDialog.GroupCreationListener {
         dialog.show(parentFragmentManager, "CreateGroupDialog")
     }
     override fun onGroupCreated() {
-        viewModel.getGroups()
+        viewModel.getGroupList()
     }
 
     // 그룹 코드
     private fun showGroupCodeDialog() {
-        val dialog = GroupCodeDialog()
+        val dialog = GroupCodeDialog().apply {
+            setGroupCodeListener(this@GroupFragment)
+        }
         // 알림창이 띄워져있는 동안 배경 클릭 허용
         dialog.isCancelable = true
         dialog.show(parentFragmentManager, "GroupCodeDialog")
+    }
+
+    override fun onGroupParticipate() {
+        viewModel.getGroupList()
     }
 }

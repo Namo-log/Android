@@ -1,132 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true">
-
-    <!-- 지도 쪽 -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+<layout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="4.7"
-        android:layout_marginBottom="-20dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:fitsSystemWindows="true">
 
-        <com.kakao.vectormap.MapView
-            android:id="@+id/map_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:background="@color/notyetGray"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/map_back_cv"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="@color/white"
-            app:cardCornerRadius="40dp"
-            app:cardElevation="5dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:padding="4dp"
-                android:src="@drawable/ic_back"
-                android:layout_gravity="center"/>
-        </androidx.cardview.widget.CardView>
-
-
-        <LinearLayout
-            android:id="@+id/map_btn_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="36dp"
-            android:gravity="center"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
-
-            <TextView
-                android:id="@+id/cancel_btn"
-                android:layout_marginEnd="15dp"
-                android:text="@string/dialog_cancel"
-                style="@style/map_common_btn" />
-
-            <TextView
-                android:id="@+id/select_btn"
-                android:layout_marginStart="15dp"
-                android:text="@string/dialog_confirm"
-                style="@style/map_common_btn" />
-
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- 검색창 쪽 -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/map_content_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5.3"
-        android:background="@drawable/border_round_top_border_gray">
-
-        <LinearLayout
-            android:id="@+id/map_search_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="12dp"
-            android:paddingHorizontal="30dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:weightSum="5"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <EditText
-                android:id="@+id/map_search_et"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="4"
-                android:backgroundTint="@color/editTextGray"
-                android:drawableStart="@drawable/ic_search"
-                android:drawablePadding="10dp"
-                android:hint="@string/map_search_hint"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:maxLines="1"
-                android:textColor="@color/black"
-                android:textColorHint="@color/editTextGray"
-                android:textSize="15sp" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/map_search_btn"
-                android:layout_width="0dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="30dp"
-                android:layout_weight="1"
-                android:background="@drawable/border_round_all_fill_mainorange"
-                android:text="@string/map_search"
-                android:textColor="@color/white"
-                android:textSize="15sp"
-                android:textStyle="bold"/>
-
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/map_rv"
+        <!-- 지도 쪽 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:paddingHorizontal="15dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/map_search_layout"
-            tools:listitem="@layout/item_map_place" />
+            android:layout_weight="4.7"
+            android:layout_marginBottom="-20dp">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.kakao.vectormap.MapView
+                android:id="@+id/map_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:background="@color/notyetGray"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
 
-</LinearLayout>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/map_back_cv"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="@color/white"
+                app:cardCornerRadius="40dp"
+                app:cardElevation="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_back"
+                    android:layout_gravity="center"/>
+            </androidx.cardview.widget.CardView>
+
+
+            <LinearLayout
+                android:id="@+id/map_btn_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="36dp"
+                android:gravity="center"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <TextView
+                    android:id="@+id/cancel_btn"
+                    android:layout_marginEnd="15dp"
+                    android:text="@string/dialog_cancel"
+                    style="@style/map_common_btn" />
+
+                <TextView
+                    android:id="@+id/select_btn"
+                    android:layout_marginStart="15dp"
+                    android:text="@string/dialog_confirm"
+                    style="@style/map_common_btn" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- 검색창 쪽 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/map_content_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5.3"
+            android:background="@drawable/bg_bottomsheet">
+
+            <LinearLayout
+                android:id="@+id/map_search_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="30dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="5"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <EditText
+                    android:id="@+id/map_search_et"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="4"
+                    android:backgroundTint="@color/editTextGray"
+                    android:drawableStart="@drawable/ic_search"
+                    android:drawablePadding="10dp"
+                    android:hint="@string/map_search_hint"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/editTextGray"
+                    android:textSize="15sp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/map_search_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_weight="1"
+                    android:shadowColor="@null"
+                    android:background="@drawable/bg_radius_5"
+                    android:backgroundTint="@color/mainOrange"
+                    android:text="@string/map_search"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/map_rv"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:paddingHorizontal="15dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/map_search_layout"
+                tools:listitem="@layout/item_map_place" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+</layout>

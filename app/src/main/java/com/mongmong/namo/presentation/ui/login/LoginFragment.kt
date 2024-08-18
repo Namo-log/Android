@@ -5,15 +5,9 @@ import android.app.NotificationManager
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.mongmong.namo.presentation.ui.MainActivity
@@ -21,31 +15,21 @@ import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentLoginBinding
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
+import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.config.LoginPlatform
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LoginFragment: Fragment() {
-    private lateinit var binding: FragmentLoginBinding
-
+class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login) {
     private val viewModel : AuthViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false)
-
+    override fun setup() {
         initObserve()
         initClickListeners()
         initNotification()
         onBackPressed()
-
-        return binding.root
     }
 
     private fun initNotification() {
@@ -66,11 +50,14 @@ class LoginFragment: Fragment() {
 
     private fun initObserve() {
         viewModel.loginResult.observe(viewLifecycleOwner) {
-            if (it?.newUser == true) {
+            if (it == null) return@observe
+
+            if (it.newUser || viewModel.checkUpdatedTerms()) {
+                // 약관 동의 화면으로 이동
                 findNavController().navigate(R.id.action_loginFragment_to_termsFragment)
                 return@observe
             }
-            if (!it?.accessToken.isNullOrEmpty()) {
+            if (it.accessToken.isNotEmpty()) {
                 Toast.makeText(requireContext(), "로그인에 성공했습니다.", Toast.LENGTH_SHORT).show()
                 setLoginFinished()
             } else {

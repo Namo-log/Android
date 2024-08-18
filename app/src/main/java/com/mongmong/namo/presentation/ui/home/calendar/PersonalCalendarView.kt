@@ -2,10 +2,10 @@ package com.mongmong.namo.presentation.ui.home.calendar
 
 import android.content.Context
 import android.graphics.*
-import android.text.TextUtils
 import android.util.AttributeSet
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.ui.home.calendar.data.StartEnd
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.DAYS_PER_WEEK
@@ -15,7 +15,7 @@ import org.joda.time.DateTime
 class PersonalCalendarView(context: Context, attrs: AttributeSet) :
     CustomCalendarView(context, attrs) {
 
-    private val scheduleList = mutableListOf<Schedule>()
+    private val scheduleList = mutableListOf<GetMonthScheduleResult>()
 
     override fun drawSchedules(canvas: Canvas) {
         if (cellHeight - eventTop > _eventHeight * 3) {
@@ -29,8 +29,8 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
 
     private fun drawDetailedSchedules(canvas: Canvas) {
         for (i in scheduleList.indices) {
-            val startIdx = days.indexOf(DateTime(scheduleList[i].startLong * 1000L).withTimeAtStartOfDay())
-            val endIdx = days.indexOf(DateTime(scheduleList[i].endLong * 1000L).withTimeAtStartOfDay())
+            val startIdx = days.indexOf(DateTime(scheduleList[i].startDate * 1000L).withTimeAtStartOfDay())
+            val endIdx = days.indexOf(DateTime(scheduleList[i].endDate * 1000L).withTimeAtStartOfDay())
 
             for (splitSchedule in splitWeek(startIdx, endIdx)) {
                 val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
@@ -48,8 +48,8 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
 
     private fun drawCompactSchedules(canvas: Canvas) {
         for (i in scheduleList.indices) {
-            val startIdx = days.indexOf(DateTime(scheduleList[i].startLong * 1000L).withTimeAtStartOfDay())
-            val endIdx = days.indexOf(DateTime(scheduleList[i].endLong * 1000L).withTimeAtStartOfDay())
+            val startIdx = days.indexOf(DateTime(scheduleList[i].startDate * 1000L).withTimeAtStartOfDay())
+            val endIdx = days.indexOf(DateTime(scheduleList[i].endDate * 1000L).withTimeAtStartOfDay())
 
             for (splitSchedule in splitWeek(startIdx, endIdx)) {
                 val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
@@ -64,7 +64,7 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
         }
     }
 
-    private fun drawScheduleRect(canvas: Canvas, schedule: Schedule, order: Int, splitSchedule: StartEnd) {
+    private fun drawScheduleRect(canvas: Canvas, schedule: GetMonthScheduleResult, order: Int, splitSchedule: StartEnd) {
         rect = setRect(order, splitSchedule.startIdx, splitSchedule.endIdx)
         val path = Path().apply {
             addRoundRect(rect, corners, Path.Direction.CW)
@@ -72,11 +72,11 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
         setBgPaintColor(schedule)
         canvas.drawPath(path, bgPaint)
 
-        val textToDraw = getTruncatedText(schedule.title, rect.width())
+        val textToDraw = getTruncatedText(schedule.name, rect.width())
         drawScheduleText(canvas, textToDraw, splitSchedule.startIdx, rect)
     }
 
-    private fun drawScheduleLine(canvas: Canvas, schedule: Schedule, order: Int, splitSchedule: StartEnd) {
+    private fun drawScheduleLine(canvas: Canvas, schedule: GetMonthScheduleResult, order: Int, splitSchedule: StartEnd) {
         rect = setLineRect(order, splitSchedule.startIdx, splitSchedule.endIdx)
         val path = Path().apply {
             addRoundRect(rect, corners, Path.Direction.CW)
@@ -132,11 +132,11 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
         )
     }
 
-    fun setScheduleList(events: List<Schedule>) {
-        val sortedEvents = events.sortedWith(compareByDescending<Schedule> {
-            DateTime(it.endLong * 1000L).millis - DateTime(it.startLong * 1000L).millis
+    fun setScheduleList(events: List<GetMonthScheduleResult>) {
+        val sortedEvents = events.sortedWith(compareByDescending<GetMonthScheduleResult> {
+            DateTime(it.endDate * 1000L).millis - DateTime(it.startDate * 1000L).millis
         }.thenBy {
-            it.startLong
+            it.startDate
         })
 
         scheduleList.clear()
@@ -150,10 +150,10 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
         categoryList.addAll(category)
     }
 
-    private fun setBgPaintColor(event: Schedule) {
+    private fun setBgPaintColor(schedule: GetMonthScheduleResult) {
         val foundCategory = categoryList.find {
-            if (it.serverId != 0L) it.serverId == event.categoryServerId
-            else it.categoryId == event.categoryId
+            if (it.serverId != 0L) it.serverId == schedule.categoryId
+            else it.categoryId == schedule.categoryId
         }
         val hexColor = CategoryColor.convertPaletteIdToHexColor(foundCategory?.paletteId ?: 0)
         bgPaint.color = Color.parseColor(hexColor)

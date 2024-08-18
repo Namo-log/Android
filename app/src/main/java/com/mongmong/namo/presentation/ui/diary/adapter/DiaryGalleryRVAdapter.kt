@@ -10,12 +10,12 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.mongmong.namo.databinding.ItemDiaryListGalleryBinding
+import com.mongmong.namo.domain.model.DiaryImage
 
 class DiaryGalleryRVAdapter(
     // 다이어리 리스트의 이미지(둥근 모서리, 점선 테두리 X)
-    private val context: Context,
-    private val imgList: List<String>?,
-    private val imageClickListener: (String) -> Unit
+    private val imgList: List<DiaryImage>?,
+    private val imageClickListener: (List<DiaryImage>) -> Unit
 ) :
     RecyclerView.Adapter<DiaryGalleryRVAdapter.ViewHolder>() {
 
@@ -29,32 +29,24 @@ class DiaryGalleryRVAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(imgList?.get(position) ?: DiaryImage(0L, ""))
 
-        val context = context
-        val uri = imgList?.get(position)
-
-        val requestOptions = RequestOptions()
-            .diskCacheStrategy(DiskCacheStrategy.DATA)
-
-        Glide.with(context)
-            .load(uri)
-            .transform(CenterCrop(), RoundedCorners(30)) // centerCrop, 이미지 모서리 설정
-            .apply(requestOptions)
-            .into(holder.imageUrl)
-
-        holder.imageUrl.setOnClickListener {
-            if (uri != null) {
-                imageClickListener(uri)
-            }
+        holder.binding.galleryImgIv.setOnClickListener {
+            if(imgList != null) imageClickListener(imgList)
         }
 
     }
 
-    override fun getItemCount(): Int = imgList!!.size
+    override fun getItemCount(): Int = imgList?.size ?: 0
 
-    inner class ViewHolder(val binding: ItemDiaryListGalleryBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        val imageUrl = binding.galleryImgIv
+    inner class ViewHolder(val binding: ItemDiaryListGalleryBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: DiaryImage) {
+            Glide.with(binding.galleryImgIv)
+                .load(item.url)
+                .transform(CenterCrop(), RoundedCorners(30)) // centerCrop, 이미지 모서리 설정
+                .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA))
+                .into(binding.galleryImgIv)
+        }
 
     }
 }

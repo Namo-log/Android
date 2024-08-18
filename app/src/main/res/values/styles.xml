@@ -63,11 +63,11 @@
     </style>
 
     <style name="img_category_check">
-        <item name="android:layout_width">13dp</item>
-        <item name="android:layout_height">12dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:scaleType">fitCenter</item>
-        <item name="android:src">@drawable/ic_category_selected</item>
+        <item name="android:src">@drawable/ic_check</item>
         <item name="android:visibility">gone</item>
     </style>
 
@@ -89,15 +89,15 @@
     <!-- 토글 -->
     <style name="category_toggle">
         <item name="thumbTint">@color/white</item>
-        <item name="track">@drawable/style_toggle_btn</item>
-        <item name="android:thumb">@drawable/style_toggle_thumb</item>
+        <item name="track">@drawable/selector_toggle_bg</item>
+        <item name="android:thumb">@drawable/bg_toggle_thumb</item>
         <item name="android:enabled">true</item>
     </style>
     <style name="custom_setting_15sp_tv">
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/textGray</item>
-        <item name="android:drawableEnd">@drawable/drawable_end_img_custom</item>
+        <item name="android:drawableEnd">@drawable/ic_arrow_right</item>
     </style>
     <style name="default_underline">
         <item name="android:layout_width">match_parent</item>
@@ -112,9 +112,10 @@
     </style>
     <!-- 다이얼로그 버튼 -->
     <style name="dialog_cancel_button">
-        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/border_round_all_fill_mainorange</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/bg_radius_5</item>
         <item name="android:textColor">@color/textGray</item>
         <item name="android:backgroundTint">@color/groupCodeGray</item>
         <item name="android:textSize">14sp</item>
@@ -123,9 +124,10 @@
     </style>
 
     <style name="dialog_check_button">
-        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/border_round_all_fill_mainorange</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/bg_radius_5</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
@@ -169,6 +171,24 @@
         <item name="android:textAlignment">textStart</item>
         <item name="android:textColor">@color/disableTextGray</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="schedule_date_picker">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:calendarTextColor">@color/black</item>
+        <item name="android:calendarViewShown">false</item>
+        <item name="android:datePickerMode">spinner</item>
+        <item name="android:theme">@style/MyDatePicker</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="schedule_time_picker">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:theme">@style/MyDatePicker</item>
+        <item name="android:timePickerMode">spinner</item>
         <item name="android:visibility">gone</item>
     </style>
 </resources>

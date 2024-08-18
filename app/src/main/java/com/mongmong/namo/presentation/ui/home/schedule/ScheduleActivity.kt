@@ -16,16 +16,15 @@ import androidx.navigation.fragment.NavHostFragment
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.ActivityScheduleBinding
+import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.home.notify.PushNotificationReceiver
 import com.mongmong.namo.presentation.utils.ConfirmDialog
-import com.mongmong.namo.presentation.utils.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 
 @AndroidEntryPoint
-class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
-
-    private lateinit var binding : ActivityScheduleBinding
+class ScheduleActivity : BaseActivity<ActivityScheduleBinding>(R.layout.activity_schedule), ConfirmDialogInterface {
 
     private val navController: NavController by lazy {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.schedule_nav_host) as NavHostFragment
@@ -38,12 +37,7 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
 
     private val viewModel : PersonalScheduleViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        binding = ActivityScheduleBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun setup() {
         val schedule = intent.getSerializableExtra("schedule") as? Schedule
         val nowDay = intent.getLongExtra("nowDay", 0)
 
@@ -102,7 +96,7 @@ class ScheduleActivity : AppCompatActivity(), ConfirmDialogInterface {
             }
 
             // 일정 삭제
-            viewModel.deleteSchedule(schedule.scheduleId, schedule.serverId, schedule.moimSchedule)
+            viewModel.deleteSchedule(schedule.scheduleId, schedule.moimSchedule)
 
             Toast.makeText(this, "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
             finish()

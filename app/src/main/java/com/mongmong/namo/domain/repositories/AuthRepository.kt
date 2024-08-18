@@ -16,23 +16,14 @@ interface AuthRepository {
     ): LoginResponse
 
     /** 토큰 재발급 */
-    suspend fun postTokenRefresh(
-        accessToken: String,
-        refreshToken: String
-    ): RefreshResponse
+    suspend fun postTokenRefresh(): RefreshResponse
 
     /** 로그아웃 */
-    suspend fun postLogout(
-        accessToken: String
-    ): Boolean
+    suspend fun postLogout(): Boolean
 
     /** 회원탈퇴 */
     // 카카오
-    suspend fun postKakaoQuit(
-        bearerToken: String
-    ): Boolean
+    suspend fun postKakaoQuit(): Boolean
     // 네이버
-    suspend fun postNaverQuit(
-        bearerToken: String
-    ): Boolean
+    suspend fun postNaverQuit(): Boolean
 }

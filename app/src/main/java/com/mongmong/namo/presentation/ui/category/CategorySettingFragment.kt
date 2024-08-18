@@ -7,46 +7,31 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.R
-import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.databinding.FragmentCategorySettingBinding
 import com.mongmong.namo.presentation.ui.category.adapter.SetCategoryRVAdapter
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.data.remote.category.CategorySettingView
-import com.mongmong.namo.domain.model.GetCategoryResponse
 import com.google.gson.Gson
+import com.mongmong.namo.presentation.config.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CategorySettingFragment: Fragment(), CategorySettingView {
-
-    lateinit var binding: FragmentCategorySettingBinding //플로팅 카테고리 설정 화면
-
+class CategorySettingFragment: BaseFragment<FragmentCategorySettingBinding>(R.layout.fragment_category_setting) {
     private lateinit var categoryRVAdapter: SetCategoryRVAdapter
 
-    private var categoryList: ArrayList<Category> = arrayListOf() // arrayListOf<Category>()
+    private val viewModel: CategoryViewModel by viewModels()
 
-    private var gson: Gson = Gson()
-    private val viewModel : CategoryViewModel by viewModels()
-
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-
-    ): View {
-        binding = FragmentCategorySettingBinding.inflate(inflater, container, false)
+    override fun setup() {
+        binding.viewModel = viewModel
 
         initObserve()
         onClickSchedule()
-
-        return binding.root
     }
 
     override fun onResume() {
@@ -68,7 +53,7 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
             activity?.finish()
         }
 
-        //팔레트 설정
+        // 팔레트 설정
         binding.categoryCalendarPaletteSetting.setOnClickListener {
 
         }
@@ -102,20 +87,18 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
                 // 데이터 저장
                 saveClickedData(category)
                 categoryRVAdapter.notifyItemChanged(position)
-
                 // 편집 화면으로 이동
-                startActivity(Intent(requireActivity(), CategoryEditActivity()::class.java))
+                val intent = Intent(requireActivity(), CategoryEditActivity()::class.java)
+                intent.putExtra("canDelete", (position != 0 && position != 1)) // 기본 카테고리는 삭제 불가
+                startActivity(intent)
             }
         })
     }
 
     private fun initObserve() {
         viewModel.categoryList.observe(viewLifecycleOwner) {
-            categoryList.clear()
             if (!it.isNullOrEmpty()) {
-                categoryList = it as ArrayList<Category>
-                categoryRVAdapter.addCategory(categoryList)
-                Log.d("getCategories", "initObserve")
+                categoryRVAdapter.addCategory(it as ArrayList<Category>)
             }
         }
     }
@@ -143,14 +126,6 @@ class CategorySettingFragment: Fragment(), CategorySettingView {
             .apply()
 
         Log.d("debug", "Category Data saved")
-    }
-
-    override fun onGetAllCategorySuccess(response: GetCategoryResponse) {
-        Log.d("CategorySettingFrag", "onGetAllCategorySuccess")
-    }
-
-    override fun onGetAllCategoryFailure(message: String) {
-        Log.d("CategorySettingFrag", "onGetAllCategoryFailure")
     }
 
     companion object {

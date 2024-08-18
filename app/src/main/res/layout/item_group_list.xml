@@ -1,83 +1,71 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginBottom="20dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="group"
+            type="com.mongmong.namo.domain.model.group.Group" />
+    </data>
 
     <LinearLayout
         android:id="@+id/item_group_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_category_view"
         android:orientation="horizontal"
-        android:padding="15dp"
-        android:background="@drawable/category_box"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginBottom="20dp"
+        android:padding="15dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/item_group_cover_img_iv"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            tools:src="@drawable/ic_mongi_default"/>
+            tools:src="@drawable/img_mongi_default" />
 
         <LinearLayout
             android:id="@+id/item_group_content_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="15dp">
+            android:layout_marginStart="15dp"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/item_group_title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:textStyle="bold"
+                android:text="@{group.groupName}"
                 android:textColor="@color/textGray"
-                tools:hint="나모 앱 런칭 캘린더"/>
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="7dp">
+                android:layout_marginTop="7dp"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/item_group_total_people_num_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
+                    android:text="@{String.valueOf(group.groupMembers.size())}"
                     android:textColor="@color/textGray"
-                    tools:hint="7"/>
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/item_group_total_people_name_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:textSize="12sp"
+                    android:text="@{group.getMemberNames()}"
                     android:textColor="@color/textGray"
-                    tools:hint="코코아, 유즈, 지니, 앨리, 라나, 얼리시"/>
+                    android:textSize="12sp" />
 
             </LinearLayout>
-
         </LinearLayout>
-
     </LinearLayout>
-
-<!--    <ImageView-->
-<!--        android:id="@+id/item_group_edit_iv"-->
-<!--        android:layout_width="30dp"-->
-<!--        android:layout_height="30dp"-->
-<!--        android:padding="5dp"-->
-<!--        android:layout_marginEnd="10dp"-->
-<!--        android:src="@drawable/ic_more_vertical"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"/>-->
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

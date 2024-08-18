@@ -4,6 +4,7 @@ import com.mongmong.namo.BuildConfig
 
 object Constants {
     const val BASE_URL = BuildConfig.BASE_URL
+    const val SUCCESS_CODE = 200
 
     /** 약관 관련 */
     const val TERM_URL = "https://www.notion.so/namo-log/fa0fbc3ae51a44679194cbd129243573?pvs=4" // 이용 약관

@@ -7,9 +7,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.databinding.ActivityGroupCalendarBinding
+import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupCalendarAdapter
 import com.mongmong.namo.presentation.ui.group.calendar.adapter.GroupCalendarAdapter.Companion.GROUP_ID
 import com.mongmong.namo.presentation.utils.SetMonthDialog
@@ -17,19 +19,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 
 @AndroidEntryPoint
-class GroupCalendarActivity : AppCompatActivity() {
-
-    private lateinit var binding : ActivityGroupCalendarBinding
-    private lateinit var db : NamoDatabase
+class GroupCalendarActivity : BaseActivity<ActivityGroupCalendarBinding>(R.layout.activity_group_calendar) {
     private lateinit var group : Group
     private lateinit var calendarAdapter : GroupCalendarAdapter
 
     private var millis = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
-    private var toadyPos = Int.MAX_VALUE / 2
     private var pos = Int.MAX_VALUE / 2
 
     private var prevIdx = -1
-    private var nowIdx = 0
 
     private val getResultValue = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -48,38 +45,32 @@ class GroupCalendarActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityGroupCalendarBinding.inflate(layoutInflater)
-        db = NamoDatabase.getInstance(this)
-        setContentView(binding.root)
-
+    override fun setup() {
         group = intent.getSerializableExtra("moim") as Group
         GROUP_ID = group.groupId
         setGroupInfo()
 
         calendarAdapter = GroupCalendarAdapter(this)
-        binding.groupCalendarVp.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-        binding.groupCalendarVp.adapter = calendarAdapter
-        binding.groupCalendarVp.setCurrentItem(GroupCalendarAdapter.START_POSITION, false)
+        binding.groupCalendarVp.apply{
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            adapter = calendarAdapter
+            setCurrentItem(GroupCalendarAdapter.START_POSITION, false)
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    pos = position
+                    prevIdx = -1
+                    millis = binding.groupCalendarVp.adapter!!.getItemId(position)
+                    binding.groupCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
+                    super.onPageSelected(position)
+                }
+            })
+        }
+
         binding.groupCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
-
-        binding.groupCalendarVp.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                pos = position
-                prevIdx = -1
-                millis = binding.groupCalendarVp.adapter!!.getItemId(position)
-                binding.groupCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
-                super.onPageSelected(position)
-            }
-        })
-    }
-
-    override fun onStart() {
-        super.onStart()
 
         clickListener()
     }
+
 
     private fun clickListener() {
         binding.groupCalendarInfoIv.setOnClickListener {
@@ -104,9 +95,7 @@ class GroupCalendarActivity : AppCompatActivity() {
         binding.groupCalendarGroupTitleTv.text = group.groupName
     }
 
-    fun getGroup() : Group {
-        return group
-    }
+    fun getGroup() = group
 
     companion object{
         var currentFragment : Fragment? = null

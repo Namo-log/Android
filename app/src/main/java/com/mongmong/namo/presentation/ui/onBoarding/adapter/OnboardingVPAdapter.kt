@@ -1,13 +1,14 @@
 package com.mongmong.namo.presentation.ui.onBoarding.adapter
 
-import androidx.fragment.app.Fragment
+import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.mongmong.namo.presentation.config.BaseFragment
 
-class OnboardingVPAdapter (
-    list : ArrayList<Fragment>,
-    fm : FragmentManager,
+class OnboardingVPAdapter(
+    list: ArrayList<BaseFragment<out ViewDataBinding>>,
+    fm: FragmentManager,
     lifecycle: Lifecycle
         ) : FragmentStateAdapter(fm, lifecycle) {
             private val fragmentList = list

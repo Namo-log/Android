@@ -7,7 +7,6 @@ import androidx.paging.PagingState
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.NetworkChecker
-import com.mongmong.namo.presentation.utils.NetworkCheckerImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -44,8 +43,9 @@ class DiaryMoimPagingSource(
                                 it.startDate,
                                 it.categoryId,
                                 it.placeName,
-                                it.content,
-                                it.imgUrl
+                                it._content,
+                                it.images,
+                                color = it.color
                             )
                         )
                     }

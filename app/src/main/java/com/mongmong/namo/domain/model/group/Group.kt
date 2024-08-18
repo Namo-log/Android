@@ -2,6 +2,8 @@ package com.mongmong.namo.domain.model.group
 
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
+import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import java.io.Serializable
 
 /** 그룹 리스트 조회 */
@@ -15,7 +17,11 @@ data class Group(
     @SerializedName("groupImgUrl") var groupImgUrl : String = "",
     @SerializedName("groupCode") var groupCode : String = "",
     @SerializedName("groupUsers") var groupMembers : List<GroupMember> = emptyList()
-) : Serializable
+) : Serializable {
+    fun getMemberNames(): String {
+        return groupMembers.joinToString { it.userName }
+    }
+}
 
 data class GroupMember (
     @SerializedName("userId") var userId : Long,
@@ -34,14 +40,23 @@ data class AddGroupResult (
 
 /** 그룹 참여 **/
 data class JoinGroupResponse(
-    @SerializedName("result") val result : Long = 0L
+    val result : JoinGroupResult
 ) : BaseResponse()
+
+data class JoinGroupResult(
+    val groupId: Long,
+    @SerializedName("code") val groupCode: String
+)
 
 /** 그룹명 변경 */
 data class UpdateGroupNameRequestBody(
     @SerializedName("groupId") val groupId: Long,
     @SerializedName("groupName") val groupName: String
 )
+
+data class UpdateGroupNameResponse(
+    val result : Long = 0L
+) : BaseResponse()
 
 /** 그룹의 일정 조회 */
 data class GetMoimScheduleResponse (
@@ -50,16 +65,60 @@ data class GetMoimScheduleResponse (
 
 data class MoimScheduleBody(
     @SerializedName("name") var name : String = "",
-    @SerializedName("startDate") var startDate : Long = 0L,
-    @SerializedName("endDate") var endDate : Long = 0L,
+    @SerializedName("startDate") var startLong : Long = 0L,
+    @SerializedName("endDate") var endLong : Long = 0L,
     @SerializedName("interval") var interval : Int = 0,
-    @SerializedName("users") var users : List<GroupMember> = listOf(),
-    @SerializedName("groupId") var moimId : Long = 0L,
+    @SerializedName("x") var placeX : Double = 0.0,
+    @SerializedName("y") var placeY : Double = 0.0,
+    @SerializedName("locationName") var placeName : String = "",
+    @SerializedName("users") var members : List<GroupMember> = listOf(),
+    @SerializedName("groupId") var groupId : Long = 0L,
     @SerializedName("moimScheduleId") var moimScheduleId : Long = 0L,
-    @SerializedName("x") var x : Double = 0.0,
-    @SerializedName("y") var y : Double = 0.0,
-    @SerializedName("locationName") var locationName : String = "",
     @SerializedName("hasDiaryPlace") var hasDiaryPlace : Boolean = false,
     @SerializedName("curMoimSchedule") var curMoimSchedule : Boolean = false
-) : Serializable
+) : Serializable {
+    fun getScheduleOwnerText(): String  {
+        return if (members.size < 2) members[0].userName
+        else members.size.toString() + "명"
+    }
 
+    fun convertMoimScheduleToBaseRequest(): BaseMoimScheduleRequestBody {
+        return BaseMoimScheduleRequestBody(
+            this.name,
+            this.startLong,
+            this.endLong,
+            this.interval,
+            this.placeX,
+            this.placeY,
+            this.placeName,
+            this.members.map { user -> user.userId } as ArrayList<Long>,
+        )
+    }
+
+    fun convertMoimScheduleToSchedule(): GetMonthScheduleResult {
+        return GetMonthScheduleResult(
+            this.moimScheduleId,
+            this.name,
+            this.startLong,
+            this.endLong,
+            listOf(),
+            this.interval,
+            this.placeX,
+            this.placeY,
+            this.placeName,
+            0L,
+            this.hasDiaryPlace,
+            this.curMoimSchedule
+        )
+    }
+}
+
+
+fun convertToGroupMembers(members: List<GroupMember>): List<MoimScheduleMember> {
+    return members.map { groupMember ->
+        MoimScheduleMember(
+            userId = groupMember.userId,
+            userName = groupMember.userName
+        )
+    }
+}

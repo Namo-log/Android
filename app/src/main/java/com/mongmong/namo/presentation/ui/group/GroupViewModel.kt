@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.domain.model.group.AddGroupResult
 import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.domain.model.group.JoinGroupResponse
+import com.mongmong.namo.domain.model.group.UpdateGroupNameResponse
 import com.mongmong.namo.domain.repositories.GroupRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,7 +18,7 @@ import javax.inject.Inject
 class GroupViewModel @Inject constructor(
     private val repository: GroupRepository
 ) : ViewModel() {
-    private val _groups = MutableLiveData<List<Group>?>()
+    private val _groups = MutableLiveData<List<Group>?>(emptyList())
     val groups: LiveData<List<Group>?> = _groups
 
     private val _addGroupResult = MutableLiveData<AddGroupResult>()
@@ -26,21 +27,25 @@ class GroupViewModel @Inject constructor(
     private val _joinGroupResult = MutableLiveData<JoinGroupResponse>()
     val joinGroupResult: LiveData<JoinGroupResponse> = _joinGroupResult
 
-    private val groupInfo = MutableLiveData<Group>()
+    private val _groupInfo = MutableLiveData<Group>()
+    val groupInfo: LiveData<Group> = _groupInfo
 
-    private val _updateGroupNameResult = MutableLiveData<JoinGroupResponse>()
-    val updateGroupNameResult: LiveData<JoinGroupResponse> = _updateGroupNameResult
+    private val _updateGroupNameResult = MutableLiveData<UpdateGroupNameResponse>()
+    val updateGroupNameResult: LiveData<UpdateGroupNameResponse> = _updateGroupNameResult
 
     private val _deleteMemberResult = MutableLiveData<Int>()
     val deleteMemberResult: LiveData<Int> = _deleteMemberResult
 
-    fun getGroups() {
+    val isDataLoaded: MutableLiveData<Boolean> = MutableLiveData(false)
+
+    fun getGroupList() {
         viewModelScope.launch {
             _groups.value = repository.getGroups()
+            isDataLoaded.value = true
         }
     }
 
-    fun addGroup(img: Uri, name: String) {
+    fun addGroup(img: Uri?, name: String) {
         viewModelScope.launch {
             _addGroupResult.value = repository.addGroups(img, name)
         }
@@ -69,8 +74,6 @@ class GroupViewModel @Inject constructor(
     }
 
     fun setGroup(group: Group) {
-        groupInfo.value = group
+        _groupInfo.value = group
     }
-
-    fun getGroup(): Group = groupInfo.value ?: Group()
 }

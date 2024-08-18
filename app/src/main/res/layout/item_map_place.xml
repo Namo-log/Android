@@ -60,7 +60,7 @@
             android:layout_gravity="center"
             android:src="@drawable/ic_check"
             android:visibility="gone"
-            app:tint="@color/MainOrange" />
+            app:tint="@color/mainOrange" />
         
     </LinearLayout>
 
