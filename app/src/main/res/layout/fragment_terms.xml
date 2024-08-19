@@ -76,7 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="20dp"
-                android:background="@color/typeBeforeGray"
+                android:background="@color/text_placeholder"
                 app:layout_constraintTop_toBottomOf="@id/terms_agree_all_btn"/>
 
             <!-- 이용 약관 -->
@@ -209,8 +209,8 @@
             android:stateListAnimator="@null"
             android:padding="15dp"
             android:background="@drawable/bg_basic_btn"
-            android:backgroundTint="@color/groupCodeGray"
-            android:textColor="@color/beforeOrange"
+            android:backgroundTint="@color/main_gray"
+            android:textColor="@color/main"
             android:text="@string/okay"
             android:textSize="18sp"
             android:textStyle="bold"

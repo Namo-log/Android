@@ -78,7 +78,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/group_name"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -93,8 +93,8 @@
                     android:hint="@string/input_group_name"
                     android:inputType="text"
                     android:gravity="end"
-                    android:textColor="@color/textGray"
-                    android:textColorHint="@color/editTextGray"
+                    android:textColor="@color/main_text"
+                    android:textColorHint="@color/text_placeholder"
                     android:textSize="15sp"
                     android:text="@{viewModel.groupInfo.groupName}"
                     android:layout_marginEnd="4dp"
@@ -124,7 +124,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/group_member"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -137,7 +137,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:text="@{String.valueOf(viewModel.groupInfo.groupMembers.size)}"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/group_info_member_header_content_unit_tv"
@@ -148,7 +148,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="명"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -174,7 +174,7 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="25dp"
                 android:background="@drawable/bg_dialog"
-                android:backgroundTint="@color/groupCodeGray"
+                android:backgroundTint="@color/main_gray"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingVertical="11dp"
@@ -187,7 +187,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/group_code"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -206,7 +206,7 @@
                     android:singleLine="true"
                     android:text="@{viewModel.groupInfo.groupCode}"
                     android:textAlignment="center"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="14sp" />
 
                 <ImageView
@@ -214,7 +214,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_copy"
-                    app:tint="@color/textGray"/>
+                    app:tint="@color/main_text"/>
 
             </LinearLayout>
 

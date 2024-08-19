@@ -47,7 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/category_detail_setting"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="15sp"
                     android:layout_marginStart="10dp"/>
             </LinearLayout>
@@ -58,7 +58,7 @@
                 android:padding="10dp"
                 android:layout_height="wrap_content"
                 android:text="@string/dialog_save"
-                android:textColor="@color/textGray"
+                android:textColor="@color/main_text"
                 android:textSize="15sp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="15dp"
@@ -81,11 +81,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/category_hint"
-                    android:textColorHint="@color/editTextGray"
+                    android:textColorHint="@color/text_placeholder"
                     android:paddingVertical="5dp"
                     android:singleLine="true"
                     android:text="@={viewModel.category.name}"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="22sp"
                     android:background="@null"
                     android:textStyle="bold"
@@ -108,7 +108,7 @@
                     app:layout_constraintEnd_toEndOf="parent">
                     <androidx.cardview.widget.CardView
                         android:id="@+id/schedule_color_cv"
-                        app:cardBackgroundColor="@color/schedule"
+                        app:cardBackgroundColor="@color/main_pink"
                         style="@style/category_cv">
                         <ImageView
                             android:id="@+id/schedule_color_select_iv"
@@ -117,7 +117,7 @@
                     <androidx.cardview.widget.CardView
                         android:id="@+id/schedule_plan_color_cv"
                         android:layout_marginStart="20dp"
-                        app:cardBackgroundColor="@color/schedule_plan"
+                        app:cardBackgroundColor="@color/main_yellow"
                         style="@style/category_cv">
                         <ImageView
                             android:id="@+id/schedule_plan_color_select_iv"
@@ -126,7 +126,7 @@
                     <androidx.cardview.widget.CardView
                         android:id="@+id/schedule_parttime_color_cv"
                         android:layout_marginStart="20dp"
-                        app:cardBackgroundColor="@color/schedule_parttime"
+                        app:cardBackgroundColor="@color/main_blue"
                         style="@style/category_cv">
                         <ImageView
                             android:id="@+id/schedule_parttime_color_select_iv"
@@ -135,7 +135,7 @@
                     <androidx.cardview.widget.CardView
                         android:id="@+id/schedule_group_color_cv"
                         android:layout_marginStart="20dp"
-                        app:cardBackgroundColor="@color/schedule_group"
+                        app:cardBackgroundColor="@color/main"
                         style="@style/category_cv">
                         <ImageView
                             android:id="@+id/schedule_group_color_select_iv"
@@ -157,7 +157,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/palette_normal"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:background="@null"
                     android:textSize="15sp"
                     android:layout_marginTop="8dp"

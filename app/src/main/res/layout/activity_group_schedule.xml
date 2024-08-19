@@ -106,12 +106,12 @@
                     android:hint="@string/schedule_hint"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:textColorHint="@color/transGray"
+                    android:textColorHint="@color/dimed_light"
                     android:background="@color/transparent"
                     android:text="@={viewModel.schedule.name}"
                     android:textStyle="bold"
                     android:textSize="22sp"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:layout_marginTop="25dp"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -124,7 +124,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="참석자"
-                        android:textColor="@color/textGray"
+                        android:textColor="@color/main_text"
                         android:textStyle="bold"
                         android:textSize="15sp"
                         app:layout_constraintTop_toTopOf="parent"
@@ -136,7 +136,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_arrow_right"
-                        android:tint="@color/textGray"
+                        android:tint="@color/main_text"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"/>
@@ -175,7 +175,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="시작"
-                        android:textColor="@color/textGray"
+                        android:textColor="@color/main_text"
                         android:textStyle="bold"
                         android:textSize="15sp"
                         app:layout_constraintTop_toTopOf="parent"
@@ -197,13 +197,13 @@
                             android:layout_height="wrap_content"
                             android:text="@{PickerConverter.parseLongToDateText(viewModel.schedule.startLong)}"
                             android:textAlignment="center"
-                            android:textColor="@color/textGray"
+                            android:textColor="@color/main_text"
                             tools:text="2022.06.29 (수)"/>
 
                         <View
                             android:layout_width="1dp"
                             android:layout_height="match_parent"
-                            android:background="@color/textGray"
+                            android:background="@color/main_text"
                             android:layout_marginVertical="2dp"
                             android:layout_marginHorizontal="10dp"/>
 
@@ -213,7 +213,7 @@
                             android:layout_height="wrap_content"
                             android:text="@{PickerConverter.parseLongToTimeText(viewModel.schedule.startLong)}"
                             android:textAlignment="center"
-                            android:textColor="@color/textGray"
+                            android:textColor="@color/main_text"
                             tools:text="12:00 PM"/>
 
                     </LinearLayout>
@@ -230,7 +230,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="종료"
-                        android:textColor="@color/textGray"
+                        android:textColor="@color/main_text"
                         android:textStyle="bold"
                         android:textSize="15sp"
                         app:layout_constraintTop_toTopOf="parent"
@@ -252,13 +252,13 @@
                             android:layout_height="wrap_content"
                             android:text="@{PickerConverter.parseLongToDateText(viewModel.schedule.endLong)}"
                             android:textAlignment="center"
-                            android:textColor="@color/textGray"
+                            android:textColor="@color/main_text"
                             tools:text="2022.06.29 (수)"/>
 
                         <View
                             android:layout_width="1dp"
                             android:layout_height="match_parent"
-                            android:background="@color/textGray"
+                            android:background="@color/main_text"
                             android:layout_marginVertical="2dp"
                             android:layout_marginHorizontal="10dp"/>
 
@@ -268,7 +268,7 @@
                             android:layout_height="wrap_content"
                             android:text="@{PickerConverter.parseLongToTimeText(viewModel.schedule.endLong)}"
                             android:textAlignment="center"
-                            android:textColor="@color/textGray"
+                            android:textColor="@color/main_text"
                             tools:text="12:00 PM"/>
 
                     </LinearLayout>
@@ -424,7 +424,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="장소"
-                        android:textColor="@color/textGray"
+                        android:textColor="@color/main_text"
                         android:textStyle="bold"
                         android:textSize="15sp"
                         app:layout_constraintTop_toTopOf="parent"
@@ -436,7 +436,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_arrow_right"
-                        android:tint="@color/textGray"
+                        android:tint="@color/main_text"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"/>
@@ -446,7 +446,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@{viewModel.schedule.placeName}"
-                        android:textColor="@color/textGray"
+                        android:textColor="@color/main_text"
                         android:textSize="15sp"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"

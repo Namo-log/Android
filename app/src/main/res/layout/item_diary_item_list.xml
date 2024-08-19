@@ -86,7 +86,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:background="@drawable/ic_record"
-                        android:backgroundTint="@color/textGray"
+                        android:backgroundTint="@color/main_text"
                         android:contentDescription="@string/diary_modify" />
 
                     <TextView
@@ -96,7 +96,7 @@
                         android:layout_gravity="center"
                         android:layout_marginStart="3dp"
                         android:text="@string/diary_modify"
-                        android:textColor="@color/textGray"
+                        android:textColor="@color/main_text"
                         android:textSize="12sp" />
 
                 </LinearLayout>
@@ -109,7 +109,7 @@
                     android:layout_marginEnd="10dp"
                     android:ellipsize="end"
                     android:maxLines="3"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="16sp"
                     android:text="@{diary.content}"
                     android:visibility="@{diary.content.length() == 0 || diary.content == null ? View.GONE : View.VISIBLE}"

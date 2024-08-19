@@ -44,7 +44,7 @@
 
             <TextView
                 android:id="@+id/diary_title_tv"
-                style="@style/title_text"
+                style="@style/header"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
@@ -91,7 +91,7 @@
             android:layout_height="wrap_content"
             android:elevation="10dp"
             android:text="@{DiaryDateConverter.getFormattedMonth(viewModel.schedule.startLong)}"
-            android:textColor="@color/textGray"
+            android:textColor="@color/main_text"
             android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/diary_today_num_tv"
@@ -106,7 +106,7 @@
             android:layout_height="wrap_content"
             android:elevation="10dp"
             android:text="@{DiaryDateConverter.getFormattedDay(viewModel.schedule.startLong)}"
-            android:textColor="@color/textGray"
+            android:textColor="@color/main_text"
             android:textSize="35sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/date_circle_iv"
@@ -123,7 +123,7 @@
             android:layout_marginStart="25dp"
             android:layout_marginTop="35dp"
             android:text="@string/diary_date"
-            android:textColor="@color/textGray"
+            android:textColor="@color/main_text"
             android:textSize="17sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/date_circle_iv"
@@ -135,7 +135,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:text="@{DiaryDateConverter.getFormattedDate(viewModel.schedule.startLong)}"
-            android:textColor="@color/textGray"
+            android:textColor="@color/main_text"
             android:textSize="17sp"
             app:layout_constraintStart_toEndOf="@id/diary_date_tv"
             app:layout_constraintTop_toTopOf="@id/diary_date_tv" />
@@ -146,7 +146,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:text="@string/diary_place"
-            android:textColor="@color/textGray"
+            android:textColor="@color/main_text"
             android:textSize="17sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@id/diary_date_tv"
@@ -161,7 +161,7 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@{TextUtils.isEmpty(viewModel.schedule.placeName) ? @string/diary_no_place : viewModel.schedule.placeName}"
-            android:textColor="@color/textGray"
+            android:textColor="@color/main_text"
             android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/diary_place_tv"
@@ -204,8 +204,8 @@
                 android:inputType="textMultiLine"
                 android:padding="10dp"
                 android:text="@={viewModel.diary.content}"
-                android:textColor="@color/textGray"
-                android:textColorHint="@color/editTextGray" />
+                android:textColor="@color/main_text"
+                android:textColorHint="@color/text_placeholder" />
         </LinearLayout>
 
         <TextView
@@ -214,7 +214,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text='@{viewModel.diary.content.length() + @string/diary_max_num}'
-            android:textColor="@color/notyetGray"
+            android:textColor="@color/text_unselected"
             app:layout_constraintEnd_toEndOf="@id/linear_corner"
             app:layout_constraintTop_toBottomOf="@id/linear_corner" />
 
@@ -222,12 +222,12 @@
             android:id="@+id/diary_edit_btn_tv"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@{viewModel.schedule.hasDiary ? @color/white : @color/mainOrange}"
+            android:background="@{viewModel.schedule.hasDiary ? @color/white : @color/main}"
             android:elevation="@{viewModel.schedule.hasDiary ? 10f : 0f}"
             android:padding="15dp"
             android:text="@{viewModel.schedule.hasDiary ? @string/diary_edit : @string/diary_add}"
             android:textAlignment="center"
-            android:textColor="@{viewModel.schedule.hasDiary ? @color/mainOrange : @color/white}"
+            android:textColor="@{viewModel.schedule.hasDiary ? @color/main : @color/white}"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent" />
 

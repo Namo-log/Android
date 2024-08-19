@@ -24,7 +24,7 @@
             android:background="@drawable/bg_circle"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:backgroundTint="@color/schedule"/>
+            tools:backgroundTint="@color/main_pink"/>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/category_selected_iv"
@@ -44,7 +44,7 @@
             android:layout_marginStart="20dp"
             android:text="@{category.name}"
             android:textSize="15sp"
-            android:textColor="@color/textGray"
+            android:textColor="@color/main_text"
             app:layout_constraintTop_toTopOf="@id/category_color_view"
             app:layout_constraintBottom_toBottomOf="@id/category_color_view"
             app:layout_constraintStart_toEndOf="@id/category_color_view"

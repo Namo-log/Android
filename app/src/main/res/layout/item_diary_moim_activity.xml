@@ -13,7 +13,7 @@
        android:clickable="false"
        android:enabled="false"
        app:layout_constraintBottom_toBottomOf="parent"
-       android:background="@color/mainOrange"
+       android:background="@color/main"
        app:layout_constraintTop_toTopOf="parent"
        app:layout_constraintEnd_toEndOf="parent">
 
@@ -54,8 +54,8 @@
                 android:minWidth="48dp"
                 android:minHeight="32dp"
                 android:hint="활동"
-                android:textColorHint="@color/editTextGray"
-                android:textColor="@color/textGray"
+                android:textColorHint="@color/text_placeholder"
+                android:textColor="@color/main_text"
                 android:textSize="17sp" />
 
             <View
@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:text="총"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="17sp" />
 
                 <TextView
@@ -85,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="5dp"
                     android:text="금액 정산"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="17sp" />
 
                 <TextView
@@ -94,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
                     android:text="원"
-                    android:textColor="@color/textGray"
+                    android:textColor="@color/main_text"
                     android:textSize="17sp" />
 
                 <ImageView

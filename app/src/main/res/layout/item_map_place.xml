@@ -7,7 +7,7 @@
     android:layout_marginTop="8dp"
     android:layout_marginHorizontal="4dp"
     android:layout_marginBottom="8dp"
-    app:cardBackgroundColor="@color/cardViewGray"
+    app:cardBackgroundColor="@color/item_background"
     app:cardElevation="4dp"
     app:cardCornerRadius="10dp"
     app:contentPadding="12dp">
@@ -30,7 +30,7 @@
                 android:text="장소 이름"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="@color/textGray"/>
+                android:textColor="@color/main_text"/>
 
             <TextView
                 android:id="@+id/item_map_place_road_address_tv"
@@ -39,7 +39,7 @@
                 android:layout_marginTop="7dp"
                 android:text="도로명 주소"
                 android:textSize="12sp"
-                android:textColor="@color/textGray"/>
+                android:textColor="@color/main_text"/>
 
             <TextView
                 android:id="@+id/item_map_place_old_address_tv"
@@ -48,7 +48,7 @@
                 android:layout_marginTop="5dp"
                 android:text="지번 주소"
                 android:textSize="12sp"
-                android:textColor="@color/textGray" />
+                android:textColor="@color/main_text" />
 
         </LinearLayout>
         
@@ -60,7 +60,7 @@
             android:layout_gravity="center"
             android:src="@drawable/ic_check"
             android:visibility="gone"
-            app:tint="@color/mainOrange" />
+            app:tint="@color/main" />
         
     </LinearLayout>
 

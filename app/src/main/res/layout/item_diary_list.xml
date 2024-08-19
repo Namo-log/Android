@@ -27,7 +27,7 @@
                 android:layout_width="100dp"
                 android:layout_height="1.6dp"
                 android:layout_marginTop="20dp"
-                android:background="@color/notyetGray"
+                android:background="@color/main_text"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"/>
 
@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{date}"
-                android:textColor="@color/realGray"
+                android:textColor="@color/main_text"
                 android:gravity="center"
                 android:textSize="17sp"
                 android:textStyle="bold"
@@ -48,7 +48,7 @@
                 android:layout_width="100dp"
                 android:layout_height="1.6dp"
                 android:layout_marginTop="20dp"
-                android:background="@color/notyetGray"
+                android:background="@color/main_text"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
 

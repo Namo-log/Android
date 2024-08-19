@@ -47,7 +47,7 @@ class GroupListRVAdapter(private var groups: List<Group>):  RecyclerView.Adapter
 
             Glide.with(binding.itemGroupCoverImgIv)
                 .load(moim.groupImgUrl)
-                .placeholder(R.color.notyetGray)
+                .placeholder(R.color.text_unselected)
                 .error(R.drawable.img_mongi_default)
                 .fallback(R.drawable.img_mongi_default)
                 .into(binding.itemGroupCoverImgIv)

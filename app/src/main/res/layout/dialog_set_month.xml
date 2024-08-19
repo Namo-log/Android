@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:text="년"
                 android:textSize="17sp"
-                android:textColor="@color/textGray"
+                android:textColor="@color/main_text"
                 android:textStyle="bold"/>
 
             <NumberPicker
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:text="월"
                 android:textSize="17sp"
-                android:textColor="@color/textGray"
+                android:textColor="@color/main_text"
                 android:textStyle="bold"/>
 
         </LinearLayout>

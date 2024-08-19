@@ -10,7 +10,7 @@
     <item android:state_checked="false">
         <shape android:shape="rectangle">
             <size android:height="25dp" android:width="45dp"/>
-            <solid android:color="@color/editTextGray"/>
+            <solid android:color="@color/text_placeholder"/>
             <corners android:radius="46dp"/>
         </shape>
     </item>

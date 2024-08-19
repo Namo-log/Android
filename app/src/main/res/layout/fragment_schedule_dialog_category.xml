@@ -72,7 +72,7 @@
                         android:layout_marginStart="20dp"
                         android:text="@string/category_edit"
                         android:textSize="15sp"
-                        android:textColor="@color/textGray"
+                        android:textColor="@color/main_text"
                         app:layout_constraintStart_toEndOf="@id/dialog_schedule_category_edit_iv"
                         app:layout_constraintTop_toTopOf="@id/dialog_schedule_category_edit_iv"
                         app:layout_constraintBottom_toBottomOf="@id/dialog_schedule_category_edit_iv"
