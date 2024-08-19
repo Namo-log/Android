@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- 메인 색상 -->
-    <color name="black">#FF000000</color>
+    <color name="black">#FF1D1D1B</color>
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="main">#DA6022</color>
