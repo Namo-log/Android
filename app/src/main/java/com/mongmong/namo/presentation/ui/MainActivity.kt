@@ -126,8 +126,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
     }
 
     private fun initNavigation() {
-        NavigationUI.setupWithNavController(binding.navBar,findNavController(R.id.nav_host))
-        //바텀내비 백스택 수정 필요
+        NavigationUI.setupWithNavController(binding.navBar, findNavController(R.id.nav_host))
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {  // editText 외 터치 시 키보드 내려감

@@ -29,7 +29,7 @@
             android:layout_height="60dp"
             android:background="@color/white"
             app:menu="@menu/nav_menu"
-            app:itemIconSize="35dp"
+            app:itemIconSize="40dp"
             app:labelVisibilityMode="unlabeled"
             app:itemRippleColor="@null"
             app:layout_constraintBottom_toBottomOf="parent"

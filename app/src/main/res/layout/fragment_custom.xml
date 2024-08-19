@@ -22,7 +22,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="9"
-                android:text="@string/bottom_custom"
+                android:text="@string/nav_custom"
                 style="@style/header"/>
 
             <ImageView
