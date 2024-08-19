@@ -185,8 +185,8 @@
         <item name="android:textAlignment">center</item>
     </style>
 
-    <!-- 필터 -->
-    <style name="filter_edit_text">
+    <!-- 검색 -->
+    <style name="search_edit_text">
         <item name="android:textColor">@color/main_text</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textColorHint">@color/text_placeholder</item>
@@ -196,7 +196,7 @@
         <item name="android:drawablePadding">8dp</item>
         <item name="android:drawableTint">@color/text_placeholder</item>
     </style>
-    <style name="filter_btn">
+    <style name="search_btn">
         <item name="android:background">@drawable/bg_filter_btn</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/white</item>

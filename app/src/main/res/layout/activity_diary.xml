@@ -67,7 +67,7 @@
             app:layout_constraintStart_toStartOf="parent"/>
 
         <EditText
-            style="@style/filter_edit_text"
+            style="@style/search_edit_text"
             android:id="@+id/diary_filter_keyword_et"
             android:hint="@string/diary_filter_keyword_hint"
             android:layout_width="0dp"
@@ -81,7 +81,7 @@
             app:layout_constraintTop_toBottomOf="@id/diary_filter" />
 
         <androidx.appcompat.widget.AppCompatButton
-            style="@style/filter_btn"
+            style="@style/search_btn"
             android:id="@+id/diary_filter_search_btn"
             android:layout_width="58dp"
             android:layout_height="30dp"
