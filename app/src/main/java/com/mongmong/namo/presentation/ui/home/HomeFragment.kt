@@ -1,6 +1,7 @@
 package com.mongmong.namo.presentation.ui.home
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +15,8 @@ import com.mongmong.namo.R
 import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.databinding.FragmentHomeBinding
 import com.mongmong.namo.presentation.config.BaseFragment
+import com.mongmong.namo.presentation.ui.diary.DiaryActivity
+import com.mongmong.namo.presentation.ui.diary.DiaryImageDetailActivity
 import com.mongmong.namo.presentation.utils.SetMonthDialog
 import com.mongmong.namo.presentation.ui.home.calendar.CalendarAdapter
 import org.joda.time.DateTime
@@ -53,7 +56,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility", "NotifyDataSetChanged")
     private fun clickListener() {
         binding.homeCalenderYearMonthLayout.setOnClickListener {
             SetMonthDialog(requireContext(), millis) {
@@ -66,6 +68,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         binding.homeCalendarTodayTv.setOnClickListener {
             binding.homeCalendarVp.setCurrentItem(todayPos, true)
+        }
+
+        binding.homeCalendarDiaryCollectBtn.setOnClickListener {
+            startActivity(Intent(requireContext(), DiaryActivity::class.java))
         }
     }
 

@@ -25,7 +25,7 @@
         android:id="@+id/diaryFragment"
         android:name="com.mongmong.namo.presentation.ui.diary.DiaryFragment"
         android:label="DiaryFragment"
-        tools:layout="@layout/fragment_diary">
+        tools:layout="@layout/activity_diary">
         <action
             android:id="@+id/action_diaryFragment_to_groupModifyFragment"
             app:destination="@id/groupModifyFragment" />
