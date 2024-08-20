@@ -3,6 +3,7 @@ package com.mongmong.namo.presentation.ui.diary
 
 import android.content.Intent
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
@@ -16,8 +17,10 @@ import com.mongmong.namo.databinding.ActivityDiaryBinding
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.presentation.config.BaseActivity
+import com.mongmong.namo.presentation.config.FilterState
 import com.mongmong.namo.presentation.ui.diary.adapter.DiaryRVAdapter
 import com.mongmong.namo.presentation.utils.SetMonthDialog
+import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -45,8 +48,15 @@ class DiaryActivity : BaseActivity<ActivityDiaryBinding>(R.layout.activity_diary
     }
 
     private fun initClickListener() {
+        binding.diaryBackBtn.setOnClickListener { finish() }
         binding.diaryFilter.setOnClickListener {
-            // 다이얼로그 띄우기
+            FilterDialog(viewModel.filter.value).apply {
+                setOnFilterSelectedListener(object : FilterDialog.OnFilterSelectedListener {
+                    override fun onFilterSelected(filter: FilterState) {
+                        viewModel.setFilter(filter)
+                    }
+                })
+            }.show(supportFragmentManager, "FilterDialog")
         }
         binding.diaryFilterSearchBtn.setOnClickListener {
             // 키워드 검색
@@ -136,6 +146,12 @@ class DiaryActivity : BaseActivity<ActivityDiaryBinding>(R.layout.activity_diary
     companion object {
         const val IS_MOIM = 1
         const val IS_NOT_MOIM = 0
+    }
+
+    /** editText 외 터치 시 키보드 내리는 이벤트 **/
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        hideKeyboardOnTouchOutside(ev)
+        return super.dispatchTouchEvent(ev)
     }
 }
 

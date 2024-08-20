@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="com.mongmong.namo.presentation.config.FilterState"/>
         <import type="android.view.View"/>
         <variable
             name="viewModel"
@@ -49,7 +50,6 @@
                 android:background="@color/transparent"
                 android:src="@drawable/ic_calendar" />
         </LinearLayout>
-
         <TextView
             style="@style/content_regular"
             android:id="@+id/diary_filter"
@@ -57,14 +57,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
             android:background="@drawable/bg_diary_tab"
-            android:text="@{String.valueOf(viewModel.filter)}"
-            android:drawableLeft="@drawable/ic_filter"
+            android:text="@{viewModel.filter.state}"
+            android:drawableLeft="@{viewModel.filter == FilterState.NONE ? @drawable/ic_filter : @drawable/ic_filter_active}"
             android:drawablePadding="8dp"
-            android:drawableTint="@{viewModel.filter.NONE ? @color/main_gray : @color/main}"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
             app:layout_constraintTop_toBottomOf="@id/diary_month_ll"
             app:layout_constraintStart_toStartOf="parent"/>
+
 
         <EditText
             style="@style/search_edit_text"

@@ -30,8 +30,7 @@ class DiaryViewModel @Inject constructor(
     private val _filter = MutableLiveData<FilterState>(FilterState.NONE)
     val filter: LiveData<FilterState> = _filter
 
-    private val _keyword = MutableLiveData<String>()
-    val keyword: LiveData<String> = _keyword
+    val keyword = MutableLiveData<String>()
 
     private val _emptyMessageResId = MutableLiveData<Int>(R.string.diary_network_failure)
     val emptyMessageResId: LiveData<Int> = _emptyMessageResId
@@ -84,6 +83,7 @@ class DiaryViewModel @Inject constructor(
         Log.d("setEmptyView", "${_isListEmpty.value}")
     }
 
+    fun setFilter(filterState: FilterState) { _filter.value = filterState }
     companion object {
         const val IS_MOIM = 1
         const val IS_NOT_MOIM = 0
