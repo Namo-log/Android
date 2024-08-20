@@ -25,10 +25,10 @@
     <string name="onboarding_skip">skip</string>
 
     <!--bottom navigation 관련 String-->
-    <string name="bottom_home">Home</string>
-    <string name="bottom_record">Record</string>
-    <string name="bottom_grouplist">GroupList</string>
-    <string name="bottom_custom">Custom</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_community">Community</string>
+    <string name="nav_shop">Shop</string>
+    <string name="nav_custom">Custom</string>
 
     <!-- Group 화면 관련 String -->
     <string name="group_calendar">Group Calendar</string>

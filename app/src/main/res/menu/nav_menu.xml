@@ -5,28 +5,28 @@
     <item
         android:id="@+id/homeFragment"
         android:icon="@drawable/selector_nav_home"
-        android:title="@string/bottom_home"
+        android:title="@string/nav_home"
         android:enabled="true"
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/diaryFragment"
-        android:icon="@drawable/selector_nav_diary"
-        android:title="@string/bottom_record"
+        android:id="@+id/communityFragment"
+        android:icon="@drawable/selector_nav_community"
+        android:title="@string/nav_community"
         android:enabled="true"
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/groupListFragment"
-        android:icon="@drawable/selector_nav_group"
-        android:title="@string/bottom_grouplist"
+        android:id="@+id/shopFragment"
+        android:icon="@drawable/selector_nav_shop"
+        android:title="@string/nav_shop"
         android:enabled="true"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/customFragment"
         android:icon="@drawable/selector_nav_custom"
-        android:title="@string/bottom_custom"
+        android:title="@string/nav_custom"
         android:enabled="true"
         app:showAsAction="ifRoom"/>
 </menu>
