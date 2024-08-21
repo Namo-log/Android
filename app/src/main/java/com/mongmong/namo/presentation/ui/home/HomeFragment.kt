@@ -1,22 +1,13 @@
 package com.mongmong.namo.presentation.ui.home
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.R
-import com.mongmong.namo.data.local.NamoDatabase
 import com.mongmong.namo.databinding.FragmentHomeBinding
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.diary.DiaryActivity
-import com.mongmong.namo.presentation.ui.diary.DiaryImageDetailActivity
 import com.mongmong.namo.presentation.utils.SetMonthDialog
 import com.mongmong.namo.presentation.ui.home.calendar.CalendarAdapter
 import org.joda.time.DateTime

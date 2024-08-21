@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.text.TextPaint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.withStyledAttributes
@@ -25,15 +26,15 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
     var onDateClickListener: OnDateClickListener? = null
     var selectedDate: DateTime? = null
     var millis: Long = 0
-    private var startX = 0f
-    private var startY = 0f
-    private var endX = 0f
-    private var endY = 0f
-    private var isScroll = false
+    var startX = 0f
+    var startY = 0f
+    var endX = 0f
+    var endY = 0f
+    var isScroll = false
 
     var cellWidth = 0f
     var cellHeight = 0f
-    private val bounds = Rect()
+    val bounds = Rect()
     private val today = DateTime.now().withTimeAtStartOfDay().millis
 
     val days = mutableListOf<DateTime>()
@@ -48,7 +49,7 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
     var showTitle: Boolean = false
     private var cellPaint: Paint = Paint()
     private var alphaPaint: Paint = Paint()
-    private var datePaint: Paint = Paint()
+    var datePaint: Paint = Paint()
     private var todayPaint: Paint = Paint()
     private var selectedPaint: Paint = Paint()
     private var clickPaint: Paint = Paint()
@@ -264,7 +265,7 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
         return date.monthOfYear == DateTime(millis).monthOfYear
     }
 
-    fun setDays(millis: Long) {
+    open fun setDays(millis: Long) {
         this.millis = millis
         days.clear()
         days.addAll(getMonthList(DateTime(millis)))
@@ -273,13 +274,14 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        Log.d("CustomCalendarView", "onDraw")
         drawDays(canvas)
         drawSelected(canvas)
         drawSchedules(canvas)
         drawRestDays(canvas)
     }
 
-    private fun drawDays(canvas: Canvas) {
+    protected open fun drawDays(canvas: Canvas) {
         val padding = dpToPx(context, 5f)  // 5dp를 픽셀로 변환
 
         for (day in 0 until 42) {
