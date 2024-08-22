@@ -1,0 +1,22 @@
+package com.mongmong.namo.presentation.ui.community.moim
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.mongmong.namo.domain.model.Moim
+import com.mongmong.namo.domain.model.group.GroupMember
+import com.mongmong.namo.presentation.utils.PickerConverter
+import org.joda.time.DateTime
+
+class MoimViewModel: ViewModel() {
+    private val _moimList = MutableLiveData<List<Moim>>(emptyList())
+    val moimList: LiveData<List<Moim>> = _moimList
+
+    init {
+        _moimList.value = listOf(
+            Moim(PickerConverter.parseDateTimeToLong(DateTime.now()), "", "나모 모임 일정", listOf(
+                GroupMember(3, "코코아", 4)
+            ))
+        )
+    }
+}

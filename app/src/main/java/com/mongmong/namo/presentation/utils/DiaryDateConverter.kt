@@ -9,5 +9,5 @@ object DiaryDateConverter {
     @JvmStatic
     fun getFormattedDay(date: Long): String = date.let { DateTime(date * 1000).toString("dd") }
     @JvmStatic
-    fun getFormattedDate(date: Long): String = date.let { DateTime(date * 1000).toString("yyyy.MM.dd (EE) hh:mm") }
+    fun getFormattedDate(date: Long): String = date.let { DateTime(date * 1000).toString("yyyy.MM.dd (EE) HH:mm") }
 }

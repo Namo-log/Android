@@ -135,5 +135,8 @@
     <string name="map_search_hint">장소 입력</string>
     <string name="map_search">검색</string>
 
+    <!-- 모임 일정 -->
+    <string name="moim_schedule_empty">모임 일정이 없습니다.\n친구와의 모임 약속을 잡아보세요!</string>
+    <string name="moim_hide_previous">지난 모임 일정 숨기기</string>
 
 </resources>

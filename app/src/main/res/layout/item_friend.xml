@@ -1,0 +1,74 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="friend"
+            type="com.mongmong.namo.domain.model.Friend"/>
+    </data>
+
+    <LinearLayout
+        android:id="@+id/item_friend_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_category_view"
+        android:backgroundTint="@color/item_background"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="20dp"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="16dp">
+        
+        <androidx.cardview.widget.CardView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="0dp">
+            <ImageView
+                android:id="@+id/item_friend_profile_iv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:imageUrl="@{friend.profileUrl}"
+                app:placeHolder="@{@drawable/img_mongi_default}"
+                tools:src="@drawable/ic_app_logo_square"/>
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:id="@+id/item_friend_content_ll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="15dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/item_moim_title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{friend.nickname}"
+                tools:text="닉네임"
+                style="@style/content_bold"/>
+
+            <TextView
+                android:id="@+id/item_moim_member_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@{friend.introduction}"
+                tools:text="친구가 직접 작성한 한 줄 소개"
+                style="@style/subtext_12" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/item_friend_favorite_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:src="@drawable/ic_favorite"
+            app:tint="@{friend.isFavorite ? @color/main : @color/text_unselected}" />
+
+    </LinearLayout>
+</layout>
