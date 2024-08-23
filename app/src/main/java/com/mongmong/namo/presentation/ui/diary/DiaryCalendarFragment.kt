@@ -2,9 +2,12 @@ package com.mongmong.namo.presentation.ui.diary
 
 import CalendarDay
 import DiaryCalendarAdapter
-import android.widget.Toast
+import android.util.Log
+import android.view.View
+import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentDiaryCalendarBinding
 import com.mongmong.namo.presentation.config.BaseFragment
@@ -12,31 +15,36 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 
 @AndroidEntryPoint
-class DiaryCalendarFragment : BaseFragment<FragmentDiaryCalendarBinding>(R.layout.fragment_diary_calendar) {
+class DiaryCalendarFragment :
+    BaseFragment<FragmentDiaryCalendarBinding>(R.layout.fragment_diary_calendar),
+    DiaryCalendarAdapter.OnCalendarDayClickListener {
 
+
+    private val viewModel: DiaryCalendarViewModel by viewModels()
     private lateinit var calendarAdapter: DiaryCalendarAdapter
-    private var currentMonth: Int? = null
-    private var currentToast: Toast? = null // 기존 토스트를 저장하는 변수
+    private var currentDay: CalendarDay? = null
 
     override fun setup() {
         setCalendar()
+        initObserve()
     }
 
     private fun setCalendar() {
         val calendarItems = generateCalendarItems()
 
         binding.diaryCalendarRv.layoutManager = GridLayoutManager(requireContext(), 7)
-        calendarAdapter = DiaryCalendarAdapter(calendarItems)
+        calendarAdapter = DiaryCalendarAdapter(calendarItems, this)
         binding.diaryCalendarRv.adapter = calendarAdapter
 
-        binding.diaryCalendarRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                handleScroll()
-            }
-        })
-
         scrollToToday()
+    }
+
+    private fun initObserve() {
+        viewModel.isBottomSheetOpened.observe(viewLifecycleOwner) { isOpened ->
+            if(isOpened) binding.diaryCalendarMl.transitionToStart()
+            else binding.diaryCalendarMl.transitionToEnd()
+            calendarAdapter.updateAllItems(isOpened)
+        }
     }
 
     private fun generateCalendarItems(): List<CalendarDay> {
@@ -63,31 +71,6 @@ class DiaryCalendarFragment : BaseFragment<FragmentDiaryCalendarBinding>(R.layou
         return calendarItems
     }
 
-    private fun handleScroll() {
-        val layoutManager = binding.diaryCalendarRv.layoutManager as GridLayoutManager
-        val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
-
-        if (firstVisiblePosition != RecyclerView.NO_POSITION) {
-            val calendarDay = calendarAdapter.getItem(firstVisiblePosition)
-            val month = calendarDay.month
-            val year = calendarDay.year
-
-            if (month != currentMonth) {
-                currentMonth = month
-                showDateToast(year, month + 1) // 여기서 +1로 수정
-            }
-        }
-    }
-
-    private fun showDateToast(year: Int, month: Int) {
-        // 기존 토스트가 있으면 취소
-        currentToast?.cancel()
-
-        // 새로운 토스트 생성 및 표시
-        currentToast = Toast.makeText(requireContext(), "${year}년 ${month}월", Toast.LENGTH_SHORT)
-        currentToast?.show()
-    }
-
     private fun scrollToToday() {
         val today = Calendar.getInstance()
         val startCalendar = Calendar.getInstance().apply {
@@ -97,4 +80,11 @@ class DiaryCalendarFragment : BaseFragment<FragmentDiaryCalendarBinding>(R.layou
         val daysFromStart = ((today.timeInMillis - startCalendar.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
         binding.diaryCalendarRv.scrollToPosition(daysFromStart)
     }
+
+    override fun onCalendarDayClick(calendarDay: CalendarDay) {
+        viewModel.toggleBottomSheetState()
+        currentDay = calendarDay
+        binding.bottomSheetTv.text = "${calendarDay.year}/${calendarDay.month + 1}/${calendarDay.date}"
+    }
+
 }
