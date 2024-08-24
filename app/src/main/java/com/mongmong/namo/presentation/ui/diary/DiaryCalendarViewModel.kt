@@ -9,7 +9,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DiaryCalendarViewModel @Inject constructor() : ViewModel() {
 
-    private val _isBottomSheetOpened = MutableLiveData(true)
+    private val _isBottomSheetOpened = MutableLiveData(false)
     val isBottomSheetOpened: LiveData<Boolean> get() = _isBottomSheetOpened
 
     fun toggleBottomSheetState() {

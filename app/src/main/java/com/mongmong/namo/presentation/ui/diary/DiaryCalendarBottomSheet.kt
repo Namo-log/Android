@@ -1,6 +1,5 @@
 package com.mongmong.namo.presentation.ui.diary
 
-import CalendarDay
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +8,7 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.BottomSheetDiaryCalendarBinding
+import com.mongmong.namo.presentation.ui.diary.adapter.CalendarDay
 
 class DiaryCalendarBottomSheet(
     private val calendarDay: CalendarDay

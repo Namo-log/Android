@@ -1,16 +1,15 @@
 package com.mongmong.namo.presentation.ui.diary
 
-import CalendarDay
-import DiaryCalendarAdapter
 import android.util.Log
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentDiaryCalendarBinding
 import com.mongmong.namo.presentation.config.BaseFragment
+import com.mongmong.namo.presentation.ui.diary.adapter.CalendarDay
+import com.mongmong.namo.presentation.ui.diary.adapter.DiaryCalendarAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 
@@ -19,10 +18,10 @@ class DiaryCalendarFragment :
     BaseFragment<FragmentDiaryCalendarBinding>(R.layout.fragment_diary_calendar),
     DiaryCalendarAdapter.OnCalendarDayClickListener {
 
-
     private val viewModel: DiaryCalendarViewModel by viewModels()
     private lateinit var calendarAdapter: DiaryCalendarAdapter
     private var currentDay: CalendarDay? = null
+    private var isInitialLoad = true
 
     override fun setup() {
         setCalendar()
@@ -40,10 +39,18 @@ class DiaryCalendarFragment :
     }
 
     private fun initObserve() {
-        viewModel.isBottomSheetOpened.observe(viewLifecycleOwner) { isOpened ->
-            if(isOpened) binding.diaryCalendarMl.transitionToStart()
-            else binding.diaryCalendarMl.transitionToEnd()
-            calendarAdapter.updateAllItems(isOpened)
+        viewModel.isBottomSheetOpened.observe(viewLifecycleOwner) { isOpening ->
+            if (isInitialLoad) {
+                isInitialLoad = false
+                return@observe // 초기 로드일 경우 무시
+            }
+            if (isOpening) { // 바텀 시트 열기
+                binding.diaryCalendarMl.transitionToEnd()
+                calendarAdapter.updateAllItems(isOpening)
+            } else { // 닫기
+                binding.diaryCalendarMl.transitionToStart()
+                calendarAdapter.updateAllItems(isOpening)
+            }
         }
     }
 
@@ -86,5 +93,4 @@ class DiaryCalendarFragment :
         currentDay = calendarDay
         binding.bottomSheetTv.text = "${calendarDay.year}/${calendarDay.month + 1}/${calendarDay.date}"
     }
-
 }
