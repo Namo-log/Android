@@ -30,18 +30,10 @@ class DiaryCalendarAdapter(
         val fromHeight = if (isOpeningBottomSheet) dpToPx(84, holder.binding.root.context) else dpToPx(56, holder.binding.root.context)
         val toHeight = if (isOpeningBottomSheet) dpToPx(56, holder.binding.root.context) else dpToPx(84, holder.binding.root.context)
 
-        if (shouldAnimate) {
-            Log.d("DiaryCalendarAdapter", "shouldAnimate : $toHeight")
+        if (shouldAnimate)
             holder.animateHeightChange(fromHeight, toHeight)
-        } else {
-            Log.d("DiaryCalendarAdapter", "should not Animate : $toHeight")
-            // 애니메이션 없이 높이 조정
-            val layoutParams = holder.binding.root.layoutParams
-            layoutParams.height = toHeight
-            holder.binding.root.layoutParams = layoutParams
-        }
-
-        Log.d("DiaryCalendarAdapter", "${holder.binding.itemDiaryCalendarRootCl.height}")
+        else
+            holder.binding.root.layoutParams = holder.binding.root.layoutParams.apply { height = toHeight }
     }
 
     override fun getItemCount(): Int = items.size

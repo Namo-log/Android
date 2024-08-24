@@ -5,6 +5,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="main">#DA6022</color>
+    <color name="main_50">#80DA6022</color>
     <color name="main_gray">#F7F7F7</color>
     <color name="item_background">#FAFAFA</color>
     <color name="main_pink">#DE8989</color>
