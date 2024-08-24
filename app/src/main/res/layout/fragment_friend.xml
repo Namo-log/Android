@@ -16,6 +16,30 @@
         android:fitsSystemWindows="true"
         android:background="@color/white">
 
+        <EditText
+            android:id="@+id/friend_search_et"
+            android:hint="@string/friend_search_hint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toStartOf="@+id/friend_search_btn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            style="@style/search_edit_text"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/friend_search_btn"
+            android:layout_width="58dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="30dp"
+            android:text="@string/diary_filter_search"
+            app:layout_constraintBottom_toBottomOf="@id/friend_search_et"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/friend_search_et"
+            style="@style/search_btn"/>
+
         <LinearLayout
             android:id="@+id/friend_list_empty_layout"
             android:layout_width="wrap_content"
@@ -39,7 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
-                android:text="추가된 친구가 없습니다.\n친구와 함께 나모를 사용해보세요!"
+                android:text="@string/friend_empty"
                 android:textAlignment="center"
                 android:layout_gravity="center" />
         </LinearLayout>
@@ -49,11 +73,11 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:paddingHorizontal="20dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:visibility="@{viewModel.friendList.empty ? View.GONE : View.VISIBLE}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_friend"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/friend_search_et"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
