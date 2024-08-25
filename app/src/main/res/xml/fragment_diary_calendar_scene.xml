@@ -14,7 +14,7 @@
 
     <ConstraintSet android:id="@+id/expanded_bottom_sheet">
         <Constraint
-            android:id="@+id/diary_calendar_bottom_sheet"
+            android:id="@+id/diary_calendar_bottom_sheet_cl"
             android:elevation="10dp"
             android:layout_width="match_parent"
             android:layout_height="350dp"

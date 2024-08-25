@@ -94,6 +94,11 @@
     <string name="diary_attendee">참석자&#160;</string>
     <string name="diary_add_activity">활동 추가</string>
     <string name="diary_detail_click">모임 기록 보러가기</string>
+    <!-- diary calendar 관련 String -->
+    <string name="diary_calendar_personal">개인 기록</string>
+    <string name="diary_calendar_moim">모임 기록</string>
+    <string name="diary_calendar_personal_empty">작성된 개인 기록이 없습니다.</string>
+    <string name="diary_calendar_moim_empty">작성된 모임 기록이 없습니다.</string>
 
 
     <!--연월 dialog 관련 String-->

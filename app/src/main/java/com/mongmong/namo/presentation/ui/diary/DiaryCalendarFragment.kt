@@ -1,8 +1,5 @@
 package com.mongmong.namo.presentation.ui.diary
 
-import android.util.Log
-import android.view.View
-import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.R
@@ -20,10 +17,10 @@ class DiaryCalendarFragment :
 
     private val viewModel: DiaryCalendarViewModel by viewModels()
     private lateinit var calendarAdapter: DiaryCalendarAdapter
-    private var currentDay: CalendarDay? = null
     private var isInitialLoad = true
 
     override fun setup() {
+        binding.viewModel = viewModel
         setCalendar()
         initObserve()
     }
@@ -88,9 +85,8 @@ class DiaryCalendarFragment :
         binding.diaryCalendarRv.scrollToPosition(daysFromStart)
     }
 
-    override fun onCalendarDayClick(calendarDay: CalendarDay) {
+    override fun onCalendarDayClick(date: CalendarDay) {
         viewModel.toggleBottomSheetState()
-        currentDay = calendarDay
-        binding.bottomSheetTv.text = "${calendarDay.year}/${calendarDay.month + 1}/${calendarDay.date}"
+        viewModel.setSelectedDate(date)
     }
 }

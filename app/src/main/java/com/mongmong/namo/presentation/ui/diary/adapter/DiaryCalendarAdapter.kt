@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.databinding.ItemDiaryCalendarBinding
+import com.mongmong.namo.databinding.ItemDiaryCalendarDateBinding
 
 data class CalendarDay(val date: String, val year: Int, val month: Int)
 
@@ -19,7 +19,7 @@ class DiaryCalendarAdapter(
     private var shouldAnimate: Boolean = false // 애니메이션 적용 여부 플래그
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemDiaryCalendarBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemDiaryCalendarDateBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -44,11 +44,11 @@ class DiaryCalendarAdapter(
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(val binding: ItemDiaryCalendarBinding) :
+    inner class ViewHolder(val binding: ItemDiaryCalendarDateBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(calendarDay: CalendarDay) {
-            binding.diaryCalendarDateTv.text = calendarDay.date
+            binding.calendarDay = calendarDay
 
             binding.root.setOnClickListener {
                 listener.onCalendarDayClick(calendarDay)
