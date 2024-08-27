@@ -29,7 +29,7 @@ class DiaryCalendarFragment :
         val calendarItems = generateCalendarItems()
 
         binding.diaryCalendarRv.layoutManager = GridLayoutManager(requireContext(), 7)
-        calendarAdapter = DiaryCalendarAdapter(calendarItems, this)
+        calendarAdapter = DiaryCalendarAdapter(binding.diaryCalendarRv, calendarItems, this)
         binding.diaryCalendarRv.adapter = calendarAdapter
 
         scrollToToday()
@@ -41,15 +41,15 @@ class DiaryCalendarFragment :
                 isInitialLoad = false
                 return@observe // 초기 로드일 경우 무시
             }
-            if (isOpening) { // 바텀 시트 열기
+            calendarAdapter.updateBottomSheetState(isOpening)
+            if (isOpening) {
                 binding.diaryCalendarMl.transitionToEnd()
-                calendarAdapter.updateAllItems(isOpening)
-            } else { // 닫기
+            } else {
                 binding.diaryCalendarMl.transitionToStart()
-                calendarAdapter.updateAllItems(isOpening)
             }
         }
     }
+
 
     private fun generateCalendarItems(): List<CalendarDay> {
         val calendarItems = mutableListOf<CalendarDay>()
