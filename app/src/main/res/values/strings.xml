@@ -3,6 +3,8 @@
 
     <!-- 기본적으로 쓰이는 String -->
     <string name="okay">확인</string>
+    <string name="close">닫기</string>
+    <string name="apply">적용</string>
 
     <!-- 약관 동의 관련 String -->
     <string name="for_service">서비스 이용을 위한</string>
@@ -70,12 +72,13 @@
     <string name="diary_filter_none">검색 필터 없음</string>
     <string name="diary_filter_search">검색</string>
     <string name="diary_filter_keyword_hint">키워드 입력</string>
-    <string name="diary_filter_close">닫기</string>
-    <string name="diary_filter_apply">적용</string>
     <string name="diary_filter_dialog_none">없음</string>
     <string name="diary_filter_dialog_title">일정 제목</string>
     <string name="diary_filter_dialog_content">기록 내용</string>
     <string name="diary_filter_dialog_participant">참석자</string>
+    <string name="diary_participant_dialog_title">참석자 정보</string>
+    <string name="diary_participant_dialog_total_num">총 인원</string>
+    <string name="diary_participant_dialog_participant">참석자</string>
     <string name="diary_network_failure">모임 기록은 네트워크 연결 시 확인할 수 있습니다.\n네트워크 연결 후 다시 시도해 주세요.</string>
     <string name="diary_empty">기록이 없습니다.\n일정에 기록을 남겨보세요!</string>
     <string name="diary_modify">수정</string>

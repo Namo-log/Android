@@ -36,7 +36,7 @@ class DiaryActivity : BaseActivity<ActivityDiaryBinding>(R.layout.activity_diary
 
     private fun showDiaryCollectFragment() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, DiaryCollectFragment())
+            .replace(R.id.fragment_container, DiaryCollectionFragment())
             .commit()
 
         binding.diaryCalendarBtn.setImageResource(R.drawable.ic_calendar)

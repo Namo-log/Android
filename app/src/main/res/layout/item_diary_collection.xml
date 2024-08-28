@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!-- 다이어리 멀티뷰 타입 item, DiaryGroupdapter -->
+<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -21,8 +21,8 @@
             android:id="@+id/diary_content_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginVertical="10dp"
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginVertical="8dp"
             android:elevation="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -32,10 +32,9 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
-
                 <View
                     android:id="@+id/item_diary_category_color_iv"
-                    android:layout_width="15dp"
+                    android:layout_width="10dp"
                     android:layout_height="0dp"
                     android:background="@drawable/bg_diary_category_color_view"
                     android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(diary.color)}"
@@ -50,72 +49,70 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_diary_content_view"
+                android:paddingStart="14dp"
+                android:paddingEnd="16dp"
                 app:layout_constraintEnd_toStartOf="parent"
                 app:layout_constraintStart_toEndOf="@id/item_diary_category_color_iv"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/item_diary_title_tv"
-                    android:layout_width="80dp"
+                    style="@style/content_bold"
+                    android:id="@+id/item_diary_collection_title_tv"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:textColor="#555555"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
+                    android:layout_marginTop="16dp"
                     android:text="@{diary.title}"
                     android:maxLines="2"
                     android:ellipsize="end"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-
-                <LinearLayout
-                    android:id="@+id/edit_ly"
+                <TextView
+                    style="@style/subtext_12"
+                    android:id="@+id/item_diary_collection_participant_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginBottom="10dp"
-                    app:layout_constraintBottom_toBottomOf="@id/layout"
-                    app:layout_constraintStart_toStartOf="@id/item_diary_title_tv"
-                    app:layout_constraintTop_toBottomOf="@id/item_diary_title_tv"
-                    app:layout_constraintVertical_bias="1.0">
-
-                    <ImageView
-                        android:id="@+id/diary_edit_iv"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:background="@drawable/ic_record"
-                        android:backgroundTint="@color/main_text"
-                        android:contentDescription="@string/diary_modify" />
-
-                    <TextView
-                        android:id="@+id/diary_edit_btn_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="3dp"
-                        android:text="@string/diary_modify"
-                        android:textColor="@color/main_text"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
+                    android:text="1"
+                    android:paddingStart="12dp"
+                    android:paddingVertical="8dp"
+                    android:drawableStart="@drawable/ic_participant"
+                    android:drawablePadding="2dp"
+                    app:layout_constraintBottom_toBottomOf="@id/item_diary_collection_title_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/item_diary_collection_title_tv"/>
 
                 <TextView
-                    android:id="@+id/item_diary_content_tv"
-                    android:layout_width="0dp"
+                    android:id="@+id/textView"
+                    style="@style/subtext_12"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:text="약속"
+                    android:textColor="@color/text_disable"
+                    app:layout_constraintBottom_toBottomOf="@+id/item_diary_collection_participant_tv"
+                    app:layout_constraintEnd_toStartOf="@+id/item_diary_collection_participant_tv"
+                    app:layout_constraintTop_toTopOf="@+id/item_diary_collection_participant_tv" />
+
+                <TextView
+                    style="@style/subtext_12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:text="11:00 - 13:00"
+                    android:textColor="@color/text_disable"
+                    app:layout_constraintBottom_toBottomOf="@+id/item_diary_collection_participant_tv"
+                    app:layout_constraintEnd_toStartOf="@+id/textView"
+                    app:layout_constraintTop_toTopOf="@+id/item_diary_collection_participant_tv" />
+
+                <TextView
+                    style="@style/subtext_14"
+                    android:id="@+id/item_diary_content_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:ellipsize="end"
-                    android:maxLines="3"
-                    android:textColor="@color/main_text"
-                    android:textSize="16sp"
                     android:text="@{diary.content}"
                     android:visibility="@{diary.content.length() == 0 || diary.content == null ? View.GONE : View.VISIBLE}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/item_diary_title_tv"
-                    app:layout_constraintTop_toTopOf="@id/item_diary_title_tv" />
+                    app:layout_constraintTop_toBottomOf="@+id/item_diary_collection_title_tv" />
 
                 <TextView
                     android:id="@+id/view_more"
@@ -128,16 +125,15 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/diary_gallery_rv"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="16dp"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/layout"
-                    app:layout_constraintStart_toEndOf="@id/item_diary_title_tv"
+                    app:layout_constraintEnd_toEndOf="@+id/item_diary_content_tv"
+                    app:layout_constraintStart_toStartOf="@+id/item_diary_collection_title_tv"
                     app:layout_constraintTop_toBottomOf="@id/view_more"
                     tools:listitem="@layout/item_diary_list_gallery" />
 

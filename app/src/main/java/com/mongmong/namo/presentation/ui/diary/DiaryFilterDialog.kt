@@ -11,7 +11,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.databinding.DialogFilterBinding
 import com.mongmong.namo.presentation.config.FilterState
 
-class FilterDialog(val filter: FilterState?) : DialogFragment() {
+class DiaryFilterDialog(val filter: FilterState?) : DialogFragment() {
 
     private lateinit var binding: DialogFilterBinding
 

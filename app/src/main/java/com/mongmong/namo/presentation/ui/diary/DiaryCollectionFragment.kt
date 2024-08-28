@@ -2,9 +2,7 @@ package com.mongmong.namo.presentation.ui.diary
 
 import android.content.Intent
 import android.util.Log
-import android.view.MotionEvent
 import android.view.View
-import androidx.activity.viewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -12,34 +10,32 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
-import com.mongmong.namo.databinding.FragmentDiaryCalendarBinding
-import com.mongmong.namo.databinding.FragmentDiaryCollectBinding
+import com.mongmong.namo.databinding.FragmentDiaryCollectionBinding
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.config.FilterState
 import com.mongmong.namo.presentation.ui.diary.adapter.DiaryRVAdapter
-import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.joda.time.format.DateTimeFormat
 
 @AndroidEntryPoint
-class DiaryCollectFragment: BaseFragment<FragmentDiaryCollectBinding>(R.layout.fragment_diary_collect) {
+class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.layout.fragment_diary_collection) {
     private val viewModel: DiaryViewModel by viewModels()
 
     private fun initClickListener() {
-        binding.diaryCollectFilter.setOnClickListener {
-            FilterDialog(viewModel.filter.value).apply {
-                setOnFilterSelectedListener(object : FilterDialog.OnFilterSelectedListener {
+        binding.diaryCollectionFilter.setOnClickListener {
+            DiaryFilterDialog(viewModel.filter.value).apply {
+                setOnFilterSelectedListener(object : DiaryFilterDialog.OnFilterSelectedListener {
                     override fun onFilterSelected(filter: FilterState) {
                         viewModel.setFilter(filter)
                     }
                 })
             }.show(parentFragmentManager, "FilterDialog")
         }
-        binding.diaryCollectFilterSearchBtn.setOnClickListener {
+        binding.diaryCollectionFilterSearchBtn.setOnClickListener {
             // 키워드 검색
         }
     }
@@ -64,6 +60,7 @@ class DiaryCollectFragment: BaseFragment<FragmentDiaryCollectBinding>(R.layout.f
         val adapter = DiaryRVAdapter(
             personalEditClickListener = ::onPersonalEditClickListener,
             moimEditClickListener = ::onMoimEditClickListener ,
+            participantClickListener = ::onParticipantClickListener,
             imageClickListener = {
                 startActivity(
                     Intent(requireActivity(), DiaryImageDetailActivity::class.java).putExtra("imgs", it as ArrayList<DiaryImage>)
@@ -76,7 +73,7 @@ class DiaryCollectFragment: BaseFragment<FragmentDiaryCollectBinding>(R.layout.f
     }
 
     private fun setRecyclerView(adapter: RecyclerView.Adapter<*>) {
-        binding.diaryCollectRv.apply {
+        binding.diaryCollectionRv.apply {
             visibility = View.VISIBLE
             this.adapter = adapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -128,6 +125,9 @@ class DiaryCollectFragment: BaseFragment<FragmentDiaryCollectBinding>(R.layout.f
                 .putExtra("moimScheduleId", scheduleId)
                 .putExtra("paletteId", paletteId)
         )
+    }
+    private fun onParticipantClickListener() {
+        DiaryParticipantDialog().show(parentFragmentManager, "ParticipantDialog")
     }
 
 
