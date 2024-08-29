@@ -42,6 +42,10 @@ class DiaryCalendarAdapter(
         this.shouldAnimate = false // 애니메이션 후에는 다시 false로 설정
     }
 
+    fun getItemAtPosition(position: Int): CalendarDay? {
+        return if (position in items.indices) items[position] else null
+    }
+
     inner class ViewHolder(val binding: ItemDiaryCalendarDateBinding) :
         RecyclerView.ViewHolder(binding.root) {
 

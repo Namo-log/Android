@@ -82,7 +82,7 @@ class DiaryRVAdapter(
             setViewMore(binding.itemDiaryContentTv, binding.viewMore)
             binding.diary = item
 
-            binding.itemDiaryCategoryColorIv.backgroundTintList =
+            binding.itemDiaryCollectionCategoryIv.backgroundTintList =
                 CategoryColor.convertPaletteIdToColorStateList(item.color)
 
             binding.diaryGalleryRv.apply {

@@ -8,12 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.mongmong.namo.R
-import com.mongmong.namo.databinding.DialogFilterBinding
+import com.mongmong.namo.databinding.DialogDiaryFilterBinding
 import com.mongmong.namo.presentation.config.FilterState
 
 class DiaryFilterDialog(val filter: FilterState?) : DialogFragment() {
 
-    private lateinit var binding: DialogFilterBinding
+    private lateinit var binding: DialogDiaryFilterBinding
 
     // 인터페이스 정의: 선택된 필터를 전달하는 콜백
     interface OnFilterSelectedListener {
@@ -30,7 +30,7 @@ class DiaryFilterDialog(val filter: FilterState?) : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DialogFilterBinding.inflate(inflater, container, false)
+        binding = DialogDiaryFilterBinding.inflate(inflater, container, false)
 
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
