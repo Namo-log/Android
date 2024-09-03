@@ -14,6 +14,7 @@ import com.google.android.material.tabs.TabLayout
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.repositories.DiaryRepository
+import com.mongmong.namo.presentation.config.FilterState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -26,11 +27,10 @@ class DiaryViewModel @Inject constructor(
     private val repository: DiaryRepository
 ) : ViewModel() {
 
-    private val _currentDate = MutableLiveData<String>(DateTime().toString(DATE_FORMAT))
-    val currentDate: LiveData<String> = _currentDate
+    private val _filter = MutableLiveData<FilterState>(FilterState.NONE)
+    val filter: LiveData<FilterState> = _filter
 
-    private val _isMoim = MutableLiveData<Int>(0)
-    val isMoim: LiveData<Int> = _isMoim
+    val keyword = MutableLiveData<String>()
 
     private val _emptyMessageResId = MutableLiveData<Int>(R.string.diary_network_failure)
     val emptyMessageResId: LiveData<Int> = _emptyMessageResId
@@ -40,19 +40,6 @@ class DiaryViewModel @Inject constructor(
 
     private val _isListEmpty = MutableLiveData<Boolean>(false)
     val isListEmpty: LiveData<Boolean> = _isListEmpty
-
-    /** 개인 기록 리스트 조회 **/
-    fun getPersonalPaging(date: String): Flow<PagingData<DiarySchedule>> {
-        Log.d("getPersonalPaging", "date: $date")
-        return Pager(
-            config = PagingConfig(
-                pageSize = PAGE_SIZE,
-                initialLoadSize = PAGE_SIZE * 2,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = { repository.getPersonalDiaryPagingSource(date) }
-        ).flow.cachedIn(viewModelScope).map { pagingData -> pagingData.insertHeaderLogic() }
-    }
 
     /** 모임 기록 리스트 조회 **/
     fun getMoimPaging(date: String): Flow<PagingData<DiarySchedule>> {
@@ -87,17 +74,6 @@ class DiaryViewModel @Inject constructor(
         return SimpleDateFormat("yyyy.MM.dd").format(this * 1000)
     }
 
-    /** 선택한 피커 날짜 **/
-    fun setCurrentDate(date: String) {
-        _currentDate.value = date
-    }
-    fun getFormattedDate() = currentDate.value!!.split(".").let { "${it[0]},${it[1].removePrefix("0")}" }
-
-    /** 개인/그룹 여부 토글 **/
-    fun getIsMoim(): Int = _isMoim.value ?: 0
-    fun setIsMoim(isMoim: Boolean) {
-        _isMoim.value = if (isMoim) IS_MOIM else IS_NOT_MOIM
-    }
 
     fun setIsListEmpty(isEmpty: Boolean) { _isListEmpty.value = isEmpty }
     fun setEmptyView(messageResId: Int, imageResId: Int) {
@@ -107,15 +83,7 @@ class DiaryViewModel @Inject constructor(
         Log.d("setEmptyView", "${_isListEmpty.value}")
     }
 
-    val onTabSelectedListener = object : TabLayout.OnTabSelectedListener {
-        override fun onTabSelected(tab: TabLayout.Tab) {
-            setIsMoim(tab.position == IS_MOIM)
-        }
-
-        override fun onTabUnselected(tab: TabLayout.Tab) {}
-        override fun onTabReselected(tab: TabLayout.Tab) {}
-    }
-
+    fun setFilter(filterState: FilterState) { _filter.value = filterState }
     companion object {
         const val IS_MOIM = 1
         const val IS_NOT_MOIM = 0

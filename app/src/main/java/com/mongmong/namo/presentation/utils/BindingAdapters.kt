@@ -2,8 +2,12 @@ package com.mongmong.namo.presentation.utils
 
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.LiveData
 import com.mongmong.namo.presentation.config.CategoryColor
@@ -26,4 +30,5 @@ object BindingAdapters {
         }
         view.backgroundTintList = ColorStateList.valueOf(Color.parseColor(hexColor))
     }
+
 }

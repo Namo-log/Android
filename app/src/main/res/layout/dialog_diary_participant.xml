@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_dialog"
+        android:paddingBottom="24dp">
+
+        <TextView
+            android:id="@+id/diary_participant_back_tv"
+            style="@style/dialog_default_btn"
+            android:text="@string/close"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/diary_participant_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/diary_participant_dialog_title"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/diary_participant_back_tv"
+            app:layout_constraintEnd_toStartOf="@id/diary_participant_save_tv"
+            app:layout_constraintStart_toEndOf="@id/diary_participant_back_tv"
+            app:layout_constraintTop_toTopOf="@+id/diary_participant_back_tv" />
+
+        <TextView
+            android:id="@+id/diary_participant_save_tv"
+            style="@style/dialog_default_btn"
+            android:text="@string/apply"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            style="@style/content_bold"
+            android:id="@+id/diary_participant_total_num_title_tv"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="28dp"
+            android:text="@string/diary_participant_dialog_total_num"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/diary_participant_title_tv" />
+
+        <TextView
+            android:id="@+id/diary_participant_total_num_tv"
+            style="@style/content_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:text="10"
+            app:layout_constraintStart_toEndOf="@+id/diary_participant_total_num_title_tv"
+            app:layout_constraintTop_toTopOf="@+id/diary_participant_total_num_title_tv" />
+
+        <TextView
+            style="@style/content_bold"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/diary_participant_participant_title_tv"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="28dp"
+            android:text="@string/diary_participant_dialog_participant"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/diary_participant_total_num_title_tv" />
+
+        <TextView
+            android:id="@+id/diary_participant_participant_tv"
+            style="@style/content_regular"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="35dp"
+            android:layout_marginStart="20dp"
+            android:text="코코아, 뚜뚜, 유즈, 고흐, 초코, 다나, 루카, 캐슬, 연현, 짱구"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/diary_participant_participant_title_tv"
+            app:layout_constraintTop_toTopOf="@+id/diary_participant_participant_title_tv" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

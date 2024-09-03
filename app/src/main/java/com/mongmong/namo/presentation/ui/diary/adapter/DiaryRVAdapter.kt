@@ -9,8 +9,8 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.mongmong.namo.databinding.ItemDiaryCollectionBinding
 import com.mongmong.namo.domain.model.DiarySchedule
-import com.mongmong.namo.databinding.ItemDiaryItemListBinding
 import com.mongmong.namo.databinding.ItemDiaryListBinding
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.presentation.config.CategoryColor
@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat
 class DiaryRVAdapter(
     val personalEditClickListener: ((DiarySchedule) -> Unit)? = null,
     val moimEditClickListener: ((Long, Int) -> Unit)? = null,
+    val participantClickListener: () -> Unit,
     private val imageClickListener: (List<DiaryImage>) -> Unit
 ) : PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
 
@@ -47,7 +48,7 @@ class DiaryRVAdapter(
                 ItemDiaryListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
             ITEM_VIEW_TYPE_ITEM -> DiaryContentViewHolder(
-                ItemDiaryItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                ItemDiaryCollectionBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                 imageClickListener,
                 personalEditClickListener,
                 moimEditClickListener
@@ -71,7 +72,7 @@ class DiaryRVAdapter(
     }
 
     inner class DiaryContentViewHolder(
-        private val binding: ItemDiaryItemListBinding,
+        private val binding: ItemDiaryCollectionBinding,
         private val imageClickListener: (List<DiaryImage>) -> Unit,
         private val personalEditClickListener: ((DiarySchedule) -> Unit)?,
         private val moimEditClickListener: ((Long, Int) -> Unit)?
@@ -81,7 +82,7 @@ class DiaryRVAdapter(
             setViewMore(binding.itemDiaryContentTv, binding.viewMore)
             binding.diary = item
 
-            binding.itemDiaryCategoryColorIv.backgroundTintList =
+            binding.itemDiaryCollectionCategoryIv.backgroundTintList =
                 CategoryColor.convertPaletteIdToColorStateList(item.color)
 
             binding.diaryGalleryRv.apply {
@@ -89,7 +90,11 @@ class DiaryRVAdapter(
                 layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             }
 
-            binding.editLy.setOnClickListener {
+            binding.itemDiaryCollectionParticipantTv.setOnClickListener {
+                participantClickListener()
+            }
+
+            binding.root.setOnClickListener {
                 personalEditClickListener?.invoke(item)
                 moimEditClickListener?.invoke(item.scheduleId, item.color)
             }

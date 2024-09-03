@@ -12,5 +12,6 @@
     <dimen name="custom_setting_default_spacing">20dp</dimen>
     <dimen name="margin_calendar_start">20dp</dimen>
     <dimen name="margin_calendar_end">10dp</dimen>
-
+    <dimen name="snackbar_custom_width">120dp</dimen>
+    <dimen name="snackbar_custom_height">44dp</dimen>
 </resources>

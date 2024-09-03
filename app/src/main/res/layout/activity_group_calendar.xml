@@ -44,9 +44,9 @@
                     android:layout_marginStart="13dp"
                     android:src="@drawable/ic_arrow_down_bold"
                     app:tint="@color/black"
-                    app:layout_constraintTop_toTopOf="@id/diary_month"
-                    app:layout_constraintBottom_toBottomOf="@id/diary_month"
-                    app:layout_constraintStart_toEndOf="@id/diary_month"/>
+                    app:layout_constraintTop_toTopOf="@id/group_calendar_year_month_tv"
+                    app:layout_constraintBottom_toBottomOf="@id/group_calendar_year_month_tv"
+                    app:layout_constraintStart_toEndOf="@id/group_calendar_year_month_tv"/>
 
             </LinearLayout>
 
