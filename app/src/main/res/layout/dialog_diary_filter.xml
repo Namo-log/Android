@@ -19,6 +19,7 @@
 
         <TextView
             android:id="@+id/filter_title_tv"
+            style="@style/content_bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="40dp"
@@ -26,8 +27,6 @@
             android:padding="10dp"
             android:text="@string/diary_filter"
             android:textColor="@color/black"
-            android:textSize="15sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/filter_back_tv"
             app:layout_constraintEnd_toStartOf="@id/filter_save_tv"
             app:layout_constraintTop_toTopOf="parent" />
@@ -52,40 +51,25 @@
             app:layout_constraintStart_toStartOf="parent">
             <RadioButton
                 android:id="@+id/filter_radio_none"
-                style="@style/content_regular"
-                android:drawableLeft="@drawable/selector_filter_radio"
-                android:drawablePadding="16dp"
-                android:button="@null"
+                style="@style/radio_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/diary_filter_dialog_none" />
             <RadioButton
                 android:id="@+id/filter_radio_title"
-                style="@style/content_regular"
-                android:drawableLeft="@drawable/selector_filter_radio"
-                android:drawablePadding="16dp"
-                android:button="@null"
-                android:background="@null"
+                style="@style/radio_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/diary_filter_dialog_title" />
             <RadioButton
                 android:id="@+id/filter_radio_content"
-                style="@style/content_regular"
-                android:drawableLeft="@drawable/selector_filter_radio"
-                android:drawablePadding="16dp"
-                android:button="@null"
-                android:background="@null"
+                style="@style/radio_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/diary_filter_dialog_content" />
             <RadioButton
                 android:id="@+id/filter_radio_participant"
-                style="@style/content_regular"
-                android:drawableLeft="@drawable/selector_filter_radio"
-                android:drawablePadding="16dp"
-                android:button="@null"
-                android:background="@null"
+                style="@style/radio_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/diary_filter_dialog_participant" />

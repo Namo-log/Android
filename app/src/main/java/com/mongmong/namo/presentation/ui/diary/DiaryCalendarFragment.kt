@@ -55,8 +55,8 @@ class DiaryCalendarFragment :
                 super.onScrolled(recyclerView, dx, dy)
 
                 val layoutManager = recyclerView.layoutManager as GridLayoutManager
-                val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition() + 7
-                val lastVisiblePosition = firstVisiblePosition + 13
+                val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition() + INDICATOR_FIRST
+                val lastVisiblePosition = firstVisiblePosition + INDICATOR_LAST
 
                 // 한 주(7일)의 아이템을 검사
                 for (position in firstVisiblePosition..lastVisiblePosition) {
@@ -165,5 +165,10 @@ class DiaryCalendarFragment :
     override fun onCalendarDayClick(date: CalendarDay) {
         viewModel.toggleBottomSheetState()
         viewModel.setSelectedDate(date)
+    }
+
+    companion object {
+        const val INDICATOR_FIRST = 7
+        const val INDICATOR_LAST = 13
     }
 }

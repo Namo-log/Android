@@ -185,6 +185,16 @@
         <item name="android:textAlignment">center</item>
     </style>
 
+    <!-- 라디오 버튼 -->
+    <style name="radio_btn" parent="content_regular">
+        <item name="android:minHeight">0dp</item>
+        <item name="android:drawableLeft">@drawable/selector_filter_radio</item>
+        <item name="android:drawablePadding">16dp</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@null</item>
+        <item name="android:layout_marginBottom">16dp</item>
+    </style>
+
     <!-- 검색 -->
     <style name="search_edit_text">
         <item name="android:textColor">@color/main_text</item>
