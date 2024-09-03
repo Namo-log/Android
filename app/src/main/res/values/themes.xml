@@ -10,8 +10,9 @@
         <item name="android:statusBarColor" >@color/transparent</item>
         <!-- Customize your theme here. -->
         <item name="android:windowTranslucentStatus">true</item>
-        <!-- 이부분 추가해주기!! -->
         <!-- Titlebar 제거 부분 -->
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:fitsSystemWindows">true</item>
         <item name="windowNoTitle">true</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <!-- custom font -->
@@ -82,7 +83,7 @@
         <item name="android:background">@color/transparent</item>
     </style>
 
-    <!--    home_calendar-->
+    <!--home_calendar-->
     <style name="Calendar"/>
 
     <style name="Calendar.HeaderDateText">

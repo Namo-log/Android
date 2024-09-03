@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="calendarDay"
+            type="com.mongmong.namo.presentation.ui.diary.adapter.CalendarDay" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/item_diary_calendar_root_cl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/calendar_bold"
+            android:text="@{calendarDay.date}"
+            android:id="@+id/diary_calendar_date_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/diary_calendar_has_diary_indicator_opened"
+            android:src="@color/main_50"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/diary_calendar_date_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <ImageView
+            android:id="@+id/diary_calendar_has_diary_indicator_closed"
+            android:src="@drawable/ic_app_logo_square"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/diary_calendar_date_tv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
