@@ -1,0 +1,112 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="friend"
+            type="com.mongmong.namo.domain.model.Friend"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:layout_marginBottom="20dp"
+        android:clipToOutline="true"
+        android:background="@drawable/bg_basic_item"
+        android:backgroundTint="@color/item_background"
+        android:elevation="4dp">
+
+        <LinearLayout
+            android:id="@+id/item_friend_alert_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingVertical="12dp"
+            android:paddingHorizontal="16dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="0dp">
+                <ImageView
+                    android:id="@+id/item_friend_alert_profile_iv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:imageUrl="@{friend.profileUrl}"
+                    app:placeHolder="@{@drawable/img_mongi_default}"
+                    tools:src="@drawable/ic_app_logo_square"/>
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="15dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/item_friend_alert_nickname_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{friend.nickname}"
+                    tools:text="닉네임#0000"
+                    style="@style/content_bold"/>
+
+                <TextView
+                    android:id="@+id/item_friend_alert_introduction_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="@{friend.introduction}"
+                    tools:text="친구가 직접 작성한 한 줄 소개"
+                    style="@style/subtext_12" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:paddingVertical="10dp"
+            android:gravity="bottom"
+            app:layout_constraintTop_toBottomOf="@id/item_friend_alert_ll">
+
+            <TextView
+                android:id="@+id/item_friend_alert_accept_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingVertical="6.5dp"
+                android:text="@string/request_accept"
+                android:textAlignment="center"
+                android:textColor="@color/main"
+                style="@style/dialog_header"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/text_unselected"/>
+
+            <TextView
+                android:id="@+id/item_friend_alert_deny_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingVertical="6.5dp"
+                android:text="@string/request_deny"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                style="@style/dialog_header"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

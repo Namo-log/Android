@@ -119,6 +119,7 @@
             android:name=".presentation.ui.diary.MoimMemoDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".presentation.ui.community.alert.CommunityAlertActivity"/>
 
         <meta-data
             android:name="google_analytics_adid_collection_enabled"

@@ -162,4 +162,10 @@
     <string name="friend_search_hint">닉네임 혹은 이름 입력</string>
     <string name="friend_empty">추가된 친구가 없습니다.\n친구와 함께 나모를 사용해보세요!</string>
 
+    <!-- 알림 -->
+    <string name="alert_empty">새로운 요청이 없습니다.</string>
+    <string name="community_alert_title">새로운 요청</string>
+    <string name="request_accept">수락</string>
+    <string name="request_deny">거절</string>
+
 </resources>

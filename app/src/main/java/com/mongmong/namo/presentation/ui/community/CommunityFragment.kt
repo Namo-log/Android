@@ -1,10 +1,12 @@
 package com.mongmong.namo.presentation.ui.community
 
+import android.content.Intent
 import com.google.android.material.tabs.TabLayoutMediator
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentCommunityBinding
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.community.adapter.CommunityVPAdapter
+import com.mongmong.namo.presentation.ui.community.alert.CommunityAlertActivity
 
 class CommunityFragment : BaseFragment<FragmentCommunityBinding>(R.layout.fragment_community) {
 
@@ -12,6 +14,13 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>(R.layout.fragme
 
     override fun setup() {
         setVPAdapter()
+        initClickListeners()
+    }
+
+    private fun initClickListeners() {
+        binding.communityAlertIv.setOnClickListener {
+            startActivity(Intent(requireActivity(), CommunityAlertActivity::class.java))
+        }
     }
 
     private fun setVPAdapter() {
