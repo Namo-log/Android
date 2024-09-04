@@ -36,7 +36,7 @@ class DiaryGalleryRVAdapter(
 
     }
 
-    override fun getItemCount(): Int = imgList?.size ?: 0
+    override fun getItemCount(): Int = imgList.size
 
     inner class ViewHolder(val binding: ItemDiaryListGalleryBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: DiaryImage) {

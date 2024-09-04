@@ -191,7 +191,7 @@ class DiaryRepositoryImpl @Inject constructor(
     ): Flow<PagingData<Diary>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 5,
+                pageSize = PAGE_SIZE,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
@@ -203,8 +203,6 @@ class DiaryRepositoryImpl @Inject constructor(
     }
 
     companion object {
-        const val IS_NOT_UPLOAD = false
-        const val IS_UPLOAD = true
-        const val SUCCESS_CODE = 200
+        const val PAGE_SIZE = 5
     }
 }

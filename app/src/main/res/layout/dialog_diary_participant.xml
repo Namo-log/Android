@@ -6,8 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_dialog"
-        android:paddingBottom="24dp">
+        android:background="@drawable/bg_dialog">
 
         <TextView
             android:id="@+id/diary_participant_back_tv"
@@ -79,6 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="35dp"
             android:layout_marginStart="20dp"
+            android:paddingBottom="24dp"
             android:text="코코아, 뚜뚜, 유즈, 고흐, 초코, 다나, 루카, 캐슬, 연현, 짱구"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/diary_participant_participant_title_tv"

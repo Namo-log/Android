@@ -73,6 +73,7 @@ class DiaryViewModel @Inject constructor(
     }
 
     fun setIsListEmpty(isEmpty: Boolean) { _isListEmpty.value = isEmpty }
+
     fun setEmptyView(messageResId: Int, imageResId: Int) {
         _isListEmpty.value = true
         _emptyMessageResId.value = messageResId

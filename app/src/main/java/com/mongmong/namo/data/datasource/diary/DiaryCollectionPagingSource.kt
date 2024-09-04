@@ -34,14 +34,14 @@ class DiaryCollectionPagingSource(
                 runCatching {
                     apiService.getDiaryCollection(filterType, keyword, page)
                 }.onSuccess { response ->
-                    Log.d("MoimPagingSource load success", "${params.key} : $response")
+                    Log.d("DiaryCollectionPagingSource load success", "${params.key} : $response")
                     val diaries = mutableListOf<GetDiaryCollectionResult>()
                     response.result.forEach {
                         diaries.add(it)
                     }
                     apiResult = diaries
                 }.onFailure {
-                    Log.d("MoimPagingSource load fail", "${params.key} : $it")
+                    Log.d("DiaryCollectionPagingSource load fail", "${params.key} : $it")
                 }
 
             }

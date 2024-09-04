@@ -9,7 +9,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.mongmong.namo.databinding.DialogDiaryParticipantBinding
 
-class DiaryParticipantDialog() : DialogFragment() {
+class DiaryParticipantDialog(
+    private val participantCount: Int,
+    private val participantNames: String
+) : DialogFragment() {
     private lateinit var binding: DialogDiaryParticipantBinding
 
     override fun onCreateView(
@@ -24,6 +27,9 @@ class DiaryParticipantDialog() : DialogFragment() {
         binding.diaryParticipantBackTv.setOnClickListener {
             dismiss()
         }
+
+        binding.diaryParticipantTotalNumTv.text = participantCount.toString()
+        binding.diaryParticipantParticipantTv.text = participantNames
 
         return binding.root
     }

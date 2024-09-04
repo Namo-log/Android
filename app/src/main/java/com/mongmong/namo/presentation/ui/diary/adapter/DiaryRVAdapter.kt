@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat
 class DiaryRVAdapter(
     val personalEditClickListener: ((Diary) -> Unit)? = null,
     val moimEditClickListener: ((Long) -> Unit)? = null,
-    val participantClickListener: () -> Unit,
+    val participantClickListener: (Int, String) -> Unit,
     private val imageClickListener: (List<DiaryImage>) -> Unit
 ) : PagingDataAdapter<Diary, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
 
@@ -97,7 +97,7 @@ class DiaryRVAdapter(
             }
 
             binding.itemDiaryCollectionParticipantTv.setOnClickListener {
-                participantClickListener()
+                participantClickListener(item.participantsCount, item.participantsNames ?: "")
             }
 
             binding.root.setOnClickListener {

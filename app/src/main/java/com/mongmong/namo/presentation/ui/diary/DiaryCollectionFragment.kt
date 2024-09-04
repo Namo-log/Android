@@ -37,27 +37,22 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
             }.show(parentFragmentManager, "FilterDialog")
         }
         binding.diaryCollectionFilterSearchBtn.setOnClickListener {
-            // 키워드 검색
+            getDiaries()
         }
     }
 
     override fun setup() {
         binding.viewModel = viewModel
-        getList()
         initClickListener()
     }
 
     override fun onResume() {
         super.onResume()
-        getList() // 화면이 다시 보일 때 관찰 시작
+        getDiaries() // 화면이 다시 보일 때 관찰 시작
     }
 
-    private fun getList() {
-        Log.d("DiaryFragment", "getList")
-        setDiaryList()
-    }
 
-    private fun setDiaryList() {
+    private fun getDiaries() {
         val adapter = DiaryRVAdapter(
             personalEditClickListener = ::onPersonalEditClickListener,
             moimEditClickListener = ::onMoimEditClickListener ,
@@ -75,23 +70,24 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
 
     private fun setRecyclerView(adapter: RecyclerView.Adapter<*>) {
         binding.diaryCollectionRv.apply {
-            visibility = View.VISIBLE
-            this.adapter = adapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            this.adapter = adapter
         }
     }
 
     private fun setDataFlow(adapter: PagingDataAdapter<Diary, RecyclerView.ViewHolder>) {
         lifecycleScope.launch {
-            val pagingDataFlow = viewModel.getDiaryPaging()
-
-            pagingDataFlow.collectLatest { pagingData ->
+            viewModel.getDiaryPaging().collectLatest { pagingData ->
                 adapter.submitData(pagingData)
                 viewModel.setIsListEmpty(adapter.itemCount == 0)
             }
         }
 
         adapter.addLoadStateListener { loadState ->
+            if (loadState.append is LoadState.Loading) {
+                Log.d("Paging", "Loading next page")
+            }
+
             when {
                 loadState.refresh is LoadState.Error ->
                     viewModel.setEmptyView(
@@ -124,8 +120,8 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
                 .putExtra("moimScheduleId", scheduleId)
         )
     }
-    private fun onParticipantClickListener() {
-        DiaryParticipantDialog().show(parentFragmentManager, "ParticipantDialog")
+    private fun onParticipantClickListener(participantsCount: Int, participantNames: String) {
+        DiaryParticipantDialog(participantsCount, participantNames).show(parentFragmentManager, "ParticipantDialog")
     }
 
 
