@@ -40,7 +40,7 @@ class GalleryImageRVAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA)
         Glide.with(holder.binding.galleryImgIv.context)
-            .load(items[position].url)
+            .load(items[position].imageUrl)
             .apply(requestOptions)
             .into(holder.binding.galleryImgIv)
 

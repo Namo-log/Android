@@ -13,7 +13,7 @@ import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.usecase.FindCategoryUseCase
-import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.state.RoomState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -137,10 +137,10 @@ class DiaryDetailViewModel @Inject constructor(
     // 이미지 삭제 관련 메서드
     fun removeImage(diaryImage: DiaryImage) {
         // 이미지 ID가 0이 아니면 삭제할 이미지, 아니라면 createImages에서 제거
-        if (diaryImage.id != 0L) deleteImageIds.add(diaryImage.id)
-        else createImages = createImages.filterNot { it == diaryImage.url }.toMutableList()
+        if (diaryImage.diaryImageId != 0L) deleteImageIds.add(diaryImage.diaryImageId)
+        else createImages = createImages.filterNot { it == diaryImage.imageUrl }.toMutableList()
         // 이미지 리스트 업데이트
-        _imgList.value = _imgList.value?.filterNot { it.url == diaryImage.url }
+        _imgList.value = _imgList.value?.filterNot { it.imageUrl == diaryImage.imageUrl }
     }
 
     fun updateImgList(newImgList: List<DiaryImage>) {
@@ -152,12 +152,12 @@ class DiaryDetailViewModel @Inject constructor(
         val currentImages = _imgList.value ?: emptyList()
         val newImagesToAdd = newImages.take(3 - currentImages.size)
         createImages.addAll(newImagesToAdd)
-        _imgList.value = currentImages + newImagesToAdd.map { DiaryImage(id = 0, url = it) }
+        _imgList.value = currentImages + newImagesToAdd.map { DiaryImage(diaryImageId = 0, imageUrl = it, orderNumber = 0) }
     }
 
     fun addDeleteImageId(imageId: Long) {
         deleteImageIds.add(imageId)
-        _imgList.value = _imgList.value?.filterNot { it.id == imageId }
+        _imgList.value = _imgList.value?.filterNot { it.diaryImageId == imageId }
     }
 
     // 초기 상태 저장 메서드

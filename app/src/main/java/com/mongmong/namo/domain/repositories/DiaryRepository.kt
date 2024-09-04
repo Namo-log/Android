@@ -1,12 +1,15 @@
 package com.mongmong.namo.domain.repositories
 
+import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.PersonalDiary
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
+import kotlinx.coroutines.flow.Flow
 
 
 interface DiaryRepository {
@@ -33,7 +36,10 @@ interface DiaryRepository {
 
     fun getPersonalDiaryPagingSource(month: String): PagingSource<Int, DiarySchedule>
 
-    fun getMoimDiaryPagingSource(month: String): PagingSource<Int, DiarySchedule>
+    fun getDiaryCollectionPagingSource(
+        filterType: String?,
+        keyword: String?,
+    ): Flow<PagingData<Diary>>
 
     suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult
 

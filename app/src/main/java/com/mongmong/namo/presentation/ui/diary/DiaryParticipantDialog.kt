@@ -7,9 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.mongmong.namo.R
 import com.mongmong.namo.databinding.DialogDiaryParticipantBinding
-import com.mongmong.namo.presentation.config.FilterState
 
 class DiaryParticipantDialog() : DialogFragment() {
     private lateinit var binding: DialogDiaryParticipantBinding

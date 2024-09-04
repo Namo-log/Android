@@ -1,11 +1,13 @@
 package com.mongmong.namo.data.remote
 
+import com.mongmong.namo.data.dto.GetDiaryCollectionResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.GetMoimMemoResponse
 import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
 import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
+import com.mongmong.namo.presentation.state.FilterType
 import retrofit2.Call
 import okhttp3.MultipartBody
 import retrofit2.http.*
@@ -88,5 +90,14 @@ interface DiaryApiService {
     suspend fun deleteMoimMemo(
         @Path("scheduleId") scheduleId: Long,
     ): DiaryResponse
+
+
+    /** v2 */
+    @GET("diaries/archive")
+    suspend fun getDiaryCollection(
+        @Query("filterType") filterType: String?,
+        @Query("keyword") keyword: String?,
+        @Query("page") page: Int,
+    ): GetDiaryCollectionResponse
 }
 

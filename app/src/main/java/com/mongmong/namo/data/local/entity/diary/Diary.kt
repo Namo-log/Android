@@ -4,7 +4,7 @@ import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.state.RoomState
 import com.mongmong.namo.BR
 
 @Entity(tableName = "diary_table")

@@ -9,7 +9,7 @@ import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.domain.repositories.CategoryRepository
 import com.mongmong.namo.domain.usecase.GetCategoriesUseCase
 import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.state.RoomState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

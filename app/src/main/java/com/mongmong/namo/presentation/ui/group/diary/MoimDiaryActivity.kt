@@ -285,7 +285,7 @@ class MoimDiaryActivity : BaseActivity<ActivityMoimDiaryBinding>(R.layout.activi
             if (currentImagesCount + newImages.size > 3) {
                 Toast.makeText(this, "이미지는 최대 3개까지 추가할 수 있습니다.", Toast.LENGTH_SHORT).show()
             } else {
-                viewModel.updateActivityImages(positionForGallery, newImages.map { DiaryImage(id = 0, url = it) })
+                viewModel.updateActivityImages(positionForGallery, newImages.map { DiaryImage(diaryImageId = 0, imageUrl = it, orderNumber = 0) })
             }
         }
     }

@@ -7,8 +7,6 @@ import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.domain.repositories.CategoryRepository
 import com.mongmong.namo.presentation.config.Constants.SUCCESS_CODE
-import com.mongmong.namo.presentation.config.RoomState
-import com.mongmong.namo.presentation.config.UploadState
 import javax.inject.Inject
 
 class CategoryRepositoryImpl @Inject constructor(

@@ -1,21 +1,31 @@
 package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import androidx.paging.map
+import com.mongmong.namo.data.datasource.diary.DiaryCollectionPagingSource
 import com.mongmong.namo.data.datasource.diary.DiaryMoimPagingSource
 import com.mongmong.namo.data.datasource.diary.DiaryPersonalPagingSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
+import com.mongmong.namo.data.dto.GetDiaryCollectionResponse
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.domain.model.PersonalDiary
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.NetworkChecker
+import com.mongmong.namo.domain.mappers.toDiary
+import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class DiaryRepositoryImpl @Inject constructor(
@@ -104,7 +114,7 @@ class DiaryRepositoryImpl @Inject constructor(
         //}
     }
     /** 모임 기록 리스트 조회 **/
-    override fun getMoimDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
+    fun getMoimDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
         return DiaryMoimPagingSource(apiService, date, networkChecker)
     }
 
@@ -171,6 +181,25 @@ class DiaryRepositoryImpl @Inject constructor(
 
     override suspend fun postDiaryToServer(serverId: Long, scheduleId: Long) {
         TODO("Not yet implemented")
+    }
+
+
+    /** v2 */
+    override fun getDiaryCollectionPagingSource(
+        filterType: String?,
+        keyword: String?
+    ): Flow<PagingData<Diary>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 5,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                DiaryCollectionPagingSource(apiService, filterType, keyword, networkChecker)
+            }
+        ).flow.map { pagingData ->
+            pagingData.map { it.toDiary() } // DTO를 도메인 모델로 변환
+        }
     }
 
     companion object {

@@ -11,10 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentDiaryCollectionBinding
+import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.presentation.config.BaseFragment
-import com.mongmong.namo.presentation.config.FilterState
+import com.mongmong.namo.presentation.state.FilterType
 import com.mongmong.namo.presentation.ui.diary.adapter.DiaryRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -29,7 +30,7 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
         binding.diaryCollectionFilter.setOnClickListener {
             DiaryFilterDialog(viewModel.filter.value).apply {
                 setOnFilterSelectedListener(object : DiaryFilterDialog.OnFilterSelectedListener {
-                    override fun onFilterSelected(filter: FilterState) {
+                    override fun onFilterSelected(filter: FilterType) {
                         viewModel.setFilter(filter)
                     }
                 })
@@ -80,9 +81,9 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
         }
     }
 
-    private fun setDataFlow(adapter: PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>) {
+    private fun setDataFlow(adapter: PagingDataAdapter<Diary, RecyclerView.ViewHolder>) {
         lifecycleScope.launch {
-            val pagingDataFlow = viewModel.getMoimPaging("1900.01.01")
+            val pagingDataFlow = viewModel.getDiaryPaging()
 
             pagingDataFlow.collectLatest { pagingData ->
                 adapter.submitData(pagingData)
@@ -110,20 +111,17 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
         }
     }
 
-    private fun onPersonalEditClickListener(item: DiarySchedule) {
+    private fun onPersonalEditClickListener(item: Diary) {
         startActivity(
             Intent(requireContext(), PersonalDetailActivity::class.java)
-                .putExtra("schedule", item.convertToSchedule())
-                .putExtra("paletteId", item.color)
         )
     }
 
-    private fun onMoimEditClickListener(scheduleId: Long, paletteId: Int) {
+    private fun onMoimEditClickListener(scheduleId: Long) {
         Log.d("onDetailClickListener", "$scheduleId")
         startActivity(
             Intent(requireContext(), MoimMemoDetailActivity::class.java)
                 .putExtra("moimScheduleId", scheduleId)
-                .putExtra("paletteId", paletteId)
         )
     }
     private fun onParticipantClickListener() {

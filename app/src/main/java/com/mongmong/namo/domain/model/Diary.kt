@@ -6,9 +6,8 @@ import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 import com.mongmong.namo.BR
 import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.presentation.config.RoomState
-import com.mongmong.namo.presentation.config.UploadState
-import java.io.Serializable
+import com.mongmong.namo.presentation.state.RoomState
+import com.mongmong.namo.presentation.state.UploadState
 
 data class PersonalDiary(
     val diaryId: Long = 0L,  // roomDB scheduleId
@@ -36,13 +35,13 @@ data class GetPersonalDiaryResult(
     val contents: String,
     val images: List<DiaryImage>
 ) {
-    fun getUrlList() = this.images.map { it.url }
+    //fun getUrlList() = this.images.map { it.url }
 }
 
-data class DiaryImage(
+/*data class DiaryImage(
     val id: Long,
     val url: String
-) : Serializable
+) : Serializable*/
 
 data class DiaryResponse(
     val result: String
@@ -95,7 +94,7 @@ data class MoimDiary(
             notifyPropertyChanged(BR.content)
         }
 
-    fun getImageUrls() = this.images.map { it.url }
+    fun getImageUrls() = this.images.map { it.imageUrl }
 }
 
 data class DiarySchedule(
@@ -126,3 +125,27 @@ data class DiarySchedule(
         true
     )
 }
+
+/** v2 Model (ui 레이어에서 비즈니스 로직에서 사용)*/
+data class Diary(
+    val diarySummary: DiarySummary,
+    val participantsCount: Int,
+    val participantsNames: String?,
+    val scheduleDate: String,
+    val scheduleId: Long,
+    val scheduleType: Int,
+    val title: String,
+    val isHeader: Boolean = false
+)
+
+data class DiarySummary(
+    val content: String,
+    val diaryId: Long,
+    val diaryImages: List<DiaryImage>?
+)
+
+data class DiaryImage(
+    val diaryImageId: Long,
+    val imageUrl: String,
+    val orderNumber: Int
+)

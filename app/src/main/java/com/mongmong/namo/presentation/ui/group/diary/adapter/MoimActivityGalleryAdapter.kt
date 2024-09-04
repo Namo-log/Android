@@ -48,7 +48,7 @@ class MoimActivityGalleryAdapter(
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
 
             Glide.with(binding.galleryImgIv)
-                .load(item.url)
+                .load(item.imageUrl)
                 .apply(requestOptions)
                 .into(binding.galleryImgIv)
 

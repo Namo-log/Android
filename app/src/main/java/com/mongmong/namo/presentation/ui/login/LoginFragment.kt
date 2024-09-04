@@ -16,7 +16,7 @@ import com.mongmong.namo.databinding.FragmentLoginBinding
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import com.mongmong.namo.presentation.config.BaseFragment
-import com.mongmong.namo.presentation.config.LoginPlatform
+import com.mongmong.namo.presentation.state.LoginPlatform
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import dagger.hilt.android.AndroidEntryPoint

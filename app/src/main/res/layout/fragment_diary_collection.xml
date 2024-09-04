@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.mongmong.namo.presentation.config.FilterState"/>
+        <import type="com.mongmong.namo.presentation.state.FilterType"/>
         <import type="android.view.View"/>
         <variable
             name="viewModel"
@@ -22,8 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
             android:background="@drawable/bg_diary_tab"
-            android:text="@{viewModel.filter.state}"
-            android:drawableLeft="@{viewModel.filter == FilterState.NONE ? @drawable/ic_filter : @drawable/ic_filter_active}"
+            android:text="@{viewModel.filter.type}"
+            android:drawableLeft="@{viewModel.filter == FilterType.NONE ? @drawable/ic_filter : @drawable/ic_filter_active}"
             android:drawablePadding="8dp"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"

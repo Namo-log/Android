@@ -1,6 +1,5 @@
 package com.mongmong.namo.presentation.ui.login
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,7 +9,7 @@ import com.mongmong.namo.domain.model.LoginResult
 import com.mongmong.namo.domain.model.RefreshResponse
 import com.mongmong.namo.domain.model.TokenBody
 import com.mongmong.namo.domain.repositories.AuthRepository
-import com.mongmong.namo.presentation.config.LoginPlatform
+import com.mongmong.namo.presentation.state.LoginPlatform
 import com.mongmong.namo.presentation.config.ApplicationClass.Companion.dsManager
 import com.mongmong.namo.presentation.config.Constants.SUCCESS_CODE
 import dagger.hilt.android.lifecycle.HiltViewModel

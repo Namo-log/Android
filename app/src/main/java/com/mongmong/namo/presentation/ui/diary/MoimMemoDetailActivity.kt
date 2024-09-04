@@ -108,7 +108,7 @@ class MoimMemoDetailActivity
     }
 
     private fun setImgList(imgList: List<String>) {
-        val diaryImages = imgList.map { DiaryImage(id = 0, url = it) }
+        val diaryImages = imgList.map { DiaryImage(diaryImageId = 0, imageUrl = it, 0) }
         val galleryViewRVAdapter = GalleryImageRVAdapter(true, {}, {
             startActivity(
                 Intent(this, DiaryImageDetailActivity::class.java).putExtra("imgs", it as ArrayList<DiaryImage>)

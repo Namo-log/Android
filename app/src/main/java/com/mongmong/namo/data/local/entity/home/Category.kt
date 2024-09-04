@@ -3,7 +3,7 @@ package com.mongmong.namo.data.local.entity.home
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.mongmong.namo.domain.model.CategoryRequestBody
-import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.state.RoomState
 import java.io.Serializable
 
 @Entity(tableName="category_table")

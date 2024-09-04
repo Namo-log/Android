@@ -9,15 +9,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.DialogDiaryFilterBinding
-import com.mongmong.namo.presentation.config.FilterState
+import com.mongmong.namo.presentation.state.FilterType
 
-class DiaryFilterDialog(val filter: FilterState?) : DialogFragment() {
+class DiaryFilterDialog(val filter: FilterType?) : DialogFragment() {
 
     private lateinit var binding: DialogDiaryFilterBinding
 
     // 인터페이스 정의: 선택된 필터를 전달하는 콜백
     interface OnFilterSelectedListener {
-        fun onFilterSelected(filter: FilterState)
+        fun onFilterSelected(filter: FilterType)
     }
 
     private var listener: OnFilterSelectedListener? = null
@@ -41,11 +41,11 @@ class DiaryFilterDialog(val filter: FilterState?) : DialogFragment() {
         // 확인 버튼 클릭 시
         binding.filterSaveTv.setOnClickListener {
             val selectedFilter = when (binding.filterRadioGroup.checkedRadioButtonId) {
-                R.id.filter_radio_none -> FilterState.NONE
-                R.id.filter_radio_title -> FilterState.TITLES
-                R.id.filter_radio_content -> FilterState.CONTENTS
-                R.id.filter_radio_participant -> FilterState.PARTICIPANTS
-                else -> FilterState.NONE
+                R.id.filter_radio_none -> FilterType.NONE
+                R.id.filter_radio_title -> FilterType.TITLES
+                R.id.filter_radio_content -> FilterType.CONTENTS
+                R.id.filter_radio_participant -> FilterType.PARTICIPANTS
+                else -> FilterType.NONE
             }
             listener?.onFilterSelected(selectedFilter)
             dismiss() // 다이얼로그 닫기
@@ -68,12 +68,12 @@ class DiaryFilterDialog(val filter: FilterState?) : DialogFragment() {
     }
 
 
-    private fun getCheckedRadioButtonId(filterState: FilterState?): Int {
-        return when (filterState) {
-            FilterState.NONE -> R.id.filter_radio_none
-            FilterState.TITLES -> R.id.filter_radio_title
-            FilterState.CONTENTS -> R.id.filter_radio_content
-            FilterState.PARTICIPANTS -> R.id.filter_radio_participant
+    private fun getCheckedRadioButtonId(filterType: FilterType?): Int {
+        return when (filterType) {
+            FilterType.NONE -> R.id.filter_radio_none
+            FilterType.TITLES -> R.id.filter_radio_title
+            FilterType.CONTENTS -> R.id.filter_radio_content
+            FilterType.PARTICIPANTS -> R.id.filter_radio_participant
             else -> R.id.filter_radio_none
         }
     }
