@@ -1,13 +1,18 @@
 package com.mongmong.namo.presentation.ui.group.schedule
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Log
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
@@ -15,7 +20,11 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.GridLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.MapLifeCycleCallback
@@ -30,9 +39,11 @@ import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.databinding.ActivityGroupScheduleBinding
 import com.mongmong.namo.presentation.config.BaseActivity
+import com.mongmong.namo.presentation.ui.group.adapter.MoimParticipantRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
 import com.mongmong.namo.presentation.utils.PickerConverter
 import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedTime
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,8 +51,7 @@ import org.joda.time.DateTime
 import java.lang.NullPointerException
 
 @AndroidEntryPoint
-class GroupScheduleActivity
-    : BaseActivity<ActivityGroupScheduleBinding>(R.layout.activity_group_schedule),
+class GroupScheduleActivity : BaseActivity<ActivityGroupScheduleBinding>(R.layout.activity_group_schedule),
     ConfirmDialogInterface {
 
     private lateinit var getLocationResult : ActivityResultLauncher<Intent>
@@ -49,7 +59,10 @@ class GroupScheduleActivity
     private var kakaoMap: KakaoMap? = null
     private lateinit var mapView: MapView
 
+    private var imageUri: Uri? = null
+
     private lateinit var getMemberResult : ActivityResultLauncher<Intent>
+    private lateinit var participantAdapter: MoimParticipantRVAdapter
 
     private val viewModel : MoimScheduleViewModel by viewModels()
 
@@ -61,7 +74,7 @@ class GroupScheduleActivity
         setResultLocation()
         setResultMember()
         initClickListeners()
-        initObservers()
+        initObserve()
     }
 
     override fun onResume() {
@@ -81,15 +94,14 @@ class GroupScheduleActivity
 
     private fun setInit() {
         viewModel.setGroup(intent.getSerializableExtra("group") as Group)
-        val nowDay = intent.getLongExtra("nowDay", 0L)
         val moimScheduleBody = intent.getSerializableExtra("moimSchedule") as? MoimScheduleBody
         if (moimScheduleBody != null) { // 모일 일정 수정
             viewModel.setSchedule(moimScheduleBody)
         } else { // 모임 일정 생성
             viewModel.setSchedule(
                 MoimScheduleBody(
-                    startLong = PickerConverter.getDefaultDate(DateTime(nowDay), true),
-                    endLong = PickerConverter.getDefaultDate(DateTime(nowDay), false),
+                    startLong = PickerConverter.getDefaultDate(DateTime.now(), true),
+                    endLong = PickerConverter.getDefaultDate(DateTime.now(), false),
                 )
             )
         }
@@ -99,14 +111,25 @@ class GroupScheduleActivity
     }
 
     private fun initClickListeners() {
-        // 참여자 클릭
-        binding.dialogGroupScheduleMemberTv.setOnClickListener {
-            val intent = Intent(this, GroupScheduleMemberActivity::class.java)
-            intent.apply {
-                putExtra("members", MoimSchduleMemberList(viewModel.group.value!!.groupMembers))
-                putExtra("selectedIds", viewModel.getSelectedMemberId().toLongArray())
+        // editText에서 완료 클릭 시
+        binding.dialogGroupScheduleTitleEt.setOnEditorActionListener { v, actionId, event ->
+            var handled = false
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                hideKeyboard() // 키보드 내림
+                handled = true
             }
-            getMemberResult.launch(intent)
+            handled
+        }
+
+        // 커버 이미지 설정
+        binding.dialogGroupScheduleCoverImgIv.setOnClickListener {
+            // 앨범 권한 확인 후 연결
+            openGallery()
+        }
+
+        // 참석자 초개 버튼 클릭
+        binding.dialogGroupScheduleAddParticipantTv.setOnClickListener {
+            //TODO: 친구 추가하기 화면으로 이동
         }
 
         initPickerClickListeners()
@@ -131,17 +154,15 @@ class GroupScheduleActivity
             finish()
         }
 
-        // 저장 클릭
+        // 저장 클릭 (편집)
         binding.dialogGroupScheduleSaveBtn.setOnClickListener {
-            if (binding.dialogGroupScheduleTitleEt.text.toString().isEmpty()) {
-                Toast.makeText(this, "일정 제목을 입력해주세요.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            if (viewModel.isCreateMode()) { // 생성
-                insertSchedule()
-            } else { // 수정
-                editSchedule()
-            }
+            editSchedule()
+        }
+
+        // 생성 버튼 클릭
+        binding.dialogGroupScheduleCreateBtn.setOnClickListener {
+            // 모임 일정 생성 진행
+            insertSchedule()
         }
 
         // 삭제 클릭
@@ -174,9 +195,15 @@ class GroupScheduleActivity
         finish()
     }
 
-    private fun initObservers() {
+    private fun initObserve() {
         viewModel.schedule.observe(this) { schedule ->
             setContent()
+        }
+
+        viewModel.participantList.observe(this) { participant ->
+            if (participant.isNotEmpty()) {
+                setParticipantAdapter()
+            }
         }
     }
 
@@ -301,6 +328,14 @@ class GroupScheduleActivity
         }
     }
 
+    private fun setParticipantAdapter() {
+        participantAdapter = MoimParticipantRVAdapter(viewModel.participantList.value!!)
+        binding.dialogGroupScheduleParticipantRv.apply {
+            adapter = participantAdapter
+            layoutManager = GridLayoutManager(context, 3)
+        }
+    }
+
 
     private fun hideKeyboard() {
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -316,6 +351,47 @@ class GroupScheduleActivity
                     result.data?.getDoubleExtra(MapActivity.PLACE_Y_KEY, 0.0)!!
                 )
                 setMapContent()
+            }
+        }
+    }
+
+    @SuppressLint("IntentReset")
+    private fun openGallery() {
+        if (hasImagePermission(this)) {
+            val galleryIntent = Intent(Intent.ACTION_PICK).apply {
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+                type = "image/*"
+                data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            }
+            getImage.launch(galleryIntent)
+        } else {
+            val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+            } else {
+                arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                )
+            }
+            ActivityCompat.requestPermissions(this, permissions, 200)
+        }
+    }
+
+    private val getImage = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            result.data?.data?.let {
+                imageUri = result.data!!.data
+                if (imageUri != null) {
+                    Glide.with(this)
+                        .load(imageUri)
+                        .fitCenter()
+                        .apply(RequestOptions().override(500,500))
+                        .into(binding.dialogGroupScheduleCoverImgIv)
+                }
             }
         }
     }

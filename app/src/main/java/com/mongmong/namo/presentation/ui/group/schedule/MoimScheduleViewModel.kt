@@ -11,6 +11,7 @@ import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.BaseMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.Group
+import com.mongmong.namo.domain.model.group.GroupMember
 import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
@@ -43,6 +44,12 @@ class MoimScheduleViewModel @Inject constructor(
 
     private val _monthDayList = MutableLiveData<List<DateTime>>()
 
+    val moimTitle: MutableLiveData<String> = MutableLiveData()
+
+    //TODO: 임시 데이터
+    private val _participantList = MutableLiveData<List<GroupMember>>()
+    val participantList: LiveData<List<GroupMember>> = _participantList
+
     // 클릭한 날짜 처리
     private lateinit var _dailyScheduleList: List<MoimScheduleBody>
 
@@ -56,6 +63,14 @@ class MoimScheduleViewModel @Inject constructor(
 
     private val _isDailyScheduleEmptyPair = MutableLiveData<Pair<Boolean, Boolean>>()
     var isDailyScheduleEmptyPair: LiveData<Pair<Boolean, Boolean>> = _isDailyScheduleEmptyPair
+
+    init {
+        _participantList.value = listOf(
+            GroupMember(0, "코코아", 1),
+            GroupMember(0, "짱구", 4),
+            GroupMember(0, "뚜뚜", 8),
+        )
+    }
 
     /** 그룹의 모든 일정 조회 */
     fun getGroupAllSchedules(groupId: Long) {
