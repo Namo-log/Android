@@ -3,21 +3,16 @@ package com.mongmong.namo.presentation.ui.diary.adapter
 import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemDiaryCollectionBinding
-import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.databinding.ItemDiaryListBinding
 import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryImage
-import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.utils.DiaryDateConverter.toDiaryHeaderDate
-import java.text.SimpleDateFormat
 
 class DiaryRVAdapter(
     val personalEditClickListener: ((Diary) -> Unit)? = null,
@@ -70,7 +65,7 @@ class DiaryRVAdapter(
     inner class DiaryHeaderViewHolder(val binding: ItemDiaryListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Diary) {
-            binding.date = item.scheduleDate.toDiaryHeaderDate()
+            binding.date = item.startDate.toDiaryHeaderDate()
         }
     }
 
@@ -90,14 +85,15 @@ class DiaryRVAdapter(
             binding.diaryGalleryRv.apply {
                 if(!item.diarySummary.diaryImages.isNullOrEmpty()){
                     Log.d("DiaryRVAdpater", "images: ${item.diarySummary.diaryImages}")
-                    Log.d("DiaryRVAdpater", "date: ${item.scheduleDate}")
+                    Log.d("DiaryRVAdpater", "date: ${item.startDate}")
+                    Log.d("DiaryRVAdpater", "category: ${item.categoryInfo.color}")
                     adapter = DiaryGalleryRVAdapter(item.diarySummary.diaryImages, imageClickListener)
                     layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
                 }
             }
 
             binding.itemDiaryCollectionParticipantTv.setOnClickListener {
-                participantClickListener(item.participantsCount, item.participantsNames ?: "")
+                participantClickListener(item.participantInfo.count, item.participantInfo.names)
             }
 
             binding.root.setOnClickListener {

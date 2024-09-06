@@ -36,4 +36,10 @@ object BindingAdapters {
     fun setGoneIfEmpty(view: View, images: List<Any>?) {
         view.visibility = if (images.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
+
+    @JvmStatic
+    @BindingAdapter("app:tint")
+    fun setImageViewTint(imageView: ImageView, color: Int) {
+        imageView.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(imageView.context, color))
+    }
 }

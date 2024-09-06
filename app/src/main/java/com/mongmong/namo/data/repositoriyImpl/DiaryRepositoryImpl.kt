@@ -16,11 +16,12 @@ import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.domain.model.PersonalDiary
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.NetworkChecker
-import com.mongmong.namo.domain.mappers.toDiary
+import com.mongmong.namo.data.mappers.DiaryMapper.toDiary
+import com.mongmong.namo.data.mappers.DiaryMapper.toDiaryDetail
 import com.mongmong.namo.domain.model.Diary
+import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.DiarySchedule
-import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
@@ -42,14 +43,14 @@ class DiaryRepositoryImpl @Inject constructor(
     }
 
     /** 개인 기록 개별 조회 **/
-    override suspend fun getPersonalDiary(scheduleId: Long): GetPersonalDiaryResponse {
+    override suspend fun getPersonalDiary(scheduleId: Long): DiaryDetail {
         Log.d("DiaryRepositoryImpl getDiary", "$scheduleId")
-        return remoteDiaryDataSource.getPersonalDiary(scheduleId)
+        return remoteDiaryDataSource.getPersonalDiary(scheduleId).result.toDiaryDetail()
     }
 
     /** 개인 기록 추가 **/
     override suspend fun addPersonalDiary(
-        diary: PersonalDiary,
+        diary: DiaryDetail,
         images: List<String>,
     ): DiaryResponse {
         Log.d("DiaryRepositoryImpl addDiary", "$diary")
@@ -71,7 +72,7 @@ class DiaryRepositoryImpl @Inject constructor(
 
     /** 개인 기록 수정 **/
     override suspend fun editPersonalDiary(
-        diary: PersonalDiary,
+        diary: DiaryDetail,
         images: List<String>,
         deleteImageIds: List<Long>?
     ): DiaryResponse {

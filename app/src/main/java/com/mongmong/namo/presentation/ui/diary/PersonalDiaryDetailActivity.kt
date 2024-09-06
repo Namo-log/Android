@@ -4,16 +4,13 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,7 +29,7 @@ import kotlinx.coroutines.launch
 import java.util.ArrayList
 
 @AndroidEntryPoint
-class PersonalDetailActivity
+class PersonalDiaryDetailActivity
     : BaseActivity<ActivityPersonalDiaryDetailBinding>(R.layout.activity_personal_diary_detail),
     ConfirmDialogInterface {
     private lateinit var galleryAdapter: GalleryImageRVAdapter
@@ -41,49 +38,56 @@ class PersonalDetailActivity
 
     override fun setup() {
         binding.apply {
-            viewModel = this@PersonalDetailActivity.viewModel
+            viewModel = this@PersonalDiaryDetailActivity.viewModel
             paletteId = intent.getIntExtra("paletteId", 0)
 
             // marquee focus
             diaryTitleTv.requestFocus()
             diaryTitleTv.isSelected = true
         }
-        setSchedule()
+        setScheduleData()
         onClickListener()
         initRecyclerView()
         initObserve()
     }
 
-    private fun setSchedule() {
-        val schedule = (intent.getSerializableExtra("schedule") as? Schedule)!!
-        hasDiary(schedule)
+    private fun setScheduleData() {
+        viewModel.setSchedule(
+            scheduleId = intent.getLongExtra("scheduleId", 0),
+            title = intent.getStringExtra("title") ?: "",
+            date = intent.getStringExtra("scheduleDate") ?: "",
+            place = intent.getStringExtra("scheduleDate") ?: "",
+            hasDiary = intent.getBooleanExtra("hasDiary", false)
+        )
+        //val place = intent.getStringExtra("place")
+        setCreateOrEdit()
     }
 
-    private fun hasDiary(schedule: Schedule) {
-        if (schedule.hasDiary == false) {  // 기록 없을 때, 추가
-            viewModel.setNewPersonalDiary(schedule)
+    private fun setCreateOrEdit() {
+        if (viewModel.diarySchedule.value?.hasDiary == false) {  // 기록 없을 때, 추가
+            viewModel.setNewDiary()
         } else {  // 기록 있을 때, 수정
-            viewModel.getExistingPersonalDiary(schedule)
+            viewModel.getPersonalDiary()
         }
     }
 
     private fun onClickListener() {
         with(binding) {
-            onBackPressedDispatcher.addCallback(this@PersonalDetailActivity, object : OnBackPressedCallback(true) {
+            onBackPressedDispatcher.addCallback(this@PersonalDiaryDetailActivity, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if(this@PersonalDetailActivity.viewModel.isDiaryChanged()) { showBackDialog() }
+                    if(this@PersonalDiaryDetailActivity.viewModel.isDiaryChanged()) { showBackDialog() }
                     else finish()
                 }
             })
 
             diaryBackIv.setOnClickListener {
-                if (this@PersonalDetailActivity.viewModel.isDiaryChanged()) { showBackDialog() }
+                if (this@PersonalDiaryDetailActivity.viewModel.isDiaryChanged()) { showBackDialog() }
                 else finish()
             }
             diaryGalleryClickIv.setOnClickListener { getGallery() }
             diaryEditBtnTv.setOnClickListener {
                 lifecycleScope.launch {
-                    if(this@PersonalDetailActivity.viewModel.schedule.value?.hasDiary == false) insertData()
+                    if(this@PersonalDiaryDetailActivity.viewModel.schedule.value?.hasDiary == false) insertData()
                     else updateDiary()
                 }
             }
@@ -108,8 +112,8 @@ class PersonalDetailActivity
         )
 
         binding.diaryGallerySavedRv.apply {
-            adapter = galleryAdapter.apply { addItemDecoration(DiaryImageItemDecoration(this@PersonalDetailActivity, IMAGE_MARGIN)) }
-            layoutManager = LinearLayoutManager(this@PersonalDetailActivity, LinearLayoutManager.HORIZONTAL, false)
+            adapter = galleryAdapter.apply { addItemDecoration(DiaryImageItemDecoration(this@PersonalDiaryDetailActivity, IMAGE_MARGIN)) }
+            layoutManager = LinearLayoutManager(this@PersonalDiaryDetailActivity, LinearLayoutManager.HORIZONTAL, false)
         }
     }
 
@@ -136,7 +140,7 @@ class PersonalDetailActivity
 
     private fun initObserve() {
         viewModel.diary.observe(this) { diary ->
-            viewModel.updateImgList(diary.images ?: emptyList())
+            viewModel.updateImgList(diary.diaryImages ?: emptyList())
         }
         viewModel.imgList.observe(this) {
             galleryAdapter.addImages(it)

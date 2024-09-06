@@ -1,13 +1,11 @@
 package com.mongmong.namo.presentation.ui.diary
 
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMoimMemoDetailBinding
@@ -142,8 +140,8 @@ class MoimMemoDetailActivity
 
     override fun onClickYesButton(id: Int) {
         when(id) {
-            PersonalDetailActivity.DELETE_BUTTON_ACTION -> viewModel.deleteMoimMemo(moimScheduleId) // 삭제
-            PersonalDetailActivity.BACK_BUTTON_ACTION -> finish() // 뒤로가기
+            PersonalDiaryDetailActivity.DELETE_BUTTON_ACTION -> viewModel.deleteMoimMemo(moimScheduleId) // 삭제
+            PersonalDiaryDetailActivity.BACK_BUTTON_ACTION -> finish() // 뒤로가기
         }
     }
 

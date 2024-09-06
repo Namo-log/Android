@@ -2,7 +2,6 @@ package com.mongmong.namo.presentation.ui.diary
 
 import android.content.Intent
 import android.util.Log
-import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -13,7 +12,6 @@ import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentDiaryCollectionBinding
 import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryImage
-import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.state.FilterType
 import com.mongmong.namo.presentation.ui.diary.adapter.DiaryRVAdapter
@@ -109,7 +107,7 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
 
     private fun onPersonalEditClickListener(item: Diary) {
         startActivity(
-            Intent(requireContext(), PersonalDetailActivity::class.java)
+            Intent(requireContext(), PersonalDiaryDetailActivity::class.java)
         )
     }
 

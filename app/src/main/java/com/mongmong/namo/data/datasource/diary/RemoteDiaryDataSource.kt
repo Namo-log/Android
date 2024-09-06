@@ -2,13 +2,13 @@ package com.mongmong.namo.data.datasource.diary
 
 import android.content.Context
 import android.util.Log
+import com.mongmong.namo.data.dto.GetPersonalDiaryResponse
+import com.mongmong.namo.data.dto.GetPersonalDiaryResult
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
 import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
 import com.mongmong.namo.data.utils.RequestConverter.imageToMultipart
 import com.mongmong.namo.domain.model.DiaryResponse
-import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
-import com.mongmong.namo.domain.model.GetPersonalDiaryResult
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
@@ -73,7 +73,14 @@ class RemoteDiaryDataSource @Inject constructor(
 
     /** 개인 기록 조회 */
     suspend fun getPersonalDiary(scheduleId: Long): GetPersonalDiaryResponse {
-        var response = GetPersonalDiaryResponse(GetPersonalDiaryResult("", emptyList()))
+        var response = GetPersonalDiaryResponse(
+            result = GetPersonalDiaryResult(
+                content = "", // 빈 문자열
+                diaryId = 0L, // 기본값 0L (Long 타입)
+                diaryImages = emptyList(), // 빈 리스트
+                enjoyRating = 0 // 기본값 0 (Int 타입)
+            )
+        )
         withContext(Dispatchers.IO) {
             runCatching {
                 diaryApiService.getPersonalDiary(scheduleId)

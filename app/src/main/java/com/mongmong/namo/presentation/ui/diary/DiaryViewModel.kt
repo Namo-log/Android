@@ -5,8 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.insertSeparators
@@ -20,8 +18,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @HiltViewModel
 class DiaryViewModel @Inject constructor(
@@ -57,12 +53,12 @@ class DiaryViewModel @Inject constructor(
                 return@insertSeparators null
             }
 
-            val beforeDate = before?.scheduleDate?.toDiaryHeaderDate()
-            val afterDate = after.scheduleDate.toDiaryHeaderDate()
+            val beforeDate = before?.startDate?.toDiaryHeaderDate()
+            val afterDate = after.startDate.toDiaryHeaderDate()
 
             if (afterDate == null || (beforeDate == null || beforeDate != afterDate)) {
                 // 첫 아이템이거나, 날짜가 변경될 때 헤더 아이템 추가
-                after.copy(scheduleDate = after.scheduleDate, isHeader = true)
+                after.copy(startDate = after.startDate, isHeader = true)
             } else null
         }
     }

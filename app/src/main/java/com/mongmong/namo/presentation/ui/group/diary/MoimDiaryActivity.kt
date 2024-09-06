@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MotionEvent
 import android.widget.TextView
@@ -13,7 +12,6 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,7 +23,7 @@ import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.presentation.ui.diary.DiaryImageDetailActivity
-import com.mongmong.namo.presentation.ui.diary.PersonalDetailActivity
+import com.mongmong.namo.presentation.ui.diary.PersonalDiaryDetailActivity
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityItemDecoration
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityRVAdapter
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimMemberRVAdapter
@@ -234,8 +232,8 @@ class MoimDiaryActivity : BaseActivity<ActivityMoimDiaryBinding>(R.layout.activi
 
     override fun onClickYesButton(id: Int) {
         when(id) {
-            PersonalDetailActivity.DELETE_BUTTON_ACTION -> viewModel.deleteMoimDiary() // 삭제
-            PersonalDetailActivity.BACK_BUTTON_ACTION -> finish() // 뒤로가기
+            PersonalDiaryDetailActivity.DELETE_BUTTON_ACTION -> viewModel.deleteMoimDiary() // 삭제
+            PersonalDiaryDetailActivity.BACK_BUTTON_ACTION -> finish() // 뒤로가기
         }
     }
 

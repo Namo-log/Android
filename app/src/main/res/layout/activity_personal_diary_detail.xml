@@ -54,7 +54,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:gravity="center"
-                android:text="@{viewModel.schedule.title}"
+                android:text="@{viewModel.diarySchedule.title}"
                 app:layout_constraintBottom_toBottomOf="@id/diary_back_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -66,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:padding="5dp"
                 android:src="@drawable/ic_delete"
-                android:visibility="@{viewModel.schedule.hasDiary ? View.VISIBLE : View.GONE}"
+                android:visibility="@{viewModel.diarySchedule.hasDiary ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@id/diary_back_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/diary_back_iv" />
@@ -86,14 +86,12 @@
             app:layout_constraintTop_toTopOf="@+id/diary_date_tv" />
 
         <TextView
+            style="@style/content_bold"
             android:id="@+id/diary_today_month_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="10dp"
-            android:text="@{DiaryDateConverter.getFormattedMonth(viewModel.schedule.startLong)}"
-            android:textColor="@color/main_text"
-            android:textSize="15sp"
-            android:textStyle="bold"
+            android:text="@{DiaryDateConverter.getFormattedMonth(viewModel.diarySchedule.date)}"
             app:layout_constraintBottom_toTopOf="@id/diary_today_num_tv"
             app:layout_constraintEnd_toEndOf="@id/date_circle_iv"
             app:layout_constraintStart_toStartOf="@id/date_circle_iv"
@@ -101,14 +99,13 @@
             app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
+            style="@style/content_bold"
             android:id="@+id/diary_today_num_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="10dp"
-            android:text="@{DiaryDateConverter.getFormattedDay(viewModel.schedule.startLong)}"
-            android:textColor="@color/main_text"
+            android:text="@{viewModel.diarySchedule.date}"
             android:textSize="35sp"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/date_circle_iv"
             app:layout_constraintEnd_toEndOf="@id/date_circle_iv"
             app:layout_constraintStart_toStartOf="@id/date_circle_iv"
@@ -117,42 +114,38 @@
 
 
         <TextView
+            style="@style/content_bold"
             android:id="@+id/diary_date_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
             android:layout_marginTop="35dp"
             android:text="@string/diary_date"
-            android:textColor="@color/main_text"
-            android:textSize="17sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/date_circle_iv"
             app:layout_constraintTop_toBottomOf="@id/diary_top" />
 
         <TextView
+            style="@style/content_regular"
             android:id="@+id/diary_input_date_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="@{DiaryDateConverter.getFormattedDate(viewModel.schedule.startLong)}"
-            android:textColor="@color/main_text"
-            android:textSize="17sp"
+            android:text="@{DiaryDateConverter.getFormattedDate(viewModel.diarySchedule.date)}"
             app:layout_constraintStart_toEndOf="@id/diary_date_tv"
             app:layout_constraintTop_toTopOf="@id/diary_date_tv" />
 
         <TextView
+            style="@style/content_bold"
             android:id="@+id/diary_place_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:text="@string/diary_place"
-            android:textColor="@color/main_text"
-            android:textSize="17sp"
-            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@id/diary_date_tv"
             app:layout_constraintTop_toBottomOf="@id/diary_date_tv" />
 
         <TextView
+            style="@style/content_regular"
             android:id="@+id/diary_input_place_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -161,22 +154,70 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@{TextUtils.isEmpty(viewModel.schedule.placeName) ? @string/diary_no_place : viewModel.schedule.placeName}"
-            android:textColor="@color/main_text"
-            android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/diary_place_tv"
             app:layout_constraintTop_toTopOf="@id/diary_place_tv" />
 
+        <TextView
+            android:id="@+id/diary_enjoy_title_tv"
+            style="@style/content_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/diary_enjoy"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintStart_toStartOf="@id/date_circle_iv"
+            app:layout_constraintTop_toBottomOf="@+id/date_circle_iv" />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginEnd="45dp"
+            app:layout_constraintBottom_toBottomOf="@+id/diary_enjoy_title_tv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/diary_enjoy_title_tv">
+
+            <ImageView
+                android:id="@+id/diary_enjoy_1_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Heart 1"
+                android:onClick="@{() -> viewModel.onHeartClicked(1)}"
+                android:padding="2dp"
+                android:src="@drawable/ic_enjoy"
+                app:tint="@{viewModel.diary.enjoyRating >= 1 ? @color/text_unselected : @color/main}" />
+
+            <ImageView
+                android:id="@+id/diary_enjoy_2_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:onClick="@{() -> viewModel.onHeartClicked(2)}"
+                android:src="@drawable/ic_enjoy"
+                app:tint="@{viewModel.diary.enjoyRating >= 2 ? @color/text_unselected : @color/main}" />
+
+            <ImageView
+                android:id="@+id/diary_enjoy_3_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> viewModel.onHeartClicked(3)}"
+                android:padding="2dp"
+                android:src="@drawable/ic_enjoy"
+                app:tint="@{viewModel.diary.enjoyRating >= 3 ? @color/text_unselected : @color/main}" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linear_corner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
-            android:layout_marginTop="35dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="25dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/diary_input_place_tv">
+            app:layout_constraintTop_toBottomOf="@+id/diary_enjoy_title_tv">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
@@ -194,21 +235,26 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
             <EditText
+                style="@style/subtext_14"
                 android:id="@+id/diary_contents_et"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:background="@drawable/bg_diary_content_view"
                 android:gravity="start"
-                android:hint="@string/diary_put"
+                android:hint="@string/diary_input"
                 android:inputType="textMultiLine"
                 android:padding="10dp"
-                android:text="@={viewModel.diary.content}"
-                android:textColor="@color/main_text"
+                android:text="@={viewModel.diary._content}"
                 android:textColorHint="@color/text_placeholder" />
         </LinearLayout>
 
         <TextView
+            style="@style/calendar_date"
             android:id="@+id/text_num_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -219,16 +265,15 @@
             app:layout_constraintTop_toBottomOf="@id/linear_corner" />
 
         <TextView
+            style="@style/content_bold"
             android:id="@+id/diary_edit_btn_tv"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@{viewModel.schedule.hasDiary ? @color/white : @color/main}"
-            android:elevation="@{viewModel.schedule.hasDiary ? 10f : 0f}"
+            android:background="@{viewModel.diaryChanged ? @color/text_unselected : @color/main}"
             android:padding="15dp"
-            android:text="@{viewModel.schedule.hasDiary ? @string/diary_edit : @string/diary_add}"
+            android:text="@string/diary_changes_save"
             android:textAlignment="center"
-            android:textColor="@{viewModel.schedule.hasDiary ? @color/main : @color/white}"
-            android:textSize="16sp"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <LinearLayout

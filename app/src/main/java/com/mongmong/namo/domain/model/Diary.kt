@@ -27,17 +27,6 @@ data class PersonalDiary(
         }
 }
 
-data class GetPersonalDiaryResponse(
-    val result: GetPersonalDiaryResult
-): BaseResponse()
-
-data class GetPersonalDiaryResult(
-    val contents: String,
-    val images: List<DiaryImage>
-) {
-    //fun getUrlList() = this.images.map { it.url }
-}
-
 /*data class DiaryImage(
     val id: Long,
     val url: String
@@ -128,14 +117,25 @@ data class DiarySchedule(
 
 /** v2 Model (ui 레이어에서 비즈니스 로직에서 사용)*/
 data class Diary(
+    val categoryInfo: CategoryInfo,
     val diarySummary: DiarySummary,
-    val participantsCount: Int,
-    val participantsNames: String?,
-    val scheduleDate: String,
+    val startDate: String,
+    val endDate: String,
     val scheduleId: Long,
     val scheduleType: Int,
     val title: String,
-    val isHeader: Boolean = false
+    val isHeader: Boolean = false,
+    val participantInfo: ParticipantInfo
+)
+
+data class CategoryInfo(
+    val name: String,
+    val color: Long
+)
+
+data class ParticipantInfo(
+    val count: Int,
+    val names: String,
 )
 
 data class DiarySummary(
@@ -148,4 +148,29 @@ data class DiaryImage(
     val diaryImageId: Long,
     val imageUrl: String,
     val orderNumber: Int
+)
+
+data class DiaryDetail(
+    var content: String,
+    val diaryId: Long,
+    var diaryImages: List<DiaryImage>,
+    var enjoyRating: Int
+) : BaseObservable() {
+
+    @get:Bindable
+    var _content: String?
+        get() = content
+        set(value) {
+            content = value ?: ""
+            notifyPropertyChanged(BR.content)
+        }
+}
+
+
+data class ScheduleForDiary(
+    val scheduleId: Long = 0,
+    val date: String = "",
+    val place: String = "",
+    val hasDiary: Boolean = false,
+    val title: String = ""
 )

@@ -1,11 +1,11 @@
 package com.mongmong.namo.data.remote
 
 import com.mongmong.namo.data.dto.GetDiaryCollectionResponse
+import com.mongmong.namo.data.dto.GetPersonalDiaryResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.GetMoimMemoResponse
-import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
 import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
 import com.mongmong.namo.presentation.state.FilterType
 import retrofit2.Call
@@ -25,12 +25,6 @@ interface DiaryApiService {
         @Query("page") page: Int,
         @Query("size") size: Int
     ): DiaryGetMonthResponse
-
-    // 개인 기록 개별 조회
-    @GET("diaries/{scheduleId}")
-    suspend fun getPersonalDiary(
-        @Path("scheduleId") scheduleId: Long
-    ): GetPersonalDiaryResponse
 
     // 개인 기록 추가
     @Multipart
@@ -99,5 +93,11 @@ interface DiaryApiService {
         @Query("keyword") keyword: String?,
         @Query("page") page: Int,
     ): GetDiaryCollectionResponse
+
+    // 개인 기록 개별 조회
+    @GET("diaries/{scheduleId}")
+    suspend fun getPersonalDiary(
+        @Path("scheduleId") scheduleId: Long
+    ): GetPersonalDiaryResponse
 }
 
