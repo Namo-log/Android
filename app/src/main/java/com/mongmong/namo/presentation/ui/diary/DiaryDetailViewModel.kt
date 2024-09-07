@@ -27,9 +27,6 @@ class DiaryDetailViewModel @Inject constructor(
     private val _diary = MutableLiveData<DiaryDetail>()
     val diary: LiveData<DiaryDetail> = _diary
 
-    private val _schedule = MutableLiveData<Schedule>(Schedule().getDefaultSchedule())
-    val schedule: LiveData<Schedule> = _schedule
-
     private val _diarySchedule = MutableLiveData<ScheduleForDiary>()
     val diarySchedule: LiveData<ScheduleForDiary> = _diarySchedule
 
@@ -58,6 +55,9 @@ class DiaryDetailViewModel @Inject constructor(
     }
 
     /** v1 */
+    private val _schedule = MutableLiveData<Schedule>(Schedule().getDefaultSchedule())
+    val schedule: LiveData<Schedule> = _schedule
+
     private val _moimDiary = MutableLiveData<MoimDiary>()
     val moimDiary: LiveData<MoimDiary> = _moimDiary
 
@@ -89,21 +89,12 @@ class DiaryDetailViewModel @Inject constructor(
 
 
     /** 개인 기록 **/
-    // 일정 데이터 초기화
-    fun setSchedule(
-        scheduleId: Long,
-        date: String,
-        title: String,
-        place: String,
-        hasDiary: Boolean
-    ) {
-        _diarySchedule.value = ScheduleForDiary(
-            scheduleId = scheduleId,
-            date = date,
-            title = title,
-            place = place,
-            hasDiary = hasDiary
-        )
+    // 기록 상단 일정 데이터 초기화
+    fun getScheduleForDiary(scheduleId: Long, hasDiary: Boolean) {
+        viewModelScope.launch {
+            _diarySchedule.postValue(repository.getScheduleForDiary(scheduleId))
+            _diarySchedule.value?.hasDiary = hasDiary
+        }
     }
 
     // 개인 기록 개별 조회

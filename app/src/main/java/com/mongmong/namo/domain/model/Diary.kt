@@ -161,7 +161,7 @@ data class DiaryDetail(
 data class ScheduleForDiary(
     val scheduleId: Long = 0,
     val date: String = "",
-    val place: String = "",
-    val hasDiary: Boolean = false,
-    val title: String = ""
+    val location: String = "",
+    var hasDiary: Boolean = false,
+    val title: String = "",
 )

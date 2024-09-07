@@ -4,6 +4,9 @@ import android.content.Context
 import android.util.Log
 import com.mongmong.namo.data.dto.GetPersonalDiaryResponse
 import com.mongmong.namo.data.dto.GetPersonalDiaryResult
+import com.mongmong.namo.data.dto.GetScheduleForDiaryResponse
+import com.mongmong.namo.data.dto.GetScheduleForDiaryResult
+import com.mongmong.namo.data.dto.Location
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
 import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
@@ -70,6 +73,29 @@ class RemoteDiaryDataSource @Inject constructor(
 
         return diaryResponse
     }*/
+
+    /** 개인 기록*/
+    suspend fun getScheduleForDiary(scheduleId: Long): GetScheduleForDiaryResponse {
+        var response = GetScheduleForDiaryResponse(
+            result = GetScheduleForDiaryResult(
+                scheduleId = 0,
+                scheduleTitle = "",
+                scheduleStartDate = "",
+                location = Location(kakaoLocationId = "", locationName = "")
+            )
+        )
+        withContext(Dispatchers.IO) {
+            runCatching {
+                diaryApiService.getScheduleForDiary(scheduleId)
+            }.onSuccess {
+                Log.d("RemoteDiaryDataSource getScheduleForDiary Success", "$it")
+                response = it
+            }.onFailure {
+                Log.d("RemoteDiaryDataSource getScheduleForDiary Failure", "$it")
+            }
+        }
+        return response
+    }
 
     /** 개인 기록 조회 */
     suspend fun getPersonalDiary(scheduleId: Long): GetPersonalDiaryResponse {

@@ -2,16 +2,18 @@ package com.mongmong.namo.data.mappers
 
 import com.mongmong.namo.data.dto.GetDiaryCollectionResult
 import com.mongmong.namo.data.dto.GetPersonalDiaryResult
+import com.mongmong.namo.data.dto.GetScheduleForDiaryResult
 import com.mongmong.namo.domain.model.CategoryInfo
 import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.DiarySummary
 import com.mongmong.namo.domain.model.ParticipantInfo
+import com.mongmong.namo.domain.model.ScheduleForDiary
 
 object DiaryMapper {
     // 매퍼 함수 (DTO -> 도메인 모델 변환)
-    fun GetDiaryCollectionResult.toDiary(): Diary {
+    fun GetDiaryCollectionResult.toModel(): Diary {
         return Diary(
             categoryInfo = CategoryInfo(
                 name = this.categoryInfo.name,
@@ -41,8 +43,17 @@ object DiaryMapper {
         )
     }
 
+    fun GetScheduleForDiaryResult.toModel(): ScheduleForDiary {
+        return ScheduleForDiary(
+            scheduleId = this.scheduleId,
+            title = this.scheduleTitle,
+            date = this.scheduleStartDate,
+            location = this.location.locationName,
+        )
+    }
 
-    fun GetPersonalDiaryResult.toDiaryDetail(): DiaryDetail {
+
+    fun GetPersonalDiaryResult.toModel(): DiaryDetail {
         return DiaryDetail(
             content = this.content,
             diaryId = this.diaryId, // Int에서 Long으로 변환

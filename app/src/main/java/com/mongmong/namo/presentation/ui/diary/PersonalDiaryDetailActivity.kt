@@ -52,14 +52,10 @@ class PersonalDiaryDetailActivity
     }
 
     private fun setScheduleData() {
-        viewModel.setSchedule(
-            scheduleId = intent.getLongExtra("scheduleId", 0),
-            title = intent.getStringExtra("title") ?: "",
-            date = intent.getStringExtra("scheduleDate") ?: "",
-            place = intent.getStringExtra("scheduleDate") ?: "",
-            hasDiary = intent.getBooleanExtra("hasDiary", false)
+        viewModel.getScheduleForDiary(
+            intent.getLongExtra("scheduleId", 0),
+            intent.getBooleanExtra("hasDiary", false)
         )
-        //val place = intent.getStringExtra("place")
         setCreateOrEdit()
     }
 

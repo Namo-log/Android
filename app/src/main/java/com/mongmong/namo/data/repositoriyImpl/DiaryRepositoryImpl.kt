@@ -11,18 +11,16 @@ import com.mongmong.namo.data.datasource.diary.DiaryMoimPagingSource
 import com.mongmong.namo.data.datasource.diary.DiaryPersonalPagingSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
-import com.mongmong.namo.data.dto.GetDiaryCollectionResponse
 import com.mongmong.namo.data.local.dao.DiaryDao
-import com.mongmong.namo.domain.model.PersonalDiary
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.NetworkChecker
-import com.mongmong.namo.data.mappers.DiaryMapper.toDiary
-import com.mongmong.namo.data.mappers.DiaryMapper.toDiaryDetail
+import com.mongmong.namo.data.mappers.DiaryMapper.toModel
 import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.model.MoimDiary
+import com.mongmong.namo.domain.model.ScheduleForDiary
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import kotlinx.coroutines.flow.Flow
@@ -42,10 +40,15 @@ class DiaryRepositoryImpl @Inject constructor(
         return DiaryPersonalPagingSource(apiService, date, networkChecker)
     }
 
-    /** 개인 기록 개별 조회 **/
+    /** 개인 기록 일정 정보 조회 **/
+    override suspend fun getScheduleForDiary(scheduleId: Long): ScheduleForDiary {
+        return remoteDiaryDataSource.getScheduleForDiary(scheduleId).result.toModel()
+    }
+
+    /** 개인 기록 상세 조회 **/
     override suspend fun getPersonalDiary(scheduleId: Long): DiaryDetail {
         Log.d("DiaryRepositoryImpl getDiary", "$scheduleId")
-        return remoteDiaryDataSource.getPersonalDiary(scheduleId).result.toDiaryDetail()
+        return remoteDiaryDataSource.getPersonalDiary(scheduleId).result.toModel()
     }
 
     /** 개인 기록 추가 **/
@@ -199,7 +202,7 @@ class DiaryRepositoryImpl @Inject constructor(
                 DiaryCollectionPagingSource(apiService, filterType, keyword, networkChecker)
             }
         ).flow.map { pagingData ->
-            pagingData.map { it.toDiary() } // DTO를 도메인 모델로 변환
+            pagingData.map { it.toModel() } // DTO를 도메인 모델로 변환
         }
     }
 

@@ -8,11 +8,13 @@ import com.mongmong.namo.domain.model.PersonalDiary
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.model.MoimDiary
+import com.mongmong.namo.domain.model.ScheduleForDiary
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import kotlinx.coroutines.flow.Flow
 
 
 interface DiaryRepository {
+    suspend fun getScheduleForDiary(scheduleId: Long): ScheduleForDiary
     suspend fun getPersonalDiary(localId: Long): DiaryDetail
 
     suspend fun addPersonalDiary(

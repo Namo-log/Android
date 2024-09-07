@@ -153,7 +153,7 @@
             android:layout_marginEnd="20dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="@{TextUtils.isEmpty(viewModel.diarySchedule.place) ? @string/diary_no_place : viewModel.diarySchedule.place}"
+            android:text="@{TextUtils.isEmpty(viewModel.diarySchedule.location) ? @string/diary_no_place : viewModel.diarySchedule.location}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/diary_place_tv"
             app:layout_constraintTop_toTopOf="@id/diary_place_tv" />

@@ -109,9 +109,6 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
         startActivity(
             Intent(requireContext(), PersonalDiaryDetailActivity::class.java)
                 .putExtra("scheduleId", item.scheduleId)
-                .putExtra("title", item.title)
-                .putExtra("scheduleDate", item.startDate)
-                .putExtra("place", "")
                 .putExtra("hasDiary", true)
         )
     }
@@ -121,9 +118,6 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
         startActivity(
             Intent(requireContext(), PersonalDiaryDetailActivity::class.java)
                 .putExtra("scheduleId", item.scheduleId)
-                .putExtra("title", item.title)
-                .putExtra("scheduleDate", item.startDate)
-                .putExtra("place", "")
                 .putExtra("hasDiary", true)
         )
     }

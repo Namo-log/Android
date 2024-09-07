@@ -2,6 +2,7 @@ package com.mongmong.namo.data.remote
 
 import com.mongmong.namo.data.dto.GetDiaryCollectionResponse
 import com.mongmong.namo.data.dto.GetPersonalDiaryResponse
+import com.mongmong.namo.data.dto.GetScheduleForDiaryResponse
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.DiaryResponse
@@ -87,12 +88,19 @@ interface DiaryApiService {
 
 
     /** v2 */
+    // 기록 보관함 조회
     @GET("diaries/archive")
     suspend fun getDiaryCollection(
         @Query("filterType") filterType: String?,
         @Query("keyword") keyword: String?,
         @Query("page") page: Int,
     ): GetDiaryCollectionResponse
+
+    // 개인 기록 일정 정보 조회
+    @GET("schedules/{scheduleId}")
+    suspend fun getScheduleForDiary(
+        @Path("scheduleId") scheduleId: Long
+    ): GetScheduleForDiaryResponse
 
     // 개인 기록 개별 조회
     @GET("diaries/{scheduleId}")
