@@ -5,10 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mongmong.namo.domain.model.PersonalDiary
 import com.mongmong.namo.data.local.entity.home.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.DiaryResponse
@@ -16,7 +14,6 @@ import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.ScheduleForDiary
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.usecase.FindCategoryUseCase
-import com.mongmong.namo.presentation.state.RoomState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,6 +23,7 @@ class DiaryDetailViewModel @Inject constructor(
     private val repository: DiaryRepository,
     private val findCategoryUseCase: FindCategoryUseCase
 ) : ViewModel() {
+    /** v2 */
     private val _diary = MutableLiveData<DiaryDetail>()
     val diary: LiveData<DiaryDetail> = _diary
 
@@ -35,6 +33,31 @@ class DiaryDetailViewModel @Inject constructor(
     private val _diarySchedule = MutableLiveData<ScheduleForDiary>()
     val diarySchedule: LiveData<ScheduleForDiary> = _diarySchedule
 
+    private val _diaryChanged = MutableLiveData<Boolean>(false)
+    val diaryChanged: LiveData<Boolean> = _diaryChanged
+
+    val content = MutableLiveData<String>()
+
+    private val _enjoy = MutableLiveData<Int>()
+    val enjoy: LiveData<Int> = _enjoy
+
+    private val _imgList = MutableLiveData<List<DiaryImage>>(emptyList())
+    val imgList: LiveData<List<DiaryImage>> = _imgList
+
+    private var initialDiaryContent: String? = null
+    private var initialImgList: List<DiaryImage> = emptyList()
+    private var initialMoimDiaryContent: String? = null
+    private var initialEnjoy: Int = 0
+
+    private var isInitialLoadComplete = false
+
+    init {
+        content.observeForever { checkForChanges() }
+        _imgList.observeForever { checkForChanges() }
+        enjoy.observeForever{ checkForChanges() }
+    }
+
+    /** v1 */
     private val _moimDiary = MutableLiveData<MoimDiary>()
     val moimDiary: LiveData<MoimDiary> = _moimDiary
 
@@ -42,9 +65,6 @@ class DiaryDetailViewModel @Inject constructor(
     val isEdit: LiveData<Boolean> = _isEdit
 
     private var isInitialLoad = true
-
-    private val _imgList = MutableLiveData<List<DiaryImage>>(emptyList())
-    val imgList: LiveData<List<DiaryImage>> = _imgList
 
     private val _addDiaryResult = MutableLiveData<DiaryResponse>()
     val addDiaryResult: LiveData<DiaryResponse> = _addDiaryResult
@@ -67,10 +87,6 @@ class DiaryDetailViewModel @Inject constructor(
     private var createImages = mutableListOf<String>()
     private var deleteImageIds = mutableListOf<Long>()
 
-    private var initialDiaryContent: String? = null
-    private var initialImgList: List<DiaryImage> = emptyList()
-    private var initialMoimDiaryContent: String? = null
-    private var initialEnjoy: Int = 0
 
     /** 개인 기록 **/
     // 일정 데이터 초기화
@@ -95,9 +111,9 @@ class DiaryDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _diarySchedule.value?.let {
                 val result = repository.getPersonalDiary(it.scheduleId)
-                Log.d("DiaryDetailViewModel getDiary", "$result")
-                _imgList.value = result.diaryImages // 기존 이미지 설정
+                Log.d("DiaryDetailViewModel getPersonalDiary", "$result")
                 initDiaryState(result.content, result.diaryImages, result.enjoyRating) // 초기 상태 저장
+                isInitialLoadComplete = true
             }
         }
     }
@@ -111,7 +127,9 @@ class DiaryDetailViewModel @Inject constructor(
             enjoyRating = 0
         )
         initDiaryState("", emptyList(), 0)
+        isInitialLoadComplete = true // Ensure this is set for new diary entries too
     }
+
 
     // 개인 기록 추가
     fun addPersonalDiary() {
@@ -173,20 +191,30 @@ class DiaryDetailViewModel @Inject constructor(
         _imgList.value = _imgList.value?.filterNot { it.diaryImageId == imageId }
     }
 
-    // 초기 상태 저장 메서드
     private fun initDiaryState(content: String?, images: List<DiaryImage>, enjoy: Int) {
+        this.content.value = content
+        _enjoy.value = enjoy
+        _imgList.value = images
+
         initialDiaryContent = content
         initialImgList = images
         initialEnjoy = enjoy
+        Log.d("initDiaryState", "$initialDiaryContent, $initialImgList, $initialEnjoy")
     }
 
-    // 변경 여부 확인 메서드
-    fun isDiaryChanged(): Boolean {
-        return _diary.value?.content != initialDiaryContent || _imgList.value != initialImgList
+    private fun checkForChanges() {
+        if (!isInitialLoadComplete) return
+        _diaryChanged.value = (
+                content.value != initialDiaryContent ||
+                        imgList.value != initialImgList ||
+                        enjoy.value != initialEnjoy
+                )
+        Log.d("initDiaryState", "${_diaryChanged.value}")
     }
 
-    fun onHeartClicked(count: Int) {
-        _diary.value?.enjoyRating = count
+    fun onEnjoyClicked(count: Int) {
+        Log.d("onEnjoyClicked", "$count")
+        _enjoy.value = count
     }
 
     /** 모임 기록*/

@@ -58,7 +58,7 @@ class MoimMemoDetailActivity
                 }
             })
             diaryBackIv.setOnClickListener {
-                if (this@MoimMemoDetailActivity.viewModel.isDiaryChanged()) {
+                if (this@MoimMemoDetailActivity.viewModel.diaryChanged.value == true) {
                     showBackDialog()
                 } else finish()
             }

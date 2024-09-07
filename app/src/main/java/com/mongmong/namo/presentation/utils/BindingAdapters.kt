@@ -38,7 +38,7 @@ object BindingAdapters {
     }
 
     @JvmStatic
-    @BindingAdapter("app:tint")
+    @BindingAdapter("app:imageTint")
     fun setImageViewTint(imageView: ImageView, color: Int) {
         imageView.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(imageView.context, color))
     }

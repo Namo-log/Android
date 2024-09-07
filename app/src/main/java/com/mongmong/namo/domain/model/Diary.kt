@@ -155,16 +155,7 @@ data class DiaryDetail(
     val diaryId: Long,
     var diaryImages: List<DiaryImage>,
     var enjoyRating: Int
-) : BaseObservable() {
-
-    @get:Bindable
-    var _content: String?
-        get() = content
-        set(value) {
-            content = value ?: ""
-            notifyPropertyChanged(BR.content)
-        }
-}
+) : BaseObservable()
 
 
 data class ScheduleForDiary(

@@ -16,7 +16,7 @@ import com.mongmong.namo.presentation.utils.DiaryDateConverter.toDiaryHeaderDate
 
 class DiaryRVAdapter(
     val personalEditClickListener: ((Diary) -> Unit)? = null,
-    val moimEditClickListener: ((Long) -> Unit)? = null,
+    val moimEditClickListener: ((Diary) -> Unit)? = null,
     val participantClickListener: (Int, String) -> Unit,
     private val imageClickListener: (List<DiaryImage>) -> Unit
 ) : PagingDataAdapter<Diary, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
@@ -73,7 +73,7 @@ class DiaryRVAdapter(
         private val binding: ItemDiaryCollectionBinding,
         private val imageClickListener: (List<DiaryImage>) -> Unit,
         private val personalEditClickListener: ((Diary) -> Unit)?,
-        private val moimEditClickListener: ((Long) -> Unit)?
+        private val moimEditClickListener: ((Diary) -> Unit)?
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Diary) {
@@ -98,7 +98,7 @@ class DiaryRVAdapter(
 
             binding.root.setOnClickListener {
                 personalEditClickListener?.invoke(item)
-                moimEditClickListener?.invoke(item.scheduleId)
+                moimEditClickListener?.invoke(item)
             }
         }
     }

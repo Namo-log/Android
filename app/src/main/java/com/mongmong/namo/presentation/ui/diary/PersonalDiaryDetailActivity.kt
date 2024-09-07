@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -39,7 +40,6 @@ class PersonalDiaryDetailActivity
     override fun setup() {
         binding.apply {
             viewModel = this@PersonalDiaryDetailActivity.viewModel
-            paletteId = intent.getIntExtra("paletteId", 0)
 
             // marquee focus
             diaryTitleTv.requestFocus()
@@ -75,19 +75,19 @@ class PersonalDiaryDetailActivity
         with(binding) {
             onBackPressedDispatcher.addCallback(this@PersonalDiaryDetailActivity, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if(this@PersonalDiaryDetailActivity.viewModel.isDiaryChanged()) { showBackDialog() }
+                    if(this@PersonalDiaryDetailActivity.viewModel.diaryChanged.value == true) { showBackDialog() }
                     else finish()
                 }
             })
 
             diaryBackIv.setOnClickListener {
-                if (this@PersonalDiaryDetailActivity.viewModel.isDiaryChanged()) { showBackDialog() }
+                if (this@PersonalDiaryDetailActivity.viewModel.diaryChanged.value == true) { showBackDialog() }
                 else finish()
             }
             diaryGalleryClickIv.setOnClickListener { getGallery() }
             diaryEditBtnTv.setOnClickListener {
                 lifecycleScope.launch {
-                    if(this@PersonalDiaryDetailActivity.viewModel.schedule.value?.hasDiary == false) insertData()
+                    if(this@PersonalDiaryDetailActivity.viewModel.diarySchedule.value?.hasDiary == false) insertData()
                     else updateDiary()
                 }
             }
@@ -140,29 +140,52 @@ class PersonalDiaryDetailActivity
 
     private fun initObserve() {
         viewModel.diary.observe(this) { diary ->
-            viewModel.updateImgList(diary.diaryImages ?: emptyList())
+            if (diary == null) {
+                Log.e("Observer", "diary is null")
+            } else {
+                Log.d("Observer", "diary is not null")
+                viewModel.updateImgList(diary.diaryImages ?: emptyList())
+            }
         }
-        viewModel.imgList.observe(this) {
-            galleryAdapter.addImages(it)
+
+        viewModel.imgList.observe(this) { imgList ->
+            if (imgList == null) {
+                Log.e("Observer", "imgList is null")
+            } else {
+                Log.d("Observer", "imgList is not null")
+                galleryAdapter.addImages(imgList)
+            }
         }
+
         viewModel.addDiaryResult.observe(this) { response ->
-            if(response.code == OK) {
+            if (response == null) {
+                Log.e("Observer", "addDiaryResult is null")
+            } else if (response.code == OK) {
+                Log.d("Observer", "addDiaryResult code is OK")
                 finish()
             }
         }
+
         viewModel.editDiaryResult.observe(this) { response ->
-            if(response.code == OK) {
+            if (response == null) {
+                Log.e("Observer", "editDiaryResult is null")
+            } else if (response.code == OK) {
+                Log.d("Observer", "editDiaryResult code is OK")
                 finish()
             }
         }
+
         viewModel.deleteDiaryResult.observe(this) { response ->
-            // 다이어리 삭제 작업이 완료되었을 때 finish() 호출
-            if (response.code == OK) {
+            if (response == null) {
+                Log.e("Observer", "deleteDiaryResult is null")
+            } else if (response.code == OK) {
+                Log.d("Observer", "deleteDiaryResult code is OK")
                 Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
     }
+
 
     /** 삭제 확인 다이얼로그 */
     private fun showDeleteDialog() {

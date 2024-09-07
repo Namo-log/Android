@@ -104,7 +104,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="10dp"
-            android:text="@{viewModel.diarySchedule.date}"
+            android:text="@{DiaryDateConverter.getFormattedDay(viewModel.diarySchedule.date)}"
             android:textSize="35sp"
             app:layout_constraintBottom_toBottomOf="@id/date_circle_iv"
             app:layout_constraintEnd_toEndOf="@id/date_circle_iv"
@@ -153,7 +153,7 @@
             android:layout_marginEnd="20dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="@{TextUtils.isEmpty(viewModel.schedule.placeName) ? @string/diary_no_place : viewModel.schedule.placeName}"
+            android:text="@{TextUtils.isEmpty(viewModel.diarySchedule.place) ? @string/diary_no_place : viewModel.diarySchedule.place}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/diary_place_tv"
             app:layout_constraintTop_toTopOf="@id/diary_place_tv" />
@@ -184,29 +184,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="Heart 1"
-                android:onClick="@{() -> viewModel.onHeartClicked(1)}"
+                android:onClick="@{() -> viewModel.onEnjoyClicked(1)}"
                 android:padding="2dp"
-                android:src="@drawable/ic_enjoy"
-                app:tint="@{viewModel.diary.enjoyRating >= 1 ? @color/text_unselected : @color/main}" />
+                android:src="@{viewModel.enjoy >= 1 ? @drawable/ic_enjoy : @drawable/ic_enjoy_empty}"/>
 
             <ImageView
                 android:id="@+id/diary_enjoy_2_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="2dp"
-                android:onClick="@{() -> viewModel.onHeartClicked(2)}"
-                android:src="@drawable/ic_enjoy"
-                app:tint="@{viewModel.diary.enjoyRating >= 2 ? @color/text_unselected : @color/main}" />
+                android:onClick="@{() -> viewModel.onEnjoyClicked(2)}"
+                android:src="@{viewModel.enjoy >= 2 ? @drawable/ic_enjoy : @drawable/ic_enjoy_empty}"/>
 
             <ImageView
                 android:id="@+id/diary_enjoy_3_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="@{() -> viewModel.onHeartClicked(3)}"
+                android:onClick="@{() -> viewModel.onEnjoyClicked(3)}"
                 android:padding="2dp"
-                android:src="@drawable/ic_enjoy"
-                app:tint="@{viewModel.diary.enjoyRating >= 3 ? @color/text_unselected : @color/main}" />
-
+                android:src="@{viewModel.enjoy >= 3 ? @drawable/ic_enjoy : @drawable/ic_enjoy_empty}"/>
         </LinearLayout>
 
         <LinearLayout
@@ -249,7 +245,7 @@
                 android:hint="@string/diary_input"
                 android:inputType="textMultiLine"
                 android:padding="10dp"
-                android:text="@={viewModel.diary._content}"
+                android:text="@={viewModel.content}"
                 android:textColorHint="@color/text_placeholder" />
         </LinearLayout>
 
@@ -259,7 +255,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text='@{viewModel.diary.content.length() + @string/diary_max_num}'
+            android:text='@{viewModel.content.length() + @string/diary_max_num}'
             android:textColor="@color/text_unselected"
             app:layout_constraintEnd_toEndOf="@id/linear_corner"
             app:layout_constraintTop_toBottomOf="@id/linear_corner" />
@@ -269,7 +265,7 @@
             android:id="@+id/diary_edit_btn_tv"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@{viewModel.diaryChanged ? @color/text_unselected : @color/main}"
+            android:background="@{viewModel.diaryChanged ? @color/main : @color/text_unselected}"
             android:padding="15dp"
             android:text="@string/diary_changes_save"
             android:textAlignment="center"
