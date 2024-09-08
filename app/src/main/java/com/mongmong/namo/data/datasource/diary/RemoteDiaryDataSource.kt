@@ -2,6 +2,7 @@ package com.mongmong.namo.data.datasource.diary
 
 import android.content.Context
 import android.util.Log
+import com.mongmong.namo.data.dto.CategoryInfo
 import com.mongmong.namo.data.dto.GetPersonalDiaryResponse
 import com.mongmong.namo.data.dto.GetPersonalDiaryResult
 import com.mongmong.namo.data.dto.GetScheduleForDiaryResponse
@@ -81,7 +82,9 @@ class RemoteDiaryDataSource @Inject constructor(
                 scheduleId = 0,
                 scheduleTitle = "",
                 scheduleStartDate = "",
-                location = Location(kakaoLocationId = "", locationName = "")
+                locationInfo = Location(kakaoLocationId = "", locationName = ""),
+                categoryInfo = CategoryInfo(name = "", colorId = 0),
+                hasDiary = true
             )
         )
         withContext(Dispatchers.IO) {

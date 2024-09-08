@@ -17,7 +17,7 @@ object DiaryMapper {
         return Diary(
             categoryInfo = CategoryInfo(
                 name = this.categoryInfo.name,
-                color = this.categoryInfo.color
+                colorId = this.categoryInfo.colorId
             ),
             diarySummary = DiarySummary(
                 content = this.diarySummary.content,
@@ -48,7 +48,9 @@ object DiaryMapper {
             scheduleId = this.scheduleId,
             title = this.scheduleTitle,
             date = this.scheduleStartDate,
-            location = this.location.locationName,
+            location = this.locationInfo.locationName,
+            categoryId = this.categoryInfo.colorId,
+            hasDiary = this.hasDiary
         )
     }
 

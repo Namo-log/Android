@@ -106,19 +106,18 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
     }
 
     private fun onPersonalEditClickListener(item: Diary) {
+        Log.d("onPersonalEditClickListener", "${item.scheduleId}")
         startActivity(
             Intent(requireContext(), PersonalDiaryDetailActivity::class.java)
                 .putExtra("scheduleId", item.scheduleId)
-                .putExtra("hasDiary", true)
         )
     }
 
     private fun onMoimEditClickListener(item: Diary) {
-        Log.d("onDetailClickListener", "${item.scheduleId}")
+        Log.d("onMoimEditClickListener", "${item.scheduleId}")
         startActivity(
             Intent(requireContext(), PersonalDiaryDetailActivity::class.java)
                 .putExtra("scheduleId", item.scheduleId)
-                .putExtra("hasDiary", true)
         )
     }
     private fun onParticipantClickListener(participantsCount: Int, participantNames: String) {

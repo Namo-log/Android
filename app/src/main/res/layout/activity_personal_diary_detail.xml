@@ -91,7 +91,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="10dp"
-            android:text="@{DiaryDateConverter.getFormattedMonth(viewModel.diarySchedule.date)}"
+            android:text="@{DiaryDateConverter.toMMM(viewModel.diarySchedule.date)}"
             app:layout_constraintBottom_toTopOf="@id/diary_today_num_tv"
             app:layout_constraintEnd_toEndOf="@id/date_circle_iv"
             app:layout_constraintStart_toStartOf="@id/date_circle_iv"
@@ -104,7 +104,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="10dp"
-            android:text="@{DiaryDateConverter.getFormattedDay(viewModel.diarySchedule.date)}"
+            android:text="@{DiaryDateConverter.toDD(viewModel.diarySchedule.date)}"
             android:textSize="35sp"
             app:layout_constraintBottom_toBottomOf="@id/date_circle_iv"
             app:layout_constraintEnd_toEndOf="@id/date_circle_iv"
@@ -130,7 +130,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="@{DiaryDateConverter.getFormattedDate(viewModel.diarySchedule.date)}"
+            android:text="@{DiaryDateConverter.toFullDateTimeWithDay(viewModel.diarySchedule.date)}"
             app:layout_constraintStart_toEndOf="@id/diary_date_tv"
             app:layout_constraintTop_toTopOf="@id/diary_date_tv" />
 
@@ -224,7 +224,7 @@
                     android:layout_width="15dp"
                     android:layout_height="0dp"
                     android:background="@drawable/bg_diary_category_color_view"
-                    android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(paletteId)}"
+                    android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(viewModel.diarySchedule.categoryId)}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -267,7 +267,7 @@
             android:layout_height="60dp"
             android:background="@{viewModel.diaryChanged ? @color/main : @color/text_unselected}"
             android:padding="15dp"
-            android:text="@string/diary_changes_save"
+            android:text="@{viewModel.diarySchedule.hasDiary ? @string/diary_changes_save : @string/diary_add}"
             android:textAlignment="center"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent" />

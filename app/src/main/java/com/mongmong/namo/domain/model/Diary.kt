@@ -130,7 +130,7 @@ data class Diary(
 
 data class CategoryInfo(
     val name: String,
-    val color: Long
+    val colorId: Int
 )
 
 data class ParticipantInfo(
@@ -164,4 +164,5 @@ data class ScheduleForDiary(
     val location: String = "",
     var hasDiary: Boolean = false,
     val title: String = "",
+    val categoryId: Int
 )

@@ -46,51 +46,46 @@ class PersonalDiaryDetailActivity
             diaryTitleTv.isSelected = true
         }
         setScheduleData()
+        initObserve()
         onClickListener()
         initRecyclerView()
-        initObserve()
     }
 
     private fun setScheduleData() {
-        viewModel.getScheduleForDiary(
-            intent.getLongExtra("scheduleId", 0),
-            intent.getBooleanExtra("hasDiary", false)
-        )
+        viewModel.getScheduleForDiary(intent.getLongExtra("scheduleId", 0))
         setCreateOrEdit()
     }
 
     private fun setCreateOrEdit() {
-        if (viewModel.diarySchedule.value?.hasDiary == false) {  // 기록 없을 때, 추가
+        if (viewModel.diarySchedule.value?.hasDiary == false) {
+            Log.d("setCreateOrEdit", "dd")
             viewModel.setNewDiary()
         } else {  // 기록 있을 때, 수정
+            Log.d("setCreateOrEdit", "dd2")
             viewModel.getPersonalDiary()
         }
     }
 
     private fun onClickListener() {
-        with(binding) {
             onBackPressedDispatcher.addCallback(this@PersonalDiaryDetailActivity, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if(this@PersonalDiaryDetailActivity.viewModel.diaryChanged.value == true) { showBackDialog() }
+                    if(viewModel.diaryChanged.value == true) { showBackDialog() }
                     else finish()
                 }
             })
 
-            diaryBackIv.setOnClickListener {
-                if (this@PersonalDiaryDetailActivity.viewModel.diaryChanged.value == true) { showBackDialog() }
+            binding.diaryBackIv.setOnClickListener {
+                if (viewModel.diaryChanged.value == true) { showBackDialog() }
                 else finish()
             }
-            diaryGalleryClickIv.setOnClickListener { getGallery() }
-            diaryEditBtnTv.setOnClickListener {
-                lifecycleScope.launch {
-                    if(this@PersonalDiaryDetailActivity.viewModel.diarySchedule.value?.hasDiary == false) insertData()
-                    else updateDiary()
-                }
+            binding.diaryGalleryClickIv.setOnClickListener { getGallery() }
+            binding.diaryEditBtnTv.setOnClickListener {
+                if(viewModel.diarySchedule.value?.hasDiary == false) viewModel.addPersonalDiary()
+                else updateDiary()
             }
-            diaryDeleteIv.setOnClickListener {
+            binding.diaryDeleteIv.setOnClickListener {
                 showDeleteDialog()
             }
-        }
     }
 
     private fun initRecyclerView() {
@@ -113,20 +108,10 @@ class PersonalDiaryDetailActivity
         }
     }
 
-    /** 다이어리 추가 **/
-    private fun insertData() {
-        if (viewModel.diary.value?.content.isNullOrEmpty() && viewModel.imgList.value.isNullOrEmpty()) {
-            Snackbar.make(binding.root, "내용이나 이미지를 추가해주세요!", Snackbar.LENGTH_SHORT).show()
-            return
-        } else {
-            viewModel.addPersonalDiary()
-        }
-    }
-
     /** 다이어리 수정 **/
     private fun updateDiary() {
         viewModel.editPersonalDiary()
-        Toast.makeText(this, "수정되었습니다", Toast.LENGTH_SHORT).show()
+
     }
 
     /** 다이어리 삭제 **/
@@ -136,46 +121,34 @@ class PersonalDiaryDetailActivity
 
     private fun initObserve() {
         viewModel.diary.observe(this) { diary ->
-            if (diary == null) {
-                Log.e("Observer", "diary is null")
-            } else {
-                Log.d("Observer", "diary is not null")
-                viewModel.updateImgList(diary.diaryImages ?: emptyList())
-            }
+            viewModel.updateImgList(diary.diaryImages)
         }
 
         viewModel.imgList.observe(this) { imgList ->
-            if (imgList == null) {
-                Log.e("Observer", "imgList is null")
-            } else {
-                Log.d("Observer", "imgList is not null")
-                galleryAdapter.addImages(imgList)
-            }
+            galleryAdapter.addImages(imgList)
         }
 
         viewModel.addDiaryResult.observe(this) { response ->
-            if (response == null) {
-                Log.e("Observer", "addDiaryResult is null")
-            } else if (response.code == OK) {
-                Log.d("Observer", "addDiaryResult code is OK")
-                finish()
+            if (response.code == OK) {
+                Toast.makeText(this, "변경사항이 적용되었습니다", Toast.LENGTH_SHORT).show()
+                viewModel.initDiaryState()
+                viewModel.setHasDiary(true)
+            } else {
+                Toast.makeText(this, "error ${response.message}", Toast.LENGTH_SHORT).show()
             }
         }
 
         viewModel.editDiaryResult.observe(this) { response ->
-            if (response == null) {
-                Log.e("Observer", "editDiaryResult is null")
-            } else if (response.code == OK) {
-                Log.d("Observer", "editDiaryResult code is OK")
-                finish()
+            if (response.code == OK) {
+                Toast.makeText(this, "변경사항이 적용되었습니다", Toast.LENGTH_SHORT).show()
+                viewModel.initDiaryState()
+            } else {
+                Toast.makeText(this, "error ${response.message}", Toast.LENGTH_SHORT).show()
             }
         }
 
         viewModel.deleteDiaryResult.observe(this) { response ->
-            if (response == null) {
-                Log.e("Observer", "deleteDiaryResult is null")
-            } else if (response.code == OK) {
-                Log.d("Observer", "deleteDiaryResult code is OK")
+            if (response.code == OK) {
                 Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
                 finish()
             }

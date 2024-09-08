@@ -86,7 +86,7 @@ class DiaryRVAdapter(
                 if(!item.diarySummary.diaryImages.isNullOrEmpty()){
                     Log.d("DiaryRVAdpater", "images: ${item.diarySummary.diaryImages}")
                     Log.d("DiaryRVAdpater", "date: ${item.startDate}")
-                    Log.d("DiaryRVAdpater", "category: ${item.categoryInfo.color}")
+                    Log.d("DiaryRVAdpater", "category: ${item.categoryInfo.colorId}")
                     adapter = DiaryGalleryRVAdapter(item.diarySummary.diaryImages, imageClickListener)
                     layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
                 }
@@ -97,8 +97,9 @@ class DiaryRVAdapter(
             }
 
             binding.root.setOnClickListener {
-                personalEditClickListener?.invoke(item)
-                moimEditClickListener?.invoke(item)
+                Log.d("DiaryRVAdapter", "clickListener ${item.scheduleType}")
+                if(item.scheduleType == 0) personalEditClickListener?.invoke(item)
+                else moimEditClickListener?.invoke(item)
             }
         }
     }

@@ -7,10 +7,12 @@ data class GetScheduleForDiaryResponse(
 ): BaseResponse()
 
 data class GetScheduleForDiaryResult(
-    val location: Location,
+    val locationInfo: Location,
     val scheduleId: Long,
     val scheduleStartDate: String,
-    val scheduleTitle: String
+    val scheduleTitle: String,
+    val categoryInfo: CategoryInfo,
+    val hasDiary: Boolean
 )
 
 data class Location(

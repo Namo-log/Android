@@ -21,7 +21,7 @@ data class GetDiaryCollectionResult(
 
 data class CategoryInfo(
     val name: String,
-    val color: Long
+    val colorId: Int
 )
 
 data class ParticipantInfo(

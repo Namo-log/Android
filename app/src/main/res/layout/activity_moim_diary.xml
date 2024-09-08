@@ -42,7 +42,7 @@
                 android:textColor="@color/main_text"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:text="@{DiaryDateConverter.getFormattedMonth(viewModel.moimDiary.name)}"
+                android:text="@{DiaryDateConverter.toMMM(viewModel.moimDiary.name)}"
                 app:layout_constraintBottom_toTopOf="@id/diary_today_num_tv"
                 app:layout_constraintEnd_toEndOf="@id/date_circle_iv"
                 app:layout_constraintStart_toStartOf="@id/date_circle_iv"
@@ -57,7 +57,7 @@
                 android:textColor="@color/main_text"
                 android:textSize="35sp"
                 android:textStyle="bold"
-                android:text="@{DiaryDateConverter.getFormattedDay(viewModel.moimDiary.name)}"
+                android:text="@{DiaryDateConverter.toDD(viewModel.moimDiary.name)}"
                 app:layout_constraintBottom_toBottomOf="@id/date_circle_iv"
                 app:layout_constraintEnd_toEndOf="@id/date_circle_iv"
                 app:layout_constraintStart_toStartOf="@id/date_circle_iv"
@@ -134,7 +134,7 @@
                 android:layout_marginStart="30dp"
                 android:textColor="@color/main_text"
                 android:textSize="17sp"
-                android:text="@{DiaryDateConverter.getFormattedDate(viewModel.moimDiary.name)}"
+                android:text="@{DiaryDateConverter.toFullDateTimeWithDay(viewModel.moimDiary.name)}"
                 app:layout_constraintStart_toEndOf="@id/group_add_date_tv"
                 app:layout_constraintTop_toTopOf="@id/group_add_date_tv" />
 

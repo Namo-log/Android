@@ -48,6 +48,8 @@ class DiaryDetailViewModel @Inject constructor(
 
     private var isInitialLoadComplete = false
 
+    var scheduleId: Long = 0
+
     init {
         content.observeForever { checkForChanges() }
         _imgList.observeForever { checkForChanges() }
@@ -90,22 +92,25 @@ class DiaryDetailViewModel @Inject constructor(
 
     /** 개인 기록 **/
     // 기록 상단 일정 데이터 초기화
-    fun getScheduleForDiary(scheduleId: Long, hasDiary: Boolean) {
+    fun getScheduleForDiary(scheduleId: Long) {
+        this.scheduleId = scheduleId
         viewModelScope.launch {
             _diarySchedule.postValue(repository.getScheduleForDiary(scheduleId))
-            _diarySchedule.value?.hasDiary = hasDiary
         }
     }
 
     // 개인 기록 개별 조회
     fun getPersonalDiary() {
         viewModelScope.launch {
-            _diarySchedule.value?.let {
-                val result = repository.getPersonalDiary(it.scheduleId)
-                Log.d("DiaryDetailViewModel getPersonalDiary", "$result")
-                initDiaryState(result.content, result.diaryImages, result.enjoyRating) // 초기 상태 저장
-                isInitialLoadComplete = true
-            }
+            val result = repository.getPersonalDiary(scheduleId)
+            Log.d("DiaryDetailViewModel getPersonalDiary", "$result")
+
+            content.value = result.content
+            _imgList.value = result.diaryImages
+            _enjoy.value = result.enjoyRating
+
+            initDiaryState() // 초기 상태 저장
+            isInitialLoadComplete = true
         }
     }
 
@@ -117,7 +122,12 @@ class DiaryDetailViewModel @Inject constructor(
             diaryImages = emptyList(),
             enjoyRating = 0
         )
-        initDiaryState("", emptyList(), 0)
+
+        content.value = ""
+        _imgList.value = emptyList()
+        _enjoy.value = 0
+
+        initDiaryState()
         isInitialLoadComplete = true // Ensure this is set for new diary entries too
     }
 
@@ -182,16 +192,14 @@ class DiaryDetailViewModel @Inject constructor(
         _imgList.value = _imgList.value?.filterNot { it.diaryImageId == imageId }
     }
 
-    private fun initDiaryState(content: String?, images: List<DiaryImage>, enjoy: Int) {
-        this.content.value = content
-        _enjoy.value = enjoy
-        _imgList.value = images
-
-        initialDiaryContent = content
-        initialImgList = images
-        initialEnjoy = enjoy
+    fun initDiaryState() {
+        initialDiaryContent = this.content.value
+        initialImgList = _imgList.value ?: emptyList()
+        initialEnjoy = _enjoy.value ?: 0
         Log.d("initDiaryState", "$initialDiaryContent, $initialImgList, $initialEnjoy")
     }
+
+    fun setHasDiary(hasDiary: Boolean) { _diarySchedule.value?.hasDiary = hasDiary}
 
     private fun checkForChanges() {
         if (!isInitialLoadComplete) return
