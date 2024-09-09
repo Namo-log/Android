@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.group.schedule
+package com.mongmong.namo.presentation.ui.community.moim.schedule
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -37,9 +37,9 @@ import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
-import com.mongmong.namo.databinding.ActivityGroupScheduleBinding
+import com.mongmong.namo.databinding.ActivityMoimScheduleBinding
 import com.mongmong.namo.presentation.config.BaseActivity
-import com.mongmong.namo.presentation.ui.group.adapter.MoimParticipantRVAdapter
+import com.mongmong.namo.presentation.ui.community.moim.schedule.adapter.MoimParticipantRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
@@ -51,7 +51,7 @@ import org.joda.time.DateTime
 import java.lang.NullPointerException
 
 @AndroidEntryPoint
-class GroupScheduleActivity : BaseActivity<ActivityGroupScheduleBinding>(R.layout.activity_group_schedule),
+class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.activity_moim_schedule),
     ConfirmDialogInterface {
 
     private lateinit var getLocationResult : ActivityResultLauncher<Intent>
@@ -129,7 +129,8 @@ class GroupScheduleActivity : BaseActivity<ActivityGroupScheduleBinding>(R.layou
 
         // 참석자 초개 버튼 클릭
         binding.dialogGroupScheduleAddParticipantTv.setOnClickListener {
-            //TODO: 친구 추가하기 화면으로 이동
+            // 친구 추가하기 화면으로 이동
+            startActivity(Intent(this, FriendInviteActivity::class.java))
         }
 
         initPickerClickListeners()
@@ -448,7 +449,7 @@ class GroupScheduleActivity : BaseActivity<ActivityGroupScheduleBinding>(R.layou
         val title = "모임 일정을 정말 삭제하시겠어요?"
         val content = "삭제한 모임 일정은\n모든 참여자의 일정에서 삭제됩니다."
 
-        val dialog = ConfirmDialog(this@GroupScheduleActivity, title, content, "삭제", 0)
+        val dialog = ConfirmDialog(this@MoimScheduleActivity, title, content, "삭제", 0)
         dialog.isCancelable = false
         dialog.show(this.supportFragmentManager, "ConfirmDialog")
     }

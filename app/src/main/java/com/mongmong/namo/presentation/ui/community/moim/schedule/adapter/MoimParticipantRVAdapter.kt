@@ -1,11 +1,11 @@
-package com.mongmong.namo.presentation.ui.group.adapter
+package com.mongmong.namo.presentation.ui.community.moim.schedule.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.domain.model.group.GroupMember
-import com.mongmong.namo.databinding.ItemMoimFriendBinding
+import com.mongmong.namo.databinding.ItemMoimParticipantBinding
 
 class MoimParticipantRVAdapter(private val memberList : List<GroupMember>) : RecyclerView.Adapter<MoimParticipantRVAdapter.ViewHolder>() {
 
@@ -13,7 +13,7 @@ class MoimParticipantRVAdapter(private val memberList : List<GroupMember>) : Rec
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
-        val binding : ItemMoimFriendBinding = ItemMoimFriendBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding : ItemMoimParticipantBinding = ItemMoimParticipantBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return ViewHolder(binding)
     }
@@ -29,11 +29,11 @@ class MoimParticipantRVAdapter(private val memberList : List<GroupMember>) : Rec
 
     override fun getItemCount(): Int = memberList.size
 
-    inner class ViewHolder(val binding: ItemMoimFriendBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemMoimParticipantBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(friend : GroupMember) {
             binding.participant = friend
             binding.isChief = isChef(bindingAdapterPosition)
-            binding.itemMoimFriendDeleteIv.visibility = if (isChef(adapterPosition)) View.GONE else View.VISIBLE
+            binding.itemMoimParticipantDeleteIv.visibility = if (isChef(adapterPosition)) View.GONE else View.VISIBLE
         }
     }
 }

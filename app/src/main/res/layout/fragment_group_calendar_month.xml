@@ -10,7 +10,7 @@
         <import type="kotlin.Pair"/>
         <variable
             name="viewModel"
-            type="com.mongmong.namo.presentation.ui.group.schedule.MoimScheduleViewModel" />
+            type="com.mongmong.namo.presentation.ui.community.moim.schedule.MoimScheduleViewModel" />
     </data>
 
     <androidx.constraintlayout.motion.widget.MotionLayout

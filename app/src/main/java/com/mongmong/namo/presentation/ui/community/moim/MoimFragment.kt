@@ -8,8 +8,7 @@ import com.mongmong.namo.databinding.FragmentMoimBinding
 import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.community.moim.adapter.MoimRVAdapter
-import com.mongmong.namo.presentation.ui.group.GroupCalendarActivity
-import com.mongmong.namo.presentation.ui.group.schedule.GroupScheduleActivity
+import com.mongmong.namo.presentation.ui.community.moim.schedule.MoimScheduleActivity
 
 class MoimFragment : BaseFragment<FragmentMoimBinding>(R.layout.fragment_moim) {
 
@@ -30,7 +29,7 @@ class MoimFragment : BaseFragment<FragmentMoimBinding>(R.layout.fragment_moim) {
     private fun initClickListeners() {
         binding.moimCreateFloatingBtn.setOnClickListener {
             // 모임 일정 생성 화면으로 이동
-            requireActivity().startActivity(Intent(context, GroupScheduleActivity::class.java)
+            requireActivity().startActivity(Intent(context, MoimScheduleActivity::class.java)
                 .putExtra("group", Group())
             )
         }

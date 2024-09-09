@@ -10,7 +10,7 @@
         <import type="android.text.TextUtils"/>
         <variable
             name="viewModel"
-            type="com.mongmong.namo.presentation.ui.group.schedule.MoimScheduleViewModel" />
+            type="com.mongmong.namo.presentation.ui.community.moim.schedule.MoimScheduleViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -372,7 +372,7 @@
                         app:spanCount="3"
                         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                         tools:itemCount="4"
-                        tools:listitem="@layout/item_moim_friend"/>
+                        tools:listitem="@layout/item_moim_participant"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/dialog_group_schedule_look_invite_friend_schedule_btn"
