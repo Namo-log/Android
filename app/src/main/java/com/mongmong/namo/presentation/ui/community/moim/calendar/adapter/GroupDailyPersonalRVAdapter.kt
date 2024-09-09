@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.group.calendar.adapter
+package com.mongmong.namo.presentation.ui.community.moim.calendar.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

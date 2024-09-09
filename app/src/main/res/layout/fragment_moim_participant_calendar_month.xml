@@ -20,8 +20,8 @@
         android:orientation="vertical"
         app:layoutDescription="@xml/fragment_group_calendar_xml_constraintlayout2_scene">
 
-        <com.mongmong.namo.presentation.ui.group.calendar.GroupCalendarView
-            android:id="@+id/group_calendar_month_view"
+        <com.mongmong.namo.presentation.ui.community.moim.calendar.ParticipantCalendarView
+            android:id="@+id/moim_participant_calendar_month_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="@dimen/margin_calendar_start"
@@ -30,7 +30,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/group_daily_layout"
+            android:id="@+id/moim_participant_daily_layout"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@drawable/bg_bottomsheet"

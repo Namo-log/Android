@@ -14,8 +14,8 @@ class MoimViewModel: ViewModel() {
 
     init {
         _moimList.value = listOf(
-            Moim(PickerConverter.parseDateTimeToLong(DateTime.now()), "", "나모 모임 일정", listOf(
-                GroupMember(3, "코코아", 4)
+            Moim(1, PickerConverter.parseDateTimeToLong(DateTime.now()), "https://github.com/nahy-512/nahy-512/assets/101113025/3fb8e968-e482-4aff-9334-60c41014a80f", "나모 모임 일정", "강남역",
+                listOf(GroupMember(3, "코코아", 4)
             ))
         )
     }

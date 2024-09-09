@@ -1,19 +1,19 @@
-package com.mongmong.namo.presentation.ui.group.calendar.adapter
+package com.mongmong.namo.presentation.ui.community.moim.calendar.adapter
 
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.mongmong.namo.presentation.ui.group.calendar.GroupCalendarMonthFragment
+import com.mongmong.namo.presentation.ui.community.moim.calendar.ParticipantCalendarMonthFragment
 import org.joda.time.DateTime
 
-class GroupCalendarAdapter(fm : FragmentActivity) : FragmentStateAdapter(fm) {
+class ParticipantCalendarAdapter(fm : FragmentActivity) : FragmentStateAdapter(fm) {
 
     private var start : Long = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
 
     override fun getItemCount(): Int = Int.MAX_VALUE
 
-    override fun createFragment(position: Int): GroupCalendarMonthFragment {
+    override fun createFragment(position: Int): ParticipantCalendarMonthFragment {
         var millis = getItemId(position)
-        return GroupCalendarMonthFragment.newInstance(millis)
+        return ParticipantCalendarMonthFragment.newInstance(millis)
     }
 
     override fun getItemId(position: Int): Long

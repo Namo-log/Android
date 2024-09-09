@@ -34,20 +34,17 @@ import com.kakao.vectormap.label.LabelOptions
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.GROUP_MEMBER_INTENT_KEY
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
 import com.mongmong.namo.R
-import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
-import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.databinding.ActivityMoimScheduleBinding
+import com.mongmong.namo.domain.model.Moim
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.community.moim.schedule.adapter.MoimParticipantRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission
-import com.mongmong.namo.presentation.utils.PickerConverter
 import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedTime
 import dagger.hilt.android.AndroidEntryPoint
-import org.joda.time.DateTime
 import java.lang.NullPointerException
 
 @AndroidEntryPoint
@@ -93,26 +90,15 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     }
 
     private fun setInit() {
-        viewModel.setGroup(intent.getSerializableExtra("group") as Group)
-        val moimScheduleBody = intent.getSerializableExtra("moimSchedule") as? MoimScheduleBody
-        if (moimScheduleBody != null) { // 모일 일정 수정
-            viewModel.setSchedule(moimScheduleBody)
-        } else { // 모임 일정 생성
-            viewModel.setSchedule(
-                MoimScheduleBody(
-                    startLong = PickerConverter.getDefaultDate(DateTime.now(), true),
-                    endLong = PickerConverter.getDefaultDate(DateTime.now(), false),
-                )
-            )
-        }
+        viewModel.setMoimSchedule(intent.getSerializableExtra("moim") as Moim)
 
         val slideAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up)
-        binding.scheduleContainerLayout.startAnimation(slideAnimation)
+        binding.moimScheduleContainerLayout.startAnimation(slideAnimation)
     }
 
     private fun initClickListeners() {
         // editText에서 완료 클릭 시
-        binding.dialogGroupScheduleTitleEt.setOnEditorActionListener { v, actionId, event ->
+        binding.moimScheduleTitleEt.setOnEditorActionListener { v, actionId, event ->
             var handled = false
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 hideKeyboard() // 키보드 내림
@@ -122,27 +108,32 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
         }
 
         // 커버 이미지 설정
-        binding.dialogGroupScheduleCoverImgIv.setOnClickListener {
+        binding.moimScheduleCoverImgIv.setOnClickListener {
             // 앨범 권한 확인 후 연결
             openGallery()
         }
 
-        // 참석자 초개 버튼 클릭
-        binding.dialogGroupScheduleAddParticipantTv.setOnClickListener {
+        // 친구 초대 버튼 클릭
+        binding.moimScheduleAddParticipantTv.setOnClickListener {
             // 친구 추가하기 화면으로 이동
             startActivity(Intent(this, FriendInviteActivity::class.java))
+        }
+
+        // 게스트 초대 버튼 클릭 (편집 모드)
+        binding.moimScheduleAddGuestTv.setOnClickListener {
+            //TODO: 게스트 초대
         }
 
         initPickerClickListeners()
 
         // 장소 클릭
-        binding.dialogGroupSchedulePlaceLayout.setOnClickListener {
+        binding.moimSchedulePlaceLayout.setOnClickListener {
             hideKeyboard()
             getLocationPermission()
         }
 
         // 길찾기 버튼
-        binding.dialogGroupSchedulePlaceKakaoBtn.setOnClickListener {
+        binding.moimSchedulePlaceKakaoBtn.setOnClickListener {
             hideKeyboard()
 
 //            val url = "kakaomap://route?sp=&ep=${place_y},${place_x}&by=PUBLICTRANSIT"
@@ -150,28 +141,39 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
 //            startActivity(intent)
         }
 
+        // 수락한 친구 일정 보기 버튼 클릭
+        binding.moimScheduleLookInviteFriendScheduleBtn.setOnClickListener {
+            // 캘린더 화면으로 이동
+            startActivity(Intent(this, MoimParticipantCalendarActivity::class.java)
+                .putExtra("moim", viewModel.moimSchedule.value)
+            )
+        }
+
+        // 활동 기록하기 버튼 클릭 (편집 모드)
+        binding.moimScheduleRecordActivityBtn.setOnClickListener {
+            //TODO: 활동 기록 화면으로 이동
+        }
+
         // 닫기 클릭
-        binding.dialogGroupScheduleCloseBtn.setOnClickListener {
+        binding.moimScheduleCloseBtn.setOnClickListener {
             finish()
         }
 
-        // 저장 클릭 (편집)
-        binding.dialogGroupScheduleSaveBtn.setOnClickListener {
+        // 저장 클릭 (편집 모드)
+        binding.moimScheduleSaveBtn.setOnClickListener {
             editSchedule()
         }
 
         // 생성 버튼 클릭
-        binding.dialogGroupScheduleCreateBtn.setOnClickListener {
+        binding.moimScheduleCreateBtn.setOnClickListener {
             // 모임 일정 생성 진행
             insertSchedule()
         }
 
         // 삭제 클릭
-        binding.scheduleDeleteBtn.setOnClickListener {
-            if (!viewModel.isCreateMode()) {
-                // 삭제 확인 다이얼로그 띄우기
-                showDialog()
-            }
+        binding.moimScheduleDeleteBtn.setOnClickListener {
+            // 삭제 확인 다이얼로그 띄우기
+            showDialog()
         }
     }
 
@@ -197,7 +199,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     }
 
     private fun initObserve() {
-        viewModel.schedule.observe(this) { schedule ->
+        viewModel.moimSchedule.observe(this) { schedule ->
             setContent()
         }
 
@@ -227,25 +229,25 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
 
     private fun initPicker() {
         val dateTimePair = viewModel.getDateTime() ?: return
-        binding.dialogGroupScheduleStartTimeTp.apply { // 시작 시간
+        binding.moimScheduleStartTimeTp.apply { // 시작 시간
             hour = dateTimePair.first.hourOfDay
             minute = dateTimePair.first.minuteOfHour
         }
-        binding.dialogGroupScheduleEndTimeTp.apply { // 종료 시간
+        binding.moimScheduleEndTimeTp.apply { // 종료 시간
             hour = dateTimePair.second.hourOfDay
             minute = dateTimePair.second.minuteOfHour
         }
-        binding.dialogGroupScheduleStartDateDp.init(dateTimePair.first.year, dateTimePair.first.monthOfYear - 1, dateTimePair.first.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
+        binding.moimScheduleStartDateDp.init(dateTimePair.first.year, dateTimePair.first.monthOfYear - 1, dateTimePair.first.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
             viewModel.updateTime(dateTimePair.first.withDate(year, monthOfYear + 1, dayOfMonth), null)
         }
-        binding.dialogGroupScheduleEndDateDp.init(dateTimePair.second.year, dateTimePair.second.monthOfYear - 1, dateTimePair.second.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
+        binding.moimScheduleEndDateDp.init(dateTimePair.second.year, dateTimePair.second.monthOfYear - 1, dateTimePair.second.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
             viewModel.updateTime(null, dateTimePair.second.withDate(year, monthOfYear + 1, dayOfMonth))
         }
     }
 
     private fun initPickerClickListeners() {
         // 시작 시간
-        with(binding.dialogGroupScheduleStartTimeTp) {
+        with(binding.moimScheduleStartTimeTp) {
             val startDateTime = viewModel.getDateTime()?.first!!
             this.hour = startDateTime.hourOfDay
             this.minute = startDateTime.minuteOfHour
@@ -254,7 +256,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
             }
         }
         // 종료 시간
-        with(binding.dialogGroupScheduleEndTimeTp) {
+        with(binding.moimScheduleEndTimeTp) {
             val endDateTime = viewModel.getDateTime()?.second!!
             this.hour = endDateTime.hourOfDay
             this.minute = endDateTime.minuteOfHour
@@ -263,19 +265,19 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
             }
         }
         // 시작일 - 날짜
-        binding.dialogGroupScheduleStartDateTv.setOnClickListener {
+        binding.moimScheduleStartDateTv.setOnClickListener {
             showPicker(it as TextView)
         }
         // 종료일 - 날짜
-        binding.dialogGroupScheduleEndDateTv.setOnClickListener {
+        binding.moimScheduleEndDateTv.setOnClickListener {
             showPicker(it as TextView)
         }
         // 시작일 - 시간
-        binding.dialogGroupScheduleStartTimeTv.setOnClickListener {
+        binding.moimScheduleStartTimeTv.setOnClickListener {
             showPicker(it as TextView)
         }
         // 종료일 - 시간
-        binding.dialogGroupScheduleEndTimeTv.setOnClickListener {
+        binding.moimScheduleEndTimeTv.setOnClickListener {
             showPicker(it as TextView)
         }
     }
@@ -283,11 +285,12 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     private fun togglePicker(pickerText: TextView?, open: Boolean) {
         pickerText?.let { pickerTextView ->
             val picker: MotionLayout = when (pickerTextView) {
-                binding.dialogGroupScheduleStartDateTv -> binding.dialogGroupScheduleStartDateLayout
-                binding.dialogGroupScheduleEndDateTv -> binding.dialogGroupScheduleEndDateLayout
-                binding.dialogGroupScheduleStartTimeTv -> binding.dialogGroupScheduleStartTimeLayout
-                binding.dialogGroupScheduleEndTimeTv -> binding.dialogGroupScheduleEndTimeLayout
-                else -> binding.dialogGroupScheduleStartTimeLayout
+
+                binding.moimScheduleStartDateTv -> binding.moimScheduleStartDateLayout
+                binding.moimScheduleEndDateTv -> binding.moimScheduleEndDateLayout
+                binding.moimScheduleStartTimeTv -> binding.moimScheduleStartTimeLayout
+                binding.moimScheduleEndTimeTv -> binding.moimScheduleEndTimeLayout
+                else -> binding.moimScheduleStartTimeLayout
             }
 
             picker.let {
@@ -331,7 +334,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
 
     private fun setParticipantAdapter() {
         participantAdapter = MoimParticipantRVAdapter(viewModel.participantList.value!!)
-        binding.dialogGroupScheduleParticipantRv.apply {
+        binding.moimScheduleParticipantRv.apply {
             adapter = participantAdapter
             layoutManager = GridLayoutManager(context, 3)
         }
@@ -340,7 +343,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
 
     private fun hideKeyboard() {
         val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputManager.hideSoftInputFromWindow(binding.dialogGroupScheduleTitleEt.windowToken, 0)
+        inputManager.hideSoftInputFromWindow(binding.moimScheduleTitleEt.windowToken, 0)
     }
 
     private fun setResultLocation() {
@@ -391,14 +394,14 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
                         .load(imageUri)
                         .fitCenter()
                         .apply(RequestOptions().override(500,500))
-                        .into(binding.dialogGroupScheduleCoverImgIv)
+                        .into(binding.moimScheduleCoverImgIv)
                 }
             }
         }
     }
 
     private fun initMapView() {
-        mapView = binding.dialogGroupSchedulePlaceContainer
+        mapView = binding.moimSchedulePlaceContainer
         mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
                 // 지도 API 가 정상적으로 종료될 때 호출됨
@@ -434,7 +437,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
         val mapData = viewModel.getPlace() ?: return
         Log.d("GroupScheduleActivity", mapData.toString())
 //        binding.dialogGroupSchedulePlaceKakaoBtn.visibility = View.VISIBLE
-        binding.dialogGroupSchedulePlaceContainer.visibility = ViewGroup.VISIBLE
+        binding.moimSchedulePlaceContainer.visibility = ViewGroup.VISIBLE
 
         // 지도 위치 조정
         val latLng = mapData.second

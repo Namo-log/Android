@@ -97,7 +97,7 @@
             android:theme="@style/Theme.MaterialTransparent"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".presentation.ui.group.GroupCalendarActivity"
+            android:name=".presentation.ui.community.moim.schedule.MoimParticipantCalendarActivity"
             android:exported="false" />
         <activity
             android:name=".presentation.ui.community.moim.schedule.MoimScheduleActivity"

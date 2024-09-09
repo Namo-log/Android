@@ -5,39 +5,23 @@ import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.LatLng
-import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
-import com.mongmong.namo.domain.model.group.BaseMoimScheduleRequestBody
-import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
-import com.mongmong.namo.domain.model.group.Group
+import com.mongmong.namo.domain.model.Moim
 import com.mongmong.namo.domain.model.group.GroupMember
 import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.presentation.utils.PickerConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import javax.inject.Inject
-import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.full.memberProperties
 
 @HiltViewModel
 class MoimScheduleViewModel @Inject constructor(
     private val repository: ScheduleRepository
 ) : ViewModel() {
-    private val _schedule = MutableLiveData<MoimScheduleBody>()
-    val schedule: LiveData<MoimScheduleBody> = _schedule
-
-    private val _group = MutableLiveData<Group>()
-    val group: LiveData<Group> = _group
-
-    private val _groupScheduleList = MutableLiveData<List<MoimScheduleBody>>(emptyList())
-    val groupScheduleList: LiveData<List<MoimScheduleBody>?> = _groupScheduleList
-
-    private val _monthScheduleList = MutableLiveData<List<MoimScheduleBody>>(emptyList())
-    val monthScheduleList: LiveData<List<MoimScheduleBody>?> = _monthScheduleList
+    private val _moimSchedule = MutableLiveData<Moim>()
+    val moimSchedule: LiveData<Moim> = _moimSchedule
 
     private val _prevClickedPicker = MutableLiveData<TextView?>()
     var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
@@ -72,65 +56,40 @@ class MoimScheduleViewModel @Inject constructor(
         )
     }
 
-    /** 그룹의 모든 일정 조회 */
-    fun getGroupAllSchedules(groupId: Long) {
-        viewModelScope.launch {
-            Log.d("MoimScheduleViewModel", "getGroupAllSchedules")
-            _groupScheduleList.value = repository.getGroupAllSchedules(groupId)
-        }
-    }
-
     /** 모임 일정 생성 */
     fun postMoimSchedule() {
-        val addRequest = AddMoimScheduleRequestBody(groupId = _group.value!!.groupId)
-        (_schedule.value!!.convertMoimScheduleToBaseRequest()).copyPropertiesTo(addRequest)
-        viewModelScope.launch {
-            repository.addMoimSchedule(addRequest)
-        }
+
     }
 
     /** 모임 일정 수정 */
     fun editMoimSchedule() {
-        val editRequest = EditMoimScheduleRequestBody(moimScheduleId = _schedule.value!!.moimScheduleId)
-        (_schedule.value!!.convertMoimScheduleToBaseRequest()).copyPropertiesTo(editRequest)
-        viewModelScope.launch {
-            repository.editMoimSchedule(editRequest)
-        }
+
     }
 
     /** 모임 일정 삭제 */
     fun deleteMoimSchedule() {
-        viewModelScope.launch {
-            repository.deleteMoimSchedule(_schedule.value!!.moimScheduleId)
-        }
+
     }
 
     /** 모임 일정 정보 세팅 */
-    fun setSchedule(schedule: MoimScheduleBody) {
-        _schedule.value = schedule
-        if (isCreateMode()) {
-            setDefaultGroupMembers()
-            _schedule.value?.groupId = _group.value!!.groupId
+    fun setMoimSchedule(moim: Moim) {
+        _moimSchedule.value = moim
+        moimTitle.value = moim.title
+        if (moim.placeName.isBlank()) {
+            _moimSchedule.value?.placeName = "없음"
         }
-        if (schedule.placeName.isBlank()) {
-            _schedule.value?.placeName = "없음"
-        }
-    }
-
-    fun setGroup(group: Group) {
-        _group.value = group
     }
 
     private fun setDailySchedule() {
         // 선택 날짜에 해당되는 일정 필터링
-        _dailyScheduleList = _groupScheduleList.value!!.filter { schedule ->
-            schedule.startLong <= _clickedDatePair.second &&
-                    schedule.endLong >= _clickedDatePair.first
-        }
-        _isDailyScheduleEmptyPair.value = Pair(
-            isDailyScheduleEmpty(false), // 개인 일정
-            isDailyScheduleEmpty(true) // 모임 일정
-        )
+//        _dailyScheduleList = _groupScheduleList.value!!.filter { schedule ->
+//            schedule.startLong <= _clickedDatePair.second &&
+//                    schedule.endLong >= _clickedDatePair.first
+//        }
+//        _isDailyScheduleEmptyPair.value = Pair(
+//            isDailyScheduleEmpty(false), // 개인 일정
+//            isDailyScheduleEmpty(true) // 모임 일정
+//        )
     }
 
     // 캘린더의 날짜 클릭
@@ -160,40 +119,36 @@ class MoimScheduleViewModel @Inject constructor(
     fun filterMonthSchedule() {
         val monthStart = _monthDayList.value!![0].withTimeAtStartOfDay().millis / 1000
         val monthEnd = _monthDayList.value!![41].plusDays(1).withTimeAtStartOfDay().millis / 1000
-        _monthScheduleList.value = _groupScheduleList.value?.filter { schedule ->
-            schedule.startLong <= monthEnd && schedule.endLong >= monthStart
-        }
+//        _monthScheduleList.value = _groupScheduleList.value?.filter { schedule ->
+//            schedule.startLong <= monthEnd && schedule.endLong >= monthStart
+//        }
     }
 
     fun setIsShow(bool: Boolean) {
         _isShow.value = bool
     }
 
-    private fun setDefaultGroupMembers() {
-        _schedule.value!!.members = _group.value!!.groupMembers
-    }
-
     fun updatePlace(placeName: String, x: Double, y: Double) {
-        _schedule.value = _schedule.value?.copy(
+        _moimSchedule.value = _moimSchedule.value?.copy(
             placeName = placeName,
-            placeX = x,
-            placeY = y
+//            placeX = x,
+//            placeY = y
         )
     }
 
     fun updateMembers(selectedMember: MoimSchduleMemberList) {
-        _schedule.value = _schedule.value!!.copy(
+        _moimSchedule.value = _moimSchedule.value!!.copy(
             members = selectedMember.memberList
         )
     }
 
     // 시간 변경
     fun updateTime(startDateTime: DateTime?, endDateTime: DateTime?) {
-        _schedule.value = _schedule.value?.copy(
-            startLong = startDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
-                ?: _schedule.value!!.startLong,
-            endLong = endDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
-                ?: _schedule.value!!.endLong
+        _moimSchedule.value = _moimSchedule.value?.copy(
+            startDate = startDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
+                ?: _moimSchedule.value!!.startDate,
+//            endLong = endDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
+//                ?: _moimSchedule.value!!.endLong
         )
     }
 
@@ -202,7 +157,7 @@ class MoimScheduleViewModel @Inject constructor(
     }
 
 
-    fun isCreateMode() = schedule.value!!.moimScheduleId == 0L
+    fun isCreateMode() = _moimSchedule.value!!.moimId == 0L
 
     private fun isDailyScheduleEmpty(isMoim: Boolean): Boolean {
         Log.d("ScheduleViewModel", "isDailyScheduleEmpty($isMoim): ${getDailySchedules(isMoim)}")
@@ -218,39 +173,26 @@ class MoimScheduleViewModel @Inject constructor(
         } as ArrayList<MoimScheduleBody>
     }
 
-    fun getSelectedMemberId() = schedule.value!!.members.map { it.userId }
+    fun getSelectedMemberId() = _moimSchedule.value!!.members.map { it.userId }
 
     fun getDateTime(): Pair<DateTime, DateTime>? {
-        if (_schedule.value != null) {
+        if (_moimSchedule.value != null) {
             return Pair(
-                PickerConverter.parseLongToDateTime(schedule.value!!.startLong),
-                PickerConverter.parseLongToDateTime(schedule.value!!.endLong)
+                PickerConverter.parseLongToDateTime(_moimSchedule.value!!.startDate),
+                PickerConverter.parseLongToDateTime(_moimSchedule.value!!.startDate)
             )
         }
         return null
     }
 
     fun getPlace(): Pair<String, LatLng>? {
-        if (_schedule.value != null) {
-            if (_schedule.value!!.placeX == 0.0 && _schedule.value!!.placeY == 0.0) return null
-            return Pair(
-                schedule.value!!.placeName,
-                LatLng.from(schedule.value!!.placeY, schedule.value!!.placeX)
-            )
-        }
+//        if (_moimSchedule.value != null) {
+//            if (_moimSchedule.value!!.placeX == 0.0 && _schedule.value!!.placeY == 0.0) return null
+//            return Pair(
+//                _moimSchedule.value!!.placeName,
+//                LatLng.from(_moimSchedule.value!!.placeY, _moimSchedule.value!!.placeX)
+//            )
+//        }
         return null
-    }
-
-    fun <T : BaseMoimScheduleRequestBody> BaseMoimScheduleRequestBody.copyPropertiesTo(target: T): T {
-        this::class.memberProperties.forEach { property ->
-            if (property is KMutableProperty1<*, *>) {
-                val targetProperty = target::class.memberProperties.find { it.name == property.name } as? KMutableProperty1<T, Any?>
-                targetProperty?.let {
-                    val value = (property as KMutableProperty1<BaseMoimScheduleRequestBody, Any?>).get(this)
-                    it.set(target, value)
-                }
-            }
-        }
-        return target
     }
 }

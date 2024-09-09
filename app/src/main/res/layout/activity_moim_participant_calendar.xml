@@ -10,7 +10,7 @@
         android:background="@color/white">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/group_calendar_header_layout"
+            android:id="@+id/moim_participant_calendar_header_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -21,64 +21,43 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <LinearLayout
-                android:id="@+id/group_calendar_year_month_layout"
+            <TextView
+                android:id="@+id/moim_participant_calendar_year_month_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
+                android:gravity="center_vertical|start"
+                tools:text="@string/month_calendar_header_year_month"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/group_calendar_year_month_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:gravity="center_vertical|start"
-                    tools:text="@string/month_calendar_header_year_month"
-                    style="@style/header"/>
-
-                <ImageView
-                    android:id="@+id/group_calendar_year_arrow_iv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="13dp"
-                    android:src="@drawable/ic_arrow_down_bold"
-                    app:tint="@color/black"
-                    app:layout_constraintTop_toTopOf="@id/group_calendar_year_month_tv"
-                    app:layout_constraintBottom_toBottomOf="@id/group_calendar_year_month_tv"
-                    app:layout_constraintStart_toEndOf="@id/group_calendar_year_month_tv"/>
-
-            </LinearLayout>
+                style="@style/header" />
 
             <TextView
-                android:id="@+id/group_calendar_group_title_tv"
+                android:id="@+id/moim_participant_calendar_title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:gravity="center"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/group_calendar_year_month_layout"
-                app:layout_constraintEnd_toStartOf="@id/group_calendar_info_iv"
-                app:layout_constraintTop_toTopOf="@id/group_calendar_year_month_layout"
-                tools:text="나모 앱런칭 캘린더"/>
+                app:layout_constraintBottom_toBottomOf="@id/moim_participant_calendar_year_month_tv"
+                app:layout_constraintEnd_toStartOf="@id/moim_participant_calendar_info_iv"
+                app:layout_constraintTop_toTopOf="@id/moim_participant_calendar_year_month_tv"
+                tools:text="모임 일정명"
+                style="@style/header"/>
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/group_calendar_info_iv"
-                android:layout_width="30dp"
-                android:layout_height="20dp"
+            <ImageView
+                android:id="@+id/moim_participant_calendar_info_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@drawable/ic_more_vertical"
                 android:scaleType="fitCenter"
                 android:layout_marginEnd="10dp"
-                app:layout_constraintBottom_toBottomOf="@id/group_calendar_year_month_layout"
+                app:layout_constraintBottom_toBottomOf="@id/moim_participant_calendar_title_tv"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/group_calendar_year_month_layout"/>
+                app:layout_constraintTop_toTopOf="@id/moim_participant_calendar_title_tv"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
-            android:id="@+id/group_calendar_days_layout"
+            android:id="@+id/moim_participant_calendar_days_layout"
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_marginStart="25dp"
@@ -87,7 +66,7 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/group_calendar_header_layout">
+            app:layout_constraintTop_toBottomOf="@id/moim_participant_calendar_header_layout">
 
             <TextView
                 android:layout_width="0dp"
@@ -162,7 +141,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/group_calendar_divider_layout"
+            android:id="@+id/moim_participant_calendar_divider_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -170,7 +149,7 @@
             android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/group_calendar_days_layout">
+            app:layout_constraintTop_toBottomOf="@id/moim_participant_calendar_days_layout">
 
             <View
                 android:layout_width="match_parent"
@@ -179,12 +158,14 @@
                 android:background="@color/main_gray"
                 android:elevation="5dp" />
 
-        </LinearLayout><androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/group_calendar_vp"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/group_calendar_divider_layout"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        </LinearLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/moim_participant_calendar_vp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/moim_participant_calendar_divider_layout"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

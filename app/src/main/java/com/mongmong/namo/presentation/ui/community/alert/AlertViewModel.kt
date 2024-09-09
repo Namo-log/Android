@@ -19,8 +19,8 @@ class AlertViewModel: ViewModel() {
     init {
         _moimRequestList.value = listOf(
             Moim(
-                PickerConverter.parseDateTimeToLong(DateTime.now()), "", "나모 모임 일정", listOf(
-                GroupMember(3, "코코아", 4)
+                1, PickerConverter.parseDateTimeToLong(DateTime.now()), "", "나모 모임 일정", "강남역",
+                listOf(GroupMember(3, "코코아", 4)
             ))
         )
 

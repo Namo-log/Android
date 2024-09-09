@@ -5,7 +5,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentMoimBinding
-import com.mongmong.namo.domain.model.group.Group
+import com.mongmong.namo.domain.model.Moim
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.community.moim.adapter.MoimRVAdapter
 import com.mongmong.namo.presentation.ui.community.moim.schedule.MoimScheduleActivity
@@ -30,7 +30,7 @@ class MoimFragment : BaseFragment<FragmentMoimBinding>(R.layout.fragment_moim) {
         binding.moimCreateFloatingBtn.setOnClickListener {
             // 모임 일정 생성 화면으로 이동
             requireActivity().startActivity(Intent(context, MoimScheduleActivity::class.java)
-                .putExtra("group", Group())
+                .putExtra("moim", Moim())
             )
         }
     }
@@ -47,7 +47,10 @@ class MoimFragment : BaseFragment<FragmentMoimBinding>(R.layout.fragment_moim) {
             }
 
             override fun onItemClick(position: Int) {
-                //TODO: 모임 일정 편집 화면으로 이동
+                // 모임 일정 편집 화면으로 이동
+                requireActivity().startActivity(Intent(context, MoimScheduleActivity::class.java)
+                    .putExtra("moim", viewModel.moimList.value!![position])
+                )
             }
         })
     }
