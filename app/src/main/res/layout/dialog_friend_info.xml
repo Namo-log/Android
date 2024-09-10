@@ -243,7 +243,7 @@
                 android:visibility="@{isFriendRequestMode ? View.GONE : View.VISIBLE}"
                 app:layout_constraintTop_toBottomOf="@id/friend_info_birth_ll">
 
-                <com.mongmong.namo.presentation.ui.common.ImageTextView
+                <com.mongmong.namo.presentation.utils.ImageTextView
                     android:id="@+id/friend_info_schedule_btn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -262,7 +262,7 @@
                     android:layout_width="16dp"
                     android:layout_height="match_parent"/>
 
-                <com.mongmong.namo.presentation.ui.common.ImageTextView
+                <com.mongmong.namo.presentation.utils.ImageTextView
                     android:id="@+id/friend_info_delete_btn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

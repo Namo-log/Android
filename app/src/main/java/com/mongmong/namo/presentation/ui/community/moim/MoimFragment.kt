@@ -27,6 +27,7 @@ class MoimFragment : BaseFragment<FragmentMoimBinding>(R.layout.fragment_moim) {
     }
 
     private fun initClickListeners() {
+        // + 버튼
         binding.moimCreateFloatingBtn.setOnClickListener {
             // 모임 일정 생성 화면으로 이동
             requireActivity().startActivity(Intent(context, MoimScheduleActivity::class.java)

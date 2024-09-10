@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="isFriendRequestMode"
+            type="Boolean" />
+        <variable
+            name="friend"
+            type="com.mongmong.namo.domain.model.Friend" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:background="@color/transparent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:elevation="5dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="15dp"
+            android:background="@drawable/bg_dialog"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/add_friend_top_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="8"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                    android:id="@+id/add_friend_close_iv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/close"
+                    style="@style/content_regular"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="6"
+                    android:text="새 친구"
+                    android:textAlignment="center"
+                    style="@style/content_bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dialog_save"
+                    android:visibility="invisible"
+                    android:textAlignment="viewEnd"
+                    style="@style/content_regular" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/add_friend_nickname_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/add_friend_top_ll">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="72dp"
+                    android:text="@string/nickname"
+                    style="@style/content_bold"/>
+
+                <EditText
+                    android:id="@+id/add_friend_nickname_et"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="34dp"
+                    android:layout_weight="1"
+                    android:hint="@string/input_hint"
+                    android:textColorHint="@color/text_placeholder"
+                    android:backgroundTint="@color/text_placeholder"
+                    android:text="@{friend.name}"
+                    tools:text="김나현"
+                    style="@style/content_regular"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/add_friend_tag_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/add_friend_nickname_ll">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="72dp"
+                    android:text="태그 4자리"
+                    style="@style/content_bold"/>
+
+                <EditText
+                    android:id="@+id/add_friend_tag_et"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="34dp"
+                    android:layout_weight="1"
+                    android:hint="@string/input_hint"
+                    android:textColorHint="@color/text_placeholder"
+                    android:backgroundTint="@color/text_placeholder"
+                    android:text="@{friend.name}"
+                    tools:text="00"
+                    style="@style/content_regular"/>
+
+            </LinearLayout>
+
+
+            <com.mongmong.namo.presentation.utils.ImageTextView
+                android:id="@+id/add_friend_request_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:paddingVertical="11dp"
+                android:paddingHorizontal="20dp"
+                android:gravity="center"
+                android:drawableStart="@drawable/ic_add_friend"
+                app:drawableStartSize="20dp"
+                android:drawablePadding="16dp"
+                android:text="@string/friend_request"
+                android:textColor="@color/black"
+                android:background="@drawable/bg_basic_outline_btn"
+                style="@style/content_regular"
+                app:layout_constraintTop_toBottomOf="@id/add_friend_tag_ll"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

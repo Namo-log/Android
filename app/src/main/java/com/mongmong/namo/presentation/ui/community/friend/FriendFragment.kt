@@ -19,7 +19,16 @@ class FriendFragment : BaseFragment<FragmentFriendBinding>(R.layout.fragment_fri
             lifecycleOwner = this@FriendFragment
         }
 
+        initClickListeners()
         initObserve()
+    }
+
+    private fun initClickListeners() {
+        // + 버튼
+        binding.friendAddFloatingBtn.setOnClickListener {
+            // 친구 추가 다이얼로그
+            AddFriendDialog().show(parentFragmentManager, "AddFriendDialog")
+        }
     }
 
     private fun setAdapter() {

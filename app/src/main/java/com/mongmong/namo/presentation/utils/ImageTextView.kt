@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.common
+package com.mongmong.namo.presentation.utils
 
 import android.content.Context
 import android.graphics.Rect

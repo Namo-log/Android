@@ -11,6 +11,8 @@
     <string name="delete">삭제</string>
     <string name="name">이름</string>
     <string name="birth">생일</string>
+    <string name="nickname">닉네임</string>
+    <string name="input_hint">입력</string>
 
     <!-- 약관 동의 관련 String -->
     <string name="for_service">서비스 이용을 위한</string>
@@ -186,12 +188,13 @@
     <!-- 친구 -->
     <string name="friend_search_hint">닉네임 혹은 이름 입력</string>
     <string name="friend_empty">추가된 친구가 없습니다.\n친구와 함께 나모를 사용해보세요!</string>
+    <string name="friend_info">친구 정보</string>
+    <string name="friend_request">친구 신청</string>
 
     <!-- 알림 -->
     <string name="alert_empty">새로운 요청이 없습니다.</string>
     <string name="community_alert_title">새로운 요청</string>
     <string name="request_accept">수락</string>
     <string name="request_deny">거절</string>
-    <string name="friend_info">친구 정보</string>
 
 </resources>
