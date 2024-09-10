@@ -13,7 +13,7 @@ class MoimViewModel: ViewModel() {
     val moimList: LiveData<List<Moim>> = _moimList
 
     // 임시 데이터
-    var moim = Moim(1, PickerConverter.parseDateTimeToLong(DateTime.now()), "https://github.com/nahy-512/nahy-512/assets/101113025/3fb8e968-e482-4aff-9334-60c41014a80f", "나모 모임 일정", "강남역",
+    var moim = Moim(1, PickerConverter.parseDateTimeToLong(DateTime.now()), "https://img.freepik.com/free-photo/beautiful-floral-composition_23-2150968962.jpg", "나모 모임 일정", "강남역",
         listOf(
             GroupMember(3, "코코아", 4),
             GroupMember(2, "짱구", 6),

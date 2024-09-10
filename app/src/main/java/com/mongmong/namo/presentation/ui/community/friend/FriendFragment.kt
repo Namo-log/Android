@@ -34,7 +34,8 @@ class FriendFragment : BaseFragment<FragmentFriendBinding>(R.layout.fragment_fri
             }
 
             override fun onItemClick(position: Int) {
-                //TODO: 친구 정보 화면으로 이동
+                // 친구 정보 화면으로 이동
+                FriendInfoDialog(viewModel.friendList.value!![position], false).show(parentFragmentManager, "FriendInfoDialog")
             }
         })
     }

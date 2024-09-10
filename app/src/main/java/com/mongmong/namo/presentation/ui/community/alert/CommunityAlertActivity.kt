@@ -6,7 +6,9 @@ import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityCommunityAlertBinding
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.community.alert.adapter.CommunityAlertVPAdapter
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CommunityAlertActivity : BaseActivity<ActivityCommunityAlertBinding>(R.layout.activity_community_alert) {
 
     private val information = arrayListOf("모임 요청", "친구 요청")

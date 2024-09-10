@@ -7,6 +7,10 @@
     <string name="apply">적용</string>
     <string name="copy_link">링크 복사</string>
     <string name="share_outside">외부 공유</string>
+    <string name="schedule">일정</string>
+    <string name="delete">삭제</string>
+    <string name="name">이름</string>
+    <string name="birth">생일</string>
 
     <!-- 약관 동의 관련 String -->
     <string name="for_service">서비스 이용을 위한</string>
@@ -188,5 +192,6 @@
     <string name="community_alert_title">새로운 요청</string>
     <string name="request_accept">수락</string>
     <string name="request_deny">거절</string>
+    <string name="friend_info">친구 정보</string>
 
 </resources>

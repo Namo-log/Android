@@ -26,7 +26,8 @@ class AlertViewModel: ViewModel() {
 
         _friendRequestList.value = listOf(
             Friend(
-              0, "", "코코아", "한줄 소개입니다", true
+              0, "https://github.com/nahy-512/nahy-512/assets/101113025/3fb8e968-e482-4aff-9334-60c41014a80f",
+                "코코아", "#1111", "한줄 소개입니다", "김나현", "1월 25일", true
             )
         )
     }

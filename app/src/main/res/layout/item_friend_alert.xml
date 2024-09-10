@@ -37,6 +37,7 @@
                     android:id="@+id/item_friend_alert_profile_iv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
                     app:imageUrl="@{friend.profileUrl}"
                     app:placeHolder="@{@drawable/img_mongi_default}"
                     tools:src="@drawable/ic_app_logo_square"/>

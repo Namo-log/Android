@@ -6,6 +6,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentFriendAlertBinding
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.community.alert.adapter.FriendAlertRVAdapter
+import com.mongmong.namo.presentation.ui.community.friend.FriendInfoDialog
 
 class FriendAlertFragment : BaseFragment<FragmentFriendAlertBinding>(R.layout.fragment_friend_alert) {
 
@@ -30,7 +31,8 @@ class FriendAlertFragment : BaseFragment<FragmentFriendAlertBinding>(R.layout.fr
         }
         friendAdapter.setItemClickListener(object : FriendAlertRVAdapter.MyItemClickListener {
             override fun onFriendInfoClick(position: Int) {
-                //TODO: 친구 정보 화면으로 이동
+                // 친구 정보 화면으로 이동
+                FriendInfoDialog(viewModel.friendRequestList.value!![position], true).show(parentFragmentManager, "FriendInfoDialog")
             }
 
             override fun onAcceptBtnClick(position: Int) {
