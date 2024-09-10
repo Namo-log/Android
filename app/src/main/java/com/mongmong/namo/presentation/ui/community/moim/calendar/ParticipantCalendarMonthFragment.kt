@@ -61,12 +61,6 @@ class ParticipantCalendarMonthFragment : BaseFragment<FragmentMoimParticipantCal
     }
 
     private fun initClickListeners() {
-        binding.groupFab.setOnClickListener {
-            val intent = Intent(context, MoimScheduleActivity::class.java)
-            intent.putExtra("nowDay", viewModel.getClickedDate().millis)
-            intent.putExtra("group", (activity as MoimParticipantCalendarActivity).getGroup() )
-            startActivity(intent)
-        }
 
         // 날짜 상세보기
         binding.moimParticipantCalendarMonthView.onDateClickListener = object : CustomCalendarView.OnDateClickListener {

@@ -92,11 +92,6 @@
             android:name=".presentation.ui.diary.DiaryActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.group.GroupInfoActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MaterialTransparent"
-            android:windowSoftInputMode="adjustPan" />
-        <activity
             android:name=".presentation.ui.community.moim.schedule.MoimParticipantCalendarActivity"
             android:exported="false" />
         <activity

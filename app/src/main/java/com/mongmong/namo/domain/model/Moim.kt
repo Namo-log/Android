@@ -17,4 +17,13 @@ data class Moim(
     fun getMemberNames(): String {
         return members.joinToString { it.userName }
     }
+
+    fun getParticipantsColoInfo(): List<CalendarColorInfo> {
+        return members.map { participant ->
+            CalendarColorInfo(
+                colorId = participant.color,
+                name = participant.userName
+            )
+        }
+    }
 }

@@ -172,6 +172,7 @@
     <string name="moim_schedule_invite_friend_empty">아직 초대한 친구가 없습니다.</string>
     <string name="moim_schedule_add_guest">게스트 초대하기</string>
     <string name="moim_schedule_record_activity">활동 기록하기 </string>
+    <string name="moim_schedule_participant_info">참석자 정보</string>
 
     <!-- 친구 -->
     <string name="friend_search_hint">닉네임 혹은 이름 입력</string>

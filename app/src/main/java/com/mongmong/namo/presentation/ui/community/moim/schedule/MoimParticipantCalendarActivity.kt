@@ -1,21 +1,25 @@
 package com.mongmong.namo.presentation.ui.community.moim.schedule
 
 import android.content.Intent
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMoimParticipantCalendarBinding
 import com.mongmong.namo.domain.model.Moim
 import com.mongmong.namo.presentation.config.BaseActivity
+import com.mongmong.namo.presentation.ui.community.moim.MoimViewModel
 import com.mongmong.namo.presentation.ui.community.moim.calendar.adapter.ParticipantCalendarAdapter
-import com.mongmong.namo.presentation.ui.group.GroupInfoActivity
+import com.mongmong.namo.presentation.ui.community.moim.calendar.MoimParticipantDialog
 import com.mongmong.namo.presentation.utils.SetMonthDialog
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 
 @AndroidEntryPoint
 class MoimParticipantCalendarActivity : BaseActivity<ActivityMoimParticipantCalendarBinding>(R.layout.activity_moim_participant_calendar) {
-    private lateinit var moimSchedule : Moim
+
+    private val viewModel: MoimViewModel by viewModels()
+
     private lateinit var calendarAdapter : ParticipantCalendarAdapter
 
     private var millis = DateTime().withDayOfMonth(1).withTimeAtStartOfDay().millis
@@ -24,7 +28,7 @@ class MoimParticipantCalendarActivity : BaseActivity<ActivityMoimParticipantCale
     private var prevIdx = -1
 
     override fun setup() {
-        moimSchedule = intent.getSerializableExtra("moim") as Moim
+        viewModel.moim = intent.getSerializableExtra("moim") as Moim
         setGroupInfo()
 
         calendarAdapter = ParticipantCalendarAdapter(this)
@@ -61,17 +65,15 @@ class MoimParticipantCalendarActivity : BaseActivity<ActivityMoimParticipantCale
 
         // 참석자 정보 표시
         binding.moimParticipantCalendarInfoIv.setOnClickListener {
-            startActivity(Intent(this, GroupInfoActivity::class.java)
-                .putExtra("group", moimSchedule)
-            )
+            MoimParticipantDialog().show(this.supportFragmentManager, "ParticipantDialog")
         }
     }
 
     private fun setGroupInfo() {
-        binding.moimParticipantCalendarTitleTv.text = moimSchedule.title
+        binding.moimParticipantCalendarTitleTv.text = viewModel.moim.title
     }
 
-    fun getGroup() = moimSchedule
+    fun getMoim() = viewModel.moim
 
     companion object{
         var currentFragment : Fragment? = null
