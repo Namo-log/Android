@@ -121,7 +121,8 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
 
         // 게스트 초대 버튼 클릭 (편집 모드)
         binding.moimScheduleAddGuestTv.setOnClickListener {
-            //TODO: 게스트 초대
+            // 게스트 초대 다이얼로그
+            GuestInviteDialog().show(this.supportFragmentManager, "GuestInviteDialog")
         }
 
         initPickerClickListeners()
