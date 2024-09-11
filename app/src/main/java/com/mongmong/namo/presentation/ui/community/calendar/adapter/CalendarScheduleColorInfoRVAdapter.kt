@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.community.moim.calendar.adapter
+package com.mongmong.namo.presentation.ui.community.calendar.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemScheduleColorInfoBinding
 import com.mongmong.namo.domain.model.CalendarColorInfo
 
-class ParticipantInfoRVAdapter(
-    private val participantList : List<CalendarColorInfo>
-) : RecyclerView.Adapter<ParticipantInfoRVAdapter.ViewHolder>() {
+class CalendarScheduleColorInfoRVAdapter(
+    private val colorInfoList : List<CalendarColorInfo>
+) : RecyclerView.Adapter<CalendarScheduleColorInfoRVAdapter.ViewHolder>() {
 
     private lateinit var context : Context
 
@@ -24,15 +24,15 @@ class ParticipantInfoRVAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(participantList[position])
+        holder.bind(colorInfoList[position])
     }
 
-    override fun getItemCount(): Int = participantList.size
+    override fun getItemCount(): Int = colorInfoList.size
 
 
     inner class ViewHolder(val binding : ItemScheduleColorInfoBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(participant : CalendarColorInfo) {
-            binding.info = participant
+        fun bind(colorInfo : CalendarColorInfo) {
+            binding.info = colorInfo
         }
     }
 }

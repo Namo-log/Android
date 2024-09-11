@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.community.moim.calendar
+package com.mongmong.namo.presentation.ui.community.calendar
 
 import android.content.Context
 import android.graphics.*
@@ -10,7 +10,7 @@ import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.DAYS_PER_WEE
 import com.mongmong.namo.presentation.utils.CustomCalendarView
 import org.joda.time.DateTime
 
-class ParticipantCalendarView(context: Context, attrs: AttributeSet) :
+class CommunityCalendarView(context: Context, attrs: AttributeSet) :
     CustomCalendarView(context, attrs) {
     private val scheduleList = mutableListOf<MoimScheduleBody>()
 

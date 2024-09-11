@@ -1,5 +1,7 @@
 package com.mongmong.namo.domain.model
 
+import java.io.Serializable
+
 data class Friend(
     val userid: Long,
     val profileUrl: String,
@@ -9,4 +11,4 @@ data class Friend(
     val name: String,
     val birth: String,
     val isFavorite: Boolean // 즐겨찾기 여부
-)
+): Serializable

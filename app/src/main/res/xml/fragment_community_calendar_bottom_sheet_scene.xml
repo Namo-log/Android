@@ -9,7 +9,7 @@
         motion:duration="170">
        <KeyFrameSet>
            <KeyAttribute
-               motion:motionTarget="@id/group_daily_layout"
+               motion:motionTarget="@id/community_calendar_daily_bottomSheet_cl"
                motion:framePosition="0"
                android:scaleY="1.2"/>
        </KeyFrameSet>
@@ -20,7 +20,7 @@
 
     <ConstraintSet android:id="@+id/end">
         <Constraint
-            android:id="@+id/group_daily_layout"
+            android:id="@+id/community_calendar_daily_bottomSheet_cl"
             android:elevation="5dp"
             motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="match_parent"

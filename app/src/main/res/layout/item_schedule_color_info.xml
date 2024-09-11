@@ -10,10 +10,9 @@
     </data>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="20dp">
+        android:layout_marginBottom="20dp">
 
         <View
             android:id="@+id/item_schedule_color_info_color_view"

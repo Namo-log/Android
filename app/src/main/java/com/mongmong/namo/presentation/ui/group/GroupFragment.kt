@@ -9,7 +9,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.group.Group
 import com.mongmong.namo.databinding.FragmentGroupListBinding
 import com.mongmong.namo.presentation.config.BaseFragment
-import com.mongmong.namo.presentation.ui.community.moim.schedule.MoimParticipantCalendarActivity
+import com.mongmong.namo.presentation.ui.community.CommunityCalendarActivity
 import com.mongmong.namo.presentation.ui.group.adapter.GroupListRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -45,7 +45,7 @@ class GroupFragment
         groupAdapter.setMyItemClickListener(object : GroupListRVAdapter.ItemClickListener {
             override fun onItemClick(moim: Group) { // 그룹 캘린더로 이동
                 Log.d("GroupListFrag", "Click Moim Item")
-                startActivity(Intent(context, MoimParticipantCalendarActivity::class.java).putExtra("moim", moim))
+                startActivity(Intent(context, CommunityCalendarActivity::class.java).putExtra("moim", moim))
             }
         })
 

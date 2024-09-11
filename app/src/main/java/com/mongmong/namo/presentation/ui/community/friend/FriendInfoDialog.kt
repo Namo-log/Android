@@ -1,5 +1,6 @@
 package com.mongmong.namo.presentation.ui.community.friend
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.mongmong.namo.databinding.DialogFriendInfoBinding
 import com.mongmong.namo.domain.model.Friend
+import com.mongmong.namo.presentation.ui.community.CommunityCalendarActivity
 
 class FriendInfoDialog(
     private val friendInfo: Friend,
@@ -39,8 +41,11 @@ class FriendInfoDialog(
 
         // 친구 리스트 - 일정 보기 버튼 클릭
         binding.friendInfoScheduleBtn.setOnClickListener {
-            //TODO: 친구 일정 캘린더로 이동
-            Toast.makeText(requireContext(), "일정 버튼 클릭", Toast.LENGTH_SHORT).show()
+            // 친구 일정 캘린더로 이동
+            startActivity(
+                Intent(requireActivity(), CommunityCalendarActivity::class.java)
+                    .putExtra("friend", friendInfo)
+            )
         }
 
         // 친구 리스트 - 삭제 버튼 클릭

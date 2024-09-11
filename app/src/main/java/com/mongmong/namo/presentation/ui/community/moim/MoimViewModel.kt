@@ -20,6 +20,7 @@ class MoimViewModel: ViewModel() {
         )
     )
 
+
     init {
         _moimList.value = listOf(
             moim

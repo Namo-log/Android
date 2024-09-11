@@ -38,6 +38,7 @@ import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
 import com.mongmong.namo.databinding.ActivityMoimScheduleBinding
 import com.mongmong.namo.domain.model.Moim
 import com.mongmong.namo.presentation.config.BaseActivity
+import com.mongmong.namo.presentation.ui.community.CommunityCalendarActivity
 import com.mongmong.namo.presentation.ui.community.moim.schedule.adapter.MoimParticipantRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
@@ -145,8 +146,11 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
         // 수락한 친구 일정 보기 버튼 클릭
         binding.moimScheduleLookInviteFriendScheduleBtn.setOnClickListener {
             // 캘린더 화면으로 이동
-            startActivity(Intent(this, MoimParticipantCalendarActivity::class.java)
-                .putExtra("moim", viewModel.moimSchedule.value)
+            startActivity(
+                Intent(this, CommunityCalendarActivity::class.java).apply {
+                    putExtra("isFriendCalendar", false)
+                    putExtra("moim", viewModel.moimSchedule.value)
+                }
             )
         }
 

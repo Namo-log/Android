@@ -92,7 +92,7 @@
             android:name=".presentation.ui.diary.DiaryActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.community.moim.schedule.MoimParticipantCalendarActivity"
+            android:name=".presentation.ui.community.CommunityCalendarActivity"
             android:exported="false" />
         <activity
             android:name=".presentation.ui.community.moim.schedule.MoimScheduleActivity"

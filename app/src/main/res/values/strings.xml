@@ -68,6 +68,8 @@
     <string name="schedule_personal_empty">등록된 개인 일정이 없습니다.</string>
     <string name="schedule_moim">모임 일정</string>
     <string name="schedule_moim_empty">등록된 모임 일정이 없습니다.</string>
+    <string name="schedule_friend">친구 일정</string>
+    <string name="schedule_empty">등록된 일정이 없습니다.</string>
     <string name="schedule_time">%s - %s</string>
     <string name="schedule_hint">일정 이름</string>
     <string name="schedule_new">새 일정</string>
@@ -190,6 +192,8 @@
     <string name="friend_empty">추가된 친구가 없습니다.\n친구와 함께 나모를 사용해보세요!</string>
     <string name="friend_info">친구 정보</string>
     <string name="friend_request">친구 신청</string>
+    <string name="calendar_info">캘린더 정보</string>
+    <string name="friend_calendar_category_notice">친구가 공개 설정을 해둔 카테고리만 볼 수 있습니다.</string>
 
     <!-- 알림 -->
     <string name="alert_empty">새로운 요청이 없습니다.</string>

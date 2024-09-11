@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.community.moim.calendar.adapter
+package com.mongmong.namo.presentation.ui.community.calendar.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import com.mongmong.namo.databinding.ItemSchedulePreviewMoimBinding
 import com.mongmong.namo.presentation.utils.ScheduleTimeConverter
 import org.joda.time.DateTime
 
-class GroupDailyPersonalRVAdapter : RecyclerView.Adapter<GroupDailyPersonalRVAdapter.ViewHolder>() {
+class ParticipantDailyScheduleRVAdapter : RecyclerView.Adapter<ParticipantDailyScheduleRVAdapter.ViewHolder>() {
 
     private val personal = ArrayList<MoimScheduleBody>()
     private lateinit var timeConverter: ScheduleTimeConverter
