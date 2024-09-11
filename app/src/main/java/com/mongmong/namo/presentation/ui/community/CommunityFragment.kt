@@ -5,7 +5,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentCommunityBinding
 import com.mongmong.namo.presentation.config.BaseFragment
-import com.mongmong.namo.presentation.ui.community.adapter.CommunityVPAdapter
 import com.mongmong.namo.presentation.ui.community.alert.CommunityAlertActivity
 
 class CommunityFragment : BaseFragment<FragmentCommunityBinding>(R.layout.fragment_community) {
