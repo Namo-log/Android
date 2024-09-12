@@ -18,14 +18,18 @@ interface DiaryRepository {
     suspend fun getPersonalDiary(localId: Long): DiaryDetail
 
     suspend fun addPersonalDiary(
-        diary: DiaryDetail,
-        images: List<String>
+        content: String,
+        enjoyRating: Int,
+        images: List<String>,
+        scheduleId: Long
     ): DiaryResponse
 
     suspend fun editPersonalDiary(
-        diary: DiaryDetail,
+        diaryId: Long,
+        content: String,
+        enjoyRating: Int,
         images: List<String>,
-        deleteImageIds: List<Long>?
+        deleteImageIds: List<Long>
     ): DiaryResponse
 
     suspend fun deletePersonalDiary(

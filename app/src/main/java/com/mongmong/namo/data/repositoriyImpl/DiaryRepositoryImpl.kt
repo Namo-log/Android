@@ -53,34 +53,25 @@ class DiaryRepositoryImpl @Inject constructor(
 
     /** 개인 기록 추가 **/
     override suspend fun addPersonalDiary(
-        diary: DiaryDetail,
+        content: String,
+        enjoyRating: Int,
         images: List<String>,
+        scheduleId: Long
     ): DiaryResponse {
-        Log.d("DiaryRepositoryImpl addDiary", "$diary")
-        return remoteDiaryDataSource.addPersonalDiary(images, diary.diaryId, diary.content)
-        /*if (networkChecker.isOnline()) {
-            val addResponse = remoteDiaryDataSource.addDiaryToServer(diary, images)
-            if (addResponse.code == SUCCESS_CODE) {
-                localDiaryDataSource.updateDiaryAfterUpload(
-                    localId = diary.diaryId,
-                    serverId = addResponse.result.scheduleId,
-                    IS_UPLOAD,
-                    RoomState.DEFAULT.state
-                )
-            } else {
-                Log.d("DiaryRepositoryImpl addDiary Fail", "$diary")
-            }
-        }*/
+        Log.d("DiaryRepositoryImpl addDiary", "$content, $enjoyRating, $images, $scheduleId")
+        return remoteDiaryDataSource.addPersonalDiary(content, enjoyRating, images, scheduleId)
     }
 
     /** 개인 기록 수정 **/
     override suspend fun editPersonalDiary(
-        diary: DiaryDetail,
+        diaryId: Long,
+        content: String,
+        enjoyRating: Int,
         images: List<String>,
-        deleteImageIds: List<Long>?
+        deleteImageIds: List<Long>
     ): DiaryResponse {
-        Log.d("DiaryRepositoryImpl editDiary", "$diary")
-        return remoteDiaryDataSource.editPersonalDiary(images, diary.diaryId, diary.content, deleteImageIds)
+        Log.d("DiaryRepositoryImpl editDiary", "$diaryId, $content, $enjoyRating, $images, $deleteImageIds")
+        return remoteDiaryDataSource.editPersonalDiary(diaryId, content, enjoyRating, images, deleteImageIds)
         /*if (networkChecker.isOnline()) {
             val editResponse = remoteDiaryDataSource.editDiaryToServer(diary, images)
             if (editResponse.code == SUCCESS_CODE) {

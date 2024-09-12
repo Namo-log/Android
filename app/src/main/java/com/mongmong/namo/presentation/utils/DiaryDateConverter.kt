@@ -10,7 +10,6 @@ object DiaryDateConverter {
     private fun parseDate(dateString: String?): Date? {
         return try {
             val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-            Log.d("DiaryDateConverter", "$format")
             format.parse(dateString)
         } catch (e: Exception) {
             null
@@ -22,7 +21,6 @@ object DiaryDateConverter {
         val date = parseDate(dateString)
         return date?.let {
             val format = SimpleDateFormat("MMM", Locale.getDefault())
-            Log.d("DiaryDateConverter", "$format")
             format.format(it)
         }
     }
@@ -32,7 +30,6 @@ object DiaryDateConverter {
         val date = parseDate(dateString)
         return date?.let {
             val format = SimpleDateFormat("dd", Locale.getDefault())
-            Log.d("DiaryDateConverter", "$format")
             format.format(it)
         }
     }
@@ -42,7 +39,6 @@ object DiaryDateConverter {
         val date = parseDate(dateString)
         return date?.let {
             val format = SimpleDateFormat("yyyy.MM.dd (EE) hh:mm", Locale.getDefault())
-            Log.d("DiaryDateConverter", "$format")
             format.format(it)
         }
     }

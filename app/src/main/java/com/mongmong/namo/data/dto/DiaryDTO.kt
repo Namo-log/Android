@@ -18,3 +18,22 @@ data class DiaryImage(
     val imageUrl: String,
     val orderNumber: Int
 )
+
+data class PostDiaryRequest(
+    val content: String,
+    val diaryImages: List<DiaryRequestImage>,
+    val enjoyRating: Int,
+    val scheduleId: Long
+)
+
+data class DiaryRequestImage(
+    val imageUrl: String,
+    val orderNumber: Int = 1
+)
+
+data class EditDiaryRequest(
+    val content: String,
+    val diaryImages: List<DiaryRequestImage>,
+    val enjoyRating: Int,
+    val deleteImages: List<Long>
+)

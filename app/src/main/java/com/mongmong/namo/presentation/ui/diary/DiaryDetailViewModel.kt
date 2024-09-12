@@ -1,5 +1,6 @@
 package com.mongmong.namo.presentation.ui.diary
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,7 +14,8 @@ import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.ScheduleForDiary
 import com.mongmong.namo.domain.repositories.DiaryRepository
-import com.mongmong.namo.domain.usecase.FindCategoryUseCase
+import com.mongmong.namo.domain.usecases.FindCategoryUseCase
+import com.mongmong.namo.domain.usecases.UploadImageToS3UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DiaryDetailViewModel @Inject constructor(
     private val repository: DiaryRepository,
-    private val findCategoryUseCase: FindCategoryUseCase
+    private val findCategoryUseCase: FindCategoryUseCase,
+    private val uploadImageToS3UseCase: UploadImageToS3UseCase
 ) : ViewModel() {
     /** v2 */
     private val _diary = MutableLiveData<DiaryDetail>()
@@ -40,6 +43,8 @@ class DiaryDetailViewModel @Inject constructor(
 
     private val _imgList = MutableLiveData<List<DiaryImage>>(emptyList())
     val imgList: LiveData<List<DiaryImage>> = _imgList
+
+    private var uploadResult = emptyList<String>()
 
     private var initialDiaryContent: String? = null
     private var initialImgList: List<DiaryImage> = emptyList()
@@ -86,7 +91,7 @@ class DiaryDetailViewModel @Inject constructor(
     private val _category = MutableLiveData<Category>()
     val category: LiveData<Category> = _category
 
-    private var createImages = mutableListOf<String>()
+    private var createImages = mutableListOf<Uri>()
     private var deleteImageIds = mutableListOf<Long>()
 
 
@@ -103,6 +108,7 @@ class DiaryDetailViewModel @Inject constructor(
     fun getPersonalDiary() {
         viewModelScope.launch {
             val result = repository.getPersonalDiary(scheduleId)
+            _diary.postValue(result)
             Log.d("DiaryDetailViewModel getPersonalDiary", "$result")
 
             content.value = result.content
@@ -136,12 +142,17 @@ class DiaryDetailViewModel @Inject constructor(
     fun addPersonalDiary() {
         viewModelScope.launch {
             Log.d("PersonalDiaryViewModel addDiary", "$_diary")
-            _diary.value?.let {
-                _addDiaryResult.postValue(repository.addPersonalDiary(
-                    diary = it,
-                    images = createImages
-                ))
-            }
+            uploadResult = uploadImageToS3UseCase.execute(PREFIX, createImages)
+            _addDiaryResult.postValue(
+                repository.addPersonalDiary(
+                    content = content.value ?: "",
+                    enjoyRating = enjoy.value ?: 3,
+                    images = uploadResult,
+                    scheduleId = scheduleId
+                )
+            )
+            createImages.clear()
+            deleteImageIds.clear()
         }
     }
 
@@ -149,12 +160,20 @@ class DiaryDetailViewModel @Inject constructor(
     fun editPersonalDiary() {
         viewModelScope.launch {
             Log.d("PersonalDiaryViewModel editDiary", "${_diary.value}")
-            _diary.value?.let {
-                _editDiaryResult.postValue(repository.editPersonalDiary(
-                    diary = it,
-                    images = createImages,
-                    deleteImageIds = deleteImageIds.toList()
-                ))
+            diary.value?.diaryId?.let {
+                Log.d("PersonalDiaryViewModel editDiary", "${_diary.value}")
+                uploadResult = uploadImageToS3UseCase.execute(PREFIX, createImages)
+                _addDiaryResult.postValue(
+                    repository.editPersonalDiary(
+                        content = content.value ?: "",
+                        enjoyRating = enjoy.value ?: 3,
+                        images = uploadResult,
+                        diaryId = it,
+                        deleteImageIds = deleteImageIds
+                    )
+                )
+                createImages.clear()
+                deleteImageIds.clear()
             }
         }
     }
@@ -170,7 +189,8 @@ class DiaryDetailViewModel @Inject constructor(
     fun removeImage(diaryImage: DiaryImage) {
         // 이미지 ID가 0이 아니면 삭제할 이미지, 아니라면 createImages에서 제거
         if (diaryImage.diaryImageId != 0L) deleteImageIds.add(diaryImage.diaryImageId)
-        else createImages = createImages.filterNot { it == diaryImage.imageUrl }.toMutableList()
+        //else createImages = createImages.filterNot { it == diaryImage.imageUrl }.toMutableList()
+
         // 이미지 리스트 업데이트
         _imgList.value = _imgList.value?.filterNot { it.imageUrl == diaryImage.imageUrl }
     }
@@ -180,11 +200,11 @@ class DiaryDetailViewModel @Inject constructor(
         _diary.value?.diaryImages = newImgList
     }
 
-    fun addCreateImages(newImages: List<String>) {
+    fun addCreateImages(newImages: List<Uri>) {
         val currentImages = _imgList.value ?: emptyList()
         val newImagesToAdd = newImages.take(3 - currentImages.size)
         createImages.addAll(newImagesToAdd)
-        _imgList.value = currentImages + newImagesToAdd.map { DiaryImage(diaryImageId = 0, imageUrl = it, orderNumber = 0) }
+        _imgList.value = currentImages + newImagesToAdd.map { DiaryImage(diaryImageId = 0, imageUrl = it.toString(), orderNumber = 0) }
     }
 
     fun addDeleteImageId(imageId: Long) {
@@ -214,6 +234,10 @@ class DiaryDetailViewModel @Inject constructor(
     fun onEnjoyClicked(count: Int) {
         Log.d("onEnjoyClicked", "$count")
         _enjoy.value = count
+    }
+
+    suspend fun uploadImageToS3(prefix: String, fileName: String) {
+
     }
 
     /** 모임 기록*/
@@ -269,5 +293,9 @@ class DiaryDetailViewModel @Inject constructor(
                 }
             Log.d("findCategoryById", "${_category.value}")
         }
+    }
+
+    companion object {
+        const val PREFIX = "diary"
     }
 }

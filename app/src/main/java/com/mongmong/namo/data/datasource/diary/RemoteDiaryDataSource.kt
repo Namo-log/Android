@@ -3,11 +3,14 @@ package com.mongmong.namo.data.datasource.diary
 import android.content.Context
 import android.util.Log
 import com.mongmong.namo.data.dto.CategoryInfo
+import com.mongmong.namo.data.dto.DiaryRequestImage
+import com.mongmong.namo.data.dto.EditDiaryRequest
 import com.mongmong.namo.data.dto.GetPersonalDiaryResponse
 import com.mongmong.namo.data.dto.GetPersonalDiaryResult
 import com.mongmong.namo.data.dto.GetScheduleForDiaryResponse
 import com.mongmong.namo.data.dto.GetScheduleForDiaryResult
 import com.mongmong.namo.data.dto.Location
+import com.mongmong.namo.data.dto.PostDiaryRequest
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
 import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
@@ -19,7 +22,6 @@ import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 class RemoteDiaryDataSource @Inject constructor(
@@ -125,23 +127,21 @@ class RemoteDiaryDataSource @Inject constructor(
 
     /** 개인 기록 추가 */
     suspend fun addPersonalDiary(
+        content: String,
+        enjoyRating: Int,
         images: List<String>,
-        scheduleId: Long,
-        content: String?
+        scheduleId: Long
     ): DiaryResponse {
         var response = DiaryResponse("")
         withContext(Dispatchers.IO) {
             runCatching {
-                val createImagesParts = if (images.isNotEmpty()) {
-                    imageToMultipart(images, context)
-                } else {
-                    listOf(MultipartBody.Part.createFormData("empty", "", "".convertTextRequest()))
-                }
-
                 diaryApiService.addPersonalDiary(
-                    scheduleId,
-                    content,
-                    createImagesParts
+                    PostDiaryRequest(
+                        content = content,
+                        diaryImages = images.map { DiaryRequestImage(it) },
+                        enjoyRating = enjoyRating,
+                        scheduleId = scheduleId
+                    )
                 )
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource addPersonalDiary Success", "$it")
@@ -154,24 +154,23 @@ class RemoteDiaryDataSource @Inject constructor(
     }
     /** 개인 기록 수정 */
     suspend fun editPersonalDiary(
+        diaryId: Long,
+        content: String,
+        enjoyRating: Int,
         images: List<String>,
-        scheduleId: Long,
-        content: String?,
-        deleteImageIds: List<Long>?
+        deleteImageIds: List<Long>
     ): DiaryResponse {
         var response = DiaryResponse("")
         withContext(Dispatchers.IO) {
             runCatching {
-                val createImagesParts = if (images.isNotEmpty()) {
-                    imageToMultipart(images, context)
-                } else {
-                    listOf(MultipartBody.Part.createFormData("empty", "", "".convertTextRequest()))
-                }
                 diaryApiService.editPersonalDiary(
-                    scheduleId,
-                    content,
-                    createImagesParts,
-                    deleteImageIds
+                    diaryId,
+                    EditDiaryRequest(
+                        content = content,
+                        enjoyRating = enjoyRating,
+                        diaryImages = images.map { DiaryRequestImage(it) },
+                        deleteImages = deleteImageIds
+                    )
                 )
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource editPersonalDiary Success", "$it")

@@ -1,14 +1,15 @@
 package com.mongmong.namo.data.remote
 
+import com.mongmong.namo.data.dto.EditDiaryRequest
 import com.mongmong.namo.data.dto.GetDiaryCollectionResponse
 import com.mongmong.namo.data.dto.GetPersonalDiaryResponse
 import com.mongmong.namo.data.dto.GetScheduleForDiaryResponse
+import com.mongmong.namo.data.dto.PostDiaryRequest
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.GetMoimMemoResponse
 import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
-import com.mongmong.namo.presentation.state.FilterType
 import retrofit2.Call
 import okhttp3.MultipartBody
 import retrofit2.http.*
@@ -28,22 +29,16 @@ interface DiaryApiService {
     ): DiaryGetMonthResponse
 
     // 개인 기록 추가
-    @Multipart
-    @PATCH("diaries")
+    @POST("diaries")
     suspend fun addPersonalDiary(
-        @Query("scheduleId") scheduleId: Long,
-        @Query("content") content: String?,
-        @Part createImages: List<MultipartBody.Part>?,
+        @Body requestBody: PostDiaryRequest
     ): DiaryResponse
 
     // 개인 기록 수정
-    @Multipart
-    @PATCH("diaries")
+    @PATCH("diaries/{diaryId}")
     suspend fun editPersonalDiary(
-        @Query("scheduleId") scheduleId: Long,
-        @Query("content") content: String?,
-        @Part createImages: List<MultipartBody.Part>?,
-        @Query("deleteImageIds") deleteImageIds: List<Long>?
+        @Path("diaryId") diaryId: Long,
+        @Body requestBody: EditDiaryRequest
     ): DiaryResponse
 
     // 개인 기록 삭제

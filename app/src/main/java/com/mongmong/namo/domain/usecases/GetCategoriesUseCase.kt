@@ -1,4 +1,4 @@
-package com.mongmong.namo.domain.usecase
+package com.mongmong.namo.domain.usecases
 
 import android.util.Log
 import com.mongmong.namo.data.local.entity.home.Category
