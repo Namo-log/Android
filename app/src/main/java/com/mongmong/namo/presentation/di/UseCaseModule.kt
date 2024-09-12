@@ -1,8 +1,10 @@
 package com.mongmong.namo.presentation.di
 
 import com.mongmong.namo.domain.repositories.CategoryRepository
-import com.mongmong.namo.domain.usecase.FindCategoryUseCase
-import com.mongmong.namo.domain.usecase.GetCategoriesUseCase
+import com.mongmong.namo.domain.repositories.ImageRepository
+import com.mongmong.namo.domain.usecases.FindCategoryUseCase
+import com.mongmong.namo.domain.usecases.GetCategoriesUseCase
+import com.mongmong.namo.domain.usecases.UploadImageToS3UseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,4 +18,7 @@ object UseCaseModule {
 
     @Provides
     fun provideFindCategoryUseCase(categoryRepository: CategoryRepository): FindCategoryUseCase = FindCategoryUseCase(categoryRepository)
+
+    @Provides
+    fun provideUploadImageToS3UseCase(imageRepository: ImageRepository): UploadImageToS3UseCase = UploadImageToS3UseCase(imageRepository)
 }

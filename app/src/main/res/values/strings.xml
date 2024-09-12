@@ -85,12 +85,14 @@
     <string name="diary_contents">나모의 새로운 시작</string>
     <string name="diary_date">날짜</string>
     <string name="diary_place">장소</string>
+    <string name="diary_enjoy">재미도</string>
     <string name="diary_no_place">없음</string>
     <string name="diary_title">나몽몽</string>
     <string name="diary_detail_view">상세보기</string>
+    <string name="diary_changes_save">변경 내용 저장</string>
     <string name="diary_add">기록 저장</string>
     <string name="diary_edit">기록 수정</string>
-    <string name="diary_put">기록 입력</string>
+    <string name="diary_input">내용 입력</string>
     <string name="diary_max_num">&#160;/ 200</string>
     <string name="diary_personal">개인</string>
     <string name="diary_group">모임</string>

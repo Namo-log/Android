@@ -4,10 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
@@ -16,7 +12,7 @@ import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.diary.MoimMemoDetailActivity
-import com.mongmong.namo.presentation.ui.diary.PersonalDetailActivity
+import com.mongmong.namo.presentation.ui.diary.PersonalDiaryDetailActivity
 import com.mongmong.namo.presentation.ui.home.HomeFragment
 import com.mongmong.namo.presentation.ui.home.schedule.adapter.DailyScheduleRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
@@ -127,7 +123,7 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
 
             override fun onDiaryIconClicked(schedule: GetMonthScheduleResult, paletteId: Int) { // 기록 아이콘 클릭
                 if (schedule.moimSchedule) return
-                val intent = Intent(context, PersonalDetailActivity::class.java)
+                val intent = Intent(context, PersonalDiaryDetailActivity::class.java)
                 intent.putExtra("schedule", schedule.convertServerScheduleResponseToLocal())
                 Log.d("CalendarMonthFragment onDiaryIconClicked", "$schedule")
                 requireActivity().startActivity(intent)

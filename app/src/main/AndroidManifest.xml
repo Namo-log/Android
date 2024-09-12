@@ -112,7 +112,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".presentation.ui.diary.PersonalDetailActivity"
+            android:name=".presentation.ui.diary.PersonalDiaryDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity

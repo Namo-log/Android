@@ -3,7 +3,6 @@ package com.mongmong.namo.data.datasource.category
 import android.util.Log
 import com.mongmong.namo.data.local.dao.CategoryDao
 import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.presentation.config.UploadState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

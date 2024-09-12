@@ -3,8 +3,8 @@ package com.mongmong.namo.domain.model
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.presentation.config.RoomState
-import com.mongmong.namo.presentation.config.UploadState
+import com.mongmong.namo.presentation.state.RoomState
+import com.mongmong.namo.presentation.state.UploadState
 
 // 개인
 /** 일정 월별 조회 */

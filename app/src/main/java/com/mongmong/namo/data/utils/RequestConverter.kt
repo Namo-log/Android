@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
@@ -34,6 +35,17 @@ object RequestConverter {
                 if(isList) MultipartBody.Part.createFormData("createImages", it.name, requestFile)
                 else MultipartBody.Part.createFormData("img", it.name, requestFile)
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    // 새로운 Uri를 RequestBody로 변환하는 함수
+    suspend fun uriToRequestBody(uri: Uri, context: Context, mediaType: String = "image/jpeg"): RequestBody? = withContext(Dispatchers.IO) {
+        try {
+            val file = uriToFile(uri, context)
+            file?.asRequestBody(mediaType.toMediaTypeOrNull())
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -80,6 +92,7 @@ object RequestConverter {
             null
         }
     }
+
 
     fun String.convertTextRequest() = toRequestBody("text/plain".toMediaTypeOrNull())
 }

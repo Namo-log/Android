@@ -47,7 +47,7 @@ class DiaryImageDetailActivity : BaseActivity<ActivityDiaryImageDetailBinding>(R
     }
 
     private fun setViewPager() {
-        imagePagerAdapter = ImageDetailVPAdapter(imgs.map { it.url })
+        imagePagerAdapter = ImageDetailVPAdapter(imgs.map { it.imageUrl })
 
         binding.diaryImageVp.apply {
             adapter = imagePagerAdapter
@@ -79,7 +79,7 @@ class DiaryImageDetailActivity : BaseActivity<ActivityDiaryImageDetailBinding>(R
     private fun downloadImage() {
         val currentItem = binding.diaryImageVp.currentItem
         if (currentItem >= 0 && currentItem < imgs.size) {
-            val imageUrl = imgs[currentItem].url
+            val imageUrl = imgs[currentItem].imageUrl
             Glide.with(this)
                 .asBitmap()
                 .load(imageUrl)

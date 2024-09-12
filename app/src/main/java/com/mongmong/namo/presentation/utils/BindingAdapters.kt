@@ -31,4 +31,15 @@ object BindingAdapters {
         view.backgroundTintList = ColorStateList.valueOf(Color.parseColor(hexColor))
     }
 
+    @JvmStatic
+    @BindingAdapter("app:isGoneIfEmpty")
+    fun setGoneIfEmpty(view: View, images: List<Any>?) {
+        view.visibility = if (images.isNullOrEmpty()) View.GONE else View.VISIBLE
+    }
+
+    @JvmStatic
+    @BindingAdapter("app:imageTint")
+    fun setImageViewTint(imageView: ImageView, color: Int) {
+        imageView.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(imageView.context, color))
+    }
 }

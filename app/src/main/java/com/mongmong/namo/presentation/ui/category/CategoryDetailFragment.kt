@@ -2,19 +2,12 @@ package com.mongmong.namo.presentation.ui.category
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.widget.SwitchCompat
 import androidx.cardview.widget.CardView
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.databinding.FragmentCategoryDetailBinding
@@ -28,7 +21,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.config.PaletteType
 import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.state.RoomState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

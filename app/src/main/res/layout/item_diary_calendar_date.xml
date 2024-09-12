@@ -14,7 +14,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            style="@style/calendar_bold"
+            style="@style/calendar_date"
             android:text="@{calendarDay.date}"
             android:id="@+id/diary_calendar_date_tv"
             android:layout_width="wrap_content"
