@@ -54,12 +54,13 @@ class CommunityCalendarActivity : BaseActivity<ActivityCommunityCalendarBinding>
                     pos = position
                     prevIdx = -1
                     millis = binding.communityCalendarVp.adapter!!.getItemId(position)
+                    binding.communityCalendarYearMonthTv.text = DateTime(millis).toString(YEAR_MONTH_PATTERN)
                     super.onPageSelected(position)
                 }
             })
         }
 
-        binding.communityCalendarYearMonthTv.text = DateTime(millis).toString("yyyy.MM")
+        binding.communityCalendarYearMonthTv.text = DateTime(millis).toString(YEAR_MONTH_PATTERN)
     }
 
 
@@ -93,5 +94,7 @@ class CommunityCalendarActivity : BaseActivity<ActivityCommunityCalendarBinding>
         var currentFragment : Fragment? = null
         var currentSelectedPos : Int? = null
         var currentSelectedDate : DateTime? = null
+
+        const val YEAR_MONTH_PATTERN = "yyyy.MM"
     }
 }
