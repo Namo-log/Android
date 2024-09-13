@@ -14,10 +14,7 @@ class FriendFragment : BaseFragment<FragmentFriendBinding>(R.layout.fragment_fri
     private lateinit var friendAdapter: FriendRVAdapter
 
     override fun setup() {
-        binding.apply {
-            viewModel = this@FriendFragment.viewModel
-            lifecycleOwner = this@FriendFragment
-        }
+        binding.viewModel = this@FriendFragment.viewModel
 
         initClickListeners()
         initObserve()

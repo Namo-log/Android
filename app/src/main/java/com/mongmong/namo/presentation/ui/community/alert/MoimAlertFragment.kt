@@ -14,10 +14,7 @@ class MoimAlertFragment : BaseFragment<FragmentMoimAlertBinding>(R.layout.fragme
     private lateinit var moimAdapter: MoimAlertRVAdapter
 
     override fun setup() {
-        binding.apply {
-            viewModel = this@MoimAlertFragment.viewModel
-            lifecycleOwner = this@MoimAlertFragment
-        }
+        binding.viewModel = this@MoimAlertFragment.viewModel
 
         initObserve()
     }

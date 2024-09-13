@@ -17,10 +17,7 @@ class MoimFragment : BaseFragment<FragmentMoimBinding>(R.layout.fragment_moim) {
     private lateinit var moimAdapter: MoimRVAdapter
 
     override fun setup() {
-        binding.apply {
-            viewModel = this@MoimFragment.viewModel
-            lifecycleOwner = this@MoimFragment
-        }
+        binding.viewModel = this@MoimFragment.viewModel
 
         initClickListeners()
         initObserve()

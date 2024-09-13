@@ -28,11 +28,11 @@ class CommunityCalendarActivity : BaseActivity<ActivityCommunityCalendarBinding>
     private var prevIdx = -1
 
     override fun setup() {
-        setInit()
+        initViews()
         initClickListeners()
     }
 
-    private fun setInit() {
+    private fun initViews() {
         viewModel.isFriendCalendar = intent.getBooleanExtra("isFriendCalendar", true)
 
         if (viewModel.isFriendCalendar) { // 친구 정보 세팅

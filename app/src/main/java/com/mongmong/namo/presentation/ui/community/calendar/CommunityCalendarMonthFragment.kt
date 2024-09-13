@@ -30,7 +30,7 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
 
         binding.viewModel = viewModel
 
-        setInit()
+        initViews()
         initClickListeners()
         initObserve()
         initAdapter()
@@ -53,7 +53,7 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
         listener.onDateClick(null, null)
     }
 
-    private fun setInit() {
+    private fun initViews() {
         binding.communityCalendarMonthView.setDays(millis)
         viewModel.setMonthDayList(binding.communityCalendarMonthView.days)
     }

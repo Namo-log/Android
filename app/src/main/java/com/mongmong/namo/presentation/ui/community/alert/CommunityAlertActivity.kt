@@ -17,10 +17,7 @@ class CommunityAlertActivity : BaseActivity<ActivityCommunityAlertBinding>(R.lay
     override fun setup() {
         setVPAdapter()
 
-        binding.apply {
-            viewModel = this@CommunityAlertActivity.viewModel
-            lifecycleOwner = this@CommunityAlertActivity
-        }
+        binding.viewModel = this@CommunityAlertActivity.viewModel
 
         initClickListeners()
     }

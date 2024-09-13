@@ -15,10 +15,7 @@ class FriendAlertFragment : BaseFragment<FragmentFriendAlertBinding>(R.layout.fr
     private lateinit var friendAdapter: FriendAlertRVAdapter
 
     override fun setup() {
-        binding.apply {
-            viewModel = this@FriendAlertFragment.viewModel
-            lifecycleOwner = this@FriendAlertFragment
-        }
+        binding.viewModel = this@FriendAlertFragment.viewModel
 
         initObserve()
     }

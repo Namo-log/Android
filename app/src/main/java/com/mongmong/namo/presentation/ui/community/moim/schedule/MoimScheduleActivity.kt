@@ -70,7 +70,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
         binding.viewModel = viewModel
 
         initMapView()
-        setInit()
+        initViews()
         setResultLocation()
         setResultMember()
         initClickListeners()
@@ -92,7 +92,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
         mapView.finish()
     }
 
-    private fun setInit() {
+    private fun initViews() {
         viewModel.setMoimSchedule(intent.getSerializableExtra("moim") as Moim)
 
         val slideAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up)

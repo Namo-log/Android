@@ -29,13 +29,13 @@ class CalendarInfoDialog : DialogFragment() {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))  // 배경 투명하게
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)  // dialog 모서리 둥글게
 
-        setInit()
+        initViews()
         setAdapter()
         initClickListeners()
         return binding.root
     }
 
-    private fun setInit() {
+    private fun initViews() {
         binding.isFriendCalendar = viewModel.isFriendCalendar
     }
 
