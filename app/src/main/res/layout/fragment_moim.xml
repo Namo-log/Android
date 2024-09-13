@@ -51,6 +51,7 @@
             android:drawablePadding="8dp"
             android:checked="true"
             android:button="@null"
+            android:background="@null"
             android:drawableEnd="@drawable/selector_checkbox_square"
             android:text="@string/moim_hide_previous"
             app:layout_constraintEnd_toEndOf="parent"

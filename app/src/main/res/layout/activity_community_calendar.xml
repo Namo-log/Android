@@ -19,22 +19,35 @@
             android:id="@+id/community_calendar_header_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+            
+            <ImageView
+                android:id="@+id/community_calendar_back_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:rotation="90"
+                android:src="@drawable/ic_arrow_down_bold"
+                app:tint="@color/main"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/community_calendar_year_month_tv"
+                app:layout_constraintBottom_toBottomOf="@id/community_calendar_year_month_tv"/>
 
             <TextView
                 android:id="@+id/community_calendar_year_month_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:gravity="center_vertical|start"
                 tools:text="@string/month_calendar_header_year_month"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/community_calendar_back_iv"
                 style="@style/header" />
 
             <TextView

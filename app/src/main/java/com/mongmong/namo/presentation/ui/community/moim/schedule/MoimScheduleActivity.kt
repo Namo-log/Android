@@ -22,7 +22,6 @@ import androidx.activity.viewModels
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.flexbox.FlexDirection
@@ -167,15 +166,13 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
             finish()
         }
 
-        // 저장 클릭 (편집 모드)
+        // 생성/저장 버튼 클릭
         binding.moimScheduleSaveBtn.setOnClickListener {
-            editSchedule()
-        }
-
-        // 생성 버튼 클릭
-        binding.moimScheduleCreateBtn.setOnClickListener {
-            // 모임 일정 생성 진행
-            insertSchedule()
+            if (viewModel.isCreateMode()) {
+                insertSchedule() // 생성
+            } else {
+                editSchedule() // 수정
+            }
         }
 
         // 삭제 클릭

@@ -4,6 +4,7 @@
     <!-- 기본적으로 쓰이는 String -->
     <string name="okay">확인</string>
     <string name="close">닫기</string>
+    <string name="create">생성</string>
     <string name="apply">적용</string>
     <string name="copy_link">링크 복사</string>
     <string name="share_outside">외부 공유</string>
@@ -173,7 +174,6 @@
     <string name="moim_schedule_new">새 모임 일정</string>
     <string name="moim_schedule_edit">모임 일정 편집</string>
     <string name="moim_schedule_title_hint">내 모임</string>
-    <string name="moim_schedule_coverImage_editable">추후 변경 가능</string>
     <string name="moim_schedule_new_moim_start">새 모임 시작하기</string>
     <string name="moim_schedule_look_invite_friend_schedule">초대한 친구 일정 보기</string>
     <string name="moim_schedule_add_participant">친구 추가하기</string>
@@ -194,6 +194,9 @@
     <string name="friend_request">친구 신청</string>
     <string name="calendar_info">캘린더 정보</string>
     <string name="friend_calendar_category_notice">친구가 공개 설정을 해둔 카테고리만 볼 수 있습니다.</string>
+    <string name="nickname_plus_tag">닉네임+태그</string>
+    <string name="nickname_tag_hint">나모#0000</string>
+    <string name="friend_favorite_color">좋아하는 색깔</string>
 
     <!-- 알림 -->
     <string name="alert_empty">새로운 요청이 없습니다.</string>

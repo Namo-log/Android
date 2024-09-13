@@ -64,7 +64,12 @@ class CommunityCalendarActivity : BaseActivity<ActivityCommunityCalendarBinding>
 
 
     private fun initClickListeners() {
-        //
+        // 뒤로가기 버튼 클릭
+        binding.communityCalendarBackIv.setOnClickListener {
+            finish() // 캘린더 닫기
+        }
+
+        // 연도 선택
         binding.communityCalendarYearMonthTv.setOnClickListener {
             SetMonthDialog(this, millis) {
                 val date = it

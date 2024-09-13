@@ -84,8 +84,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:visibility="@{viewModel.moimSchedule.moimId == 0L ? View.GONE : View.VISIBLE }"
-                    android:text="@string/dialog_save"
+                    tools:text="@string/create"
+                    android:text="@{viewModel.moimSchedule.moimId == 0L ? @string/create : @string/dialog_save}"
                     android:textAlignment="viewEnd"
                     style="@style/content_regular"/>
 
@@ -116,7 +116,7 @@
                         android:layout_marginTop="25dp"
                         style="@style/header"/>
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="30dp">
@@ -130,15 +130,10 @@
                             app:layout_constraintTop_toTopOf="parent"
                             style="@style/content_bold"/>
 
-                        <TextView
-                            android:id="@+id/moim_schedule_alert_tv"
-                            android:layout_width="wrap_content"
+                        <View
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="@string/moim_schedule_coverImage_editable"
-                            app:layout_constraintStart_toStartOf="@id/moim_schedule_coverImg_tv"
-                            app:layout_constraintTop_toBottomOf="@id/moim_schedule_coverImg_tv"
-                            style="@style/content_regular"/>
+                            android:layout_weight="1"/>
 
                         <androidx.cardview.widget.CardView
                             android:id="@+id/moim_schedule_coverImg_cv"
@@ -159,7 +154,7 @@
                                 app:imageUrl="@{viewModel.moimSchedule.coverImg}"/>
                         </androidx.cardview.widget.CardView>
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/moim_schedule_start_layout"
@@ -422,20 +417,6 @@
                 </LinearLayout>
 
             </androidx.core.widget.NestedScrollView>
-
-            <TextView
-                android:id="@+id/moim_schedule_create_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="@{viewModel.moimSchedule.moimId == 0L ? View.VISIBLE : View.GONE }"
-                android:paddingTop="24dp"
-                android:paddingBottom="30dp"
-                android:textAlignment="center"
-                android:background="@color/main"
-                android:textColor="@color/white"
-                android:text="@string/moim_schedule_new_moim_start"
-                app:layout_constraintBottom_toBottomOf="parent"
-                style="@style/content_bold"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
