@@ -4,7 +4,16 @@
     <!-- 기본적으로 쓰이는 String -->
     <string name="okay">확인</string>
     <string name="close">닫기</string>
+    <string name="create">생성</string>
     <string name="apply">적용</string>
+    <string name="copy_link">링크 복사</string>
+    <string name="share_outside">외부 공유</string>
+    <string name="schedule">일정</string>
+    <string name="delete">삭제</string>
+    <string name="name">이름</string>
+    <string name="birth">생일</string>
+    <string name="nickname">닉네임</string>
+    <string name="input_hint">입력</string>
 
     <!-- 약관 동의 관련 String -->
     <string name="for_service">서비스 이용을 위한</string>
@@ -60,11 +69,16 @@
     <string name="schedule_personal_empty">등록된 개인 일정이 없습니다.</string>
     <string name="schedule_moim">모임 일정</string>
     <string name="schedule_moim_empty">등록된 모임 일정이 없습니다.</string>
+    <string name="schedule_friend">친구 일정</string>
+    <string name="schedule_empty">등록된 일정이 없습니다.</string>
     <string name="schedule_time">%s - %s</string>
     <string name="schedule_hint">일정 이름</string>
     <string name="schedule_new">새 일정</string>
     <string name="schedule_edit">일정 편집</string>
-    <string name="schedule_moim_edit">모임 일정 편집</string>
+    <string name="schedule_start">시작</string>
+    <string name="schedule_end">종료</string>
+    <string name="schedule_place">장소</string>
+
 
     <!--diary 관련 String-->
     <string name="diary_storage">보관함</string>
@@ -154,5 +168,40 @@
     <string name="map_search_hint">장소 입력</string>
     <string name="map_search">검색</string>
 
+    <!-- 모임 일정 -->
+    <string name="moim_schedule_empty">모임 일정이 없습니다.\n친구와의 모임 약속을 잡아보세요!</string>
+    <string name="moim_hide_previous">지난 모임 일정 숨기기</string>
+    <string name="moim_schedule_new">새 모임 일정</string>
+    <string name="moim_schedule_edit">모임 일정 편집</string>
+    <string name="moim_schedule_title_hint">내 모임</string>
+    <string name="moim_schedule_new_moim_start">새 모임 시작하기</string>
+    <string name="moim_schedule_look_invite_friend_schedule">초대한 친구 일정 보기</string>
+    <string name="moim_schedule_add_participant">친구 추가하기</string>
+    <string name="moim_schedule_do_friend_invite">친구 초대하기</string>
+    <string name="moim_schedule_invite_friend">초대한 친구</string>
+    <string name="moim_schedule_invite_friend_empty">아직 초대한 친구가 없습니다.</string>
+    <string name="moim_schedule_add_guest">게스트 초대하기</string>
+    <string name="moim_schedule_record_activity">활동 기록하기 </string>
+    <string name="moim_schedule_participant_info">참석자 정보</string>
+    <string name="moim_guest_invite">게스트 초대</string>
+    <string name="moim_guest_invite_link">초대 링크</string>
+    <string name="moim_guest_invite_notification">링크는 나모 어플을 설치하지 않은 게스트와 공유할 수 있습니다. 편집은 불가하며, 보기 권한이 주어집니다.</string>
+
+    <!-- 친구 -->
+    <string name="friend_search_hint">닉네임 혹은 이름 입력</string>
+    <string name="friend_empty">추가된 친구가 없습니다.\n친구와 함께 나모를 사용해보세요!</string>
+    <string name="friend_info">친구 정보</string>
+    <string name="friend_request">친구 신청</string>
+    <string name="calendar_info">캘린더 정보</string>
+    <string name="friend_calendar_category_notice">친구가 공개 설정을 해둔 카테고리만 볼 수 있습니다.</string>
+    <string name="nickname_plus_tag">닉네임+태그</string>
+    <string name="nickname_tag_hint">나모#0000</string>
+    <string name="friend_favorite_color">좋아하는 색깔</string>
+
+    <!-- 알림 -->
+    <string name="alert_empty">새로운 요청이 없습니다.</string>
+    <string name="community_alert_title">새로운 요청</string>
+    <string name="request_accept">수락</string>
+    <string name="request_deny">거절</string>
 
 </resources>

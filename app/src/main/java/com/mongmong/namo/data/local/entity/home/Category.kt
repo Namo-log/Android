@@ -2,6 +2,7 @@ package com.mongmong.namo.data.local.entity.home
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.mongmong.namo.domain.model.CalendarColorInfo
 import com.mongmong.namo.domain.model.CategoryRequestBody
 import com.mongmong.namo.presentation.config.RoomState
 import java.io.Serializable
@@ -23,5 +24,9 @@ data class Category(
             paletteId = this.paletteId,
             isShare = this.isShare
         )
+    }
+
+    fun getCategoryColorInfo(): CalendarColorInfo {
+        return CalendarColorInfo(this.paletteId, this.name)
     }
 }

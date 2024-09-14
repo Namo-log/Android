@@ -10,6 +10,7 @@
     <dimen name="test_100">100dp</dimen>
     <dimen name="test_10">10dp</dimen>
     <dimen name="custom_setting_default_spacing">20dp</dimen>
+    <dimen name="margin_bottomsheet_top">96dp</dimen>
     <dimen name="margin_calendar_start">20dp</dimen>
     <dimen name="margin_calendar_end">10dp</dimen>
     <dimen name="snackbar_custom_width">120dp</dimen>

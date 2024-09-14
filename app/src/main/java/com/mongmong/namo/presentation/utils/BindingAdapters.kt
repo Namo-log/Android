@@ -5,11 +5,10 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
+import androidx.annotation.ColorInt
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.LiveData
+import com.bumptech.glide.Glide
 import com.mongmong.namo.presentation.config.CategoryColor
 
 object BindingAdapters {
@@ -31,4 +30,18 @@ object BindingAdapters {
         view.backgroundTintList = ColorStateList.valueOf(Color.parseColor(hexColor))
     }
 
+    @JvmStatic
+    @BindingAdapter("app:imageUrl", "app:placeHolder")
+    fun setImage (imageView : ImageView, url : String?, placeHolder: Drawable){
+        Glide.with(imageView.context)
+            .load(url)
+            .placeholder(placeHolder)
+            .into(imageView)
+    }
+
+    @JvmStatic
+    @BindingAdapter("app:tint")
+    fun ImageView.setImageTint(@ColorInt color: Int) {
+        setColorFilter(color)
+    }
 }

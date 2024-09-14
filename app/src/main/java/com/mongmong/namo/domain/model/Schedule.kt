@@ -6,6 +6,12 @@ import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.config.UploadState
 
+// 캘린더에 표시되는 색상 정보 (친구: 카테고리 정보, 참석자: 색상 & 이름)
+data class CalendarColorInfo(
+    val colorId: Int,
+    val name: String
+)
+
 // 개인
 /** 일정 월별 조회 */
 data class GetMonthScheduleResponse (

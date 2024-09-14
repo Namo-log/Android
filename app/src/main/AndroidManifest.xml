@@ -92,21 +92,12 @@
             android:name=".presentation.ui.diary.DiaryActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.group.GroupInfoActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MaterialTransparent"
-            android:windowSoftInputMode="adjustPan" />
-        <activity
-            android:name=".presentation.ui.group.GroupCalendarActivity"
+            android:name=".presentation.ui.community.CommunityCalendarActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.group.schedule.GroupScheduleActivity"
+            android:name=".presentation.ui.community.moim.schedule.MoimScheduleActivity"
             android:exported="false"
             android:theme="@style/SlideAnimation" />
-        <activity
-            android:name=".presentation.ui.group.schedule.GroupScheduleMemberActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MaterialTransparent" />
         <activity
             android:name=".presentation.ui.group.diary.MoimDiaryActivity"
             android:exported="false"
@@ -119,6 +110,8 @@
             android:name=".presentation.ui.diary.MoimMemoDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".presentation.ui.community.alert.CommunityAlertActivity"/>
+        <activity android:name=".presentation.ui.community.moim.schedule.FriendInviteActivity"/>
 
         <meta-data
             android:name="google_analytics_adid_collection_enabled"
