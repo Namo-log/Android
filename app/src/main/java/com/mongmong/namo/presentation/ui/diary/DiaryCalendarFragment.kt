@@ -1,6 +1,7 @@
 package com.mongmong.namo.presentation.ui.diary
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -34,6 +35,7 @@ class DiaryCalendarFragment :
     override fun setup() {
         binding.viewModel = viewModel
         setCalendar()
+        initClickListener()
         initObserve()
     }
 
@@ -58,14 +60,33 @@ class DiaryCalendarFragment :
         setDiaryIndicator(binding.diaryCalendarRv)
     }
 
+    private fun initClickListener() {
+        binding.diaryCalendarReturnBtn.setOnClickListener {
+            binding.diaryCalendarRv.smoothScrollToPosition(calendarAdapter.itemCount - 1)
+        }
+    }
+
     private fun setupScrollListener() {
         binding.diaryCalendarRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 checkFirstDay(recyclerView)
                 setDiaryIndicator(recyclerView)
+                updateReturnBtnVisible()
             }
         })
+    }
+
+    private fun updateReturnBtnVisible() {
+        val layoutManager = binding.diaryCalendarRv.layoutManager as GridLayoutManager
+        val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+        val totalItemCount = layoutManager.itemCount
+
+        val isAtBottom = lastVisibleItemPosition == totalItemCount - 1
+        val isBottomSheetOpened = viewModel.isBottomSheetOpened.value ?: false
+
+        Log.d("updateReturnBtnVisible", "$lastVisibleItemPosition:${totalItemCount - 1} -> ${!isAtBottom}, $isBottomSheetOpened")
+        viewModel.setReturnBtnVisible(!isAtBottom && !isBottomSheetOpened)
     }
 
     private fun checkFirstDay(recyclerView: RecyclerView) {
@@ -95,8 +116,7 @@ class DiaryCalendarFragment :
     private fun setDiaryIndicator(recyclerView: RecyclerView) {
         val layoutManager = recyclerView.layoutManager as GridLayoutManager
         val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
-        //val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
-        val lastVisiblePosition = firstVisiblePosition + INDICATOR_FIRST
+        val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
 
         getCalendarDiary(firstVisiblePosition)
         getCalendarDiary(lastVisiblePosition)
@@ -146,16 +166,11 @@ class DiaryCalendarFragment :
 
     private fun initObserve() {
         viewModel.calendarDiaryResult.observe(viewLifecycleOwner) { calendarDiaryResult ->
-            // 어댑터에 기록이 있는 날짜 정보 전달
             val yearMonth = "${calendarDiaryResult.year}-${String.format("%02d", calendarDiaryResult.month)}"
+            val diaryDates = calendarDiaryResult.dates.toSet()
 
-            // 이미 리스트 타입이므로 split 대신 그대로 사용
-            val recordDates = calendarDiaryResult.dates.toSet()  // 만약 List<Int>라면 바로 Set으로 변환
-
-            calendarAdapter.updateDiaryDates(yearMonth, recordDates)
+            calendarAdapter.updateDiaryDates(yearMonth, diaryDates)
         }
-
-
 
         viewModel.isBottomSheetOpened.observe(viewLifecycleOwner) { isOpening ->
             if (isInitialLoad) {
@@ -168,26 +183,33 @@ class DiaryCalendarFragment :
             } else {
                 binding.diaryCalendarMl.transitionToStart()
             }
+            updateReturnBtnVisible()
         }
+
+        viewModel.isReturnBtnVisible.observe(viewLifecycleOwner) { isVisible ->
+            Log.d("updateReturnBtnVisible observe", "Return button visible: $isVisible")
+        }
+
 
     }
 
     private fun generateCalendarItems(): List<CalendarDay> {
         val calendarItems = mutableListOf<CalendarDay>()
-
         val calendar = Calendar.getInstance().apply {
             set(1970, Calendar.JANUARY, 1)
         }
-
         val endCalendar = Calendar.getInstance().apply {
-            //set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
-            set(1971, Calendar.JANUARY, 1)
+            set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
+            //set(1971, Calendar.JANUARY, 1)
         }
 
         val firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-        calendar.add(Calendar.DAY_OF_MONTH, -(firstDayOfWeek - 1))
+        val daysToFill = firstDayOfWeek - 1
 
-        // 시작 날짜부터 현재 날짜까지 calendarItems에 추가
+        for (i in 1..daysToFill) {
+            calendarItems.add(CalendarDay("", 0, 0, isEmpty = true))
+        }
+
         while (calendar.before(endCalendar) || calendar == endCalendar) {
             val isFirstDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH) == 1
             val dateText = if (isFirstDayOfMonth) {
@@ -201,6 +223,7 @@ class DiaryCalendarFragment :
 
         return calendarItems
     }
+
 
 
 
@@ -221,7 +244,6 @@ class DiaryCalendarFragment :
 
     companion object {
         const val INDICATOR_FIRST = 7
-        const val INDICATOR_LAST = 13
-        const val INDICATOR_CALENDAR_MIDDLE = 21
+        const val INDICATOR_LAST = 21
     }
 }

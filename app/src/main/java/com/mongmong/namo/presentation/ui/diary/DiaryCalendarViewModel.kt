@@ -27,8 +27,16 @@ class DiaryCalendarViewModel @Inject constructor(
     private val _calendarDiaryResult = MutableLiveData<CalendarDiaryDate>()
     val calendarDiaryResult: LiveData<CalendarDiaryDate> = _calendarDiaryResult
 
+    private val _isReturnBtnVisible = MutableLiveData<Boolean>(false)
+    val isReturnBtnVisible: LiveData<Boolean> = _isReturnBtnVisible
+
+
     fun toggleBottomSheetState() {
         _isBottomSheetOpened.value = _isBottomSheetOpened.value != true
+    }
+
+    fun setReturnBtnVisible(visible: Boolean) {
+        _isReturnBtnVisible.value = visible
     }
 
     fun setSelectedDate(date: CalendarDay) {

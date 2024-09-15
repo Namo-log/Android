@@ -7,15 +7,18 @@
         <variable
             name="calendarDay"
             type="com.mongmong.namo.domain.model.CalendarDay" />
+        <import type="android.view.View"/>
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_diary_calendar_root_cl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="@{calendarDay.isEmpty ? View.INVISIBLE : View.VISIBLE}">
 
         <TextView
             style="@style/calendar_date"
             android:text="@{calendarDay.date}"
+            android:textColor="@{calendarDay.isAfterToday() ? @color/text_unselected : @color/black}"
             android:id="@+id/diary_calendar_date_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

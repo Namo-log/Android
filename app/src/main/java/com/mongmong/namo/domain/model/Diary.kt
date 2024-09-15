@@ -8,6 +8,7 @@ import com.mongmong.namo.BR
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.presentation.state.RoomState
 import com.mongmong.namo.presentation.state.UploadState
+import java.util.Calendar
 
 data class PersonalDiary(
     val diaryId: Long = 0L,  // roomDB scheduleId
@@ -171,8 +172,20 @@ data class ScheduleForDiary(
 data class CalendarDay(
     val date: String,
     val year: Int,
-    val month: Int
-)
+    val month: Int,
+    val isEmpty: Boolean = false
+) {
+    fun isAfterToday(): Boolean {
+        if(isEmpty) return false
+        val today = Calendar.getInstance()
+        val calendarDayDate = Calendar.getInstance().apply {
+            set(Calendar.YEAR, year)
+            set(Calendar.MONTH, month)
+            set(Calendar.DAY_OF_MONTH, date.split("/").last().toInt())
+        }
+        return calendarDayDate.after(today)
+    }
+}
 
 data class CalendarDiaryDate(
     val dates: List<String>,
