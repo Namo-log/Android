@@ -2,20 +2,14 @@ package com.mongmong.namo.presentation.ui.category
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentCategorySettingBinding
 import com.mongmong.namo.presentation.ui.category.adapter.SetCategoryRVAdapter
-import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.domain.model.Category
 import com.google.gson.Gson
 import com.mongmong.namo.presentation.config.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -122,7 +116,6 @@ class CategorySettingFragment: BaseFragment<FragmentCategorySettingBinding>(R.la
         editor
             .putString(CATEGORY_DATA, json)
             .putLong(CATEGORY_ID, dataSet.categoryId)
-            .putLong(CATEGORY_SERVER_ID, dataSet.serverId)
             .apply()
 
         Log.d("debug", "Category Data saved")
@@ -132,6 +125,5 @@ class CategorySettingFragment: BaseFragment<FragmentCategorySettingBinding>(R.la
         const val CATEGORY_KEY_PREFS = "category"
         const val CATEGORY_DATA = "category_data"
         const val CATEGORY_ID = "categoryId"
-        const val CATEGORY_SERVER_ID = "serverId"
     }
 }

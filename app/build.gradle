@@ -135,11 +135,11 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:32.1.0')
     implementation 'com.google.firebase:firebase-config'
 
-    // reflection
-    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.7.10'
-
     // DataStore
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    // FlexBox
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -7,12 +7,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
-import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,7 +29,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMapBinding
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
-import com.mongmong.namo.presentation.ui.group.schedule.GroupScheduleActivity
+import com.mongmong.namo.presentation.ui.community.moim.schedule.MoimScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.map.adapter.MapRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.KakaoAPI
@@ -160,7 +158,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map) {
 
     private fun initClickListeners() {
         val targetActivityClass = when(intent.getStringExtra(ORIGIN_ACTIVITY_INTENT_KEY)) {
-            "GroupSchedule" -> GroupScheduleActivity::class.java
+            "GroupSchedule" -> MoimScheduleActivity::class.java
             "Schedule" -> ScheduleActivity::class.java
             else -> ScheduleActivity::class.java
         }

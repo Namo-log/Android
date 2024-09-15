@@ -2,14 +2,14 @@ package com.mongmong.namo.data.datasource.category
 
 import android.util.Log
 import com.mongmong.namo.data.remote.CategoryApiService
-import com.mongmong.namo.domain.model.CategoryRequestBody
-import com.mongmong.namo.domain.model.DeleteCategoryResponse
-import com.mongmong.namo.domain.model.EditCategoryResponse
-import com.mongmong.namo.domain.model.EditCategoryResult
-import com.mongmong.namo.domain.model.GetCategoryResponse
-import com.mongmong.namo.domain.model.GetCategoryResult
-import com.mongmong.namo.domain.model.PostCategoryResponse
-import com.mongmong.namo.domain.model.PostCategoryResult
+import com.mongmong.namo.data.dto.CategoryRequestBody
+import com.mongmong.namo.data.dto.DeleteCategoryResponse
+import com.mongmong.namo.data.dto.EditCategoryResponse
+import com.mongmong.namo.data.dto.EditCategoryResult
+import com.mongmong.namo.data.dto.GetCategoryResponse
+import com.mongmong.namo.data.dto.GetCategoryResult
+import com.mongmong.namo.data.dto.PostCategoryResponse
+import com.mongmong.namo.data.dto.PostCategoryResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

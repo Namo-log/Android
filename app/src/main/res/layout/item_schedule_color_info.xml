@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="info"
+            type="com.mongmong.namo.domain.model.CalendarColorInfo" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp">
+
+        <View
+            android:id="@+id/item_schedule_color_info_color_view"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/bg_circle"
+            app:tintColor="@{info.colorId}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/item_group_member_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@{info.name}"
+            tools:text="코코아"
+            style="@style/content_regular"/>
+
+    </LinearLayout>
+</layout>

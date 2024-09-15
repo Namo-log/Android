@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.presentation.config.CategoryColor
@@ -74,16 +74,15 @@ class DailyScheduleRVAdapter : RecyclerView.Adapter<DailyScheduleRVAdapter.ViewH
 
             //TODO: 카테고리를 찾지 못했을 때의 처리
             val category = categoryList.find {
-                if (it.serverId != 0L) it.serverId == schedule.categoryId
-                else it.categoryId == schedule.categoryId
+                it.categoryId == schedule.categoryId
             } ?: categoryList.first()
 
             binding.itemSchedulePreviewTimeTv.text = timeConverter.getScheduleTimeText(schedule.startDate, schedule.endDate)
-            binding.itemSchedulePreviewColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.paletteId)
+            binding.itemSchedulePreviewColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.colorId)
 
             // 기록 아이콘 클릭
             binding.itemSchedulePreviewDiaryIv.setOnClickListener {
-                scheduleClickListener.onDiaryIconClicked(schedule, category.paletteId)
+                scheduleClickListener.onDiaryIconClicked(schedule, category.colorId)
             }
         }
     }

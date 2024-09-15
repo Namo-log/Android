@@ -1,6 +1,7 @@
 package com.mongmong.namo.presentation.utils
 
 import android.util.Log
+import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.*
@@ -59,4 +60,7 @@ object DiaryDateConverter {
         val date = inputFormat.parse(this) ?: return ""  // null 처리
         return outputFormat.format(date)
     }
+
+    @JvmStatic
+    fun getFormattedDate(date: Long): String = date.let { DateTime(date * 1000).toString("yyyy.MM.dd (EE) HH:mm") }
 }

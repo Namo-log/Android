@@ -3,8 +3,6 @@ package com.mongmong.namo.domain.model.group
 import com.google.gson.annotations.SerializedName
 import com.mongmong.namo.presentation.config.BaseResponse
 import java.io.Serializable
-import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.full.memberProperties
 
 data class AddMoimScheduleResponse(
     @SerializedName("result") val result : Long

@@ -3,8 +3,7 @@ package com.mongmong.namo.presentation.ui.home.calendar
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import com.mongmong.namo.data.local.entity.home.Category
-import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.ui.home.calendar.data.StartEnd
@@ -152,10 +151,9 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
 
     private fun setBgPaintColor(schedule: GetMonthScheduleResult) {
         val foundCategory = categoryList.find {
-            if (it.serverId != 0L) it.serverId == schedule.categoryId
-            else it.categoryId == schedule.categoryId
+            it.categoryId == schedule.categoryId
         }
-        val hexColor = CategoryColor.convertPaletteIdToHexColor(foundCategory?.paletteId ?: 0)
+        val hexColor = CategoryColor.convertPaletteIdToHexColor(foundCategory?.colorId ?: 0)
         bgPaint.color = Color.parseColor(hexColor)
     }
 }

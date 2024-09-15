@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="isFriendCalendar"
+            type="Boolean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:fitsSystemWindows="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/community_calendar_header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            
+            <ImageView
+                android:id="@+id/community_calendar_back_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:rotation="90"
+                android:src="@drawable/ic_arrow_down_bold"
+                app:tint="@color/main"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/community_calendar_year_month_tv"
+                app:layout_constraintBottom_toBottomOf="@id/community_calendar_year_month_tv"/>
+
+            <TextView
+                android:id="@+id/community_calendar_year_month_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:gravity="center_vertical|start"
+                tools:text="@string/month_calendar_header_year_month"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/community_calendar_back_iv"
+                style="@style/header" />
+
+            <TextView
+                android:id="@+id/community_calendar_title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="@id/community_calendar_year_month_tv"
+                app:layout_constraintEnd_toStartOf="@id/community_calendar_info_iv"
+                app:layout_constraintTop_toTopOf="@id/community_calendar_year_month_tv"
+                tools:text="모임 일정명"
+                style="@style/header"/>
+
+            <ImageView
+                android:id="@+id/community_calendar_info_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_more_vertical"
+                android:scaleType="fitCenter"
+                android:layout_marginEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="@id/community_calendar_title_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/community_calendar_title_tv"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/community_calendar_days_layout"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/community_calendar_header_layout">
+
+            <TextView
+                android:text="@string/sunday"
+                style="@style/calendar_day_of_week_tv" />
+
+            <TextView
+                android:text="@string/monday"
+                style="@style/calendar_day_of_week_tv" />
+
+            <TextView
+                android:text="@string/tuesday"
+                style="@style/calendar_day_of_week_tv" />
+
+            <TextView
+                android:text="@string/wednesday"
+                style="@style/calendar_day_of_week_tv" />
+
+            <TextView
+                android:text="@string/thursday"
+                style="@style/calendar_day_of_week_tv" />
+
+            <TextView
+                android:text="@string/friday"
+                style="@style/calendar_day_of_week_tv" />
+
+            <TextView
+                android:text="@string/saturday"
+                style="@style/calendar_day_of_week_tv" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/community_calendar_divider_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/community_calendar_days_layout">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/main_gray"
+                android:elevation="5dp" />
+
+        </LinearLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/community_calendar_vp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/community_calendar_divider_layout"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
