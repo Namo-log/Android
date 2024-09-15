@@ -1,13 +1,7 @@
 package com.mongmong.namo.presentation.ui.home.schedule
 
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -15,9 +9,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.ui.home.schedule.adapter.DialogCategoryRVAdapter
-import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.mongmong.namo.databinding.FragmentScheduleDialogCategoryBinding
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.category.CategoryActivity
@@ -64,7 +57,6 @@ class ScheduleDialogCategoryFragment
             override fun onSendId(category: Category) {
                 // 카테고리 세팅
                 schedule.categoryId = category.categoryId
-                schedule.categoryServerId = category.serverId
                 Log.d("TEST_CATEGORY", "In category : ${schedule.categoryId}")
                 Log.d("TEST_CATEGORY", "In category Server: ${schedule.categoryServerId}")
                 Log.d("TEST_CATEGORY", "In category Result: ${schedule}")

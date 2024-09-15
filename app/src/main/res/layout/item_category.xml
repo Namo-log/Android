@@ -6,7 +6,7 @@
         <import type="com.mongmong.namo.presentation.config.CategoryColor"/>
         <variable
             name="category"
-            type="com.mongmong.namo.data.local.entity.home.Category" />
+            type="com.mongmong.namo.domain.model.Category" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -38,7 +38,7 @@
                     android:id="@+id/item_category_color_iv"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    app:cardBackgroundColor="@{CategoryColor.convertPaletteIdToColorStateList(category.paletteId)}"
+                    app:cardBackgroundColor="@{CategoryColor.convertPaletteIdToColorStateList(category.colorId)}"
                     app:cardCornerRadius="25dp"
                     app:cardElevation="0dp"
                     tools:backgroundTint="@color/main_pink">

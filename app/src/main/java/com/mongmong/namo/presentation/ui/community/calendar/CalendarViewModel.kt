@@ -2,7 +2,7 @@ package com.mongmong.namo.presentation.ui.community.calendar
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.domain.model.Friend
 import com.mongmong.namo.domain.model.Moim
 import com.mongmong.namo.domain.model.group.GroupMember
@@ -35,9 +35,9 @@ class CalendarViewModel: ViewModel() {
         )
 
         friendCategoryList = listOf(
-            Category(name = "일정", paletteId = 4),
-            Category(name = "약속", paletteId = 3),
-            Category(name = "피자", paletteId = 8),
+            Category(name = "일정", colorId = 4),
+            Category(name = "약속", colorId = 3),
+            Category(name = "피자", colorId = 8),
         )
     }
 

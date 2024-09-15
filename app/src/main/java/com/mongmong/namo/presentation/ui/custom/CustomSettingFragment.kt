@@ -118,23 +118,6 @@ class CustomSettingFragment: BaseFragment<FragmentCustomSettingBinding>(R.layout
         activity?.let { dialog.show(it.supportFragmentManager, "ConfirmDialog") }
     }
 
-    private fun deleteAllRoomDatas() {
-        val db = NamoDatabase.getInstance(requireContext())
-
-        // 모든 데이터 삭제
-        val thread = Thread {
-            db.scheduleDao.deleteAllSchedules()
-            db.diaryDao.deleteAllDiaries()
-            db.categoryDao.deleteAllCategories()
-        }
-        thread.start()
-        try {
-            thread.join()
-        } catch ( e: InterruptedException) {
-            e.printStackTrace()
-        }
-    }
-
     private fun moveToLoginFragment() {
         // 토큰 비우기
         ApplicationClass.sSharedPreferences.edit().clear().apply()

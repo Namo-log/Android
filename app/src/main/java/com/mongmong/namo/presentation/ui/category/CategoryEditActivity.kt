@@ -1,17 +1,15 @@
 package com.mongmong.namo.presentation.ui.category
 
 import android.content.Context
-import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityCategoryEditBinding
-import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.config.RoomState
 import com.mongmong.namo.presentation.utils.ConfirmDialog

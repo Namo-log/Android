@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.domain.model.PersonalDiary
-import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.DiaryResponse
@@ -220,7 +220,7 @@ class DiaryDetailViewModel @Inject constructor(
             _category.value =
                 schedule.value?.let {
                     Log.d("findCategoryById", "${_schedule.value}")
-                    findCategoryUseCase.invoke(it.categoryId, it.categoryId)
+                    findCategoryUseCase.invoke(it.categoryId)
                 }
             Log.d("findCategoryById", "${_category.value}")
         }

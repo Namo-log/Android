@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.domain.repositories.CategoryRepository
 import com.mongmong.namo.domain.usecase.GetCategoriesUseCase
 import com.mongmong.namo.presentation.config.CategoryColor
@@ -83,8 +83,8 @@ class CategoryViewModel @Inject constructor(
 
     fun setCategory(category: Category) {
         _category.value = category
-        if (category.paletteId != 0) {
-            _color.value = CategoryColor.findCategoryColorByPaletteId(category.paletteId)
+        if (category.colorId != 0) {
+            _color.value = CategoryColor.findCategoryColorByPaletteId(category.colorId)
         }
     }
 
@@ -100,7 +100,7 @@ class CategoryViewModel @Inject constructor(
 
     fun updateCategoryColor(color: CategoryColor) {
         _color.value = color
-        _category.value = _category.value?.copy(paletteId = color.paletteId)
+        _category.value = _category.value?.copy(colorId = color.paletteId)
     }
 
     fun updateIsShare(isShare: Boolean) {
@@ -113,11 +113,5 @@ class CategoryViewModel @Inject constructor(
 
     fun isValidInput(): Boolean {
         return (!_category.value?.name.isNullOrEmpty()) && (_color.value != null)
-    }
-
-    fun updateCategoryAfterUpload(localId: Long, isUpload: Boolean, serverId: Long, state: String) {
-        viewModelScope.launch {
-            repository.updateCategoryAfterUpload(localId, serverId, isUpload, state)
-        }
     }
 }
