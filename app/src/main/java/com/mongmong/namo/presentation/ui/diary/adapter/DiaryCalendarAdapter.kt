@@ -20,10 +20,16 @@ class DiaryCalendarAdapter(
     private var isOpeningBottomSheet: Boolean = false
     private var shouldAnimate: Boolean = false
 
-    // 기록된 날짜 정보 업데이트
     fun updateDiaryDates(yearMonth: String, recordDates: Set<String>) {
         diaryDates[yearMonth] = recordDates
-        notifyDataSetChanged()
+
+        items.forEachIndexed { index, calendarDay ->
+            val currentYearMonth = "${calendarDay.year}-${String.format("%02d", calendarDay.month + 1)}"
+            val day = calendarDay.date.split("/").last()
+            if (currentYearMonth == yearMonth && recordDates.contains(day)) {
+                notifyItemChanged(index)
+            }
+        }
     }
 
     fun updateBottomSheetState(isOpened: Boolean) {
