@@ -2,25 +2,18 @@ package com.mongmong.namo.presentation.ui.category
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.widget.SwitchCompat
 import androidx.cardview.widget.CardView
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.databinding.FragmentCategoryDetailBinding
 import com.mongmong.namo.presentation.ui.category.CategorySettingFragment.Companion.CATEGORY_DATA
 import com.mongmong.namo.presentation.ui.category.adapter.CategoryPaletteRVAdapter
-import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.domain.model.Category
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.google.gson.reflect.TypeToken
@@ -115,22 +108,11 @@ class CategoryDetailFragment(private val isEditMode: Boolean)
 
     /** 카테고리 추가 */
     private fun insertData() {
-        // RoomDB
-//        name = binding.categoryDetailTitleEt.text.toString()
-//        category = Category(0, name, color!!.paletteId, share)
-//        category.state = RoomState.ADDED.state
-
         // 새 카테고리 등록
         viewModel.addCategory()
     }
 
     private fun updateData() {
-        // RoomDB
-//        name = binding.categoryDetailTitleEt.text.toString()
-//        category = Category(categoryId, name, color!!.paletteId, share)
-//        category.state = RoomState.EDITED.state
-//        category.serverId = serverId
-
         // 카테고리 편집
         viewModel.editCategory()
     }
@@ -230,7 +212,7 @@ class CategoryDetailFragment(private val isEditMode: Boolean)
                 // 데이터 값 넣어주기
                 if (CategoryColor.findPaletteByPaletteType(PaletteType.DEFAULT_4).contains(viewModel.color.value)) {
                     // 기본 카테고리 체크 표시
-                    checkList[viewModel.category.value!!.paletteId - 1].visibility = View.VISIBLE
+                    checkList[viewModel.category.value!!.colorId - 1].visibility = View.VISIBLE
                 }
             } catch (e: JsonParseException) { // 파싱이 안 될 경우
                 e.printStackTrace()

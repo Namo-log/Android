@@ -1,7 +1,6 @@
 package com.mongmong.namo.presentation.di
 
 import com.mongmong.namo.data.datasource.auth.RemoteAuthDataSource
-import com.mongmong.namo.data.datasource.category.LocalCategoryDataSource
 import com.mongmong.namo.data.datasource.category.RemoteCategoryDataSource
 import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
@@ -71,10 +70,9 @@ object RepositoryModule {
     /** 카테고리 */
     @Provides
     fun provideCategoryRepository(
-        localCategoryDataSource: LocalCategoryDataSource,
         remoteCategoryDataSource: RemoteCategoryDataSource,
         networkChecker: NetworkChecker
-    ): CategoryRepository = CategoryRepositoryImpl(localCategoryDataSource, remoteCategoryDataSource, networkChecker)
+    ): CategoryRepository = CategoryRepositoryImpl(remoteCategoryDataSource, networkChecker)
 
     /** 그룹 */
     @Provides

@@ -3,7 +3,6 @@ package com.mongmong.namo.presentation.di
 import android.content.Context
 import androidx.room.Room
 import com.mongmong.namo.data.local.NamoDatabase
-import com.mongmong.namo.data.local.dao.CategoryDao
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.dao.ScheduleDao
 import dagger.Module
@@ -29,8 +28,4 @@ object DatabaseModule {
     /** 기록 */
     @Provides
     fun provideDiaryDao(database: NamoDatabase): DiaryDao = database.diaryDao
-
-    /** 카테고리 */
-    @Provides
-    fun provideCategoryDao(database: NamoDatabase): CategoryDao = database.categoryDao
 }

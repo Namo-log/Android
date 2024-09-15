@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.LatLng
-import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
@@ -161,7 +161,7 @@ class PersonalScheduleViewModel @Inject constructor(
 //                    )
                     _categoryList.value?.first()
                 } else {
-                    findCategoryUseCase.invoke(schedule.categoryId, schedule.categoryId)
+                    findCategoryUseCase.invoke(schedule.categoryId)
                 }
             }
             setCategory()
