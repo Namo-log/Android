@@ -166,3 +166,16 @@ data class ScheduleForDiary(
     val title: String = "",
     val categoryId: Int
 )
+
+/** 기록 캘린더 */
+data class CalendarDay(
+    val date: String,
+    val year: Int,
+    val month: Int
+)
+
+data class CalendarDiaryDate(
+    val dates: List<String>,
+    val month: Int,
+    val year: Int
+)

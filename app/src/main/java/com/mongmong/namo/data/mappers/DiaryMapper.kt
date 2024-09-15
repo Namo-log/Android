@@ -1,8 +1,10 @@
 package com.mongmong.namo.data.mappers
 
+import com.mongmong.namo.data.dto.GetCalendarDiaryResult
 import com.mongmong.namo.data.dto.GetDiaryCollectionResult
 import com.mongmong.namo.data.dto.GetPersonalDiaryResult
 import com.mongmong.namo.data.dto.GetScheduleForDiaryResult
+import com.mongmong.namo.domain.model.CalendarDiaryDate
 import com.mongmong.namo.domain.model.CategoryInfo
 import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryDetail
@@ -67,6 +69,14 @@ object DiaryMapper {
                 )
             },
             enjoyRating = this.enjoyRating
+        )
+    }
+
+    fun GetCalendarDiaryResult.toModel(): CalendarDiaryDate {
+        return CalendarDiaryDate(
+            dates = this.dates,
+            year = this.year,
+            month = this.month
         )
     }
 }

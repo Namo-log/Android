@@ -15,6 +15,7 @@ import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.data.mappers.DiaryMapper.toModel
+import com.mongmong.namo.domain.model.CalendarDiaryDate
 import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiaryResponse
@@ -108,6 +109,12 @@ class DiaryRepositoryImpl @Inject constructor(
             }*/
         //}
     }
+
+    override suspend fun getCalendarDiary(yearMonth: String): CalendarDiaryDate {
+        return remoteDiaryDataSource.getCalendarDiary(yearMonth).result.toModel()
+    }
+
+
     /** 모임 기록 리스트 조회 **/
     fun getMoimDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
         return DiaryMoimPagingSource(apiService, date, networkChecker)

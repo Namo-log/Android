@@ -5,6 +5,8 @@ import android.util.Log
 import com.mongmong.namo.data.dto.CategoryInfo
 import com.mongmong.namo.data.dto.DiaryRequestImage
 import com.mongmong.namo.data.dto.EditDiaryRequest
+import com.mongmong.namo.data.dto.GetCalendarDiaryResponse
+import com.mongmong.namo.data.dto.GetCalendarDiaryResult
 import com.mongmong.namo.data.dto.GetPersonalDiaryResponse
 import com.mongmong.namo.data.dto.GetPersonalDiaryResult
 import com.mongmong.namo.data.dto.GetScheduleForDiaryResponse
@@ -15,6 +17,7 @@ import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
 import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
 import com.mongmong.namo.data.utils.RequestConverter.imageToMultipart
+import com.mongmong.namo.domain.model.CalendarDiaryDate
 import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
@@ -197,6 +200,23 @@ class RemoteDiaryDataSource @Inject constructor(
         }
         return diaryResponse
     }
+
+
+    suspend fun getCalendarDiary(yearMonth: String): GetCalendarDiaryResponse {
+        var response = GetCalendarDiaryResponse(GetCalendarDiaryResult())
+        withContext(Dispatchers.IO) {
+            runCatching {
+                diaryApiService.getCalendarDiary(yearMonth)
+            }.onSuccess {
+                Log.d("RemoteDiaryDataSource deleteDiary Success", "$it")
+                response = it
+            }.onFailure {
+                Log.d("RemoteDiaryDataSource deleteDiary Failure", "$it")
+            }
+        }
+        return response
+    }
+
 
     /** 모임 기록 조회 */
     suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult {
