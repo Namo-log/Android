@@ -59,15 +59,11 @@ object RepositoryModule {
     /** 기록 */
     @Provides
     fun provideDiaryRepository(
-        localDiaryDataSource: LocalDiaryDataSource,
         remoteDiaryDataSource: RemoteDiaryDataSource,
-        diaryDao: DiaryDao,
         diaryService: DiaryApiService,
         networkChecker: NetworkChecker
     ): DiaryRepository = DiaryRepositoryImpl(
-        localDiaryDataSource,
         remoteDiaryDataSource,
-        diaryDao,
         diaryService,
         networkChecker
     )

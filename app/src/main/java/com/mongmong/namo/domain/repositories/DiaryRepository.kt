@@ -4,8 +4,6 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryDetail
-import com.mongmong.namo.domain.model.PersonalDiary
-import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.ScheduleForDiary
@@ -22,7 +20,7 @@ interface DiaryRepository {
         enjoyRating: Int,
         images: List<String>,
         scheduleId: Long
-    ): DiaryResponse
+    ): Boolean
 
     suspend fun editPersonalDiary(
         diaryId: Long,
@@ -30,11 +28,11 @@ interface DiaryRepository {
         enjoyRating: Int,
         images: List<String>,
         deleteImageIds: List<Long>
-    ): DiaryResponse
+    ): Boolean
 
     suspend fun deletePersonalDiary(
-        scheduleId: Long
-    ): DiaryResponse
+        diaryId: Long
+    ): Boolean
 
     suspend fun uploadDiaryToServer()
 

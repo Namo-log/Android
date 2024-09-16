@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.mongmong.namo.data.dto.CategoryInfo
 import com.mongmong.namo.data.dto.DiaryRequestImage
+import com.mongmong.namo.data.dto.DiaryResponse
 import com.mongmong.namo.data.dto.EditDiaryRequest
 import com.mongmong.namo.data.dto.GetPersonalDiaryResponse
 import com.mongmong.namo.data.dto.GetPersonalDiaryResult
@@ -15,7 +16,6 @@ import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
 import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
 import com.mongmong.namo.data.utils.RequestConverter.imageToMultipart
-import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
@@ -29,54 +29,6 @@ class RemoteDiaryDataSource @Inject constructor(
     private val groupDiaryApiService: GroupDiaryApiService,
     private val context: Context
 ) {
-    /*suspend fun addDiaryToServer(
-        diary: Diary,
-        images: List<String>?,
-    ): DiaryAddResponse {
-        var diaryResponse = DiaryAddResponse(result = GetScheduleId(-1))
-
-        withContext(Dispatchers.IO) {
-            runCatching {
-                diaryApiService.addDiary(
-                    scheduleId = diary.scheduleServerId.toString().convertTextRequest(),
-                    content = (diary.content ?: "").convertTextRequest(),
-                    imageToMultipart(images, context)
-                )
-            }.onSuccess {
-                Log.d("RemoteDiaryDataSource addDiaryToServer Success", "$it")
-                diaryResponse = it
-            }.onFailure {
-                Log.d("RemoteDiaryDataSource addDiaryToServer Failure", "$it")
-            }
-        }
-
-        return diaryResponse
-    }*/
-
-    /*suspend fun editDiaryToServer(
-        diary: Diary,
-        images: List<String>?
-    ): DiaryResponse {
-        var diaryResponse = DiaryResponse("")
-
-        withContext(Dispatchers.IO) {
-            runCatching {
-                diaryApiService.editDiary(
-                    scheduleId = diary.scheduleServerId.toString().convertTextRequest(),
-                    content = (diary.content ?: "").convertTextRequest(),
-                    imgs = imageToMultipart(images, context)
-                )
-            }.onSuccess {
-                Log.d("RemoteDiaryDataSource editDiaryToServer Success", "$it")
-                diaryResponse = it
-            }.onFailure {
-                Log.d("RemoteDiaryDataSource editDiaryToServer Failure", "$it")
-            }
-        }
-
-        return diaryResponse
-    }*/
-
     /** 개인 기록*/
     suspend fun getScheduleForDiary(scheduleId: Long): GetScheduleForDiaryResponse {
         var response = GetScheduleForDiaryResponse(

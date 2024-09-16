@@ -1,6 +1,6 @@
 package com.mongmong.namo.data.remote.group
 
-import com.mongmong.namo.domain.model.DiaryResponse
+import com.mongmong.namo.data.dto.DiaryResponse
 import com.mongmong.namo.presentation.config.BaseResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
