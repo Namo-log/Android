@@ -1,14 +1,12 @@
 package com.mongmong.namo.presentation.di
 
 import android.content.Context
-import com.mongmong.namo.data.datasource.category.LocalCategoryDataSource
 import com.mongmong.namo.data.datasource.category.RemoteCategoryDataSource
 import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.datasource.group.GroupDataSource
-import com.mongmong.namo.data.local.dao.CategoryDao
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.dao.ScheduleDao
 import com.mongmong.namo.data.remote.CategoryApiService
@@ -47,8 +45,6 @@ object DataSourceModule {
     : RemoteDiaryDataSource = RemoteDiaryDataSource(diaryApiService, groupDiaryApiService, context)
 
     /** 카테고리 */
-    @Provides
-    fun provideLocalCategoryDataSource(categoryDao: CategoryDao): LocalCategoryDataSource = LocalCategoryDataSource(categoryDao)
     @Provides
     fun provideRemoteCategoryDataSource(apiService: CategoryApiService): RemoteCategoryDataSource = RemoteCategoryDataSource(apiService)
 

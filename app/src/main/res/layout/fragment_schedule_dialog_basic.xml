@@ -39,7 +39,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="6"
-                android:text="@{viewModel.schedule.scheduleId == 0L ? @string/schedule_new : (viewModel.schedule.moimSchedule ? @string/schedule_moim_edit : @string/schedule_edit )}"
+                android:text="@{viewModel.schedule.scheduleId == 0L ? @string/schedule_new : (viewModel.schedule.moimSchedule ? @string/moim_schedule_edit : @string/schedule_edit )}"
                 tools:text="새 일정"
                 android:textStyle="bold"
                 android:textColor="@color/black"
@@ -117,7 +117,7 @@
                     android:layout_width="13dp"
                     android:layout_height="13dp"
                     android:background="@drawable/bg_circle"
-                    android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(viewModel.category.paletteId)}"
+                    android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(viewModel.category.colorId)}"
                     android:src="@color/main"/>
 
                 <TextView

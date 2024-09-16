@@ -7,7 +7,7 @@
         <import type="com.mongmong.namo.presentation.config.CategoryColor"/>
         <variable
             name="category"
-            type="com.mongmong.namo.data.local.entity.home.Category" />
+            type="com.mongmong.namo.domain.model.Category" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,7 +20,7 @@
             android:id="@+id/category_color_view"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(category.paletteId)}"
+            android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(category.colorId)}"
             android:background="@drawable/bg_circle"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"

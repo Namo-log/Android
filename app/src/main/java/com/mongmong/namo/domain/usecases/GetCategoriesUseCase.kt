@@ -1,7 +1,7 @@
 package com.mongmong.namo.domain.usecases
 
 import android.util.Log
-import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.domain.repositories.CategoryRepository
 import javax.inject.Inject
 

@@ -1,11 +1,11 @@
 package com.mongmong.namo.domain.repositories
 
-import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.domain.model.Category
 
 interface CategoryRepository {
     suspend fun getCategories(): List<Category>
 
-    suspend fun findCategoryById(localId: Long, serverId: Long): Category
+    suspend fun findCategoryById(categoryId: Long): Category
 
     suspend fun addCategory(
         category: Category
@@ -18,11 +18,4 @@ interface CategoryRepository {
     suspend fun deleteCategory(
         category: Category
     ): Boolean
-
-    suspend fun updateCategoryAfterUpload(
-        localId: Long,
-        serverId: Long,
-        isUpload: Boolean,
-        status: String
-    )
 }

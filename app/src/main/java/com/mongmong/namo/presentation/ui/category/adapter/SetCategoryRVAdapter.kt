@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemCategoryBinding
-import com.mongmong.namo.data.local.entity.home.Category
+import com.mongmong.namo.domain.model.Category
 
 class SetCategoryRVAdapter:  RecyclerView.Adapter<SetCategoryRVAdapter.ViewHolder>(){
 

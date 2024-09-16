@@ -16,4 +16,9 @@
         <attr name="eventMorePadding" format="dimension"/>
         <attr name="eventLineHeight" format="dimension"/>
     </declare-styleable>
+
+    <declare-styleable name="ImageTextView">
+        <attr name="drawableStartSize" format="dimension|reference" />
+        <attr name="drawableEndSize" format="dimension|reference" />
+    </declare-styleable>
 </resources>
