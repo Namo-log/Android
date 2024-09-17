@@ -3,6 +3,7 @@ package com.mongmong.namo.data.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import android.provider.OpenableColumns
 import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -93,6 +94,23 @@ object RequestConverter {
         }
     }
 
+    fun getFileNameFromUri(context: Context, uri: Uri): String? {
+        if (uri.scheme == "content") {
+            var fileName: String? = null
+            val cursor = context.contentResolver.query(uri, null, null, null, null)
+            cursor?.use {
+                if (it.moveToFirst()) {
+                    val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    if (nameIndex != -1) {
+                        fileName = it.getString(nameIndex)
+                    }
+                }
+            }
+            return fileName
+        } else {
+            return uri.lastPathSegment?.substringAfterLast('/')
+        }
+    }
 
     fun String.convertTextRequest() = toRequestBody("text/plain".toMediaTypeOrNull())
 }

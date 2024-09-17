@@ -181,28 +181,30 @@
 
             <ImageView
                 android:id="@+id/diary_enjoy_1_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:contentDescription="Heart 1"
                 android:onClick="@{() -> viewModel.onEnjoyClicked(1)}"
-                android:padding="2dp"
-                android:src="@{viewModel.enjoy >= 1 ? @drawable/ic_enjoy : @drawable/ic_enjoy_empty}"/>
+                android:src="@drawable/ic_favorite"
+                app:tint="@{viewModel.enjoy >= 1 ? @color/main : @color/text_unselected}" />
 
             <ImageView
                 android:id="@+id/diary_enjoy_2_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="2dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:onClick="@{() -> viewModel.onEnjoyClicked(2)}"
-                android:src="@{viewModel.enjoy >= 2 ? @drawable/ic_enjoy : @drawable/ic_enjoy_empty}"/>
+                android:src="@drawable/ic_favorite"
+                android:layout_marginStart="4dp"
+                app:tint="@{viewModel.enjoy >= 2 ? @color/main : @color/text_unselected}" />
 
             <ImageView
                 android:id="@+id/diary_enjoy_3_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
                 android:onClick="@{() -> viewModel.onEnjoyClicked(3)}"
-                android:padding="2dp"
-                android:src="@{viewModel.enjoy >= 3 ? @drawable/ic_enjoy : @drawable/ic_enjoy_empty}"/>
+                android:src="@drawable/ic_favorite"
+                android:layout_marginStart="4dp"
+                app:tint="@{viewModel.enjoy >= 3 ? @color/main : @color/text_unselected}" />
         </LinearLayout>
 
         <LinearLayout

@@ -1,4 +1,4 @@
-package com.mongmong.namo.data.mappers
+package com.mongmong.namo.data.utils.mappers
 
 import com.mongmong.namo.data.dto.GetDiaryCollectionResult
 import com.mongmong.namo.data.dto.GetPersonalDiaryResult
