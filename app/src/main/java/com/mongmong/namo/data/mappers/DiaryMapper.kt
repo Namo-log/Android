@@ -1,6 +1,7 @@
 package com.mongmong.namo.data.mappers
 
 import com.mongmong.namo.data.dto.GetCalendarDiaryResult
+import com.mongmong.namo.data.dto.GetDiaryByDateResult
 import com.mongmong.namo.data.dto.GetDiaryCollectionResult
 import com.mongmong.namo.data.dto.GetPersonalDiaryResult
 import com.mongmong.namo.data.dto.GetScheduleForDiaryResult
@@ -77,6 +78,25 @@ object DiaryMapper {
             dates = this.dates,
             year = this.year,
             month = this.month
+        )
+    }
+
+    fun GetDiaryByDateResult.toModel(): Diary {
+        return Diary(
+            categoryInfo = CategoryInfo(
+                name = this.categoryInfo.name,
+                colorId = this.categoryInfo.colorId
+            ),
+            diarySummary = DiarySummary(diaryId = this.diaryId),
+            startDate = this.scheduleStartDate,
+            endDate = this.scheduleEndDate,
+            scheduleId = 0L,
+            scheduleType = this.scheduleType,
+            title = this.scheduleTitle,
+            participantInfo = ParticipantInfo(
+                count = this.participantInfo.participantsCount,
+                names = this.participantInfo.participantsNames ?: ""
+            )
         )
     }
 }

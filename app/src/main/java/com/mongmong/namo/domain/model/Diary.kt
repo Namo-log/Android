@@ -1,5 +1,6 @@
 package com.mongmong.namo.domain.model
 
+import android.util.Log
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import com.mongmong.namo.presentation.config.BaseResponse
@@ -140,9 +141,9 @@ data class ParticipantInfo(
 )
 
 data class DiarySummary(
-    val content: String,
+    val content: String = "",
     val diaryId: Long,
-    val diaryImages: List<DiaryImage>?
+    val diaryImages: List<DiaryImage>? = emptyList()
 )
 
 data class DiaryImage(
@@ -184,6 +185,17 @@ data class CalendarDay(
             set(Calendar.DAY_OF_MONTH, date.split("/").last().toInt())
         }
         return calendarDayDate.after(today)
+    }
+
+    fun toDateString(): String {
+        // date 필드에서 일(day) 값을 추출합니다.
+        val dayPart = date.split("/").last()
+
+        // month는 0부터 시작하므로 1을 더해줍니다.
+        val monthString = String.format("%02d", month + 1)
+        val dayString = String.format("%02d", dayPart.toInt())
+
+        return "${year}-${monthString}-${dayString}"
     }
 }
 

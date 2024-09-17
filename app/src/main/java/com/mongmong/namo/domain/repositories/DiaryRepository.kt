@@ -39,6 +39,8 @@ interface DiaryRepository {
 
     suspend fun getCalendarDiary(yearMonth: String): CalendarDiaryDate
 
+    suspend fun getDiaryByDate(date: String): List<Diary>
+
     suspend fun uploadDiaryToServer()
 
     suspend fun postDiaryToServer(serverId: Long, scheduleId: Long)

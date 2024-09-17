@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemDiaryCollectionBinding
-import com.mongmong.namo.databinding.ItemDiaryListBinding
+import com.mongmong.namo.databinding.ItemDiaryHeaderBinding
 import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.presentation.utils.DiaryDateConverter.toDiaryHeaderDate
@@ -43,7 +43,7 @@ class DiaryRVAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             ITEM_VIEW_TYPE_HEADER -> DiaryHeaderViewHolder(
-                ItemDiaryListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ItemDiaryHeaderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
             ITEM_VIEW_TYPE_ITEM -> DiaryContentViewHolder(
                 ItemDiaryCollectionBinding.inflate(LayoutInflater.from(parent.context), parent, false),
@@ -62,7 +62,7 @@ class DiaryRVAdapter(
         }
     }
 
-    inner class DiaryHeaderViewHolder(val binding: ItemDiaryListBinding) :
+    inner class DiaryHeaderViewHolder(val binding: ItemDiaryHeaderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Diary) {
             binding.date = item.startDate.toDiaryHeaderDate()

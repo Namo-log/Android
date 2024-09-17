@@ -11,3 +11,17 @@ data class GetCalendarDiaryResult(
     val month: Int = 1,
     val year: Int = 1970
 )
+
+data class GetDiaryByDateResponse(
+    val result: List<GetDiaryByDateResult>
+): BaseResponse()
+
+data class GetDiaryByDateResult(
+    val categoryInfo: CategoryInfo,
+    val participantInfo: ParticipantInfo,
+    val scheduleEndDate: String,
+    val scheduleStartDate: String,
+    val scheduleType: Int,
+    val scheduleTitle: String,
+    val diaryId: Long
+)

@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentDiaryCalendarBinding
@@ -19,6 +20,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 import com.google.android.material.snackbar.Snackbar
 import com.mongmong.namo.domain.model.CalendarDay
+import com.mongmong.namo.presentation.ui.diary.adapter.MoimDiaryRVAdapter
+import com.mongmong.namo.presentation.ui.diary.adapter.PersonalDiaryRVAdapter
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.dpToPx
 
 @AndroidEntryPoint
@@ -28,6 +31,8 @@ class DiaryCalendarFragment :
 
     private val viewModel: DiaryCalendarViewModel by viewModels()
     private lateinit var calendarAdapter: DiaryCalendarAdapter
+    private lateinit var personalDiaryAdapter: PersonalDiaryRVAdapter
+    private lateinit var moimDiaryAdapter: MoimDiaryRVAdapter
     private var isInitialLoad = true
     private var lastDisplayedMonth: Int? = null // 마지막으로 표시된 월을 저장하는 변수
     private val fetchedMonths = mutableSetOf<String>() // 이미 요청한 월을 저장하는 집합
@@ -35,6 +40,7 @@ class DiaryCalendarFragment :
     override fun setup() {
         binding.viewModel = viewModel
         setCalendar()
+        setupDiaryAdapters()
         initClickListener()
         initObserve()
     }
@@ -58,6 +64,21 @@ class DiaryCalendarFragment :
         setupScrollListener()
         scrollToToday()
         setDiaryIndicator(binding.diaryCalendarRv)
+    }
+
+    private fun setupDiaryAdapters() {
+        personalDiaryAdapter = PersonalDiaryRVAdapter()
+        moimDiaryAdapter = MoimDiaryRVAdapter()
+
+        binding.bottomSheetPersonalDiaryRv.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = personalDiaryAdapter
+        }
+
+        binding.bottomSheetMoimDiaryRv.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = moimDiaryAdapter
+        }
     }
 
     private fun initClickListener() {
@@ -85,7 +106,6 @@ class DiaryCalendarFragment :
         val isAtBottom = lastVisibleItemPosition == totalItemCount - 1
         val isBottomSheetOpened = viewModel.isBottomSheetOpened.value ?: false
 
-        Log.d("updateReturnBtnVisible", "$lastVisibleItemPosition:${totalItemCount - 1} -> ${!isAtBottom}, $isBottomSheetOpened")
         viewModel.setReturnBtnVisible(!isAtBottom && !isBottomSheetOpened)
     }
 
@@ -186,11 +206,17 @@ class DiaryCalendarFragment :
             updateReturnBtnVisible()
         }
 
-        viewModel.isReturnBtnVisible.observe(viewLifecycleOwner) { isVisible ->
-            Log.d("updateReturnBtnVisible observe", "Return button visible: $isVisible")
+        viewModel.diariesByDate.observe(viewLifecycleOwner) { diaryItems ->
+            val personalDiaries = diaryItems.filter { it.scheduleType == 0 }
+            val moimDiaries = diaryItems.filter { it.scheduleType == 1 }
+
+            // 필터링된 결과로 각 RecyclerView 업데이트
+            personalDiaryAdapter.updateData(personalDiaries)
+            moimDiaryAdapter.updateData(moimDiaries)
+
+            binding.bottomSheetPersonalDiaryNoneTv.visibility = if (personalDiaries.isEmpty()) View.VISIBLE else View.GONE
+            binding.bottomSheetMoimDiaryNoneTv.visibility = if (moimDiaries.isEmpty()) View.VISIBLE else View.GONE
         }
-
-
     }
 
     private fun generateCalendarItems(): List<CalendarDay> {
@@ -239,6 +265,7 @@ class DiaryCalendarFragment :
 
     override fun onCalendarDayClick(date: CalendarDay) {
         viewModel.toggleBottomSheetState()
+        viewModel.getDiaryByDate(date)
         viewModel.setSelectedDate(date)
     }
 

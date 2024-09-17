@@ -114,6 +114,10 @@ class DiaryRepositoryImpl @Inject constructor(
         return remoteDiaryDataSource.getCalendarDiary(yearMonth).result.toModel()
     }
 
+    override suspend fun getDiaryByDate(date: String): List<Diary> {
+        return remoteDiaryDataSource.getDiaryByDate(date).result.map { it.toModel() }
+    }
+
 
     /** 모임 기록 리스트 조회 **/
     fun getMoimDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {

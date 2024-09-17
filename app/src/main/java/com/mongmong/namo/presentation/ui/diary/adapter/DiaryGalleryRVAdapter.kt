@@ -15,8 +15,7 @@ import com.mongmong.namo.domain.model.DiaryImage
 class DiaryGalleryRVAdapter(
     private val imgList: List<DiaryImage>,
     private val imageClickListener: (List<DiaryImage>) -> Unit
-) :
-    RecyclerView.Adapter<DiaryGalleryRVAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<DiaryGalleryRVAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemDiaryListGalleryBinding = ItemDiaryListGalleryBinding.inflate(
