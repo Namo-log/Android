@@ -17,7 +17,7 @@
 
         <TextView
             style="@style/calendar_date"
-            android:text="@{calendarDay.date}"
+            android:text='@{calendarDay.displayDate}'
             android:textColor="@{calendarDay.isAfterToday() ? @color/text_unselected : @color/black}"
             android:id="@+id/diary_calendar_date_tv"
             android:layout_width="wrap_content"

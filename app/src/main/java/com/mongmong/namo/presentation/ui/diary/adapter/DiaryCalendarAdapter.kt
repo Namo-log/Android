@@ -20,13 +20,12 @@ class DiaryCalendarAdapter(
     private var isOpeningBottomSheet: Boolean = false
     private var shouldAnimate: Boolean = false
 
-    fun updateDiaryDates(yearMonth: String, recordDates: Set<String>) {
-        diaryDates[yearMonth] = recordDates
+    fun updateDiaryDates(yearMonth: String, diaryDates: Set<String>) {
+        this.diaryDates[yearMonth] = diaryDates
 
         items.forEachIndexed { index, calendarDay ->
             val currentYearMonth = "${calendarDay.year}-${String.format("%02d", calendarDay.month + 1)}"
-            val day = calendarDay.date.split("/").last()
-            if (currentYearMonth == yearMonth && recordDates.contains(day)) {
+            if (currentYearMonth == yearMonth && diaryDates.contains(calendarDay.date.toString())) {
                 notifyItemChanged(index)
             }
         }
@@ -67,8 +66,7 @@ class DiaryCalendarAdapter(
             binding.calendarDay = calendarDay
 
             val yearMonth = "${calendarDay.year}-${String.format("%02d", calendarDay.month + 1)}"
-            val day = calendarDay.date.split("/").last() // "/"로 구분하여 마지막 부분을 사용 (예: "n/1" -> "1")
-            val hasDiary = diaryDates[yearMonth]?.contains(day) ?: false
+            val hasDiary = diaryDates[yearMonth]?.contains(calendarDay.date.toString()) ?: false
             binding.diaryCalendarHasDiaryIndicatorIv.visibility = if (hasDiary) View.VISIBLE else View.GONE
 
             updateItem(isOpeningBottomSheet)

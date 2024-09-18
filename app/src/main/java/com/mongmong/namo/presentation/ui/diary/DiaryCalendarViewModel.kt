@@ -1,6 +1,5 @@
 package com.mongmong.namo.presentation.ui.diary
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,8 +25,11 @@ class DiaryCalendarViewModel @Inject constructor(
     private val _isBottomSheetOpened = MutableLiveData(false)
     val isBottomSheetOpened: LiveData<Boolean> = _isBottomSheetOpened
 
-    private val _selectedDate = MutableLiveData<CalendarDay>()
-    val selectedDate: LiveData<CalendarDay> = _selectedDate
+    private val _dateTitle = MutableLiveData<String>()
+    val dateTitle: LiveData<String> = _dateTitle
+
+    private var _selectedDate = CalendarDay(0, 0, 0, false)
+    val selectedDate: CalendarDay = _selectedDate
 
     private val _calendarDiaryResult = MutableLiveData<CalendarDiaryDate>()
     val calendarDiaryResult: LiveData<CalendarDiaryDate> = _calendarDiaryResult
@@ -45,15 +47,14 @@ class DiaryCalendarViewModel @Inject constructor(
     }
 
     fun setSelectedDate(date: CalendarDay) {
-        _selectedDate.value = date
-    }
+        _selectedDate = date
 
-    fun getDateFormatted(): String {
         val calendar = Calendar.getInstance().apply {
-            selectedDate.value?.let { set(it.year, it.month, it.date.toInt()) }
+            set(date.year, date.month, date.date)
         }
         val dateFormat = SimpleDateFormat("yyyy.MM.dd (E)", Locale.getDefault())
-        return dateFormat.format(calendar.time)
+
+        _dateTitle.value = dateFormat.format(calendar.time)
     }
 
     fun getCalendarDiary(yearMonth: String) {

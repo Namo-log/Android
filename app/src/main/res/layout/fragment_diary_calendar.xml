@@ -148,7 +148,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:gravity="center"
-                    android:text="@{viewModel.getDateFormatted()}"
+                    android:text="@{viewModel.dateTitle}"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.core.widget.NestedScrollView
@@ -186,15 +186,14 @@
                         <TextView
                             android:id="@+id/bottom_sheet_personal_diary_none_tv"
                             style="@style/schedule_empty_text"
-                            android:layout_marginBottom="45dp"
                             android:layout_marginStart="28dp"
-                            android:text="@string/schedule_personal_empty"
+                            android:text="@string/diary_calendar_personal_empty"
                             android:visibility="gone" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="3dp"
+                            android:layout_marginTop="26dp"
                             android:layout_marginBottom="6dp"
                             android:layout_marginStart="28dp"
                             android:text="@string/diary_calendar_moim"

@@ -171,7 +171,7 @@ data class ScheduleForDiary(
 
 /** 기록 캘린더 */
 data class CalendarDay(
-    val date: String,
+    val date: Int,
     val year: Int,
     val month: Int,
     val isEmpty: Boolean = false
@@ -182,21 +182,32 @@ data class CalendarDay(
         val calendarDayDate = Calendar.getInstance().apply {
             set(Calendar.YEAR, year)
             set(Calendar.MONTH, month)
-            set(Calendar.DAY_OF_MONTH, date.split("/").last().toInt())
+            set(Calendar.DAY_OF_MONTH, date)
         }
         return calendarDayDate.after(today)
     }
 
     fun toDateString(): String {
-        // date 필드에서 일(day) 값을 추출합니다.
-        val dayPart = date.split("/").last()
-
-        // month는 0부터 시작하므로 1을 더해줍니다.
         val monthString = String.format("%02d", month + 1)
-        val dayString = String.format("%02d", dayPart.toInt())
+        val dayString = String.format("%02d", date)
 
         return "${year}-${monthString}-${dayString}"
     }
+
+    fun isSameDate(otherDate: CalendarDay): Boolean {
+        return this.year == otherDate.year && this.month == otherDate.month && this.date == otherDate.date
+    }
+
+    val displayDate: String
+        get() {
+            val day = date
+            val monthDisplay = month + 1 // 월은 0부터 시작하므로 1을 더해줍니다.
+            return if (day == 1) {
+                "$monthDisplay/$day"
+            } else {
+                day.toString()
+            }
+        }
 }
 
 data class CalendarDiaryDate(

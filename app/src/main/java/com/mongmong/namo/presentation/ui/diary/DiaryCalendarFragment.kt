@@ -1,7 +1,6 @@
 package com.mongmong.namo.presentation.ui.diary
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -114,15 +113,13 @@ class DiaryCalendarFragment :
         val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
         val lastVisiblePosition = firstVisiblePosition + INDICATOR_LAST
 
-        // 한 주(7일)의 아이템을 검사
         for (position in firstVisiblePosition..lastVisiblePosition) {
             val calendarDay = calendarAdapter.getItemAtPosition(position)
             if (calendarDay != null) {
-                // 날짜가 1일인 아이템을 찾음
-                if (calendarDay.date.endsWith("/1")) {
+                if (calendarDay.date == 1) {
                     val currentMonth = calendarDay.month + 1
 
-                    // 달이 바뀐 경우에만 스낵바를 띄움
+                    // 달이 바뀐 경우에만 스낵바
                     if (lastDisplayedMonth == null || lastDisplayedMonth != currentMonth) {
                         lastDisplayedMonth = currentMonth
                         showMonthSnackBar(calendarDay.year, currentMonth)
@@ -233,17 +230,11 @@ class DiaryCalendarFragment :
         val daysToFill = firstDayOfWeek - 1
 
         for (i in 1..daysToFill) {
-            calendarItems.add(CalendarDay("", 0, 0, isEmpty = true))
+            calendarItems.add(CalendarDay(0, 0, 0, isEmpty = true))
         }
 
         while (calendar.before(endCalendar) || calendar == endCalendar) {
-            val isFirstDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH) == 1
-            val dateText = if (isFirstDayOfMonth) {
-                "${calendar.get(Calendar.MONTH) + 1}/${calendar.get(Calendar.DAY_OF_MONTH)}"
-            } else {
-                "${calendar.get(Calendar.DAY_OF_MONTH)}"
-            }
-            calendarItems.add(CalendarDay(dateText, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)))
+            calendarItems.add(CalendarDay(calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)))
             calendar.add(Calendar.DAY_OF_MONTH, 1)
         }
 
@@ -264,9 +255,18 @@ class DiaryCalendarFragment :
     }
 
     override fun onCalendarDayClick(date: CalendarDay) {
-        viewModel.toggleBottomSheetState()
-        viewModel.getDiaryByDate(date)
-        viewModel.setSelectedDate(date)
+        if (viewModel.isBottomSheetOpened.value == true) {
+            if (viewModel.selectedDate != null && viewModel.selectedDate.isSameDate(date)) {
+                viewModel.toggleBottomSheetState()
+            } else {
+                viewModel.setSelectedDate(date)
+                viewModel.getDiaryByDate(date)
+            }
+        } else {
+            viewModel.setSelectedDate(date)
+            viewModel.getDiaryByDate(date)
+            viewModel.toggleBottomSheetState()
+        }
     }
 
     companion object {
