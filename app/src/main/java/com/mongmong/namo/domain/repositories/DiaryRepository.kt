@@ -1,31 +1,38 @@
 package com.mongmong.namo.domain.repositories
 
+import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import com.mongmong.namo.domain.model.PersonalDiary
-import com.mongmong.namo.domain.model.DiaryResponse
+import com.mongmong.namo.domain.model.Diary
+import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiarySchedule
-import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
+import com.mongmong.namo.domain.model.ScheduleForDiary
 import com.mongmong.namo.domain.model.group.MoimDiaryResult
+import kotlinx.coroutines.flow.Flow
 
 
 interface DiaryRepository {
-    suspend fun getPersonalDiary(localId: Long): GetPersonalDiaryResponse
+    suspend fun getScheduleForDiary(scheduleId: Long): ScheduleForDiary
+    suspend fun getPersonalDiary(localId: Long): DiaryDetail
 
     suspend fun addPersonalDiary(
-        diary: PersonalDiary,
-        images: List<String>
-    ): DiaryResponse
+        content: String,
+        enjoyRating: Int,
+        images: List<String>,
+        scheduleId: Long
+    ): Boolean
 
     suspend fun editPersonalDiary(
-        diary: PersonalDiary,
+        diaryId: Long,
+        content: String,
+        enjoyRating: Int,
         images: List<String>,
-        deleteImageIds: List<Long>?
-    ): DiaryResponse
+        deleteImageIds: List<Long>
+    ): Boolean
 
     suspend fun deletePersonalDiary(
-        scheduleId: Long
-    ): DiaryResponse
+        diaryId: Long
+    ): Boolean
 
     suspend fun uploadDiaryToServer()
 
@@ -33,7 +40,10 @@ interface DiaryRepository {
 
     fun getPersonalDiaryPagingSource(month: String): PagingSource<Int, DiarySchedule>
 
-    fun getMoimDiaryPagingSource(month: String): PagingSource<Int, DiarySchedule>
+    fun getDiaryCollectionPagingSource(
+        filterType: String?,
+        keyword: String?,
+    ): Flow<PagingData<Diary>>
 
     suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult
 

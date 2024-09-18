@@ -47,7 +47,7 @@
 
         <TextView
             android:id="@+id/item_moim_diary_participant_cnt_tv"
-            style="@style/calendar_bold"
+            style="@style/calendar_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=""

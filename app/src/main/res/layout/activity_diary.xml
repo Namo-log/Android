@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.mongmong.namo.presentation.config.FilterState"/>
+        <import type="com.mongmong.namo.presentation.state.FilterType"/>
         <import type="android.view.View"/>
         <variable
             name="viewModel"

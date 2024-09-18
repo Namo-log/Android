@@ -3,6 +3,7 @@ package com.mongmong.namo.data.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import android.provider.OpenableColumns
 import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -11,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
@@ -34,6 +36,17 @@ object RequestConverter {
                 if(isList) MultipartBody.Part.createFormData("createImages", it.name, requestFile)
                 else MultipartBody.Part.createFormData("img", it.name, requestFile)
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    // 새로운 Uri를 RequestBody로 변환하는 함수
+    suspend fun uriToRequestBody(uri: Uri, context: Context, mediaType: String = "image/jpeg"): RequestBody? = withContext(Dispatchers.IO) {
+        try {
+            val file = uriToFile(uri, context)
+            file?.asRequestBody(mediaType.toMediaTypeOrNull())
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -78,6 +91,24 @@ object RequestConverter {
         } catch (e: Exception) {
             e.printStackTrace()
             null
+        }
+    }
+
+    fun getFileNameFromUri(context: Context, uri: Uri): String? {
+        if (uri.scheme == "content") {
+            var fileName: String? = null
+            val cursor = context.contentResolver.query(uri, null, null, null, null)
+            cursor?.use {
+                if (it.moveToFirst()) {
+                    val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    if (nameIndex != -1) {
+                        fileName = it.getString(nameIndex)
+                    }
+                }
+            }
+            return fileName
+        } else {
+            return uri.lastPathSegment?.substringAfterLast('/')
         }
     }
 

@@ -30,5 +30,5 @@ data class MoimActivity(
     @SerializedName("images") var images: MutableList<DiaryImage>?
 ) : java.io.Serializable {
     fun getDefault() = MoimActivity(0L, "", 0L, arrayListOf(), arrayListOf())
-    fun getImageUrls() = this.images?.map { it.url }
+    fun getImageUrls() = this.images?.map { it.imageUrl }
 }

@@ -3,7 +3,7 @@ package com.mongmong.namo.data.datasource.diary
 import android.util.Log
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.state.RoomState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

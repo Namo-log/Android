@@ -13,8 +13,8 @@ import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
-import com.mongmong.namo.domain.usecase.FindCategoryUseCase
-import com.mongmong.namo.domain.usecase.GetCategoriesUseCase
+import com.mongmong.namo.domain.usecases.FindCategoryUseCase
+import com.mongmong.namo.domain.usecases.GetCategoriesUseCase
 import com.mongmong.namo.presentation.utils.PickerConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

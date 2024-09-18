@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.config
+package com.mongmong.namo.presentation.state
 
 enum class LoginPlatform(val platformName: String) {
     KAKAO("KAKAO"),

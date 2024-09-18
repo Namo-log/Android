@@ -120,6 +120,24 @@
         <item name="android:background">@color/text_unselected</item>
     </style>
 
+    <style name="button_label">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/main_text</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
+    </style>
+
+    <style name="calendar_date">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/main_text</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
+    </style>
+
+    <style name="calendar_schedule">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/main_text</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
+    </style>
+
     <!-- 카테고리 -->
     <style name="img_category_check">
         <item name="android:layout_width">wrap_content</item>
@@ -260,12 +278,6 @@
         <item name="android:visibility">gone</item>
     </style>
 
-    <!-- 캘린더 날짜 -->
-    <style name="calendar_bold">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/main_text</item>
-        <item name="fontFamily">@font/pretendard_bold</item>
-    </style>
     <style name="calendar_snackbar">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/white</item>

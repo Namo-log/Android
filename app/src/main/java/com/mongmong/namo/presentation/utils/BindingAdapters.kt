@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.LiveData
 import com.bumptech.glide.Glide
@@ -28,6 +29,19 @@ object BindingAdapters {
             else -> CategoryColor.DEFAULT_PALETTE_COLOR1.hexColor
         }
         view.backgroundTintList = ColorStateList.valueOf(Color.parseColor(hexColor))
+    }
+
+    @JvmStatic
+    @BindingAdapter("app:isGoneIfEmpty")
+    fun setGoneIfEmpty(view: View, images: List<Any>?) {
+        view.visibility = if (images.isNullOrEmpty()) View.GONE else View.VISIBLE
+    }
+
+    @JvmStatic
+    @BindingAdapter("app:imageTint")
+    fun setImageViewTint(imageView: ImageView, color: Int) {
+        imageView.imageTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(imageView.context, color))
     }
 
     @JvmStatic
