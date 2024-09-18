@@ -34,10 +34,6 @@ data class PersonalDiary(
     val url: String
 ) : Serializable*/
 
-data class DiaryResponse(
-    val result: String
-) : BaseResponse() // 기본 string
-
 
 /** 기록 전체 조회 **/
 data class DiaryGetAllResponse(

@@ -2,6 +2,10 @@ package com.mongmong.namo.data.dto
 
 import com.mongmong.namo.presentation.config.BaseResponse
 
+data class DiaryResponse(
+    val result: String
+) : BaseResponse()
+
 data class GetPersonalDiaryResponse(
     val result: GetPersonalDiaryResult
 ): BaseResponse()

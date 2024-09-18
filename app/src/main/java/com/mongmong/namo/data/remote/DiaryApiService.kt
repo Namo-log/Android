@@ -1,5 +1,6 @@
 package com.mongmong.namo.data.remote
 
+import com.mongmong.namo.data.dto.DiaryResponse
 import com.mongmong.namo.data.dto.EditDiaryRequest
 import com.mongmong.namo.data.dto.GetCalendarDiaryResponse
 import com.mongmong.namo.data.dto.GetDiaryByDateResponse
@@ -9,7 +10,6 @@ import com.mongmong.namo.data.dto.GetScheduleForDiaryResponse
 import com.mongmong.namo.data.dto.PostDiaryRequest
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
-import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.GetMoimMemoResponse
 import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
 import retrofit2.Call
@@ -44,9 +44,9 @@ interface DiaryApiService {
     ): DiaryResponse
 
     // 개인 기록 삭제
-    @DELETE("diaries/{scheduleId}")
+    @DELETE("diaries/{diaryId}")
     suspend fun deletePersonalDiary(
-        @Path("scheduleId") scheduleId: Long
+        @Path("diaryId") diaryId: Long
     ): DiaryResponse
 
     // 기록 캘린더 기록 조회

@@ -9,16 +9,13 @@ import androidx.paging.map
 import com.mongmong.namo.data.datasource.diary.DiaryCollectionPagingSource
 import com.mongmong.namo.data.datasource.diary.DiaryMoimPagingSource
 import com.mongmong.namo.data.datasource.diary.DiaryPersonalPagingSource
-import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
-import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.NetworkChecker
-import com.mongmong.namo.data.mappers.DiaryMapper.toModel
 import com.mongmong.namo.domain.model.CalendarDiaryDate
+import com.mongmong.namo.data.utils.mappers.DiaryMapper.toModel
 import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryDetail
-import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.ScheduleForDiary
@@ -29,9 +26,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class DiaryRepositoryImpl @Inject constructor(
-    private val localDiaryDataSource: LocalDiaryDataSource,
     private val remoteDiaryDataSource: RemoteDiaryDataSource,
-    private val diaryDao: DiaryDao,
     private val apiService: DiaryApiService,
     private val networkChecker: NetworkChecker
 ) : DiaryRepository {
@@ -58,9 +53,9 @@ class DiaryRepositoryImpl @Inject constructor(
         enjoyRating: Int,
         images: List<String>,
         scheduleId: Long
-    ): DiaryResponse {
+    ): Boolean {
         Log.d("DiaryRepositoryImpl addDiary", "$content, $enjoyRating, $images, $scheduleId")
-        return remoteDiaryDataSource.addPersonalDiary(content, enjoyRating, images, scheduleId)
+        return remoteDiaryDataSource.addPersonalDiary(content, enjoyRating, images, scheduleId).isSuccess
     }
 
     /** 개인 기록 수정 **/
@@ -70,44 +65,15 @@ class DiaryRepositoryImpl @Inject constructor(
         enjoyRating: Int,
         images: List<String>,
         deleteImageIds: List<Long>
-    ): DiaryResponse {
+    ): Boolean {
         Log.d("DiaryRepositoryImpl editDiary", "$diaryId, $content, $enjoyRating, $images, $deleteImageIds")
-        return remoteDiaryDataSource.editPersonalDiary(diaryId, content, enjoyRating, images, deleteImageIds)
-        /*if (networkChecker.isOnline()) {
-            val editResponse = remoteDiaryDataSource.editDiaryToServer(diary, images)
-            if (editResponse.code == SUCCESS_CODE) {
-                localDiaryDataSource.updateDiaryAfterUpload(
-                    localId = diary.diaryId,
-                    serverId = diary.scheduleServerId,
-                    IS_UPLOAD,
-                    RoomState.DEFAULT.state
-                )
-            } else {
-                // 서버 업로드 실패 시 로직
-            }
-        }*/
+        return remoteDiaryDataSource.editPersonalDiary(diaryId, content, enjoyRating, images, deleteImageIds).isSuccess
     }
 
     /** 개인 기록 삭제 **/
-    override suspend fun deletePersonalDiary(scheduleId: Long): DiaryResponse {
-        // room db에 삭제 상태로 변경
-        /*localDiaryDataSource.updateDiaryAfterUpload(
-            localId,
-            scheduleServerId,
-            IS_NOT_UPLOAD,
-            RoomState.DELETED.state
-        )*/
-        //if (networkChecker.isOnline()) {
-            // 서버 db에서 삭제
-            Log.d("DiaryRepositoryImpl deletePersonalDiary", "$scheduleId")
-            return remoteDiaryDataSource.deletePersonalDiary(scheduleId)
-            /*if(deleteResponse.code == SUCCESS_CODE) {
-                // room db에서 삭제
-                localDiaryDataSource.deleteDiary(localId)
-            } else {
-                // 서버 업로드 실패 시 로직
-            }*/
-        //}
+    override suspend fun deletePersonalDiary(diaryId: Long): Boolean {
+        Log.d("DiaryRepositoryImpl deletePersonalDiary", "$diaryId")
+        return remoteDiaryDataSource.deletePersonalDiary(diaryId).isSuccess
     }
 
     override suspend fun getCalendarDiary(yearMonth: String): CalendarDiaryDate {
@@ -117,7 +83,6 @@ class DiaryRepositoryImpl @Inject constructor(
     override suspend fun getDiaryByDate(date: String): List<Diary> {
         return remoteDiaryDataSource.getDiaryByDate(date).result.map { it.toModel() }
     }
-
 
     /** 모임 기록 리스트 조회 **/
     fun getMoimDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {

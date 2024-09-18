@@ -2,6 +2,7 @@ package com.mongmong.namo.presentation.ui.diary
 
 import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +12,6 @@ import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiaryImage
-import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.ScheduleForDiary
 import com.mongmong.namo.domain.repositories.DiaryRepository
@@ -45,6 +45,15 @@ class DiaryDetailViewModel @Inject constructor(
     private val _imgList = MutableLiveData<List<DiaryImage>>(emptyList())
     val imgList: LiveData<List<DiaryImage>> = _imgList
 
+    private val _addDiaryResult = MutableLiveData<Boolean>()
+    val addDiaryResult: LiveData<Boolean> = _addDiaryResult
+
+    private val _editDiaryResult = MutableLiveData<Boolean>()
+    val editDiaryResult: LiveData<Boolean> = _editDiaryResult
+
+    private val _deleteDiaryResult = MutableLiveData<Boolean>()
+    val deleteDiaryResult: LiveData<Boolean> = _deleteDiaryResult
+
     private var uploadResult = emptyList<String>()
 
     private var initialDiaryContent: String? = null
@@ -66,22 +75,13 @@ class DiaryDetailViewModel @Inject constructor(
     private val _schedule = MutableLiveData<Schedule>(Schedule().getDefaultSchedule())
     val schedule: LiveData<Schedule> = _schedule
 
+    private var isInitialLoad = true
+
     private val _moimDiary = MutableLiveData<MoimDiary>()
     val moimDiary: LiveData<MoimDiary> = _moimDiary
 
     private val _isEdit = MutableLiveData<Boolean>(false)
     val isEdit: LiveData<Boolean> = _isEdit
-
-    private var isInitialLoad = true
-
-    private val _addDiaryResult = MutableLiveData<DiaryResponse>()
-    val addDiaryResult: LiveData<DiaryResponse> = _addDiaryResult
-
-    private val _editDiaryResult = MutableLiveData<DiaryResponse>()
-    val editDiaryResult: LiveData<DiaryResponse> = _editDiaryResult
-
-    private val _deleteDiaryResult = MutableLiveData<DiaryResponse>()
-    val deleteDiaryResult: LiveData<DiaryResponse> = _deleteDiaryResult
 
     private val _deleteMemoResult = MutableLiveData<Boolean>()
     val deleteMemoResult: LiveData<Boolean> = _deleteMemoResult
@@ -182,17 +182,23 @@ class DiaryDetailViewModel @Inject constructor(
     // 개인 기록 삭제
     fun deletePersonalDiary() {
         viewModelScope.launch {
-            _deleteDiaryResult.postValue(schedule.value?.let { repository.deletePersonalDiary(it.scheduleId) })
+            _deleteDiaryResult.postValue(diary.value?.let { repository.deletePersonalDiary(it.diaryId) })
         }
     }
 
-    // 이미지 삭제 관련 메서드
+    /** 이미지 리스트 관련 로직 */
+    fun addCreateImages(newImages: List<Uri>) {
+        val currentImages = _imgList.value ?: emptyList()
+        val newImagesToAdd = newImages.take(3 - currentImages.size)
+        createImages.addAll(newImagesToAdd)
+        _imgList.value = currentImages + newImagesToAdd.map { DiaryImage(diaryImageId = 0, imageUrl = it.toString(), orderNumber = 1) }
+    }
+
     fun removeImage(diaryImage: DiaryImage) {
         // 이미지 ID가 0이 아니면 삭제할 이미지, 아니라면 createImages에서 제거
         if (diaryImage.diaryImageId != 0L) deleteImageIds.add(diaryImage.diaryImageId)
-        //else createImages = createImages.filterNot { it == diaryImage.imageUrl }.toMutableList()
+        else createImages = createImages.filterNot { it == diaryImage.imageUrl.toUri() }.toMutableList()
 
-        // 이미지 리스트 업데이트
         _imgList.value = _imgList.value?.filterNot { it.imageUrl == diaryImage.imageUrl }
     }
 
@@ -201,17 +207,6 @@ class DiaryDetailViewModel @Inject constructor(
         _diary.value?.diaryImages = newImgList
     }
 
-    fun addCreateImages(newImages: List<Uri>) {
-        val currentImages = _imgList.value ?: emptyList()
-        val newImagesToAdd = newImages.take(3 - currentImages.size)
-        createImages.addAll(newImagesToAdd)
-        _imgList.value = currentImages + newImagesToAdd.map { DiaryImage(diaryImageId = 0, imageUrl = it.toString(), orderNumber = 0) }
-    }
-
-    fun addDeleteImageId(imageId: Long) {
-        deleteImageIds.add(imageId)
-        _imgList.value = _imgList.value?.filterNot { it.diaryImageId == imageId }
-    }
 
     fun initDiaryState() {
         initialDiaryContent = this.content.value
@@ -219,8 +214,6 @@ class DiaryDetailViewModel @Inject constructor(
         initialEnjoy = _enjoy.value ?: 0
         Log.d("initDiaryState", "$initialDiaryContent, $initialImgList, $initialEnjoy")
     }
-
-    fun setHasDiary(hasDiary: Boolean) { _diarySchedule.value?.hasDiary = hasDiary}
 
     private fun checkForChanges() {
         if (!isInitialLoadComplete) return
@@ -233,12 +226,7 @@ class DiaryDetailViewModel @Inject constructor(
     }
 
     fun onEnjoyClicked(count: Int) {
-        Log.d("onEnjoyClicked", "$count")
         _enjoy.value = count
-    }
-
-    suspend fun uploadImageToS3(prefix: String, fileName: String) {
-
     }
 
     /** 모임 기록*/

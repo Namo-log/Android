@@ -36,9 +36,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.ui.diary.adapter.DiaryCalendarActivity"
-            android:exported="false" />
-        <activity
             android:name=".presentation.ui.diary.DiaryImageDetailActivity"
             android:exported="false" />
         <activity
