@@ -69,19 +69,11 @@ class PersonalScheduleViewModel @Inject constructor(
         }
     }
 
-//    /** 선택한 날짜의 일정 조회 */
-//    fun getDailySchedules(startDate: Long, endDate: Long) {
-//        viewModelScope.launch {
-//            Log.d("ScheduleViewModel", "getDailySchedules")
-//            _personalDailyScheduleList.value = repository.getDailySchedules(startDate, endDate)
-//        }
-//    }
-
-    /** 일정 추가 */
+    /** 일정 생성 */
     fun addSchedule() {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "addSchedule ${_schedule.value}")
-            _isComplete.postValue(
+            _isComplete.value = (
                 repository.addSchedule(
                     schedule = _schedule.value!!.convertLocalScheduleToServer()
                 )

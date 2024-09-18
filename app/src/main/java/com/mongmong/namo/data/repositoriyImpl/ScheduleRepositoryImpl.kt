@@ -36,27 +36,6 @@ class ScheduleRepositoryImpl @Inject constructor(
     override suspend fun addSchedule(schedule: ScheduleRequestBody): Boolean {
         Log.d("ScheduleRepositoryImpl", "addSchedule $schedule")
         return remoteScheduleDataSource.addScheduleToServer(schedule).code == SUCCESS_CODE
-        /*
-        schedule.scheduleId = localScheduleDataSource.addSchedule(schedule) // 로컬에서 일정 생성후 받아온 scheduleId 업데이트
-        if (networkChecker.isOnline()) {
-            val addResponse =
-                remoteScheduleDataSource.addScheduleToServer(schedule.convertLocalScheduleToServer())
-            if (addResponse.code == SUCCESS_CODE) {
-                Log.d("ScheduleRepositoryImpl", "addSchedule Success, $addResponse")
-                localScheduleDataSource.updateScheduleAfterUpload(
-                    localId = schedule.scheduleId,
-                    serverId = addResponse.result.scheduleId,
-                    isUpload = UploadState.IS_UPLOAD.state,
-                    status = RoomState.DEFAULT.state,
-                )
-            } else {
-                Log.d(
-                    "ScheduleRepositoryImpl",
-                    "addSchedule Fail, code = ${addResponse.code}, message = ${addResponse.message}"
-                )
-            }
-        }
-         */
     }
 
     override suspend fun editSchedule(scheduleId: Long, schedule: ScheduleRequestBody): Boolean {

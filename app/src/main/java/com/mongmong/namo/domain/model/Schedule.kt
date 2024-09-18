@@ -65,15 +65,23 @@ data class PostScheduleResult (
 )
 
 data class ScheduleRequestBody(
-    var name: String = "",
+    var title: String = "",
+    var categoryId: Long = 0L,
+    var period: Period,
+    var location: Location,
+    var reminderTrigger: List<Int>? = listOf(), //TODO: String으로 변경
+)
+
+data class Period(
     var startDate: Long = 0L,
     var endDate: Long = 0L,
-    var interval: Int = 0,
-    var alarmDate: List<Int>? = listOf(),
-    var x: Double = 0.0,
-    var y: Double = 0.0,
+)
+
+data class Location(
+    var longitude: Double = 0.0,
+    var latitude: Double = 0.0,
     var locationName: String = "없음",
-    var categoryId: Long = 0L
+    var kakaoLocationId: String? = ""
 )
 
 /** 일정 수정 */

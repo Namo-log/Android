@@ -3,6 +3,8 @@ package com.mongmong.namo.data.local.entity.home
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.mongmong.namo.domain.model.Location
+import com.mongmong.namo.domain.model.Period
 import com.mongmong.namo.domain.model.ScheduleRequestBody
 import com.mongmong.namo.presentation.config.RoomState
 import java.io.Serializable
@@ -63,15 +65,11 @@ data class Schedule(
 ) : Serializable {
     fun convertLocalScheduleToServer() : ScheduleRequestBody {
         return ScheduleRequestBody(
-            name = this.title,
-            startDate = this.startLong,
-            endDate = this.endLong,
-            interval = this.dayInterval,
-            alarmDate = this.alarmList,
-            x = this.placeX,
-            y = this.placeY,
-            locationName = this.placeName,
+            title = this.title,
             categoryId = this.categoryId,
+            period = Period(this.startLong, this.endLong),
+            location = Location(this.placeY, this.placeX, this.placeName),
+            reminderTrigger = this.alarmList,
         )
     }
 
