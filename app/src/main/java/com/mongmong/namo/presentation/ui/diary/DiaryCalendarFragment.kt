@@ -256,7 +256,7 @@ class DiaryCalendarFragment :
 
     override fun onCalendarDayClick(date: CalendarDay) {
         if (viewModel.isBottomSheetOpened.value == true) {
-            if (viewModel.selectedDate != null && viewModel.selectedDate.isSameDate(date)) {
+            if (viewModel.selectedDate.value?.isSameDate(date) == true) {
                 viewModel.toggleBottomSheetState()
             } else {
                 viewModel.setSelectedDate(date)

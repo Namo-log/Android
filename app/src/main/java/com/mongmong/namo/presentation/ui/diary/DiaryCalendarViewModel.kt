@@ -28,8 +28,8 @@ class DiaryCalendarViewModel @Inject constructor(
     private val _dateTitle = MutableLiveData<String>()
     val dateTitle: LiveData<String> = _dateTitle
 
-    private var _selectedDate = CalendarDay(0, 0, 0, false)
-    val selectedDate: CalendarDay = _selectedDate
+    private val _selectedDate = MutableLiveData<CalendarDay>()
+    val selectedDate: LiveData<CalendarDay> = _selectedDate
 
     private val _calendarDiaryResult = MutableLiveData<CalendarDiaryDate>()
     val calendarDiaryResult: LiveData<CalendarDiaryDate> = _calendarDiaryResult
@@ -47,7 +47,7 @@ class DiaryCalendarViewModel @Inject constructor(
     }
 
     fun setSelectedDate(date: CalendarDay) {
-        _selectedDate = date
+        _selectedDate.value = date
 
         val calendar = Calendar.getInstance().apply {
             set(date.year, date.month, date.date)
