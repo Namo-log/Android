@@ -1,6 +1,7 @@
 package com.mongmong.namo.presentation.ui.diary
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -66,8 +67,14 @@ class DiaryCalendarFragment :
     }
 
     private fun setupDiaryAdapters() {
-        personalDiaryAdapter = PersonalDiaryRVAdapter()
-        moimDiaryAdapter = MoimDiaryRVAdapter()
+        personalDiaryAdapter = PersonalDiaryRVAdapter(onItemClick = { scheduleId ->
+            startActivity(Intent(requireContext(), PersonalDiaryDetailActivity::class.java)
+                .putExtra("scheduleId", scheduleId))
+        })
+        moimDiaryAdapter = MoimDiaryRVAdapter(onItemClick = { scheduleId ->
+            startActivity(Intent(requireContext(), PersonalDiaryDetailActivity::class.java)
+                .putExtra("scheduleId", scheduleId))
+        })
 
         binding.bottomSheetPersonalDiaryRv.apply {
             layoutManager = LinearLayoutManager(requireContext())

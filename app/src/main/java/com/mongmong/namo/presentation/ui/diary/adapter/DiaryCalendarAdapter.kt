@@ -35,7 +35,7 @@ class DiaryCalendarAdapter(
         this.isOpeningBottomSheet = isOpened
 
         // 화면에 보이는 아이템들의 위치를 가져옴
-        val layoutManager = recyclerView.layoutManager as? RecyclerView.LayoutManager ?: return
+        val layoutManager = recyclerView.layoutManager ?: return
         val firstVisibleItemPosition = (layoutManager as? GridLayoutManager)?.findFirstVisibleItemPosition()
             ?: (layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
             ?: 0
@@ -71,10 +71,6 @@ class DiaryCalendarAdapter(
 
     fun getItemAtPosition(position: Int): CalendarDay? {
         return if (position in items.indices) items[position] else null
-    }
-
-    fun getPositionOfItem(calendarDay: CalendarDay): Int {
-        return items.indexOfFirst { it.isSameDate(calendarDay) }
     }
 
     override fun getItemCount(): Int = items.size

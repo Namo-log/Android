@@ -23,5 +23,6 @@ data class GetDiaryByDateResult(
     val scheduleStartDate: String,
     val scheduleType: Int,
     val scheduleTitle: String,
+    val scheduleId: Long,
     val diaryId: Long
 )

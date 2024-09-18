@@ -90,7 +90,7 @@ object DiaryMapper {
             diarySummary = DiarySummary(diaryId = this.diaryId),
             startDate = this.scheduleStartDate,
             endDate = this.scheduleEndDate,
-            scheduleId = 0L,
+            scheduleId = this.scheduleId,
             scheduleType = this.scheduleType,
             title = this.scheduleTitle,
             participantInfo = ParticipantInfo(

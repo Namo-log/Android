@@ -7,7 +7,9 @@ import com.mongmong.namo.databinding.ItemMoimDiaryBinding
 import com.mongmong.namo.databinding.ItemPersonalDiaryBinding
 import com.mongmong.namo.domain.model.Diary
 
-class MoimDiaryRVAdapter(): RecyclerView.Adapter<MoimDiaryRVAdapter.ViewHolder>() {
+class MoimDiaryRVAdapter(
+    private val onItemClick: (Long) -> Unit
+): RecyclerView.Adapter<MoimDiaryRVAdapter.ViewHolder>() {
     private var diaries: List<Diary> = emptyList()
 
     fun updateData(newData: List<Diary>) {
@@ -31,6 +33,8 @@ class MoimDiaryRVAdapter(): RecyclerView.Adapter<MoimDiaryRVAdapter.ViewHolder>(
     inner class ViewHolder(private val binding: ItemMoimDiaryBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(diary: Diary) {
             binding.diary = diary
+
+            binding.itemMoimDiaryContentCl.setOnClickListener { onItemClick(diary.scheduleId) }
         }
     }
 

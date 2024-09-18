@@ -6,7 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemPersonalDiaryBinding
 import com.mongmong.namo.domain.model.Diary
 
-class PersonalDiaryRVAdapter(): RecyclerView.Adapter<PersonalDiaryRVAdapter.ViewHolder>() {
+class PersonalDiaryRVAdapter(
+    private val onItemClick: (Long) -> Unit
+): RecyclerView.Adapter<PersonalDiaryRVAdapter.ViewHolder>() {
     private var diaries: List<Diary> = emptyList()
 
     fun updateData(newData: List<Diary>) {
@@ -30,6 +32,8 @@ class PersonalDiaryRVAdapter(): RecyclerView.Adapter<PersonalDiaryRVAdapter.View
     inner class ViewHolder(private val binding: ItemPersonalDiaryBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(diary: Diary) {
             binding.diary = diary
+
+            binding.itemPersonalDiaryContentCl.setOnClickListener { onItemClick(diary.scheduleId) }
         }
     }
 
