@@ -20,9 +20,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 import com.google.android.material.snackbar.Snackbar
 import com.mongmong.namo.domain.model.CalendarDay
+import com.mongmong.namo.presentation.config.Constants.START_YEAR
 import com.mongmong.namo.presentation.ui.diary.adapter.MoimDiaryRVAdapter
 import com.mongmong.namo.presentation.ui.diary.adapter.PersonalDiaryRVAdapter
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.dpToPx
+import com.mongmong.namo.presentation.utils.DiaryDateConverter.toYearMonth
 
 @AndroidEntryPoint
 class DiaryCalendarFragment :
@@ -149,7 +151,7 @@ class DiaryCalendarFragment :
     private fun getCalendarDiary(position: Int) {
         val calendarDay = calendarAdapter.getItemAtPosition(position)
         if (calendarDay != null) {
-            val yearMonth = "${calendarDay.year}-${String.format("%02d", calendarDay.month + 1)}" // yyyy-MM 형식
+            val yearMonth = calendarDay.toYearMonth()
 
             // 이미 요청한 적 없는 월인 경우 서버에 요청
             if (!fetchedMonths.contains(yearMonth)) {
@@ -254,7 +256,7 @@ class DiaryCalendarFragment :
     private fun scrollToToday() {
         val today = Calendar.getInstance()
         val startCalendar = Calendar.getInstance().apply {
-            set(1970, Calendar.JANUARY, 1)
+            set(START_YEAR, Calendar.JANUARY, 1)
         }
 
         val daysFromStart = ((today.timeInMillis - startCalendar.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()

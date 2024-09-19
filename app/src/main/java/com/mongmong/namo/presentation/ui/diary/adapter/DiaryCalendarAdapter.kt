@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ItemDiaryCalendarDateBinding
 import com.mongmong.namo.domain.model.CalendarDay
+import com.mongmong.namo.presentation.utils.DiaryDateConverter.toYearMonth
 
 class DiaryCalendarAdapter(
     private val recyclerView: RecyclerView,
@@ -24,8 +25,7 @@ class DiaryCalendarAdapter(
         this.diaryDates[yearMonth] = diaryDates
 
         items.forEachIndexed { index, calendarDay ->
-            val currentYearMonth = "${calendarDay.year}-${String.format("%02d", calendarDay.month + 1)}"
-            if (currentYearMonth == yearMonth && diaryDates.contains(calendarDay.date.toString())) {
+            if (calendarDay.toYearMonth() == yearMonth && diaryDates.contains(calendarDay.date.toString())) {
                 notifyItemChanged(index)
             }
         }
@@ -81,8 +81,7 @@ class DiaryCalendarAdapter(
         fun bind(calendarDay: CalendarDay) {
             binding.calendarDay = calendarDay
 
-            val yearMonth = "${calendarDay.year}-${String.format("%02d", calendarDay.month + 1)}"
-            val hasDiary = diaryDates[yearMonth]?.contains(calendarDay.date.toString()) ?: false
+            val hasDiary = diaryDates[calendarDay.toYearMonth()]?.contains(calendarDay.date.toString()) ?: false
             binding.diaryCalendarHasDiaryIndicatorIv.visibility = if (hasDiary) View.VISIBLE else View.GONE
 
             binding.root.setOnClickListener {
@@ -91,7 +90,7 @@ class DiaryCalendarAdapter(
         }
 
         fun updateItem(isOpening: Boolean) {
-            val height = dpToPx(if (isOpening) 56 else 84, binding.root.context)
+            val height = dpToPx(if (isOpening) OPEN_HEIGHT else CLOSE_HEIGHT, binding.root.context)
             binding.root.layoutParams = binding.root.layoutParams.apply {
                 this.height = height
             }
@@ -103,7 +102,7 @@ class DiaryCalendarAdapter(
 
         fun animateHeightChange(isOpening: Boolean) {
             val fromHeight = binding.root.height
-            val toHeight = dpToPx(if (isOpening) 56 else 84, binding.root.context)
+            val toHeight = dpToPx(if (isOpening) OPEN_HEIGHT else CLOSE_HEIGHT, binding.root.context)
 
             val valueAnimator = ValueAnimator.ofInt(fromHeight, toHeight)
             valueAnimator.addUpdateListener { animator ->
@@ -111,7 +110,7 @@ class DiaryCalendarAdapter(
                 layoutParams.height = animator.animatedValue as Int
                 binding.root.layoutParams = layoutParams
             }
-            valueAnimator.duration = 170
+            valueAnimator.duration = ANIMATION_DURATION
             valueAnimator.start()
 
             val indicatorImage = if (isOpening) R.drawable.ic_calendar else R.drawable.img_mongi_default
@@ -125,5 +124,11 @@ class DiaryCalendarAdapter(
 
     private fun dpToPx(dp: Int, context: android.content.Context): Int {
         return (dp * context.resources.displayMetrics.density).toInt()
+    }
+
+    companion object {
+        const val ANIMATION_DURATION = 170L
+        const val OPEN_HEIGHT = 56
+        const val CLOSE_HEIGHT = 84
     }
 }
