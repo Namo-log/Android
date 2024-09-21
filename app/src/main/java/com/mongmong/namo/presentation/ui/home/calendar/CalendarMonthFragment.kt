@@ -11,8 +11,8 @@ import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.presentation.config.BaseFragment
-import com.mongmong.namo.presentation.ui.diary.MoimMemoDetailActivity
 import com.mongmong.namo.presentation.ui.diary.PersonalDiaryDetailActivity
+import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryDetailActivity
 import com.mongmong.namo.presentation.ui.home.HomeFragment
 import com.mongmong.namo.presentation.ui.home.schedule.adapter.DailyScheduleRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
@@ -146,7 +146,7 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
             override fun onDiaryIconClicked(schedule: GetMonthScheduleResult, paletteId: Int) { // 기록 아이콘 클릭
                 if (!schedule.moimSchedule) return
                 requireActivity().startActivity(
-                    Intent(context, MoimMemoDetailActivity::class.java)
+                    Intent(context, MoimDiaryDetailActivity::class.java)
                         .putExtra("moimScheduleId", schedule.scheduleId)
                         .putExtra("paletteId", paletteId)
                 )

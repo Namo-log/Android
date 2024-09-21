@@ -16,7 +16,7 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
-import com.mongmong.namo.databinding.ActivityMoimDiaryBinding
+import com.mongmong.namo.databinding.ActivityMoimDiaryDetailBinding
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
@@ -38,7 +38,9 @@ import java.util.Locale
 
 
 @AndroidEntryPoint
-class MoimDiaryActivity : BaseActivity<ActivityMoimDiaryBinding>(R.layout.activity_moim_diary), ConfirmDialogInterface {  // 그룹 다이어리 추가, 수정, 삭제 화면
+class MoimDiaryDetailActivity :
+    BaseActivity<ActivityMoimDiaryDetailBinding>(R.layout.activity_moim_diary_detail),
+    ConfirmDialogInterface {  // 그룹 다이어리 추가, 수정, 삭제 화면
     private lateinit var memberAdapter: MoimMemberRVAdapter  // 그룹 멤버 리스트 보여주기
     private lateinit var activityAdapter: MoimActivityRVAdapter // 각 장소 item
 
@@ -50,7 +52,7 @@ class MoimDiaryActivity : BaseActivity<ActivityMoimDiaryBinding>(R.layout.activi
 
     override fun setup() {
         binding.apply {
-            viewModel = this@MoimDiaryActivity.viewModel
+            viewModel = this@MoimDiaryDetailActivity.viewModel
             // marquee focus
             groupTitleTv.requestFocus()
             groupTitleTv.isSelected = true
@@ -101,7 +103,7 @@ class MoimDiaryActivity : BaseActivity<ActivityMoimDiaryBinding>(R.layout.activi
             if (viewModel.activities.value?.any { it.name.isEmpty() } == false) {
                 viewModel.patchMoimActivities()
             } else {
-                Toast.makeText(this@MoimDiaryActivity, "장소를 입력해주세요!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MoimDiaryDetailActivity, "장소를 입력해주세요!", Toast.LENGTH_SHORT).show()
             }
         }
 

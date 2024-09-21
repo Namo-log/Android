@@ -243,10 +243,7 @@
                         android:background="@drawable/bg_basic_outline_btn"
                         android:layout_gravity="center"
                         android:paddingHorizontal="25dp"
-                        android:layout_marginTop="20dp"
-                        app:layout_constraintBottom_toTopOf="@id/diary_edit_btn_tv"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent">
+                        android:layout_marginTop="20dp">
 
                         <ImageView
                             android:layout_width="18dp"

@@ -27,7 +27,6 @@ class DiaryDetailViewModel @Inject constructor(
     private val findCategoryUseCase: FindCategoryUseCase,
     private val uploadImageToS3UseCase: UploadImageToS3UseCase
 ) : ViewModel() {
-    /** v2 */
     private val _diary = MutableLiveData<DiaryDetail>()
     val diary: LiveData<DiaryDetail> = _diary
 
@@ -56,22 +55,8 @@ class DiaryDetailViewModel @Inject constructor(
 
     private var uploadResult = emptyList<String>()
 
-    private var initialDiaryContent: String? = null
-    private var initialImgList: List<DiaryImage> = emptyList()
-    private var initialMoimDiaryContent: String? = null
-    private var initialEnjoy: Int = 0
-
-    private var isInitialLoadComplete = false
-
     var scheduleId: Long = 0
 
-    init {
-        content.observeForever { checkForChanges() }
-        _imgList.observeForever { checkForChanges() }
-        enjoy.observeForever{ checkForChanges() }
-    }
-
-    /** v1 */
     private val _schedule = MutableLiveData<Schedule>(Schedule().getDefaultSchedule())
     val schedule: LiveData<Schedule> = _schedule
 
@@ -83,17 +68,23 @@ class DiaryDetailViewModel @Inject constructor(
     private val _isEdit = MutableLiveData<Boolean>(false)
     val isEdit: LiveData<Boolean> = _isEdit
 
-    private val _deleteMemoResult = MutableLiveData<Boolean>()
-    val deleteMemoResult: LiveData<Boolean> = _deleteMemoResult
-
-    private val _patchMemoResult = MutableLiveData<Boolean>()
-    val patchMemoResult : LiveData<Boolean> = _patchMemoResult
-
     private val _category = MutableLiveData<Category>()
     val category: LiveData<Category> = _category
 
     private var createImages = mutableListOf<Uri>()
     private var deleteImageIds = mutableListOf<Long>()
+    private var initialDiaryContent: String? = null
+    private var initialImgList: List<DiaryImage> = emptyList()
+    private var initialMoimDiaryContent: String? = null
+    private var initialEnjoy: Int = 0
+
+    private var isInitialLoadComplete = false
+
+    init {
+        content.observeForever { checkForChanges() }
+        _imgList.observeForever { checkForChanges() }
+        enjoy.observeForever{ checkForChanges() }
+    }
 
 
     /** 개인 기록 **/
@@ -208,7 +199,7 @@ class DiaryDetailViewModel @Inject constructor(
     }
 
 
-    fun initDiaryState() {
+    private fun initDiaryState() {
         initialDiaryContent = this.content.value
         initialImgList = _imgList.value ?: emptyList()
         initialEnjoy = _enjoy.value ?: 0
@@ -227,61 +218,6 @@ class DiaryDetailViewModel @Inject constructor(
 
     fun onEnjoyClicked(count: Int) {
         _enjoy.value = count
-    }
-
-    /** 모임 기록*/
-    // 모임 메모 조회
-    fun getMoimMemo(scheduleId: Long) {
-        viewModelScope.launch {
-            val moimMemo = repository.getMoimMemo(scheduleId)
-            _moimDiary.postValue(moimMemo)
-            initMoimDiaryState(moimMemo.content) // 초기 상태 저장
-        }
-    }
-
-    fun isEditMode() {
-        if (isInitialLoad) {
-            _isEdit.value = !_moimDiary.value?.content.isNullOrEmpty()
-            isInitialLoad = false
-            Log.d("getMoimMemo", "${_isEdit.value} , $isInitialLoad")
-        }
-    }
-
-    // 모임 메모 수정
-    fun patchMoimMemo(scheduleId: Long) {
-        viewModelScope.launch {
-            _patchMemoResult.postValue(repository.patchMoimMemo(scheduleId, _moimDiary.value?.content ?: ""))
-        }
-    }
-
-    // 모임 메모 삭제
-    fun deleteMoimMemo(scheduleId: Long) {
-        viewModelScope.launch {
-            Log.d("MoimDiaryViewModel deleteMoimMemo", "$scheduleId")
-            _deleteMemoResult.value = repository.deleteMoimMemo(scheduleId)
-        }
-    }
-
-    // 초기 상태 저장 메서드
-    private fun initMoimDiaryState(content: String?) {
-        initialMoimDiaryContent = content
-    }
-
-    // 변경 여부 확인 메서드
-    fun isMoimDiaryChanged(): Boolean {
-        return _moimDiary.value?.content != initialMoimDiaryContent
-    }
-
-    /** 카테고리 id로 카테고리 조회 */
-    fun findCategoryById() {
-        viewModelScope.launch {
-            _category.value =
-                schedule.value?.let {
-                    Log.d("findCategoryById", "${_schedule.value}")
-                    findCategoryUseCase.invoke(it.categoryId)
-                }
-            Log.d("findCategoryById", "${_category.value}")
-        }
     }
 
     companion object {
