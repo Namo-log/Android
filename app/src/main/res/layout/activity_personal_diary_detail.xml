@@ -90,27 +90,28 @@
             android:id="@+id/diary_today_month_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:elevation="10dp"
+            android:elevation="5dp"
             android:text="@{DiaryDateConverter.toMMM(viewModel.diarySchedule.date)}"
+            android:includeFontPadding="false"
+            app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintBottom_toTopOf="@id/diary_today_num_tv"
             app:layout_constraintEnd_toEndOf="@id/date_circle_iv"
             app:layout_constraintStart_toStartOf="@id/date_circle_iv"
-            app:layout_constraintTop_toTopOf="@id/date_circle_iv"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintTop_toTopOf="@id/date_circle_iv" />
 
         <TextView
             style="@style/content_bold"
             android:id="@+id/diary_today_num_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:elevation="10dp"
+            android:elevation="5dp"
+            android:includeFontPadding="false"
             android:text="@{DiaryDateConverter.toDD(viewModel.diarySchedule.date)}"
-            android:textSize="35sp"
+            android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="@id/date_circle_iv"
             app:layout_constraintEnd_toEndOf="@id/date_circle_iv"
             app:layout_constraintStart_toStartOf="@id/date_circle_iv"
-            app:layout_constraintTop_toBottomOf="@id/diary_today_month_tv"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintTop_toBottomOf="@id/diary_today_month_tv" />
 
 
         <TextView
