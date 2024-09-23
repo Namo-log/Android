@@ -47,15 +47,12 @@ class MoimDiaryDetailActivity :
     private var positionForGallery: Int = -1
     private val viewModel: MoimDiaryViewModel by viewModels()
 
-    private val itemTouchSimpleCallback = ItemTouchHelperCallback()  // 아이템 밀어서 삭제
-    private val itemTouchHelper = ItemTouchHelper(itemTouchSimpleCallback)
-
     override fun setup() {
         binding.apply {
             viewModel = this@MoimDiaryDetailActivity.viewModel
             // marquee focus
-            groupTitleTv.requestFocus()
-            groupTitleTv.isSelected = true
+            moimDiaryTitleTv.requestFocus()
+            moimDiaryTitleTv.isSelected = true
         }
 
         initView()
@@ -83,7 +80,7 @@ class MoimDiaryDetailActivity :
                 } else finish()
             }
         })
-        binding.groupAddBackIv.setOnClickListener {
+        binding.moimDiaryBackIv.setOnClickListener {
             if (viewModel.isDiaryChanged()) {
                 showBackDialog()
             } else finish()
@@ -99,7 +96,7 @@ class MoimDiaryDetailActivity :
         }
 
         // 기록 추가 or 기록 수정
-        binding.groupSaveTv.setOnClickListener {
+        binding.moimDiarySaveBtn.setOnClickListener {
             if (viewModel.activities.value?.any { it.name.isEmpty() } == false) {
                 viewModel.patchMoimActivities()
             } else {
@@ -108,7 +105,7 @@ class MoimDiaryDetailActivity :
         }
 
         // 기록 삭제
-        binding.diaryDeleteIv.setOnClickListener {
+        binding.moimDiaryDeleteIv.setOnClickListener {
             showDeleteDialog()
         }
     }
@@ -175,26 +172,11 @@ class MoimDiaryDetailActivity :
             }
         )
 
-        binding.diaryGroupAddPlaceRv.apply {
+        binding.moimParticipantRv.apply {
             adapter = activityAdapter
             layoutManager =
                 LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(MoimActivityItemDecoration(dpToPx(context, 25f)))
-        }
-        itemTouchHelper.attachToRecyclerView(binding.diaryGroupAddPlaceRv)
-
-        // RecyclerView의 다른 곳을 터치하거나 Swipe 시 기존에 Swipe된 것은 제자리로 변경
-        binding.root.setOnTouchListener { _, _ ->
-            itemTouchSimpleCallback.resetPreviousClamp(binding.diaryGroupAddPlaceRv)
-            false
-        }
-        binding.scrollViewLayout.setOnTouchListener { _, _ ->
-            itemTouchSimpleCallback.resetPreviousClamp(binding.diaryGroupAddPlaceRv)
-            false
-        }
-        binding.diaryGroupAddPlaceRv.setOnTouchListener { _, _ ->
-            itemTouchSimpleCallback.removePreviousClamp(binding.diaryGroupAddPlaceRv)
-            false
         }
 
     }
@@ -211,7 +193,6 @@ class MoimDiaryDetailActivity :
                 viewModel.updateActivityMembers(position, updatedMembers)
             }
         ).show(supportFragmentManager, "show")
-        binding.diaryGroupAddPlaceRv.smoothScrollToPosition(position)
     }
 
     private fun showDeleteDialog() {

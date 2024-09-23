@@ -54,7 +54,6 @@ class DiaryDetailViewModel @Inject constructor(
 
     private var initialDiaryContent: String? = null
     private var initialImgList: List<DiaryImage> = emptyList()
-    private var initialMoimDiaryContent: String? = null
     private var initialEnjoy: Int = 0
 
     private var isInitialLoadComplete = false

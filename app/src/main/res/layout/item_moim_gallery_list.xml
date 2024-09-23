@@ -20,11 +20,11 @@
             app:layout_constraintEnd_toEndOf="@id/gallery_img_iv"/>
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/gallery_img_iv"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="92dp"
+            android:layout_height="92dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_app_logo_square"
-            android:layout_margin="8dp"
+            android:layout_margin="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

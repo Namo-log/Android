@@ -6,20 +6,17 @@
     android:layout_marginEnd="10dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
-        android:id="@+id/circle"
+    <TextView
+        style="@style/content_regular"
+        android:id="@+id/people_name_tv"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:src="@drawable/bg_person_tv"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <TextView
-        android:id="@+id/people_name_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="앨리"
-        android:textColor="@color/text_unselected"
+        android:textSize="11sp"
+        android:gravity="center"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_person_tv"
+        android:textColor="@color/text_placeholder"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
