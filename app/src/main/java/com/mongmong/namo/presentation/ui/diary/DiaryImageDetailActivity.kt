@@ -27,7 +27,7 @@ import java.io.OutputStream
 
 class DiaryImageDetailActivity : BaseActivity<ActivityDiaryImageDetailBinding>(R.layout.activity_diary_image_detail) {
     private lateinit var imagePagerAdapter: ImageDetailVPAdapter
-    private lateinit var imgs: List<DiaryImage>
+    private lateinit var imgs: List<String>
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -40,14 +40,14 @@ class DiaryImageDetailActivity : BaseActivity<ActivityDiaryImageDetailBinding>(R
     }
 
     override fun setup() {
-        imgs = intent.getSerializableExtra("imgs") as List<DiaryImage>
+        imgs = intent.getStringArrayListExtra("imgs") as List<String>
         setViewPager()
         initClickListener()
         updatePosition()
     }
 
     private fun setViewPager() {
-        imagePagerAdapter = ImageDetailVPAdapter(imgs.map { it.imageUrl })
+        imagePagerAdapter = ImageDetailVPAdapter(imgs)
 
         binding.diaryImageVp.apply {
             adapter = imagePagerAdapter
@@ -79,7 +79,7 @@ class DiaryImageDetailActivity : BaseActivity<ActivityDiaryImageDetailBinding>(R
     private fun downloadImage() {
         val currentItem = binding.diaryImageVp.currentItem
         if (currentItem >= 0 && currentItem < imgs.size) {
-            val imageUrl = imgs[currentItem].imageUrl
+            val imageUrl = imgs[currentItem]
             Glide.with(this)
                 .asBitmap()
                 .load(imageUrl)

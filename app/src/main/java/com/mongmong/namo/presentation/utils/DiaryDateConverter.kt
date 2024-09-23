@@ -1,6 +1,7 @@
 package com.mongmong.namo.presentation.utils
 
 import android.util.Log
+import com.mongmong.namo.domain.model.CalendarDay
 import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -60,6 +61,9 @@ object DiaryDateConverter {
         val date = inputFormat.parse(this) ?: return ""  // null 처리
         return outputFormat.format(date)
     }
+
     @JvmStatic
     fun getFormattedDate(date: Long): String = date.let { DateTime(date * 1000).toString("yyyy.MM.dd (EE) HH:mm") }
+
+    fun CalendarDay.toYearMonth(): String = "${this.year}-${String.format("%02d", this.month + 1)}"
 }

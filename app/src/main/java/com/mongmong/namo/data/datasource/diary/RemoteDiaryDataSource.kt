@@ -6,6 +6,10 @@ import com.mongmong.namo.data.dto.CategoryInfo
 import com.mongmong.namo.data.dto.DiaryRequestImage
 import com.mongmong.namo.data.dto.DiaryResponse
 import com.mongmong.namo.data.dto.EditDiaryRequest
+import com.mongmong.namo.data.dto.GetCalendarDiaryResponse
+import com.mongmong.namo.data.dto.GetCalendarDiaryResult
+import com.mongmong.namo.data.dto.GetDiaryByDateResponse
+import com.mongmong.namo.data.dto.GetDiaryByDateResult
 import com.mongmong.namo.data.dto.GetPersonalDiaryResponse
 import com.mongmong.namo.data.dto.GetPersonalDiaryResult
 import com.mongmong.namo.data.dto.GetScheduleForDiaryResponse
@@ -104,6 +108,7 @@ class RemoteDiaryDataSource @Inject constructor(
         }
         return response
     }
+
     /** 개인 기록 수정 */
     suspend fun editPersonalDiary(
         diaryId: Long,
@@ -150,6 +155,39 @@ class RemoteDiaryDataSource @Inject constructor(
         return diaryResponse
     }
 
+    /** 보관함 캘린더 */
+    suspend fun getCalendarDiary(yearMonth: String): GetCalendarDiaryResponse {
+        var response = GetCalendarDiaryResponse(GetCalendarDiaryResult())
+        withContext(Dispatchers.IO) {
+            runCatching {
+                diaryApiService.getCalendarDiary(yearMonth)
+            }.onSuccess {
+                Log.d("RemoteDiaryDataSource getCalendarDiary Success", "$it")
+                response = it
+            }.onFailure {
+                Log.d("RemoteDiaryDataSource getCalendarDiary Failure", "$it")
+            }
+        }
+        return response
+    }
+
+    /** 보관함 캘린더 날짜별 기록 */
+    suspend fun getDiaryByDate(date: String): GetDiaryByDateResponse {
+        var response = GetDiaryByDateResponse(emptyList())
+        withContext(Dispatchers.IO) {
+            runCatching {
+                diaryApiService.getDiaryByDate(date)
+            }.onSuccess {
+                Log.d("RemoteDiaryDataSource getDiaryByDate Success", "$it")
+                response = it
+            }.onFailure {
+                Log.d("RemoteDiaryDataSource getDiaryByDate Fail", "$it")
+            }
+        }
+        return response
+    }
+
+
     /** 모임 기록 조회 */
     suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult {
         var diaryResponse = GetMoimDiaryResponse(
@@ -178,15 +216,15 @@ class RemoteDiaryDataSource @Inject constructor(
     /** 모임 메모 조회 */
     suspend fun getMoimMemo(scheduleId: Long): MoimDiary = withContext(Dispatchers.IO) {
         var result = MoimDiary(
-                scheduleId = 0L,
-                title = "",
-                startDate = 0L,
-                _content = "",
-                images = emptyList(),
-                categoryId = 0L,
-                color = 0,
-                placeName = ""
-            )
+            scheduleId = 0L,
+            title = "",
+            startDate = 0L,
+            _content = "",
+            images = emptyList(),
+            categoryId = 0L,
+            color = 0,
+            placeName = ""
+        )
 
         runCatching {
             diaryApiService.getMoimMemo(scheduleId)

@@ -19,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.joda.time.format.DateTimeFormat
+import java.util.ArrayList
 
 @AndroidEntryPoint
 class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.layout.fragment_diary_collection) {
@@ -55,9 +56,13 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
             personalEditClickListener = ::onPersonalEditClickListener,
             moimEditClickListener = ::onMoimEditClickListener ,
             participantClickListener = ::onParticipantClickListener,
-            imageClickListener = {
+            imageClickListener = { images ->
                 startActivity(
-                    Intent(requireActivity(), DiaryImageDetailActivity::class.java).putExtra("imgs", it as ArrayList<DiaryImage>)
+                    Intent(requireActivity(), DiaryImageDetailActivity::class.java)
+                        .putStringArrayListExtra(
+                            "imgs",
+                            images.map { it.imageUrl } as ArrayList<String>
+                        )
                 )
             }
         )

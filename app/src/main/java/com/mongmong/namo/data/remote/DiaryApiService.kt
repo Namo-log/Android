@@ -2,6 +2,8 @@ package com.mongmong.namo.data.remote
 
 import com.mongmong.namo.data.dto.DiaryResponse
 import com.mongmong.namo.data.dto.EditDiaryRequest
+import com.mongmong.namo.data.dto.GetCalendarDiaryResponse
+import com.mongmong.namo.data.dto.GetDiaryByDateResponse
 import com.mongmong.namo.data.dto.GetDiaryCollectionResponse
 import com.mongmong.namo.data.dto.GetPersonalDiaryResponse
 import com.mongmong.namo.data.dto.GetScheduleForDiaryResponse
@@ -46,6 +48,17 @@ interface DiaryApiService {
     suspend fun deletePersonalDiary(
         @Path("diaryId") diaryId: Long
     ): DiaryResponse
+
+    // 기록 캘린더 기록 조회
+    @GET("diaries/calendar/{yearMonth}")
+    suspend fun getCalendarDiary(
+        @Path("yearMonth") yearMonth: String
+    ): GetCalendarDiaryResponse
+
+    @GET("diaries/date/{date}")
+    suspend fun getDiaryByDate(
+        @Path("date") date: String
+    ): GetDiaryByDateResponse
 
     /** 모임 */
     // 월별 모임 기록 조회

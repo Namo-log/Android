@@ -99,9 +99,11 @@ class PersonalDiaryDetailActivity
             },
             imageClickListener = {
                 startActivity(
-                    Intent(this, DiaryImageDetailActivity::class.java).apply {
-                        putExtra("imgs", ArrayList(viewModel.imgList.value))
-                    }
+                    Intent(this, DiaryImageDetailActivity::class.java)
+                        .putStringArrayListExtra(
+                            "imgs",
+                            viewModel.imgList.value?.map { it.imageUrl } as ArrayList<String>
+                        )
                 )
             }
         )

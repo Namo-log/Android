@@ -9,11 +9,10 @@ import androidx.paging.map
 import com.mongmong.namo.data.datasource.diary.DiaryCollectionPagingSource
 import com.mongmong.namo.data.datasource.diary.DiaryMoimPagingSource
 import com.mongmong.namo.data.datasource.diary.DiaryPersonalPagingSource
-import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
-import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.NetworkChecker
+import com.mongmong.namo.domain.model.CalendarDiaryDate
 import com.mongmong.namo.data.utils.mappers.DiaryMapper.toModel
 import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryDetail
@@ -75,6 +74,14 @@ class DiaryRepositoryImpl @Inject constructor(
     override suspend fun deletePersonalDiary(diaryId: Long): Boolean {
         Log.d("DiaryRepositoryImpl deletePersonalDiary", "$diaryId")
         return remoteDiaryDataSource.deletePersonalDiary(diaryId).isSuccess
+    }
+
+    override suspend fun getCalendarDiary(yearMonth: String): CalendarDiaryDate {
+        return remoteDiaryDataSource.getCalendarDiary(yearMonth).result.toModel()
+    }
+
+    override suspend fun getDiaryByDate(date: String): List<Diary> {
+        return remoteDiaryDataSource.getDiaryByDate(date).result.map { it.toModel() }
     }
 
     /** 모임 기록 리스트 조회 **/

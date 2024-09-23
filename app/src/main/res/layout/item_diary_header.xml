@@ -10,50 +10,41 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginVertical="10dp"
-        android:layout_marginEnd="20dp">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/diary_date_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginHorizontal="35dp">
             <View
                 android:id="@+id/view1"
-                android:layout_width="100dp"
-                android:layout_height="1.6dp"
-                android:layout_marginTop="20dp"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
                 android:background="@color/main_text"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/diary_day_tv"/>
 
             <TextView
+                style="@style/content_bold"
                 android:id="@+id/diary_day_tv"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{date}"
-                android:textColor="@color/main_text"
                 android:gravity="center"
-                android:textSize="17sp"
-                android:textStyle="bold"
+                android:layout_marginHorizontal="20.5dp"
+                app:layout_constraintStart_toEndOf="@id/view1"
+                app:layout_constraintEnd_toStartOf="@id/view2"
                 app:layout_constraintTop_toTopOf="@id/view1"
                 app:layout_constraintBottom_toBottomOf="@id/view1"/>
 
             <View
                 android:id="@+id/view2"
-                android:layout_width="100dp"
-                android:layout_height="1.6dp"
-                android:layout_marginTop="20dp"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
                 android:background="@color/main_text"
+                app:layout_constraintStart_toEndOf="@id/diary_day_tv"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

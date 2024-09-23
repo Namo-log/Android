@@ -1,5 +1,6 @@
 package com.mongmong.namo.domain.model
 
+import android.util.Log
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import com.mongmong.namo.presentation.config.BaseResponse
@@ -8,6 +9,7 @@ import com.mongmong.namo.BR
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.presentation.state.RoomState
 import com.mongmong.namo.presentation.state.UploadState
+import java.util.Calendar
 
 data class PersonalDiary(
     val diaryId: Long = 0L,  // roomDB scheduleId
@@ -135,9 +137,9 @@ data class ParticipantInfo(
 )
 
 data class DiarySummary(
-    val content: String,
+    val content: String = "",
     val diaryId: Long,
-    val diaryImages: List<DiaryImage>?
+    val diaryImages: List<DiaryImage>? = emptyList()
 )
 
 data class DiaryImage(
@@ -161,4 +163,51 @@ data class ScheduleForDiary(
     var hasDiary: Boolean = false,
     val title: String = "",
     val categoryId: Int
+)
+
+/** 기록 캘린더 */
+data class CalendarDay(
+    val date: Int,
+    val year: Int,
+    val month: Int,
+    val isEmpty: Boolean = false
+) {
+    fun isAfterToday(): Boolean {
+        if(isEmpty) return false
+        val today = Calendar.getInstance()
+        val calendarDayDate = Calendar.getInstance().apply {
+            set(Calendar.YEAR, year)
+            set(Calendar.MONTH, month)
+            set(Calendar.DAY_OF_MONTH, date)
+        }
+        return calendarDayDate.after(today)
+    }
+
+    fun toDateString(): String {
+        val monthString = String.format("%02d", month + 1)
+        val dayString = String.format("%02d", date)
+
+        return "${year}-${monthString}-${dayString}"
+    }
+
+    fun isSameDate(otherDate: CalendarDay): Boolean {
+        return this.year == otherDate.year && this.month == otherDate.month && this.date == otherDate.date
+    }
+
+    val displayDate: String
+        get() {
+            val day = date
+            val monthDisplay = month + 1 // 월은 0부터 시작하므로 1을 더해줍니다.
+            return if (day == 1) {
+                "$monthDisplay/$day"
+            } else {
+                day.toString()
+            }
+        }
+}
+
+data class CalendarDiaryDate(
+    val dates: List<String>,
+    val month: Int,
+    val year: Int
 )
