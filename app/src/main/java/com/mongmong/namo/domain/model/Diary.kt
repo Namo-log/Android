@@ -115,14 +115,11 @@ data class DiarySchedule(
         this.scheduleId,
         this.title,
         this.startDate,
-        0L, 0,
-        this.categoryId,
-        this.place,
-        0.0, 0.0, 0, null,
-        UploadState.IS_UPLOAD.state,
-        RoomState.DEFAULT.state,
-        this.serverId,
-        this.categoryServerId,
-        true
+        0L,
+        Location(locationName = this.place),
+        ScheduleCategoryInfo(this.categoryId, color, "", false),
+        emptyList(),
+        true,
+        false
     )
 }

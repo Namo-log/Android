@@ -21,7 +21,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     override fun setup() {
         setView()
-        clickListener()
+        initClickListeners()
     }
 
     private fun setView() {
@@ -47,7 +47,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
     }
 
-    private fun clickListener() {
+    private fun initClickListeners() {
+        // 상단 날짜 클릭
         binding.homeCalenderYearMonthLayout.setOnClickListener {
             SetMonthDialog(requireContext(), millis) {
                 val date = it
@@ -57,10 +58,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }.show()
         }
 
+        // 오늘 날짜 클릭
         binding.homeCalendarTodayTv.setOnClickListener {
+            // 오늘 날짜가 있는 달력으로 이동
             binding.homeCalendarVp.setCurrentItem(todayPos, true)
         }
 
+        // 보관함 아이콘 클릭
         binding.homeCalendarDiaryCollectBtn.setOnClickListener {
             startActivity(Intent(requireContext(), DiaryActivity::class.java))
         }

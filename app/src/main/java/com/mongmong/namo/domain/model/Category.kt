@@ -18,6 +18,15 @@ data class Category(
         )
     }
 
+    fun convertCategoryToScheduleCategory() : ScheduleCategoryInfo {
+        return ScheduleCategoryInfo(
+            categoryId = this.categoryId,
+            colorId = this.colorId,
+            name = this.name,
+            isShare = this.isShare
+        )
+    }
+
     fun getCategoryColorInfo(): CalendarColorInfo {
         return CalendarColorInfo(this.colorId, this.name)
     }

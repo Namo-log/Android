@@ -2,7 +2,6 @@ package com.mongmong.namo.presentation.di
 
 import com.mongmong.namo.data.datasource.auth.RemoteAuthDataSource
 import com.mongmong.namo.data.datasource.category.RemoteCategoryDataSource
-import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
@@ -46,10 +45,9 @@ object RepositoryModule {
     /** 일정 */
     @Provides
     fun provideScheduleRepository(
-        localScheduleDataSource: LocalScheduleDataSource,
         remoteScheduleDataSource: RemoteScheduleDataSource,
         networkChecker: NetworkChecker
-    ): ScheduleRepository = ScheduleRepositoryImpl(localScheduleDataSource, remoteScheduleDataSource, networkChecker)
+    ): ScheduleRepository = ScheduleRepositoryImpl(remoteScheduleDataSource, networkChecker)
 
     /** 기록 */
     @Provides

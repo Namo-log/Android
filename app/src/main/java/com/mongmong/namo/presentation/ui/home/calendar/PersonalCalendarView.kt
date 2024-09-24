@@ -71,7 +71,7 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
         setBgPaintColor(schedule)
         canvas.drawPath(path, bgPaint)
 
-        val textToDraw = getTruncatedText(schedule.name, rect.width())
+        val textToDraw = getTruncatedText(schedule.title, rect.width())
         drawScheduleText(canvas, textToDraw, splitSchedule.startIdx, rect)
     }
 
@@ -151,7 +151,7 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
 
     private fun setBgPaintColor(schedule: GetMonthScheduleResult) {
         val foundCategory = categoryList.find {
-            it.categoryId == schedule.categoryId
+            it.categoryId == schedule.categoryInfo.categoryId
         }
         val hexColor = CategoryColor.convertPaletteIdToHexColor(foundCategory?.colorId ?: 0)
         bgPaint.color = Color.parseColor(hexColor)

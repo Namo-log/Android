@@ -74,7 +74,7 @@ class DailyScheduleRVAdapter : RecyclerView.Adapter<DailyScheduleRVAdapter.ViewH
 
             //TODO: 카테고리를 찾지 못했을 때의 처리
             val category = categoryList.find {
-                it.categoryId == schedule.categoryId
+                it.categoryId == schedule.categoryInfo.categoryId
             } ?: categoryList.first()
 
             binding.itemSchedulePreviewTimeTv.text = timeConverter.getScheduleTimeText(schedule.startDate, schedule.endDate)

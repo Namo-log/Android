@@ -10,6 +10,7 @@ import com.kakao.vectormap.LatLng
 import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
+import com.mongmong.namo.domain.model.Location
 import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
@@ -62,10 +63,10 @@ class PersonalScheduleViewModel @Inject constructor(
     var isDailyScheduleEmptyPair: LiveData<Pair<Boolean, Boolean>> = _isDailyScheduleEmptyPair
 
     /** 월별 일정 리스트 조회 */
-    fun getMonthSchedules(yearMonth: String) {
+    fun getMonthSchedules(year: Int, month: Int) {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "getMonthSchedules")
-            _scheduleList.value = repository.getMonthSchedules(yearMonth)
+            _scheduleList.value = repository.getMonthSchedules(year, month)
         }
     }
 
@@ -115,7 +116,7 @@ class PersonalScheduleViewModel @Inject constructor(
                 repository.editMoimScheduleCategory(
                     PatchMoimScheduleCategoryRequestBody(
                         _schedule.value!!.scheduleId,
-                        _schedule.value!!.categoryId
+                        _schedule.value!!.categoryInfo.categoryId
                     )
                 )
             )
@@ -146,14 +147,14 @@ class PersonalScheduleViewModel @Inject constructor(
         viewModelScope.launch {
             // 카테고리 찾기
             _category.value = schedule.value?.let { schedule ->
-                if (schedule.scheduleId == 0L && schedule.categoryId == 0L) { // 새 일정인 경우
+                if (schedule.scheduleId == 0L && schedule.categoryInfo.categoryId == 0L) { // 새 일정인 경우
 //                    Log.d(
 //                        "ScheduleViewModel",
 //                        "findCategoryById() - categoryList:  ${_categoryList.value}"
 //                    )
                     _categoryList.value?.first()
                 } else {
-                    findCategoryUseCase.invoke(schedule.categoryId)
+                    findCategoryUseCase.invoke(schedule.categoryInfo.categoryId)
                 }
             }
             setCategory()
@@ -165,8 +166,8 @@ class PersonalScheduleViewModel @Inject constructor(
     fun setSchedule(schedule: Schedule?) {
         _schedule.value = schedule
         Log.d("ScheduleViewModel", "schedule: ${_schedule.value}")
-        if (schedule?.placeName!!.isBlank()) {
-            _schedule.value?.placeName = "없음"
+        if (schedule?.locationInfo?.locationName!!.isBlank()) {
+            _schedule.value?.locationInfo?.locationName = "없음"
         }
     }
 
@@ -174,7 +175,7 @@ class PersonalScheduleViewModel @Inject constructor(
         Log.d("ScheduleViewModel", "setCategory()")
         // 일정에 카테고리 정보 넣기
         _schedule.value = _schedule.value?.copy(
-            categoryId = _category.value?.categoryId!!
+            categoryInfo = _category.value!!.convertCategoryToScheduleCategory()
         )
     }
 
@@ -226,16 +227,18 @@ class PersonalScheduleViewModel @Inject constructor(
 
     fun updatePlace(placeName: String, x: Double, y: Double) {
         _schedule.value = _schedule.value?.copy(
-            placeName = placeName,
-            placeX = x,
-            placeY = y
+            locationInfo = Location(
+                locationName = placeName,
+                longitude = y,
+                latitude = x
+            )
         )
     }
 
     fun updatePrevClickedPicker(clicked: TextView?) {
         _prevClickedPicker.value = clicked
     }
-    fun isMoimSchedule() = schedule.value!!.moimSchedule
+    fun isMoimSchedule() = schedule.value!!.isMeetingSchedule
 
     fun isCreateMode() = (schedule.value!!.scheduleId == 0L)
 
@@ -249,7 +252,7 @@ class PersonalScheduleViewModel @Inject constructor(
 
     fun getDailySchedules(isMoim: Boolean): ArrayList<GetMonthScheduleResult> {
         return _dailyScheduleList.filter { schedule ->
-            schedule.moimSchedule == isMoim
+            schedule.isMeetingSchedule == isMoim
         } as ArrayList<GetMonthScheduleResult>
     }
 
@@ -265,10 +268,10 @@ class PersonalScheduleViewModel @Inject constructor(
 
     fun getPlace(): Pair<String, LatLng>? {
         if (_schedule.value != null) {
-            if (_schedule.value!!.placeX == 0.0 && _schedule.value!!.placeY == 0.0) return null
+            if (_schedule.value!!.locationInfo.longitude == 0.0 && _schedule.value!!.locationInfo.latitude == 0.0) return null
             return Pair(
-                schedule.value!!.placeName,
-                LatLng.from(schedule.value!!.placeY, schedule.value!!.placeX)
+                schedule.value!!.locationInfo.locationName,
+                LatLng.from(schedule.value!!.locationInfo.longitude, schedule.value!!.locationInfo.latitude)
             )
         }
         return null

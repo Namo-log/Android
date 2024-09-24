@@ -51,14 +51,13 @@ class ScheduleDialogCategoryFragment
 
     private fun setAdapter(categoryList: List<Category>) {
         categoryRVAdapter = DialogCategoryRVAdapter(categoryList)
-        categoryRVAdapter.setSelectedId(schedule.categoryId)
+        categoryRVAdapter.setSelectedId(schedule.categoryInfo.categoryId)
         categoryRVAdapter.setMyItemClickListener(object: DialogCategoryRVAdapter.MyItemClickListener {
             // 아이템 클릭
             override fun onSendId(category: Category) {
                 // 카테고리 세팅
-                schedule.categoryId = category.categoryId
-                Log.d("TEST_CATEGORY", "In category : ${schedule.categoryId}")
-                Log.d("TEST_CATEGORY", "In category Server: ${schedule.categoryServerId}")
+                schedule.categoryInfo.categoryId = category.categoryId
+                Log.d("TEST_CATEGORY", "In category : ${schedule.categoryInfo.categoryId}")
                 Log.d("TEST_CATEGORY", "In category Result: ${schedule}")
                 val action = ScheduleDialogCategoryFragmentDirections.actionScheduleDialogCategoryFragmentToScheduleDialogBasicFragment(schedule)
                 findNavController().navigate(action)

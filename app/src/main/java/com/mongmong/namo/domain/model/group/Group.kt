@@ -81,36 +81,6 @@ data class MoimScheduleBody(
         return if (members.size < 2) members[0].userName
         else members.size.toString() + "명"
     }
-
-    fun convertMoimScheduleToBaseRequest(): BaseMoimScheduleRequestBody {
-        return BaseMoimScheduleRequestBody(
-            this.name,
-            this.startLong,
-            this.endLong,
-            this.interval,
-            this.placeX,
-            this.placeY,
-            this.placeName,
-            this.members.map { user -> user.userId } as ArrayList<Long>,
-        )
-    }
-
-    fun convertMoimScheduleToSchedule(): GetMonthScheduleResult {
-        return GetMonthScheduleResult(
-            this.moimScheduleId,
-            this.name,
-            this.startLong,
-            this.endLong,
-            listOf(),
-            this.interval,
-            this.placeX,
-            this.placeY,
-            this.placeName,
-            0L,
-            this.hasDiaryPlace,
-            this.curMoimSchedule
-        )
-    }
 }
 
 

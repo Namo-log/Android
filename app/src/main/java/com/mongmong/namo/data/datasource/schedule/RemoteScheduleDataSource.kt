@@ -30,12 +30,13 @@ class RemoteScheduleDataSource @Inject constructor(
 ) {
     /** 개인 */
     suspend fun getMonthSchedules(
-        yearMonth: String
+        year: Int,
+        month: Int
     ): List<GetMonthScheduleResult> {
         var scheduleResponse = GetMonthScheduleResponse(result = emptyList())
         withContext(Dispatchers.IO) {
             runCatching {
-                scheduleApiService.getMonthSchedule(yearMonth)
+                scheduleApiService.getMonthSchedule(year, month)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "getMonthSchedules Success $it")
                 scheduleResponse = it

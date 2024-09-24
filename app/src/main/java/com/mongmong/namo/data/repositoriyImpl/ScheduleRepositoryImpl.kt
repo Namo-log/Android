@@ -1,7 +1,6 @@
 package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
-import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.data.remote.NetworkChecker
@@ -14,23 +13,20 @@ import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.presentation.config.Constants.SUCCESS_CODE
-import com.mongmong.namo.presentation.config.RoomState
-import com.mongmong.namo.presentation.config.UploadState
 import javax.inject.Inject
 
 class ScheduleRepositoryImpl @Inject constructor(
-    private val localScheduleDataSource: LocalScheduleDataSource,
     private val remoteScheduleDataSource: RemoteScheduleDataSource,
     private val networkChecker: NetworkChecker
 ) : ScheduleRepository {
 
     /** 개인 */
-    override suspend fun getMonthSchedules(yearMonth: String): List<GetMonthScheduleResult> {
-        return remoteScheduleDataSource.getMonthSchedules(yearMonth)
+    override suspend fun getMonthSchedules(year: Int, month: Int): List<GetMonthScheduleResult> {
+        return remoteScheduleDataSource.getMonthSchedules(year, month)
     }
 
     override suspend fun getDailySchedules(startDate: Long, endDate: Long): List<Schedule> {
-        return localScheduleDataSource.getDailySchedules(startDate, endDate)
+        return emptyList()
     }
 
     override suspend fun addSchedule(schedule: ScheduleRequestBody): Boolean {

@@ -39,7 +39,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="6"
-                android:text="@{viewModel.schedule.scheduleId == 0L ? @string/schedule_new : (viewModel.schedule.moimSchedule ? @string/moim_schedule_edit : @string/schedule_edit )}"
+                android:text="@{viewModel.schedule.scheduleId == 0L ? @string/schedule_new : (viewModel.schedule.meetingSchedule ? @string/moim_schedule_edit : @string/schedule_edit )}"
                 tools:text="새 일정"
                 android:textStyle="bold"
                 android:textColor="@color/black"
@@ -70,9 +70,9 @@
             android:background="@color/transparent"
             android:textStyle="bold"
             android:textSize="22sp"
-            android:textColor="@{viewModel.schedule.moimSchedule ? @color/text_disable : @color/main_text}"
-            android:focusable="@{viewModel.schedule.moimSchedule ? false : true}"
-            android:focusableInTouchMode="@{viewModel.schedule.moimSchedule ? false : true}"
+            android:textColor="@{viewModel.schedule.meetingSchedule ? @color/text_disable : @color/main_text}"
+            android:focusable="@{viewModel.schedule.meetingSchedule ? false : true}"
+            android:focusableInTouchMode="@{viewModel.schedule.meetingSchedule ? false : true}"
             android:layout_marginTop="25dp"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -166,8 +166,8 @@
                     android:layout_height="wrap_content"
                     android:text="@{PickerConverter.parseLongToDateText(viewModel.schedule.startLong)}"
                     android:textAlignment="center"
-                    android:textColor="@{viewModel.schedule.moimSchedule ? @color/text_disable : @color/main_text}"
-                    android:clickable="@{viewModel.schedule.moimSchedule ? false : true}"
+                    android:textColor="@{viewModel.schedule.meetingSchedule ? @color/text_disable : @color/main_text}"
+                    android:clickable="@{viewModel.schedule.meetingSchedule ? false : true}"
                     tools:text="2022.06.29 (수)"/>
 
                 <View
@@ -183,8 +183,8 @@
                     android:layout_height="wrap_content"
                     android:text="@{PickerConverter.parseLongToTimeText(viewModel.schedule.startLong)}"
                     android:textAlignment="center"
-                    android:textColor="@{viewModel.schedule.moimSchedule ? @color/text_disable : @color/main_text}"
-                    android:clickable="@{viewModel.schedule.moimSchedule ? false : true}"
+                    android:textColor="@{viewModel.schedule.meetingSchedule ? @color/text_disable : @color/main_text}"
+                    android:clickable="@{viewModel.schedule.meetingSchedule ? false : true}"
                     tools:text="12:00 PM"/>
 
             </LinearLayout>
@@ -223,8 +223,8 @@
                     android:layout_height="wrap_content"
                     android:text="@{PickerConverter.parseLongToDateText(viewModel.schedule.endLong)}"
                     android:textAlignment="center"
-                    android:textColor="@{viewModel.schedule.moimSchedule ? @color/text_disable : @color/main_text}"
-                    android:clickable="@{viewModel.schedule.moimSchedule ? false : true}"
+                    android:textColor="@{viewModel.schedule.meetingSchedule ? @color/text_disable : @color/main_text}"
+                    android:clickable="@{viewModel.schedule.meetingSchedule ? false : true}"
                     tools:text="2022.06.29 (수)"/>
 
                 <View
@@ -240,8 +240,8 @@
                     android:layout_height="wrap_content"
                     android:text="@{PickerConverter.parseLongToTimeText(viewModel.schedule.endLong)}"
                     android:textAlignment="center"
-                    android:textColor="@{viewModel.schedule.moimSchedule ? @color/text_disable : @color/main_text}"
-                    android:clickable="@{viewModel.schedule.moimSchedule ? false : true}"
+                    android:textColor="@{viewModel.schedule.meetingSchedule ? @color/text_disable : @color/main_text}"
+                    android:clickable="@{viewModel.schedule.meetingSchedule ? false : true}"
                     tools:text="12:00 PM"/>
 
             </LinearLayout>
@@ -408,7 +408,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:clickable="@{viewModel.schedule.moimSchedule ? false : true}">
+            android:clickable="@{viewModel.schedule.meetingSchedule ? false : true}">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -425,11 +425,11 @@
                 android:id="@+id/dialog_schedule_place_name_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.schedule.placeName}"
-                android:textColor="@{viewModel.schedule.moimSchedule ? @color/text_disable : @color/main_text}"
+                android:text="@{viewModel.schedule.locationInfo.locationName}"
+                android:textColor="@{viewModel.schedule.meetingSchedule ? @color/text_disable : @color/main_text}"
                 android:textSize="15sp"
                 android:drawablePadding="15dp"
-                android:drawableEnd="@{viewModel.schedule.moimSchedule ? null : @drawable/ic_arrow_right}"
+                android:drawableEnd="@{viewModel.schedule.meetingSchedule ? null : @drawable/ic_arrow_right}"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

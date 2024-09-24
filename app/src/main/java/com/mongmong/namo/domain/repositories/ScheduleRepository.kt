@@ -12,7 +12,7 @@ import com.mongmong.namo.domain.model.group.MoimScheduleBody
 interface ScheduleRepository {
     /** 개인 */
     suspend fun getMonthSchedules(
-        yearMonth: String
+        year: Int, month: Int
     ): List<GetMonthScheduleResult>
 
     suspend fun getDailySchedules(

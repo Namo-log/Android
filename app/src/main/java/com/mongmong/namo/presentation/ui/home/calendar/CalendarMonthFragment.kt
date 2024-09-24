@@ -18,6 +18,7 @@ import com.mongmong.namo.presentation.ui.home.schedule.adapter.DailyScheduleRVAd
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.PersonalScheduleViewModel
 import com.mongmong.namo.presentation.utils.CustomCalendarView
+import com.mongmong.namo.presentation.utils.PickerConverter
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 import java.text.SimpleDateFormat
@@ -122,7 +123,7 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
             }
 
             override fun onDiaryIconClicked(schedule: GetMonthScheduleResult, paletteId: Int) { // 기록 아이콘 클릭
-                if (schedule.moimSchedule) return
+                if (schedule.isMeetingSchedule) return
                 val intent = Intent(context, PersonalDetailActivity::class.java)
                 intent.putExtra("schedule", schedule.convertServerScheduleResponseToLocal())
                 Log.d("CalendarMonthFragment onDiaryIconClicked", "$schedule")
@@ -144,7 +145,7 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
             }
 
             override fun onDiaryIconClicked(schedule: GetMonthScheduleResult, paletteId: Int) { // 기록 아이콘 클릭
-                if (!schedule.moimSchedule) return
+                if (!schedule.isMeetingSchedule) return
                 requireActivity().startActivity(
                     Intent(context, MoimMemoDetailActivity::class.java)
                         .putExtra("moimScheduleId", schedule.scheduleId)
@@ -166,7 +167,9 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
 
     // 캘린더에 표시할 월별 일정
     private fun setMonthCalendarSchedule() {
-        viewModel.getMonthSchedules(yearMonthDate(millis))
+        val dateTime = DateTime(millis)
+        Log.d("CalendarMonthFrag", "dateTime: $dateTime")
+        viewModel.getMonthSchedules(dateTime.year, dateTime.monthOfYear)
     }
 
     // 일정 상세보기
@@ -217,7 +220,7 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
 
         @SuppressLint("SimpleDateFormat")
         fun yearMonthDate(millis: Long): String {
-            return SimpleDateFormat("yyyy,MM").format(millis)
+            return SimpleDateFormat("yyyy.MM").format(millis)
         }
     }
 }

@@ -80,7 +80,7 @@
                     android:id="@+id/item_schedule_preview_title_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{scheule.name}"
+                    android:text="@{scheule.title}"
                     android:ellipsize="marquee"
                     android:focusable="true"
                     android:singleLine="true"

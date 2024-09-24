@@ -5,12 +5,10 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.mongmong.namo.R
@@ -96,7 +94,7 @@ class ScheduleActivity : BaseActivity<ActivityScheduleBinding>(R.layout.activity
             }
 
             // 일정 삭제
-            viewModel.deleteSchedule(schedule.scheduleId, schedule.moimSchedule)
+            viewModel.deleteSchedule(schedule.scheduleId, schedule.isMeetingSchedule)
 
             Toast.makeText(this, "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
             finish()

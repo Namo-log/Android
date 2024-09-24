@@ -109,13 +109,13 @@ class CalendarUtils {
         fun getOrder(event: Schedule, eventList: ArrayList<Schedule>): Int {
             var maxIdx = 0
             var idx = 0
-            for (i in 0 until event.dayInterval + 1) {
-                val temp = getTodaySchedule(eventList, DateTime(event.startLong).withTimeAtStartOfDay().plusDays(i))
-                idx = temp.indexOf(event)
-                if (maxIdx < idx) {
-                    maxIdx = idx
-                }
-            }
+//            for (i in 0 until event.dayInterval + 1) {
+//                val temp = getTodaySchedule(eventList, DateTime(event.startLong).withTimeAtStartOfDay().plusDays(i))
+//                idx = temp.indexOf(event)
+//                if (maxIdx < idx) {
+//                    maxIdx = idx
+//                }
+//            }
 
             return maxIdx
         }

@@ -15,19 +15,16 @@ import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ScheduleApiService {
     /** 개인 일정 */
     // 월별 일정 조회
-    @GET("schedules/{yearMonth}")
+    @GET("schedules/calendar")
     suspend fun getMonthSchedule(
-        @Path("yearMonth") yearMonth : String,
+        @Query("year") yaer: Int,
+        @Query("month") month: Int
     ) : GetMonthScheduleResponse
-
-    // 일정 전체 조회
-    @GET("schedules/all")
-    fun getAllSchedule(
-    ) : Call<GetMonthScheduleResponse>
 
     // 일정 생성
     @POST("schedules")

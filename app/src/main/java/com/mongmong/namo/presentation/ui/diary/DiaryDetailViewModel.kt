@@ -26,7 +26,7 @@ class DiaryDetailViewModel @Inject constructor(
     private val _diary = MutableLiveData<PersonalDiary>()
     val diary: LiveData<PersonalDiary> = _diary
 
-    private val _schedule = MutableLiveData<Schedule>(Schedule().getDefaultSchedule())
+    private val _schedule = MutableLiveData<Schedule>(Schedule())
     val schedule: LiveData<Schedule> = _schedule
 
     private val _moimDiary = MutableLiveData<MoimDiary>()
@@ -74,7 +74,7 @@ class DiaryDetailViewModel @Inject constructor(
             _schedule.value = schedule
             _diary.value = PersonalDiary(
                 diaryId = schedule.scheduleId,
-                scheduleServerId = schedule.serverId,
+                scheduleServerId = schedule.scheduleId,
                 _content = result.contents,
                 images = result.images,
                 state = RoomState.ADDED.state
@@ -88,8 +88,8 @@ class DiaryDetailViewModel @Inject constructor(
     fun setNewPersonalDiary(schedule: Schedule) {
         _schedule.value = schedule
         _diary.value = PersonalDiary(
-            diaryId = schedule.serverId,
-            scheduleServerId = schedule.serverId,
+            diaryId = schedule.scheduleId,
+            scheduleServerId = schedule.scheduleId,
             _content = "",
             images = emptyList(),
             state = RoomState.ADDED.state
@@ -220,7 +220,7 @@ class DiaryDetailViewModel @Inject constructor(
             _category.value =
                 schedule.value?.let {
                     Log.d("findCategoryById", "${_schedule.value}")
-                    findCategoryUseCase.invoke(it.categoryId)
+                    findCategoryUseCase.invoke(it.scheduleId)
                 }
             Log.d("findCategoryById", "${_category.value}")
         }

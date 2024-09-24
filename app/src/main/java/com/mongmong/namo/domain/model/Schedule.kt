@@ -19,41 +19,37 @@ data class GetMonthScheduleResponse (
 ) : BaseResponse()
 
 data class GetMonthScheduleResult (
-    @SerializedName("scheduleId") val scheduleId : Long,
-    @SerializedName("name") val name : String,
-    @SerializedName("startDate") val startDate : Long,
-    @SerializedName("endDate") val endDate : Long,
-    @SerializedName("alarmDate") val alarmDate : List<Int>,
-    @SerializedName("interval") val interval : Int,
-    @SerializedName("x") val placeX : Double,
-    @SerializedName("y") val placeY : Double,
-    @SerializedName("locationName") val placeName : String,
-    @SerializedName("categoryId") val categoryId : Long,
-    @SerializedName("hasDiary") val hasDiary : Boolean?,
-    @SerializedName("moimSchedule") val moimSchedule : Boolean,
+    val scheduleId : Long,
+    val title : String,
+    val startDate : Long,
+    val endDate : Long,
+    val alarmDate : List<Int>,
+    val locationInfo: Location,
+    val categoryInfo : ScheduleCategoryInfo,
+    val hasDiary : Boolean?,
+    val isMeetingSchedule : Boolean,
 ) {
     fun convertServerScheduleResponseToLocal(): Schedule {
         return Schedule(
             this.scheduleId, // localId
-            this.name,
+            this.title,
             this.startDate,
             this.endDate,
-            this.interval,
-            this.categoryId,
-            this.placeName,
-            this.placeX,
-            this.placeY,
-            0,
+            this.locationInfo,
+            this.categoryInfo,
             this.alarmDate ?: listOf(),
-            UploadState.IS_UPLOAD.state,
-            RoomState.DEFAULT.state,
-            this.scheduleId,
-            this.categoryId,
             this.hasDiary,
-            this.moimSchedule
+            this.isMeetingSchedule
         )
     }
 }
+
+data class ScheduleCategoryInfo(
+    var categoryId: Long = 0L,
+    val colorId: Int = 0,
+    val name: String = "",
+    val isShare: Boolean = false
+)
 
 /** 일정 생성 */
 data class PostScheduleResponse (
@@ -78,8 +74,8 @@ data class Period(
 )
 
 data class Location(
-    var longitude: Double = 0.0,
-    var latitude: Double = 0.0,
+    var longitude: Double = 0.0, // 경도
+    var latitude: Double = 0.0, // 위도
     var locationName: String = "없음",
     var kakaoLocationId: String? = ""
 )

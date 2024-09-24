@@ -398,7 +398,7 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
         }
 
         viewModel.category.observe(viewLifecycleOwner) { category ->
-            if (category.categoryId != 0L && viewModel.schedule.value?.categoryId == 0L) viewModel.setCategory()
+            if (category.categoryId != 0L && viewModel.schedule.value?.categoryInfo?.categoryId == 0L) viewModel.setCategory()
         }
 
         viewModel.isComplete.observe(viewLifecycleOwner) { isComplete ->

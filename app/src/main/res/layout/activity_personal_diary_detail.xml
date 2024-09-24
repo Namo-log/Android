@@ -160,7 +160,7 @@
             android:layout_marginEnd="20dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="@{TextUtils.isEmpty(viewModel.schedule.placeName) ? @string/diary_no_place : viewModel.schedule.placeName}"
+            android:text="@{TextUtils.isEmpty(viewModel.schedule.locationInfo.locationName) ? @string/diary_no_place : viewModel.schedule.locationInfo.locationName}"
             android:textColor="@color/main_text"
             android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="parent"
