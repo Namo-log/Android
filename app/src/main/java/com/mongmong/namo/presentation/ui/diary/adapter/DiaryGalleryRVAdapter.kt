@@ -13,11 +13,9 @@ import com.mongmong.namo.databinding.ItemDiaryListGalleryBinding
 import com.mongmong.namo.domain.model.DiaryImage
 
 class DiaryGalleryRVAdapter(
-    // 다이어리 리스트의 이미지(둥근 모서리, 점선 테두리 X)
-    private val imgList: List<DiaryImage>?,
+    private val imgList: List<DiaryImage>,
     private val imageClickListener: (List<DiaryImage>) -> Unit
-) :
-    RecyclerView.Adapter<DiaryGalleryRVAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<DiaryGalleryRVAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemDiaryListGalleryBinding = ItemDiaryListGalleryBinding.inflate(
@@ -29,7 +27,7 @@ class DiaryGalleryRVAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(imgList?.get(position) ?: DiaryImage(0L, ""))
+        holder.bind(imgList[position])
 
         holder.binding.galleryImgIv.setOnClickListener {
             if(imgList != null) imageClickListener(imgList)
@@ -37,12 +35,12 @@ class DiaryGalleryRVAdapter(
 
     }
 
-    override fun getItemCount(): Int = imgList?.size ?: 0
+    override fun getItemCount(): Int = imgList.size
 
     inner class ViewHolder(val binding: ItemDiaryListGalleryBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: DiaryImage) {
             Glide.with(binding.galleryImgIv)
-                .load(item.url)
+                .load(item.imageUrl)
                 .transform(CenterCrop(), RoundedCorners(30)) // centerCrop, 이미지 모서리 설정
                 .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA))
                 .into(binding.galleryImgIv)

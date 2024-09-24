@@ -4,68 +4,115 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable
+            name="diary"
+            type="com.mongmong.namo.domain.model.Diary" />
         <import type="android.view.View" />
+        <import type="com.mongmong.namo.presentation.utils.DiaryDateConverter" />
+        <import type="com.mongmong.namo.presentation.config.CategoryColor" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_basic_item"
-        android:layout_marginBottom="15dp">
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/item_moim_diary_cover_img_iv"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            tools:src="@drawable/img_mongi_default"
-            android:layout_marginStart="16dp"
-            android:layout_marginVertical="20dp"
-            app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/white">
+
+        <View
+            android:id="@+id/item_moim_diary_category_iv"
+            android:layout_width="30dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="28dp"
+            android:background="@drawable/bg_diary_calendar_category_color_view"
+            android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(diary.categoryInfo.colorId)}"
+            android:elevation="1dp"
+            app:layout_constraintBottom_toBottomOf="@id/item_moim_diary_content_cl"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/item_moim_diary_content_cl" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_moim_diary_content_cl"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="6dp"
+            android:layout_marginEnd="22dp"
+            android:background="@drawable/bg_diary_calendar_content_view"
+            android:elevation="1dp"
+            android:paddingVertical="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-        <TextView
-            android:id="@+id/item_moim_diary_date_tv"
-            style="@style/subtext_12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:layout_marginTop="17dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintStart_toEndOf="@id/item_moim_diary_cover_img_iv"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="2024.07.31 (수) 18:00"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/item_moim_diary_category_iv"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/item_moim_diary_title_tv"
-            style="@style/content_bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text=""
-            app:layout_constraintStart_toStartOf="@+id/item_moim_diary_date_tv"
-            app:layout_constraintTop_toBottomOf="@id/item_moim_diary_date_tv"
-            tools:text="나모는 몽몽 울어" />
+            <TextView
+                android:id="@+id/item_moim_diary_date_tv"
+                style="@style/subtext_12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text='@{DiaryDateConverter.toTime(diary.startDate) + " - " + DiaryDateConverter.toTime(diary.endDate)}'
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="13:00 - 14:00" />
 
-        <TextView
-            android:id="@+id/item_moim_diary_participant_cnt_tv"
-            style="@style/calendar_bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            app:layout_constraintStart_toStartOf="@+id/item_moim_diary_date_tv"
-            app:layout_constraintTop_toBottomOf="@+id/item_moim_diary_title_tv"
-            tools:text="10" />
+            <View
+                android:id="@+id/item_moim_diary_date_divider"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:layout_marginVertical="2dp"
+                android:layout_marginStart="8dp"
+                android:background="@color/main_text"
+                app:layout_constraintBottom_toBottomOf="@id/item_moim_diary_date_tv"
+                app:layout_constraintStart_toEndOf="@id/item_moim_diary_date_tv"
+                app:layout_constraintTop_toTopOf="@id/item_moim_diary_date_tv" />
 
-        <TextView
-            android:id="@+id/item_moim_diary_participant_tv"
-            style="@style/subtext_12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:layout_marginStart="10dp"
-            android:maxLength="30"
-            android:ellipsize="end"
-            app:layout_constraintStart_toEndOf="@+id/item_moim_diary_participant_cnt_tv"
-            app:layout_constraintTop_toBottomOf="@+id/item_moim_diary_title_tv"
-            tools:text="코코아, 유즈, 뚜뚜, 고흐, 초코, 다나, 루카, 캐" />
+            <TextView
+                android:id="@+id/item_moim_diary_category_tv"
+                style="@style/subtext_12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@{diary.categoryInfo.name}"
+                app:layout_constraintBottom_toBottomOf="@+id/item_moim_diary_date_tv"
+                app:layout_constraintStart_toEndOf="@+id/item_moim_diary_date_divider"
+                app:layout_constraintTop_toTopOf="@+id/item_moim_diary_date_tv"
+                tools:text="일정" />
+
+            <TextView
+                android:id="@+id/item_moim_diary_title_tv"
+                style="@style/content_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@{diary.title}"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="@+id/item_moim_diary_date_tv"
+                app:layout_constraintTop_toBottomOf="@id/item_moim_diary_date_tv"
+                tools:text="나모는 몽몽 울어" />
+
+            <TextView
+                android:id="@+id/item_moim_diary_participant_cnt_tv"
+                style="@style/calendar_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@{diary.participantInfo.count}"
+                app:layout_constraintStart_toStartOf="@+id/item_moim_diary_date_tv"
+                app:layout_constraintTop_toBottomOf="@+id/item_moim_diary_title_tv"
+                tools:text="10" />
+
+            <TextView
+                android:id="@+id/item_moim_diary_participant_tv"
+                style="@style/subtext_12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:ellipsize="end"
+                android:maxLength="30"
+                android:text="@{diary.participantInfo.names}"
+                app:layout_constraintBottom_toBottomOf="@+id/item_moim_diary_participant_cnt_tv"
+                app:layout_constraintStart_toEndOf="@+id/item_moim_diary_participant_cnt_tv"
+                app:layout_constraintTop_toTopOf="@+id/item_moim_diary_participant_cnt_tv"
+                tools:text="코코아, 유즈, 뚜뚜, 고흐, 초코, 다나, 루카, 캐" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

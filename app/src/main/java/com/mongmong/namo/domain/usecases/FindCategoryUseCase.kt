@@ -1,4 +1,4 @@
-package com.mongmong.namo.domain.usecase
+package com.mongmong.namo.domain.usecases
 
 import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.domain.repositories.CategoryRepository

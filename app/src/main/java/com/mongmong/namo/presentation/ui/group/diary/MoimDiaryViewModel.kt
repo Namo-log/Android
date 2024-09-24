@@ -101,9 +101,9 @@ class MoimDiaryViewModel @Inject constructor(
     fun deleteActivityImage(position: Int, diaryImage: DiaryImage) {
         val activity = _activities.value?.get(position) ?: return
 
-        if (activity.moimActivityId != 0L && diaryImage.id != 0L) {
+        if (activity.moimActivityId != 0L && diaryImage.diaryImageId != 0L) {
             // deleteImageIdsMap에 activityId를 키로 사용하여 imageId를 추가
-            deleteImageIdsMap.getOrPut(activity.moimActivityId) { mutableListOf() }.add(diaryImage.id)
+            deleteImageIdsMap.getOrPut(activity.moimActivityId) { mutableListOf() }.add(diaryImage.diaryImageId)
         }
 
         activity.images?.remove(diaryImage)
@@ -131,7 +131,7 @@ class MoimDiaryViewModel @Inject constructor(
 
     private suspend fun editMoimActivity(activity: MoimActivity) {
         val members = activity.members.ifEmpty { _moimDiary.value?.users?.map { it.userId } }
-        val createImages = activity.images?.filter { it.id == 0L }?.map { it.url }
+        val createImages = activity.images?.filter { it.diaryImageId == 0L }?.map { it.imageUrl }
         val deleteImageIds = deleteImageIdsMap[activity.moimActivityId]
         repository.editMoimActivity(activity.moimActivityId, deleteImageIds,activity.name, activity.pay, members ?: emptyList(), createImages)
     }

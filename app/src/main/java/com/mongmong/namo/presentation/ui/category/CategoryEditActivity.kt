@@ -11,7 +11,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityCategoryEditBinding
 import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.presentation.config.BaseActivity
-import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.state.RoomState
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

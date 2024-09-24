@@ -4,6 +4,8 @@ import com.mongmong.namo.data.remote.AnonymousApiService
 import com.mongmong.namo.data.remote.CategoryApiService
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.AuthApiService
+import com.mongmong.namo.data.remote.AwsS3ApiService
+import com.mongmong.namo.data.remote.ImageApiService
 import com.mongmong.namo.data.remote.ReissuanceApiService
 import com.mongmong.namo.data.remote.group.GroupApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
@@ -79,6 +81,17 @@ object ServiceModule {
     fun provideGroupDiaryService(@NetworkModule.BasicRetrofit retrofit: Retrofit): GroupDiaryApiService =
         retrofit.create(GroupDiaryApiService::class.java)
 
+    /** 이미지 url  */
+    @Provides
+    @Singleton
+    fun provideImageService(@NetworkModule.BasicRetrofit retrofit: Retrofit): ImageApiService =
+        retrofit.create(ImageApiService::class.java)
+
+    /** s3 이미지 업로드 */
+    @Provides
+    @Singleton
+    fun provideAwsS3Service(@NetworkModule.AnonymousRetrofit retrofit: Retrofit): AwsS3ApiService =
+        retrofit.create(AwsS3ApiService::class.java)
 
     /** 카카오 맵 **/
     @Provides

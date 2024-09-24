@@ -1,10 +1,16 @@
 package com.mongmong.namo.data.remote
 
+import com.mongmong.namo.data.dto.DiaryResponse
+import com.mongmong.namo.data.dto.EditDiaryRequest
+import com.mongmong.namo.data.dto.GetCalendarDiaryResponse
+import com.mongmong.namo.data.dto.GetDiaryByDateResponse
+import com.mongmong.namo.data.dto.GetDiaryCollectionResponse
+import com.mongmong.namo.data.dto.GetPersonalDiaryResponse
+import com.mongmong.namo.data.dto.GetScheduleForDiaryResponse
+import com.mongmong.namo.data.dto.PostDiaryRequest
 import com.mongmong.namo.domain.model.DiaryGetAllResponse
 import com.mongmong.namo.domain.model.DiaryGetMonthResponse
-import com.mongmong.namo.domain.model.DiaryResponse
 import com.mongmong.namo.domain.model.GetMoimMemoResponse
-import com.mongmong.namo.domain.model.GetPersonalDiaryResponse
 import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
 import retrofit2.Call
 import okhttp3.MultipartBody
@@ -24,36 +30,35 @@ interface DiaryApiService {
         @Query("size") size: Int
     ): DiaryGetMonthResponse
 
-    // 개인 기록 개별 조회
-    @GET("diaries/{scheduleId}")
-    suspend fun getPersonalDiary(
-        @Path("scheduleId") scheduleId: Long
-    ): GetPersonalDiaryResponse
-
     // 개인 기록 추가
-    @Multipart
-    @PATCH("diaries")
+    @POST("diaries")
     suspend fun addPersonalDiary(
-        @Query("scheduleId") scheduleId: Long,
-        @Query("content") content: String?,
-        @Part createImages: List<MultipartBody.Part>?,
+        @Body requestBody: PostDiaryRequest
     ): DiaryResponse
 
     // 개인 기록 수정
-    @Multipart
-    @PATCH("diaries")
+    @PATCH("diaries/{diaryId}")
     suspend fun editPersonalDiary(
-        @Query("scheduleId") scheduleId: Long,
-        @Query("content") content: String?,
-        @Part createImages: List<MultipartBody.Part>?,
-        @Query("deleteImageIds") deleteImageIds: List<Long>?
+        @Path("diaryId") diaryId: Long,
+        @Body requestBody: EditDiaryRequest
     ): DiaryResponse
 
     // 개인 기록 삭제
-    @DELETE("diaries/{scheduleId}")
+    @DELETE("diaries/{diaryId}")
     suspend fun deletePersonalDiary(
-        @Path("scheduleId") scheduleId: Long
+        @Path("diaryId") diaryId: Long
     ): DiaryResponse
+
+    // 기록 캘린더 기록 조회
+    @GET("diaries/calendar/{yearMonth}")
+    suspend fun getCalendarDiary(
+        @Path("yearMonth") yearMonth: String
+    ): GetCalendarDiaryResponse
+
+    @GET("diaries/date/{date}")
+    suspend fun getDiaryByDate(
+        @Path("date") date: String
+    ): GetDiaryByDateResponse
 
     /** 모임 */
     // 월별 모임 기록 조회
@@ -88,5 +93,27 @@ interface DiaryApiService {
     suspend fun deleteMoimMemo(
         @Path("scheduleId") scheduleId: Long,
     ): DiaryResponse
+
+
+    /** v2 */
+    // 기록 보관함 조회
+    @GET("diaries/archive")
+    suspend fun getDiaryCollection(
+        @Query("filterType") filterType: String?,
+        @Query("keyword") keyword: String?,
+        @Query("page") page: Int,
+    ): GetDiaryCollectionResponse
+
+    // 개인 기록 일정 정보 조회
+    @GET("schedules/{scheduleId}")
+    suspend fun getScheduleForDiary(
+        @Path("scheduleId") scheduleId: Long
+    ): GetScheduleForDiaryResponse
+
+    // 개인 기록 개별 조회
+    @GET("diaries/{scheduleId}")
+    suspend fun getPersonalDiary(
+        @Path("scheduleId") scheduleId: Long
+    ): GetPersonalDiaryResponse
 }
 

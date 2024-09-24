@@ -21,7 +21,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.config.PaletteType
 import com.mongmong.namo.presentation.config.CategoryColor
-import com.mongmong.namo.presentation.config.RoomState
+import com.mongmong.namo.presentation.state.RoomState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

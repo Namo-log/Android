@@ -2,7 +2,6 @@ package com.mongmong.namo.presentation.ui.diary
 
 import android.content.Intent
 import android.util.Log
-import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -11,15 +10,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentDiaryCollectionBinding
+import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryImage
-import com.mongmong.namo.domain.model.DiarySchedule
 import com.mongmong.namo.presentation.config.BaseFragment
-import com.mongmong.namo.presentation.config.FilterState
+import com.mongmong.namo.presentation.state.FilterType
 import com.mongmong.namo.presentation.ui.diary.adapter.DiaryRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.joda.time.format.DateTimeFormat
+import java.util.ArrayList
 
 @AndroidEntryPoint
 class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.layout.fragment_diary_collection) {
@@ -29,41 +29,40 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
         binding.diaryCollectionFilter.setOnClickListener {
             DiaryFilterDialog(viewModel.filter.value).apply {
                 setOnFilterSelectedListener(object : DiaryFilterDialog.OnFilterSelectedListener {
-                    override fun onFilterSelected(filter: FilterState) {
+                    override fun onFilterSelected(filter: FilterType) {
                         viewModel.setFilter(filter)
                     }
                 })
             }.show(parentFragmentManager, "FilterDialog")
         }
         binding.diaryCollectionFilterSearchBtn.setOnClickListener {
-            // 키워드 검색
+            getDiaries()
         }
     }
 
     override fun setup() {
         binding.viewModel = viewModel
-        getList()
         initClickListener()
     }
 
     override fun onResume() {
         super.onResume()
-        getList() // 화면이 다시 보일 때 관찰 시작
+        getDiaries() // 화면이 다시 보일 때 관찰 시작
     }
 
-    private fun getList() {
-        Log.d("DiaryFragment", "getList")
-        setDiaryList()
-    }
 
-    private fun setDiaryList() {
+    private fun getDiaries() {
         val adapter = DiaryRVAdapter(
             personalEditClickListener = ::onPersonalEditClickListener,
             moimEditClickListener = ::onMoimEditClickListener ,
             participantClickListener = ::onParticipantClickListener,
-            imageClickListener = {
+            imageClickListener = { images ->
                 startActivity(
-                    Intent(requireActivity(), DiaryImageDetailActivity::class.java).putExtra("imgs", it as ArrayList<DiaryImage>)
+                    Intent(requireActivity(), DiaryImageDetailActivity::class.java)
+                        .putStringArrayListExtra(
+                            "imgs",
+                            images.map { it.imageUrl } as ArrayList<String>
+                        )
                 )
             }
         )
@@ -74,23 +73,24 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
 
     private fun setRecyclerView(adapter: RecyclerView.Adapter<*>) {
         binding.diaryCollectionRv.apply {
-            visibility = View.VISIBLE
-            this.adapter = adapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            this.adapter = adapter
         }
     }
 
-    private fun setDataFlow(adapter: PagingDataAdapter<DiarySchedule, RecyclerView.ViewHolder>) {
+    private fun setDataFlow(adapter: PagingDataAdapter<Diary, RecyclerView.ViewHolder>) {
         lifecycleScope.launch {
-            val pagingDataFlow = viewModel.getMoimPaging("1900.01.01")
-
-            pagingDataFlow.collectLatest { pagingData ->
+            viewModel.getDiaryPaging().collectLatest { pagingData ->
                 adapter.submitData(pagingData)
                 viewModel.setIsListEmpty(adapter.itemCount == 0)
             }
         }
 
         adapter.addLoadStateListener { loadState ->
+            if (loadState.append is LoadState.Loading) {
+                Log.d("Paging", "Loading next page")
+            }
+
             when {
                 loadState.refresh is LoadState.Error ->
                     viewModel.setEmptyView(
@@ -110,24 +110,23 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
         }
     }
 
-    private fun onPersonalEditClickListener(item: DiarySchedule) {
+    private fun onPersonalEditClickListener(item: Diary) {
+        Log.d("onPersonalEditClickListener", "${item.scheduleId}")
         startActivity(
-            Intent(requireContext(), PersonalDetailActivity::class.java)
-                .putExtra("schedule", item.convertToSchedule())
-                .putExtra("paletteId", item.color)
+            Intent(requireContext(), PersonalDiaryDetailActivity::class.java)
+                .putExtra("scheduleId", item.scheduleId)
         )
     }
 
-    private fun onMoimEditClickListener(scheduleId: Long, paletteId: Int) {
-        Log.d("onDetailClickListener", "$scheduleId")
+    private fun onMoimEditClickListener(item: Diary) {
+        Log.d("onMoimEditClickListener", "${item.scheduleId}")
         startActivity(
-            Intent(requireContext(), MoimMemoDetailActivity::class.java)
-                .putExtra("moimScheduleId", scheduleId)
-                .putExtra("paletteId", paletteId)
+            Intent(requireContext(), PersonalDiaryDetailActivity::class.java)
+                .putExtra("scheduleId", item.scheduleId)
         )
     }
-    private fun onParticipantClickListener() {
-        DiaryParticipantDialog().show(parentFragmentManager, "ParticipantDialog")
+    private fun onParticipantClickListener(participantsCount: Int, participantNames: String) {
+        DiaryParticipantDialog(participantsCount, participantNames).show(parentFragmentManager, "ParticipantDialog")
     }
 
 

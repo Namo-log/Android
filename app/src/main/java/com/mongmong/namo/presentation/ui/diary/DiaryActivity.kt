@@ -11,12 +11,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class DiaryActivity : BaseActivity<ActivityDiaryBinding>(R.layout.activity_diary) {
-    private val viewModel: DiaryViewModel by viewModels()
-
     private var isCalendarView = false
 
     override fun setup() {
-        binding.viewModel = viewModel
         initClickListener()
 
         showDiaryCollectFragment()
