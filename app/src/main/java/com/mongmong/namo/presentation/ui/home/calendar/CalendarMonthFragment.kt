@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
@@ -116,8 +117,10 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
         }
         personalDailyScheduleAdapter.setDailyScheduleClickListener(object : DailyScheduleRVAdapter.PersonalScheduleClickListener {
             override fun onContentClicked(schedule: GetMonthScheduleResult) { // 아이템 전체 클릭
+                // 일정 편집 화면으로 이동
+                val scheduleJson = Gson().toJson(schedule.convertServerScheduleResponseToLocal())
                 val intent = Intent(context, ScheduleActivity::class.java)
-                intent.putExtra("schedule", schedule.convertServerScheduleResponseToLocal())
+                    .putExtra("schedule", scheduleJson)
                 requireActivity().startActivity(intent)
             }
 
@@ -215,11 +218,6 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
             arguments = Bundle().apply {
                 putLong(MILLIS, millis)
             }
-        }
-
-        @SuppressLint("SimpleDateFormat")
-        fun yearMonthDate(millis: Long): String {
-            return SimpleDateFormat("yyyy.MM").format(millis)
         }
     }
 }

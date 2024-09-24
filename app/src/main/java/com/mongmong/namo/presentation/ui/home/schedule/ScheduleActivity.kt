@@ -5,12 +5,14 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.google.gson.Gson
 import com.mongmong.namo.R
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.ActivityScheduleBinding
@@ -32,17 +34,19 @@ class ScheduleActivity : BaseActivity<ActivityScheduleBinding>(R.layout.activity
     private var alarmList : MutableList<Int> = mutableListOf()
 
     private var schedule : Schedule? = null
-
     private val viewModel : PersonalScheduleViewModel by viewModels()
 
     override fun setup() {
-        val schedule = intent.getSerializableExtra("schedule") as? Schedule
+        // intent가 넘어왔는지 확인
+        intent.getStringExtra("schedule")?.let { scheduleJson ->
+            // 넘어왔다면 song 인스턴스에 gson 형태로 받아온 데이터를 넣어줌
+            schedule = Gson().fromJson(scheduleJson, Schedule::class.java)
+            Log.e("ScheduleActivity", schedule.toString()) // 로그 확인
+        }
         val nowDay = intent.getLongExtra("nowDay", 0)
 
         if (schedule != null) {
             binding.scheduleDeleteBtn.visibility = View.VISIBLE
-            this.schedule = schedule
-            deleteClick()
         } else {
             binding.scheduleDeleteBtn.visibility = View.GONE
             binding.scheduleDeleteBtn.setOnClickListener {
@@ -55,10 +59,10 @@ class ScheduleActivity : BaseActivity<ActivityScheduleBinding>(R.layout.activity
         val slideAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up)
         binding.scheduleContainerLayout.startAnimation(slideAnimation)
 
-        clickListener()
+        initClickListeners()
     }
 
-    private fun clickListener() {
+    private fun initClickListeners() {
         binding.scheduleBackgroundLayout.setOnClickListener {
             finish()
         }
@@ -66,9 +70,7 @@ class ScheduleActivity : BaseActivity<ActivityScheduleBinding>(R.layout.activity
         binding.scheduleContainerLayout.setOnClickListener {
             return@setOnClickListener
         }
-    }
 
-    private fun deleteClick() {
         binding.scheduleDeleteBtn.setOnClickListener {
             showDialog()
         }
