@@ -79,7 +79,7 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
                     dailyParticipantScheduleAdapter.setClickedDate(date)
                     dailyFriendScheduleAdapter.setClickedDate(date)
 
-                    viewModel.clickDate(pos)
+                    viewModel.onClickCalendarDate(pos)
                     setDailySchedule()
 
                     if (viewModel.isCloseScheduleDetailBottomSheet()) {
@@ -137,7 +137,7 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
             return
         } else if (this@CommunityCalendarMonthFragment == CommunityCalendarActivity.currentFragment) {
             binding.communityCalendarMonthView.selectedDate = CommunityCalendarActivity.currentSelectedDate
-            viewModel.clickDate(CommunityCalendarActivity.currentSelectedPos!!)
+            viewModel.onClickCalendarDate(CommunityCalendarActivity.currentSelectedPos!!)
             setDailySchedule()
             binding.communityCalendarMotionLayout.transitionToEnd()
             viewModel.updateIsShow()

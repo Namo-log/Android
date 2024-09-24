@@ -13,6 +13,7 @@ import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.Location
 import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.domain.model.Period
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecases.FindCategoryUseCase
 import com.mongmong.namo.domain.usecases.GetCategoriesUseCase
@@ -42,22 +43,21 @@ class PersonalScheduleViewModel @Inject constructor(
 
     private val _categoryList = MutableLiveData<List<Category>>(emptyList())
     val categoryList: LiveData<List<Category>> = _categoryList
-
     private val _prevClickedPicker = MutableLiveData<TextView?>()
     var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
 
     private val _monthDayList = MutableLiveData<List<DateTime>>()
 
     // 클릭한 날짜 처리
-    private lateinit var _dailyScheduleList: List<GetMonthScheduleResult>
+    private val _clickedDateTime = MutableLiveData<DateTime>()
+    val clickedDateTime: LiveData<DateTime> = _clickedDateTime
+    private lateinit var _dailyScheduleList: List<GetMonthScheduleResult> // 하루 일정
 
     private val _isShow = MutableLiveData(false)
     var isShow: LiveData<Boolean> = _isShow
 
     private var _prevIndex = -1 // 클릭한 날짜의 index
     private var _nowIndex = 0 // 클릭한 날짜의 index
-
-    private lateinit var _clickedDatePair: Pair<Long, Long> // 클릭한 날짜의 시작, 종료 시간
 
     private val _isDailyScheduleEmptyPair = MutableLiveData<Pair<Boolean, Boolean>>()
     var isDailyScheduleEmptyPair: LiveData<Pair<Boolean, Boolean>> = _isDailyScheduleEmptyPair
@@ -182,8 +182,8 @@ class PersonalScheduleViewModel @Inject constructor(
     private fun setDailySchedule() {
         // 선택 날짜에 해당되는 일정 필터링
         _dailyScheduleList = _scheduleList.value!!.filter { schedule ->
-            schedule.startDate <= _clickedDatePair.second &&
-                    schedule.endDate >= _clickedDatePair.first
+            schedule.startDate <= getClickedDatePeriod().endDate &&
+                    schedule.endDate >= getClickedDatePeriod().startDate
         }
         _isDailyScheduleEmptyPair.value = Pair(
             isDailyScheduleEmpty(false), // 개인 일정
@@ -192,14 +192,18 @@ class PersonalScheduleViewModel @Inject constructor(
     }
 
     // 캘린더의 날짜 클릭
-    fun clickDate(index: Int) {
-        _nowIndex = index
-        // 클릭한 날짜의 시작, 종료 시간 저장
-        _clickedDatePair = Pair(
+    fun onClickCalendarDate(index: Int) {
+        _nowIndex = index // 클릭한 번호 저장
+        _clickedDateTime.value = getClickedDate() // 클릭한 날짜 저장
+        setDailySchedule()
+    }
+
+    private fun getClickedDatePeriod(): Period {
+        // 클릭한 날짜의 시작, 종료 시간
+        return Period(
             (getClickedDate().withTimeAtStartOfDay().millis) / 1000, // 날짜 시작일
             (getClickedDate().plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000, // 날짜 종료일
         )
-        setDailySchedule()
     }
 
     fun updateIsShow() {

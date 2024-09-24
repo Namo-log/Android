@@ -18,7 +18,6 @@ import com.mongmong.namo.presentation.ui.home.schedule.adapter.DailyScheduleRVAd
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.PersonalScheduleViewModel
 import com.mongmong.namo.presentation.utils.CustomCalendarView
-import com.mongmong.namo.presentation.utils.PickerConverter
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 import java.text.SimpleDateFormat
@@ -84,7 +83,7 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
                         personalDailyScheduleAdapter.setClickedDate(date)
                         groupDailyScheduleAdapter.setClickedDate(date)
 
-                        viewModel.clickDate(pos)
+                        viewModel.onClickCalendarDate(pos)
                         setDailySchedule()
 
                         if (viewModel.isCloseScheduleDetailBottomSheet()) {
@@ -202,7 +201,7 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
             return
         } else if (this@CalendarMonthFragment == HomeFragment.currentFragment) {
             binding.calendarMonthView.selectedDate = HomeFragment.currentSelectedDate
-            viewModel.clickDate(HomeFragment.currentSelectedPos!!)
+            viewModel.onClickCalendarDate(HomeFragment.currentSelectedPos!!)
             setDailySchedule()
             binding.constraintLayout.transitionToEnd()
             viewModel.updateIsShow()
