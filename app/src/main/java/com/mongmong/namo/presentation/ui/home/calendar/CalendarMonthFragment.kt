@@ -124,8 +124,8 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
 
             override fun onDiaryIconClicked(schedule: GetMonthScheduleResult, paletteId: Int) { // 기록 아이콘 클릭
                 if (schedule.isMeetingSchedule) return
-                val intent = Intent(context, PersonalDetailActivity::class.java)
-                intent.putExtra("schedule", schedule.convertServerScheduleResponseToLocal())
+                val intent = Intent(context, PersonalDiaryDetailActivity::class.java)
+                    .putExtra("scheduleId", schedule.scheduleId)
                 Log.d("CalendarMonthFragment onDiaryIconClicked", "$schedule")
                 requireActivity().startActivity(intent)
             }

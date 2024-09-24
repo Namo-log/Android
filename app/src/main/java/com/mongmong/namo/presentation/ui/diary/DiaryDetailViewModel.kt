@@ -70,7 +70,7 @@ class DiaryDetailViewModel @Inject constructor(
     }
 
     /** v1 */
-    private val _schedule = MutableLiveData<Schedule>(Schedule().getDefaultSchedule())
+    private val _schedule = MutableLiveData<Schedule>(Schedule())
     val schedule: LiveData<Schedule> = _schedule
 
     private var isInitialLoad = true
@@ -291,7 +291,7 @@ class DiaryDetailViewModel @Inject constructor(
             _category.value =
                 schedule.value?.let {
                     Log.d("findCategoryById", "${_schedule.value}")
-                    findCategoryUseCase.invoke(it.categoryId)
+                    findCategoryUseCase.invoke(it.categoryInfo.categoryId)
                 }
             Log.d("findCategoryById", "${_category.value}")
         }
