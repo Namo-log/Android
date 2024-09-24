@@ -9,12 +9,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.mongmong.namo.databinding.ItemGalleryListBinding
 import com.mongmong.namo.domain.model.DiaryImage
-import kotlinx.coroutines.*
 
-class MoimActivityGalleryAdapter(
+class MoimDiaryImagesRVAdapter(
     private val itemClickListener: () -> Unit,
     private val deleteImageClickListener: (DiaryImage) -> Unit
-) : RecyclerView.Adapter<MoimActivityGalleryAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<MoimDiaryImagesRVAdapter.ViewHolder>() {
 
     private val items: MutableList<DiaryImage> = mutableListOf()
 
@@ -34,9 +33,6 @@ class MoimActivityGalleryAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(items[position])
-        holder.itemView.setOnClickListener {
-            itemClickListener()
-        }
     }
 
     override fun getItemCount(): Int = items.size
@@ -54,6 +50,10 @@ class MoimActivityGalleryAdapter(
 
             binding.galleryDeleteBtn.setOnClickListener {
                 deleteImageClickListener(item)
+            }
+
+            binding.galleryImgIv.setOnClickListener {
+                itemClickListener()
             }
         }
     }

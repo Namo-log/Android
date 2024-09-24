@@ -42,13 +42,13 @@ class DiaryRepositoryImpl @Inject constructor(
     }
 
     /** 개인 기록 상세 조회 **/
-    override suspend fun getPersonalDiary(scheduleId: Long): DiaryDetail {
+    override suspend fun getDiary(scheduleId: Long): DiaryDetail {
         Log.d("DiaryRepositoryImpl getDiary", "$scheduleId")
-        return remoteDiaryDataSource.getPersonalDiary(scheduleId).result.toModel()
+        return remoteDiaryDataSource.getDiary(scheduleId).result.toModel()
     }
 
     /** 개인 기록 추가 **/
-    override suspend fun addPersonalDiary(
+    override suspend fun addDiary(
         content: String,
         enjoyRating: Int,
         images: List<String>,
@@ -59,7 +59,7 @@ class DiaryRepositoryImpl @Inject constructor(
     }
 
     /** 개인 기록 수정 **/
-    override suspend fun editPersonalDiary(
+    override suspend fun editDiary(
         diaryId: Long,
         content: String,
         enjoyRating: Int,
@@ -71,7 +71,7 @@ class DiaryRepositoryImpl @Inject constructor(
     }
 
     /** 개인 기록 삭제 **/
-    override suspend fun deletePersonalDiary(diaryId: Long): Boolean {
+    override suspend fun deleteDiary(diaryId: Long): Boolean {
         Log.d("DiaryRepositoryImpl deletePersonalDiary", "$diaryId")
         return remoteDiaryDataSource.deletePersonalDiary(diaryId).isSuccess
     }

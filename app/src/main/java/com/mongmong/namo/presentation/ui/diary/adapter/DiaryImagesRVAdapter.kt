@@ -1,6 +1,5 @@
 package com.mongmong.namo.presentation.ui.diary.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -12,10 +11,10 @@ import com.bumptech.glide.request.RequestOptions
 import com.mongmong.namo.databinding.ItemDiaryListGalleryBinding
 import com.mongmong.namo.domain.model.DiaryImage
 
-class DiaryGalleryRVAdapter(
+class DiaryImagesRVAdapter(
     private val imgList: List<DiaryImage>,
     private val imageClickListener: (List<DiaryImage>) -> Unit
-) : RecyclerView.Adapter<DiaryGalleryRVAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<DiaryImagesRVAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val binding: ItemDiaryListGalleryBinding = ItemDiaryListGalleryBinding.inflate(

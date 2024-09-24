@@ -4,11 +4,10 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.databinding.ItemDiaryGroupMembersBinding
-import com.mongmong.namo.domain.model.group.MoimActivity
+import com.mongmong.namo.databinding.ItemMoimDiaryParticipantsBinding
 import com.mongmong.namo.domain.model.group.MoimScheduleMember
 
-class MoimMemberRVAdapter() : RecyclerView.Adapter<MoimMemberRVAdapter.ViewHolder>() {
+class MoimParticipantsRVAdapter() : RecyclerView.Adapter<MoimParticipantsRVAdapter.ViewHolder>() {
     private val members = mutableListOf<MoimScheduleMember>()
     @SuppressLint("NotifyDataSetChanged")
     fun submitList(newMembers: List<MoimScheduleMember>) {
@@ -17,7 +16,7 @@ class MoimMemberRVAdapter() : RecyclerView.Adapter<MoimMemberRVAdapter.ViewHolde
         notifyDataSetChanged()
     }
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val binding: ItemDiaryGroupMembersBinding = ItemDiaryGroupMembersBinding.inflate(
+        val binding: ItemMoimDiaryParticipantsBinding = ItemMoimDiaryParticipantsBinding.inflate(
             LayoutInflater.from(viewGroup.context), viewGroup, false
         )
         return ViewHolder(binding)
@@ -30,7 +29,7 @@ class MoimMemberRVAdapter() : RecyclerView.Adapter<MoimMemberRVAdapter.ViewHolde
 
     override fun getItemCount(): Int = members.size
 
-    inner class ViewHolder(val binding: ItemDiaryGroupMembersBinding) :
+    inner class ViewHolder(val binding: ItemMoimDiaryParticipantsBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(member: MoimScheduleMember) {
             binding.peopleNameTv.text = member.userName

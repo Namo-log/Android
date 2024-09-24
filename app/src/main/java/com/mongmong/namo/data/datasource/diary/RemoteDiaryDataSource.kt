@@ -9,7 +9,6 @@ import com.mongmong.namo.data.dto.EditDiaryRequest
 import com.mongmong.namo.data.dto.GetCalendarDiaryResponse
 import com.mongmong.namo.data.dto.GetCalendarDiaryResult
 import com.mongmong.namo.data.dto.GetDiaryByDateResponse
-import com.mongmong.namo.data.dto.GetDiaryByDateResult
 import com.mongmong.namo.data.dto.GetPersonalDiaryResponse
 import com.mongmong.namo.data.dto.GetPersonalDiaryResult
 import com.mongmong.namo.data.dto.GetScheduleForDiaryResponse
@@ -59,7 +58,7 @@ class RemoteDiaryDataSource @Inject constructor(
     }
 
     /** 개인 기록 조회 */
-    suspend fun getPersonalDiary(scheduleId: Long): GetPersonalDiaryResponse {
+    suspend fun getDiary(scheduleId: Long): GetPersonalDiaryResponse {
         var response = GetPersonalDiaryResponse(
             result = GetPersonalDiaryResult(
                 content = "", // 빈 문자열

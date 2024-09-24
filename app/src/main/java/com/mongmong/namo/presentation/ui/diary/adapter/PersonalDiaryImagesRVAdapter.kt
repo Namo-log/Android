@@ -10,11 +10,10 @@ import com.bumptech.glide.request.RequestOptions
 import com.mongmong.namo.databinding.ItemGalleryListBinding
 import com.mongmong.namo.domain.model.DiaryImage
 
-class GalleryImageRVAdapter(
-    private val isMoimMemo: Boolean,
+class PersonalDiaryImagesRVAdapter(
     val deleteClickListener: (diaryImage: DiaryImage) -> Unit,
     val imageClickListener: (List<DiaryImage>) -> Unit
-) : RecyclerView.Adapter<GalleryImageRVAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<PersonalDiaryImagesRVAdapter.ViewHolder>() {
 
     private val items = ArrayList<DiaryImage>()
 
@@ -38,24 +37,26 @@ class GalleryImageRVAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA)
-        Glide.with(holder.binding.galleryImgIv.context)
-            .load(items[position].imageUrl)
-            .apply(requestOptions)
-            .into(holder.binding.galleryImgIv)
-
-        holder.binding.galleryDeleteBtn.visibility = if (isMoimMemo) View.GONE else View.VISIBLE
-
-        holder.binding.galleryDeleteBtn.setOnClickListener {
-            removeImage(position)
-        }
-
-        holder.binding.galleryImgIv.setOnClickListener {
-            imageClickListener(items)
-        }
+        holder.bind(items[position])
     }
 
     override fun getItemCount(): Int = items.size
 
-    inner class ViewHolder(val binding: ItemGalleryListBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val binding: ItemGalleryListBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(image: DiaryImage) {
+            val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA)
+            Glide.with(binding.galleryImgIv.context)
+                .load(image.imageUrl)
+                .apply(requestOptions)
+                .into(binding.galleryImgIv)
+
+            binding.galleryDeleteBtn.setOnClickListener {
+                removeImage(bindingAdapterPosition)
+            }
+
+            binding.galleryImgIv.setOnClickListener {
+                imageClickListener(items)
+            }
+        }
+    }
 }

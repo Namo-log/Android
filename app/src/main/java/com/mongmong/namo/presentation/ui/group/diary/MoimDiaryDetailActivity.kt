@@ -6,43 +6,39 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import android.view.MotionEvent
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMoimDiaryDetailBinding
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.group.MoimActivity
-import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.presentation.ui.diary.DiaryImageDetailActivity
 import com.mongmong.namo.presentation.ui.diary.PersonalDiaryDetailActivity
-import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityItemDecoration
-import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimActivityRVAdapter
-import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimMemberRVAdapter
-import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.dpToPx
+import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimDiaryVPAdapter
+import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimParticipantsRVAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.PermissionChecker
 import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.NumberFormat
-import java.util.Locale
+import java.util.ArrayList
 
 
 @AndroidEntryPoint
 class MoimDiaryDetailActivity :
     BaseActivity<ActivityMoimDiaryDetailBinding>(R.layout.activity_moim_diary_detail),
     ConfirmDialogInterface {  // 그룹 다이어리 추가, 수정, 삭제 화면
-    private lateinit var memberAdapter: MoimMemberRVAdapter  // 그룹 멤버 리스트 보여주기
-    private lateinit var activityAdapter: MoimActivityRVAdapter // 각 장소 item
+    private lateinit var participantsAdapter: MoimParticipantsRVAdapter  // 일정 참여자
+    private lateinit var vpAdapter: MoimDiaryVPAdapter // 각 활동 item
 
     private var positionForGallery: Int = -1
     private val viewModel: MoimDiaryViewModel by viewModels()
@@ -55,70 +51,85 @@ class MoimDiaryDetailActivity :
             moimDiaryTitleTv.isSelected = true
         }
 
-        initView()
-        onClickListener()
+        setupParticipants()
+        setupViewPager()
+        setupScheduleData()
+        initClickListener()
         initObserve()
     }
 
-    private fun initView() {
-        viewModel.moimScheduleId = intent.getLongExtra("moimScheduleId", 0L)
-        viewModel.isEdit.value = intent.getBooleanExtra("hasMoimActivity", false)
-        if (viewModel.isEdit.value == false) {
-            viewModel.setNewMoimDiary(intent?.getSerializableExtra("moimSchedule") as MoimScheduleBody)
-        } else {
-            viewModel.getMoimDiary(viewModel.moimScheduleId)
-        }
-        setRecyclerView()
+    private fun setupScheduleData() {
+        viewModel.getScheduleForDiary(intent.getLongExtra("scheduleId", 0))
+        setCreateOrEdit()
     }
 
-    private fun onClickListener() {
-        // 뒤로가기
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (viewModel.isDiaryChanged()) {
-                    showBackDialog()
-                } else finish()
+    private fun setCreateOrEdit() {
+        if (viewModel.diarySchedule.value?.hasDiary == false) {
+            Log.d("setCreateOrEdit", "dd")
+            viewModel.setNewDiary()
+        } else {  // 기록 있을 때, 수정
+            Log.d("setCreateOrEdit", "dd2")
+            viewModel.getDiary()
+        }
+    }
+
+
+    private fun setupParticipants() {
+        binding.moimParticipantRv.apply {
+            participantsAdapter = MoimParticipantsRVAdapter()
+            adapter = participantsAdapter
+            layoutManager =
+                LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
+        }
+    }
+
+    private fun setupViewPager() {
+        vpAdapter = MoimDiaryVPAdapter(
+            diaryEventListener = object : MoimDiaryVPAdapter.OnDiaryEventListener{
+                override fun onImageClicked(images: List<DiaryImage>) {
+                    startActivity(
+                        Intent(this@MoimDiaryDetailActivity, DiaryImageDetailActivity::class.java)
+                            .putStringArrayListExtra("imgs", images.map { it.imageUrl } as ArrayList<String>)
+                    )
+                }
+                override fun onContentChanged(content: String) { viewModel.updateContent(content) }
+                override fun onEnjoyClicked(enjoyRating: Int) { viewModel.updateEnjoy(enjoyRating) }
+                override fun onDeleteImage(image: DiaryImage) { viewModel.deleteDiaryImage(image) }
+
+            },
+            activityEventListener = object : MoimDiaryVPAdapter.OnActivityEventListener {
+                override fun onDeleteActivity() {
+                    //viewModel.deleteActivity()
+                }
+
+                override fun onUpdateImage(position: Int) {
+                    // 이미지 업데이트 처리
+                }
+
+                override fun onActivityNameChanged(name: String, position: Int) {
+                    viewModel.updateActivityName(position, name)
+                }
+
+                // 기타 콜백 구현
             }
-        })
-        binding.moimDiaryBackIv.setOnClickListener {
-            if (viewModel.isDiaryChanged()) {
-                showBackDialog()
-            } else finish()
+        )
+
+        // ViewPager2에 어댑터 연결
+        binding.moimDiaryVp.apply {
+            adapter = vpAdapter
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL
         }
 
-        //  장소 추가 버튼 클릭리스너
-        binding.moimActivityAddLy.setOnClickListener {
-            if (viewModel.activities.value?.size ?: 0 >= 3)
-                Toast.makeText(this, "장소 추가는 3개까지 가능합니다", Toast.LENGTH_SHORT).show()
-            else {
-                viewModel.addActivity(MoimActivity(0L, "", 0L, arrayListOf(), arrayListOf()))
-            }
-        }
-
-        // 기록 추가 or 기록 수정
-        binding.moimDiarySaveBtn.setOnClickListener {
-            if (viewModel.activities.value?.any { it.name.isEmpty() } == false) {
-                viewModel.patchMoimActivities()
-            } else {
-                Toast.makeText(this@MoimDiaryDetailActivity, "장소를 입력해주세요!", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        // 기록 삭제
-        binding.moimDiaryDeleteIv.setOnClickListener {
-            showDeleteDialog()
-        }
+        binding.moimDiaryIndicator.setViewPager(binding.moimDiaryVp)
     }
 
     private fun initObserve() {
-        viewModel.moimDiary.observe(this) { result ->
-            // 초기화된 어댑터에 데이터 전달
-            activityAdapter.submitList(result.moimActivities)
-            memberAdapter.submitList(result.users)
+        viewModel.diary.observe(this) { diary ->
+            vpAdapter.updateDiary(diary)
         }
 
         viewModel.activities.observe(this) { activities ->
-            activityAdapter.submitList(activities)
+            vpAdapter.submitActivities(activities)
         }
 
         viewModel.patchActivitiesComplete.observe(this) { isComplete ->
@@ -138,61 +149,43 @@ class MoimDiaryDetailActivity :
         }
     }
 
-    private fun setRecyclerView() {
-        // 멤버 이름 리사이클러뷰
-        binding.moimParticipantRv.apply {
-            memberAdapter = MoimMemberRVAdapter()
-            adapter = memberAdapter
-            layoutManager =
-                LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
-        }
-        // 장소 추가 리사이클러뷰
-        activityAdapter = MoimActivityRVAdapter(
-            payClickListener = ::onPayClickListener,
-            imageDetailClickListener = { position ->
-                positionForGallery = position
-                startActivity(
-                    Intent(this, DiaryImageDetailActivity::class.java).apply {
-                        putExtra("imgs", viewModel.activities.value?.get(position)?.images as ArrayList<DiaryImage>?)
-                    }
-                )
-            },
-            updateImageClickListener = { position ->
-                positionForGallery = position
-                getGallery()
-            },
-            activityNameTextWatcher = { text, position ->
-                viewModel.updateActivityName(position, text)
-            },
-            deleteActivityClickListener = { activityId ->
-                viewModel.deleteActivity(activityId)
-            },
-            deleteImageClickListener = { position, image ->
-                viewModel.deleteActivityImage(position, image)
+    private fun initClickListener() {
+        // 뒤로가기
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (viewModel.diaryChanged.value == true) {
+                    showBackDialog()
+                } else finish()
             }
-        )
-
-        binding.moimParticipantRv.apply {
-            adapter = activityAdapter
-            layoutManager =
-                LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-            addItemDecoration(MoimActivityItemDecoration(dpToPx(context, 25f)))
+        })
+        binding.moimDiaryBackIv.setOnClickListener {
+            if (viewModel.diaryChanged.value == true) {
+                showBackDialog()
+            } else finish()
         }
 
-    }
-
-    private fun onPayClickListener(pay: Long, position: Int, payText: TextView) {
-        GroupPayDialog(
-            viewModel.moimDiary.value?.users ?: emptyList(),
-            viewModel.activities.value?.get(position)!!,
-            { updatedPay ->
-                viewModel.updateActivityPay(position, updatedPay)
-                payText.text = NumberFormat.getNumberInstance(Locale.US).format(updatedPay)
-            },
-            { updatedMembers ->
-                viewModel.updateActivityMembers(position, updatedMembers)
+        //  활동 추가 버튼 클릭리스너
+        binding.moimActivityAddLy.setOnClickListener {
+            if (viewModel.activities.value?.size ?: 0 >= 3)
+                Toast.makeText(this, "활동 추가는 3개까지 가능합니다", Toast.LENGTH_SHORT).show()
+            else {
+                viewModel.addActivity(MoimActivity(0L, "", 0L, arrayListOf(), arrayListOf()))
             }
-        ).show(supportFragmentManager, "show")
+        }
+
+        // 기록 추가 or 기록 수정
+        binding.moimDiarySaveBtn.setOnClickListener {
+            if (viewModel.activities.value?.any { it.name.isEmpty() } == false) {
+                viewModel.patchMoimActivities()
+            } else {
+                Toast.makeText(this@MoimDiaryDetailActivity, "장소를 입력해주세요!", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // 기록 삭제
+        binding.moimDiaryDeleteIv.setOnClickListener {
+            showDeleteDialog()
+        }
     }
 
     private fun showDeleteDialog() {
@@ -215,7 +208,7 @@ class MoimDiaryDetailActivity :
 
     override fun onClickYesButton(id: Int) {
         when(id) {
-            PersonalDiaryDetailActivity.DELETE_BUTTON_ACTION -> viewModel.deleteMoimDiary() // 삭제
+            PersonalDiaryDetailActivity.DELETE_BUTTON_ACTION -> viewModel.deleteDiary() // 삭제
             PersonalDiaryDetailActivity.BACK_BUTTON_ACTION -> finish() // 뒤로가기
         }
     }

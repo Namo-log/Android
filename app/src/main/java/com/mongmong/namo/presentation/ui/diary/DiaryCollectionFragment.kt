@@ -11,10 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentDiaryCollectionBinding
 import com.mongmong.namo.domain.model.Diary
-import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.state.FilterType
 import com.mongmong.namo.presentation.ui.diary.adapter.DiaryRVAdapter
+import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -53,8 +53,7 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
 
     private fun getDiaries() {
         val adapter = DiaryRVAdapter(
-            personalEditClickListener = ::onPersonalEditClickListener,
-            moimEditClickListener = ::onMoimEditClickListener ,
+            detailClickListener = ::onDetailClickListener,
             participantClickListener = ::onParticipantClickListener,
             imageClickListener = { images ->
                 startActivity(
@@ -110,21 +109,16 @@ class DiaryCollectionFragment: BaseFragment<FragmentDiaryCollectionBinding>(R.la
         }
     }
 
-    private fun onPersonalEditClickListener(item: Diary) {
-        Log.d("onPersonalEditClickListener", "${item.scheduleId}")
+    private fun onDetailClickListener(item: Diary) {
+        Log.d("onPersonalEditClickListener", "${item.scheduleType}")
+
         startActivity(
-            Intent(requireContext(), PersonalDiaryDetailActivity::class.java)
+            Intent(requireContext(),
+                if(item.scheduleType == 0) PersonalDiaryDetailActivity::class.java else MoimDiaryDetailActivity::class.java)
                 .putExtra("scheduleId", item.scheduleId)
         )
     }
 
-    private fun onMoimEditClickListener(item: Diary) {
-        Log.d("onMoimEditClickListener", "${item.scheduleId}")
-        startActivity(
-            Intent(requireContext(), PersonalDiaryDetailActivity::class.java)
-                .putExtra("scheduleId", item.scheduleId)
-        )
-    }
     private fun onParticipantClickListener(participantsCount: Int, participantNames: String) {
         DiaryParticipantDialog(participantsCount, participantNames).show(parentFragmentManager, "ParticipantDialog")
     }

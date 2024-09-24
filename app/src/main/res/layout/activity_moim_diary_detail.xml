@@ -50,7 +50,7 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="@{viewModel.moimDiary.name}"
+                android:text="@{viewModel.diarySchedule.title}"
                 android:textAlignment="center"
                 app:layout_constraintBottom_toBottomOf="@id/moim_diary_back_iv"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -104,7 +104,7 @@
                         android:layout_height="wrap_content"
                         android:elevation="5dp"
                         android:includeFontPadding="false"
-                        android:text="@{DiaryDateConverter.toMMM(viewModel.moimDiary.name)}"
+                        android:text="@{DiaryDateConverter.toMMM(viewModel.diarySchedule.date)}"
                         app:layout_constraintBottom_toTopOf="@id/moim_diary_today_num_tv"
                         app:layout_constraintEnd_toEndOf="@id/moim_diary_date_circle_iv"
                         app:layout_constraintStart_toStartOf="@id/moim_diary_date_circle_iv"
@@ -118,7 +118,7 @@
                         android:layout_height="wrap_content"
                         android:elevation="5dp"
                         android:includeFontPadding="false"
-                        android:text="@{DiaryDateConverter.toDD(viewModel.moimDiary.name)}"
+                        android:text="@{DiaryDateConverter.toDD(viewModel.diarySchedule.date)}"
                         android:textSize="36sp"
                         app:layout_constraintBottom_toBottomOf="@id/moim_diary_date_circle_iv"
                         app:layout_constraintEnd_toEndOf="@id/moim_diary_date_circle_iv"
@@ -143,7 +143,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
-                        android:text="@{DiaryDateConverter.toFullDateTimeWithDay(viewModel.moimDiary.name)}"
+                        android:text="@{DiaryDateConverter.toFullDateTimeWithDay(viewModel.diarySchedule.date)}"
                         app:layout_constraintStart_toEndOf="@id/moim_diary_date_tv"
                         app:layout_constraintTop_toTopOf="@id/moim_diary_date_tv" />
 
@@ -166,7 +166,7 @@
                         android:layout_marginEnd="30dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="@{viewModel.moimDiary.locationName}"
+                        android:text="@{viewModel.diarySchedule.location}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/moim_diary_place_tv"
                         app:layout_constraintTop_toTopOf="@id/moim_diary_place_tv" />
@@ -178,7 +178,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="25dp"
                         android:layout_marginTop="20dp"
-                        android:text='@{@string/diary_attendee + "("+ viewModel.moimDiary.users.size + ")"}'
+                        android:text='@{@string/diary_attendee}'
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/moim_diary_date_circle_iv" />
 
@@ -237,7 +237,8 @@
                     android:layout_marginHorizontal="25dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/bg_basic_item"
-                    android:elevation="5dp"
+                    android:backgroundTint="@color/white"
+                    android:elevation="3dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -263,10 +264,12 @@
                 </LinearLayout>
 
                 <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/moim_diary_vp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
                 <me.relex.circleindicator.CircleIndicator3
+                    android:id="@+id/moim_diary_indicator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

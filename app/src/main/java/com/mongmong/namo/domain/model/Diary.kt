@@ -148,13 +148,34 @@ data class DiaryImage(
     val orderNumber: Int
 )
 
-data class DiaryDetail(
-    var content: String,
+class DiaryDetail(
+    content: String,
     val diaryId: Long,
-    var diaryImages: List<DiaryImage>,
-    var enjoyRating: Int
-) : BaseObservable()
+    diaryImages: List<DiaryImage>,
+    enjoyRating: Int
+) : BaseObservable() {
 
+    @get:Bindable
+    var content: String = content
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.content)
+        }
+
+    @get:Bindable
+    var diaryImages: List<DiaryImage> = diaryImages
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.diaryImages)
+        }
+
+    @get:Bindable
+    var enjoyRating: Int = enjoyRating
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.enjoyRating)
+        }
+}
 
 data class ScheduleForDiary(
     val scheduleId: Long = 0,

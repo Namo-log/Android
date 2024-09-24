@@ -14,16 +14,16 @@ import kotlinx.coroutines.flow.Flow
 
 interface DiaryRepository {
     suspend fun getScheduleForDiary(scheduleId: Long): ScheduleForDiary
-    suspend fun getPersonalDiary(localId: Long): DiaryDetail
+    suspend fun getDiary(scheduleId: Long): DiaryDetail
 
-    suspend fun addPersonalDiary(
+    suspend fun addDiary(
         content: String,
         enjoyRating: Int,
         images: List<String>,
         scheduleId: Long
     ): Boolean
 
-    suspend fun editPersonalDiary(
+    suspend fun editDiary(
         diaryId: Long,
         content: String,
         enjoyRating: Int,
@@ -31,7 +31,7 @@ interface DiaryRepository {
         deleteImageIds: List<Long>
     ): Boolean
 
-    suspend fun deletePersonalDiary(
+    suspend fun deleteDiary(
         diaryId: Long
     ): Boolean
 
