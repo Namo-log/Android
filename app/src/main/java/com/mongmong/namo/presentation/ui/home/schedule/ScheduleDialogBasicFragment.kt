@@ -19,9 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
@@ -31,15 +29,11 @@ import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
-import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.mongmong.namo.presentation.config.BaseFragment
-import com.mongmong.namo.presentation.ui.diary.MoimMemoDetailActivity
 import com.mongmong.namo.presentation.ui.diary.PersonalDiaryDetailActivity
-import com.mongmong.namo.presentation.utils.PickerConverter
 import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedTime
 import dagger.hilt.android.AndroidEntryPoint
-import org.joda.time.DateTime
 
 @AndroidEntryPoint
 class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBinding>(R.layout.fragment_schedule_dialog_basic) {

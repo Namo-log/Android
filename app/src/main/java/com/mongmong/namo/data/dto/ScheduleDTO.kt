@@ -1,10 +1,8 @@
-package com.mongmong.namo.domain.model
+package com.mongmong.namo.data.dto
 
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
-import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.presentation.state.RoomState
-import com.mongmong.namo.presentation.state.UploadState
+import com.mongmong.namo.domain.model.Schedule
 
 // 캘린더에 표시되는 색상 정보 (친구: 카테고리 정보, 참석자: 색상 & 이름)
 data class CalendarColorInfo(
@@ -28,7 +26,7 @@ data class GetMonthScheduleResult (
     val startDate : Long,
     val endDate : Long,
     val alarmDate : List<Int>,
-    val locationInfo: Location,
+    val locationInfo: ScheduleLocation,
     val categoryInfo : ScheduleCategoryInfo,
     val hasDiary : Boolean?,
     val isMeetingSchedule : Boolean,
@@ -64,7 +62,7 @@ data class ScheduleRequestBody(
     var title: String = "",
     var categoryId: Long = 0L,
     var period: Period,
-    var location: Location,
+    var location: ScheduleLocation,
     var reminderTrigger: List<Int>? = listOf(), //TODO: String으로 변경
 )
 
@@ -73,7 +71,7 @@ data class Period(
     var endDate: Long = 0L,
 )
 
-data class Location(
+data class ScheduleLocation(
     var longitude: Double = 0.0, // 경도
     var latitude: Double = 0.0, // 위도
     var locationName: String = "없음",

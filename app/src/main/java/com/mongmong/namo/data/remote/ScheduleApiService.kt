@@ -1,12 +1,12 @@
 package com.mongmong.namo.data.remote
 
-import com.mongmong.namo.domain.model.DeleteScheduleResponse
-import com.mongmong.namo.domain.model.GetMonthScheduleResponse
-import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
-import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
-import com.mongmong.namo.domain.model.PostScheduleResponse
-import com.mongmong.namo.domain.model.ScheduleDefaultResponse
-import com.mongmong.namo.domain.model.ScheduleRequestBody
+import com.mongmong.namo.data.dto.DeleteScheduleResponse
+import com.mongmong.namo.data.dto.GetMonthScheduleResponse
+import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
+import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.data.dto.PostScheduleResponse
+import com.mongmong.namo.data.dto.ScheduleDefaultResponse
+import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.Call
 import retrofit2.http.Body

@@ -2,12 +2,13 @@ package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
-import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.data.remote.NetworkChecker
-import com.mongmong.namo.domain.model.GetMonthScheduleResult
-import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
-import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
-import com.mongmong.namo.domain.model.ScheduleRequestBody
+import com.mongmong.namo.data.dto.GetMonthScheduleResult
+import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
+import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.data.dto.ScheduleRequestBody
+import com.mongmong.namo.data.utils.mappers.ScheduleMapper.toModel
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
@@ -21,8 +22,10 @@ class ScheduleRepositoryImpl @Inject constructor(
 ) : ScheduleRepository {
 
     /** 개인 */
-    override suspend fun getMonthSchedules(year: Int, month: Int): List<GetMonthScheduleResult> {
-        return remoteScheduleDataSource.getMonthSchedules(year, month)
+    override suspend fun getMonthSchedules(year: Int, month: Int): List<Schedule> {
+        return remoteScheduleDataSource.getMonthSchedules(year, month).result.map { scheduleData ->
+            scheduleData.toModel() // DTO를 도메인 모델로 변환
+        }
     }
 
     override suspend fun getDailySchedules(startDate: Long, endDate: Long): List<Schedule> {

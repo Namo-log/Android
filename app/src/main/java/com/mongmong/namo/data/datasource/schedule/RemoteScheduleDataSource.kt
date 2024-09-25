@@ -4,16 +4,16 @@ import android.util.Log
 import com.mongmong.namo.data.remote.group.GroupScheduleApiService
 import com.mongmong.namo.data.remote.ScheduleApiService
 import com.mongmong.namo.domain.model.group.AddMoimScheduleResponse
-import com.mongmong.namo.domain.model.DeleteScheduleResponse
+import com.mongmong.namo.data.dto.DeleteScheduleResponse
 import com.mongmong.namo.domain.model.group.GetMoimScheduleResponse
-import com.mongmong.namo.domain.model.GetMonthScheduleResponse
-import com.mongmong.namo.domain.model.GetMonthScheduleResult
-import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
-import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.data.dto.GetMonthScheduleResponse
+import com.mongmong.namo.data.dto.GetMonthScheduleResult
+import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
+import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
-import com.mongmong.namo.domain.model.PostScheduleResponse
-import com.mongmong.namo.domain.model.ScheduleDefaultResponse
-import com.mongmong.namo.domain.model.ScheduleRequestBody
+import com.mongmong.namo.data.dto.PostScheduleResponse
+import com.mongmong.namo.data.dto.ScheduleDefaultResponse
+import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.presentation.config.BaseResponse
@@ -29,7 +29,7 @@ class RemoteScheduleDataSource @Inject constructor(
     suspend fun getMonthSchedules(
         year: Int,
         month: Int
-    ): List<GetMonthScheduleResult> {
+    ): GetMonthScheduleResponse {
         var scheduleResponse = GetMonthScheduleResponse(result = emptyList())
         withContext(Dispatchers.IO) {
             runCatching {
@@ -41,7 +41,7 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "getMonthSchedules Success $it")
             }
         }
-        return scheduleResponse.result
+        return scheduleResponse
     }
 
     suspend fun addScheduleToServer(

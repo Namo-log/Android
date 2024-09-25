@@ -2,8 +2,6 @@ package com.mongmong.namo.domain.model.group
 
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
-import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.domain.model.GetMonthScheduleResult
 import java.io.Serializable
 
 /** 그룹 리스트 조회 */

@@ -2,8 +2,6 @@ package com.mongmong.namo.data.local.dao
 
 import androidx.room.*
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.domain.model.DiarySchedule
-import com.mongmong.namo.data.local.entity.home.Schedule
 
 @Dao
 interface DiaryDao {

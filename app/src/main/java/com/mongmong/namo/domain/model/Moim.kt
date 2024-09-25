@@ -1,5 +1,6 @@
 package com.mongmong.namo.domain.model
 
+import com.mongmong.namo.data.dto.CalendarColorInfo
 import com.mongmong.namo.domain.model.group.GroupMember
 import com.mongmong.namo.presentation.utils.PickerConverter
 import org.joda.time.DateTime

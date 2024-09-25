@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemScheduleColorInfoBinding
-import com.mongmong.namo.domain.model.CalendarColorInfo
+import com.mongmong.namo.data.dto.CalendarColorInfo
 
 class CalendarScheduleColorInfoRVAdapter(
     private val colorInfoList : List<CalendarColorInfo>

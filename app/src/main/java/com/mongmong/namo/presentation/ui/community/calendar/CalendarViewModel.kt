@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.domain.model.Friend
 import com.mongmong.namo.domain.model.Moim
-import com.mongmong.namo.domain.model.Period
+import com.mongmong.namo.data.dto.Period
 import com.mongmong.namo.domain.model.group.GroupMember
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.presentation.utils.PickerConverter

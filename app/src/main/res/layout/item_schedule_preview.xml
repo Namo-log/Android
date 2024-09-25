@@ -8,7 +8,7 @@
         <import type="android.view.View"/>
         <variable
             name="schedule"
-            type="com.mongmong.namo.domain.model.GetMonthScheduleResult"/>
+            type="com.mongmong.namo.domain.model.Schedule"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

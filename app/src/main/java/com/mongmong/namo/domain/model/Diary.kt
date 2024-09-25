@@ -1,14 +1,11 @@
 package com.mongmong.namo.domain.model
 
-import android.util.Log
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 import com.mongmong.namo.BR
-import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.presentation.state.RoomState
-import com.mongmong.namo.presentation.state.UploadState
 import java.util.Calendar
 
 data class PersonalDiary(
@@ -96,19 +93,7 @@ data class DiarySchedule(
     var categoryServerId: Long = 0L,
     var color: Int = 1,
     var isHeader: Boolean = false
-) {
-    fun convertToSchedule() = Schedule(
-        this.scheduleId,
-        this.title,
-        this.startDate,
-        0L,
-        Location(locationName = this.place),
-        ScheduleCategoryInfo(this.categoryId, color, "", false),
-        emptyList(),
-        true,
-        false
-    )
-}
+)
 
 /** v2 Model (ui 레이어에서 비즈니스 로직에서 사용)*/
 data class Diary(

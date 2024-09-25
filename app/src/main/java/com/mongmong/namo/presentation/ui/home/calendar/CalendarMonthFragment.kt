@@ -9,7 +9,8 @@ import com.google.gson.Gson
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
-import com.mongmong.namo.domain.model.GetMonthScheduleResult
+import com.mongmong.namo.data.dto.GetMonthScheduleResult
+import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.diary.MoimMemoDetailActivity
 import com.mongmong.namo.presentation.ui.diary.PersonalDiaryDetailActivity
@@ -114,15 +115,15 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
         personalDailyScheduleAdapter.setDailyScheduleClickListener(object : DailyScheduleRVAdapter.PersonalScheduleClickListener {
-            override fun onContentClicked(schedule: GetMonthScheduleResult) { // 아이템 전체 클릭
+            override fun onContentClicked(schedule: Schedule) { // 아이템 전체 클릭
                 // 일정 편집 화면으로 이동
-                val scheduleJson = Gson().toJson(schedule.convertServerScheduleResponseToLocal())
+                val scheduleJson = Gson().toJson(schedule)
                 val intent = Intent(context, ScheduleActivity::class.java)
                     .putExtra("schedule", scheduleJson)
                 requireActivity().startActivity(intent)
             }
 
-            override fun onDiaryIconClicked(schedule: GetMonthScheduleResult, paletteId: Int) { // 기록 아이콘 클릭
+            override fun onDiaryIconClicked(schedule: Schedule, paletteId: Int) { // 기록 아이콘 클릭
                 if (schedule.isMeetingSchedule) return
                 val intent = Intent(context, PersonalDiaryDetailActivity::class.java)
                     .putExtra("scheduleId", schedule.scheduleId)
@@ -138,13 +139,14 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
         }
 
         groupDailyScheduleAdapter.setDailyScheduleClickListener(object : DailyScheduleRVAdapter.PersonalScheduleClickListener {
-            override fun onContentClicked(schedule: GetMonthScheduleResult) { // 아이템 전체 클릭
+            override fun onContentClicked(schedule: Schedule) { // 아이템 전체 클릭
+                val scheduleJson = Gson().toJson(schedule)
                 requireActivity().startActivity(Intent(context, ScheduleActivity::class.java)
-                    .putExtra("schedule", schedule.convertServerScheduleResponseToLocal())
+                    .putExtra("schedule", scheduleJson)
                 )
             }
 
-            override fun onDiaryIconClicked(schedule: GetMonthScheduleResult, paletteId: Int) { // 기록 아이콘 클릭
+            override fun onDiaryIconClicked(schedule: Schedule, paletteId: Int) { // 기록 아이콘 클릭
                 if (!schedule.isMeetingSchedule) return
                 requireActivity().startActivity(
                     Intent(context, MoimMemoDetailActivity::class.java)
@@ -196,7 +198,7 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
         }
     }
 
-    private fun drawMonthCalendar(scheduleList: List<GetMonthScheduleResult>) {
+    private fun drawMonthCalendar(scheduleList: List<Schedule>) {
         binding.calendarMonthView.setScheduleList(scheduleList)
         if (HomeFragment.currentFragment == null) {
             return

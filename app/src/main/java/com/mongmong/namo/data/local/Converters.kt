@@ -2,7 +2,7 @@ package com.mongmong.namo.data.local
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson
-import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.domain.model.Schedule
 
 class StringListConverters {
     @TypeConverter

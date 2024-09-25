@@ -2,14 +2,12 @@ package com.mongmong.namo.presentation.ui.diary
 
 import android.net.Uri
 import android.util.Log
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mongmong.namo.domain.model.PersonalDiary
 import com.mongmong.namo.domain.model.Category
-import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.MoimDiary

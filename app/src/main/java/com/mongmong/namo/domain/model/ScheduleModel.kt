@@ -1,9 +1,9 @@
-package com.mongmong.namo.data.local.entity.home
+package com.mongmong.namo.domain.model
 
-import com.mongmong.namo.domain.model.Location
-import com.mongmong.namo.domain.model.Period
-import com.mongmong.namo.domain.model.ScheduleCategoryInfo
-import com.mongmong.namo.domain.model.ScheduleRequestBody
+import com.mongmong.namo.data.dto.Period
+import com.mongmong.namo.data.dto.ScheduleCategoryInfo
+import com.mongmong.namo.data.dto.ScheduleLocation
+import com.mongmong.namo.data.dto.ScheduleRequestBody
 import java.io.Serializable
 
 data class Schedule(
@@ -11,7 +11,7 @@ data class Schedule(
     var title: String = "",
     var startLong: Long = 0,
     var endLong: Long = 0,
-    var locationInfo: Location = Location(),
+    var locationInfo: ScheduleLocation = ScheduleLocation(),
     var categoryInfo: ScheduleCategoryInfo = ScheduleCategoryInfo(),
     var alarmList: List<Int>? = listOf(),
     var hasDiary: Boolean? = false,

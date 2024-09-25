@@ -14,7 +14,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.gson.Gson
 import com.mongmong.namo.R
-import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.databinding.ActivityScheduleBinding
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.home.notify.PushNotificationReceiver

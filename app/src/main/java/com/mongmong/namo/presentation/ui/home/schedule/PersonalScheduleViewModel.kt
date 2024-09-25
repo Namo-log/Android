@@ -8,12 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.LatLng
 import com.mongmong.namo.domain.model.Category
-import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.domain.model.GetMonthScheduleResult
-import com.mongmong.namo.domain.model.Location
-import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
-import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
-import com.mongmong.namo.domain.model.Period
+import com.mongmong.namo.domain.model.Schedule
+import com.mongmong.namo.data.dto.GetMonthScheduleResult
+import com.mongmong.namo.data.dto.Location
+import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
+import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.data.dto.Period
+import com.mongmong.namo.data.dto.ScheduleLocation
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecases.FindCategoryUseCase
 import com.mongmong.namo.domain.usecases.GetCategoriesUseCase
@@ -32,8 +33,8 @@ class PersonalScheduleViewModel @Inject constructor(
     private val _schedule = MutableLiveData<Schedule?>()
     val schedule: LiveData<Schedule?> = _schedule
 
-    private val _scheduleList = MutableLiveData<List<GetMonthScheduleResult>>(emptyList())
-    val scheduleList: LiveData<List<GetMonthScheduleResult>?> = _scheduleList
+    private val _scheduleList = MutableLiveData<List<Schedule>>(emptyList())
+    val scheduleList: LiveData<List<Schedule>?> = _scheduleList
 
     private val _isComplete = MutableLiveData<Boolean>()
     val isComplete: LiveData<Boolean> = _isComplete
@@ -53,7 +54,7 @@ class PersonalScheduleViewModel @Inject constructor(
     private val _clickedDateTime = MutableLiveData<DateTime>()
     val clickedDateTime: LiveData<DateTime> = _clickedDateTime
 
-    private lateinit var _dailyScheduleList: List<GetMonthScheduleResult> // 하루 일정
+    private lateinit var _dailyScheduleList: List<Schedule> // 하루 일정
 
     private val _isShow = MutableLiveData(false)
     var isShow: LiveData<Boolean> = _isShow
@@ -81,10 +82,10 @@ class PersonalScheduleViewModel @Inject constructor(
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "addSchedule ${_schedule.value}")
             _isComplete.value = (
-                repository.addSchedule(
-                    schedule = _schedule.value!!.convertLocalScheduleToServer()
-                )
-            )
+                    repository.addSchedule(
+                        schedule = _schedule.value!!.convertLocalScheduleToServer()
+                    )
+                    )
         }
     }
 
@@ -188,8 +189,8 @@ class PersonalScheduleViewModel @Inject constructor(
     private fun setDailySchedule() {
         // 선택 날짜에 해당되는 일정 필터링
         _dailyScheduleList = _scheduleList.value!!.filter { schedule ->
-            schedule.startDate <= getClickedDatePeriod().endDate &&
-                    schedule.endDate >= getClickedDatePeriod().startDate
+            schedule.startLong <= getClickedDatePeriod().endDate &&
+            schedule.endLong >= getClickedDatePeriod().startDate
         }
         _isDailyScheduleEmptyPair.value = Pair(
             isDailyScheduleEmpty(false), // 개인 일정
@@ -238,7 +239,7 @@ class PersonalScheduleViewModel @Inject constructor(
     // 장소 선택
     fun updatePlace(placeName: String, x: Double, y: Double) {
         _schedule.value = _schedule.value?.copy(
-            locationInfo = Location(
+            locationInfo = ScheduleLocation(
                 locationName = placeName,
                 longitude = y,
                 latitude = x
@@ -254,6 +255,7 @@ class PersonalScheduleViewModel @Inject constructor(
     fun updatePrevClickedPicker(clicked: TextView?) {
         _prevClickedPicker.value = clicked
     }
+
     fun isMoimSchedule() = schedule.value!!.isMeetingSchedule
 
     fun isCreateMode() = (schedule.value!!.scheduleId == 0L)
@@ -266,10 +268,10 @@ class PersonalScheduleViewModel @Inject constructor(
     // 선택한 날짜
     fun getClickedDate() = _monthDayList.value!![_nowIndex]
 
-    fun getDailySchedules(isMoim: Boolean): ArrayList<GetMonthScheduleResult> {
+    fun getDailySchedules(isMoim: Boolean): ArrayList<Schedule> {
         return _dailyScheduleList.filter { schedule ->
             schedule.isMeetingSchedule == isMoim
-        } as ArrayList<GetMonthScheduleResult>
+        } as ArrayList<Schedule>
     }
 
     fun getDateTime(): Pair<DateTime, DateTime>? {
@@ -287,7 +289,10 @@ class PersonalScheduleViewModel @Inject constructor(
             if (_schedule.value!!.locationInfo.longitude == 0.0 && _schedule.value!!.locationInfo.latitude == 0.0) return null
             return Pair(
                 schedule.value!!.locationInfo.locationName,
-                LatLng.from(schedule.value!!.locationInfo.longitude, schedule.value!!.locationInfo.latitude)
+                LatLng.from(
+                    schedule.value!!.locationInfo.longitude,
+                    schedule.value!!.locationInfo.latitude
+                )
             )
         }
         return null

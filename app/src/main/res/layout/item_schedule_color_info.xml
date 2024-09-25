@@ -6,7 +6,7 @@
     <data>
         <variable
             name="info"
-            type="com.mongmong.namo.domain.model.CalendarColorInfo" />
+            type="com.mongmong.namo.data.dto.CalendarColorInfo" />
     </data>
 
     <LinearLayout
