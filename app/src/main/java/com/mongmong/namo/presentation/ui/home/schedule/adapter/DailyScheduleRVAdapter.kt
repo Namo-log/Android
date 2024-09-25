@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
 import com.mongmong.namo.domain.model.GetMonthScheduleResult
-import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.utils.ScheduleTimeConverter
 import org.joda.time.DateTime
 
@@ -70,19 +69,13 @@ class DailyScheduleRVAdapter : RecyclerView.Adapter<DailyScheduleRVAdapter.ViewH
 
     inner class ViewHolder(val binding : ItemSchedulePreviewBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(schedule : GetMonthScheduleResult) {
-            binding.scheule = schedule
-
-            //TODO: 카테고리를 찾지 못했을 때의 처리
-            val category = categoryList.find {
-                it.categoryId == schedule.categoryInfo.categoryId
-            } ?: categoryList.first()
+            binding.schedule = schedule
 
             binding.itemSchedulePreviewTimeTv.text = timeConverter.getScheduleTimeText(schedule.startDate, schedule.endDate)
-            binding.itemSchedulePreviewColorView.backgroundTintList = CategoryColor.convertPaletteIdToColorStateList(category.colorId)
 
             // 기록 아이콘 클릭
             binding.itemSchedulePreviewDiaryIv.setOnClickListener {
-                scheduleClickListener.onDiaryIconClicked(schedule, category.colorId)
+                scheduleClickListener.onDiaryIconClicked(schedule, schedule.categoryInfo.colorId)
             }
         }
     }

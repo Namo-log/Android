@@ -1,11 +1,11 @@
 package com.mongmong.namo.data.remote
 
 import com.mongmong.namo.domain.model.DeleteScheduleResponse
-import com.mongmong.namo.domain.model.EditScheduleResponse
 import com.mongmong.namo.domain.model.GetMonthScheduleResponse
 import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.domain.model.PostScheduleResponse
+import com.mongmong.namo.domain.model.ScheduleDefaultResponse
 import com.mongmong.namo.domain.model.ScheduleRequestBody
 import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.Call
@@ -37,7 +37,7 @@ interface ScheduleApiService {
     suspend fun editSchedule(
         @Path("scheduleId") serverId : Long,
         @Body schedule : ScheduleRequestBody
-    ) : EditScheduleResponse
+    ) : ScheduleDefaultResponse
 
     // 일정 삭제
     @DELETE("schedules/{scheduleId}/{kind}")

@@ -53,7 +53,7 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
 
         initMapView()
         initClickListeners()
-        setInit()
+        initViews()
 
         getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if (it.resultCode == Activity.RESULT_OK) {
@@ -94,7 +94,7 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
         }
     }
 
-    private fun setInit() {
+    private fun initViews() {
         viewModel.getCategories()
         val args: ScheduleDialogBasicFragmentArgs by navArgs()
         // 정보 세팅
@@ -158,10 +158,10 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
             // 개인 일정일 경우
             if (viewModel.isCreateMode()) {
                 // 일정 생성
-                insertData()
+                viewModel.addSchedule()
             } else {
                 // 일정 수정
-                updateData()
+                viewModel.editSchedule()
             }
         }
     }
@@ -219,21 +219,12 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
 
     /** 일정 추가 **/
     private fun insertData() {
-        // 현재 일정의 상태가 추가 상태임을 나타냄
-//        schedule.state = RoomState.ADDED.state
-//        schedule.isUpload = UploadState.IS_NOT_UPLOAD.state
-//        schedule.serverId = 0
-
         // 새 일정 등록
         viewModel.addSchedule()
     }
 
     /** 일정 수정 **/
     private fun updateData() {
-        // 현재 일정의 상태가 수정 상태임을 나타냄
-//        schedule.state = RoomState.EDITED.state
-//        schedule.isUpload = UploadState.IS_NOT_UPLOAD.state
-
         // 일정 편집
         viewModel.editSchedule()
         Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
@@ -404,6 +395,9 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
         viewModel.isComplete.observe(viewLifecycleOwner) { isComplete ->
             // 추가 작업이 완료된 후 뒤로가기
             if (isComplete) {
+                if (!viewModel.isCreateMode()) { // 편집 완료 시
+                    Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                }
                 requireActivity().finish()
             }
         }

@@ -89,12 +89,6 @@ class ScheduleActivity : BaseActivity<ActivityScheduleBinding>(R.layout.activity
     /** 일정 삭제 **/
     private fun deleteData() {
         schedule?.let { schedule ->
-            // 알림 리스트 삭제
-            alarmList = schedule.alarmList!!.toMutableList()
-            for (i in alarmList) {
-                deleteNotification(schedule.scheduleId.toInt() + DateTime(schedule.startLong).minusMinutes(i).millis.toInt(), schedule!!)
-            }
-
             // 일정 삭제
             viewModel.deleteSchedule(schedule.scheduleId, schedule.isMeetingSchedule)
 

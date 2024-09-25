@@ -7,7 +7,7 @@
         <import type="com.mongmong.namo.presentation.config.CategoryColor"/>
         <import type="android.view.View"/>
         <variable
-            name="scheule"
+            name="schedule"
             type="com.mongmong.namo.domain.model.GetMonthScheduleResult"/>
     </data>
 
@@ -21,6 +21,7 @@
             android:layout_width="30dp"
             android:layout_height="0dp"
             android:background="@drawable/bg_schedule_catory_color_view"
+            app:tintColor="@{schedule.categoryInfo.colorId}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -71,6 +72,7 @@
                         android:id="@+id/item_schedule_preview_category_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="@{schedule.categoryInfo.name}"
                         tools:text="일정"
                         style="@style/subtext_12"/>
 
@@ -80,7 +82,7 @@
                     android:id="@+id/item_schedule_preview_title_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{scheule.title}"
+                    android:text="@{schedule.title}"
                     android:ellipsize="marquee"
                     android:focusable="true"
                     android:singleLine="true"
@@ -94,8 +96,8 @@
                 android:layout_width="34dp"
                 android:layout_height="34dp"
                 android:background="@drawable/ic_record"
-                android:backgroundTint="@{scheule.hasDiary ? @color/main : @color/text_unselected}"
-                android:visibility="@{scheule.hasDiary == null ? View.GONE : View.VISIBLE}"
+                android:backgroundTint="@{schedule.hasDiary ? @color/main : @color/text_unselected}"
+                android:visibility="@{schedule.hasDiary == null ? View.GONE : View.VISIBLE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>

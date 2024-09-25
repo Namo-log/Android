@@ -12,6 +12,10 @@ data class CalendarColorInfo(
     val name: String
 )
 
+data class ScheduleDefaultResponse (
+    var result: String = ""
+) : BaseResponse()
+
 // 개인
 /** 일정 월별 조회 */
 data class GetMonthScheduleResponse (
@@ -53,12 +57,8 @@ data class ScheduleCategoryInfo(
 
 /** 일정 생성 */
 data class PostScheduleResponse (
-    val result : PostScheduleResult
+    val result : Long
 ) : BaseResponse()
-
-data class PostScheduleResult (
-    @SerializedName("scheduleId") val scheduleId : Long
-)
 
 data class ScheduleRequestBody(
     var title: String = "",

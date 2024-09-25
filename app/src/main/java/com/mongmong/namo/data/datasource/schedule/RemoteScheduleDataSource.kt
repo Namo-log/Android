@@ -14,12 +14,11 @@ import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.domain.model.PostScheduleResponse
-import com.mongmong.namo.domain.model.PostScheduleResult
+import com.mongmong.namo.domain.model.ScheduleDefaultResponse
 import com.mongmong.namo.domain.model.ScheduleRequestBody
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.presentation.config.BaseResponse
-import com.mongmong.namo.presentation.config.Constants.SUCCESS_CODE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -50,7 +49,7 @@ class RemoteScheduleDataSource @Inject constructor(
     suspend fun addScheduleToServer(
         schedule: ScheduleRequestBody,
     ): PostScheduleResponse {
-        var scheduleResponse = PostScheduleResponse(result = PostScheduleResult(-1))
+        var scheduleResponse = PostScheduleResponse(-1)
 
         withContext(Dispatchers.IO) {
             runCatching {
@@ -59,7 +58,7 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "addScheduleToServer Success $it")
                 scheduleResponse = it
             }.onFailure {
-                Log.d("RemoteScheduleDataSource", "addScheduleToServer Failure $it")
+                Log.d("RemoteScheduleDataSource", "addScheduleToServer Fail $it")
             }
         }
         return scheduleResponse
@@ -68,8 +67,8 @@ class RemoteScheduleDataSource @Inject constructor(
     suspend fun editScheduleToServer(
         scheduleId: Long,
         schedule: ScheduleRequestBody
-    ) : EditScheduleResponse {
-        var scheduleResponse = EditScheduleResponse(result = EditScheduleResult(-1))
+    ) : ScheduleDefaultResponse {
+        var scheduleResponse = ScheduleDefaultResponse()
 
         withContext(Dispatchers.IO) {
             runCatching {
@@ -78,7 +77,7 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "editScheduleToServer Success, $it")
                 scheduleResponse = it
             }.onFailure {
-                Log.d("RemoteScheduleDataSource", "editScheduleToServer Fail")
+                Log.d("RemoteScheduleDataSource", "editScheduleToServer Fail $it")
             }
         }
         return scheduleResponse
