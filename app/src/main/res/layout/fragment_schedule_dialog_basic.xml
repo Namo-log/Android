@@ -84,13 +84,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="카테고리"
-                android:textColor="@color/main_text"
-                android:textStyle="bold"
-                android:textSize="15sp"
+                android:text="@string/category"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                style="@style/content_bold"/>
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/dialog_schedule_category_btn"
@@ -125,10 +123,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{viewModel.category.name}"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
                     android:layout_marginStart="10dp"
-                    tools:text="카테고리명"/>
+                    tools:text="카테고리명"
+                    style="@style/content_regular"/>
 
             </LinearLayout>
 
@@ -143,13 +140,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="시작"
-                android:textColor="@color/main_text"
-                android:textStyle="bold"
-                android:textSize="15sp"
+                android:text="@string/schedule_start"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                style="@style/content_bold"/>
 
             <LinearLayout
                 android:id="@+id/dialog_schedule_start_content_layout"
@@ -168,7 +163,8 @@
                     android:textAlignment="center"
                     android:textColor="@{viewModel.schedule.meetingSchedule ? @color/text_disable : @color/main_text}"
                     android:clickable="@{viewModel.schedule.meetingSchedule ? false : true}"
-                    tools:text="2022.06.29 (수)"/>
+                    tools:text="2022.06.29 (수)"
+                    style="@style/content_regular"/>
 
                 <View
                     android:layout_width="1dp"
@@ -185,7 +181,8 @@
                     android:textAlignment="center"
                     android:textColor="@{viewModel.schedule.meetingSchedule ? @color/text_disable : @color/main_text}"
                     android:clickable="@{viewModel.schedule.meetingSchedule ? false : true}"
-                    tools:text="12:00 PM"/>
+                    tools:text="12:00 PM"
+                    style="@style/content_regular"/>
 
             </LinearLayout>
 
@@ -200,13 +197,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="종료"
-                android:textColor="@color/main_text"
-                android:textStyle="bold"
-                android:textSize="15sp"
+                android:text="@string/schedule_end"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                style="@style/content_bold"/>
 
             <LinearLayout
                 android:id="@+id/dialog_schedule_end_content_layout"
@@ -225,7 +220,8 @@
                     android:textAlignment="center"
                     android:textColor="@{viewModel.schedule.meetingSchedule ? @color/text_disable : @color/main_text}"
                     android:clickable="@{viewModel.schedule.meetingSchedule ? false : true}"
-                    tools:text="2022.06.29 (수)"/>
+                    tools:text="2022.06.29 (수)"
+                    style="@style/content_regular"/>
 
                 <View
                     android:layout_width="1dp"
@@ -242,7 +238,8 @@
                     android:textAlignment="center"
                     android:textColor="@{viewModel.schedule.meetingSchedule ? @color/text_disable : @color/main_text}"
                     android:clickable="@{viewModel.schedule.meetingSchedule ? false : true}"
-                    tools:text="12:00 PM"/>
+                    tools:text="12:00 PM"
+                    style="@style/content_regular"/>
 
             </LinearLayout>
 
@@ -413,13 +410,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="장소"
-                android:textColor="@color/main_text"
-                android:textStyle="bold"
-                android:textSize="15sp"
+                android:text="@string/schedule_place"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                style="@style/content_bold"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/dialog_schedule_place_name_tv"
@@ -427,13 +422,13 @@
                 android:layout_height="wrap_content"
                 android:text="@{viewModel.schedule.locationInfo.locationName}"
                 android:textColor="@{viewModel.schedule.meetingSchedule ? @color/text_disable : @color/main_text}"
-                android:textSize="15sp"
                 android:drawablePadding="15dp"
                 android:drawableEnd="@{viewModel.schedule.meetingSchedule ? null : @drawable/ic_arrow_right}"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:text="없음"/>
+                tools:text="없음"
+                style="@style/content_regular"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -5,8 +5,6 @@ import com.mongmong.namo.data.remote.group.GroupScheduleApiService
 import com.mongmong.namo.data.remote.ScheduleApiService
 import com.mongmong.namo.domain.model.group.AddMoimScheduleResponse
 import com.mongmong.namo.domain.model.DeleteScheduleResponse
-import com.mongmong.namo.domain.model.EditScheduleResponse
-import com.mongmong.namo.domain.model.EditScheduleResult
 import com.mongmong.namo.domain.model.group.GetMoimScheduleResponse
 import com.mongmong.namo.domain.model.GetMonthScheduleResponse
 import com.mongmong.namo.domain.model.GetMonthScheduleResult

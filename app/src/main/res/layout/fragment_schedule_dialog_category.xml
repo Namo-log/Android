@@ -26,10 +26,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="6"
                 android:text="@string/category"
-                android:textStyle="bold"
+                android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="15sp"
-                android:textAlignment="center"/>
+                style="@style/content_bold"/>
 
         </LinearLayout>
 
@@ -71,12 +70,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
                         android:text="@string/category_edit"
-                        android:textSize="15sp"
-                        android:textColor="@color/main_text"
                         app:layout_constraintStart_toEndOf="@id/dialog_schedule_category_edit_iv"
                         app:layout_constraintTop_toTopOf="@id/dialog_schedule_category_edit_iv"
                         app:layout_constraintBottom_toBottomOf="@id/dialog_schedule_category_edit_iv"
-                        app:layout_constraintEnd_toEndOf="parent" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        style="@style/content_regular"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
