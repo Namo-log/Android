@@ -78,6 +78,7 @@
     <string name="schedule_start">시작</string>
     <string name="schedule_end">종료</string>
     <string name="schedule_place">장소</string>
+    <string name="schedule_do_record">기록하기</string>
 
 
     <!--diary 관련 String-->

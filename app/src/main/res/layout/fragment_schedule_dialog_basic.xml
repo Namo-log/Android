@@ -30,9 +30,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="닫기"
-                android:textColor="@color/black"
-                android:textSize="15sp"/>
+                android:text="@string/dialog_cancel"
+                style="@style/content_regular"/>
 
             <TextView
                 android:id="@+id/dialog_schedule_header_tv"
@@ -41,20 +40,19 @@
                 android:layout_weight="6"
                 android:text="@{viewModel.schedule.scheduleId == 0L ? @string/schedule_new : (viewModel.schedule.meetingSchedule ? @string/moim_schedule_edit : @string/schedule_edit )}"
                 tools:text="새 일정"
-                android:textStyle="bold"
                 android:textColor="@color/black"
-                android:textSize="15sp"
-                android:textAlignment="center"/>
+                android:textAlignment="center"
+                style="@style/content_bold"/>
 
             <TextView
                 android:id="@+id/dialog_schedule_save_btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="저장"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                android:textAlignment="viewEnd"/>
+                android:text="@{viewModel.schedule.scheduleId == 0L ? @string/create : @string/dialog_save}"
+                android:textAlignment="viewEnd"
+                tools:text="@string/create"
+                style="@style/content_regular"/>
 
         </LinearLayout>
 
@@ -157,8 +155,9 @@
 
                 <TextView
                     android:id="@+id/dialog_schedule_start_date_tv"
-                    android:layout_width="110dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:minWidth="110dp"
                     android:text="@{PickerConverter.parseLongToDateText(viewModel.schedule.startLong)}"
                     android:textAlignment="center"
                     android:textColor="@{viewModel.schedule.meetingSchedule ? @color/text_disable : @color/main_text}"
@@ -214,8 +213,9 @@
 
                 <TextView
                     android:id="@+id/dialog_schedule_end_date_tv"
-                    android:layout_width="110dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:minWidth="110dp"
                     android:text="@{PickerConverter.parseLongToDateText(viewModel.schedule.endLong)}"
                     android:textAlignment="center"
                     android:textColor="@{viewModel.schedule.meetingSchedule ? @color/text_disable : @color/main_text}"
@@ -446,6 +446,27 @@
             android:text="카카오맵으로 길찾기"
             android:layout_marginTop="10dp"
             android:visibility="gone"/>
+
+        <com.mongmong.namo.presentation.utils.ImageTextView
+            android:id="@+id/dialog_schedule_record_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:layout_gravity="center_horizontal"
+            android:paddingVertical="10dp"
+            android:paddingHorizontal="30dp"
+            android:visibility="@{viewModel.schedule.scheduleId == 0L ? View.GONE : View.VISIBLE}"
+            android:gravity="center"
+            android:drawableStart="@drawable/ic_record"
+            android:drawablePadding="12dp"
+            android:drawableTint="@color/white"
+            app:drawableStartSize="24dp"
+            android:text="@string/schedule_do_record"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/main"
+            android:background="@drawable/bg_basic_outline_btn"
+            android:fontFamily="@font/pretendard_semibold"
+            style="@style/content_regular"/>
 
     </LinearLayout>
 </layout>

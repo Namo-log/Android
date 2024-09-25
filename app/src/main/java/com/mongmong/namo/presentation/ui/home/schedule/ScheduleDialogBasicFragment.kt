@@ -33,6 +33,8 @@ import com.kakao.vectormap.label.LabelOptions
 import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.mongmong.namo.presentation.config.BaseFragment
+import com.mongmong.namo.presentation.ui.diary.MoimMemoDetailActivity
+import com.mongmong.namo.presentation.ui.diary.PersonalDiaryDetailActivity
 import com.mongmong.namo.presentation.utils.PickerConverter
 import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedTime
 import dagger.hilt.android.AndroidEntryPoint
@@ -140,12 +142,12 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
 //            startActivity(intent)
         }
 
-        // 닫기 클릭
+        // 취소 클릭
         binding.dialogScheduleCloseBtn.setOnClickListener {
             requireActivity().finish()
         }
 
-        // 저장 클릭
+        // 생성/저장 클릭
         binding.dialogScheduleSaveBtn.setOnClickListener {
             if (!isValidInput()) return@setOnClickListener
 
@@ -163,6 +165,15 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
                 // 일정 수정
                 viewModel.editSchedule()
             }
+        }
+
+        // 기록하기 버튼
+        binding.dialogScheduleRecordBtn.setOnClickListener {
+            // 기록하기 화면으로 이동
+            requireActivity().startActivity(
+                Intent(context, PersonalDiaryDetailActivity::class.java)
+                    .putExtra("scheduleId", viewModel.schedule.value?.scheduleId)
+            )
         }
     }
 
