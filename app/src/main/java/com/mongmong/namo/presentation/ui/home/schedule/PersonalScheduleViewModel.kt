@@ -43,6 +43,7 @@ class PersonalScheduleViewModel @Inject constructor(
 
     private val _categoryList = MutableLiveData<List<Category>>(emptyList())
     val categoryList: LiveData<List<Category>> = _categoryList
+
     private val _prevClickedPicker = MutableLiveData<TextView?>()
     var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
 
@@ -51,6 +52,7 @@ class PersonalScheduleViewModel @Inject constructor(
     // 클릭한 날짜 처리
     private val _clickedDateTime = MutableLiveData<DateTime>()
     val clickedDateTime: LiveData<DateTime> = _clickedDateTime
+
     private lateinit var _dailyScheduleList: List<GetMonthScheduleResult> // 하루 일정
 
     private val _isShow = MutableLiveData(false)
@@ -61,6 +63,10 @@ class PersonalScheduleViewModel @Inject constructor(
 
     private val _isDailyScheduleEmptyPair = MutableLiveData<Pair<Boolean, Boolean>>()
     var isDailyScheduleEmptyPair: LiveData<Pair<Boolean, Boolean>> = _isDailyScheduleEmptyPair
+
+    init {
+        getCategories()
+    }
 
     /** 월별 일정 리스트 조회 */
     fun getMonthSchedules(year: Int, month: Int) {
@@ -96,13 +102,13 @@ class PersonalScheduleViewModel @Inject constructor(
     }
 
     /** 일정 삭제 */
-    fun deleteSchedule(scheduleId: Long, isGroup: Boolean) {
+    fun deleteSchedule() {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "deleteSchedule $schedule")
             _isComplete.postValue(
                 repository.deleteSchedule(
-                    scheduleId = scheduleId,
-                    isGroup = isGroup
+                    scheduleId = _schedule.value!!.scheduleId,
+                    isGroup = _schedule.value!!.isMeetingSchedule
                 )
             )
         }
@@ -229,6 +235,7 @@ class PersonalScheduleViewModel @Inject constructor(
         )
     }
 
+    // 장소 선택
     fun updatePlace(placeName: String, x: Double, y: Double) {
         _schedule.value = _schedule.value?.copy(
             locationInfo = Location(
@@ -237,6 +244,11 @@ class PersonalScheduleViewModel @Inject constructor(
                 latitude = x
             )
         )
+    }
+
+    fun updateCategory(category: Category) {
+        _category.value = category
+        setCategory()
     }
 
     fun updatePrevClickedPicker(clicked: TextView?) {

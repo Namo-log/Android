@@ -1,6 +1,5 @@
 package com.mongmong.namo.presentation.ui.home.calendar
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -21,7 +20,6 @@ import com.mongmong.namo.presentation.ui.home.schedule.PersonalScheduleViewModel
 import com.mongmong.namo.presentation.utils.CustomCalendarView
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
-import java.text.SimpleDateFormat
 
 @AndroidEntryPoint
 class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layout.fragment_calendar_month) {

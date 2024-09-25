@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.mongmong.namo.presentation.ui.category.CategoryViewModel" />
+            type="com.mongmong.namo.presentation.ui.home.schedule.PersonalScheduleViewModel" />
     </data>
 
     <LinearLayout
@@ -22,7 +22,7 @@
 
             <TextView
                 android:id="@+id/dialog_schedule_category_header_tv"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="6"
                 android:text="@string/category"
