@@ -17,8 +17,10 @@ import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.presentation.config.BaseResponse
+import com.mongmong.namo.presentation.utils.ScheduleDateConverter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.joda.time.DateTime
 import javax.inject.Inject
 
 class RemoteScheduleDataSource @Inject constructor(
@@ -27,13 +29,16 @@ class RemoteScheduleDataSource @Inject constructor(
 ) {
     /** 개인 */
     suspend fun getMonthSchedules(
-        year: Int,
-        month: Int
+        startDate: DateTime,
+        endDate: DateTime
     ): GetMonthScheduleResponse {
         var scheduleResponse = GetMonthScheduleResponse(result = emptyList())
         withContext(Dispatchers.IO) {
             runCatching {
-                scheduleApiService.getMonthSchedule(year, month)
+                scheduleApiService.getMonthSchedule(
+                    startDate = ScheduleDateConverter.parseDateTimeToServerData(startDate),
+                    endDate = ScheduleDateConverter.parseDateTimeToServerData(endDate)
+                )
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "getMonthSchedules Success $it")
                 scheduleResponse = it

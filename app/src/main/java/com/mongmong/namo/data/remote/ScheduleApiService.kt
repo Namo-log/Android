@@ -19,11 +19,11 @@ import retrofit2.http.Query
 
 interface ScheduleApiService {
     /** 개인 일정 */
-    // 월별 일정 조회
+    // 한달 날짜 범위로 일정 조회
     @GET("schedules/calendar")
     suspend fun getMonthSchedule(
-        @Query("year") yaer: Int,
-        @Query("month") month: Int
+        @Query("startDate") startDate: String,
+        @Query("endDate") endDate: String
     ) : GetMonthScheduleResponse
 
     // 일정 생성

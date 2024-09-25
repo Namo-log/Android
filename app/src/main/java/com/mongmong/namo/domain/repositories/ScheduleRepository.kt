@@ -8,11 +8,12 @@ import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
+import org.joda.time.DateTime
 
 interface ScheduleRepository {
     /** 개인 */
     suspend fun getMonthSchedules(
-        year: Int, month: Int
+        startDate: DateTime, endDate: DateTime
     ): List<Schedule>
 
     suspend fun getDailySchedules(

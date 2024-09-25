@@ -70,10 +70,13 @@ class PersonalScheduleViewModel @Inject constructor(
     }
 
     /** 월별 일정 리스트 조회 */
-    fun getMonthSchedules(year: Int, month: Int) {
+    fun getMonthSchedules() {
         viewModelScope.launch {
-            Log.d("ScheduleViewModel", "getMonthSchedules")
-            _scheduleList.value = repository.getMonthSchedules(year, month)
+            // 범위로 일정 목록 조회
+            _scheduleList.value = repository.getMonthSchedules(
+                startDate = _monthDayList.value!!.first(), // 캘린더에 표시되는 첫번쨰 날짜
+                endDate = _monthDayList.value!!.last() // 캘린더에 표시되는 마지막 날짜
+            )
         }
     }
 

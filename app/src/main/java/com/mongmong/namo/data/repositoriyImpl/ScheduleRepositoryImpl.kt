@@ -14,6 +14,7 @@ import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.presentation.config.Constants.SUCCESS_CODE
+import org.joda.time.DateTime
 import javax.inject.Inject
 
 class ScheduleRepositoryImpl @Inject constructor(
@@ -22,8 +23,8 @@ class ScheduleRepositoryImpl @Inject constructor(
 ) : ScheduleRepository {
 
     /** 개인 */
-    override suspend fun getMonthSchedules(year: Int, month: Int): List<Schedule> {
-        return remoteScheduleDataSource.getMonthSchedules(year, month).result.map { scheduleData ->
+    override suspend fun getMonthSchedules(startDate: DateTime, endDate: DateTime): List<Schedule> {
+        return remoteScheduleDataSource.getMonthSchedules(startDate, endDate).result.map { scheduleData ->
             scheduleData.toModel() // DTO를 도메인 모델로 변환
         }
     }

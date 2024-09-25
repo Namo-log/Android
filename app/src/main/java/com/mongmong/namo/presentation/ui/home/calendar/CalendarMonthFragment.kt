@@ -9,7 +9,6 @@ import com.google.gson.Gson
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
-import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.diary.MoimMemoDetailActivity
@@ -30,7 +29,6 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
     private val groupDailyScheduleAdapter = DailyScheduleRVAdapter()
 
     private val viewModel: PersonalScheduleViewModel by viewModels()
-
 
     override fun setup() {
         arguments?.let {
@@ -167,11 +165,9 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
         groupDailyScheduleAdapter.setCategoryList(categoryList)
     }
 
-    // 캘린더에 표시할 월별 일정
+    // 캘린더에 표시할 월별 일정 조회
     private fun setMonthCalendarSchedule() {
-        val dateTime = DateTime(millis)
-        Log.d("CalendarMonthFrag", "dateTime: $dateTime")
-        viewModel.getMonthSchedules(dateTime.year, dateTime.monthOfYear)
+        viewModel.getMonthSchedules()
     }
 
     // 일정 상세보기
