@@ -202,11 +202,11 @@ class MoimDiaryViewModel @Inject constructor(
     fun addEmptyActivity() {
         _activities.value = _activities.value?.plus(
             Activity(
-                endDate = "",
+                endDate = diarySchedule.value?.date ?: "",
                 activityId = 0L,
                 location = ActivityLocation(),
                 participants = _diarySchedule.value?.participantInfo ?: emptyList(),
-                startDate = "",
+                startDate = diarySchedule.value?.date ?: "",
                 title = "",
                 tag = "",
                 pay = 0,
@@ -220,11 +220,11 @@ class MoimDiaryViewModel @Inject constructor(
     }
 
     fun updateActivityStartDate(position: Int, date: String) {
-
+        _activities.value?.get(position)?.startDate = date
     }
 
     fun updateActivityEndDate(position: Int, date: String) {
-
+        _activities.value?.get(position)?.endDate = date
     }
 
     fun updateActivityLocation(position: Int, id: String, name: String, x: Double, y: Double) {

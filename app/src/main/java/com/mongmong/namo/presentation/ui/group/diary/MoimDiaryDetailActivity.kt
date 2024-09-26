@@ -75,10 +75,8 @@ class MoimDiaryDetailActivity :
 
     private fun setCreateOrEdit() {
         if (viewModel.diarySchedule.value?.hasDiary == false) {
-            Log.d("setCreateOrEdit", "dd")
             viewModel.setNewDiary()
         } else {  // 기록 있을 때, 수정
-            Log.d("setCreateOrEdit", "dd2")
             viewModel.getDiaryData()
         }
     }

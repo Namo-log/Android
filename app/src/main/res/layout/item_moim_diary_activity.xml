@@ -68,24 +68,40 @@
                     android:text="@string/schedule_start"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/activity_title_tv" />
-                <TextView
-                    android:id="@+id/activity_start_date_tv"
-                    style="@style/content_regular"
+                <LinearLayout
+                    android:id="@+id/activity_start_content_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{DiaryDateConverter.toFullDateTimeWithDay(activity.startDate)}"
-                    app:layout_constraintBottom_toBottomOf="@+id/activity_start_date_title_tv"
+                    android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/activity_start_date_title_tv" />
-            </LinearLayout>
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
 
-            <CalendarView
-                android:id="@+id/activity_start_date_calendar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:visibility="gone"
-                android:layout_marginHorizontal="12.5dp"/>
+                    <TextView
+                        android:id="@+id/activity_start_date_tv"
+                        android:layout_width="110dp"
+                        android:layout_height="wrap_content"
+                        android:text="@{DiaryDateConverter.toDate(activity.startDate)}"
+                        android:textAlignment="center"
+                        tools:text="2022.06.29 (수)"/>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/main_text"
+                        android:layout_marginVertical="2dp"
+                        android:layout_marginHorizontal="10dp"/>
+
+                    <TextView
+                        android:id="@+id/activity_start_time_tv"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:text="@{DiaryDateConverter.to12HourTime(activity.startDate)}"
+                        android:textAlignment="center"
+                        tools:text="12:00 PM"/>
+
+                </LinearLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -102,24 +118,84 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/activity_start_date_title_tv" />
 
-                <TextView
-                    android:id="@+id/activity_end_date_tv"
-                    style="@style/content_regular"
+                <LinearLayout
+                    android:id="@+id/activity_end_content_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{DiaryDateConverter.toFullDateTimeWithDay(activity.endDate)}"
-                    app:layout_constraintBottom_toBottomOf="@+id/activity_end_date_title_tv"
+                    android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/activity_end_date_title_tv" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <TextView
+                        android:id="@+id/activity_end_date_tv"
+                        android:layout_width="110dp"
+                        android:layout_height="wrap_content"
+                        android:text="@{DiaryDateConverter.toDate(activity.endDate)}"
+                        android:textAlignment="center"
+                        tools:text="2022.06.29 (수)"/>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/main_text"
+                        android:layout_marginVertical="2dp"
+                        android:layout_marginHorizontal="10dp"/>
+
+                    <TextView
+                        android:id="@+id/activity_end_time_tv"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:text="@{DiaryDateConverter.to12HourTime(activity.endDate)}"
+                        android:textAlignment="center"
+                        tools:text="12:00 PM"/>
+
+                </LinearLayout>
             </LinearLayout>
 
-            <CalendarView
-                android:id="@+id/activity_end_date_calendar"
+            <androidx.constraintlayout.motion.widget.MotionLayout
+                android:id="@+id/activity_start_date_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:visibility="gone"
-                android:layout_marginHorizontal="12.5dp"/>
+                app:layoutDescription="@xml/item_moim_diary_activity_start_date_scene">
+                <DatePicker
+                    android:id="@+id/activity_start_date_dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    style="@style/schedule_date_picker"/>
+            </androidx.constraintlayout.motion.widget.MotionLayout>
+
+            <androidx.constraintlayout.motion.widget.MotionLayout
+                android:id="@+id/activity_end_date_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutDescription="@xml/item_moim_diary_activity_end_date_scene">
+                <DatePicker
+                    android:id="@+id/activity_end_date_dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    style="@style/schedule_date_picker"/>
+            </androidx.constraintlayout.motion.widget.MotionLayout>
+
+            <androidx.constraintlayout.motion.widget.MotionLayout
+                android:id="@+id/activity_start_time_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutDescription="@xml/item_moim_diary_activity_start_time_scene">
+                <TimePicker
+                    android:id="@+id/activity_start_time_tp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    style="@style/schedule_time_picker"/>
+            </androidx.constraintlayout.motion.widget.MotionLayout>
+
+            <androidx.constraintlayout.motion.widget.MotionLayout
+                android:id="@+id/activity_end_time_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutDescription="@xml/item_moim_diary_activity_end_time_scene">
+                <TimePicker
+                    android:id="@+id/activity_end_time_tp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    style="@style/schedule_time_picker"/>
+            </androidx.constraintlayout.motion.widget.MotionLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
