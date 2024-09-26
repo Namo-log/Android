@@ -1,6 +1,5 @@
 package com.mongmong.namo.domain.model
 
-import com.mongmong.namo.data.dto.CalendarColorInfo
 import com.mongmong.namo.data.dto.CategoryRequestBody
 import com.mongmong.namo.data.dto.ScheduleCategoryInfo
 import java.io.Serializable

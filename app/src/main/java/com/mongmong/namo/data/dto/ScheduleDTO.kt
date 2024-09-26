@@ -4,12 +4,6 @@ import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
 import com.mongmong.namo.domain.model.Schedule
 
-// 캘린더에 표시되는 색상 정보 (친구: 카테고리 정보, 참석자: 색상 & 이름)
-data class CalendarColorInfo(
-    val colorId: Int,
-    val name: String
-)
-
 data class ScheduleDefaultResponse (
     var result: String = ""
 ) : BaseResponse()
