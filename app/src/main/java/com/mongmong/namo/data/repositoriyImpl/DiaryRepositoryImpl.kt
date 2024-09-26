@@ -7,13 +7,12 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.map
 import com.mongmong.namo.data.datasource.diary.DiaryCollectionPagingSource
-import com.mongmong.namo.data.datasource.diary.DiaryMoimPagingSource
-import com.mongmong.namo.data.datasource.diary.DiaryPersonalPagingSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.domain.model.CalendarDiaryDate
 import com.mongmong.namo.data.utils.mappers.DiaryMapper.toModel
+import com.mongmong.namo.domain.model.Activity
 import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiarySchedule
@@ -30,11 +29,6 @@ class DiaryRepositoryImpl @Inject constructor(
     private val apiService: DiaryApiService,
     private val networkChecker: NetworkChecker
 ) : DiaryRepository {
-
-    /** 개인 기록 리스트 조회 **/
-    override fun getPersonalDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
-        return DiaryPersonalPagingSource(apiService, date, networkChecker)
-    }
 
     /** 개인 기록 일정 정보 조회 **/
     override suspend fun getScheduleForDiary(scheduleId: Long): ScheduleForDiary {
@@ -84,9 +78,8 @@ class DiaryRepositoryImpl @Inject constructor(
         return remoteDiaryDataSource.getDiaryByDate(date).result.map { it.toModel() }
     }
 
-    /** 모임 기록 리스트 조회 **/
-    fun getMoimDiaryPagingSource(date: String): PagingSource<Int, DiarySchedule> {
-        return DiaryMoimPagingSource(apiService, date, networkChecker)
+    override suspend fun getActivities(scheduleId: Long): List<Activity> {
+        return emptyList()
     }
 
     /** 모임 기록 개별 조회 **/
@@ -114,12 +107,12 @@ class DiaryRepositoryImpl @Inject constructor(
     override suspend fun addMoimActivity(
         moimScheduleId: Long,
         activityName: String,
-        activityMoney: Long,
+        activityPay: Long,
         participantUserIds: List<Long>,
         createImages: List<String>?
     ) {
         Log.d("MoimActivity", "impl addMoimActivity")
-        remoteDiaryDataSource.addMoimActivity(moimScheduleId, activityName, activityMoney, participantUserIds, createImages)
+        remoteDiaryDataSource.addMoimActivity(moimScheduleId, activityName, activityPay, participantUserIds, createImages)
     }
 
     /** 모임 기록 활동 수정 **/
@@ -127,12 +120,12 @@ class DiaryRepositoryImpl @Inject constructor(
         activityId: Long,
         deleteImageIds: List<Long>?,
         activityName: String,
-        activityMoney: Long,
+        activityPay: Long,
         participantUserIds: List<Long>,
         createImages: List<String>?
     ) {
         Log.d("MoimActivity", "impl editMoimActivity")
-        remoteDiaryDataSource.editMoimActivity(activityId, deleteImageIds, activityName, activityMoney, participantUserIds, createImages)
+        remoteDiaryDataSource.editMoimActivity(activityId, deleteImageIds, activityName, activityPay, participantUserIds, createImages)
     }
 
     /** 모임 기록 활동 삭제**/

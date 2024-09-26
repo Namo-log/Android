@@ -154,7 +154,7 @@
             android:layout_marginEnd="20dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="@{TextUtils.isEmpty(viewModel.diarySchedule.location) ? @string/diary_no_place : viewModel.diarySchedule.location}"
+            android:text="@{TextUtils.isEmpty(viewModel.diarySchedule.location.name) ? @string/diary_no_place : viewModel.diarySchedule.location.name}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/diary_place_tv"
             app:layout_constraintTop_toTopOf="@id/diary_place_tv" />
@@ -295,7 +295,7 @@
                 android:orientation="horizontal"
                 android:overScrollMode="never"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_gallery_list" />
+                tools:listitem="@layout/item_diary_image" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/diary_gallery_click_iv"

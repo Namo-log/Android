@@ -1,6 +1,5 @@
 package com.mongmong.namo.domain.model
 
-import android.util.Log
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import com.mongmong.namo.presentation.config.BaseResponse
@@ -123,7 +122,7 @@ data class Diary(
     val scheduleType: Int,
     val title: String,
     val isHeader: Boolean = false,
-    val participantInfo: ParticipantInfo
+    val participantInfo: ParticipantSummary
 )
 
 data class CategoryInfo(
@@ -131,7 +130,7 @@ data class CategoryInfo(
     val colorId: Int
 )
 
-data class ParticipantInfo(
+data class ParticipantSummary(
     val count: Int,
     val names: String,
 )
@@ -180,10 +179,23 @@ class DiaryDetail(
 data class ScheduleForDiary(
     val scheduleId: Long = 0,
     val date: String = "",
-    val location: String = "",
+    val location: ScheduleForDiaryLocation,
     var hasDiary: Boolean = false,
     val title: String = "",
-    val categoryId: Int
+    val categoryId: Int,
+    val participantInfo: List<ParticipantInfo>,
+    val participantCount: Int
+)
+
+data class ScheduleForDiaryLocation(
+    val kakaoLocationId: String = "",
+    val name: String = ""
+)
+
+data class ParticipantInfo(
+    val userId: Long,
+    val nickname: String,
+    val isGuest: Boolean = true
 )
 
 /** 기록 캘린더 */

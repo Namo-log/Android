@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.mongmong.namo.databinding.ItemGalleryListBinding
+import com.mongmong.namo.databinding.ItemDiaryImageBinding
 import com.mongmong.namo.domain.model.DiaryImage
 
 class PersonalDiaryImagesRVAdapter(
@@ -30,7 +30,7 @@ class PersonalDiaryImagesRVAdapter(
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val binding: ItemGalleryListBinding = ItemGalleryListBinding.inflate(
+        val binding: ItemDiaryImageBinding = ItemDiaryImageBinding.inflate(
             LayoutInflater.from(viewGroup.context), viewGroup, false
         )
         return ViewHolder(binding)
@@ -42,19 +42,19 @@ class PersonalDiaryImagesRVAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    inner class ViewHolder(val binding: ItemGalleryListBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemDiaryImageBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(image: DiaryImage) {
             val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA)
-            Glide.with(binding.galleryImgIv.context)
+            Glide.with(binding.imageIv.context)
                 .load(image.imageUrl)
                 .apply(requestOptions)
-                .into(binding.galleryImgIv)
+                .into(binding.imageIv)
 
-            binding.galleryDeleteBtn.setOnClickListener {
+            binding.imageDeleteBtn.setOnClickListener {
                 removeImage(bindingAdapterPosition)
             }
 
-            binding.galleryImgIv.setOnClickListener {
+            binding.imageIv.setOnClickListener {
                 imageClickListener(items)
             }
         }

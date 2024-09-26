@@ -1,18 +1,19 @@
 package com.mongmong.namo.presentation.ui.group.diary.adapter
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.mongmong.namo.databinding.ItemGalleryListBinding
+import com.mongmong.namo.databinding.ItemMoimDiaryImageBinding
 import com.mongmong.namo.domain.model.DiaryImage
 
 class MoimDiaryImagesRVAdapter(
     private val itemClickListener: () -> Unit,
-    private val deleteImageClickListener: (DiaryImage) -> Unit
+    private val deleteClickListener: (DiaryImage) -> Unit
 ) : RecyclerView.Adapter<MoimDiaryImagesRVAdapter.ViewHolder>() {
 
     private val items: MutableList<DiaryImage> = mutableListOf()
@@ -24,8 +25,14 @@ class MoimDiaryImagesRVAdapter(
         notifyDataSetChanged()
     }
 
+    private fun removeImage(position: Int) {
+        val removedImage = items.removeAt(position)
+        notifyItemRemoved(position)
+        deleteClickListener(removedImage)
+    }
+
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val binding: ItemGalleryListBinding = ItemGalleryListBinding.inflate(
+        val binding: ItemMoimDiaryImageBinding = ItemMoimDiaryImageBinding.inflate(
             LayoutInflater.from(viewGroup.context), viewGroup, false
         )
         return ViewHolder(binding)
@@ -37,22 +44,23 @@ class MoimDiaryImagesRVAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    inner class ViewHolder(val binding: ItemGalleryListBinding) :
+    inner class ViewHolder(val binding: ItemMoimDiaryImageBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: DiaryImage) {
             val requestOptions = RequestOptions()
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
+            Log.d("MoimDiaryImagesRVAdapter", "${item.imageUrl}")
 
-            Glide.with(binding.galleryImgIv)
+            Glide.with(binding.imageIv.context)
                 .load(item.imageUrl)
                 .apply(requestOptions)
-                .into(binding.galleryImgIv)
+                .into(binding.imageIv)
 
-            binding.galleryDeleteBtn.setOnClickListener {
-                deleteImageClickListener(item)
+            binding.imageDeleteBtn.setOnClickListener {
+                removeImage(bindingAdapterPosition)
             }
 
-            binding.galleryImgIv.setOnClickListener {
+            binding.imageIv.setOnClickListener {
                 itemClickListener()
             }
         }

@@ -6,11 +6,11 @@ data class DiaryResponse(
     val result: String
 ) : BaseResponse()
 
-data class GetPersonalDiaryResponse(
-    val result: GetPersonalDiaryResult
+data class GetDiaryResponse(
+    val result: GetDiaryResult
 ): BaseResponse()
 
-data class GetPersonalDiaryResult(
+data class GetDiaryResult(
     val content: String,
     val diaryId: Long,
     val diaryImages: List<DiaryImage>,

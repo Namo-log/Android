@@ -9,11 +9,11 @@ import com.mongmong.namo.data.dto.EditDiaryRequest
 import com.mongmong.namo.data.dto.GetCalendarDiaryResponse
 import com.mongmong.namo.data.dto.GetCalendarDiaryResult
 import com.mongmong.namo.data.dto.GetDiaryByDateResponse
-import com.mongmong.namo.data.dto.GetPersonalDiaryResponse
-import com.mongmong.namo.data.dto.GetPersonalDiaryResult
+import com.mongmong.namo.data.dto.GetDiaryResponse
+import com.mongmong.namo.data.dto.GetDiaryResult
 import com.mongmong.namo.data.dto.GetScheduleForDiaryResponse
 import com.mongmong.namo.data.dto.GetScheduleForDiaryResult
-import com.mongmong.namo.data.dto.Location
+import com.mongmong.namo.data.dto.LocationInfo
 import com.mongmong.namo.data.dto.PostDiaryRequest
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
@@ -39,9 +39,11 @@ class RemoteDiaryDataSource @Inject constructor(
                 scheduleId = 0,
                 scheduleTitle = "",
                 scheduleStartDate = "",
-                locationInfo = Location(kakaoLocationId = "", locationName = ""),
+                locationInfo = LocationInfo(kakaoLocationId = "", locationName = ""),
                 categoryInfo = CategoryInfo(name = "", colorId = 0),
-                hasDiary = true
+                hasDiary = true,
+                participantCount = 0,
+                participantInfo = emptyList()
             )
         )
         withContext(Dispatchers.IO) {
@@ -58,9 +60,9 @@ class RemoteDiaryDataSource @Inject constructor(
     }
 
     /** 개인 기록 조회 */
-    suspend fun getDiary(scheduleId: Long): GetPersonalDiaryResponse {
-        var response = GetPersonalDiaryResponse(
-            result = GetPersonalDiaryResult(
+    suspend fun getDiary(scheduleId: Long): GetDiaryResponse {
+        var response = GetDiaryResponse(
+            result = GetDiaryResult(
                 content = "", // 빈 문자열
                 diaryId = 0L, // 기본값 0L (Long 타입)
                 diaryImages = emptyList(), // 빈 리스트
@@ -274,7 +276,7 @@ class RemoteDiaryDataSource @Inject constructor(
     suspend fun addMoimActivity(
         moimScheduleId: Long,
         activityName: String,
-        activityMoney: Long,
+        activityPay: Long,
         participantUserIds: List<Long>,
         createImages: List<String>?
     ) {
@@ -288,7 +290,7 @@ class RemoteDiaryDataSource @Inject constructor(
                 groupDiaryApiService.addMoimActivity(
                     moimScheduleId = moimScheduleId,
                     activityName = activityName,
-                    activityMoney = activityMoney.toString(),
+                    activityPay = activityPay.toString(),
                     participantUserIds = participantUserIds,
                     createImages = createImagesParts
                 )
@@ -305,7 +307,7 @@ class RemoteDiaryDataSource @Inject constructor(
         activityId: Long,
         deleteImageIds: List<Long>?,
         activityName: String,
-        activityMoney: Long,
+        activityPay: Long,
         participantUserIds: List<Long>,
         createImages: List<String>?
     ) {
@@ -321,7 +323,7 @@ class RemoteDiaryDataSource @Inject constructor(
                     activityId = activityId,
                     deleteImageIds = deleteImageIds,
                     activityName = activityName,
-                    activityMoney = activityMoney.toString(),
+                    activityPay = activityPay.toString(),
                     participantUserIds = participantUserIds,
                     createImages = createImagesParts
                 )

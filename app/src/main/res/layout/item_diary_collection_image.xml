@@ -8,7 +8,7 @@
 
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/gallery_img_iv"
+        android:id="@+id/image_iv"
         android:layout_width="71dp"
         android:layout_height="71dp"
         app:layout_constraintBottom_toBottomOf="parent"

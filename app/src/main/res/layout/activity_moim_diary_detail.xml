@@ -7,9 +7,8 @@
     <data>
 
         <import type="com.mongmong.namo.presentation.utils.DiaryDateConverter" />
-
+        <import type="android.text.TextUtils" />
         <import type="android.view.View" />
-
         <variable
             name="viewModel"
             type="com.mongmong.namo.presentation.ui.group.diary.MoimDiaryViewModel" />
@@ -63,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:padding="5dp"
                 android:src="@drawable/ic_delete"
-                android:visibility="@{viewModel.isEdit ? View.VISIBLE : View.GONE}"
+                android:visibility="@{viewModel.diarySchedule.hasDiary ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@id/moim_diary_back_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/moim_diary_back_iv" />
@@ -166,7 +165,7 @@
                         android:layout_marginEnd="30dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="@{viewModel.diarySchedule.location}"
+                        android:text="@{TextUtils.isEmpty(viewModel.diarySchedule.location.name) ? @string/diary_no_place : viewModel.diarySchedule.location.name}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/moim_diary_place_tv"
                         app:layout_constraintTop_toTopOf="@id/moim_diary_place_tv" />
@@ -195,25 +194,25 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/moim_diary_people_tv" />
 
-                    <de.hdodenhof.circleimageview.CircleImageView
+                    <androidx.cardview.widget.CardView
                         android:id="@+id/moim_diary_schedule_btn"
                         android:layout_width="42dp"
                         android:layout_height="42dp"
                         android:layout_marginStart="30dp"
                         android:layout_marginTop="15dp"
-                        android:src="@color/main_text"
+                        android:backgroundTint="@color/main_text"
+                        app:cardCornerRadius="42dp"
+                        app:cardElevation="0dp"
+                        android:visibility="@{viewModel.isParticipantVisible ? View.VISIBLE : View.GONE}"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/moim_diary_people_tv" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_calendar"
-                        app:layout_constraintBottom_toBottomOf="@+id/moim_diary_schedule_btn"
-                        app:layout_constraintEnd_toEndOf="@+id/moim_diary_schedule_btn"
-                        app:layout_constraintStart_toStartOf="@+id/moim_diary_schedule_btn"
-                        app:layout_constraintTop_toTopOf="@+id/moim_diary_schedule_btn"
-                        app:tint="@color/white" />
+                        app:layout_constraintTop_toBottomOf="@id/moim_diary_people_tv" >
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_calendar"
+                            android:layout_gravity="center"
+                            app:tint="@color/white" />
+                    </androidx.cardview.widget.CardView>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/moim_participant_rv"

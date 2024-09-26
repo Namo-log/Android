@@ -3,11 +3,13 @@ package com.mongmong.namo.presentation.ui.group.diary.adapter
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemMoimDiaryActivityBinding
 import com.mongmong.namo.databinding.ItemMoimDiaryDiaryBinding
+import com.mongmong.namo.domain.model.Activity
 import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.group.MoimActivity
@@ -17,7 +19,7 @@ class MoimDiaryVPAdapter(
     private val activityEventListener: OnActivityEventListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val activities = mutableListOf<MoimActivity>()
+    private val activities = mutableListOf<Activity>()
     private var diary = DiaryDetail("", 0L, emptyList(), 3)
 
     fun updateDiary(diary: DiaryDetail) {
@@ -25,7 +27,7 @@ class MoimDiaryVPAdapter(
         notifyDataSetChanged()
     }
 
-    fun submitActivities(newActivities: List<MoimActivity>) {
+    fun submitActivities(newActivities: List<Activity>) {
         activities.clear()
         activities.addAll(newActivities)
         notifyDataSetChanged()
@@ -81,16 +83,19 @@ class MoimDiaryVPAdapter(
             binding.diaryEnjoy2Iv.setOnClickListener { diaryEventListener.onEnjoyClicked(2) }
             binding.diaryEnjoy3Iv.setOnClickListener { diaryEventListener.onEnjoyClicked(3) }
 
+            binding.diaryAddImageIv.setOnClickListener { diaryEventListener.onAddImageClicked() }
+
             // 이미지 리스트 어댑터 설정
             val adapter = MoimDiaryImagesRVAdapter(
                 itemClickListener = { /* 이미지 클릭 시 동작 */ },
-                deleteImageClickListener = { diaryImage ->
+                deleteClickListener = { diaryImage ->
                     diaryEventListener.onDeleteImage(diaryImage)
                 }
             )
-            binding.moimGalleryRv.apply {
+            binding.diaryImagesRv.apply {
                 this.adapter = adapter
                 layoutManager = LinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)
+                itemAnimator = null
             }
             adapter.addItem(diary.diaryImages)
         }
@@ -101,15 +106,32 @@ class MoimDiaryVPAdapter(
         private val listener: OnActivityEventListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(activity: MoimActivity) {
-
-            // 여기서 콜백을 설정합니다.
+        fun bind(activity: Activity) {
             binding.activityDeleteBtn.setOnClickListener {
-                listener.onDeleteActivity()
+                listener.onDeleteActivity(bindingAdapterPosition - 1)
             }
-            binding.updateImageIv.setOnClickListener {
-                listener.onUpdateImage(bindingAdapterPosition)
+
+            binding.activityStartDateTv.setOnClickListener {
+                binding.activityStartDateCalendar.visibility =
+                    if (binding.activityStartDateCalendar.visibility == View.VISIBLE) View.GONE else View.VISIBLE
             }
+
+            binding.activityEndDateTv.setOnClickListener {
+                binding.activityEndDateCalendar.visibility =
+                    if (binding.activityEndDateCalendar.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+            }
+
+            binding.activityStartDateCalendar.setOnDateChangeListener { _, year, month, dayOfMonth ->
+                val selectedDate = "$year-${month + 1}-$dayOfMonth" // 월은 0부터 시작하므로 +1
+                listener.onStartDateSelected(bindingAdapterPosition - 1, selectedDate)
+            }
+
+            // endDate 캘린더 날짜 선택 시 호출
+            binding.activityEndDateCalendar.setOnDateChangeListener { _, year, month, dayOfMonth ->
+                val selectedDate = "$year-${month + 1}-$dayOfMonth"
+                listener.onEndDateSelected(bindingAdapterPosition - 1, selectedDate)
+            }
+
             binding.activityTitleTv.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
                     listener.onActivityNameChanged(s.toString(), bindingAdapterPosition - 1)
@@ -117,7 +139,24 @@ class MoimDiaryVPAdapter(
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             })
-            // 기타 이벤트 리스너 설정
+
+            binding.activityAddImageIv.setOnClickListener {
+                listener.onAddImageClicked(bindingAdapterPosition - 1)
+            }
+
+            // 이미지 리스트 어댑터 설정
+            val adapter = MoimDiaryImagesRVAdapter(
+                itemClickListener = { /* 이미지 클릭 시 동작 */ },
+                deleteClickListener = { diaryImage ->
+                    diaryEventListener.onDeleteImage(diaryImage)
+                }
+            )
+            binding.activityImagesRv.apply {
+                this.adapter = adapter
+                layoutManager = LinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)
+                itemAnimator = null
+            }
+            adapter.addItem(diary.diaryImages)
         }
     }
 
@@ -127,18 +166,22 @@ class MoimDiaryVPAdapter(
     }
 
     interface OnActivityEventListener {
-        fun onDeleteActivity()
-        fun onUpdateImage(position: Int)
+        fun onAddImageClicked(position: Int)
+        fun onDeleteActivity(position: Int)
         fun onActivityNameChanged(name: String, position: Int)
-        // 기타 필요한 콜백 메서드들
+        fun onStartDateSelected(position: Int, date: String)
+        fun onEndDateSelected(position: Int, date: String)
+        fun onTagClicked(position: Int)
+        fun onParticipantsClicked(position: Int)
+        fun onPayClicked(position: Int)
     }
 
     interface OnDiaryEventListener {
+        fun onAddImageClicked()
         fun onImageClicked(images: List<DiaryImage>)
         fun onContentChanged(content: String)
         fun onEnjoyClicked(enjoyRating: Int)
         fun onDeleteImage(image: DiaryImage)
-        // 기타 필요한 메서드 추가
     }
 }
 

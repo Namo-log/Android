@@ -2,6 +2,7 @@ package com.mongmong.namo.domain.repositories
 
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import com.mongmong.namo.domain.model.Activity
 import com.mongmong.namo.domain.model.CalendarDiaryDate
 import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryDetail
@@ -39,11 +40,11 @@ interface DiaryRepository {
 
     suspend fun getDiaryByDate(date: String): List<Diary>
 
+    suspend fun getActivities(scheduleId: Long): List<Activity>
+
     suspend fun uploadDiaryToServer()
 
     suspend fun postDiaryToServer(serverId: Long, scheduleId: Long)
-
-    fun getPersonalDiaryPagingSource(month: String): PagingSource<Int, DiarySchedule>
 
     fun getDiaryCollectionPagingSource(
         filterType: String?,

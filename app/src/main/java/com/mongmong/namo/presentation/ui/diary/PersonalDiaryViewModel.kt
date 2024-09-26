@@ -147,7 +147,6 @@ class PersonalDiaryViewModel @Inject constructor(
     fun addImages(newImages: List<Uri>) {
         val currentImages = diary.value?.diaryImages ?: emptyList()
         val newImagesToAdd = newImages.take(3 - currentImages.size)
-        Log.d("addCreateImages", "${currentImages} ${newImagesToAdd}")
         _diary.value?.diaryImages = currentImages + newImagesToAdd.map {
             DiaryImage(diaryImageId = 0L, imageUrl = it.toString(), orderNumber = 1)
         }

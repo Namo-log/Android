@@ -8,7 +8,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import com.mongmong.namo.databinding.ItemDiaryListGalleryBinding
+import com.mongmong.namo.databinding.ItemDiaryCollectionImageBinding
 import com.mongmong.namo.domain.model.DiaryImage
 
 class DiaryImagesRVAdapter(
@@ -17,7 +17,7 @@ class DiaryImagesRVAdapter(
 ) : RecyclerView.Adapter<DiaryImagesRVAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val binding: ItemDiaryListGalleryBinding = ItemDiaryListGalleryBinding.inflate(
+        val binding: ItemDiaryCollectionImageBinding = ItemDiaryCollectionImageBinding.inflate(
             LayoutInflater.from(viewGroup.context),
             viewGroup,
             false
@@ -28,7 +28,7 @@ class DiaryImagesRVAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(imgList[position])
 
-        holder.binding.galleryImgIv.setOnClickListener {
+        holder.binding.imageIv.setOnClickListener {
             if(imgList != null) imageClickListener(imgList)
         }
 
@@ -36,13 +36,13 @@ class DiaryImagesRVAdapter(
 
     override fun getItemCount(): Int = imgList.size
 
-    inner class ViewHolder(val binding: ItemDiaryListGalleryBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemDiaryCollectionImageBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: DiaryImage) {
-            Glide.with(binding.galleryImgIv)
+            Glide.with(binding.imageIv.context)
                 .load(item.imageUrl)
                 .transform(CenterCrop(), RoundedCorners(30)) // centerCrop, 이미지 모서리 설정
                 .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA))
-                .into(binding.galleryImgIv)
+                .into(binding.imageIv)
         }
 
     }

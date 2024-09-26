@@ -103,7 +103,7 @@
                 tools:layout_editor_absoluteX="20dp" />
 
             <TextView
-                android:id="@+id/text_num_tv"
+                android:id="@+id/diary_content_num_tv"
                 style="@style/calendar_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -124,18 +124,18 @@
                 android:layout_marginBottom="20dp"
                 android:nestedScrollingEnabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_num_tv">
+                app:layout_constraintTop_toBottomOf="@+id/diary_content_num_tv">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/moim_gallery_rv"
+                    android:id="@+id/diary_images_rv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_moim_gallery_list" />
+                    tools:listitem="@layout/item_moim_diary_image" />
 
                 <ImageView
-                    android:id="@+id/update_image_iv"
+                    android:id="@+id/diary_add_image_iv"
                     android:layout_width="92dp"
                     android:layout_height="92dp"
                     android:layout_gravity="center"

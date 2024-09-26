@@ -40,7 +40,7 @@ class MoimDiaryDetailActivity :
     private lateinit var participantsAdapter: MoimParticipantsRVAdapter  // 일정 참여자
     private lateinit var vpAdapter: MoimDiaryVPAdapter // 각 활동 item
 
-    private var positionForGallery: Int = -1
+    private var positionForGallery = DIARY_POSITION
     private val viewModel: MoimDiaryViewModel by viewModels()
 
     override fun setup() {
@@ -69,10 +69,9 @@ class MoimDiaryDetailActivity :
             viewModel.setNewDiary()
         } else {  // 기록 있을 때, 수정
             Log.d("setCreateOrEdit", "dd2")
-            viewModel.getDiary()
+            viewModel.getDiaryData()
         }
     }
-
 
     private fun setupParticipants() {
         binding.moimParticipantRv.apply {
@@ -86,6 +85,10 @@ class MoimDiaryDetailActivity :
     private fun setupViewPager() {
         vpAdapter = MoimDiaryVPAdapter(
             diaryEventListener = object : MoimDiaryVPAdapter.OnDiaryEventListener{
+                override fun onAddImageClicked() {
+                    positionForGallery = DIARY_POSITION
+                    getGallery()
+                }
                 override fun onImageClicked(images: List<DiaryImage>) {
                     startActivity(
                         Intent(this@MoimDiaryDetailActivity, DiaryImageDetailActivity::class.java)
@@ -98,18 +101,31 @@ class MoimDiaryDetailActivity :
 
             },
             activityEventListener = object : MoimDiaryVPAdapter.OnActivityEventListener {
-                override fun onDeleteActivity() {
+                override fun onAddImageClicked(position: Int) {
+                    positionForGallery = position
+                    getGallery()
+                }
+                override fun onDeleteActivity(position: Int) {
                     //viewModel.deleteActivity()
                 }
-
-                override fun onUpdateImage(position: Int) {
-                    // 이미지 업데이트 처리
-                }
-
                 override fun onActivityNameChanged(name: String, position: Int) {
                     viewModel.updateActivityName(position, name)
                 }
+                override fun onStartDateSelected(position: Int) {
 
+                }
+                override fun onEndDateSelected(position: Int) {
+
+                }
+                override fun onTagClicked(position: Int) {
+
+                }
+                override fun onParticipantsClicked(position: Int) {
+
+                }
+                override fun onPayClicked(position: Int) {
+
+                }
                 // 기타 콜백 구현
             }
         )
@@ -130,6 +146,7 @@ class MoimDiaryDetailActivity :
 
         viewModel.activities.observe(this) { activities ->
             vpAdapter.submitActivities(activities)
+            binding.moimDiaryIndicator.setViewPager(binding.moimDiaryVp)
         }
 
         viewModel.patchActivitiesComplete.observe(this) { isComplete ->
@@ -169,17 +186,17 @@ class MoimDiaryDetailActivity :
             if (viewModel.activities.value?.size ?: 0 >= 3)
                 Toast.makeText(this, "활동 추가는 3개까지 가능합니다", Toast.LENGTH_SHORT).show()
             else {
-                viewModel.addActivity(MoimActivity(0L, "", 0L, arrayListOf(), arrayListOf()))
+                viewModel.addEmptyActivity()
             }
         }
 
         // 기록 추가 or 기록 수정
         binding.moimDiarySaveBtn.setOnClickListener {
-            if (viewModel.activities.value?.any { it.name.isEmpty() } == false) {
+            /*if (viewModel.activities.value?.any { it.name.isEmpty() } == false) {
                 viewModel.patchMoimActivities()
             } else {
                 Toast.makeText(this@MoimDiaryDetailActivity, "장소를 입력해주세요!", Toast.LENGTH_SHORT).show()
-            }
+            }*/
         }
 
         // 기록 삭제
@@ -241,25 +258,37 @@ class MoimDiaryDetailActivity :
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val newImages = mutableListOf<String>()
+            val newImages = mutableListOf<Uri>()
             result.data?.let { data ->
                 if (data.clipData != null) { // 여러 개의 이미지를 선택한 경우
                     val count = data.clipData!!.itemCount
                     for (i in 0 until count) {
                         val imageUri = data.clipData!!.getItemAt(i).uri
-                        newImages.add(imageUri.toString())
+                        newImages.add(imageUri)
                     }
                 } else { // 단일 이미지 선택
                     val imageUri: Uri? = data.data
-                    imageUri?.let { newImages.add(it.toString()) }
+                    imageUri?.let { newImages.add(it) }
                 }
             }
 
-            val currentImagesCount = viewModel.activities.value?.get(positionForGallery)?.images?.size ?: 0
-            if (currentImagesCount + newImages.size > 3) {
-                Toast.makeText(this, "이미지는 최대 3개까지 추가할 수 있습니다.", Toast.LENGTH_SHORT).show()
+
+            if (positionForGallery == DIARY_POSITION) {
+                // 다이어리의 이미지 추가 처리
+                val currentImagesCount = viewModel.diary.value?.diaryImages?.size ?: 0
+                if (currentImagesCount + newImages.size > 3) {
+                    Toast.makeText(this, "이미지는 최대 3개까지 추가할 수 있습니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    viewModel.addDiaryImages(newImages)
+                }
             } else {
-                viewModel.updateActivityImages(positionForGallery, newImages.map { DiaryImage(diaryImageId = 0, imageUrl = it, orderNumber = 0) })
+                // 활동의 이미지 추가 처리
+                val currentImagesCount = viewModel.activities.value?.get(positionForGallery)?.images?.size ?: 0
+                if (currentImagesCount + newImages.size > 3) {
+                    Toast.makeText(this, "이미지는 최대 3개까지 추가할 수 있습니다.", Toast.LENGTH_SHORT).show()
+                } else {
+                    viewModel.addActivityImages(positionForGallery, newImages)
+                }
             }
         }
     }
@@ -273,6 +302,7 @@ class MoimDiaryDetailActivity :
     }
 
     companion object {
+        const val DIARY_POSITION = -1
         const val DELETE_BUTTON_ACTION = 1
         const val BACK_BUTTON_ACTION = 2
     }
