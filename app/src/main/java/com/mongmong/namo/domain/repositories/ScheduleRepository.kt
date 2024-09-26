@@ -31,8 +31,7 @@ interface ScheduleRepository {
     ): Boolean
 
     suspend fun deleteSchedule(
-        scheduleId: Long,
-        isGroup: Boolean
+        scheduleId: Long
     ): Boolean
 
     // 모임

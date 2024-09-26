@@ -5,7 +5,7 @@ import com.mongmong.namo.data.dto.GetMonthScheduleResponse
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.data.dto.PostScheduleResponse
-import com.mongmong.namo.data.dto.ScheduleDefaultResponse
+import com.mongmong.namo.data.dto.EditScheduleResponse
 import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.Call
@@ -37,13 +37,12 @@ interface ScheduleApiService {
     suspend fun editSchedule(
         @Path("scheduleId") serverId : Long,
         @Body schedule : ScheduleRequestBody
-    ) : ScheduleDefaultResponse
+    ) : EditScheduleResponse
 
     // 일정 삭제
-    @DELETE("schedules/{scheduleId}/{kind}")
+    @DELETE("schedules/{scheduleId}")
     suspend fun deleteSchedule(
-        @Path("scheduleId") serverId : Long,
-        @Path("kind") isMoimSchedule: Int,
+        @Path("scheduleId") serverId : Long
     ) : DeleteScheduleResponse
 
     /** 모임 일정 */

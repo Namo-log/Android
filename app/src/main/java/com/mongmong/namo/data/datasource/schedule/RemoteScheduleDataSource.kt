@@ -12,7 +12,7 @@ import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.data.dto.PostScheduleResponse
-import com.mongmong.namo.data.dto.ScheduleDefaultResponse
+import com.mongmong.namo.data.dto.EditScheduleResponse
 import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
@@ -70,8 +70,8 @@ class RemoteScheduleDataSource @Inject constructor(
     suspend fun editScheduleToServer(
         scheduleId: Long,
         schedule: ScheduleRequestBody
-    ) : ScheduleDefaultResponse {
-        var scheduleResponse = ScheduleDefaultResponse()
+    ) : EditScheduleResponse {
+        var scheduleResponse = EditScheduleResponse()
 
         withContext(Dispatchers.IO) {
             runCatching {
@@ -87,15 +87,12 @@ class RemoteScheduleDataSource @Inject constructor(
     }
 
     suspend fun deleteScheduleToServer(
-        scheduleId: Long,
-        isGroup: Boolean
+        scheduleId: Long
     ) : DeleteScheduleResponse {
-        var scheduleResponse = DeleteScheduleResponse("")
-        val value = if (isGroup) IS_GROUP else IS_NOT_GROUP
-
+        var scheduleResponse = DeleteScheduleResponse()
         withContext(Dispatchers.IO) {
             runCatching {
-                scheduleApiService.deleteSchedule(scheduleId, value)
+                scheduleApiService.deleteSchedule(scheduleId)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "deleteScheduleToServer Success, $it")
                 scheduleResponse = it
@@ -221,10 +218,5 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "deleteMoimSchedule Failure")
             }
         }
-    }
-
-    companion object {
-        const val IS_GROUP = 1
-        const val IS_NOT_GROUP = 0
     }
 }

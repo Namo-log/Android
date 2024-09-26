@@ -43,63 +43,10 @@ class ScheduleRepositoryImpl @Inject constructor(
             scheduleId,
             schedule
         ).code == SUCCESS_CODE
-        /*
-        Log.d("ScheduleRepositoryImpl", "editSchedule $schedule")
-        localScheduleDataSource.editSchedule(schedule)
-        if (networkChecker.isOnline()) {
-            val editResponse = remoteScheduleDataSource.editScheduleToServer(
-                schedule.serverId,
-                schedule.convertLocalScheduleToServer()
-            )
-            if (editResponse.code == SUCCESS_CODE) {
-                Log.d("ScheduleRepositoryImpl", "editSchedule Success")
-                localScheduleDataSource.updateScheduleAfterUpload(
-                    localId = schedule.scheduleId,
-                    serverId = editResponse.result.scheduleId,
-                    isUpload = UploadState.IS_UPLOAD.state,
-                    status = RoomState.DEFAULT.state,
-                )
-            } else {
-                Log.d(
-                    "ScheduleRepositoryImpl",
-                    "editSchedule Fail, code = ${editResponse.code}, message = ${editResponse.message}"
-                )
-            }
-        }
-         */
     }
 
-    override suspend fun deleteSchedule(scheduleId: Long, isGroup: Boolean): Boolean {
-        return remoteScheduleDataSource.deleteScheduleToServer(scheduleId, isGroup).code == SUCCESS_CODE
-        /*
-        // 모임 일정
-        if (isGroup) {
-            remoteScheduleDataSource.deleteScheduleToServer(serverId, isGroup)
-            return
-        }
-
-        // 개인 일정
-        // room db에 삭제 상태로 변경
-        localScheduleDataSource.updateScheduleAfterUpload(
-            localId = localId,
-            serverId = serverId,
-            isUpload = UploadState.IS_NOT_UPLOAD.state,
-            status = RoomState.DELETED.state,
-        )
-        if (networkChecker.isOnline()) {
-            // 서버 db에서 삭제
-            val deleteResponse = remoteScheduleDataSource.deleteScheduleToServer(serverId, isGroup)
-            if (deleteResponse.code == DiaryRepositoryImpl.SUCCESS_CODE) {
-                // room db에서 삭제
-                localScheduleDataSource.deleteSchedule(localId)
-            } else {
-                Log.d(
-                    "ScheduleRepositoryImpl",
-                    "deleteSchedule Fail, code = ${deleteResponse.code}, message = ${deleteResponse.message}"
-                )
-            }
-        }
-         */
+    override suspend fun deleteSchedule(scheduleId: Long): Boolean {
+        return remoteScheduleDataSource.deleteScheduleToServer(scheduleId).code == SUCCESS_CODE
     }
 
     // 모임

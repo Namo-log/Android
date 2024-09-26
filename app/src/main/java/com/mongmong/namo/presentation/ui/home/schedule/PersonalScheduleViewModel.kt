@@ -9,8 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.LatLng
 import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.domain.model.Schedule
-import com.mongmong.namo.data.dto.GetMonthScheduleResult
-import com.mongmong.namo.data.dto.Location
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.data.dto.Period
@@ -112,7 +110,6 @@ class PersonalScheduleViewModel @Inject constructor(
             _isComplete.postValue(
                 repository.deleteSchedule(
                     scheduleId = _schedule.value!!.scheduleId,
-                    isGroup = _schedule.value!!.isMeetingSchedule
                 )
             )
         }

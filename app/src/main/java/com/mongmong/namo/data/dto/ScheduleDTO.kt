@@ -2,11 +2,6 @@ package com.mongmong.namo.data.dto
 
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.google.gson.annotations.SerializedName
-import com.mongmong.namo.domain.model.Schedule
-
-data class ScheduleDefaultResponse (
-    var result: String = ""
-) : BaseResponse()
 
 // 개인
 /** 일정 월별 조회 */
@@ -24,21 +19,7 @@ data class GetMonthScheduleResult (
     val categoryInfo : ScheduleCategoryInfo,
     val hasDiary : Boolean?,
     val isMeetingSchedule : Boolean,
-) {
-    fun convertServerScheduleResponseToLocal(): Schedule {
-        return Schedule(
-            this.scheduleId, // localId
-            this.title,
-            this.startDate,
-            this.endDate,
-            this.locationInfo,
-            this.categoryInfo,
-            this.alarmDate ?: listOf(),
-            this.hasDiary,
-            this.isMeetingSchedule
-        )
-    }
-}
+)
 
 data class ScheduleCategoryInfo(
     var categoryId: Long = 0L,
@@ -74,16 +55,12 @@ data class ScheduleLocation(
 
 /** 일정 수정 */
 data class EditScheduleResponse (
-    @SerializedName("result") val result : EditScheduleResult
+    @SerializedName("result") val result : String = ""
 ) : BaseResponse()
-
-data class EditScheduleResult (
-    @SerializedName("scheduleId")  val scheduleId : Long
-)
 
 /** 일정 삭제 */
 data class DeleteScheduleResponse (
-    @SerializedName("result") val result : String
+    @SerializedName("result") val result : String = ""
 ) : BaseResponse()
 
 // 모임
