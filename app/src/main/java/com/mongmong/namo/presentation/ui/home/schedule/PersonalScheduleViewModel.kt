@@ -32,7 +32,7 @@ class PersonalScheduleViewModel @Inject constructor(
     val schedule: LiveData<Schedule?> = _schedule
 
     private val _scheduleList = MutableLiveData<List<Schedule>>(emptyList())
-    val scheduleList: LiveData<List<Schedule>?> = _scheduleList
+    val scheduleList: LiveData<List<Schedule>> = _scheduleList
 
     private val _isComplete = MutableLiveData<Boolean>()
     val isComplete: LiveData<Boolean> = _isComplete
@@ -52,7 +52,7 @@ class PersonalScheduleViewModel @Inject constructor(
     private val _clickedDateTime = MutableLiveData<DateTime>()
     val clickedDateTime: LiveData<DateTime> = _clickedDateTime
 
-    private lateinit var _dailyScheduleList: List<Schedule> // 하루 일정
+    private var _dailyScheduleList: List<Schedule> = emptyList() // 하루 일정
 
     private val _isShow = MutableLiveData(false)
     var isShow: LiveData<Boolean> = _isShow
@@ -64,7 +64,7 @@ class PersonalScheduleViewModel @Inject constructor(
     var isDailyScheduleEmptyPair: LiveData<Pair<Boolean, Boolean>> = _isDailyScheduleEmptyPair
 
     init {
-        getCategories()
+        getCategories() // 최초 카테고리 목록 조회
     }
 
     /** 월별 일정 리스트 조회 */
@@ -86,7 +86,7 @@ class PersonalScheduleViewModel @Inject constructor(
                     repository.addSchedule(
                         schedule = _schedule.value!!.convertLocalScheduleToServer()
                     )
-                    )
+            )
         }
     }
 
@@ -190,7 +190,7 @@ class PersonalScheduleViewModel @Inject constructor(
         // 선택 날짜에 해당되는 일정 필터링
         _dailyScheduleList = _scheduleList.value!!.filter { schedule ->
             schedule.startLong <= getClickedDatePeriod().endDate &&
-            schedule.endLong >= getClickedDatePeriod().startDate
+                    schedule.endLong >= getClickedDatePeriod().startDate
         }
         _isDailyScheduleEmptyPair.value = Pair(
             isDailyScheduleEmpty(false), // 개인 일정
