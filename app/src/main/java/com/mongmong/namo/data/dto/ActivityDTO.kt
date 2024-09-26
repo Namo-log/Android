@@ -25,9 +25,9 @@ data class ActivityParticipant(
 
 data class ActivityLocation(
     val kakaoLocationId: String,
-    val latitude: Int,
+    val latitude: Double,
     val locationName: String,
-    val longitude: Int
+    val longitude: Double
 )
 
 data class ActivityImage(

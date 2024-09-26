@@ -217,11 +217,20 @@ class MoimDiaryViewModel @Inject constructor(
 
     fun updateActivityName(position: Int, title: String) {
         _activities.value?.get(position)?.title = title
-        _activities.value = _activities.value
     }
 
     fun updateActivityStartDate(position: Int, date: String) {
 
+    }
+
+    fun updateActivityEndDate(position: Int, date: String) {
+
+    }
+
+    fun updateActivityLocation(position: Int, id: String, name: String, x: Double, y: Double) {
+        Log.d("updateActivityLocation", "$position $id $name $x $y")
+        _activities.value?.get(position)?.location = ActivityLocation(kakaoLocationId = id, locationName = name, longitude = x, latitude = y)
+        _activities.value = _activities.value
     }
 
     fun updateActivityPay(position: Int, pay: Int) {

@@ -1,272 +1,280 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <import type="com.mongmong.namo.presentation.utils.DiaryDateConverter" />
+        <variable
+            name="activity"
+            type="com.mongmong.namo.domain.model.Activity" />
+    </data>
+
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="25dp"
-        android:layout_marginVertical="16dp"
-        android:orientation="vertical"
-        android:backgroundTint="@color/white"
-        android:background="@drawable/bg_basic_item"
-        android:elevation="3dp">
+        android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <EditText
-                android:id="@+id/activity_title_tv"
-                style="@style/content_bold"
-                android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginVertical="16dp"
+            android:orientation="vertical"
+            android:backgroundTint="@color/white"
+            android:background="@drawable/bg_basic_item"
+            android:elevation="3dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/activity_title_tv"
+                    style="@style/content_bold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/transparent"
+                    android:hint="@string/moim_diary_new_activity"
+                    android:text="@{activity.title}"
+                    android:textColorHint="@color/text_unselected"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/activity_delete_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/bg_moim_diary_activity_delete"
+                    android:src="@drawable/ic_delete"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/text_placeholder" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="20dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="21dp">
+                <TextView
+                    android:id="@+id/activity_start_date_title_tv"
+                    style="@style/content_bold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/schedule_start"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/activity_title_tv" />
+                <TextView
+                    android:id="@+id/activity_start_date_tv"
+                    style="@style/content_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{DiaryDateConverter.toFullDateTimeWithDay(activity.startDate)}"
+                    app:layout_constraintBottom_toBottomOf="@+id/activity_start_date_title_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/activity_start_date_title_tv" />
+            </LinearLayout>
+
+            <CalendarView
+                android:id="@+id/activity_start_date_calendar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                android:layout_marginHorizontal="12.5dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp">
+                <TextView
+                    android:id="@+id/activity_end_date_title_tv"
+                    style="@style/content_bold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/schedule_end"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/activity_start_date_title_tv" />
+
+                <TextView
+                    android:id="@+id/activity_end_date_tv"
+                    style="@style/content_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{DiaryDateConverter.toFullDateTimeWithDay(activity.endDate)}"
+                    app:layout_constraintBottom_toBottomOf="@+id/activity_end_date_title_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/activity_end_date_title_tv" />
+            </LinearLayout>
+
+            <CalendarView
+                android:id="@+id/activity_end_date_calendar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"
+                android:layout_marginHorizontal="12.5dp"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp">
+                <TextView
+                    android:id="@+id/activity_place_title_tv"
+                    style="@style/content_bold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/diary_place"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/activity_end_date_title_tv" />
+
+                <TextView
+                    android:id="@+id/activity_place_tv"
+                    style="@style/content_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_arrow_right"
+                    android:drawablePadding="8dp"
+                    android:text="@{activity.location.locationName.empty ? @string/diary_no_place : activity.location.locationName}"
+                    app:layout_constraintBottom_toBottomOf="@+id/activity_place_title_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/activity_image_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="15dp"
                 android:layout_marginTop="20dp"
-                android:background="@color/transparent"
-                android:hint="@string/moim_diary_new_activity"
-                android:textColorHint="@color/text_unselected"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/activity_delete_btn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="12dp"
-                android:background="@drawable/bg_moim_diary_activity_delete"
-                android:src="@drawable/ic_delete"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/text_placeholder" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="21dp">
-            <TextView
-                android:id="@+id/activity_start_date_title_tv"
-                style="@style/content_bold"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/schedule_start"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/activity_title_tv" />
-            <TextView
-                android:id="@+id/activity_start_date_tv"
-                style="@style/content_regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/schedule_start"
-                app:layout_constraintBottom_toBottomOf="@+id/activity_start_date_title_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/activity_start_date_title_tv" />
-        </LinearLayout>
-
-        <CalendarView
-            android:id="@+id/activity_start_date_calendar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:visibility="gone"
-            android:layout_marginHorizontal="12.5dp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="16dp">
-            <TextView
-                android:id="@+id/activity_end_date_title_tv"
-                style="@style/content_bold"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/schedule_end"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_start_date_title_tv" />
-
-            <TextView
-                android:id="@+id/activity_end_date_tv"
-                style="@style/content_regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/schedule_start"
-                app:layout_constraintBottom_toBottomOf="@+id/activity_end_date_title_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/activity_end_date_title_tv" />
-        </LinearLayout>
-
-        <CalendarView
-            android:id="@+id/activity_end_date_calendar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:visibility="gone"
-            android:layout_marginHorizontal="12.5dp"/>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/moim_diary_activity_time"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="16dp">
-            <TextView
-                android:id="@+id/activity_place_title_tv"
-                style="@style/content_bold"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/diary_place"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/activity_end_date_title_tv" />
-
-            <TextView
-                android:id="@+id/activity_place_tv"
-                style="@style/content_regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_arrow_right"
-                android:drawablePadding="8dp"
-                android:text="@string/diary_no_place"
-                app:layout_constraintBottom_toBottomOf="@+id/activity_place_title_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv" />
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/activity_image_ll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="15dp"
-            android:layout_marginTop="20dp"
-            android:nestedScrollingEnabled="false"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/activity_place_title_tv">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/activity_images_rv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
                 android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_moim_diary_image" />
+                app:layout_constraintTop_toBottomOf="@id/activity_place_title_tv">
 
-            <ImageView
-                android:id="@+id/activity_add_image_iv"
-                android:layout_width="92dp"
-                android:layout_height="92dp"
-                android:layout_gravity="center"
-                android:layout_marginStart="7dp"
-                android:background="@drawable/bg_gallery_dotted"
-                android:layerType="software"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_gallery" />
-        </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/activity_images_rv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_moim_diary_image" />
 
-        <LinearLayout
-            android:id="@+id/activity_tag_ll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_moim_diary_activity_tab"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="16dp"
-            android:layout_marginTop="15dp"
-            app:layout_constraintTop_toBottomOf="@id/activity_image_ll">
+                <ImageView
+                    android:id="@+id/activity_add_image_iv"
+                    android:layout_width="92dp"
+                    android:layout_height="92dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="7dp"
+                    android:background="@drawable/bg_gallery_dotted"
+                    android:layerType="software"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_gallery" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/activity_tag_title_tv"
-                style="@style/content_bold"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:id="@+id/activity_tag_ll"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/moim_diary_activity_tag" />
+                android:background="@drawable/bg_moim_diary_activity_tab"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="16dp"
+                android:layout_marginTop="15dp"
+                app:layout_constraintTop_toBottomOf="@id/activity_image_ll">
 
-            <TextView
-                android:id="@+id/activity_tag_tv"
-                style="@style/content_regular"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/activity_tag_title_tv"
+                    style="@style/content_bold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/moim_diary_activity_tag" />
+
+                <TextView
+                    android:id="@+id/activity_tag_tv"
+                    style="@style/content_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_arrow_right"
+                    android:drawablePadding="8dp"
+                    android:text="@string/diary_no_place"
+                    app:layout_constraintBottom_toBottomOf="@+id/activity_place_title_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/activity_participants_ll"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_arrow_right"
-                android:drawablePadding="8dp"
-                android:text="@string/diary_no_place"
-                app:layout_constraintBottom_toBottomOf="@+id/activity_place_title_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv" />
-        </LinearLayout>
+                android:background="@drawable/bg_moim_diary_activity_tab"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="16dp"
+                app:layout_constraintTop_toBottomOf="@id/activity_tag_ll">
 
-        <LinearLayout
-            android:id="@+id/activity_participants_ll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_moim_diary_activity_tab"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="16dp"
-            app:layout_constraintTop_toBottomOf="@id/activity_tag_ll">
+                <TextView
+                    android:id="@+id/activity_participants_title_tv"
+                    style="@style/content_bold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/moim_diary_activity_participants" />
 
-            <TextView
-                android:id="@+id/activity_participants_title_tv"
-                style="@style/content_bold"
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/activity_participants_tv"
+                    style="@style/content_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_arrow_right"
+                    android:drawablePadding="8dp"
+                    android:text="@string/diary_no_place"
+                    app:layout_constraintBottom_toBottomOf="@+id/activity_place_title_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/activity_money_ll"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/moim_diary_activity_participants" />
+                android:background="@drawable/bg_moim_diary_activity_tab"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="16dp"
+                app:layout_constraintTop_toBottomOf="@id/activity_participants_ll">
 
-            <TextView
-                android:id="@+id/activity_participants_tv"
-                style="@style/content_regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_arrow_right"
-                android:drawablePadding="8dp"
-                android:text="@string/diary_no_place"
-                app:layout_constraintBottom_toBottomOf="@+id/activity_place_title_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/activity_money_title_tv"
+                    style="@style/content_bold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/moim_diary_activity_money" />
 
-        <LinearLayout
-            android:id="@+id/activity_money_ll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_moim_diary_activity_tab"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="16dp"
-            app:layout_constraintTop_toBottomOf="@id/activity_participants_ll">
-
-            <TextView
-                android:id="@+id/activity_money_title_tv"
-                style="@style/content_bold"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/moim_diary_activity_money" />
-
-            <TextView
-                android:id="@+id/activity_money_tv"
-                style="@style/content_regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_arrow_right"
-                android:drawablePadding="8dp"
-                android:text="@string/diary_no_place"
-                app:layout_constraintBottom_toBottomOf="@+id/activity_place_title_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv" />
+                <TextView
+                    android:id="@+id/activity_money_tv"
+                    style="@style/content_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_arrow_right"
+                    android:drawablePadding="8dp"
+                    android:text="@string/diary_no_place"
+                    app:layout_constraintBottom_toBottomOf="@+id/activity_place_title_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</layout>

@@ -2,6 +2,7 @@ package com.mongmong.namo.presentation.ui.group.diary.adapter
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,8 +49,7 @@ class MoimDiaryVPAdapter(
             }
             VIEW_TYPE_ACTIVITY -> {
                 ActivityViewHolder(
-                    ItemMoimDiaryActivityBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-                    activityEventListener)
+                    ItemMoimDiaryActivityBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             }
             else -> throw IllegalArgumentException("Invalid view type")
         }
@@ -102,13 +102,26 @@ class MoimDiaryVPAdapter(
     }
 
     inner class ActivityViewHolder(
-        private val binding: ItemMoimDiaryActivityBinding,
-        private val listener: OnActivityEventListener
+        private val binding: ItemMoimDiaryActivityBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(activity: Activity) {
+            binding.activity = activity
+
+            binding.activityTitleTv.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    val position = bindingAdapterPosition - 1
+                    if (position >= 0) {  // 유효한 인덱스인지 확인
+                        Log.d("MoimDiaryVPAdapter", "$position")
+                        activityEventListener.onActivityNameChanged(s.toString(), position)
+                    }
+                }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            })
+
             binding.activityDeleteBtn.setOnClickListener {
-                listener.onDeleteActivity(bindingAdapterPosition - 1)
+                activityEventListener.onDeleteActivity(bindingAdapterPosition - 1)
             }
 
             binding.activityStartDateTv.setOnClickListener {
@@ -123,25 +136,20 @@ class MoimDiaryVPAdapter(
 
             binding.activityStartDateCalendar.setOnDateChangeListener { _, year, month, dayOfMonth ->
                 val selectedDate = "$year-${month + 1}-$dayOfMonth" // 월은 0부터 시작하므로 +1
-                listener.onStartDateSelected(bindingAdapterPosition - 1, selectedDate)
+                activityEventListener.onStartDateSelected(bindingAdapterPosition - 1, selectedDate)
             }
 
-            // endDate 캘린더 날짜 선택 시 호출
             binding.activityEndDateCalendar.setOnDateChangeListener { _, year, month, dayOfMonth ->
                 val selectedDate = "$year-${month + 1}-$dayOfMonth"
-                listener.onEndDateSelected(bindingAdapterPosition - 1, selectedDate)
+                activityEventListener.onEndDateSelected(bindingAdapterPosition - 1, selectedDate)
             }
 
-            binding.activityTitleTv.addTextChangedListener(object : TextWatcher {
-                override fun afterTextChanged(s: Editable?) {
-                    listener.onActivityNameChanged(s.toString(), bindingAdapterPosition - 1)
-                }
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            })
+            binding.activityPlaceTv.setOnClickListener {
+                activityEventListener.onLocationClicked(bindingAdapterPosition - 1)
+            }
 
             binding.activityAddImageIv.setOnClickListener {
-                listener.onAddImageClicked(bindingAdapterPosition - 1)
+                activityEventListener.onAddImageClicked(bindingAdapterPosition - 1)
             }
 
             // 이미지 리스트 어댑터 설정
@@ -171,6 +179,7 @@ class MoimDiaryVPAdapter(
         fun onActivityNameChanged(name: String, position: Int)
         fun onStartDateSelected(position: Int, date: String)
         fun onEndDateSelected(position: Int, date: String)
+        fun onLocationClicked(position: Int)
         fun onTagClicked(position: Int)
         fun onParticipantsClicked(position: Int)
         fun onPayClicked(position: Int)

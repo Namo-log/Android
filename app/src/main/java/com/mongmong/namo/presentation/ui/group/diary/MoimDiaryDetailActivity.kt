@@ -3,6 +3,7 @@ package com.mongmong.namo.presentation.ui.group.diary
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -10,9 +11,11 @@ import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.mongmong.namo.R
@@ -21,15 +24,22 @@ import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.MainActivity
+import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
 import com.mongmong.namo.presentation.ui.diary.DiaryImageDetailActivity
 import com.mongmong.namo.presentation.ui.diary.PersonalDiaryDetailActivity
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimDiaryVPAdapter
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimParticipantsRVAdapter
+import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
+import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity.Companion.PLACE_ID_KEY
+import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity.Companion.PLACE_NAME_KEY
+import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity.Companion.PLACE_X_KEY
+import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity.Companion.PLACE_Y_KEY
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.PermissionChecker
 import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint
+import java.lang.NullPointerException
 import java.util.ArrayList
 
 
@@ -111,12 +121,17 @@ class MoimDiaryDetailActivity :
                 override fun onActivityNameChanged(name: String, position: Int) {
                     viewModel.updateActivityName(position, name)
                 }
-                override fun onStartDateSelected(position: Int) {
-
+                override fun onStartDateSelected(position: Int, date: String) {
+                    viewModel.updateActivityStartDate(position, date)
                 }
-                override fun onEndDateSelected(position: Int) {
-
+                override fun onEndDateSelected(position: Int, date: String) {
+                    viewModel.updateActivityEndDate(position, date)
                 }
+
+                override fun onLocationClicked(position: Int) {
+                    getLocationPermission(position)
+                }
+
                 override fun onTagClicked(position: Int) {
 
                 }
@@ -126,7 +141,6 @@ class MoimDiaryDetailActivity :
                 override fun onPayClicked(position: Int) {
 
                 }
-                // 기타 콜백 구현
             }
         )
 
@@ -229,6 +243,42 @@ class MoimDiaryDetailActivity :
             PersonalDiaryDetailActivity.BACK_BUTTON_ACTION -> finish() // 뒤로가기
         }
     }
+
+    private fun getLocationPermission(position: Int) {
+        val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            try {
+                val intent = Intent(this, MapActivity::class.java)
+                intent.putExtra(ORIGIN_ACTIVITY_INTENT_KEY, "MoimDiary")
+                val placeData = viewModel.activities.value?.get(position)?.location
+
+                if (placeData != null && placeData.locationName.isNotEmpty()) {
+                    intent.apply {
+                        putExtra(PLACE_NAME_KEY, placeData.locationName)
+                        putExtra(PLACE_X_KEY, placeData.longitude)
+                        putExtra(PLACE_Y_KEY, placeData.latitude)
+                    }
+                }
+                getLocationResult.launch(intent)
+            } catch (e : NullPointerException) {
+                Log.e("LOCATION_ERROR", e.toString())
+            }
+        }
+    }
+
+    private val getLocationResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val placeId = result.data?.getStringExtra(PLACE_ID_KEY) ?: ""
+            val placeName = result.data?.getStringExtra(PLACE_NAME_KEY) ?: ""
+            val placeX = result.data?.getDoubleExtra(PLACE_X_KEY, 0.0)
+            val placeY = result.data?.getDoubleExtra(PLACE_Y_KEY, 0.0)
+
+            if (placeName != null && placeX != null && placeY != null) {
+                viewModel.updateActivityLocation(binding.moimDiaryVp.currentItem - 1, placeId, placeName, placeX, placeY)
+            }
+        }
+    }
+
 
     private fun getGallery() {
         if (PermissionChecker.hasImagePermission(this)) {

@@ -17,7 +17,7 @@ data class Activity(
 
 data class ActivityLocation(
     val kakaoLocationId: String = "",
-    val latitude: Int = 0,
+    val latitude: Double = 0.0,
     val locationName: String = "",
-    val longitude: Int = 0
+    val longitude: Double = 0.0
 )
