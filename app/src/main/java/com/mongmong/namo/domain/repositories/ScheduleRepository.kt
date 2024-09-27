@@ -4,7 +4,6 @@ import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
-import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
@@ -16,18 +15,13 @@ interface ScheduleRepository {
         startDate: DateTime, endDate: DateTime
     ): List<Schedule>
 
-    suspend fun getDailySchedules(
-        startDate: Long,
-        endDate: Long
-    ): List<Schedule>
-
     suspend fun addSchedule(
-        schedule: ScheduleRequestBody
+        schedule: Schedule
     ): Boolean
 
     suspend fun editSchedule(
         scheduleId: Long,
-        schedule: ScheduleRequestBody
+        schedule: Schedule
     ): Boolean
 
     suspend fun deleteSchedule(

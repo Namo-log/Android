@@ -7,7 +7,6 @@ import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
-import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.data.utils.mappers.ScheduleMapper.toModel
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
@@ -29,24 +28,20 @@ class ScheduleRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getDailySchedules(startDate: Long, endDate: Long): List<Schedule> {
-        return emptyList()
-    }
-
-    override suspend fun addSchedule(schedule: ScheduleRequestBody): Boolean {
+    override suspend fun addSchedule(schedule: Schedule): Boolean {
         Log.d("ScheduleRepositoryImpl", "addSchedule $schedule")
-        return remoteScheduleDataSource.addScheduleToServer(schedule).code == SUCCESS_CODE
+        return remoteScheduleDataSource.addSchedule(schedule.toModel()).code == SUCCESS_CODE
     }
 
-    override suspend fun editSchedule(scheduleId: Long, schedule: ScheduleRequestBody): Boolean {
-        return remoteScheduleDataSource.editScheduleToServer(
+    override suspend fun editSchedule(scheduleId: Long, schedule: Schedule): Boolean {
+        return remoteScheduleDataSource.editSchedule(
             scheduleId,
-            schedule
+            schedule.toModel()
         ).code == SUCCESS_CODE
     }
 
     override suspend fun deleteSchedule(scheduleId: Long): Boolean {
-        return remoteScheduleDataSource.deleteScheduleToServer(scheduleId).code == SUCCESS_CODE
+        return remoteScheduleDataSource.deleteSchedule(scheduleId).code == SUCCESS_CODE
     }
 
     // 모임

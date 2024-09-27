@@ -49,7 +49,7 @@ class RemoteScheduleDataSource @Inject constructor(
         return scheduleResponse
     }
 
-    suspend fun addScheduleToServer(
+    suspend fun addSchedule(
         schedule: ScheduleRequestBody,
     ): PostScheduleResponse {
         var scheduleResponse = PostScheduleResponse(-1)
@@ -67,7 +67,7 @@ class RemoteScheduleDataSource @Inject constructor(
         return scheduleResponse
     }
 
-    suspend fun editScheduleToServer(
+    suspend fun editSchedule(
         scheduleId: Long,
         schedule: ScheduleRequestBody
     ) : EditScheduleResponse {
@@ -86,7 +86,7 @@ class RemoteScheduleDataSource @Inject constructor(
         return scheduleResponse
     }
 
-    suspend fun deleteScheduleToServer(
+    suspend fun deleteSchedule(
         scheduleId: Long
     ) : DeleteScheduleResponse {
         var scheduleResponse = DeleteScheduleResponse()
