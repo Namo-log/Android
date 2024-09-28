@@ -12,7 +12,7 @@ import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.data.dto.Period
-import com.mongmong.namo.data.dto.ScheduleLocation
+import com.mongmong.namo.domain.model.Location
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecases.FindCategoryUseCase
 import com.mongmong.namo.domain.usecases.GetCategoriesUseCase
@@ -84,7 +84,7 @@ class PersonalScheduleViewModel @Inject constructor(
             Log.d("ScheduleViewModel", "addSchedule ${_schedule.value}")
             _isComplete.value = (
                     repository.addSchedule(
-                        schedule = _schedule.value!!.convertLocalScheduleToServer()
+                        schedule = _schedule.value!!
                     )
             )
         }
@@ -97,7 +97,7 @@ class PersonalScheduleViewModel @Inject constructor(
             _isComplete.postValue(
                 repository.editSchedule(
                     scheduleId = _schedule.value!!.scheduleId,
-                    schedule = _schedule.value!!.convertLocalScheduleToServer()
+                    schedule = _schedule.value!!
                 )
             )
         }
@@ -239,7 +239,7 @@ class PersonalScheduleViewModel @Inject constructor(
     // 장소 선택
     fun updatePlace(placeName: String, x: Double, y: Double) {
         _schedule.value = _schedule.value?.copy(
-            locationInfo = ScheduleLocation(
+            locationInfo = Location(
                 locationName = placeName,
                 longitude = y,
                 latitude = x
