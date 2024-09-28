@@ -1,10 +1,12 @@
 package com.mongmong.namo.presentation.ui.community.calendar
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.domain.model.Friend
 import com.mongmong.namo.domain.model.Moim
+import com.mongmong.namo.data.dto.Period
 import com.mongmong.namo.domain.model.group.GroupMember
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.presentation.utils.PickerConverter
@@ -14,8 +16,10 @@ class CalendarViewModel: ViewModel() {
     // 달력에 들어가는 한달치 날짜
     private val _monthDateList = MutableLiveData<List<DateTime>>()
 
-    // 클릭한 날짜의 일정 처리 (하루 일정)
-    private lateinit var _dailyScheduleList: List<MoimScheduleBody>
+    // 클릭한 날짜의 일정 처리
+    private val _clickedDateTime = MutableLiveData<DateTime>()
+    val clickedDateTime: LiveData<DateTime> = _clickedDateTime
+    private lateinit var _dailyScheduleList: List<MoimScheduleBody> // 하루 일정
 
     // 친구 캘린더인지, 모임 캘린더인지를 구분
     var isFriendCalendar = true
@@ -45,21 +49,23 @@ class CalendarViewModel: ViewModel() {
     private var _prevIndex = -1 // 클릭한 날짜의 index
     private var _nowIndex = 0 // 클릭한 날짜의 index
 
-    private lateinit var _clickedDatePair: Pair<Long, Long> // 클릭한 날짜의 시작, 종료 시간
-
     private fun setDailySchedule() {
         //TODO: 한 달 일정 중 선택 날짜에 해당되는 일정 필터링
     }
 
     // 캘린더의 날짜 클릭
-    fun clickDate(index: Int) {
+    fun onClickCalendarDate(index: Int) {
         _nowIndex = index
-        // 클릭한 날짜의 시작, 종료 시간 저장
-        _clickedDatePair = Pair(
+        _clickedDateTime.value = getClickedDate() // 클릭한 날짜 저장
+        setDailySchedule()
+    }
+
+    private fun getClickedDatePeriod(): Period {
+        // 클릭한 날짜의 시작, 종료 시간
+        return Period(
             (getClickedDate().withTimeAtStartOfDay().millis) / 1000, // 날짜 시작일
             (getClickedDate().plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000, // 날짜 종료일
         )
-        setDailySchedule()
     }
 
     fun updateIsShow() {

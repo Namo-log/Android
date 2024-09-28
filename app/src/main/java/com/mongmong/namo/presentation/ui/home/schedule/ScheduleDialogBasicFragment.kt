@@ -18,9 +18,8 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
@@ -30,13 +29,11 @@ import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
-import com.mongmong.namo.data.local.entity.home.Schedule
 import com.mongmong.namo.databinding.FragmentScheduleDialogBasicBinding
 import com.mongmong.namo.presentation.config.BaseFragment
-import com.mongmong.namo.presentation.utils.PickerConverter
+import com.mongmong.namo.presentation.ui.diary.PersonalDiaryDetailActivity
 import com.mongmong.namo.presentation.utils.PickerConverter.setSelectedTime
 import dagger.hilt.android.AndroidEntryPoint
-import org.joda.time.DateTime
 
 @AndroidEntryPoint
 class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBinding>(R.layout.fragment_schedule_dialog_basic) {
@@ -46,14 +43,13 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
 
     private lateinit var getResult : ActivityResultLauncher<Intent>
 
-    private val viewModel : PersonalScheduleViewModel by viewModels()
+    private val viewModel: PersonalScheduleViewModel by activityViewModels()
 
     override fun setup() {
         binding.viewModel = viewModel
 
         initMapView()
         initClickListeners()
-        setInit()
 
         getResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if (it.resultCode == Activity.RESULT_OK) {
@@ -94,35 +90,13 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
         }
     }
 
-    private fun setInit() {
-        viewModel.getCategories()
-        val args: ScheduleDialogBasicFragmentArgs by navArgs()
-        // 정보 세팅
-        if (args.schedule != null) {
-            viewModel.setSchedule(args.schedule)
-        } else {
-            viewModel.setSchedule(
-                Schedule(
-                    startLong = PickerConverter.getDefaultDate(DateTime(args.nowDay), true),
-                    endLong = PickerConverter.getDefaultDate(DateTime(args.nowDay), false)
-                )
-            )
-        }
-    }
-
     private fun initClickListeners() {
         // 카테고리 클릭
         binding.dialogScheduleCategoryLayout.setOnClickListener {
             hideKeyBoard()
 
-            val action = viewModel.schedule.value?.let { schedule ->
-                ScheduleDialogBasicFragmentDirections.actionScheduleDialogBasicFragmentToScheduleDialogCategoryFragment(
-                    schedule
-                )
-            }
-            if (action != null) {
-                findNavController().navigate(action)
-            }
+            val action = ScheduleDialogBasicFragmentDirections.actionScheduleDialogBasicFragmentToScheduleDialogCategoryFragment()
+            findNavController().navigate(action)
         }
 
         // 장소 클릭
@@ -140,12 +114,12 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
 //            startActivity(intent)
         }
 
-        // 닫기 클릭
+        // 취소 클릭
         binding.dialogScheduleCloseBtn.setOnClickListener {
             requireActivity().finish()
         }
 
-        // 저장 클릭
+        // 생성/저장 클릭
         binding.dialogScheduleSaveBtn.setOnClickListener {
             if (!isValidInput()) return@setOnClickListener
 
@@ -158,11 +132,20 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
             // 개인 일정일 경우
             if (viewModel.isCreateMode()) {
                 // 일정 생성
-                insertData()
+                viewModel.addSchedule()
             } else {
                 // 일정 수정
-                updateData()
+                viewModel.editSchedule()
             }
+        }
+
+        // 기록하기 버튼
+        binding.dialogScheduleRecordBtn.setOnClickListener {
+            // 기록하기 화면으로 이동
+            requireActivity().startActivity(
+                Intent(context, PersonalDiaryDetailActivity::class.java)
+                    .putExtra("scheduleId", viewModel.schedule.value?.scheduleId)
+            )
         }
     }
 
@@ -215,28 +198,6 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
             return false
         }
         return true
-    }
-
-    /** 일정 추가 **/
-    private fun insertData() {
-        // 현재 일정의 상태가 추가 상태임을 나타냄
-//        schedule.state = RoomState.ADDED.state
-//        schedule.isUpload = UploadState.IS_NOT_UPLOAD.state
-//        schedule.serverId = 0
-
-        // 새 일정 등록
-        viewModel.addSchedule()
-    }
-
-    /** 일정 수정 **/
-    private fun updateData() {
-        // 현재 일정의 상태가 수정 상태임을 나타냄
-//        schedule.state = RoomState.EDITED.state
-//        schedule.isUpload = UploadState.IS_NOT_UPLOAD.state
-
-        // 일정 편집
-        viewModel.editSchedule()
-        Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
     /** 모임 일정 카테고리 수정 */
@@ -397,13 +358,12 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
             if (categoryList.isNotEmpty()) viewModel.findCategoryById()
         }
 
-        viewModel.category.observe(viewLifecycleOwner) { category ->
-            if (category.categoryId != 0L && viewModel.schedule.value?.categoryId == 0L) viewModel.setCategory()
-        }
-
         viewModel.isComplete.observe(viewLifecycleOwner) { isComplete ->
             // 추가 작업이 완료된 후 뒤로가기
             if (isComplete) {
+                if (!viewModel.isCreateMode()) { // 편집 완료 시
+                    Toast.makeText(requireContext(), "일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                }
                 requireActivity().finish()
             }
         }

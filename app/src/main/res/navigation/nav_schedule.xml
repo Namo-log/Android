@@ -13,16 +13,6 @@
         <action
             android:id="@+id/action_scheduleDialogBasicFragment_to_scheduleDialogCategoryFragment"
             app:destination="@id/scheduleDialogCategoryFragment" />
-        <action
-            android:id="@+id/action_scheduleDialogBasicFragment_self"
-            app:destination="@id/scheduleDialogBasicFragment"
-            app:popUpTo="@id/scheduleDialogBasicFragment"
-            app:popUpToInclusive="true" />
-        <argument
-            android:name="schedule"
-            app:argType="com.mongmong.namo.data.local.entity.home.Schedule"
-            app:nullable="true"
-            android:defaultValue="@null" />
         <argument
             android:name="nowDay"
             app:argType="long"
@@ -38,8 +28,5 @@
             app:destination="@id/scheduleDialogBasicFragment"
             app:popUpTo="@id/scheduleDialogBasicFragment"
             app:popUpToInclusive="true" />
-        <argument
-            android:name="schedule"
-            app:argType="com.mongmong.namo.data.local.entity.home.Schedule" />
     </fragment>
 </navigation>

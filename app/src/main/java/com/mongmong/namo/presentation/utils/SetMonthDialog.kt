@@ -43,12 +43,12 @@ class SetMonthDialog(
         binding.yearPicker.value = date.year
         binding.monthPicker.value = date.monthOfYear
 
-        clickListener()
+        initClickListeners()
     }
 
-    private fun clickListener() {
+    private fun initClickListeners() {
         binding.acceptBtn.setOnClickListener {
-            var date = DateTime(binding.yearPicker.value, binding.monthPicker.value, 1, 0, 0)
+            val date = DateTime(binding.yearPicker.value, binding.monthPicker.value, 1, 0, 0)
             okCallback(date)
 
             dismiss()

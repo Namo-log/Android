@@ -1,15 +1,15 @@
 package com.mongmong.namo.presentation.ui.home.calendar
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
-import com.mongmong.namo.domain.model.GetMonthScheduleResult
+import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.diary.PersonalDiaryDetailActivity
 import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryDetailActivity
@@ -20,7 +20,6 @@ import com.mongmong.namo.presentation.ui.home.schedule.PersonalScheduleViewModel
 import com.mongmong.namo.presentation.utils.CustomCalendarView
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
-import java.text.SimpleDateFormat
 
 @AndroidEntryPoint
 class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layout.fragment_calendar_month) {
@@ -30,7 +29,6 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
     private val groupDailyScheduleAdapter = DailyScheduleRVAdapter()
 
     private val viewModel: PersonalScheduleViewModel by viewModels()
-
 
     override fun setup() {
         arguments?.let {
@@ -83,7 +81,7 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
                         personalDailyScheduleAdapter.setClickedDate(date)
                         groupDailyScheduleAdapter.setClickedDate(date)
 
-                        viewModel.clickDate(pos)
+                        viewModel.onClickCalendarDate(pos)
                         setDailySchedule()
 
                         if (viewModel.isCloseScheduleDetailBottomSheet()) {
@@ -115,16 +113,18 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
         personalDailyScheduleAdapter.setDailyScheduleClickListener(object : DailyScheduleRVAdapter.PersonalScheduleClickListener {
-            override fun onContentClicked(schedule: GetMonthScheduleResult) { // 아이템 전체 클릭
+            override fun onContentClicked(schedule: Schedule) { // 아이템 전체 클릭
+                // 일정 편집 화면으로 이동
+                val scheduleJson = Gson().toJson(schedule)
                 val intent = Intent(context, ScheduleActivity::class.java)
-                intent.putExtra("schedule", schedule.convertServerScheduleResponseToLocal())
+                    .putExtra("schedule", scheduleJson)
                 requireActivity().startActivity(intent)
             }
 
-            override fun onDiaryIconClicked(schedule: GetMonthScheduleResult, paletteId: Int) { // 기록 아이콘 클릭
-                if (schedule.moimSchedule) return
+            override fun onDiaryIconClicked(schedule: Schedule, paletteId: Int) { // 기록 아이콘 클릭
+                if (schedule.isMeetingSchedule) return
                 val intent = Intent(context, PersonalDiaryDetailActivity::class.java)
-                intent.putExtra("schedule", schedule.convertServerScheduleResponseToLocal())
+                    .putExtra("scheduleId", schedule.scheduleId)
                 Log.d("CalendarMonthFragment onDiaryIconClicked", "$schedule")
                 requireActivity().startActivity(intent)
             }
@@ -137,14 +137,15 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
         }
 
         groupDailyScheduleAdapter.setDailyScheduleClickListener(object : DailyScheduleRVAdapter.PersonalScheduleClickListener {
-            override fun onContentClicked(schedule: GetMonthScheduleResult) { // 아이템 전체 클릭
+            override fun onContentClicked(schedule: Schedule) { // 아이템 전체 클릭
+                val scheduleJson = Gson().toJson(schedule)
                 requireActivity().startActivity(Intent(context, ScheduleActivity::class.java)
-                    .putExtra("schedule", schedule.convertServerScheduleResponseToLocal())
+                    .putExtra("schedule", scheduleJson)
                 )
             }
 
-            override fun onDiaryIconClicked(schedule: GetMonthScheduleResult, paletteId: Int) { // 기록 아이콘 클릭
-                if (!schedule.moimSchedule) return
+            override fun onDiaryIconClicked(schedule: Schedule, paletteId: Int) { // 기록 아이콘 클릭
+                if (!schedule.isMeetingSchedule) return
                 requireActivity().startActivity(
                     Intent(context, MoimDiaryDetailActivity::class.java)
                         .putExtra("moimScheduleId", schedule.scheduleId)
@@ -164,9 +165,9 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
         groupDailyScheduleAdapter.setCategoryList(categoryList)
     }
 
-    // 캘린더에 표시할 월별 일정
+    // 캘린더에 표시할 월별 일정 조회
     private fun setMonthCalendarSchedule() {
-        viewModel.getMonthSchedules(yearMonthDate(millis))
+        viewModel.getMonthSchedules()
     }
 
     // 일정 상세보기
@@ -193,13 +194,13 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
         }
     }
 
-    private fun drawMonthCalendar(scheduleList: List<GetMonthScheduleResult>) {
+    private fun drawMonthCalendar(scheduleList: List<Schedule>) {
         binding.calendarMonthView.setScheduleList(scheduleList)
         if (HomeFragment.currentFragment == null) {
             return
         } else if (this@CalendarMonthFragment == HomeFragment.currentFragment) {
             binding.calendarMonthView.selectedDate = HomeFragment.currentSelectedDate
-            viewModel.clickDate(HomeFragment.currentSelectedPos!!)
+            viewModel.onClickCalendarDate(HomeFragment.currentSelectedPos!!)
             setDailySchedule()
             binding.constraintLayout.transitionToEnd()
             viewModel.updateIsShow()
@@ -213,11 +214,6 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
             arguments = Bundle().apply {
                 putLong(MILLIS, millis)
             }
-        }
-
-        @SuppressLint("SimpleDateFormat")
-        fun yearMonthDate(millis: Long): String {
-            return SimpleDateFormat("yyyy,MM").format(millis)
         }
     }
 }

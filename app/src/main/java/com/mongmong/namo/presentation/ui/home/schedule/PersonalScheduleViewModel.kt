@@ -8,10 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.LatLng
 import com.mongmong.namo.domain.model.Category
-import com.mongmong.namo.data.local.entity.home.Schedule
-import com.mongmong.namo.domain.model.GetMonthScheduleResult
-import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
-import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.domain.model.Schedule
+import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
+import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.data.dto.Period
+import com.mongmong.namo.data.dto.ScheduleLocation
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecases.FindCategoryUseCase
 import com.mongmong.namo.domain.usecases.GetCategoriesUseCase
@@ -30,8 +31,8 @@ class PersonalScheduleViewModel @Inject constructor(
     private val _schedule = MutableLiveData<Schedule?>()
     val schedule: LiveData<Schedule?> = _schedule
 
-    private val _scheduleList = MutableLiveData<List<GetMonthScheduleResult>>(emptyList())
-    val scheduleList: LiveData<List<GetMonthScheduleResult>?> = _scheduleList
+    private val _scheduleList = MutableLiveData<List<Schedule>>(emptyList())
+    val scheduleList: LiveData<List<Schedule>> = _scheduleList
 
     private val _isComplete = MutableLiveData<Boolean>()
     val isComplete: LiveData<Boolean> = _isComplete
@@ -48,7 +49,10 @@ class PersonalScheduleViewModel @Inject constructor(
     private val _monthDayList = MutableLiveData<List<DateTime>>()
 
     // 클릭한 날짜 처리
-    private lateinit var _dailyScheduleList: List<GetMonthScheduleResult>
+    private val _clickedDateTime = MutableLiveData<DateTime>()
+    val clickedDateTime: LiveData<DateTime> = _clickedDateTime
+
+    private var _dailyScheduleList: List<Schedule> = emptyList() // 하루 일정
 
     private val _isShow = MutableLiveData(false)
     var isShow: LiveData<Boolean> = _isShow
@@ -56,35 +60,32 @@ class PersonalScheduleViewModel @Inject constructor(
     private var _prevIndex = -1 // 클릭한 날짜의 index
     private var _nowIndex = 0 // 클릭한 날짜의 index
 
-    private lateinit var _clickedDatePair: Pair<Long, Long> // 클릭한 날짜의 시작, 종료 시간
-
     private val _isDailyScheduleEmptyPair = MutableLiveData<Pair<Boolean, Boolean>>()
     var isDailyScheduleEmptyPair: LiveData<Pair<Boolean, Boolean>> = _isDailyScheduleEmptyPair
 
+    init {
+        getCategories() // 최초 카테고리 목록 조회
+    }
+
     /** 월별 일정 리스트 조회 */
-    fun getMonthSchedules(yearMonth: String) {
+    fun getMonthSchedules() {
         viewModelScope.launch {
-            Log.d("ScheduleViewModel", "getMonthSchedules")
-            _scheduleList.value = repository.getMonthSchedules(yearMonth)
+            // 범위로 일정 목록 조회
+            _scheduleList.value = repository.getMonthSchedules(
+                startDate = _monthDayList.value!!.first(), // 캘린더에 표시되는 첫번쨰 날짜
+                endDate = _monthDayList.value!!.last() // 캘린더에 표시되는 마지막 날짜
+            )
         }
     }
 
-//    /** 선택한 날짜의 일정 조회 */
-//    fun getDailySchedules(startDate: Long, endDate: Long) {
-//        viewModelScope.launch {
-//            Log.d("ScheduleViewModel", "getDailySchedules")
-//            _personalDailyScheduleList.value = repository.getDailySchedules(startDate, endDate)
-//        }
-//    }
-
-    /** 일정 추가 */
+    /** 일정 생성 */
     fun addSchedule() {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "addSchedule ${_schedule.value}")
-            _isComplete.postValue(
-                repository.addSchedule(
-                    schedule = _schedule.value!!.convertLocalScheduleToServer()
-                )
+            _isComplete.value = (
+                    repository.addSchedule(
+                        schedule = _schedule.value!!.convertLocalScheduleToServer()
+                    )
             )
         }
     }
@@ -103,13 +104,12 @@ class PersonalScheduleViewModel @Inject constructor(
     }
 
     /** 일정 삭제 */
-    fun deleteSchedule(scheduleId: Long, isGroup: Boolean) {
+    fun deleteSchedule() {
         viewModelScope.launch {
             Log.d("ScheduleViewModel", "deleteSchedule $schedule")
             _isComplete.postValue(
                 repository.deleteSchedule(
-                    scheduleId = scheduleId,
-                    isGroup = isGroup
+                    scheduleId = _schedule.value!!.scheduleId,
                 )
             )
         }
@@ -123,7 +123,7 @@ class PersonalScheduleViewModel @Inject constructor(
                 repository.editMoimScheduleCategory(
                     PatchMoimScheduleCategoryRequestBody(
                         _schedule.value!!.scheduleId,
-                        _schedule.value!!.categoryId
+                        _schedule.value!!.categoryInfo.categoryId
                     )
                 )
             )
@@ -154,14 +154,14 @@ class PersonalScheduleViewModel @Inject constructor(
         viewModelScope.launch {
             // 카테고리 찾기
             _category.value = schedule.value?.let { schedule ->
-                if (schedule.scheduleId == 0L && schedule.categoryId == 0L) { // 새 일정인 경우
+                if (schedule.scheduleId == 0L && schedule.categoryInfo.categoryId == 0L) { // 새 일정인 경우
 //                    Log.d(
 //                        "ScheduleViewModel",
 //                        "findCategoryById() - categoryList:  ${_categoryList.value}"
 //                    )
                     _categoryList.value?.first()
                 } else {
-                    findCategoryUseCase.invoke(schedule.categoryId)
+                    findCategoryUseCase.invoke(schedule.categoryInfo.categoryId)
                 }
             }
             setCategory()
@@ -173,8 +173,8 @@ class PersonalScheduleViewModel @Inject constructor(
     fun setSchedule(schedule: Schedule?) {
         _schedule.value = schedule
         Log.d("ScheduleViewModel", "schedule: ${_schedule.value}")
-        if (schedule?.placeName!!.isBlank()) {
-            _schedule.value?.placeName = "없음"
+        if (schedule?.locationInfo?.locationName!!.isBlank()) {
+            _schedule.value?.locationInfo?.locationName = "없음"
         }
     }
 
@@ -182,15 +182,15 @@ class PersonalScheduleViewModel @Inject constructor(
         Log.d("ScheduleViewModel", "setCategory()")
         // 일정에 카테고리 정보 넣기
         _schedule.value = _schedule.value?.copy(
-            categoryId = _category.value?.categoryId!!
+            categoryInfo = _category.value!!.convertCategoryToScheduleCategory()
         )
     }
 
     private fun setDailySchedule() {
         // 선택 날짜에 해당되는 일정 필터링
         _dailyScheduleList = _scheduleList.value!!.filter { schedule ->
-            schedule.startDate <= _clickedDatePair.second &&
-                    schedule.endDate >= _clickedDatePair.first
+            schedule.startLong <= getClickedDatePeriod().endDate &&
+                    schedule.endLong >= getClickedDatePeriod().startDate
         }
         _isDailyScheduleEmptyPair.value = Pair(
             isDailyScheduleEmpty(false), // 개인 일정
@@ -199,14 +199,18 @@ class PersonalScheduleViewModel @Inject constructor(
     }
 
     // 캘린더의 날짜 클릭
-    fun clickDate(index: Int) {
-        _nowIndex = index
-        // 클릭한 날짜의 시작, 종료 시간 저장
-        _clickedDatePair = Pair(
+    fun onClickCalendarDate(index: Int) {
+        _nowIndex = index // 클릭한 번호 저장
+        _clickedDateTime.value = getClickedDate() // 클릭한 날짜 저장
+        setDailySchedule()
+    }
+
+    private fun getClickedDatePeriod(): Period {
+        // 클릭한 날짜의 시작, 종료 시간
+        return Period(
             (getClickedDate().withTimeAtStartOfDay().millis) / 1000, // 날짜 시작일
             (getClickedDate().plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000, // 날짜 종료일
         )
-        setDailySchedule()
     }
 
     fun updateIsShow() {
@@ -232,18 +236,27 @@ class PersonalScheduleViewModel @Inject constructor(
         )
     }
 
+    // 장소 선택
     fun updatePlace(placeName: String, x: Double, y: Double) {
         _schedule.value = _schedule.value?.copy(
-            placeName = placeName,
-            placeX = x,
-            placeY = y
+            locationInfo = ScheduleLocation(
+                locationName = placeName,
+                longitude = y,
+                latitude = x
+            )
         )
+    }
+
+    fun updateCategory(category: Category) {
+        _category.value = category
+        setCategory()
     }
 
     fun updatePrevClickedPicker(clicked: TextView?) {
         _prevClickedPicker.value = clicked
     }
-    fun isMoimSchedule() = schedule.value!!.moimSchedule
+
+    fun isMoimSchedule() = schedule.value!!.isMeetingSchedule
 
     fun isCreateMode() = (schedule.value!!.scheduleId == 0L)
 
@@ -255,10 +268,10 @@ class PersonalScheduleViewModel @Inject constructor(
     // 선택한 날짜
     fun getClickedDate() = _monthDayList.value!![_nowIndex]
 
-    fun getDailySchedules(isMoim: Boolean): ArrayList<GetMonthScheduleResult> {
+    fun getDailySchedules(isMoim: Boolean): ArrayList<Schedule> {
         return _dailyScheduleList.filter { schedule ->
-            schedule.moimSchedule == isMoim
-        } as ArrayList<GetMonthScheduleResult>
+            schedule.isMeetingSchedule == isMoim
+        } as ArrayList<Schedule>
     }
 
     fun getDateTime(): Pair<DateTime, DateTime>? {
@@ -273,10 +286,13 @@ class PersonalScheduleViewModel @Inject constructor(
 
     fun getPlace(): Pair<String, LatLng>? {
         if (_schedule.value != null) {
-            if (_schedule.value!!.placeX == 0.0 && _schedule.value!!.placeY == 0.0) return null
+            if (_schedule.value!!.locationInfo.longitude == 0.0 && _schedule.value!!.locationInfo.latitude == 0.0) return null
             return Pair(
-                schedule.value!!.placeName,
-                LatLng.from(schedule.value!!.placeY, schedule.value!!.placeX)
+                schedule.value!!.locationInfo.locationName,
+                LatLng.from(
+                    schedule.value!!.locationInfo.longitude,
+                    schedule.value!!.locationInfo.latitude
+                )
             )
         }
         return null

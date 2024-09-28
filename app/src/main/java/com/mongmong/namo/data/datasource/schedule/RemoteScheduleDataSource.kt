@@ -4,24 +4,23 @@ import android.util.Log
 import com.mongmong.namo.data.remote.group.GroupScheduleApiService
 import com.mongmong.namo.data.remote.ScheduleApiService
 import com.mongmong.namo.domain.model.group.AddMoimScheduleResponse
-import com.mongmong.namo.domain.model.DeleteScheduleResponse
-import com.mongmong.namo.domain.model.EditScheduleResponse
-import com.mongmong.namo.domain.model.EditScheduleResult
+import com.mongmong.namo.data.dto.DeleteScheduleResponse
 import com.mongmong.namo.domain.model.group.GetMoimScheduleResponse
-import com.mongmong.namo.domain.model.GetMonthScheduleResponse
-import com.mongmong.namo.domain.model.GetMonthScheduleResult
-import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
-import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.data.dto.GetMonthScheduleResponse
+import com.mongmong.namo.data.dto.GetMonthScheduleResult
+import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
+import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
-import com.mongmong.namo.domain.model.PostScheduleResponse
-import com.mongmong.namo.domain.model.PostScheduleResult
-import com.mongmong.namo.domain.model.ScheduleRequestBody
+import com.mongmong.namo.data.dto.PostScheduleResponse
+import com.mongmong.namo.data.dto.EditScheduleResponse
+import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.presentation.config.BaseResponse
-import com.mongmong.namo.presentation.config.Constants.SUCCESS_CODE
+import com.mongmong.namo.presentation.utils.ScheduleDateConverter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.joda.time.DateTime
 import javax.inject.Inject
 
 class RemoteScheduleDataSource @Inject constructor(
@@ -30,12 +29,16 @@ class RemoteScheduleDataSource @Inject constructor(
 ) {
     /** 개인 */
     suspend fun getMonthSchedules(
-        yearMonth: String
-    ): List<GetMonthScheduleResult> {
+        startDate: DateTime,
+        endDate: DateTime
+    ): GetMonthScheduleResponse {
         var scheduleResponse = GetMonthScheduleResponse(result = emptyList())
         withContext(Dispatchers.IO) {
             runCatching {
-                scheduleApiService.getMonthSchedule(yearMonth)
+                scheduleApiService.getMonthSchedule(
+                    startDate = ScheduleDateConverter.parseDateTimeToServerData(startDate),
+                    endDate = ScheduleDateConverter.parseDateTimeToServerData(endDate)
+                )
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "getMonthSchedules Success $it")
                 scheduleResponse = it
@@ -43,13 +46,13 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "getMonthSchedules Success $it")
             }
         }
-        return scheduleResponse.result
+        return scheduleResponse
     }
 
-    suspend fun addScheduleToServer(
+    suspend fun addSchedule(
         schedule: ScheduleRequestBody,
     ): PostScheduleResponse {
-        var scheduleResponse = PostScheduleResponse(result = PostScheduleResult(-1))
+        var scheduleResponse = PostScheduleResponse(-1)
 
         withContext(Dispatchers.IO) {
             runCatching {
@@ -58,17 +61,17 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "addScheduleToServer Success $it")
                 scheduleResponse = it
             }.onFailure {
-                Log.d("RemoteScheduleDataSource", "addScheduleToServer Failure $it")
+                Log.d("RemoteScheduleDataSource", "addScheduleToServer Fail $it")
             }
         }
         return scheduleResponse
     }
 
-    suspend fun editScheduleToServer(
+    suspend fun editSchedule(
         scheduleId: Long,
         schedule: ScheduleRequestBody
     ) : EditScheduleResponse {
-        var scheduleResponse = EditScheduleResponse(result = EditScheduleResult(-1))
+        var scheduleResponse = EditScheduleResponse()
 
         withContext(Dispatchers.IO) {
             runCatching {
@@ -77,22 +80,19 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "editScheduleToServer Success, $it")
                 scheduleResponse = it
             }.onFailure {
-                Log.d("RemoteScheduleDataSource", "editScheduleToServer Fail")
+                Log.d("RemoteScheduleDataSource", "editScheduleToServer Fail $it")
             }
         }
         return scheduleResponse
     }
 
-    suspend fun deleteScheduleToServer(
-        scheduleId: Long,
-        isGroup: Boolean
+    suspend fun deleteSchedule(
+        scheduleId: Long
     ) : DeleteScheduleResponse {
-        var scheduleResponse = DeleteScheduleResponse("")
-        val value = if (isGroup) IS_GROUP else IS_NOT_GROUP
-
+        var scheduleResponse = DeleteScheduleResponse()
         withContext(Dispatchers.IO) {
             runCatching {
-                scheduleApiService.deleteSchedule(scheduleId, value)
+                scheduleApiService.deleteSchedule(scheduleId)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "deleteScheduleToServer Success, $it")
                 scheduleResponse = it
@@ -218,10 +218,5 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "deleteMoimSchedule Failure")
             }
         }
-    }
-
-    companion object {
-        const val IS_GROUP = 1
-        const val IS_NOT_GROUP = 0
     }
 }
