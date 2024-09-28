@@ -1,9 +1,11 @@
 package com.mongmong.namo.presentation.di
 
 import com.mongmong.namo.domain.repositories.CategoryRepository
+import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.repositories.ImageRepository
 import com.mongmong.namo.domain.usecases.FindCategoryUseCase
 import com.mongmong.namo.domain.usecases.GetCategoriesUseCase
+import com.mongmong.namo.domain.usecases.GetActivitiesUseCase
 import com.mongmong.namo.domain.usecases.UploadImageToS3UseCase
 import dagger.Module
 import dagger.Provides
@@ -21,4 +23,7 @@ object UseCaseModule {
 
     @Provides
     fun provideUploadImageToS3UseCase(imageRepository: ImageRepository): UploadImageToS3UseCase = UploadImageToS3UseCase(imageRepository)
+
+    @Provides
+    fun provideGetActivitiesUseCase(diaryRepository: DiaryRepository): GetActivitiesUseCase = GetActivitiesUseCase(diaryRepository)
 }

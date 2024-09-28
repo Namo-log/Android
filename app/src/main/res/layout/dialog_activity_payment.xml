@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?><!-- 그룹 다이어리 정산 다이얼로그 -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="payment"
+            type="com.mongmong.namo.domain.model.Payment" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_dialog"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/activity_payment_header_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/activity_payment_back_tv"
+                style="@style/dialog_default_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/close"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                style="@style/content_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/activity_payment"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/activity_payment_save_tv"
+                style="@style/dialog_default_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/dialog_save"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginVertical="18dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_payment_header_layout">
+
+            <TextView
+                android:id="@+id/activity_payment_total_amount_title_tv"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:text="@string/activity_payment_total_amount"
+                android:textColor="@color/main_text"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/activity_payment_total_et"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/activity_payment_total_et" />
+
+            <EditText
+                android:id="@+id/activity_payment_total_et"
+                style="@style/content_regular"
+                android:layout_width="130dp"
+                android:layout_height="30dp"
+                android:background="@drawable/bg_radius_5"
+                android:backgroundTint="@color/main_gray"
+                android:hint="@string/activity_payment_input"
+                android:inputType="number"
+                android:maxLines="1"
+                android:padding="6dp"
+                android:text="@{String.valueOf(payment.totalAmount)}"
+                android:textAlignment="textEnd"
+                android:textColorHint="@color/text_placeholder"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <TextView
+                android:id="@+id/activity_payment_participant_count_title_tv"
+                style="@style/content_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:text="@string/activity_payment_participant_count"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/activity_payment_total_amount_title_tv" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_division"
+                app:layout_constraintBottom_toBottomOf="@+id/activity_payment_count_tv"
+                app:layout_constraintStart_toStartOf="@id/activity_payment_count_tv"
+                app:layout_constraintTop_toTopOf="@+id/activity_payment_count_tv" />
+
+            <TextView
+                android:id="@+id/activity_payment_count_tv"
+                style="@style/content_regular"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text='@{String.valueOf(payment.divisionCount) + @string/activity_payment_people_unit}'
+                android:textAlignment="textEnd"
+                app:layout_constraintBottom_toBottomOf="@+id/activity_payment_participant_count_title_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/activity_payment_participant_count_title_tv" />
+
+            <View
+                android:id="@+id/activity_payment_divider"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_gravity="end"
+                android:layout_marginTop="11dp"
+                android:background="@color/main_text"
+                app:layout_constraintEnd_toEndOf="@id/activity_payment_count_tv"
+                app:layout_constraintStart_toStartOf="@id/activity_payment_count_tv"
+                app:layout_constraintTop_toBottomOf="@id/activity_payment_count_tv" />
+
+            <TextView
+                android:id="@+id/activity_payment_per_title_tv"
+                style="@style/content_bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:text="@string/activity_payment_per_person"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/activity_payment_divider" />
+
+            <TextView
+                android:id="@+id/activity_payment_result_tv"
+                style="@style/content_regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{String.valueOf(payment.amountPerPerson) + @string/activity_payment_unit}"
+                app:layout_constraintBottom_toBottomOf="@id/activity_payment_per_title_tv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/activity_payment_per_title_tv" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/activity_participants_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:layout_marginTop="17dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/activity_payment_per_title_tv"
+                app:spanCount="2"
+                tools:listitem="@layout/item_moim_diary_activity_participants" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

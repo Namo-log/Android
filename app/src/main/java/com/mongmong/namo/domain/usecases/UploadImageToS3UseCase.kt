@@ -2,8 +2,9 @@ package com.mongmong.namo.domain.usecases
 
 import android.net.Uri
 import com.mongmong.namo.domain.repositories.ImageRepository
+import javax.inject.Inject
 
-class UploadImageToS3UseCase(private val repository: ImageRepository) {
+class UploadImageToS3UseCase @Inject constructor(private val repository: ImageRepository) {
 
     suspend fun execute(prefix:String, images: List<Uri>): List<String> {
         val uploadResults = mutableListOf<String>()

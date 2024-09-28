@@ -127,17 +127,14 @@ class MoimDiaryVPAdapter(
             binding.activityStartDateTv.setOnClickListener {
                 handleDateViews(binding.activityStartDateLayout, binding.activityStartDateTv)
             }
-
             // 시작 시간 클릭 시
             binding.activityStartTimeTv.setOnClickListener {
                 handleDateViews(binding.activityStartTimeLayout, binding.activityStartTimeTv)
             }
-
             // 종료 날짜 클릭 시
             binding.activityEndDateTv.setOnClickListener {
                 handleDateViews(binding.activityEndDateLayout, binding.activityEndDateTv)
             }
-
             // 종료 시간 클릭 시
             binding.activityEndTimeTv.setOnClickListener {
                 handleDateViews(binding.activityEndTimeLayout, binding.activityEndTimeTv)
@@ -164,6 +161,18 @@ class MoimDiaryVPAdapter(
                 itemAnimator = null
             }
             adapter.addItem(activity.images)
+
+            binding.activityTagTv.setOnClickListener {
+                activityEventListener.onTagClicked(bindingAdapterPosition - 1)
+            }
+
+            binding.activityParticipantsTv.setOnClickListener {
+                activityEventListener.onParticipantsClicked(bindingAdapterPosition - 1)
+            }
+
+            binding.activityPaymentTv.setOnClickListener {
+                activityEventListener.onPayClicked(bindingAdapterPosition - 1)
+            }
         }
 
         private fun initPickerListeners(activity: Activity) {

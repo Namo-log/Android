@@ -277,7 +277,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/moim_diary_activity_tag" />
+                    android:text="@string/activity_tag" />
 
                 <TextView
                     android:id="@+id/activity_tag_tv"
@@ -286,7 +286,7 @@
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/ic_arrow_right"
                     android:drawablePadding="8dp"
-                    android:text="@string/diary_no_place"
+                    android:text="@{activity.tag.empty? @string/diary_no_place : activity.tag}"
                     app:layout_constraintBottom_toBottomOf="@+id/activity_place_title_tv"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv" />
@@ -307,7 +307,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/moim_diary_activity_participants" />
+                    android:text="@string/activity_participants" />
 
                 <TextView
                     android:id="@+id/activity_participants_tv"
@@ -316,7 +316,7 @@
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/ic_arrow_right"
                     android:drawablePadding="8dp"
-                    android:text="@string/diary_no_place"
+                    app:participantsText="@{activity.participants}"
                     app:layout_constraintBottom_toBottomOf="@+id/activity_place_title_tv"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv" />
@@ -332,21 +332,21 @@
                 app:layout_constraintTop_toBottomOf="@id/activity_participants_ll">
 
                 <TextView
-                    android:id="@+id/activity_money_title_tv"
+                    android:id="@+id/activity_payment_title_tv"
                     style="@style/content_bold"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/moim_diary_activity_money" />
+                    android:text="@string/activity_payment" />
 
                 <TextView
-                    android:id="@+id/activity_money_tv"
+                    android:id="@+id/activity_payment_tv"
                     style="@style/content_regular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/ic_arrow_right"
                     android:drawablePadding="8dp"
-                    android:text="@string/diary_no_place"
+                    android:text='@{activity.payment.totalAmount == 0 ? @string/moim_diary_none : "총 " + String.valueOf(activity.payment.totalAmount) + "원"}'
                     app:layout_constraintBottom_toBottomOf="@+id/activity_place_title_tv"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv" />

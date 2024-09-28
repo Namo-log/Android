@@ -5,11 +5,14 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.LiveData
 import com.bumptech.glide.Glide
+import com.mongmong.namo.R
+import com.mongmong.namo.domain.model.ParticipantInfo
 import com.mongmong.namo.presentation.config.CategoryColor
 
 object BindingAdapters {
@@ -58,4 +61,28 @@ object BindingAdapters {
     fun ImageView.setImageTint(@ColorInt color: Int) {
         setColorFilter(color)
     }
+
+    @JvmStatic
+    @BindingAdapter("participantsText")
+    fun setParticipantsText(textView: TextView, participants: List<ParticipantInfo>?) {
+        participants?.let {
+            if (it.isEmpty()) {
+                // 참가자가 없을 때
+                textView.text = textView.context.getString(R.string.moim_diary_none)
+            } else {
+                // 참가자가 있을 때 처리
+                val size = participants.size
+                val displayedNames = participants.take(3).joinToString(", ") { participant -> participant.nickname }
+
+                textView.text = if (size > 3) {
+                    "$displayedNames 외 ${size - 3}명"
+                } else {
+                    displayedNames
+                }
+            }
+        } ?: run {
+            textView.text = textView.context.getString(R.string.diary_no_place)
+        }
+    }
+
 }

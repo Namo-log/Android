@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
@@ -21,14 +20,13 @@ import androidx.viewpager2.widget.ViewPager2
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMoimDiaryDetailBinding
 import com.mongmong.namo.domain.model.DiaryImage
-import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
 import com.mongmong.namo.presentation.ui.diary.DiaryImageDetailActivity
 import com.mongmong.namo.presentation.ui.diary.PersonalDiaryDetailActivity
 import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimDiaryVPAdapter
-import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimParticipantsRVAdapter
+import com.mongmong.namo.presentation.ui.group.diary.adapter.MoimDiaryParticipantsRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity.Companion.PLACE_ID_KEY
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity.Companion.PLACE_NAME_KEY
@@ -47,8 +45,8 @@ import java.util.ArrayList
 class MoimDiaryDetailActivity :
     BaseActivity<ActivityMoimDiaryDetailBinding>(R.layout.activity_moim_diary_detail),
     ConfirmDialogInterface {  // 그룹 다이어리 추가, 수정, 삭제 화면
-    private lateinit var participantsAdapter: MoimParticipantsRVAdapter  // 일정 참여자
-    private lateinit var vpAdapter: MoimDiaryVPAdapter // 각 활동 item
+    private lateinit var participantsAdapter: MoimDiaryParticipantsRVAdapter  // 일정 참여자
+    private lateinit var vpAdapter: MoimDiaryVPAdapter // 일기장 + 활동
 
     private var positionForGallery = DIARY_POSITION
     private val viewModel: MoimDiaryViewModel by viewModels()
@@ -83,7 +81,7 @@ class MoimDiaryDetailActivity :
 
     private fun setupParticipants() {
         binding.moimParticipantRv.apply {
-            participantsAdapter = MoimParticipantsRVAdapter()
+            participantsAdapter = MoimDiaryParticipantsRVAdapter()
             adapter = participantsAdapter
             layoutManager =
                 LinearLayoutManager(applicationContext, LinearLayoutManager.HORIZONTAL, false)
@@ -114,7 +112,7 @@ class MoimDiaryDetailActivity :
                     getGallery()
                 }
                 override fun onDeleteActivity(position: Int) {
-                    //viewModel.deleteActivity()
+                    viewModel.deleteActivity(position)
                 }
                 override fun onActivityNameChanged(name: String, position: Int) {
                     viewModel.updateActivityName(position, name)
@@ -125,19 +123,17 @@ class MoimDiaryDetailActivity :
                 override fun onEndDateSelected(position: Int, date: String) {
                     viewModel.updateActivityEndDate(position, date)
                 }
-
                 override fun onLocationClicked(position: Int) {
                     getLocationPermission(position)
                 }
-
                 override fun onTagClicked(position: Int) {
-
+                    showActivityTagDialog(position)
                 }
                 override fun onParticipantsClicked(position: Int) {
-
+                    showActivityParticipantsDialog(position)
                 }
                 override fun onPayClicked(position: Int) {
-
+                    showActivityPaymentDialog(position)
                 }
             }
         )
@@ -152,6 +148,10 @@ class MoimDiaryDetailActivity :
     }
 
     private fun initObserve() {
+        viewModel.diarySchedule.observe(this) { diarySchedule ->
+            participantsAdapter.submitList(diarySchedule.participantInfo)
+        }
+
         viewModel.diary.observe(this) { diary ->
             vpAdapter.updateDiary(diary)
         }
@@ -159,6 +159,17 @@ class MoimDiaryDetailActivity :
         viewModel.activities.observe(this) { activities ->
             vpAdapter.submitActivities(activities)
             binding.moimDiaryIndicator.setViewPager(binding.moimDiaryVp)
+        }
+
+        // 활동이 추가되면 마지막 페이지로 이동
+        viewModel.isActivityAdded.observe(this) { isAdded ->
+            if (isAdded) {
+                val lastPage = vpAdapter.itemCount - 1
+                binding.moimDiaryVp.setCurrentItem(lastPage, true)  // 마지막 페이지로 이동
+
+                // 이벤트 처리 후 플래그 초기화
+                viewModel.activityAddedHandled()
+            }
         }
 
         viewModel.patchActivitiesComplete.observe(this) { isComplete ->
@@ -197,9 +208,7 @@ class MoimDiaryDetailActivity :
         binding.moimActivityAddLy.setOnClickListener {
             if (viewModel.activities.value?.size ?: 0 >= 3)
                 Toast.makeText(this, "활동 추가는 3개까지 가능합니다", Toast.LENGTH_SHORT).show()
-            else {
-                viewModel.addEmptyActivity()
-            }
+            else { viewModel.addEmptyActivity() }
         }
 
         // 기록 추가 or 기록 수정
@@ -240,6 +249,24 @@ class MoimDiaryDetailActivity :
             PersonalDiaryDetailActivity.DELETE_BUTTON_ACTION -> viewModel.deleteDiary() // 삭제
             PersonalDiaryDetailActivity.BACK_BUTTON_ACTION -> finish() // 뒤로가기
         }
+    }
+
+    private fun showActivityTagDialog(position: Int) {
+        val dialog = ActivityTagDialog(position)
+        dialog.isCancelable = false
+        dialog.show(supportFragmentManager, "")
+    }
+
+    private fun showActivityParticipantsDialog(position: Int) {
+        val dialog = ActivityParticipantsDialog(position)
+        dialog.isCancelable = false
+        dialog.show(supportFragmentManager, "")
+    }
+
+    private fun showActivityPaymentDialog(position: Int) {
+        val dialog = ActivityPaymentDialog(position)
+        dialog.isCancelable = false
+        dialog.show(supportFragmentManager, "")
     }
 
     private fun getLocationPermission(position: Int) {

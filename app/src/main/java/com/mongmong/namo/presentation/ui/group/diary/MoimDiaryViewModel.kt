@@ -11,6 +11,8 @@ import com.mongmong.namo.domain.model.ActivityLocation
 import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.ParticipantInfo
+import com.mongmong.namo.domain.model.Payment
+import com.mongmong.namo.domain.model.PaymentParticipant
 import com.mongmong.namo.domain.model.ScheduleForDiary
 import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.repositories.DiaryRepository
@@ -46,6 +48,9 @@ class MoimDiaryViewModel @Inject constructor(
     private val _deleteDiaryResult = MutableLiveData<Boolean>()
     val deleteDiaryResult: LiveData<Boolean> = _deleteDiaryResult
 
+    private val _isActivityAdded = MutableLiveData<Boolean>(false)
+    val isActivityAdded: LiveData<Boolean> = _isActivityAdded
+
     private var initialDiaryContent: String? = null
     private var initialImgList: List<DiaryImage> = emptyList()
     private var initialEnjoy: Int = 0
@@ -63,7 +68,7 @@ class MoimDiaryViewModel @Inject constructor(
     val deleteDiaryComplete: LiveData<Boolean> = _deleteDiaryComplete
 
     val isParticipantVisible = MutableLiveData<Boolean>(false)
-    private val deleteItems = mutableListOf<Long>()  // 삭제할 항목 저장
+    private val deleteActivityIds = mutableListOf<Long>()  // 삭제할 항목 저장
 
     private val deleteImageIdsMap: MutableMap<Long, MutableList<Long>> = mutableMapOf()
 
@@ -132,8 +137,7 @@ class MoimDiaryViewModel @Inject constructor(
                 // 새로운 이미지 S3에 업로드
                 val newImageUrls = uploadImageToS3UseCase.execute(
                     PersonalDiaryViewModel.PREFIX,
-                    diary.value?.diaryImages
-                        ?.filter { it.diaryImageId == 0L }
+                    diary.value?.diaryImages?.filter { it.diaryImageId == 0L }
                         ?.map { Uri.parse(it.imageUrl) }
                         ?: emptyList()
                 )
@@ -144,8 +148,7 @@ class MoimDiaryViewModel @Inject constructor(
                         content = diary.value?.content ?: "",
                         enjoyRating = diary.value?.enjoyRating ?: 3,
                         images = (
-                                diary.value?.diaryImages
-                                    ?.filter { it.diaryImageId != 0L }
+                                diary.value?.diaryImages?.filter { it.diaryImageId != 0L }
                                     ?.map { it.imageUrl }
                                     ?: emptyList()
                                 ) + newImageUrls,
@@ -205,14 +208,22 @@ class MoimDiaryViewModel @Inject constructor(
                 endDate = diarySchedule.value?.date ?: "",
                 activityId = 0L,
                 location = ActivityLocation(),
-                participants = _diarySchedule.value?.participantInfo ?: emptyList(),
+                participants = emptyList(),
                 startDate = diarySchedule.value?.date ?: "",
                 title = "",
                 tag = "",
-                pay = 0,
+                payment = Payment(participants = _diarySchedule.value?.participantInfo?.map {
+                    PaymentParticipant(it.userId, it.nickname, false)
+                } ?: emptyList()),
                 images = emptyList()
             )
         )
+
+        _isActivityAdded.value = true
+    }
+
+    fun activityAddedHandled() {
+        _isActivityAdded.value = false
     }
 
     fun updateActivityName(position: Int, title: String) {
@@ -228,26 +239,35 @@ class MoimDiaryViewModel @Inject constructor(
     }
 
     fun updateActivityLocation(position: Int, id: String, name: String, x: Double, y: Double) {
-        Log.d("updateActivityLocation", "$position $id $name $x $y")
         _activities.value?.get(position)?.location = ActivityLocation(kakaoLocationId = id, locationName = name, longitude = x, latitude = y)
         _activities.value = _activities.value
     }
 
-    fun updateActivityPay(position: Int, pay: Int) {
-        _activities.value?.get(position)?.pay = pay
+    fun updateActivityTag(position: Int, tag: String) {
+        _activities.value?.get(position)?.tag = tag
         _activities.value = _activities.value
     }
 
-    fun updateActivityMembers(position: Int, members: List<ParticipantInfo>) {
+    fun updateActivityPayment(position: Int, payment: Payment) {
+        _activities.value?.get(position)?.payment = payment
+        Log.d("updateActivityPayment", "$payment")
+        _activities.value = _activities.value
+    }
+
+    fun updateActivityParticipants(position: Int, members: List<ParticipantInfo>) {
         _activities.value?.get(position)?.participants = members
         _activities.value = _activities.value
     }
 
 
-    fun deleteActivity(activityId: Long) {
-        if (activityId > 0) deleteItems.add(activityId)
-        _activities.value = _activities.value?.filterNot { it.activityId == activityId }?.toMutableList()
-        deleteImageIdsMap.remove(activityId)
+    fun deleteActivity(position: Int) {
+        _activities.value?.get(position)?.let {
+            if (it.activityId != 0L) { deleteActivityIds.add(it.activityId) }
+
+            _activities.value = _activities.value?.toMutableList()?.apply {
+                removeAt(position)
+            }
+        }
     }
 
 

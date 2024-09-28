@@ -5,12 +5,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemMoimDiaryParticipantsBinding
-import com.mongmong.namo.domain.model.group.MoimScheduleMember
+import com.mongmong.namo.domain.model.ParticipantInfo
 
-class MoimParticipantsRVAdapter() : RecyclerView.Adapter<MoimParticipantsRVAdapter.ViewHolder>() {
-    private val members = mutableListOf<MoimScheduleMember>()
+class MoimDiaryParticipantsRVAdapter() : RecyclerView.Adapter<MoimDiaryParticipantsRVAdapter.ViewHolder>() {
+    private val members = mutableListOf<ParticipantInfo>()
     @SuppressLint("NotifyDataSetChanged")
-    fun submitList(newMembers: List<MoimScheduleMember>) {
+    fun submitList(newMembers: List<ParticipantInfo>) {
         members.clear()
         members.addAll(newMembers)
         notifyDataSetChanged()
@@ -23,7 +23,6 @@ class MoimParticipantsRVAdapter() : RecyclerView.Adapter<MoimParticipantsRVAdapt
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         holder.bind(members[position])
     }
 
@@ -31,8 +30,8 @@ class MoimParticipantsRVAdapter() : RecyclerView.Adapter<MoimParticipantsRVAdapt
 
     inner class ViewHolder(val binding: ItemMoimDiaryParticipantsBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(member: MoimScheduleMember) {
-            binding.peopleNameTv.text = member.userName
+        fun bind(member: ParticipantInfo) {
+            binding.peopleNameTv.text = member.nickname
         }
     }
 }
