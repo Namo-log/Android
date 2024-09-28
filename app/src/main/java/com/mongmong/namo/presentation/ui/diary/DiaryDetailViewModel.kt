@@ -2,14 +2,12 @@ package com.mongmong.namo.presentation.ui.diary
 
 import android.net.Uri
 import android.util.Log
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mongmong.namo.domain.model.PersonalDiary
 import com.mongmong.namo.domain.model.Category
-import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.MoimDiary
@@ -70,7 +68,7 @@ class DiaryDetailViewModel @Inject constructor(
     }
 
     /** v1 */
-    private val _schedule = MutableLiveData<Schedule>(Schedule().getDefaultSchedule())
+    private val _schedule = MutableLiveData<Schedule>(Schedule())
     val schedule: LiveData<Schedule> = _schedule
 
     private var isInitialLoad = true
@@ -291,7 +289,7 @@ class DiaryDetailViewModel @Inject constructor(
             _category.value =
                 schedule.value?.let {
                     Log.d("findCategoryById", "${_schedule.value}")
-                    findCategoryUseCase.invoke(it.categoryId)
+                    findCategoryUseCase.invoke(it.categoryInfo.categoryId)
                 }
             Log.d("findCategoryById", "${_category.value}")
         }

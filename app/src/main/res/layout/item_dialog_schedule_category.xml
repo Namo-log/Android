@@ -43,13 +43,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:text="@{category.name}"
-            android:textSize="15sp"
-            android:textColor="@color/main_text"
             app:layout_constraintTop_toTopOf="@id/category_color_view"
             app:layout_constraintBottom_toBottomOf="@id/category_color_view"
             app:layout_constraintStart_toEndOf="@id/category_color_view"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:text="일정(기본)"/>
+            tools:text="일정(기본)"
+            style="@style/content_regular"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

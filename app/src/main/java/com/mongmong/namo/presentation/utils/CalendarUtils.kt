@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.util.TypedValue
 import androidx.annotation.ColorInt
-import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.domain.model.Schedule
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
 
@@ -109,13 +109,13 @@ class CalendarUtils {
         fun getOrder(event: Schedule, eventList: ArrayList<Schedule>): Int {
             var maxIdx = 0
             var idx = 0
-            for (i in 0 until event.dayInterval + 1) {
-                val temp = getTodaySchedule(eventList, DateTime(event.startLong).withTimeAtStartOfDay().plusDays(i))
-                idx = temp.indexOf(event)
-                if (maxIdx < idx) {
-                    maxIdx = idx
-                }
-            }
+//            for (i in 0 until event.dayInterval + 1) {
+//                val temp = getTodaySchedule(eventList, DateTime(event.startLong).withTimeAtStartOfDay().plusDays(i))
+//                idx = temp.indexOf(event)
+//                if (maxIdx < idx) {
+//                    maxIdx = idx
+//                }
+//            }
 
             return maxIdx
         }

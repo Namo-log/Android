@@ -2,13 +2,11 @@ package com.mongmong.namo.presentation.di
 
 import android.content.Context
 import com.mongmong.namo.data.datasource.category.RemoteCategoryDataSource
-import com.mongmong.namo.data.datasource.schedule.LocalScheduleDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.datasource.group.GroupDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
-import com.mongmong.namo.data.local.dao.ScheduleDao
 import com.mongmong.namo.data.remote.CategoryApiService
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupApiService
@@ -25,8 +23,6 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object DataSourceModule {
     /** 일정 */
-    @Provides
-    fun provideLocalScheduleDataSource(scheduleDao: ScheduleDao): LocalScheduleDataSource = LocalScheduleDataSource(scheduleDao)
     @Provides
     fun provideRemoteScheduleDataSource(
         scheduleApiService: ScheduleApiService,

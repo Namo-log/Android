@@ -5,21 +5,22 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.google.gson.Gson
 import com.mongmong.namo.R
-import com.mongmong.namo.data.local.entity.home.Schedule
+import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.databinding.ActivityScheduleBinding
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.home.notify.PushNotificationReceiver
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.PickerConverter
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 
@@ -30,37 +31,39 @@ class ScheduleActivity : BaseActivity<ActivityScheduleBinding>(R.layout.activity
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.schedule_nav_host) as NavHostFragment
         navHostFragment.navController
     }
-
-    private var alarmList : MutableList<Int> = mutableListOf()
-
-    private var schedule : Schedule? = null
-
     private val viewModel : PersonalScheduleViewModel by viewModels()
 
     override fun setup() {
-        val schedule = intent.getSerializableExtra("schedule") as? Schedule
+        var schedule : Schedule? = null
+
+        // intent가 넘어왔는지 확인
+        intent.getStringExtra("schedule")?.let { scheduleJson ->
+            // 넘어왔다면 song 인스턴스에 gson 형태로 받아온 데이터를 넣어줌
+            schedule = Gson().fromJson(scheduleJson, Schedule::class.java)
+            Log.e("ScheduleActivity", schedule.toString()) // 로그 확인
+        }
         val nowDay = intent.getLongExtra("nowDay", 0)
 
-        if (schedule != null) {
+        if (schedule != null) { // 생성 모드
             binding.scheduleDeleteBtn.visibility = View.VISIBLE
-            this.schedule = schedule
-            deleteClick()
-        } else {
+            viewModel.setSchedule(schedule)
+        } else { // 편집 모드
             binding.scheduleDeleteBtn.visibility = View.GONE
-            binding.scheduleDeleteBtn.setOnClickListener {
-                return@setOnClickListener
-            }
+            viewModel.setSchedule(
+                Schedule(
+                    startLong = PickerConverter.getDefaultDate(DateTime(nowDay), true),
+                    endLong = PickerConverter.getDefaultDate(DateTime(nowDay), false)
+                )
+            )
         }
-        val action = ScheduleDialogBasicFragmentDirections.actionScheduleDialogBasicFragmentSelf(schedule = schedule, nowDay = nowDay)
-        navController.navigate(action)
 
         val slideAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up)
         binding.scheduleContainerLayout.startAnimation(slideAnimation)
 
-        clickListener()
+        initClickListeners()
     }
 
-    private fun clickListener() {
+    private fun initClickListeners() {
         binding.scheduleBackgroundLayout.setOnClickListener {
             finish()
         }
@@ -68,9 +71,7 @@ class ScheduleActivity : BaseActivity<ActivityScheduleBinding>(R.layout.activity
         binding.scheduleContainerLayout.setOnClickListener {
             return@setOnClickListener
         }
-    }
 
-    private fun deleteClick() {
         binding.scheduleDeleteBtn.setOnClickListener {
             showDialog()
         }
@@ -88,19 +89,11 @@ class ScheduleActivity : BaseActivity<ActivityScheduleBinding>(R.layout.activity
 
     /** 일정 삭제 **/
     private fun deleteData() {
-        schedule?.let { schedule ->
-            // 알림 리스트 삭제
-            alarmList = schedule.alarmList!!.toMutableList()
-            for (i in alarmList) {
-                deleteNotification(schedule.scheduleId.toInt() + DateTime(schedule.startLong).minusMinutes(i).millis.toInt(), schedule!!)
-            }
+        // 일정 삭제
+        viewModel.deleteSchedule()
 
-            // 일정 삭제
-            viewModel.deleteSchedule(schedule.scheduleId, schedule.moimSchedule)
-
-            Toast.makeText(this, "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-            finish()
-        }
+        Toast.makeText(this, "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+        finish()
     }
 
     private fun deleteNotification(id : Int, schedule : Schedule) {

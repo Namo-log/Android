@@ -74,11 +74,11 @@ class LocalDiaryDataSource @Inject constructor(private val diaryDao: DiaryDao) {
 
 
     private fun updateHasDiary(localId: Long) {
-        diaryDao.updateHasDiary(localId)
+//        diaryDao.updateHasDiary(localId)
     }
 
     private fun deleteHasDiary(localId: Long) {
-        diaryDao.deleteHasDiary(localId)
+//        diaryDao.deleteHasDiary(localId)
     }
 
     suspend fun updateDiaryAfterUpload(

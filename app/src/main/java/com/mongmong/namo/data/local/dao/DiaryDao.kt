@@ -2,8 +2,6 @@ package com.mongmong.namo.data.local.dao
 
 import androidx.room.*
 import com.mongmong.namo.data.local.entity.diary.Diary
-import com.mongmong.namo.domain.model.DiarySchedule
-import com.mongmong.namo.data.local.entity.home.Schedule
 
 @Dao
 interface DiaryDao {
@@ -20,11 +18,11 @@ interface DiaryDao {
     @Query("DELETE FROM diary_table")
     fun deleteAllDiaries()
 
-    @Query("UPDATE schedule_table SET hasDiary= 1 WHERE scheduleId =:scheduleIdx")
-    fun updateHasDiary(scheduleIdx: Long)
-
-    @Query("UPDATE schedule_table SET hasDiary= 0 WHERE scheduleId =:scheduleIdx")
-    fun deleteHasDiary(scheduleIdx: Long)
+//    @Query("UPDATE schedule_table SET hasDiary= 1 WHERE scheduleId =:scheduleIdx")
+//    fun updateHasDiary(scheduleIdx: Long)
+//
+//    @Query("UPDATE schedule_table SET hasDiary= 0 WHERE scheduleId =:scheduleIdx")
+//    fun deleteHasDiary(scheduleIdx: Long)
 
     @Query("SELECT * FROM diary_table WHERE diaryId=:scheduleId")
     fun getDiaryDaily(scheduleId: Long): Diary
@@ -42,7 +40,7 @@ interface DiaryDao {
     @Query("SELECT * FROM diary_table WHERE isUpload = 0")
     fun getNotUploadedDiary(): List<Diary>
 
-    @Query("SELECT * FROM schedule_table")
-    fun getAllSchedule(): List<Schedule>
+//    @Query("SELECT * FROM schedule_table")
+//    fun getAllSchedule(): List<Schedule>
 
 }

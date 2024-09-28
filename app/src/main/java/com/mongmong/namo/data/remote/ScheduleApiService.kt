@@ -1,12 +1,12 @@
 package com.mongmong.namo.data.remote
 
-import com.mongmong.namo.domain.model.DeleteScheduleResponse
-import com.mongmong.namo.domain.model.EditScheduleResponse
-import com.mongmong.namo.domain.model.GetMonthScheduleResponse
-import com.mongmong.namo.domain.model.PatchMoimScheduleAlarmRequestBody
-import com.mongmong.namo.domain.model.PatchMoimScheduleCategoryRequestBody
-import com.mongmong.namo.domain.model.PostScheduleResponse
-import com.mongmong.namo.domain.model.ScheduleRequestBody
+import com.mongmong.namo.data.dto.DeleteScheduleResponse
+import com.mongmong.namo.data.dto.GetMonthScheduleResponse
+import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
+import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.data.dto.PostScheduleResponse
+import com.mongmong.namo.data.dto.EditScheduleResponse
+import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.Call
 import retrofit2.http.Body
@@ -15,19 +15,16 @@ import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ScheduleApiService {
     /** 개인 일정 */
-    // 월별 일정 조회
-    @GET("schedules/{yearMonth}")
+    // 한달 날짜 범위로 일정 조회
+    @GET("schedules/calendar")
     suspend fun getMonthSchedule(
-        @Path("yearMonth") yearMonth : String,
+        @Query("startDate") startDate: String,
+        @Query("endDate") endDate: String
     ) : GetMonthScheduleResponse
-
-    // 일정 전체 조회
-    @GET("schedules/all")
-    fun getAllSchedule(
-    ) : Call<GetMonthScheduleResponse>
 
     // 일정 생성
     @POST("schedules")
@@ -43,10 +40,9 @@ interface ScheduleApiService {
     ) : EditScheduleResponse
 
     // 일정 삭제
-    @DELETE("schedules/{scheduleId}/{kind}")
+    @DELETE("schedules/{scheduleId}")
     suspend fun deleteSchedule(
-        @Path("scheduleId") serverId : Long,
-        @Path("kind") isMoimSchedule: Int,
+        @Path("scheduleId") serverId : Long
     ) : DeleteScheduleResponse
 
     /** 모임 일정 */
