@@ -22,7 +22,16 @@ data class MoimScheduleDetail(
     var endDate: Long = PickerConverter.parseDateTimeToLong(DateTime.now()),
     var locationInfo: Location = Location(),
     val participants: List<Participant> = emptyList()
-): Serializable
+): Serializable {
+    fun getParticipantsColoInfo(): List<CalendarColorInfo> {
+        return participants.map { participant ->
+            CalendarColorInfo(
+                colorId = participant.colorId,
+                name = participant.nickname
+            )
+        }
+    }
+}
 
 data class Participant(
     val participantId: Long = 0L,
@@ -31,6 +40,27 @@ data class Participant(
     val nickname: String = "",
     val colorId: Int = 0,
     val isOwner: Boolean = false
+)
+
+data class MoimCalendarSchedule(
+    val scheduleId: Long = 0L,
+    val title: String = "",
+    val startDate: Long,
+    val endDate: Long,
+    val participants: List<MoimCalendarParticipant> = emptyList(),
+    val isCurMoim: Boolean = false
+) {
+    fun getScheduleOwnerText(): String  {
+        return if (participants.size < 2) participants[0].nickname
+        else participants.size.toString() + "명"
+    }
+}
+
+data class MoimCalendarParticipant(
+    val participantId: Long = 0L,
+    val userId: Long = 0L,
+    val nickname: String = "",
+    val colorId: Int = 0,
 )
 
 data class Moim(

@@ -5,14 +5,13 @@ import com.mongmong.namo.data.remote.group.GroupScheduleApiService
 import com.mongmong.namo.data.remote.ScheduleApiService
 import com.mongmong.namo.domain.model.group.AddMoimScheduleResponse
 import com.mongmong.namo.data.dto.DeleteScheduleResponse
-import com.mongmong.namo.domain.model.group.GetMoimScheduleResponse
 import com.mongmong.namo.data.dto.GetMonthScheduleResponse
 import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
-import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.data.dto.PostScheduleResponse
 import com.mongmong.namo.data.dto.EditScheduleResponse
+import com.mongmong.namo.data.dto.GetMoimCalendarResponse
 import com.mongmong.namo.data.dto.GetMoimDetailResponse
 import com.mongmong.namo.data.dto.GetMoimDetailResult
 import com.mongmong.namo.data.dto.GetMoimResponse
@@ -170,7 +169,7 @@ class RemoteScheduleDataSource @Inject constructor(
         var moimResponse = GetMoimResponse(result = emptyList())
         withContext(Dispatchers.IO) {
             runCatching {
-                moimScheduleApiService.getAllMoimSchedule()
+                moimScheduleApiService.getMoimCalendarSchedule()
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "getMoimSchedules Success $it")
                 moimResponse = it
@@ -199,21 +198,28 @@ class RemoteScheduleDataSource @Inject constructor(
         return moimDetailResponse
     }
 
-    suspend fun getGroupAllSchedules(
-        groupId: Long
-    ): List<MoimScheduleBody> {
-        var scheduleResponse = GetMoimScheduleResponse(result = emptyList())
+    // 모임 캘린더 조회
+    suspend fun getMoimCalendarSchedules(
+        moimId: Long,
+        startDate: DateTime,
+        endDate: DateTime
+    ): GetMoimCalendarResponse {
+        var scheduleResponse = GetMoimCalendarResponse(result = arrayListOf())
         withContext(Dispatchers.IO) {
             runCatching {
-                moimScheduleApiService.getAllMoimSchedule(groupId)
+                moimScheduleApiService.getMoimCalendarSchedule(
+                    moimId,
+                    ScheduleDateConverter.parseDateTimeToServerData(startDate),
+                    ScheduleDateConverter.parseDateTimeToServerData(endDate)
+                )
             }.onSuccess {
-                Log.d("RemoteScheduleDataSource", "getAllMoimSchedules Success $it")
+                Log.d("RemoteScheduleDataSource", "getMoimCalendarSchedules Success $it")
                 scheduleResponse = it
             }.onFailure {
-                Log.d("RemoteScheduleDataSource", "getAllMoimSchedules Fail")
+                Log.d("RemoteScheduleDataSource", "getMoimCalendarSchedules Fail $it")
             }
         }
-        return scheduleResponse.result
+        return scheduleResponse
     }
 
     suspend fun addMoimSchedule(

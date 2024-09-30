@@ -1,9 +1,13 @@
 package com.mongmong.namo.data.utils.mappers
 
+import com.mongmong.namo.data.dto.CalendarParticipant
+import com.mongmong.namo.data.dto.GetMoimCalendarResult
 import com.mongmong.namo.data.dto.GetMoimDetailResult
 import com.mongmong.namo.data.dto.GetMoimResult
 import com.mongmong.namo.data.dto.MoimParticipant
 import com.mongmong.namo.domain.model.Location
+import com.mongmong.namo.domain.model.MoimCalendarParticipant
+import com.mongmong.namo.domain.model.MoimCalendarSchedule
 import com.mongmong.namo.domain.model.MoimPreview
 import com.mongmong.namo.domain.model.MoimScheduleDetail
 import com.mongmong.namo.domain.model.Participant
@@ -48,6 +52,28 @@ object MoimMapper {
             colorId = this.colorId,
             isGuest = this.isGuest,
             isOwner = this.isOwner
+        )
+    }
+
+    fun GetMoimCalendarResult.toModel(): MoimCalendarSchedule {
+        return MoimCalendarSchedule(
+            scheduleId = this.scheduleId,
+            title = this.title,
+            startDate = this.startDate,
+            endDate = this.endDate,
+            participants = this.participants.map { participantData ->
+                participantData.toModel()
+            },
+            isCurMoim = this.isCurMeetingSchedule
+        )
+    }
+
+    fun CalendarParticipant.toModel(): MoimCalendarParticipant {
+        return MoimCalendarParticipant(
+            participantId = this.participantId,
+            userId = this.userId,
+            nickname = this.nickname,
+            colorId = this.colorId
         )
     }
 }

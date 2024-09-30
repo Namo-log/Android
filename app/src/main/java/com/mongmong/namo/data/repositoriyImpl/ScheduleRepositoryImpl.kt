@@ -9,11 +9,11 @@ import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.data.utils.mappers.MoimMapper.toModel
 import com.mongmong.namo.data.utils.mappers.ScheduleMapper.toModel
+import com.mongmong.namo.domain.model.MoimCalendarSchedule
 import com.mongmong.namo.domain.model.MoimPreview
 import com.mongmong.namo.domain.model.MoimScheduleDetail
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
-import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.presentation.config.Constants.SUCCESS_CODE
 import org.joda.time.DateTime
@@ -71,8 +71,14 @@ class ScheduleRepositoryImpl @Inject constructor(
         return remoteScheduleDataSource.getMoimSchedueDetail(moimScheduleId).result.toModel()
     }
 
-    override suspend fun getGroupAllSchedules(groupId: Long): List<MoimScheduleBody> {
-        return remoteScheduleDataSource.getGroupAllSchedules(groupId)
+    override suspend fun getMoimCalendarSchedules(
+        moimScheduleId: Long,
+        startDate: DateTime,
+        endDate: DateTime
+    ): List<MoimCalendarSchedule> {
+        return remoteScheduleDataSource.getMoimCalendarSchedules(moimScheduleId, startDate, endDate).result.map { scheduleData ->
+            scheduleData.toModel()
+        }
     }
 
     override suspend fun addMoimSchedule(moimSchedule: AddMoimScheduleRequestBody) {

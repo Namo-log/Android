@@ -37,3 +37,24 @@ data class MoimParticipant(
     val colorId: Int = 0,
     val isOwner: Boolean = false
 )
+
+/** 모임 캘린더 조회 */
+data class GetMoimCalendarResponse(
+    val result: ArrayList<GetMoimCalendarResult>
+)
+
+data class GetMoimCalendarResult(
+    val scheduleId: Long = 0L,
+    val title: String = "",
+    val startDate: Long = 0L,
+    val endDate: Long = 0L,
+    val participants: List<CalendarParticipant> = emptyList(),
+    val isCurMeetingSchedule: Boolean = false
+)
+
+data class CalendarParticipant(
+    val participantId: Long = 0L,
+    val userId: Long = 0L,
+    val nickname: String = "",
+    val colorId: Int = 0,
+)

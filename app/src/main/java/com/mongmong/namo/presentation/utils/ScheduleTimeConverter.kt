@@ -8,12 +8,15 @@ class ScheduleTimeConverter(private var clickedDate: DateTime) {
     fun getScheduleTimeText(startLong: Long, endLong: Long): String {
         val dayInterval = getDayInterval(startLong, endLong)
         if (dayInterval == 0) { // 하루 일정
-            return setTimeText(parseTimeToFormattedText(startLong), parseTimeToFormattedText(endLong))
+            return setTimeText(
+                Companion.parseTimeToFormattedText(startLong),
+                Companion.parseTimeToFormattedText(endLong)
+            )
         } else { // 기간 일정
             if (calculateDayIntervalWithClickedDate(startLong) == 0) { // 시작일
-                return setTimeText(parseTimeToFormattedText(startLong), DAY_END)
+                return setTimeText(Companion.parseTimeToFormattedText(startLong), DAY_END)
             } else if (calculateDayIntervalWithClickedDate(endLong) == 0) { // 종료일
-                return setTimeText(DAY_START, parseTimeToFormattedText(endLong))
+                return setTimeText(DAY_START, Companion.parseTimeToFormattedText(endLong))
             }
             // 중간일
             return setTimeText(DAY_START, DAY_END)
@@ -62,16 +65,17 @@ class ScheduleTimeConverter(private var clickedDate: DateTime) {
         }.timeInMillis
     }
 
-    // 시간 형식(HH:mm)으로 변환
-    private fun parseTimeToFormattedText(date: Long): String {
-        return DateTime(date * LONG_CONVERTER).toString(TIME_PATTERN)
-    }
-
     companion object {
         const val LONG_CONVERTER = 1000L
         const val INTERVAL_CONVERTER = 24 * 60 * 60
         const val TIME_PATTERN = "HH:mm"
         const val DAY_START = "00:00"
         const val DAY_END = "23:59"
+
+        // 시간 형식(HH:mm)으로 변환
+        @JvmStatic
+        fun parseTimeToFormattedText(date: Long): String {
+            return DateTime(date * LONG_CONVERTER).toString(TIME_PATTERN)
+        }
     }
 }

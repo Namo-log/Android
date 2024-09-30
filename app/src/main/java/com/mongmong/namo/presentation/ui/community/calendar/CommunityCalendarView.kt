@@ -3,7 +3,7 @@ package com.mongmong.namo.presentation.ui.community.calendar
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import com.mongmong.namo.domain.model.group.MoimScheduleBody
+import com.mongmong.namo.domain.model.MoimCalendarSchedule
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.ui.home.calendar.data.StartEnd
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.DAYS_PER_WEEK
@@ -12,7 +12,8 @@ import org.joda.time.DateTime
 
 class CommunityCalendarView(context: Context, attrs: AttributeSet) :
     CustomCalendarView(context, attrs) {
-    private val scheduleList = mutableListOf<MoimScheduleBody>()
+
+    private val scheduleList = mutableListOf<MoimCalendarSchedule>()
 
     override fun drawSchedules(canvas: Canvas) {
         if (cellHeight - eventTop > _eventHeight * 4) {
@@ -26,8 +27,8 @@ class CommunityCalendarView(context: Context, attrs: AttributeSet) :
 
     private fun drawDetailedSchedules(canvas: Canvas) {
         for (i in scheduleList.indices) {
-            val startIdx = days.indexOf(DateTime(scheduleList[i].startLong * 1000L).withTimeAtStartOfDay())
-            val endIdx = days.indexOf(DateTime(scheduleList[i].endLong * 1000L).withTimeAtStartOfDay())
+            val startIdx = days.indexOf(DateTime(scheduleList[i].startDate * 1000L).withTimeAtStartOfDay())
+            val endIdx = days.indexOf(DateTime(scheduleList[i].endDate * 1000L).withTimeAtStartOfDay())
 
             for (splitSchedule in splitWeek(startIdx, endIdx)) {
                 val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
@@ -45,8 +46,8 @@ class CommunityCalendarView(context: Context, attrs: AttributeSet) :
 
     private fun drawCompactSchedules(canvas: Canvas) {
         for (i in scheduleList.indices) {
-            val startIdx = days.indexOf(DateTime(scheduleList[i].startLong * 1000L).withTimeAtStartOfDay())
-            val endIdx = days.indexOf(DateTime(scheduleList[i].endLong * 1000L).withTimeAtStartOfDay())
+            val startIdx = days.indexOf(DateTime(scheduleList[i].startDate * 1000L).withTimeAtStartOfDay())
+            val endIdx = days.indexOf(DateTime(scheduleList[i].endDate * 1000L).withTimeAtStartOfDay())
 
             for (splitSchedule in splitWeek(startIdx, endIdx)) {
                 val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
@@ -61,7 +62,7 @@ class CommunityCalendarView(context: Context, attrs: AttributeSet) :
         }
     }
 
-    private fun drawScheduleRect(canvas: Canvas, schedule: MoimScheduleBody, order: Int, splitSchedule: StartEnd) {
+    private fun drawScheduleRect(canvas: Canvas, schedule: MoimCalendarSchedule, order: Int, splitSchedule: StartEnd) {
         rect = setRect(order, splitSchedule.startIdx, splitSchedule.endIdx)
         val path = Path().apply {
             addRoundRect(rect, corners, Path.Direction.CW)
@@ -69,11 +70,11 @@ class CommunityCalendarView(context: Context, attrs: AttributeSet) :
         setBgPaintColor(schedule)
         canvas.drawPath(path, bgPaint)
 
-        val textToDraw = getTruncatedText(schedule.name, rect.width())
+        val textToDraw = getTruncatedText(schedule.title, rect.width())
         drawScheduleText(canvas, textToDraw, splitSchedule.startIdx, rect)
     }
 
-    private fun drawScheduleLine(canvas: Canvas, schedule: MoimScheduleBody, order: Int, splitSchedule: StartEnd) {
+    private fun drawScheduleLine(canvas: Canvas, schedule: MoimCalendarSchedule, order: Int, splitSchedule: StartEnd) {
         rect = setLineRect(order, splitSchedule.startIdx, splitSchedule.endIdx)
         val path = Path().apply {
             addRoundRect(rect, corners, Path.Direction.CW)
@@ -129,11 +130,11 @@ class CommunityCalendarView(context: Context, attrs: AttributeSet) :
         )
     }
 
-    fun setScheduleList(events: List<MoimScheduleBody>) {
-        val sortedEvents = events.sortedWith(compareByDescending<MoimScheduleBody> {
-            DateTime(it.endLong * 1000L).millis - DateTime(it.startLong * 1000L).millis
+    fun setScheduleList(events: List<MoimCalendarSchedule>) {
+        val sortedEvents = events.sortedWith(compareByDescending<MoimCalendarSchedule> {
+            DateTime(it.endDate * 1000L).millis - DateTime(it.startDate * 1000L).millis
         }.thenBy {
-            it.startLong
+            it.startDate
         })
 
         scheduleList.clear()
@@ -142,8 +143,8 @@ class CommunityCalendarView(context: Context, attrs: AttributeSet) :
         invalidate()
     }
 
-    private fun setBgPaintColor(event: MoimScheduleBody) {
-        val paletteId = if (event.curMoimSchedule) 4 else event.members[0].color
-        bgPaint.color = Color.parseColor(CategoryColor.getAllColors()[paletteId - 1])
+    private fun setBgPaintColor(schedule: MoimCalendarSchedule) {
+        val hexColor = CategoryColor.convertPaletteIdToHexColor(schedule.participants[0].colorId)
+        bgPaint.color = Color.parseColor(hexColor)
     }
 }
