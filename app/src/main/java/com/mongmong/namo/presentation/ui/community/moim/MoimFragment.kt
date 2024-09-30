@@ -9,7 +9,9 @@ import com.mongmong.namo.domain.model.Moim
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.community.moim.adapter.MoimRVAdapter
 import com.mongmong.namo.presentation.ui.community.moim.schedule.MoimScheduleActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MoimFragment : BaseFragment<FragmentMoimBinding>(R.layout.fragment_moim) {
 
     private val viewModel: MoimViewModel by viewModels()
@@ -47,14 +49,14 @@ class MoimFragment : BaseFragment<FragmentMoimBinding>(R.layout.fragment_moim) {
             override fun onItemClick(position: Int) {
                 // 모임 일정 편집 화면으로 이동
                 requireActivity().startActivity(Intent(context, MoimScheduleActivity::class.java)
-                    .putExtra("moim", viewModel.moimList.value!![position])
+                    .putExtra("moim", viewModel.moimPreviewList.value!![position])
                 )
             }
         })
     }
 
     private fun initObserve() {
-        viewModel.moimList.observe(viewLifecycleOwner) {
+        viewModel.moimPreviewList.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 setAdapter()
                 moimAdapter.addMoim(it)

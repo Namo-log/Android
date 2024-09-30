@@ -13,6 +13,7 @@ import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.data.dto.PostScheduleResponse
 import com.mongmong.namo.data.dto.EditScheduleResponse
+import com.mongmong.namo.data.dto.GetMoimResponse
 import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
@@ -157,7 +158,22 @@ class RemoteScheduleDataSource @Inject constructor(
         return scheduleResponse
     }
 
-    /** 그룹 */
+    /** 모임 */
+    suspend fun getMoimSchedules(): GetMoimResponse {
+        var moimResponse = GetMoimResponse(result = emptyList())
+        withContext(Dispatchers.IO) {
+            runCatching {
+                scheduleApiService.getAllMoimSchedule()
+            }.onSuccess {
+                Log.d("RemoteScheduleDataSource", "getMoimSchedules Success $it")
+                moimResponse = it
+            }.onFailure {
+                Log.d("RemoteScheduleDataSource", "getMoimSchedules Fail $it")
+            }
+        }
+        return moimResponse
+    }
+
     suspend fun getGroupAllSchedules(
         groupId: Long
     ): List<MoimScheduleBody> {

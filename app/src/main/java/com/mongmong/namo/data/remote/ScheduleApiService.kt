@@ -6,9 +6,9 @@ import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.data.dto.PostScheduleResponse
 import com.mongmong.namo.data.dto.EditScheduleResponse
+import com.mongmong.namo.data.dto.GetMoimResponse
 import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.presentation.config.BaseResponse
-import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -46,10 +46,9 @@ interface ScheduleApiService {
     ) : DeleteScheduleResponse
 
     /** 모임 일정 */
-    // 모임 일정 전체 조회
-    @GET("schedules/group/all")
-    fun getAllMoimSchedule(
-    ) : Call<GetMonthScheduleResponse>
+    // 모임 일정 목록 조회
+    @GET("schedules/meeting")
+    suspend fun getAllMoimSchedule(): GetMoimResponse
 
     // 월별 모임 일정 조회
     @GET("schedules/group/{yearMonth}")

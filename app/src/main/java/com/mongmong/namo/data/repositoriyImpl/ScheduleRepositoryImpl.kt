@@ -7,7 +7,10 @@ import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.data.utils.mappers.MoimMapper.toModel
 import com.mongmong.namo.data.utils.mappers.ScheduleMapper.toModel
+import com.mongmong.namo.domain.model.Moim
+import com.mongmong.namo.domain.model.MoimPreview
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
@@ -57,7 +60,13 @@ class ScheduleRepositoryImpl @Inject constructor(
         return remoteScheduleDataSource.editMoimScheduleAlert(alert).code == SUCCESS_CODE
     }
 
-    /** 그룹 */
+    /** 모임 */
+    override suspend fun getMoimSchedules(): List<MoimPreview> {
+        return remoteScheduleDataSource.getMoimSchedules().result.map { moimData ->
+            moimData.toModel() // DTO를 도메인 모델로 변환
+        }
+    }
+
     override suspend fun getGroupAllSchedules(groupId: Long): List<MoimScheduleBody> {
         return remoteScheduleDataSource.getGroupAllSchedules(groupId)
     }

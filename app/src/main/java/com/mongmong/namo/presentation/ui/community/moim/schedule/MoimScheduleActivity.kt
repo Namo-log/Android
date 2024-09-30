@@ -39,6 +39,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
 import com.mongmong.namo.databinding.ActivityMoimScheduleBinding
 import com.mongmong.namo.domain.model.Moim
+import com.mongmong.namo.domain.model.MoimPreview
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.community.CommunityCalendarActivity
 import com.mongmong.namo.presentation.ui.community.moim.schedule.adapter.MoimParticipantRVAdapter

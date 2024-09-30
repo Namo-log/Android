@@ -6,6 +6,15 @@ import org.joda.time.DateTime
 import java.io.Serializable
 
 //TODO: 종료일, 장소 좌표 등 데이터 추가
+data class MoimPreview(
+    val moimId: Long = 0L,
+    var startDate: Long = PickerConverter.parseDateTimeToLong(DateTime.now()),
+    var coverImg: String = "",
+    var title: String = "",
+    var participantCount: Int = 0,
+    var participantNicknames: String = ""
+): Serializable
+
 data class Moim(
     val moimId: Long = 0L,
     var startDate: Long = PickerConverter.parseDateTimeToLong(DateTime.now()),
