@@ -47,16 +47,6 @@ interface ScheduleApiService {
     ) : DeleteScheduleResponse
 
     /** 모임 일정 */
-    // 모임 일정 목록 조회
-    @GET("schedules/meeting")
-    suspend fun getAllMoimSchedule(): GetMoimResponse
-
-    // 모임 일정 상세 조회
-    @GET("schedules/meeting/{meetingScheduleId}")
-    suspend fun getMoimScheduleDetail(
-        @Path("meetingScheduleId") moimScheduleId: Long
-    ) : GetMoimDetailResponse
-
     // 월별 모임 일정 조회
     @GET("schedules/group/{yearMonth}")
     suspend fun getMonthMoimSchedule(

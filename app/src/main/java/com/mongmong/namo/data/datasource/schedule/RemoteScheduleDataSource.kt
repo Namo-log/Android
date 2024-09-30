@@ -28,9 +28,10 @@ import javax.inject.Inject
 
 class RemoteScheduleDataSource @Inject constructor(
     private val scheduleApiService: ScheduleApiService,
-    private val groupScheduleApiService: GroupScheduleApiService,
+    private val moimScheduleApiService: GroupScheduleApiService,
 ) {
     /** 개인 */
+    // 일정 조회
     suspend fun getMonthSchedules(
         startDate: DateTime,
         endDate: DateTime
@@ -52,6 +53,7 @@ class RemoteScheduleDataSource @Inject constructor(
         return scheduleResponse
     }
 
+    // 일정 생성
     suspend fun addSchedule(
         schedule: ScheduleRequestBody,
     ): PostScheduleResponse {
@@ -70,6 +72,7 @@ class RemoteScheduleDataSource @Inject constructor(
         return scheduleResponse
     }
 
+    // 일정 수정
     suspend fun editSchedule(
         scheduleId: Long,
         schedule: ScheduleRequestBody
@@ -89,6 +92,7 @@ class RemoteScheduleDataSource @Inject constructor(
         return scheduleResponse
     }
 
+    // 일정 삭제
     suspend fun deleteSchedule(
         scheduleId: Long
     ) : DeleteScheduleResponse {
@@ -161,11 +165,12 @@ class RemoteScheduleDataSource @Inject constructor(
     }
 
     /** 모임 */
+    // 모임 일정 목록 조회
     suspend fun getMoimSchedules(): GetMoimResponse {
         var moimResponse = GetMoimResponse(result = emptyList())
         withContext(Dispatchers.IO) {
             runCatching {
-                scheduleApiService.getAllMoimSchedule()
+                moimScheduleApiService.getAllMoimSchedule()
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "getMoimSchedules Success $it")
                 moimResponse = it
@@ -176,13 +181,14 @@ class RemoteScheduleDataSource @Inject constructor(
         return moimResponse
     }
 
+    // 모임 일정 상세 조회
     suspend fun getMoimSchedueDetail(
         moimScheduleId: Long
     ): GetMoimDetailResponse {
         var moimDetailResponse = GetMoimDetailResponse(result = GetMoimDetailResult())
         withContext(Dispatchers.IO) {
             runCatching {
-                scheduleApiService.getMoimScheduleDetail(moimScheduleId)
+                moimScheduleApiService.getMoimScheduleDetail(moimScheduleId)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "getMoimSchedueDetail Success $it")
                 moimDetailResponse = it
@@ -199,7 +205,7 @@ class RemoteScheduleDataSource @Inject constructor(
         var scheduleResponse = GetMoimScheduleResponse(result = emptyList())
         withContext(Dispatchers.IO) {
             runCatching {
-                groupScheduleApiService.getAllMoimSchedule(groupId)
+                moimScheduleApiService.getAllMoimSchedule(groupId)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "getAllMoimSchedules Success $it")
                 scheduleResponse = it
@@ -216,7 +222,7 @@ class RemoteScheduleDataSource @Inject constructor(
         var scheduleResponse = AddMoimScheduleResponse(-1)
         withContext(Dispatchers.IO) {
             runCatching {
-                groupScheduleApiService.postMoimSchedule(moimSchedule)
+                moimScheduleApiService.postMoimSchedule(moimSchedule)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "addMoimSchedule Success $it")
                 scheduleResponse = it
@@ -232,7 +238,7 @@ class RemoteScheduleDataSource @Inject constructor(
     ) {
         withContext(Dispatchers.IO) {
             runCatching {
-                groupScheduleApiService.editMoimSchedule(moimSchedule)
+                moimScheduleApiService.editMoimSchedule(moimSchedule)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "editMoimSchedule Success $it")
             }.onFailure {
@@ -246,7 +252,7 @@ class RemoteScheduleDataSource @Inject constructor(
     ) {
         withContext(Dispatchers.IO) {
             runCatching {
-                groupScheduleApiService.deleteMoimSchedule(moimScheduleId)
+                moimScheduleApiService.deleteMoimSchedule(moimScheduleId)
             }.onSuccess {
                 Log.d("RemoteScheduleDataSource", "deleteMoimSchedule Success $it")
             }.onFailure {
