@@ -6,6 +6,7 @@ import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.domain.model.Moim
 import com.mongmong.namo.domain.model.MoimPreview
+import com.mongmong.namo.domain.model.MoimScheduleDetail
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
@@ -42,6 +43,10 @@ interface ScheduleRepository {
 
     /** 모임 */
     suspend fun getMoimSchedules(): List<MoimPreview>
+
+    suspend fun getMoimScheduleDetail(
+        moimScheduleId: Long
+    ): MoimScheduleDetail
 
     suspend fun getGroupAllSchedules(
         groupId: Long

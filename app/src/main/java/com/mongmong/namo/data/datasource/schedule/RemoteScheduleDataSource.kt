@@ -13,6 +13,8 @@ import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.data.dto.PostScheduleResponse
 import com.mongmong.namo.data.dto.EditScheduleResponse
+import com.mongmong.namo.data.dto.GetMoimDetailResponse
+import com.mongmong.namo.data.dto.GetMoimDetailResult
 import com.mongmong.namo.data.dto.GetMoimResponse
 import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
@@ -172,6 +174,23 @@ class RemoteScheduleDataSource @Inject constructor(
             }
         }
         return moimResponse
+    }
+
+    suspend fun getMoimSchedueDetail(
+        moimScheduleId: Long
+    ): GetMoimDetailResponse {
+        var moimDetailResponse = GetMoimDetailResponse(result = GetMoimDetailResult())
+        withContext(Dispatchers.IO) {
+            runCatching {
+                scheduleApiService.getMoimScheduleDetail(moimScheduleId)
+            }.onSuccess {
+                Log.d("RemoteScheduleDataSource", "getMoimSchedueDetail Success $it")
+                moimDetailResponse = it
+            }.onFailure {
+                Log.d("RemoteScheduleDataSource", "getMoimSchedueDetail Fail $it")
+            }
+        }
+        return moimDetailResponse
     }
 
     suspend fun getGroupAllSchedules(

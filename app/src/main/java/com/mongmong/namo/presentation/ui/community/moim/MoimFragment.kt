@@ -49,7 +49,7 @@ class MoimFragment : BaseFragment<FragmentMoimBinding>(R.layout.fragment_moim) {
             override fun onItemClick(position: Int) {
                 // 모임 일정 편집 화면으로 이동
                 requireActivity().startActivity(Intent(context, MoimScheduleActivity::class.java)
-                    .putExtra("moim", viewModel.moimPreviewList.value!![position])
+                    .putExtra("moimScheduleId", viewModel.moimPreviewList.value!![position].moimId)
                 )
             }
         })

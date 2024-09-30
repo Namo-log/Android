@@ -5,14 +5,15 @@ import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.LatLng
-import com.mongmong.namo.domain.model.Moim
-import com.mongmong.namo.domain.model.group.GroupMember
+import com.mongmong.namo.domain.model.MoimScheduleDetail
 import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.presentation.utils.PickerConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import org.joda.time.DateTime
 import javax.inject.Inject
 
@@ -20,8 +21,8 @@ import javax.inject.Inject
 class MoimScheduleViewModel @Inject constructor(
     private val repository: ScheduleRepository
 ) : ViewModel() {
-    private val _moimSchedule = MutableLiveData<Moim>()
-    val moimSchedule: LiveData<Moim> = _moimSchedule
+    private val _moimSchedule = MutableLiveData<MoimScheduleDetail>()
+    val moimSchedule: LiveData<MoimScheduleDetail> = _moimSchedule
 
     private val _prevClickedPicker = MutableLiveData<TextView?>()
     var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
@@ -29,10 +30,6 @@ class MoimScheduleViewModel @Inject constructor(
     private val _monthDayList = MutableLiveData<List<DateTime>>()
 
     val moimTitle: MutableLiveData<String> = MutableLiveData()
-
-    //TODO: 임시 데이터
-    private val _participantList = MutableLiveData<List<GroupMember>>()
-    val participantList: LiveData<List<GroupMember>> = _participantList
 
     // 클릭한 날짜 처리
     private lateinit var _dailyScheduleList: List<MoimScheduleBody>
@@ -48,12 +45,12 @@ class MoimScheduleViewModel @Inject constructor(
     private val _isDailyScheduleEmptyPair = MutableLiveData<Pair<Boolean, Boolean>>()
     var isDailyScheduleEmptyPair: LiveData<Pair<Boolean, Boolean>> = _isDailyScheduleEmptyPair
 
-    init {
-        _participantList.value = listOf(
-            GroupMember(0, "코코아", 1),
-            GroupMember(0, "짱구", 4),
-            GroupMember(0, "뚜뚜", 8),
-        )
+    /** 모임 일정 조회 */
+    private fun getMoimSchedule(moimScheduleId: Long) {
+        viewModelScope.launch {
+            _moimSchedule.value = repository.getMoimScheduleDetail(moimScheduleId)
+            moimTitle.value = _moimSchedule.value!!.title
+        }
     }
 
     /** 모임 일정 생성 */
@@ -72,12 +69,12 @@ class MoimScheduleViewModel @Inject constructor(
     }
 
     /** 모임 일정 정보 세팅 */
-    fun setMoimSchedule(moim: Moim) {
-        _moimSchedule.value = moim
-        moimTitle.value = moim.title
-        if (moim.placeName.isBlank()) {
-            _moimSchedule.value?.placeName = "없음"
+    fun setMoimSchedule(moimScheduleId: Long) {
+        if (moimScheduleId == 0L) { // 모임 일정 생성
+            _moimSchedule.value = MoimScheduleDetail()
+            return
         }
+        getMoimSchedule(moimScheduleId) // 모임 일정 편집
     }
 
     private fun setDailySchedule() {
@@ -130,15 +127,13 @@ class MoimScheduleViewModel @Inject constructor(
 
     fun updatePlace(placeName: String, x: Double, y: Double) {
         _moimSchedule.value = _moimSchedule.value?.copy(
-            placeName = placeName,
-//            placeX = x,
-//            placeY = y
+            //
         )
     }
 
     fun updateMembers(selectedMember: MoimSchduleMemberList) {
         _moimSchedule.value = _moimSchedule.value!!.copy(
-            members = selectedMember.memberList
+//            members = selectedMember.memberList
         )
     }
 
@@ -147,8 +142,8 @@ class MoimScheduleViewModel @Inject constructor(
         _moimSchedule.value = _moimSchedule.value?.copy(
             startDate = startDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
                 ?: _moimSchedule.value!!.startDate,
-//            endLong = endDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
-//                ?: _moimSchedule.value!!.endLong
+            endDate = endDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
+                ?: _moimSchedule.value!!.endDate
         )
     }
 
@@ -173,7 +168,7 @@ class MoimScheduleViewModel @Inject constructor(
         } as ArrayList<MoimScheduleBody>
     }
 
-    fun getSelectedMemberId() = _moimSchedule.value!!.members.map { it.userId }
+//    fun getSelectedMemberId() = _moimSchedule.value!!.members.map { it.userId }
 
     fun getDateTime(): Pair<DateTime, DateTime>? {
         if (_moimSchedule.value != null) {

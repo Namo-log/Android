@@ -70,8 +70,8 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     override fun setup() {
         binding.viewModel = viewModel
 
-        initMapView()
         initViews()
+        initMapView()
         setResultLocation()
         setResultMember()
         initClickListeners()
@@ -94,7 +94,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     }
 
     private fun initViews() {
-        viewModel.setMoimSchedule(intent.getSerializableExtra("moim") as Moim)
+        viewModel.setMoimSchedule(intent.getLongExtra("moimScheduleId", 0L))
 
         val slideAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up)
         binding.moimScheduleContainerLayout.startAnimation(slideAnimation)
@@ -128,8 +128,6 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
             // 게스트 초대 다이얼로그
             GuestInviteDialog().show(this.supportFragmentManager, "GuestInviteDialog")
         }
-
-        initPickerClickListeners()
 
         // 장소 클릭
         binding.moimSchedulePlaceLayout.setOnClickListener {
@@ -206,11 +204,11 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
 
     private fun initObserve() {
         viewModel.moimSchedule.observe(this) { schedule ->
-            setContent()
-        }
-
-        viewModel.participantList.observe(this) { participant ->
-            if (participant.isNotEmpty()) {
+            if (schedule != null) {
+                initPickerClickListeners()
+                setContent()
+            }
+            if (schedule.participants.isNotEmpty()) {
                 setParticipantAdapter()
             }
         }
@@ -339,7 +337,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     }
 
     private fun setParticipantAdapter() {
-        participantAdapter = MoimParticipantRVAdapter(viewModel.participantList.value!!)
+        participantAdapter = MoimParticipantRVAdapter(viewModel.moimSchedule.value!!.participants)
         binding.moimScheduleParticipantRv.apply {
             adapter = participantAdapter
             layoutManager = FlexboxLayoutManager(context).apply {
