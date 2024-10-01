@@ -7,7 +7,7 @@
 
         <variable
             name="payment"
-            type="com.mongmong.namo.domain.model.Payment" />
+            type="com.mongmong.namo.domain.model.ActivityPayment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

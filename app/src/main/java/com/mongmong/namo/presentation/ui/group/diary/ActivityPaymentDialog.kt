@@ -14,9 +14,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.databinding.DialogActivityPaymentBinding
-import com.mongmong.namo.domain.model.Payment
-import com.mongmong.namo.domain.model.PaymentParticipant
-import com.mongmong.namo.presentation.ui.group.diary.adapter.ActivityParticipantsRVAdapter
+import com.mongmong.namo.domain.model.ActivityPayment
 import com.mongmong.namo.presentation.ui.group.diary.adapter.ActivityPaymentsRVAdapter
 
 class ActivityPaymentDialog(private val position: Int) : DialogFragment() {
@@ -27,7 +25,7 @@ class ActivityPaymentDialog(private val position: Int) : DialogFragment() {
 
     private var totalAmount: Int = 0
     private var selectedParticipantsCount: Int = 0
-    private lateinit var payment: Payment
+    private lateinit var payment: ActivityPayment
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -39,7 +37,7 @@ class ActivityPaymentDialog(private val position: Int) : DialogFragment() {
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
 
         // 초기 데이터 설정
-        payment = viewModel.activities.value?.get(position)?.payment ?: Payment(participants = emptyList())
+        payment = viewModel.activities.value?.get(position)?.payment ?: ActivityPayment(participants = emptyList())
         binding.payment = payment
 
         totalAmount = payment.totalAmount

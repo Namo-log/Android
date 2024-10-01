@@ -11,11 +11,11 @@ import com.mongmong.namo.domain.model.ActivityLocation
 import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.ParticipantInfo
-import com.mongmong.namo.domain.model.Payment
+import com.mongmong.namo.domain.model.ActivityPayment
 import com.mongmong.namo.domain.model.PaymentParticipant
 import com.mongmong.namo.domain.model.ScheduleForDiary
-import com.mongmong.namo.domain.model.group.MoimActivity
 import com.mongmong.namo.domain.repositories.DiaryRepository
+import com.mongmong.namo.domain.usecases.GetActivitiesUseCase
 import com.mongmong.namo.domain.usecases.UploadImageToS3UseCase
 import com.mongmong.namo.presentation.ui.diary.PersonalDiaryViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +25,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MoimDiaryViewModel @Inject constructor(
     private val repository: DiaryRepository,
-    private val uploadImageToS3UseCase: UploadImageToS3UseCase
+    private val uploadImageToS3UseCase: UploadImageToS3UseCase,
+    private val getActivitiesUseCase: GetActivitiesUseCase
 ) : ViewModel() {
     private val _diary = MutableLiveData<DiaryDetail>()
     val diary: LiveData<DiaryDetail> = _diary
@@ -67,12 +68,14 @@ class MoimDiaryViewModel @Inject constructor(
     private val _deleteDiaryComplete = MutableLiveData<Boolean>()
     val deleteDiaryComplete: LiveData<Boolean> = _deleteDiaryComplete
 
-    val isParticipantVisible = MutableLiveData<Boolean>(false)
+    val isParticipantVisible = MutableLiveData<Boolean>(true)
     private val deleteActivityIds = mutableListOf<Long>()  // 삭제할 항목 저장
 
     private val deleteImageIdsMap: MutableMap<Long, MutableList<Long>> = mutableMapOf()
 
 
+    /** 기록 */
+    // 기록 일정 정보 조회
     fun getScheduleForDiary(scheduleId: Long) {
         this.scheduleId = scheduleId
         viewModelScope.launch {
@@ -80,7 +83,7 @@ class MoimDiaryViewModel @Inject constructor(
         }
     }
 
-    // 개인 기록 개별 조회
+    // 기록 개별 조회
     fun getDiaryData() {
         viewModelScope.launch {
             val result = repository.getDiary(scheduleId)
@@ -91,8 +94,8 @@ class MoimDiaryViewModel @Inject constructor(
         }
     }
 
-    // 개인 기록 추가시 데이터 초기화
-    fun setNewDiary() {
+    // 빈 기록 설정
+    fun setupNewDiary() {
         _diary.value = DiaryDetail(
             diaryId = 0,
             content =  "",
@@ -103,15 +106,7 @@ class MoimDiaryViewModel @Inject constructor(
         initDiaryState()
     }
 
-    fun getActivitiesData() {
-        viewModelScope.launch {
-            val result = repository.getActivities(scheduleId)
-            _activities.value = result
-        }
-    }
-
-
-    // 개인 기록 추가
+    // 기록 추가
     fun addDiary() {
         viewModelScope.launch {
             Log.d("PersonalDiaryViewModel addDiary", "$_diary")
@@ -130,7 +125,7 @@ class MoimDiaryViewModel @Inject constructor(
         }
     }
 
-    // 개인 기록 수정
+    // 기록 수정
     fun editDiary() {
         viewModelScope.launch {
             diary.value?.diaryId?.let { diaryId ->
@@ -163,23 +158,26 @@ class MoimDiaryViewModel @Inject constructor(
     }
 
 
-    // 개인 기록 삭제
+    // 기록 삭제
     fun deleteDiary() {
         viewModelScope.launch {
             _deleteDiaryResult.value = diary.value?.let { repository.deleteDiary(it.diaryId) }
         }
     }
 
+    // 기록 내용 업데이트 (ui)
     fun updateContent(newContent: String) {
         _diary.value?.content = newContent
         checkForChanges()
     }
 
+    // 기록 재미도 업데이트 (ui)
     fun updateEnjoy(count: Int) {
         _diary.value?.enjoyRating = count
         checkForChanges()
     }
 
+    // 기록 이미지 추가 (ui)
     fun addDiaryImages(newImages: List<Uri>) {
         val currentImages = diary.value?.diaryImages ?: emptyList()
         val newImagesToAdd = newImages.take(3 - currentImages.size)
@@ -192,7 +190,7 @@ class MoimDiaryViewModel @Inject constructor(
         checkForChanges()
     }
 
-    // 이미지 삭제 시
+    // 기록 이미지 삭제 (ui)
     fun deleteDiaryImage(image: DiaryImage) {
         _diary.value?.let {
             val updatedImages = it.diaryImages.toMutableList().apply { remove(image) }
@@ -202,6 +200,15 @@ class MoimDiaryViewModel @Inject constructor(
     }
 
     /** 활동 */
+    // 활동 조회
+    fun getActivitiesData() {
+        viewModelScope.launch {
+            val result = getActivitiesUseCase.execute(scheduleId)
+            _activities.value = result
+        }
+    }
+
+    // 빈 활동 추가
     fun addEmptyActivity() {
         _activities.value = _activities.value?.plus(
             Activity(
@@ -212,7 +219,7 @@ class MoimDiaryViewModel @Inject constructor(
                 startDate = diarySchedule.value?.date ?: "",
                 title = "",
                 tag = "",
-                payment = Payment(participants = _diarySchedule.value?.participantInfo?.map {
+                payment = ActivityPayment(participants = _diarySchedule.value?.participantInfo?.map {
                     PaymentParticipant(it.userId, it.nickname, false)
                 } ?: emptyList()),
                 images = emptyList()
@@ -226,36 +233,43 @@ class MoimDiaryViewModel @Inject constructor(
         _isActivityAdded.value = false
     }
 
+    // 활동 이름 변경 (ui)
     fun updateActivityName(position: Int, title: String) {
         _activities.value?.get(position)?.title = title
     }
 
+    // 활동 시작 시간 변경 (ui)
     fun updateActivityStartDate(position: Int, date: String) {
         _activities.value?.get(position)?.startDate = date
     }
 
+    // 활동 종료 시간 변경 (ui)
     fun updateActivityEndDate(position: Int, date: String) {
         _activities.value?.get(position)?.endDate = date
     }
 
+    // 활동 장소 변경 (ui)
     fun updateActivityLocation(position: Int, id: String, name: String, x: Double, y: Double) {
         _activities.value?.get(position)?.location = ActivityLocation(kakaoLocationId = id, locationName = name, longitude = x, latitude = y)
         _activities.value = _activities.value
     }
 
+    // 활동 태그 변경 (ui)
     fun updateActivityTag(position: Int, tag: String) {
         _activities.value?.get(position)?.tag = tag
         _activities.value = _activities.value
     }
 
-    fun updateActivityPayment(position: Int, payment: Payment) {
-        _activities.value?.get(position)?.payment = payment
-        Log.d("updateActivityPayment", "$payment")
+    // 활동 참가자 변경 (ui)
+    fun updateActivityParticipants(position: Int, members: List<ParticipantInfo>) {
+        _activities.value?.get(position)?.participants = members
         _activities.value = _activities.value
     }
 
-    fun updateActivityParticipants(position: Int, members: List<ParticipantInfo>) {
-        _activities.value?.get(position)?.participants = members
+    // 활동 정산 변경 (ui)
+    fun updateActivityPayment(position: Int, payment: ActivityPayment) {
+        _activities.value?.get(position)?.payment = payment
+        Log.d("updateActivityPayment", "$payment")
         _activities.value = _activities.value
     }
 
@@ -308,21 +322,6 @@ class MoimDiaryViewModel @Inject constructor(
             _patchActivitiesComplete.value = true
         }
     }*/
-
-    private suspend fun addMoimActivity(activity: MoimActivity) {
-        //val members = activity.members.ifEmpty { _moimDiary.value?.users?.map { it.userId } }
-        //repository.addMoimActivity(scheduleId, activity.name, activity.pay, members ?: emptyList(), activity.getImageUrls())
-    }
-
-    private suspend fun editMoimActivity(activity: MoimActivity) {
-        //val members = activity.members.ifEmpty { _moimDiary.value?.users?.map { it.userId } }
-        val createImages = activity.images?.filter { it.diaryImageId == 0L }?.map { it.imageUrl }
-        val deleteImageIds = deleteImageIdsMap[activity.moimActivityId]
-        //repository.editMoimActivity(activity.moimActivityId, deleteImageIds,activity.name, activity.pay, members ?: emptyList(), createImages)
-    }
-    private suspend fun deleteMoimActivity(activityId: Long) {
-        repository.deleteMoimActivity(activityId)
-    }
 
     fun toggleIsParticipantVisible() {
         isParticipantVisible.value = !isParticipantVisible.value!!

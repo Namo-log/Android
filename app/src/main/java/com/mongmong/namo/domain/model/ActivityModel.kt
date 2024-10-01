@@ -8,7 +8,7 @@ data class Activity(
     var startDate: String,
     var title: String,
     var tag: String,
-    var payment: Payment,
+    var payment: ActivityPayment,
     var images: List<DiaryImage>
 )
 
@@ -20,7 +20,7 @@ data class ActivityLocation(
     val longitude: Double = 0.0
 )
 
-data class Payment(
+data class ActivityPayment(
     var totalAmount: Int = 0,
     var divisionCount: Int = 0,
     var amountPerPerson: Int = 0,

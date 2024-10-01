@@ -6,6 +6,10 @@ import com.mongmong.namo.data.dto.CategoryInfo
 import com.mongmong.namo.data.dto.DiaryRequestImage
 import com.mongmong.namo.data.dto.DiaryResponse
 import com.mongmong.namo.data.dto.EditDiaryRequest
+import com.mongmong.namo.data.dto.GetActivitiesResponse
+import com.mongmong.namo.data.dto.GetActivitiesResult
+import com.mongmong.namo.data.dto.GetActivityPaymentResponse
+import com.mongmong.namo.data.dto.GetActivityPaymentResult
 import com.mongmong.namo.data.dto.GetCalendarDiaryResponse
 import com.mongmong.namo.data.dto.GetCalendarDiaryResult
 import com.mongmong.namo.data.dto.GetDiaryByDateResponse
@@ -19,20 +23,16 @@ import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
 import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
 import com.mongmong.namo.data.utils.RequestConverter.imageToMultipart
-import com.mongmong.namo.domain.model.MoimDiary
-import com.mongmong.namo.domain.model.group.GetMoimDiaryResponse
-import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import javax.inject.Inject
 
 class RemoteDiaryDataSource @Inject constructor(
-    private val diaryApiService: DiaryApiService,
-    private val groupDiaryApiService: GroupDiaryApiService,
-    private val context: Context
+    private val diaryApiService: DiaryApiService
 ) {
-    /** 개인 기록*/
+    /** 기록 */
+    //기록 일정 정보 조회
     suspend fun getScheduleForDiary(scheduleId: Long): GetScheduleForDiaryResponse {
         var response = GetScheduleForDiaryResponse(
             result = GetScheduleForDiaryResult(
@@ -59,7 +59,7 @@ class RemoteDiaryDataSource @Inject constructor(
         return response
     }
 
-    /** 개인 기록 조회 */
+    // 기록 상세 조회
     suspend fun getDiary(scheduleId: Long): GetDiaryResponse {
         var response = GetDiaryResponse(
             result = GetDiaryResult(
@@ -71,7 +71,7 @@ class RemoteDiaryDataSource @Inject constructor(
         )
         withContext(Dispatchers.IO) {
             runCatching {
-                diaryApiService.getPersonalDiary(scheduleId)
+                diaryApiService.getDiary(scheduleId)
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource getPersonalDiary Success", "$it")
                 response = it
@@ -82,7 +82,7 @@ class RemoteDiaryDataSource @Inject constructor(
         return response
     }
 
-    /** 개인 기록 추가 */
+    // 기록 추가
     suspend fun addPersonalDiary(
         content: String,
         enjoyRating: Int,
@@ -92,7 +92,7 @@ class RemoteDiaryDataSource @Inject constructor(
         var response = DiaryResponse("")
         withContext(Dispatchers.IO) {
             runCatching {
-                diaryApiService.addPersonalDiary(
+                diaryApiService.addDiary(
                     PostDiaryRequest(
                         content = content,
                         diaryImages = images.map { DiaryRequestImage(it) },
@@ -110,7 +110,7 @@ class RemoteDiaryDataSource @Inject constructor(
         return response
     }
 
-    /** 개인 기록 수정 */
+    // 기록 수정
     suspend fun editPersonalDiary(
         diaryId: Long,
         content: String,
@@ -121,7 +121,7 @@ class RemoteDiaryDataSource @Inject constructor(
         var response = DiaryResponse("")
         withContext(Dispatchers.IO) {
             runCatching {
-                diaryApiService.editPersonalDiary(
+                diaryApiService.editDiary(
                     diaryId,
                     EditDiaryRequest(
                         content = content,
@@ -140,12 +140,12 @@ class RemoteDiaryDataSource @Inject constructor(
         return response
     }
 
-    /** 개인 기록 삭제 */
+    // 기록 삭제
     suspend fun deletePersonalDiary(scheduleServerId: Long): DiaryResponse {
         var diaryResponse = DiaryResponse("")
         withContext(Dispatchers.IO) {
             runCatching {
-                diaryApiService.deletePersonalDiary(scheduleServerId)
+                diaryApiService.deleteDiary(scheduleServerId)
             }.onSuccess {
                 Log.d("RemoteDiaryDataSource deleteDiary Success", "$it")
                 diaryResponse = it
@@ -156,7 +156,7 @@ class RemoteDiaryDataSource @Inject constructor(
         return diaryResponse
     }
 
-    /** 보관함 캘린더 */
+    // 기록 캘린더 조회
     suspend fun getCalendarDiary(yearMonth: String): GetCalendarDiaryResponse {
         var response = GetCalendarDiaryResponse(GetCalendarDiaryResult())
         withContext(Dispatchers.IO) {
@@ -172,7 +172,7 @@ class RemoteDiaryDataSource @Inject constructor(
         return response
     }
 
-    /** 보관함 캘린더 날짜별 기록 */
+    // 날짜별 기록 조회 (기록 캘린더)
     suspend fun getDiaryByDate(date: String): GetDiaryByDateResponse {
         var response = GetDiaryByDateResponse(emptyList())
         withContext(Dispatchers.IO) {
@@ -187,179 +187,4 @@ class RemoteDiaryDataSource @Inject constructor(
         }
         return response
     }
-
-
-    /** 모임 기록 조회 */
-    suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult {
-        var diaryResponse = GetMoimDiaryResponse(
-            result = MoimDiaryResult(
-                name = "",
-                startDate = 0L,
-                locationName = "",
-                users = emptyList(),
-                moimActivities = emptyList()
-            )
-        )
-        withContext(Dispatchers.IO) {
-            runCatching {
-                diaryApiService.getMoimDiary(scheduleId)
-            }.onSuccess {
-                Log.d("RemoteDiaryDataSource getMoimDiary Success", "$it")
-                diaryResponse = it
-            }.onFailure {
-                Log.d("RemoteDiaryDataSource getMoimDiary Fail", "$it")
-            }
-        }
-
-        return diaryResponse.result
-    }
-
-    /** 모임 메모 조회 */
-    suspend fun getMoimMemo(scheduleId: Long): MoimDiary = withContext(Dispatchers.IO) {
-        var result = MoimDiary(
-            scheduleId = 0L,
-            title = "",
-            startDate = 0L,
-            _content = "",
-            images = emptyList(),
-            categoryId = 0L,
-            color = 0,
-            placeName = ""
-        )
-
-        runCatching {
-            diaryApiService.getMoimMemo(scheduleId)
-        }.onSuccess {
-            Log.d("RemoteDiaryDataSource getMoimMemo Success", "$it")
-            result = it.result
-        }.onFailure {
-            Log.d("RemoteDiaryDataSource getMoimMemo Failure", "$it")
-        }
-        return@withContext result
-    }
-
-    /** 모임 메모 수정 */
-    suspend fun patchMoimMemo(scheduleId: Long, content: String): Boolean {
-        var isSuccess = false
-        withContext(Dispatchers.IO) {
-            runCatching {
-                diaryApiService.patchMoimMemo(scheduleId, content)
-            }.onSuccess {
-                Log.d("RemoteDiaryDataSource patchMoimMemo Success", "$it")
-                isSuccess = true
-            }.onFailure {
-                Log.d("RemoteDiaryDataSource patchMoimMemo Failure", "$it")
-            }
-        }
-
-        return isSuccess
-    }
-
-    /** 모임 메모 삭제 */
-    suspend fun deleteMoimMemo(scheduleId: Long): Boolean =
-        withContext(Dispatchers.IO) {
-            var isSuccess = false
-            runCatching {
-                diaryApiService.deleteMoimMemo(scheduleId)
-            }.onSuccess {
-                Log.d("RemoteDiaryDataSource deleteMoimMemo Success", "$it")
-                isSuccess = true
-            }.onFailure {
-                Log.d("RemoteDiaryDataSource deleteMoimMemo Failure", "$it")
-            }
-
-            Log.d("RemoteDiaryDataSource deleteMoimMemo", "$isSuccess")
-            return@withContext isSuccess
-        }
-
-    /** 모임 기록 활동 추가 */
-    suspend fun addMoimActivity(
-        moimScheduleId: Long,
-        activityName: String,
-        activityPay: Long,
-        participantUserIds: List<Long>,
-        createImages: List<String>?
-    ) {
-        withContext(Dispatchers.IO) {
-            runCatching {
-                val createImagesParts = if (!createImages.isNullOrEmpty()) {
-                    imageToMultipart(createImages, context)
-                } else {
-                    listOf(MultipartBody.Part.createFormData("empty", "", "".convertTextRequest()))
-                }
-                groupDiaryApiService.addMoimActivity(
-                    moimScheduleId = moimScheduleId,
-                    activityName = activityName,
-                    activityPay = activityPay.toString(),
-                    participantUserIds = participantUserIds,
-                    createImages = createImagesParts
-                )
-            }.onSuccess {
-                Log.d("RemoteDiaryDataSource addMoimActivity Success", "$it")
-            }.onFailure {
-                Log.d("RemoteDiaryDataSource addMoimActivity Success", "$it")
-            }
-        }
-    }
-
-    /** 모임 기록 활동 수정 */
-    suspend fun editMoimActivity(
-        activityId: Long,
-        deleteImageIds: List<Long>?,
-        activityName: String,
-        activityPay: Long,
-        participantUserIds: List<Long>,
-        createImages: List<String>?
-    ) {
-        withContext(Dispatchers.IO) {
-            runCatching {
-                val createImagesParts = if (!createImages.isNullOrEmpty()) {
-                    imageToMultipart(createImages, context)
-                } else {
-                    listOf(MultipartBody.Part.createFormData("empty", "", "".convertTextRequest()))
-                }
-
-                groupDiaryApiService.editMoimActivity(
-                    activityId = activityId,
-                    deleteImageIds = deleteImageIds,
-                    activityName = activityName,
-                    activityPay = activityPay.toString(),
-                    participantUserIds = participantUserIds,
-                    createImages = createImagesParts
-                )
-            }.onSuccess {
-                Log.d("RemoteDiaryDataSource editMoimActivity Success", "$it")
-            }.onFailure {
-                Log.d("RemoteDiaryDataSource editMoimActivity Success", "$it")
-            }
-        }
-    }
-
-    /** 모임 기록 활동 삭제 */
-    suspend fun deleteMoimActivity(activityId: Long) {
-        withContext(Dispatchers.IO) {
-            runCatching {
-                groupDiaryApiService.deleteMoimActivity(activityId)
-            }.onSuccess {
-                Log.d("RemoteDiaryDataSource deleteMoimActivity Success", "$it")
-            }.onFailure {
-                Log.d("RemoteDiaryDataSource deleteMoimActivity Success", "$it")
-            }
-        }
-    }
-
-    /** 모임 기록 삭제 */
-    suspend fun deleteMoimDiary(moimScheduleId: Long): Boolean =
-        withContext(Dispatchers.IO) {
-            var isSuccess = false
-            runCatching {
-                groupDiaryApiService.deleteMoimDiary(moimScheduleId)
-            }.onSuccess {
-                Log.d("RemoteDiaryDataSource deleteMoimDiary Success", "$it")
-                isSuccess = true
-            }.onFailure {
-                Log.d("RemoteDiaryDataSource deleteMoimDiary Success", "$it")
-            }
-            return@withContext isSuccess
-        }
 }

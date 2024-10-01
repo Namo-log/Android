@@ -4,8 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemMoimDiaryActivityParticipantsBinding
-import com.mongmong.namo.domain.model.ParticipantInfo
-import com.mongmong.namo.domain.model.Payment
 import com.mongmong.namo.domain.model.PaymentParticipant
 
 class ActivityPaymentsRVAdapter(
