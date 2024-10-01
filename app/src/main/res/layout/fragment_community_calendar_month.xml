@@ -7,7 +7,6 @@
     <data>
         <import type="com.mongmong.namo.presentation.utils.ScheduleDateConverter"/>
         <import type="android.view.View"/>
-        <import type="kotlin.Pair"/>
         <variable
             name="viewModel"
             type="com.mongmong.namo.presentation.ui.community.calendar.CalendarViewModel" />
@@ -83,6 +82,13 @@
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/community_calendar_daily_empty_tv"
+                        android:layout_marginBottom="45dp"
+                        android:text="@string/schedule_empty"
+                        android:visibility="@{viewModel.isParticipantScheduleEmpty ? View.VISIBLE : View.GONE}"
+                        style="@style/schedule_empty_text"/>
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/community_calendar_friend_daily_schedule_rv"
                         android:layout_width="match_parent"
@@ -96,13 +102,6 @@
                         android:layout_height="wrap_content"
                         android:nestedScrollingEnabled="false"
                         tools:listitem="@layout/item_schedule_preview_moim"/>
-
-<!--                    <androidx.appcompat.widget.AppCompatTextView-->
-<!--                        android:id="@+id/community_calendar_daily_empty_tv"-->
-<!--                        android:layout_marginBottom="45dp"-->
-<!--                        android:text="@string/schedule_personal_empty"-->
-<!--                        android:visibility="@{viewModel.isDailyScheduleEmptyPair.first ? View.VISIBLE : View.GONE}"-->
-<!--                        style="@style/schedule_empty_text"/>-->
 
                 </LinearLayout>
 

@@ -43,18 +43,6 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
         setAdapter()
     }
 
-    override fun onPause() {
-        super.onPause()
-        val listener = object : CustomCalendarView.OnDateClickListener {
-            override fun onDateClick(date: DateTime?, pos : Int?) {
-                binding.communityCalendarMonthView.selectedDate = null
-                binding.communityCalendarMotionLayout.transitionToStart()
-                binding.communityCalendarMotionLayout.invalidate()
-            }
-        }
-        listener.onDateClick(null, null)
-    }
-
     private fun initViews() {
         binding.communityCalendarMonthView.setDays(millis)
     }
@@ -128,7 +116,7 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
         binding.communityCalendarDailyScrollSv.scrollTo(0,0)
         // 일정 아이템 표시
         dailyFriendScheduleAdapter.addSchedules(arrayListOf())
-        dailyParticipantScheduleAdapter.addPersonal(viewModel.moimScheduleList.value!! as ArrayList)
+        dailyParticipantScheduleAdapter.addPersonal(viewModel.getDailySchedules(false))
     }
 
     private fun initObserve() {

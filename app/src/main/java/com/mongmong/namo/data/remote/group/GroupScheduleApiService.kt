@@ -27,7 +27,7 @@ interface GroupScheduleApiService {
     ) : GetMoimDetailResponse
 
     // 모임 캘린더 조회
-    @GET("schedules/meeting/{meetingScheduleId}/calender")
+    @GET("schedules/meeting/{meetingScheduleId}/calendar")
     suspend fun getMoimCalendarSchedule(
         @Path("meetingScheduleId") moimId: Long,
         @Query("startDate") startDate: String,

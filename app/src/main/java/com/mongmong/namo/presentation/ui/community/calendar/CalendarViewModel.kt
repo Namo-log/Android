@@ -7,13 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.domain.model.Friend
-import com.mongmong.namo.domain.model.Moim
 import com.mongmong.namo.data.dto.Period
 import com.mongmong.namo.domain.model.MoimCalendarSchedule
 import com.mongmong.namo.domain.model.MoimScheduleDetail
-import com.mongmong.namo.domain.model.group.GroupMember
 import com.mongmong.namo.domain.repositories.ScheduleRepository
-import com.mongmong.namo.presentation.utils.PickerConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
@@ -36,6 +33,9 @@ class CalendarViewModel @Inject constructor (
 
     private var _dailyScheduleList: List<MoimCalendarSchedule> = emptyList() // 하루 일정
 
+    private val _isParticipantScheduleEmpty = MutableLiveData<Boolean>()
+    var isParticipantScheduleEmpty: LiveData<Boolean> = _isParticipantScheduleEmpty
+
     // 친구 캘린더인지, 모임 캘린더인지를 구분
     var isFriendCalendar = true
     var moimSchedule = MoimScheduleDetail()
@@ -54,7 +54,6 @@ class CalendarViewModel @Inject constructor (
 
     private val _isShow = MutableLiveData(false)
     var isShow: LiveData<Boolean> = _isShow
-//    var isShow = false // 바텀 시트 표시 여부
 
     private var _prevIndex = -1 // 클릭한 날짜의 index
     private var _nowIndex = 0 // 클릭한 날짜의 index
@@ -77,6 +76,7 @@ class CalendarViewModel @Inject constructor (
             schedule.startDate <= getClickedDatePeriod().endDate &&
                     schedule.endDate >= getClickedDatePeriod().startDate
         }
+        _isParticipantScheduleEmpty.value = isDailyScheduleEmpty(false) // 친구 일정
     }
 
     // 캘린더의 날짜 클릭
@@ -106,6 +106,17 @@ class CalendarViewModel @Inject constructor (
     fun setMonthDayList(monthDayList: List<DateTime>) {
         Log.e("CalendarViewModel", "setMonthDayList\n${monthDayList.first()}\n${monthDayList.last()}")
         _monthDateList.value = monthDayList
+    }
+
+    private fun isDailyScheduleEmpty(isMoim: Boolean): Boolean {
+        Log.d("CalendarViewModel", "isDailyScheduleEmpty($isMoim): ${getDailySchedules(isMoim)}")
+        return getDailySchedules(isMoim).isEmpty()
+    }
+
+    fun getDailySchedules(isMoim: Boolean): ArrayList<MoimCalendarSchedule> {
+        return _dailyScheduleList.filter { schedule ->
+            schedule.isCurMoim == isMoim
+        } as ArrayList<MoimCalendarSchedule>
     }
 
     // 선택한 날짜

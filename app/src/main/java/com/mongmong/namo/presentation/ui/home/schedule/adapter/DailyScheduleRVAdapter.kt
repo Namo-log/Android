@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.databinding.ItemSchedulePreviewBinding
-import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.presentation.utils.ScheduleTimeConverter
 import org.joda.time.DateTime
