@@ -1,5 +1,6 @@
 package com.mongmong.namo.presentation.di
 
+import com.mongmong.namo.domain.repositories.ActivityRepository
 import com.mongmong.namo.domain.repositories.CategoryRepository
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.repositories.ImageRepository
@@ -25,5 +26,5 @@ object UseCaseModule {
     fun provideUploadImageToS3UseCase(imageRepository: ImageRepository): UploadImageToS3UseCase = UploadImageToS3UseCase(imageRepository)
 
     @Provides
-    fun provideGetActivitiesUseCase(diaryRepository: DiaryRepository): GetActivitiesUseCase = GetActivitiesUseCase(diaryRepository)
+    fun provideGetActivitiesUseCase(activityRepository: ActivityRepository): GetActivitiesUseCase = GetActivitiesUseCase(activityRepository)
 }
