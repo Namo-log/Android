@@ -30,3 +30,9 @@ data class CalendarColorInfo(
     val colorId: Int,
     val name: String
 )
+
+enum class ScheduleType(val value: Int) {
+    PERSONAL(0),
+    MOIM(1),
+    BIRTHDAY(2)
+}

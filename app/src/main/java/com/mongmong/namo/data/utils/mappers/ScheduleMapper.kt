@@ -7,6 +7,7 @@ import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.domain.model.Location
 import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.domain.model.ScheduleCategoryInfo
+import com.mongmong.namo.domain.model.ScheduleType
 
 object ScheduleMapper {
     // DTO -> Model
@@ -29,7 +30,7 @@ object ScheduleMapper {
             ),
             alarmList = this.alarmDate,
             hasDiary = this.hasDiary,
-            isMeetingSchedule = this.isMeetingSchedule
+            isMeetingSchedule = (this.scheduleType == ScheduleType.MOIM.value)
         )
     }
 
