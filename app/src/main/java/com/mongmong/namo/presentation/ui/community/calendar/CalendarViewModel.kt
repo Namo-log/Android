@@ -33,7 +33,10 @@ class CalendarViewModel @Inject constructor (
 
     private var _dailyScheduleList: List<MoimCalendarSchedule> = emptyList() // 하루 일정
 
-    private val _isParticipantScheduleEmpty = MutableLiveData<Boolean>()
+    private val _isMoimScheduleExist = MutableLiveData<Boolean>() // 모임 일정 정보가 있을 경우
+    val isMoimScheduleExist: LiveData<Boolean> = _isMoimScheduleExist
+
+    private val _isParticipantScheduleEmpty = MutableLiveData<Boolean>() // 친구/참석자 일정이 있을 경우
     var isParticipantScheduleEmpty: LiveData<Boolean> = _isParticipantScheduleEmpty
 
     // 친구 캘린더인지, 모임 캘린더인지를 구분
@@ -77,6 +80,7 @@ class CalendarViewModel @Inject constructor (
                     schedule.endDate >= getClickedDatePeriod().startDate
         }
         _isParticipantScheduleEmpty.value = isDailyScheduleEmpty(false) // 친구 일정
+        _isMoimScheduleExist.value = !isDailyScheduleEmpty(true) // 해당 모임 일정
     }
 
     // 캘린더의 날짜 클릭

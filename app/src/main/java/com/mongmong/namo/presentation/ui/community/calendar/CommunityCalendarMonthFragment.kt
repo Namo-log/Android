@@ -11,6 +11,7 @@ import com.mongmong.namo.presentation.ui.community.CommunityCalendarActivity
 import com.mongmong.namo.presentation.ui.community.calendar.adapter.ParticipantDailyScheduleRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.adapter.DailyScheduleRVAdapter
 import com.mongmong.namo.presentation.utils.CustomCalendarView
+import com.mongmong.namo.presentation.utils.ScheduleTimeConverter
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 
@@ -115,8 +116,11 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
     private fun setDailySchedule() {
         binding.communityCalendarDailyScrollSv.scrollTo(0,0)
         // 일정 아이템 표시
-        dailyFriendScheduleAdapter.addSchedules(arrayListOf())
-        dailyParticipantScheduleAdapter.addPersonal(viewModel.getDailySchedules(false))
+        if (viewModel.isMoimScheduleExist.value == true) {
+            setMoimSchedule(viewModel.getDailySchedules(true).first()) // 해당 모임 일정
+        }
+        dailyFriendScheduleAdapter.addSchedules(arrayListOf()) // 친구 일정
+        dailyParticipantScheduleAdapter.addPersonal(viewModel.getDailySchedules(false)) // 모임 참석자 일정
     }
 
     private fun initObserve() {
@@ -126,6 +130,12 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
                 drawMonthCalendar(it)
             }
         }
+    }
+
+    private fun setMoimSchedule(dailySchedule: MoimCalendarSchedule) {
+        binding.communityCalendarDailyMoimScheduleTitleTv.text = dailySchedule.title
+        binding.communityCalendarDailyMoimScheduleTimeTv.text = ScheduleTimeConverter(viewModel.getClickedDate())
+            .getScheduleTimeText(dailySchedule.startDate, dailySchedule.endDate)
     }
 
     private fun drawMonthCalendar(scheduleList: List<MoimCalendarSchedule>) {
