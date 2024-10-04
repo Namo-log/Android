@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
@@ -18,8 +19,10 @@ import com.mongmong.namo.presentation.ui.home.schedule.adapter.DailyScheduleRVAd
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.PersonalScheduleViewModel
 import com.mongmong.namo.presentation.utils.CustomCalendarView
+import com.mongmong.namo.presentation.utils.LocalDateTimeAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
+import org.joda.time.LocalDateTime
 
 @AndroidEntryPoint
 class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layout.fragment_calendar_month) {
@@ -115,7 +118,10 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
         personalDailyScheduleAdapter.setDailyScheduleClickListener(object : DailyScheduleRVAdapter.PersonalScheduleClickListener {
             override fun onContentClicked(schedule: Schedule) { // 아이템 전체 클릭
                 // 일정 편집 화면으로 이동
-                val scheduleJson = Gson().toJson(schedule)
+                val gson = GsonBuilder()
+                    .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
+                    .create()
+                val scheduleJson = gson.toJson(schedule)
                 val intent = Intent(context, ScheduleActivity::class.java)
                     .putExtra("schedule", scheduleJson)
                 requireActivity().startActivity(intent)
@@ -138,7 +144,11 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
 
         groupDailyScheduleAdapter.setDailyScheduleClickListener(object : DailyScheduleRVAdapter.PersonalScheduleClickListener {
             override fun onContentClicked(schedule: Schedule) { // 아이템 전체 클릭
-                val scheduleJson = Gson().toJson(schedule)
+                // GsonBuilder에 커스텀 TypeAdapter 등록
+                val gson = GsonBuilder()
+                    .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
+                    .create()
+                val scheduleJson = gson.toJson(schedule)
                 requireActivity().startActivity(Intent(context, ScheduleActivity::class.java)
                     .putExtra("schedule", scheduleJson)
                 )

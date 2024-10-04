@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.kakao.vectormap.LatLng
 import com.mongmong.namo.domain.model.Moim
+import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.domain.model.group.GroupMember
 import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
@@ -14,6 +15,7 @@ import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.presentation.utils.PickerConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.joda.time.DateTime
+import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -143,12 +145,12 @@ class MoimScheduleViewModel @Inject constructor(
     }
 
     // 시간 변경
-    fun updateTime(startDateTime: DateTime?, endDateTime: DateTime?) {
+    fun updateTime(startDateTime: LocalDateTime?, endDateTime: LocalDateTime?) {
         _moimSchedule.value = _moimSchedule.value?.copy(
-            startDate = startDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
+            startDate = startDateTime
                 ?: _moimSchedule.value!!.startDate,
-//            endLong = endDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
-//                ?: _moimSchedule.value!!.endLong
+//            endDate = endDateTime
+//                ?: _moimSchedule.value!!.endDate,
         )
     }
 
@@ -175,11 +177,11 @@ class MoimScheduleViewModel @Inject constructor(
 
     fun getSelectedMemberId() = _moimSchedule.value!!.members.map { it.userId }
 
-    fun getDateTime(): Pair<DateTime, DateTime>? {
+    fun getDateTime(): SchedulePeriod? {
         if (_moimSchedule.value != null) {
-            return Pair(
-                PickerConverter.parseLongToDateTime(_moimSchedule.value!!.startDate),
-                PickerConverter.parseLongToDateTime(_moimSchedule.value!!.startDate)
+            return SchedulePeriod(
+                moimSchedule.value!!.startDate,
+                moimSchedule.value!!.startDate,
             )
         }
         return null

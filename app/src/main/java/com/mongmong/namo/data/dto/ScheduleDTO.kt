@@ -10,15 +10,15 @@ data class GetMonthScheduleResponse (
 ) : BaseResponse()
 
 data class GetMonthScheduleResult (
-    val scheduleId : Long,
-    val title : String,
-    val startDate : Long,
-    val endDate : Long,
-    val alarmDate : List<Int>,
+    val scheduleId: Long,
+    val title: String,
+    val startDate: String,
+    val endDate: String,
+    val alarmDate: List<Int>,
     val locationInfo: ScheduleLocation,
-    val categoryInfo : ScheduleCategoryInfo,
-    val hasDiary : Boolean?,
-    val isMeetingSchedule : Boolean,
+    val categoryInfo: ScheduleCategoryInfo,
+    val hasDiary: Boolean?,
+    val isMeetingSchedule: Boolean,
 )
 
 data class ScheduleCategoryInfo(
@@ -42,8 +42,8 @@ data class ScheduleRequestBody(
 )
 
 data class Period(
-    var startDate: Long = 0L,
-    var endDate: Long = 0L,
+    var startDate: String,
+    var endDate: String,
 )
 
 data class ScheduleLocation(

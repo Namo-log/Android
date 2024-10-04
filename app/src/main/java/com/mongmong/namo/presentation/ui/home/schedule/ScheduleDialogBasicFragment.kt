@@ -152,7 +152,7 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
     private fun initPickerClickListeners() {
         // 시작 시간
         with(binding.dialogScheduleStartTimeTp) {
-            val startDateTime = viewModel.getDateTime()?.first!!
+            val startDateTime = viewModel.getDateTime()?.startDate!!
             this.hour = startDateTime.hourOfDay
             this.minute = startDateTime.minuteOfHour
             this.setOnTimeChangedListener { _, hourOfDay, minute ->
@@ -161,7 +161,7 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
         }
         // 종료 시간
         with(binding.dialogScheduleEndTimeTp) {
-            val endDateTime = viewModel.getDateTime()?.second!!
+            val endDateTime = viewModel.getDateTime()?.endDate!!
             this.hour = endDateTime.hourOfDay
             this.minute = endDateTime.minuteOfHour
             this.setOnTimeChangedListener { _, hourOfDay, minute ->
@@ -292,20 +292,28 @@ class ScheduleDialogBasicFragment : BaseFragment<FragmentScheduleDialogBasicBind
     }
 
     private fun initPicker(){
-        val dateTimePair = viewModel.getDateTime() ?: return
+        val period = viewModel.getDateTime() ?: return
         binding.dialogScheduleStartTimeTp.apply { // 시작 시간
-            hour = dateTimePair.first.hourOfDay
-            minute = dateTimePair.first.minuteOfHour
+            hour = period.startDate.hourOfDay
+            minute = period.startDate.minuteOfHour
         }
         binding.dialogScheduleEndTimeTp.apply { // 종료 시간
-            hour = dateTimePair.second.hourOfDay
-            minute = dateTimePair.second.minuteOfHour
+            hour = period.endDate.hourOfDay
+            minute = period.endDate.minuteOfHour
         }
-        binding.dialogScheduleStartDateDp.init(dateTimePair.first.year, dateTimePair.first.monthOfYear - 1, dateTimePair.first.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
-            viewModel.updateTime(dateTimePair.first.withDate(year, monthOfYear + 1, dayOfMonth), null)
+        binding.dialogScheduleStartDateDp.init( // 시작 날짜
+            period.startDate.year, period.startDate.monthOfYear - 1, period.startDate.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
+            viewModel.updateTime(
+                period.startDate.withDate(year, monthOfYear + 1, dayOfMonth),
+                null
+            )
         }
-        binding.dialogScheduleEndDateDp.init(dateTimePair.second.year, dateTimePair.second.monthOfYear - 1, dateTimePair.second.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
-            viewModel.updateTime(null, dateTimePair.second.withDate(year, monthOfYear + 1, dayOfMonth))
+        binding.dialogScheduleEndDateDp.init( // 종료 날짜
+            period.endDate.year, period.endDate.monthOfYear - 1, period.endDate.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
+            viewModel.updateTime(
+                null,
+                period.endDate.withDate(year, monthOfYear + 1, dayOfMonth)
+            )
         }
     }
 
