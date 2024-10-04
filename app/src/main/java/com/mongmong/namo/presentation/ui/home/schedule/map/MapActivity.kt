@@ -30,6 +30,7 @@ import com.mongmong.namo.databinding.ActivityMapBinding
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
 import com.mongmong.namo.presentation.ui.community.moim.schedule.MoimScheduleActivity
+import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryDetailActivity
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.map.adapter.MapRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.KakaoAPI
@@ -160,6 +161,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map) {
         val targetActivityClass = when(intent.getStringExtra(ORIGIN_ACTIVITY_INTENT_KEY)) {
             "GroupSchedule" -> MoimScheduleActivity::class.java
             "Schedule" -> ScheduleActivity::class.java
+            "MoimDiary" -> MoimDiaryDetailActivity::class.java
             else -> ScheduleActivity::class.java
         }
 
@@ -210,6 +212,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map) {
         binding.selectBtn.setOnClickListener {
             val intent = Intent(this, targetActivityClass)
             intent.apply {
+                putExtra(PLACE_ID_KEY, selectedPlace.id)
                 putExtra(PLACE_NAME_KEY, selectedPlace.place_name)
                 putExtra(PLACE_X_KEY, selectedPlace.x)
                 putExtra(PLACE_Y_KEY, selectedPlace.y)
@@ -363,6 +366,7 @@ class MapActivity : BaseActivity<ActivityMapBinding>(R.layout.activity_map) {
                 R.drawable.ic_pin_default
             )
         }
+        const val PLACE_ID_KEY = "PLACE_ID"
         const val PLACE_NAME_KEY = "PLACE_NAME"
         const val PLACE_X_KEY = "PLACE_X"
         const val PLACE_Y_KEY = "PLACE_Y"

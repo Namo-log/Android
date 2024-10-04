@@ -3,8 +3,8 @@ package com.mongmong.namo.presentation.di
 import android.content.Context
 import com.mongmong.namo.data.datasource.auth.RemoteAuthDataSource
 import com.mongmong.namo.data.datasource.category.RemoteCategoryDataSource
+import com.mongmong.namo.data.datasource.diary.ActivityDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
-import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.datasource.group.GroupDataSource
 import com.mongmong.namo.data.datasource.s3.ImageDataSource
@@ -12,6 +12,7 @@ import com.mongmong.namo.data.datasource.terms.RemoteTermDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.data.remote.DiaryApiService
+import com.mongmong.namo.data.repositoriyImpl.ActivityRepositoryImpl
 import com.mongmong.namo.data.repositoriyImpl.AuthRepositoryImpl
 import com.mongmong.namo.data.repositoriyImpl.ImageRepositoryImpl
 import com.mongmong.namo.data.repositoriyImpl.CategoryRepositoryImpl
@@ -19,6 +20,7 @@ import com.mongmong.namo.data.repositoriyImpl.DiaryRepositoryImpl
 import com.mongmong.namo.data.repositoriyImpl.GroupRepositoryImpl
 import com.mongmong.namo.data.repositoriyImpl.ScheduleRepositoryImpl
 import com.mongmong.namo.data.repositoriyImpl.TermRepositoryImpl
+import com.mongmong.namo.domain.repositories.ActivityRepository
 import com.mongmong.namo.domain.repositories.AuthRepository
 import com.mongmong.namo.domain.repositories.ImageRepository
 import com.mongmong.namo.domain.repositories.CategoryRepository
@@ -65,6 +67,12 @@ object RepositoryModule {
         diaryService,
         networkChecker
     )
+
+    /** 활동 */
+    @Provides
+    fun provideActivityRepository(
+        activityDataSource: ActivityDataSource
+    ): ActivityRepository = ActivityRepositoryImpl(activityDataSource)
 
     /** 카테고리 */
     @Provides

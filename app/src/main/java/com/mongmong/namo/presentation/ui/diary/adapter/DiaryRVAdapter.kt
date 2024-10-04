@@ -15,8 +15,7 @@ import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.presentation.utils.DiaryDateConverter.toDiaryHeaderDate
 
 class DiaryRVAdapter(
-    val personalEditClickListener: ((Diary) -> Unit)? = null,
-    val moimEditClickListener: ((Diary) -> Unit)? = null,
+    val detailClickListener: ((Diary) -> Unit)? = null,
     val participantClickListener: (Int, String) -> Unit,
     private val imageClickListener: (List<DiaryImage>) -> Unit
 ) : PagingDataAdapter<Diary, RecyclerView.ViewHolder>(DiaryDiffCallback()) {
@@ -48,8 +47,7 @@ class DiaryRVAdapter(
             ITEM_VIEW_TYPE_ITEM -> DiaryContentViewHolder(
                 ItemDiaryCollectionBinding.inflate(LayoutInflater.from(parent.context), parent, false),
                 imageClickListener,
-                personalEditClickListener,
-                moimEditClickListener
+                detailClickListener
             )
             else -> throw ClassCastException("Unknown viewType $viewType")
         }
@@ -72,8 +70,7 @@ class DiaryRVAdapter(
     inner class DiaryContentViewHolder(
         private val binding: ItemDiaryCollectionBinding,
         private val imageClickListener: (List<DiaryImage>) -> Unit,
-        private val personalEditClickListener: ((Diary) -> Unit)?,
-        private val moimEditClickListener: ((Diary) -> Unit)?
+        private val detailClickListener: ((Diary) -> Unit)?,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Diary) {
@@ -85,9 +82,7 @@ class DiaryRVAdapter(
             binding.diaryGalleryRv.apply {
                 if(!item.diarySummary.diaryImages.isNullOrEmpty()){
                     Log.d("DiaryRVAdpater", "images: ${item.diarySummary.diaryImages}")
-                    Log.d("DiaryRVAdpater", "date: ${item.startDate}")
-                    Log.d("DiaryRVAdpater", "category: ${item.categoryInfo.colorId}")
-                    adapter = DiaryGalleryRVAdapter(item.diarySummary.diaryImages, imageClickListener)
+                    adapter = DiaryImagesRVAdapter(item.diarySummary.diaryImages, imageClickListener)
                     layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
                 }
             }
@@ -98,8 +93,7 @@ class DiaryRVAdapter(
 
             binding.root.setOnClickListener {
                 Log.d("DiaryRVAdapter", "clickListener ${item.scheduleType}")
-                if(item.scheduleType == 0) personalEditClickListener?.invoke(item)
-                else moimEditClickListener?.invoke(item)
+                detailClickListener?.invoke(item)
             }
         }
     }

@@ -119,6 +119,24 @@
     <string name="diary_calendar_moim">모임 기록</string>
     <string name="diary_calendar_personal_empty">작성된 개인 기록이 없습니다.</string>
     <string name="diary_calendar_moim_empty">작성된 모임 기록이 없습니다.</string>
+    <!-- moim diary 관련 String -->
+    <string name="moim_diary_whole_money">전체 정산</string>
+    <string name="moim_diary_none_activity">활동 없음</string>
+    <string name="moim_diary_diary">일기장</string>
+    <string name="moim_diary_start_date">시작</string>
+    <string name="moim_diary_end_date">종료</string>
+    <string name="moim_diary_new_activity">새 활동</string>
+    <string name="moim_diary_none">없음</string>
+    <!-- activity 관련 String -->
+    <string name="activity_tag">활동 태그</string>
+    <string name="activity_participants">활동 참석자</string>
+    <string name="activity_payment">활동 정산</string>
+    <string name="activity_payment_total_amount">총 금액</string>
+    <string name="activity_payment_participant_count">인원 수</string>
+    <string name="activity_payment_per_person">인당 금액</string>
+    <string name="activity_payment_input">금액 입력</string>
+    <string name="activity_payment_people_unit">&#160;명</string>
+    <string name="activity_payment_unit">&#160;원</string>
 
 
     <!--연월 dialog 관련 String-->

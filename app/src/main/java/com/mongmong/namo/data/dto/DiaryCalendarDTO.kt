@@ -18,7 +18,7 @@ data class GetDiaryByDateResponse(
 
 data class GetDiaryByDateResult(
     val categoryInfo: CategoryInfo,
-    val participantInfo: ParticipantInfo,
+    val participantInfo: DiaryCollectionParticipant,
     val scheduleEndDate: String,
     val scheduleStartDate: String,
     val scheduleType: Int,

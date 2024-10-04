@@ -1,6 +1,5 @@
 package com.mongmong.namo.data.dto
 
-import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.presentation.config.BaseResponse
 
 data class GetDiaryCollectionResponse(
@@ -16,7 +15,7 @@ data class GetDiaryCollectionResult(
     val scheduleType: Int,
     val title: String,
     val isHeader: Boolean = false,
-    val participantInfo: ParticipantInfo
+    val participantInfo: DiaryCollectionParticipant
 )
 
 data class CategoryInfo(
@@ -24,7 +23,7 @@ data class CategoryInfo(
     val colorId: Int
 )
 
-data class ParticipantInfo(
+data class DiaryCollectionParticipant(
     val participantsCount: Int,
     val participantsNames: String?,
 )

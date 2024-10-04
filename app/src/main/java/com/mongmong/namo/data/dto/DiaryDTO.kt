@@ -6,15 +6,15 @@ data class DiaryResponse(
     val result: String
 ) : BaseResponse()
 
-data class GetPersonalDiaryResponse(
-    val result: GetPersonalDiaryResult
+data class GetDiaryResponse(
+    val result: GetDiaryResult
 ): BaseResponse()
 
-data class GetPersonalDiaryResult(
-    val content: String,
-    val diaryId: Long,
-    val diaryImages: List<DiaryImage>,
-    val enjoyRating: Int
+data class GetDiaryResult(
+    val content: String = "",
+    val diaryId: Long = 0L,
+    val diaryImages: List<DiaryImage> = emptyList(),
+    val enjoyRating: Int = 0
 )
 
 data class DiaryImage(

@@ -19,7 +19,7 @@ interface GroupDiaryApiService {
     suspend fun addMoimActivity(
         @Path("moimScheduleId") moimScheduleId: Long,
         @Query("activityName") activityName: String?,
-        @Query("activityMoney") activityMoney: String?,
+        @Query("activityMoney") activityPay: String?,
         @Query("participantUserIds") participantUserIds: List<Long>,
         @Part createImages: List<MultipartBody.Part>?
     ): DiaryResponse
@@ -31,7 +31,7 @@ interface GroupDiaryApiService {
         @Path("activityId") activityId: Long,
         @Query("deleteImageIds") deleteImageIds: List<Long>?,
         @Query("activityName") activityName: String?,
-        @Query("activityMoney") activityMoney: String?,
+        @Query("activityMoney") activityPay: String?,
         @Query("participantUserIds") participantUserIds: List<Long>,
         @Part createImages: List<MultipartBody.Part>?
     ): DiaryResponse
