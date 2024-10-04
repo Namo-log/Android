@@ -7,23 +7,23 @@ data class GetScheduleForDiaryResponse(
 ): BaseResponse()
 
 data class GetScheduleForDiaryResult(
-    val locationInfo: LocationInfo,
-    val scheduleId: Long,
-    val scheduleStartDate: String,
-    val scheduleTitle: String,
-    val categoryInfo: CategoryInfo,
-    val participantCount: Int,
-    val participantInfo: List<ScheduleForDiaryParticipant>,
-    val hasDiary: Boolean
+    val locationInfo: LocationInfo = LocationInfo(),
+    val scheduleId: Long = 0L,
+    val scheduleStartDate: String = "",
+    val scheduleTitle: String = "",
+    val categoryInfo: CategoryInfo = CategoryInfo("", 0),
+    val participantCount: Int = 0,
+    val participantInfo: List<ScheduleForDiaryParticipant> = emptyList(),
+    val hasDiary: Boolean = true
 )
 
 data class ScheduleForDiaryParticipant(
-    val userId: Long,
-    val nickname: String,
-    val isGuest: Boolean
+    val userId: Long = 0L,
+    val nickname: String = "",
+    val isGuest: Boolean = false
 )
 
 data class LocationInfo(
-    val kakaoLocationId: String,
-    val locationName: String
+    val kakaoLocationId: String = "",
+    val locationName: String = ""
 )

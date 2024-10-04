@@ -34,18 +34,7 @@ class RemoteDiaryDataSource @Inject constructor(
     /** 기록 */
     //기록 일정 정보 조회
     suspend fun getScheduleForDiary(scheduleId: Long): GetScheduleForDiaryResponse {
-        var response = GetScheduleForDiaryResponse(
-            result = GetScheduleForDiaryResult(
-                scheduleId = 0,
-                scheduleTitle = "",
-                scheduleStartDate = "",
-                locationInfo = LocationInfo(kakaoLocationId = "", locationName = ""),
-                categoryInfo = CategoryInfo(name = "", colorId = 0),
-                hasDiary = true,
-                participantCount = 0,
-                participantInfo = emptyList()
-            )
-        )
+        var response = GetScheduleForDiaryResponse(result = GetScheduleForDiaryResult())
         withContext(Dispatchers.IO) {
             runCatching {
                 diaryApiService.getScheduleForDiary(scheduleId)
@@ -61,14 +50,7 @@ class RemoteDiaryDataSource @Inject constructor(
 
     // 기록 상세 조회
     suspend fun getDiary(scheduleId: Long): GetDiaryResponse {
-        var response = GetDiaryResponse(
-            result = GetDiaryResult(
-                content = "", // 빈 문자열
-                diaryId = 0L, // 기본값 0L (Long 타입)
-                diaryImages = emptyList(), // 빈 리스트
-                enjoyRating = 0 // 기본값 0 (Int 타입)
-            )
-        )
+        var response = GetDiaryResponse(result = GetDiaryResult())
         withContext(Dispatchers.IO) {
             runCatching {
                 diaryApiService.getDiary(scheduleId)

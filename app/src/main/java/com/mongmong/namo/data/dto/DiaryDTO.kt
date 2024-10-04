@@ -11,10 +11,10 @@ data class GetDiaryResponse(
 ): BaseResponse()
 
 data class GetDiaryResult(
-    val content: String,
-    val diaryId: Long,
-    val diaryImages: List<DiaryImage>,
-    val enjoyRating: Int
+    val content: String = "",
+    val diaryId: Long = 0L,
+    val diaryImages: List<DiaryImage> = emptyList(),
+    val enjoyRating: Int = 0
 )
 
 data class DiaryImage(

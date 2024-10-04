@@ -63,8 +63,10 @@ object BindingAdapters {
     }
 
     @JvmStatic
-    @BindingAdapter("participantsText")
-    fun setParticipantsText(textView: TextView, participants: List<ParticipantInfo>?) {
+    @BindingAdapter(value = ["participantsText", "maxCount"], requireAll = false)
+    fun setParticipantsText(textView: TextView, participants: List<ParticipantInfo>?, maxCount: Int?) {
+        val maxCount = maxCount ?: 3
+
         participants?.let {
             if (it.isEmpty()) {
                 // 참가자가 없을 때
@@ -72,10 +74,10 @@ object BindingAdapters {
             } else {
                 // 참가자가 있을 때 처리
                 val size = participants.size
-                val displayedNames = participants.take(3).joinToString(", ") { participant -> participant.nickname }
+                val displayedNames = participants.take(maxCount).joinToString(", ") { participant -> participant.nickname }
 
-                textView.text = if (size > 3) {
-                    "$displayedNames 외 ${size - 3}명"
+                textView.text = if (size > maxCount) {
+                    "$displayedNames 외 ${size - maxCount}명"
                 } else {
                     displayedNames
                 }
@@ -84,5 +86,6 @@ object BindingAdapters {
             textView.text = textView.context.getString(R.string.diary_no_place)
         }
     }
+
 
 }

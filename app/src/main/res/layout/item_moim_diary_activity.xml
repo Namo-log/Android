@@ -319,7 +319,8 @@
                     app:participantsText="@{activity.participants}"
                     app:layout_constraintBottom_toBottomOf="@+id/activity_place_title_tv"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv" />
+                    app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv"
+                    maxCount="3"/>
             </LinearLayout>
 
             <LinearLayout
