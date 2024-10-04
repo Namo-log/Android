@@ -7,10 +7,11 @@ import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.domain.model.Friend
 import com.mongmong.namo.domain.model.Moim
 import com.mongmong.namo.data.dto.Period
+import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.domain.model.group.GroupMember
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
-import com.mongmong.namo.presentation.utils.PickerConverter
 import org.joda.time.DateTime
+import org.joda.time.LocalDateTime
 
 class CalendarViewModel: ViewModel() {
     // 달력에 들어가는 한달치 날짜
@@ -31,7 +32,7 @@ class CalendarViewModel: ViewModel() {
     var moim = Moim()
 
     init {
-        moim = Moim(1, PickerConverter.parseDateTimeToLong(DateTime.now()), "https://img.freepik.com/free-photo/beautiful-floral-composition_23-2150968962.jpg", "나모 모임 일정", "강남역",
+        moim = Moim(1, LocalDateTime.now(), "https://img.freepik.com/free-photo/beautiful-floral-composition_23-2150968962.jpg", "나모 모임 일정", "강남역",
             listOf(
                 GroupMember(3, "코코아", 4),
                 GroupMember(2, "짱구", 6),
@@ -60,11 +61,15 @@ class CalendarViewModel: ViewModel() {
         setDailySchedule()
     }
 
-    private fun getClickedDatePeriod(): Period {
+    private fun getClickedDatePeriod(): SchedulePeriod {
         // 클릭한 날짜의 시작, 종료 시간
-        return Period(
-            (getClickedDate().withTimeAtStartOfDay().millis) / 1000, // 날짜 시작일
-            (getClickedDate().plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000, // 날짜 종료일
+        return SchedulePeriod(
+            getClickedDate().toLocalDateTime(), // 날짜 시작일
+            getClickedDate() // 날짜 종료일
+                .plusDays(1)
+                .withTimeAtStartOfDay()
+                .minusMillis(1)
+                .toLocalDateTime()
         )
     }
 

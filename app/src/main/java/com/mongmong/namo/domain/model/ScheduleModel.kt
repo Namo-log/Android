@@ -1,15 +1,21 @@
 package com.mongmong.namo.domain.model
 
+import org.joda.time.LocalDateTime
+
 data class Schedule(
     var scheduleId: Long = 0L,
     var title: String = "",
-    var startLong: Long = 0,
-    var endLong: Long = 0,
+    var period: SchedulePeriod = SchedulePeriod(),
     var locationInfo: Location = Location(),
     var categoryInfo: ScheduleCategoryInfo = ScheduleCategoryInfo(),
     var alarmList: List<Int>? = listOf(),
     var hasDiary: Boolean? = false,
     var isMeetingSchedule: Boolean = false
+)
+
+data class SchedulePeriod(
+    var startDate: LocalDateTime = LocalDateTime.now(),
+    var endDate: LocalDateTime = LocalDateTime.now(),
 )
 
 data class Location(

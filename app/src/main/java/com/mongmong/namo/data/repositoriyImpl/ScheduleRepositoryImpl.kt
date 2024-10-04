@@ -7,7 +7,7 @@ import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
-import com.mongmong.namo.data.utils.mappers.ScheduleMapper.toModel
+import com.mongmong.namo.data.utils.mappers.ScheduleMapper.toDTO
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
@@ -24,19 +24,19 @@ class ScheduleRepositoryImpl @Inject constructor(
     /** 개인 */
     override suspend fun getMonthSchedules(startDate: DateTime, endDate: DateTime): List<Schedule> {
         return remoteScheduleDataSource.getMonthSchedules(startDate, endDate).result.map { scheduleData ->
-            scheduleData.toModel() // DTO를 도메인 모델로 변환
+            scheduleData.toDTO() // DTO를 도메인 모델로 변환
         }
     }
 
     override suspend fun addSchedule(schedule: Schedule): Boolean {
         Log.d("ScheduleRepositoryImpl", "addSchedule $schedule")
-        return remoteScheduleDataSource.addSchedule(schedule.toModel()).code == SUCCESS_CODE
+        return remoteScheduleDataSource.addSchedule(schedule.toDTO()).code == SUCCESS_CODE
     }
 
     override suspend fun editSchedule(scheduleId: Long, schedule: Schedule): Boolean {
         return remoteScheduleDataSource.editSchedule(
             scheduleId,
-            schedule.toModel()
+            schedule.toDTO()
         ).code == SUCCESS_CODE
     }
 

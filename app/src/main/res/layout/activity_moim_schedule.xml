@@ -181,7 +181,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:minWidth="110dp"
-                                android:text="@{PickerConverter.parseLongToDateText(viewModel.moimSchedule.startDate)}"
+                                android:text="@{PickerConverter.getDateText(viewModel.moimSchedule.startDate)}"
                                 android:textAlignment="center"
                                 tools:text="2022.06.29 (수)"
                                 style="@style/content_regular"/>
@@ -198,7 +198,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:minWidth="80dp"
-                                android:text="@{PickerConverter.parseLongToTimeText(viewModel.moimSchedule.startDate)}"
+                                android:text="@{PickerConverter.getTimeText(viewModel.moimSchedule.startDate)}"
                                 android:textAlignment="center"
                                 tools:text="12:00 PM"
                                 style="@style/content_regular"/>
@@ -232,7 +232,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:minWidth="110dp"
-                                android:text="@{PickerConverter.parseLongToDateText(viewModel.moimSchedule.startDate)}"
+                                android:text="@{PickerConverter.getDateText(viewModel.moimSchedule.startDate)}"
                                 android:textAlignment="center"
                                 tools:text="2022.06.29 (수)"
                                 style="@style/content_regular"/>
@@ -249,7 +249,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:minWidth="80dp"
-                                android:text="@{PickerConverter.parseLongToTimeText(viewModel.moimSchedule.startDate)}"
+                                android:text="@{PickerConverter.getTimeText(viewModel.moimSchedule.startDate)}"
                                 android:textAlignment="center"
                                 tools:text="12:00 PM"
                                 style="@style/content_regular"/>

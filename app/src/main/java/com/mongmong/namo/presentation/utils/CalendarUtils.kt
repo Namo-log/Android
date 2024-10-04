@@ -133,8 +133,8 @@ class CalendarUtils {
         }
 
         fun isScheduleHaveToday(event: Schedule, today: DateTime): Boolean {
-            val start = DateTime(event.startLong).withTimeAtStartOfDay()
-            val end = DateTime(event.endLong).withTimeAtStartOfDay()
+            val start = DateTime(event.period.startDate).withTimeAtStartOfDay()
+            val end = DateTime(event.period.endDate).withTimeAtStartOfDay()
             val now = today.withTimeAtStartOfDay()
 
             return (now.isAfter(start) && now.isBefore(end)) || now.isEqual(start) || now.isEqual(end)
