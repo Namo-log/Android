@@ -46,7 +46,6 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:text="@{@string/schedule_time(ScheduleTimeConverter.parseTimeToFormattedText(schedule.startDate), ScheduleTimeConverter.parseTimeToFormattedText(schedule.endDate))}"
                 tools:text="11:00 - 13:00"
                 style="@style/subtext_12"/>
 
@@ -79,7 +78,6 @@
                 app:layout_constraintBottom_toBottomOf="@id/item_calendar_event_base_layout"
                 app:layout_constraintEnd_toEndOf="@id/item_calendar_event_base_layout"
                 tools:text="이름"/>
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

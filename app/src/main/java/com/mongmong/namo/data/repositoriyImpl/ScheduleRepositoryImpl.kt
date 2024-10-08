@@ -7,7 +7,13 @@ import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.data.utils.mappers.MoimMapper.toDTO
+import com.mongmong.namo.data.utils.mappers.MoimMapper.toModel
+import com.mongmong.namo.data.utils.mappers.ScheduleMapper.toDTO
 import com.mongmong.namo.data.utils.mappers.ScheduleMapper.toModel
+import com.mongmong.namo.domain.model.MoimCalendarSchedule
+import com.mongmong.namo.domain.model.MoimPreview
+import com.mongmong.namo.domain.model.MoimScheduleDetail
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.MoimScheduleBody
@@ -75,7 +81,7 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addMoimSchedule(moimSchedule: MoimScheduleDetail): Boolean {
-        return remoteScheduleDataSource.addMoimSchedule(moimSchedule.toModel()).code == SUCCESS_CODE
+        return remoteScheduleDataSource.addMoimSchedule(moimSchedule.toDTO()).code == SUCCESS_CODE
     }
 
     override suspend fun editMoimSchedule(moimSchedule: EditMoimScheduleRequestBody) {

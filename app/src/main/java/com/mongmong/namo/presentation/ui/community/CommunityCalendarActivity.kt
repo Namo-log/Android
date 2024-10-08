@@ -40,8 +40,7 @@ class CommunityCalendarActivity : BaseActivity<ActivityCommunityCalendarBinding>
             viewModel.friend = intent.getSerializableExtra("friend") as Friend
             setCalendarTitleInfo(viewModel.friend.nickname)
         } else { // 모임 정보 세팅
-            val moimJson = intent.getStringExtra("moim")
-            viewModel.moimSchedule = Gson().fromJson(moimJson, MoimScheduleDetail::class.java)
+            viewModel.moimSchedule = intent.getSerializableExtra("moim") as MoimScheduleDetail
             setCalendarTitleInfo(viewModel.moimSchedule.title)
         }
 

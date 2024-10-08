@@ -16,12 +16,14 @@ object PickerConverter {
     }
 
     @JvmStatic
-    fun getDateText(dateTime: LocalDateTime): String {
+    fun getDateText(dateTime: LocalDateTime?): String? {
+        if (dateTime == null) return  null
         return dateTime.toString(DATE_FORMAT)
     }
 
     @JvmStatic
-    fun getTimeText(dateTime: LocalDateTime): String {
+    fun getTimeText(dateTime: LocalDateTime?): String? {
+        if (dateTime == null) return  null
         return dateTime.toString(TIME_FORMAT)
     }
 

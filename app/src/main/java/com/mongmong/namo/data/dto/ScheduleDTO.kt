@@ -43,8 +43,8 @@ data class ScheduleRequestBody(
 )
 
 data class Period(
-    var startDate: String,
-    var endDate: String,
+    var startDate: String = "",
+    var endDate: String = "",
 )
 
 data class ScheduleLocation(

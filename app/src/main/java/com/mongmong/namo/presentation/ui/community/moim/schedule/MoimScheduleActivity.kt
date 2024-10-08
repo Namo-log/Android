@@ -33,11 +33,9 @@ import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
-import com.mongmong.namo.presentation.ui.MainActivity.Companion.GROUP_MEMBER_INTENT_KEY
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMoimScheduleBinding
-import com.mongmong.namo.domain.model.Participant
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.community.CommunityCalendarActivity
 import com.mongmong.namo.presentation.ui.community.moim.schedule.adapter.MoimParticipantRVAdapter
@@ -142,12 +140,11 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
 
         // 수락한 친구 일정 보기 버튼 클릭
         binding.moimScheduleLookInviteFriendScheduleBtn.setOnClickListener {
-            val moimJson = Gson().toJson(viewModel.moimSchedule.value!!)
             // 캘린더 화면으로 이동
             startActivity(
                 Intent(this, CommunityCalendarActivity::class.java).apply {
                     putExtra("isFriendCalendar", false)
-                    putExtra("moim", moimJson)
+                    putExtra("moim", viewModel.moimSchedule.value!!)
                 }
             )
         }
@@ -229,20 +226,20 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     }
 
     private fun initPicker() {
-        val dateTimePair = viewModel.getDateTime() ?: return
+        val period = viewModel.getDateTime() ?: return
         binding.moimScheduleStartTimeTp.apply { // 시작 시간
-            hour = dateTimePair.startDate.hourOfDay
-            minute = dateTimePair.startDate.minuteOfHour
+            hour = period.startDate.hourOfDay
+            minute = period.startDate.minuteOfHour
         }
         binding.moimScheduleEndTimeTp.apply { // 종료 시간
-            hour = dateTimePair.endDate.hourOfDay
-            minute = dateTimePair.endDate.minuteOfHour
+            hour = period.endDate.hourOfDay
+            minute = period.endDate.minuteOfHour
         }
-        binding.moimScheduleStartDateDp.init(dateTimePair.startDate.year, dateTimePair.startDate.monthOfYear - 1, dateTimePair.startDate.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
-            viewModel.updateTime(dateTimePair.startDate.withDate(year, monthOfYear + 1, dayOfMonth), null)
+        binding.moimScheduleStartDateDp.init(period.startDate.year, period.startDate.monthOfYear - 1, period.startDate.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
+            viewModel.updateTime(period.startDate.withDate(year, monthOfYear + 1, dayOfMonth), null)
         }
-        binding.moimScheduleEndDateDp.init(dateTimePair.endDate.year, dateTimePair.endDate.monthOfYear - 1, dateTimePair.endDate.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
-            viewModel.updateTime(null, dateTimePair.endDate.withDate(year, monthOfYear + 1, dayOfMonth))
+        binding.moimScheduleEndDateDp.init(period.endDate.year, period.endDate.monthOfYear - 1, period.endDate.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
+            viewModel.updateTime(null, period.endDate.withDate(year, monthOfYear + 1, dayOfMonth))
         }
     }
 

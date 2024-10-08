@@ -1,13 +1,12 @@
 package com.mongmong.namo.domain.model
 
 import com.mongmong.namo.domain.model.group.GroupMember
-import com.mongmong.namo.presentation.utils.PickerConverter
-import org.joda.time.DateTime
+import org.joda.time.LocalDateTime
 import java.io.Serializable
 
 data class MoimPreview(
     val moimId: Long = 0L,
-    var startDate: Long = PickerConverter.parseDateTimeToLong(DateTime.now()),
+    var startDate: LocalDateTime = LocalDateTime.now(),
     var coverImg: String = "",
     var title: String = "",
     var participantCount: Int = 0,
@@ -18,8 +17,7 @@ data class MoimScheduleDetail(
     val moimId: Long = 0L,
     var title: String = "",
     var coverImg: String = "",
-    var startDate: Long = PickerConverter.parseDateTimeToLong(DateTime.now()),
-    var endDate: Long = PickerConverter.parseDateTimeToLong(DateTime.now()),
+    var period: SchedulePeriod = SchedulePeriod(),
     var locationInfo: Location = Location(),
     val participants: List<Participant> = emptyList()
 ): Serializable {
@@ -40,13 +38,13 @@ data class Participant(
     val nickname: String = "",
     val colorId: Int = 0,
     val isOwner: Boolean = false
-)
+): Serializable
 
 data class MoimCalendarSchedule(
     val scheduleId: Long = 0L,
     val title: String = "",
-    val startDate: Long,
-    val endDate: Long,
+    val startDate: LocalDateTime = LocalDateTime.now(),
+    val endDate: LocalDateTime = LocalDateTime.now(),
     val participants: List<MoimCalendarParticipant> = emptyList(),
     val isCurMoim: Boolean = false
 ) {
@@ -65,7 +63,7 @@ data class MoimCalendarParticipant(
 
 data class Moim(
     val moimId: Long = 0L,
-    var startDate: Long = PickerConverter.parseDateTimeToLong(DateTime.now()),
+    var startDate: LocalDateTime = LocalDateTime.now(),
     var coverImg: String = "",
     var title: String = "",
     var placeName: String = "",

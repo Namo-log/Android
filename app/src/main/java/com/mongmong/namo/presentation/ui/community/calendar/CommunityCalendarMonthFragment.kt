@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentCommunityCalendarMonthBinding
 import com.mongmong.namo.domain.model.MoimCalendarSchedule
+import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.community.CommunityCalendarActivity
 import com.mongmong.namo.presentation.ui.community.calendar.adapter.ParticipantDailyScheduleRVAdapter
@@ -135,7 +136,7 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
     private fun setMoimSchedule(dailySchedule: MoimCalendarSchedule) {
         binding.communityCalendarDailyMoimScheduleTitleTv.text = dailySchedule.title
         binding.communityCalendarDailyMoimScheduleTimeTv.text = ScheduleTimeConverter(viewModel.getClickedDate())
-            .getScheduleTimeText(dailySchedule.startDate, dailySchedule.endDate)
+            .getScheduleTimeText(SchedulePeriod(dailySchedule.startDate, dailySchedule.endDate))
     }
 
     private fun drawMonthCalendar(scheduleList: List<MoimCalendarSchedule>) {

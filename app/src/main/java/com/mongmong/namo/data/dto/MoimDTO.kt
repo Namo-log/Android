@@ -10,7 +10,7 @@ data class GetMoimResponse(
 data class GetMoimResult(
     val meetingScheduleId: Long = 0,
     val title: String = "",
-    val startDate: Long = 0L,
+    val startDate: String = "",
     val imageUrl: String = "",
     val participantCount: Int = 0,
     val participantNicknames: String = ""
@@ -25,8 +25,8 @@ data class GetMoimDetailResult(
     val scheduleId: Long = 0,
     val title: String = "",
     val imageUrl: String = "",
-    val startDate: Long = 0L,
-    val endDate: Long = 0L,
+    val startDate: String = "",
+    val endDate: String = "",
     val locationInfo: ScheduleLocation = ScheduleLocation(),
     val participants: List<MoimParticipant> = emptyList()
 )
@@ -48,8 +48,8 @@ data class GetMoimCalendarResponse(
 data class GetMoimCalendarResult(
     val scheduleId: Long = 0L,
     val title: String = "",
-    val startDate: Long = 0L,
-    val endDate: Long = 0L,
+    val startDate: String = "",
+    val endDate: String = "",
     val participants: List<CalendarParticipant> = emptyList(),
     val isCurMeetingSchedule: Boolean = false
 )

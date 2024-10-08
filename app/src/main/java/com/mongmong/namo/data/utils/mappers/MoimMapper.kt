@@ -14,13 +14,15 @@ import com.mongmong.namo.domain.model.MoimCalendarSchedule
 import com.mongmong.namo.domain.model.MoimPreview
 import com.mongmong.namo.domain.model.MoimScheduleDetail
 import com.mongmong.namo.domain.model.Participant
+import com.mongmong.namo.domain.model.SchedulePeriod
+import com.mongmong.namo.presentation.utils.ScheduleDateConverter
 
 object MoimMapper {
     // DTO -> Model
     fun GetMoimResult.toModel(): MoimPreview {
         return MoimPreview(
             moimId = this.meetingScheduleId,
-            startDate = this.startDate,
+            startDate = ScheduleDateConverter.parseServerDateToLocalDateTime(this.startDate),
             coverImg = this.imageUrl,
             title = this.title,
             participantCount = this.participantCount,
@@ -33,8 +35,10 @@ object MoimMapper {
             moimId = this.scheduleId,
             title = this.title,
             coverImg = this.imageUrl,
-            startDate = this.startDate,
-            endDate = this.endDate,
+            period = SchedulePeriod(
+                ScheduleDateConverter.parseServerDateToLocalDateTime(this.startDate),
+                ScheduleDateConverter.parseServerDateToLocalDateTime(this.endDate),
+            ),
             locationInfo = Location(
                 this.locationInfo.longitude,
                 this.locationInfo.latitude,
@@ -62,8 +66,8 @@ object MoimMapper {
         return MoimCalendarSchedule(
             scheduleId = this.scheduleId,
             title = this.title,
-            startDate = this.startDate,
-            endDate = this.endDate,
+            startDate = ScheduleDateConverter.parseServerDateToLocalDateTime(this.startDate),
+            endDate = ScheduleDateConverter.parseServerDateToLocalDateTime(this.endDate),
             participants = this.participants.map { participantData ->
                 participantData.toModel()
             },
@@ -80,13 +84,13 @@ object MoimMapper {
         )
     }
 
-    fun MoimScheduleDetail.toModel(): MoimScheduleRequestBody {
+    fun MoimScheduleDetail.toDTO(): MoimScheduleRequestBody {
         return MoimScheduleRequestBody(
             title = this.title,
             imageUrl = this.coverImg,
             period = Period(
-                this.startDate,
-                this.endDate
+                this.period.startDate.toString(),
+                this.period.endDate.toString()
             ),
             location = ScheduleLocation(
                 this.locationInfo.longitude,

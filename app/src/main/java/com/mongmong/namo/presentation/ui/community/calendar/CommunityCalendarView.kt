@@ -8,7 +8,9 @@ import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.ui.home.calendar.data.StartEnd
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.DAYS_PER_WEEK
 import com.mongmong.namo.presentation.utils.CustomCalendarView
+import com.mongmong.namo.presentation.utils.ScheduleDateConverter.parseLocalDateTimeToDateTime
 import org.joda.time.DateTime
+import org.joda.time.Days
 
 class CommunityCalendarView(context: Context, attrs: AttributeSet) :
     CustomCalendarView(context, attrs) {
@@ -27,8 +29,8 @@ class CommunityCalendarView(context: Context, attrs: AttributeSet) :
 
     private fun drawDetailedSchedules(canvas: Canvas) {
         for (i in scheduleList.indices) {
-            val startIdx = days.indexOf(DateTime(scheduleList[i].startDate * 1000L).withTimeAtStartOfDay())
-            val endIdx = days.indexOf(DateTime(scheduleList[i].endDate * 1000L).withTimeAtStartOfDay())
+            val startIdx = days.indexOf(parseLocalDateTimeToDateTime(scheduleList[i].startDate).withTimeAtStartOfDay())
+            val endIdx = days.indexOf(parseLocalDateTimeToDateTime(scheduleList[i].endDate).withTimeAtStartOfDay())
 
             for (splitSchedule in splitWeek(startIdx, endIdx)) {
                 val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
@@ -46,8 +48,8 @@ class CommunityCalendarView(context: Context, attrs: AttributeSet) :
 
     private fun drawCompactSchedules(canvas: Canvas) {
         for (i in scheduleList.indices) {
-            val startIdx = days.indexOf(DateTime(scheduleList[i].startDate * 1000L).withTimeAtStartOfDay())
-            val endIdx = days.indexOf(DateTime(scheduleList[i].endDate * 1000L).withTimeAtStartOfDay())
+            val startIdx = days.indexOf(parseLocalDateTimeToDateTime(scheduleList[i].startDate).withTimeAtStartOfDay())
+            val endIdx = days.indexOf(parseLocalDateTimeToDateTime(scheduleList[i].endDate).withTimeAtStartOfDay())
 
             for (splitSchedule in splitWeek(startIdx, endIdx)) {
                 val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
@@ -132,7 +134,7 @@ class CommunityCalendarView(context: Context, attrs: AttributeSet) :
 
     fun setScheduleList(events: List<MoimCalendarSchedule>) {
         val sortedEvents = events.sortedWith(compareByDescending<MoimCalendarSchedule> {
-            DateTime(it.endDate * 1000L).millis - DateTime(it.startDate * 1000L).millis
+            Days.daysBetween(it.startDate, it.endDate)
         }.thenBy {
             it.startDate
         })

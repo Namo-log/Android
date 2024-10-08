@@ -1,23 +1,20 @@
 package com.mongmong.namo.presentation.ui.community.calendar
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.domain.model.Friend
-import com.mongmong.namo.data.dto.Period
 import com.mongmong.namo.domain.model.MoimCalendarSchedule
 import com.mongmong.namo.domain.model.MoimScheduleDetail
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import com.mongmong.namo.domain.model.SchedulePeriod
-import com.mongmong.namo.domain.model.group.GroupMember
-import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import org.joda.time.DateTime
 import javax.inject.Inject
-import org.joda.time.LocalDateTime
 
 @HiltViewModel
 class CalendarViewModel @Inject constructor (

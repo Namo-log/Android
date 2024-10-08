@@ -1,7 +1,5 @@
 package com.mongmong.namo.data.utils.mappers
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.data.dto.Period
 import com.mongmong.namo.data.dto.ScheduleLocation

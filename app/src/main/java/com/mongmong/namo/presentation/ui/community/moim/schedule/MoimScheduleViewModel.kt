@@ -9,12 +9,14 @@ import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.LatLng
 import com.mongmong.namo.domain.model.MoimScheduleDetail
 import com.mongmong.namo.domain.model.Participant
+import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecases.UploadImageToS3UseCase
 import com.mongmong.namo.presentation.utils.PickerConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
+import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -90,12 +92,14 @@ class MoimScheduleViewModel @Inject constructor(
     }
 
     // 시간 변경
-    fun updateTime(startDateTime: DateTime?, endDateTime: DateTime?) {
+    fun updateTime(startDateTime: LocalDateTime?, endDateTime: LocalDateTime?) {
         _moimSchedule.value = _moimSchedule.value?.copy(
-            startDate = startDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
-                ?: _moimSchedule.value!!.startDate,
-            endDate = endDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
-                ?: _moimSchedule.value!!.endDate
+            period = SchedulePeriod(
+                startDate = startDateTime
+                    ?: _moimSchedule.value!!.period.startDate,
+                endDate = endDateTime
+                    ?: _moimSchedule.value!!.period.endDate
+            ),
         )
     }
 
@@ -105,12 +109,9 @@ class MoimScheduleViewModel @Inject constructor(
 
     fun isCreateMode() = _moimSchedule.value!!.moimId == 0L
 
-    fun getDateTime(): Pair<DateTime, DateTime>? {
+    fun getDateTime(): SchedulePeriod? {
         if (_moimSchedule.value != null) {
-            return Pair(
-                PickerConverter.parseLongToDateTime(_moimSchedule.value!!.startDate),
-                PickerConverter.parseLongToDateTime(_moimSchedule.value!!.startDate)
-            )
+            return _moimSchedule.value!!.period
         }
         return null
     }
