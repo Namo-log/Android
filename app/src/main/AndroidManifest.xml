@@ -96,15 +96,11 @@
             android:exported="false"
             android:theme="@style/SlideAnimation" />
         <activity
-            android:name=".presentation.ui.group.diary.MoimDiaryActivity"
+            android:name=".presentation.ui.group.diary.MoimDiaryDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".presentation.ui.diary.PersonalDiaryDetailActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustPan" />
-        <activity
-            android:name=".presentation.ui.diary.MoimMemoDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".presentation.ui.community.alert.CommunityAlertActivity"/>

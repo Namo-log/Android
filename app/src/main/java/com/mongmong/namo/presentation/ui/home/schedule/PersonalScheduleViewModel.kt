@@ -11,15 +11,15 @@ import com.mongmong.namo.domain.model.Category
 import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
-import com.mongmong.namo.data.dto.Period
 import com.mongmong.namo.domain.model.Location
+import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecases.FindCategoryUseCase
 import com.mongmong.namo.domain.usecases.GetCategoriesUseCase
-import com.mongmong.namo.presentation.utils.PickerConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
+import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -189,8 +189,8 @@ class PersonalScheduleViewModel @Inject constructor(
     private fun setDailySchedule() {
         // 선택 날짜에 해당되는 일정 필터링
         _dailyScheduleList = _scheduleList.value!!.filter { schedule ->
-            schedule.startLong <= getClickedDatePeriod().endDate &&
-                    schedule.endLong >= getClickedDatePeriod().startDate
+            schedule.period.startDate <= getClickedDatePeriod().endDate &&
+                    schedule.period.endDate >= getClickedDatePeriod().startDate
         }
         _isDailyScheduleEmptyPair.value = Pair(
             isDailyScheduleEmpty(false), // 개인 일정
@@ -205,11 +205,15 @@ class PersonalScheduleViewModel @Inject constructor(
         setDailySchedule()
     }
 
-    private fun getClickedDatePeriod(): Period {
-        // 클릭한 날짜의 시작, 종료 시간
-        return Period(
-            (getClickedDate().withTimeAtStartOfDay().millis) / 1000, // 날짜 시작일
-            (getClickedDate().plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000, // 날짜 종료일
+    // 클릭한 날짜의 시작, 종료 시간
+    private fun getClickedDatePeriod(): SchedulePeriod {
+        return SchedulePeriod(
+            getClickedDate().toLocalDateTime(), // 날짜 시작일
+            getClickedDate() // 날짜 종료일
+                .plusDays(1)
+                .withTimeAtStartOfDay()
+                .minusMillis(1)
+                .toLocalDateTime()
         )
     }
 
@@ -227,12 +231,14 @@ class PersonalScheduleViewModel @Inject constructor(
     }
 
     // 시간 변경
-    fun updateTime(startDateTime: DateTime?, endDateTime: DateTime?) {
+    fun updateTime(startDateTime: LocalDateTime?, endDateTime: LocalDateTime?) {
         _schedule.value = _schedule.value?.copy(
-            startLong = startDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
-                ?: _schedule.value!!.startLong,
-            endLong = endDateTime?.let { PickerConverter.parseDateTimeToLong(it) }
-                ?: _schedule.value!!.endLong
+            period = SchedulePeriod(
+                startDate = startDateTime
+                    ?: _schedule.value!!.period.startDate,
+                endDate = endDateTime
+                    ?: _schedule.value!!.period.endDate
+            ),
         )
     }
 
@@ -274,12 +280,9 @@ class PersonalScheduleViewModel @Inject constructor(
         } as ArrayList<Schedule>
     }
 
-    fun getDateTime(): Pair<DateTime, DateTime>? {
+    fun getDateTime(): SchedulePeriod? {
         if (_schedule.value != null) {
-            return Pair(
-                PickerConverter.parseLongToDateTime(schedule.value!!.startLong),
-                PickerConverter.parseLongToDateTime(schedule.value!!.endLong)
-            )
+            return schedule.value!!.period
         }
         return null
     }
@@ -300,6 +303,6 @@ class PersonalScheduleViewModel @Inject constructor(
 
     fun isInvalidDate(): Boolean {
         // 시작일 > 종료일
-        return schedule.value!!.startLong > schedule.value!!.endLong
+        return schedule.value!!.period.startDate > schedule.value!!.period.endDate
     }
 }

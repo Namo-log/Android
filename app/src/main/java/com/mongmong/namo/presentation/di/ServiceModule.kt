@@ -1,5 +1,6 @@
 package com.mongmong.namo.presentation.di
 
+import com.mongmong.namo.data.remote.ActivityApiService
 import com.mongmong.namo.data.remote.AnonymousApiService
 import com.mongmong.namo.data.remote.CategoryApiService
 import com.mongmong.namo.data.remote.DiaryApiService
@@ -58,6 +59,12 @@ object ServiceModule {
     @Singleton
     fun provideDiaryService(@NetworkModule.BasicRetrofit retrofit: Retrofit) : DiaryApiService =
         retrofit.create(DiaryApiService::class.java)
+
+    /** 활동 */
+    @Provides
+    @Singleton
+    fun provideActivityService(@NetworkModule.BasicRetrofit retrofit: Retrofit): ActivityApiService =
+        retrofit.create(ActivityApiService::class.java)
 
     /** 카테고리 */
     @Provides

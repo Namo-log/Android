@@ -1,5 +1,7 @@
 package com.mongmong.namo.data.utils.mappers
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.data.dto.Period
 import com.mongmong.namo.data.dto.ScheduleLocation
@@ -7,6 +9,8 @@ import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.domain.model.Location
 import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.domain.model.ScheduleCategoryInfo
+import com.mongmong.namo.domain.model.SchedulePeriod
+import com.mongmong.namo.presentation.utils.ScheduleDateConverter
 import com.mongmong.namo.domain.model.ScheduleType
 
 object ScheduleMapper {
@@ -15,8 +19,10 @@ object ScheduleMapper {
         return Schedule(
             scheduleId = this.scheduleId,
             title = this.title,
-            startLong = this.startDate,
-            endLong = this.endDate,
+            period = SchedulePeriod( // LocalDateTime 형태로 변환
+                ScheduleDateConverter.parseServerDateToLocalDateTime(this.startDate),
+                ScheduleDateConverter.parseServerDateToLocalDateTime(this.endDate),
+            ),
             locationInfo = Location(
                 this.locationInfo.longitude,
                 this.locationInfo.latitude,
@@ -35,13 +41,13 @@ object ScheduleMapper {
     }
 
     // Model -> DTO
-    fun Schedule.toModel(): ScheduleRequestBody {
+    fun Schedule.toDTO(): ScheduleRequestBody {
         return ScheduleRequestBody(
             title = this.title,
             categoryId = this.categoryInfo.categoryId,
             period = Period(
-                this.startLong,
-                this.endLong
+                this.period.startDate.toString(),
+                this.period.endDate.toString()
             ),
             location = ScheduleLocation(
                 this.locationInfo.longitude,

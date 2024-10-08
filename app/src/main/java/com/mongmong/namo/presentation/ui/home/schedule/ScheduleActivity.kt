@@ -13,16 +13,20 @@ import androidx.activity.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.databinding.ActivityScheduleBinding
+import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.home.notify.PushNotificationReceiver
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
+import com.mongmong.namo.presentation.utils.LocalDateTimeAdapter
 import com.mongmong.namo.presentation.utils.PickerConverter
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
+import org.joda.time.LocalDateTime
 
 @AndroidEntryPoint
 class ScheduleActivity : BaseActivity<ActivityScheduleBinding>(R.layout.activity_schedule), ConfirmDialogInterface {
@@ -38,8 +42,12 @@ class ScheduleActivity : BaseActivity<ActivityScheduleBinding>(R.layout.activity
 
         // intent가 넘어왔는지 확인
         intent.getStringExtra("schedule")?.let { scheduleJson ->
-            // 넘어왔다면 song 인스턴스에 gson 형태로 받아온 데이터를 넣어줌
-            schedule = Gson().fromJson(scheduleJson, Schedule::class.java)
+            // GsonBuilder에 커스텀 TypeAdapter 등록
+            val gson = GsonBuilder()
+                .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeAdapter())
+                .create()
+            // JSON을 Schedule로 역직렬화
+            schedule = gson.fromJson(scheduleJson, Schedule::class.java)
             Log.e("ScheduleActivity", schedule.toString()) // 로그 확인
         }
         val nowDay = intent.getLongExtra("nowDay", 0)
@@ -51,8 +59,10 @@ class ScheduleActivity : BaseActivity<ActivityScheduleBinding>(R.layout.activity
             binding.scheduleDeleteBtn.visibility = View.GONE
             viewModel.setSchedule(
                 Schedule(
-                    startLong = PickerConverter.getDefaultDate(DateTime(nowDay), true),
-                    endLong = PickerConverter.getDefaultDate(DateTime(nowDay), false)
+                    period = SchedulePeriod(
+                        PickerConverter.getDefaultDate(DateTime(nowDay).toLocalDateTime(), true),
+                        PickerConverter.getDefaultDate(DateTime(nowDay).toLocalDateTime(), false)
+                    ),
                 )
             )
         }
@@ -102,7 +112,7 @@ class ScheduleActivity : BaseActivity<ActivityScheduleBinding>(R.layout.activity
         val intent = Intent(this, PushNotificationReceiver::class.java)
         intent.putExtra("notification_id", id)
         intent.putExtra("notification_title", schedule.title)
-        intent.putExtra("notification_content", DateTime(schedule.startLong).toString("MM-dd") + " ~ " + DateTime(schedule.endLong).toString("MM-dd"))
+        intent.putExtra("notification_content", DateTime(schedule.period.startDate).toString("MM-dd") + " ~ " + DateTime(schedule.period.endDate).toString("MM-dd"))
 
         val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.getBroadcast(this, id, intent, PendingIntent.FLAG_IMMUTABLE)

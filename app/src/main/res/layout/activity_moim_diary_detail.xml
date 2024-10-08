@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?><!-- 그룹 다이어리 추가 화면 -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.mongmong.namo.presentation.utils.DiaryDateConverter" />
+        <import type="android.text.TextUtils" />
+        <import type="android.view.View" />
+        <variable
+            name="viewModel"
+            type="com.mongmong.namo.presentation.ui.group.diary.MoimDiaryViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:fitsSystemWindows="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/moim_diary_top"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/moim_diary_back_iv"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_back"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/moim_diary_title_tv"
+                style="@style/header"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="@{viewModel.diarySchedule.title}"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="@id/moim_diary_back_iv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/moim_diary_back_iv" />
+
+            <ImageView
+                android:id="@+id/moim_diary_delete_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:src="@drawable/ic_delete"
+                android:visibility="@{viewModel.diarySchedule.hasDiary ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@id/moim_diary_back_iv"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/moim_diary_back_iv" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/moim_diary_save_btn"
+            app:layout_constraintTop_toBottomOf="@id/moim_diary_top">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/moim_diary_date_circle_iv"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:backgroundTint="@color/white"
+                        app:cardCornerRadius="80dp"
+                        app:cardElevation="5dp"
+                        android:layout_marginStart="25dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/moim_diary_place_tv"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/moim_diary_date_tv" />
+
+                    <TextView
+                        android:id="@+id/moim_diary_today_month_tv"
+                        style="@style/content_bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:elevation="5dp"
+                        android:includeFontPadding="false"
+                        android:text="@{DiaryDateConverter.toMMM(viewModel.diarySchedule.date)}"
+                        app:layout_constraintBottom_toTopOf="@id/moim_diary_today_num_tv"
+                        app:layout_constraintEnd_toEndOf="@id/moim_diary_date_circle_iv"
+                        app:layout_constraintStart_toStartOf="@id/moim_diary_date_circle_iv"
+                        app:layout_constraintTop_toTopOf="@id/moim_diary_date_circle_iv"
+                        app:layout_constraintVertical_chainStyle="packed" />
+
+                    <TextView
+                        android:id="@+id/moim_diary_today_num_tv"
+                        style="@style/content_bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:elevation="5dp"
+                        android:includeFontPadding="false"
+                        android:text="@{DiaryDateConverter.toDD(viewModel.diarySchedule.date)}"
+                        android:textSize="36sp"
+                        app:layout_constraintBottom_toBottomOf="@id/moim_diary_date_circle_iv"
+                        app:layout_constraintEnd_toEndOf="@id/moim_diary_date_circle_iv"
+                        app:layout_constraintStart_toStartOf="@id/moim_diary_date_circle_iv"
+                        app:layout_constraintTop_toBottomOf="@id/moim_diary_today_month_tv" />
+
+
+                    <TextView
+                        android:id="@+id/moim_diary_date_tv"
+                        style="@style/content_bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="25dp"
+                        android:layout_marginTop="27dp"
+                        android:text="@string/diary_date"
+                        app:layout_constraintStart_toEndOf="@id/moim_diary_date_circle_iv"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/moim_diary_input_date_tv"
+                        style="@style/content_regular"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="@{DiaryDateConverter.toFullDateTimeWithDay(viewModel.diarySchedule.date)}"
+                        app:layout_constraintStart_toEndOf="@id/moim_diary_date_tv"
+                        app:layout_constraintTop_toTopOf="@id/moim_diary_date_tv" />
+
+                    <TextView
+                        android:id="@+id/moim_diary_place_tv"
+                        style="@style/content_bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/diary_place"
+                        app:layout_constraintStart_toStartOf="@+id/moim_diary_date_tv"
+                        app:layout_constraintTop_toBottomOf="@id/moim_diary_date_tv" />
+
+                    <TextView
+                        android:id="@+id/moim_diary_input_place_tv"
+                        style="@style/content_regular"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="30dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@{TextUtils.isEmpty(viewModel.diarySchedule.location.name) ? @string/diary_no_place : viewModel.diarySchedule.location.name}"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/moim_diary_place_tv"
+                        app:layout_constraintTop_toTopOf="@id/moim_diary_place_tv" />
+
+                    <TextView
+                        android:id="@+id/moim_diary_people_tv"
+                        style="@style/content_bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginTop="20dp"
+                        android:text='@{@string/diary_attendee + "(" + viewModel.diarySchedule.participantCount + ")"}'
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/moim_diary_date_circle_iv" />
+
+                    <ImageView
+                        android:id="@+id/moim_diary_participant_hide_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="25dp"
+                        android:padding="5dp"
+                        android:onClick="@{() -> viewModel.toggleIsParticipantVisible()}"
+                        android:rotation="@{viewModel.isParticipantVisible ? 180 : 0}"
+                        android:src="@drawable/ic_arrow_down_bold"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="@id/moim_diary_people_tv"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/moim_diary_people_tv" />
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/moim_diary_schedule_btn"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginTop="15dp"
+                        android:backgroundTint="@color/main_text"
+                        app:cardCornerRadius="42dp"
+                        app:cardElevation="0dp"
+                        android:visibility="@{viewModel.isParticipantVisible ? View.VISIBLE : View.GONE}"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/moim_diary_people_tv" >
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_calendar"
+                            android:layout_gravity="center"
+                            app:tint="@color/white" />
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/moim_participant_rv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="30dp"
+                        android:orientation="horizontal"
+                        android:visibility="@{viewModel.isParticipantVisible ? View.VISIBLE : View.GONE}"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintBottom_toBottomOf="@+id/moim_diary_schedule_btn"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/moim_diary_schedule_btn"
+                        app:layout_constraintTop_toTopOf="@+id/moim_diary_schedule_btn"
+                        tools:listitem="@layout/item_moim_diary_participants" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="25dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_basic_item"
+                    android:backgroundTint="@color/white"
+                    android:elevation="3dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/content_bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="12dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_weight="1"
+                        android:text="@string/moim_diary_whole_money" />
+
+                    <TextView
+                        style="@style/content_regular"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="12dp"
+                        android:layout_marginEnd="20dp"
+                        android:drawableEnd="@drawable/ic_arrow_right"
+                        android:drawablePadding="8dp"
+                        android:drawableTint="@color/text_unselected"
+                        android:text="@string/moim_diary_none_activity"
+                        android:textColor="@color/text_unselected" />
+                </LinearLayout>
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/moim_diary_vp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <me.relex.circleindicator.CircleIndicator3
+                    android:id="@+id/moim_diary_indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp"
+                    app:ci_drawable="@drawable/ic_indicator"
+                    app:ci_drawable_unselected="@drawable/ic_indicator_unselected" />
+
+                <LinearLayout
+                    android:id="@+id/moim_activity_add_ly"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="30dp"
+                    android:background="@drawable/bg_basic_outline_btn"
+                    android:paddingHorizontal="25dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="center_vertical"
+                        android:backgroundTint="@color/main_text"
+                        android:src="@drawable/ic_moim_diary_activity_add" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginVertical="11dp"
+                        android:layout_marginStart="12dp"
+                        android:text="@string/diary_add_activity"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/moim_diary_save_btn"
+            style="@style/content_bold"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@{viewModel.diaryChanged ? @color/main : @color/text_unselected}"
+            android:enabled="@{viewModel.diaryChanged}"
+            android:text="@{viewModel.diarySchedule.hasDiary ? @string/diary_changes_save : @string/diary_add}"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+

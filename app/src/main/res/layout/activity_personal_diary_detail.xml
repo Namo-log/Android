@@ -14,7 +14,7 @@
             type="Integer" />
         <variable
             name="viewModel"
-            type="com.mongmong.namo.presentation.ui.diary.DiaryDetailViewModel" />
+            type="com.mongmong.namo.presentation.ui.diary.PersonalDiaryViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -74,7 +74,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/date_circle_iv"
+            android:id="@+id/moim_diary_date_circle_iv"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginStart="30dp"
@@ -95,9 +95,9 @@
             android:includeFontPadding="false"
             app:layout_constraintVertical_chainStyle="packed"
             app:layout_constraintBottom_toTopOf="@id/diary_today_num_tv"
-            app:layout_constraintEnd_toEndOf="@id/date_circle_iv"
-            app:layout_constraintStart_toStartOf="@id/date_circle_iv"
-            app:layout_constraintTop_toTopOf="@id/date_circle_iv" />
+            app:layout_constraintEnd_toEndOf="@id/moim_diary_date_circle_iv"
+            app:layout_constraintStart_toStartOf="@id/moim_diary_date_circle_iv"
+            app:layout_constraintTop_toTopOf="@id/moim_diary_date_circle_iv" />
 
         <TextView
             style="@style/content_bold"
@@ -108,9 +108,9 @@
             android:includeFontPadding="false"
             android:text="@{DiaryDateConverter.toDD(viewModel.diarySchedule.date)}"
             android:textSize="36sp"
-            app:layout_constraintBottom_toBottomOf="@id/date_circle_iv"
-            app:layout_constraintEnd_toEndOf="@id/date_circle_iv"
-            app:layout_constraintStart_toStartOf="@id/date_circle_iv"
+            app:layout_constraintBottom_toBottomOf="@id/moim_diary_date_circle_iv"
+            app:layout_constraintEnd_toEndOf="@id/moim_diary_date_circle_iv"
+            app:layout_constraintStart_toStartOf="@id/moim_diary_date_circle_iv"
             app:layout_constraintTop_toBottomOf="@id/diary_today_month_tv" />
 
 
@@ -120,9 +120,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
-            android:layout_marginTop="35dp"
+            android:layout_marginTop="27dp"
             android:text="@string/diary_date"
-            app:layout_constraintStart_toEndOf="@id/date_circle_iv"
+            app:layout_constraintStart_toEndOf="@id/moim_diary_date_circle_iv"
             app:layout_constraintTop_toBottomOf="@id/diary_top" />
 
         <TextView
@@ -154,7 +154,7 @@
             android:layout_marginEnd="20dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="@{TextUtils.isEmpty(viewModel.diarySchedule.location) ? @string/diary_no_place : viewModel.diarySchedule.location}"
+            android:text="@{TextUtils.isEmpty(viewModel.diarySchedule.location.name) ? @string/diary_no_place : viewModel.diarySchedule.location.name}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/diary_place_tv"
             app:layout_constraintTop_toTopOf="@id/diary_place_tv" />
@@ -167,8 +167,8 @@
             android:text="@string/diary_enjoy"
             android:layout_marginStart="15dp"
             android:layout_marginTop="24dp"
-            app:layout_constraintStart_toStartOf="@id/date_circle_iv"
-            app:layout_constraintTop_toBottomOf="@+id/date_circle_iv" />
+            app:layout_constraintStart_toStartOf="@id/moim_diary_date_circle_iv"
+            app:layout_constraintTop_toBottomOf="@+id/moim_diary_date_circle_iv" />
 
 
         <LinearLayout
@@ -185,27 +185,27 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:contentDescription="Heart 1"
-                android:onClick="@{() -> viewModel.onEnjoyClicked(1)}"
+                android:onClick="@{() -> viewModel.updateEnjoy(1)}"
                 android:src="@drawable/ic_favorite"
-                app:tint="@{viewModel.enjoy >= 1 ? @color/main : @color/text_unselected}" />
+                app:tint="@{viewModel.diary.enjoyRating >= 1 ? @color/main : @color/text_unselected}" />
 
             <ImageView
                 android:id="@+id/diary_enjoy_2_iv"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:onClick="@{() -> viewModel.onEnjoyClicked(2)}"
+                android:onClick="@{() -> viewModel.updateEnjoy(2)}"
                 android:src="@drawable/ic_favorite"
                 android:layout_marginStart="4dp"
-                app:tint="@{viewModel.enjoy >= 2 ? @color/main : @color/text_unselected}" />
+                app:tint="@{viewModel.diary.enjoyRating >= 2 ? @color/main : @color/text_unselected}" />
 
             <ImageView
                 android:id="@+id/diary_enjoy_3_iv"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:onClick="@{() -> viewModel.onEnjoyClicked(3)}"
+                android:onClick="@{() -> viewModel.updateEnjoy(3)}"
                 android:src="@drawable/ic_favorite"
                 android:layout_marginStart="4dp"
-                app:tint="@{viewModel.enjoy >= 3 ? @color/main : @color/text_unselected}" />
+                app:tint="@{viewModel.diary.enjoyRating >= 3 ? @color/main : @color/text_unselected}" />
         </LinearLayout>
 
         <LinearLayout
@@ -242,13 +242,16 @@
                 style="@style/subtext_14"
                 android:id="@+id/diary_contents_et"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="wrap_content"
+                android:minHeight="150dp"
                 android:background="@drawable/bg_diary_content_view"
                 android:gravity="start"
                 android:hint="@string/diary_input"
                 android:inputType="textMultiLine"
-                android:padding="10dp"
-                android:text="@={viewModel.content}"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp"
+                android:text="@={viewModel.diary.content}"
+                android:afterTextChanged="@{() -> viewModel.checkForChanges()}"
                 android:textColorHint="@color/text_placeholder" />
         </LinearLayout>
 
@@ -258,7 +261,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text='@{viewModel.content.length() + @string/diary_max_num}'
+            android:text='@{viewModel.diary.content.length() + @string/diary_max_num}'
             android:textColor="@color/text_unselected"
             app:layout_constraintEnd_toEndOf="@id/linear_corner"
             app:layout_constraintTop_toBottomOf="@id/linear_corner" />
@@ -292,7 +295,7 @@
                 android:orientation="horizontal"
                 android:overScrollMode="never"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_gallery_list" />
+                tools:listitem="@layout/item_diary_image" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/diary_gallery_click_iv"
@@ -300,7 +303,7 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center"
                 android:layout_marginStart="12dp"
-                android:visibility="@{viewModel.imgList.size() == 3 ? View.GONE : View.VISIBLE}"
+                android:visibility="@{viewModel.diary.diaryImages.size() == 3 ? View.GONE : View.VISIBLE}"
                 android:background="@drawable/bg_gallery_dotted"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_gallery" />

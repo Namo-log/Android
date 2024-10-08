@@ -6,8 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemSchedulePreviewMoimBinding
 import com.mongmong.namo.domain.model.MoimCalendarSchedule
+import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.presentation.utils.ScheduleTimeConverter
 import org.joda.time.DateTime
+import org.joda.time.LocalDateTime
 
 class ParticipantDailyScheduleRVAdapter : RecyclerView.Adapter<ParticipantDailyScheduleRVAdapter.ViewHolder>() {
 
@@ -47,6 +49,10 @@ class ParticipantDailyScheduleRVAdapter : RecyclerView.Adapter<ParticipantDailyS
 
         fun bind(personalSchedule: MoimCalendarSchedule) {
             binding.schedule = personalSchedule
+
+            binding.itemCalendarEventTime.text = timeConverter.getScheduleTimeText(
+                SchedulePeriod(LocalDateTime.now(), LocalDateTime.now()) //TODO: 추후 변경 필요
+            )
         }
     }
 }

@@ -12,12 +12,13 @@ data class GetMonthScheduleResponse (
 data class GetMonthScheduleResult (
     val scheduleId: Long,
     val title: String,
-    val startDate: Long,
-    val endDate: Long,
+    val startDate: String,
+    val endDate: String,
     val alarmDate: List<Int>,
     val locationInfo: ScheduleLocation,
     val categoryInfo: ScheduleCategoryInfo,
     val hasDiary: Boolean?,
+    val isMeetingSchedule: Boolean,
     val scheduleType: Int, // 0: 개인 일정, 1: 모임 일정, 2: 생일
 )
 
@@ -42,8 +43,8 @@ data class ScheduleRequestBody(
 )
 
 data class Period(
-    var startDate: Long = 0L,
-    var endDate: Long = 0L,
+    var startDate: String,
+    var endDate: String,
 )
 
 data class ScheduleLocation(

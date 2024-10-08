@@ -4,13 +4,14 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import com.mongmong.namo.domain.model.Category
-import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.presentation.config.CategoryColor
 import com.mongmong.namo.presentation.ui.home.calendar.data.StartEnd
 import com.mongmong.namo.presentation.utils.CalendarUtils.Companion.DAYS_PER_WEEK
 import com.mongmong.namo.presentation.utils.CustomCalendarView
+import com.mongmong.namo.presentation.utils.ScheduleDateConverter
 import org.joda.time.DateTime
+import org.joda.time.Days
 
 class PersonalCalendarView(context: Context, attrs: AttributeSet) :
     CustomCalendarView(context, attrs) {
@@ -29,8 +30,8 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
 
     private fun drawDetailedSchedules(canvas: Canvas) {
         for (i in scheduleList.indices) {
-            val startIdx = days.indexOf(DateTime(scheduleList[i].startLong * 1000L).withTimeAtStartOfDay())
-            val endIdx = days.indexOf(DateTime(scheduleList[i].endLong * 1000L).withTimeAtStartOfDay())
+            val startIdx = days.indexOf(ScheduleDateConverter.parseLocalDateTimeToDateTime(scheduleList[i].period.startDate).withTimeAtStartOfDay())
+            val endIdx = days.indexOf(ScheduleDateConverter.parseLocalDateTimeToDateTime(scheduleList[i].period.endDate).withTimeAtStartOfDay())
 
             for (splitSchedule in splitWeek(startIdx, endIdx)) {
                 val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
@@ -48,8 +49,8 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
 
     private fun drawCompactSchedules(canvas: Canvas) {
         for (i in scheduleList.indices) {
-            val startIdx = days.indexOf(DateTime(scheduleList[i].startLong * 1000L).withTimeAtStartOfDay())
-            val endIdx = days.indexOf(DateTime(scheduleList[i].endLong * 1000L).withTimeAtStartOfDay())
+            val startIdx = days.indexOf(ScheduleDateConverter.parseLocalDateTimeToDateTime(scheduleList[i].period.startDate).withTimeAtStartOfDay())
+            val endIdx = days.indexOf(ScheduleDateConverter.parseLocalDateTimeToDateTime(scheduleList[i].period.endDate).withTimeAtStartOfDay())
 
             for (splitSchedule in splitWeek(startIdx, endIdx)) {
                 val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
@@ -134,9 +135,9 @@ class PersonalCalendarView(context: Context, attrs: AttributeSet) :
 
     fun setScheduleList(events: List<Schedule>) {
         val sortedEvents = events.sortedWith(compareByDescending<Schedule> {
-            DateTime(it.endLong * 1000L).millis - DateTime(it.startLong * 1000L).millis
+            Days.daysBetween(it.period.startDate, it.period.endDate)
         }.thenBy {
-            it.startLong
+            it.period.startDate
         })
 
         scheduleList.clear()

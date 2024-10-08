@@ -81,6 +81,9 @@ dependencies {
     //dot indicator
     implementation "com.tbuonomo:dotsindicator:4.3"
 
+    //indicator
+    implementation 'me.relex:circleindicator:2.1.6'
+
     //lottie - animation
     implementation 'com.airbnb.android:lottie:3.5.0'
 

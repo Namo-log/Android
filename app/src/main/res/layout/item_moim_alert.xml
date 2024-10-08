@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.mongmong.namo.presentation.utils.DiaryDateConverter"/>
+        <import type="com.mongmong.namo.presentation.utils.ScheduleDateConverter"/>
         <variable
             name="moim"
             type="com.mongmong.namo.domain.model.Moim"/>
@@ -49,7 +49,7 @@
                     android:id="@+id/item_moim_alert_date_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{DiaryDateConverter.getFormattedDate(moim.startDate)}"
+                    android:text="@{ScheduleDateConverter.getFullDateText(moim.startDate)}"
                     tools:text="2024.08.07 (수) 12:00"
                     style="@style/subtext_12"/>
 

@@ -6,8 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.mongmong.namo.domain.model.Friend
 import com.mongmong.namo.domain.model.Moim
 import com.mongmong.namo.domain.model.group.GroupMember
-import com.mongmong.namo.presentation.utils.PickerConverter
-import org.joda.time.DateTime
+import org.joda.time.LocalDateTime
 
 class AlertViewModel: ViewModel() {
     private val _moimRequestList = MutableLiveData<List<Moim>>(emptyList())
@@ -19,7 +18,7 @@ class AlertViewModel: ViewModel() {
     init {
         _moimRequestList.value = listOf(
             Moim(
-                1, PickerConverter.parseDateTimeToLong(DateTime.now()), "", "나모 모임 일정", "강남역",
+                1, LocalDateTime.now(), "", "나모 모임 일정", "강남역",
                 listOf(GroupMember(3, "코코아", 4)
             ))
         )

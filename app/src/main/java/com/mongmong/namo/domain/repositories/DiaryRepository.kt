@@ -1,29 +1,37 @@
 package com.mongmong.namo.domain.repositories
 
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
 import com.mongmong.namo.domain.model.CalendarDiaryDate
 import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryDetail
-import com.mongmong.namo.domain.model.DiarySchedule
-import com.mongmong.namo.domain.model.MoimDiary
 import com.mongmong.namo.domain.model.ScheduleForDiary
-import com.mongmong.namo.domain.model.group.MoimDiaryResult
 import kotlinx.coroutines.flow.Flow
 
 
 interface DiaryRepository {
-    suspend fun getScheduleForDiary(scheduleId: Long): ScheduleForDiary
-    suspend fun getPersonalDiary(localId: Long): DiaryDetail
+    /** 기록 */
+    // 기록 보관함 조회
+    fun getDiaryCollectionPagingSource(
+        filterType: String?,
+        keyword: String?,
+    ): Flow<PagingData<Diary>>
 
-    suspend fun addPersonalDiary(
+    // 기록 일정 정보 조회
+    suspend fun getScheduleForDiary(scheduleId: Long): ScheduleForDiary
+
+    // 기록 개별 조회
+    suspend fun getDiary(scheduleId: Long): DiaryDetail
+
+    // 기록 추가
+    suspend fun addDiary(
         content: String,
         enjoyRating: Int,
         images: List<String>,
         scheduleId: Long
     ): Boolean
 
-    suspend fun editPersonalDiary(
+    // 기록 수정
+    suspend fun editDiary(
         diaryId: Long,
         content: String,
         enjoyRating: Int,
@@ -31,51 +39,12 @@ interface DiaryRepository {
         deleteImageIds: List<Long>
     ): Boolean
 
-    suspend fun deletePersonalDiary(
-        diaryId: Long
-    ): Boolean
+    // 기록 삭제
+    suspend fun deleteDiary(diaryId: Long): Boolean
 
+    // 기록 캘린더 조회
     suspend fun getCalendarDiary(yearMonth: String): CalendarDiaryDate
 
+    // 날짜별 기록 조회 (기록 캘린더)
     suspend fun getDiaryByDate(date: String): List<Diary>
-
-    suspend fun uploadDiaryToServer()
-
-    suspend fun postDiaryToServer(serverId: Long, scheduleId: Long)
-
-    fun getPersonalDiaryPagingSource(month: String): PagingSource<Int, DiarySchedule>
-
-    fun getDiaryCollectionPagingSource(
-        filterType: String?,
-        keyword: String?,
-    ): Flow<PagingData<Diary>>
-
-    suspend fun getMoimDiary(scheduleId: Long): MoimDiaryResult
-
-    suspend fun getMoimMemo(scheduleId: Long): MoimDiary
-
-    suspend fun patchMoimMemo(scheduleId: Long, content: String): Boolean
-
-    suspend fun deleteMoimMemo(scheduleId: Long): Boolean
-
-    suspend fun addMoimActivity(
-        moimScheduleId: Long,
-        activityName: String,
-        activityMoney: Long,
-        participantUserIds: List<Long>,
-        createImages: List<String>?
-    )
-
-    suspend fun editMoimActivity(
-        activityId: Long,
-        deleteImageIds: List<Long>?,
-        activityName: String,
-        activityMoney: Long,
-        participantUserIds: List<Long>,
-        createImages: List<String>?
-    )
-
-    suspend fun deleteMoimActivity(activityId: Long)
-
-    suspend fun deleteMoimDiary(moimScheduleId: Long): Boolean
 }

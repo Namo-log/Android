@@ -2,11 +2,12 @@ package com.mongmong.namo.presentation.di
 
 import android.content.Context
 import com.mongmong.namo.data.datasource.category.RemoteCategoryDataSource
+import com.mongmong.namo.data.datasource.diary.ActivityDataSource
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
-import com.mongmong.namo.data.datasource.diary.LocalDiaryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteDiaryDataSource
 import com.mongmong.namo.data.datasource.group.GroupDataSource
 import com.mongmong.namo.data.local.dao.DiaryDao
+import com.mongmong.namo.data.remote.ActivityApiService
 import com.mongmong.namo.data.remote.CategoryApiService
 import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupApiService
@@ -31,14 +32,15 @@ object DataSourceModule {
 
     /** 기록 */
     @Provides
-    fun provideLocalDiaryDataSource(diaryDao: DiaryDao): LocalDiaryDataSource = LocalDiaryDataSource(diaryDao)
-    @Provides
     fun provideRemoteDiaryDataSource(
-        diaryApiService: DiaryApiService,
-        groupDiaryApiService: GroupDiaryApiService,
-        @ApplicationContext context: Context
-    )
-    : RemoteDiaryDataSource = RemoteDiaryDataSource(diaryApiService, groupDiaryApiService, context)
+        diaryApiService: DiaryApiService
+    ): RemoteDiaryDataSource = RemoteDiaryDataSource(diaryApiService)
+
+    /** 활동 */
+    @Provides
+    fun provideActivityDataSource(
+        activityApiService: ActivityApiService
+    ): ActivityDataSource = ActivityDataSource(activityApiService)
 
     /** 카테고리 */
     @Provides

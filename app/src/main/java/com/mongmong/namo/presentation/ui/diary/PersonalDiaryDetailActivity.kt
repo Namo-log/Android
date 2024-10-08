@@ -16,7 +16,7 @@ import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.databinding.ActivityPersonalDiaryDetailBinding
-import com.mongmong.namo.presentation.ui.diary.adapter.GalleryImageRVAdapter
+import com.mongmong.namo.presentation.ui.diary.adapter.PersonalDiaryImagesRVAdapter
 import com.mongmong.namo.presentation.utils.ConfirmDialog
 import com.mongmong.namo.presentation.utils.ConfirmDialog.ConfirmDialogInterface
 import com.mongmong.namo.R
@@ -30,9 +30,9 @@ import java.util.ArrayList
 class PersonalDiaryDetailActivity
     : BaseActivity<ActivityPersonalDiaryDetailBinding>(R.layout.activity_personal_diary_detail),
     ConfirmDialogInterface {
-    private lateinit var galleryAdapter: GalleryImageRVAdapter
+    private lateinit var galleryAdapter: PersonalDiaryImagesRVAdapter
 
-    private val viewModel: DiaryDetailViewModel by viewModels()
+    private val viewModel: PersonalDiaryViewModel by viewModels()
 
     override fun setup() {
         binding.apply {
@@ -59,41 +59,44 @@ class PersonalDiaryDetailActivity
             viewModel.setNewDiary()
         } else {  // 기록 있을 때, 수정
             Log.d("setCreateOrEdit", "dd2")
-            viewModel.getPersonalDiary()
+            viewModel.getDiaryData()
         }
     }
 
     private fun initClickListener() {
-            onBackPressedDispatcher.addCallback(this@PersonalDiaryDetailActivity, object : OnBackPressedCallback(true) {
+        onBackPressedDispatcher.addCallback(
+            this@PersonalDiaryDetailActivity,
+            object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if(viewModel.diaryChanged.value == true) { showBackDialog() }
-                    else finish()
+                    if (viewModel.diaryChanged.value == true) {
+                        showBackDialog()
+                    } else finish()
                 }
             })
 
-            binding.diaryBackIv.setOnClickListener {
-                if (viewModel.diaryChanged.value == true) { showBackDialog() }
-                else finish()
+        binding.diaryBackIv.setOnClickListener {
+            if (viewModel.diaryChanged.value == true) {
+                showBackDialog()
+            } else finish()
+        }
+        binding.diaryGalleryClickIv.setOnClickListener { getGallery() }
+        binding.diarySaveBtn.setOnClickListener {
+            Log.d("PersonalDiaryDetailActivity", "save btn")
+            if (viewModel.diarySchedule.value?.hasDiary == false) {
+                Log.d("PersonalDiaryDetailActivity", "save btn add")
+                viewModel.addDiary()
+            } else {
+                Log.d("PersonalDiaryDetailActivity", "save btn edit")
+                viewModel.editDiary()
             }
-            binding.diaryGalleryClickIv.setOnClickListener { getGallery() }
-            binding.diarySaveBtn.setOnClickListener {
-                Log.d("PersonalDiaryDetailActivity", "save btn")
-                if(viewModel.diarySchedule.value?.hasDiary == false) {
-                    Log.d("PersonalDiaryDetailActivity", "save btn add")
-                    viewModel.addPersonalDiary()
-                }
-                else {
-                    Log.d("PersonalDiaryDetailActivity", "save btn edit")
-                    viewModel.editPersonalDiary()
-                }
-            }
-            binding.diaryDeleteIv.setOnClickListener {
-                showDeleteDialog()
-            }
+        }
+        binding.diaryDeleteIv.setOnClickListener {
+            showDeleteDialog()
+        }
     }
 
     private fun initRecyclerView() {
-        galleryAdapter = GalleryImageRVAdapter(false,
+        galleryAdapter = PersonalDiaryImagesRVAdapter(
             deleteClickListener = { removedImage ->
                 viewModel.removeImage(removedImage)
             },
@@ -102,31 +105,30 @@ class PersonalDiaryDetailActivity
                     Intent(this, DiaryImageDetailActivity::class.java)
                         .putStringArrayListExtra(
                             "imgs",
-                            viewModel.imgList.value?.map { it.imageUrl } as ArrayList<String>
+                            viewModel.diary.value?.diaryImages?.map { it.imageUrl } as ArrayList<String>
                         )
                 )
             }
         )
 
         binding.diaryGallerySavedRv.apply {
-            adapter = galleryAdapter.apply { addItemDecoration(DiaryImageItemDecoration(this@PersonalDiaryDetailActivity, IMAGE_MARGIN)) }
+            adapter = galleryAdapter.apply {
+                addItemDecoration(DiaryImageItemDecoration(this@PersonalDiaryDetailActivity, IMAGE_MARGIN))
+                itemAnimator = null
+            }
             layoutManager = LinearLayoutManager(this@PersonalDiaryDetailActivity, LinearLayoutManager.HORIZONTAL, false)
         }
     }
 
     private fun initObserve() {
         viewModel.diary.observe(this) { diary ->
-            viewModel.updateImgList(diary.diaryImages)
-        }
-
-        viewModel.imgList.observe(this) { imgList ->
-            galleryAdapter.addImages(imgList)
+            galleryAdapter.addImages(diary.diaryImages)
         }
 
         viewModel.addDiaryResult.observe(this) { isSuccess ->
             if (isSuccess) {
                 Toast.makeText(this, "변경사항이 적용되었습니다", Toast.LENGTH_SHORT).show()
-                viewModel.getPersonalDiary()
+                viewModel.getDiaryData()
             } else {
                 Toast.makeText(this, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
             }
@@ -135,7 +137,7 @@ class PersonalDiaryDetailActivity
         viewModel.editDiaryResult.observe(this) { isSuccess ->
             if (isSuccess) {
                 Toast.makeText(this, "변경사항이 적용되었습니다", Toast.LENGTH_SHORT).show()
-                viewModel.getPersonalDiary()
+                viewModel.getDiaryData()
             } else {
                 Toast.makeText(this, "error", Toast.LENGTH_SHORT).show()
             }
@@ -173,7 +175,7 @@ class PersonalDiaryDetailActivity
 
     override fun onClickYesButton(id: Int) {
         when(id) {
-            DELETE_BUTTON_ACTION -> viewModel.deletePersonalDiary() // 삭제
+            DELETE_BUTTON_ACTION -> viewModel.deleteDiary() // 삭제
             BACK_BUTTON_ACTION -> finish() // 뒤로가기
         }
     }
@@ -207,12 +209,12 @@ class PersonalDiaryDetailActivity
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         val imageUris = getImageUrisFromResult(result)
-        val currentImageCount = viewModel.imgList.value?.size ?: 0
+        val currentImageCount = viewModel.diary.value?.diaryImages?.size ?: 0
         if (imageUris.isNullOrEmpty()) return@registerForActivityResult
         if (currentImageCount + imageUris.size > 3) {
             Toast.makeText(this, "사진은 총 3장까지 선택 가능합니다.", Toast.LENGTH_SHORT).show()
         } else {
-            viewModel.addCreateImages(imageUris)
+            viewModel.addImages(imageUris)
         }
     }
 

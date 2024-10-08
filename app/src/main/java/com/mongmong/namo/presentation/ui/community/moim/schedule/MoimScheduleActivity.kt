@@ -231,25 +231,25 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     private fun initPicker() {
         val dateTimePair = viewModel.getDateTime() ?: return
         binding.moimScheduleStartTimeTp.apply { // 시작 시간
-            hour = dateTimePair.first.hourOfDay
-            minute = dateTimePair.first.minuteOfHour
+            hour = dateTimePair.startDate.hourOfDay
+            minute = dateTimePair.startDate.minuteOfHour
         }
         binding.moimScheduleEndTimeTp.apply { // 종료 시간
-            hour = dateTimePair.second.hourOfDay
-            minute = dateTimePair.second.minuteOfHour
+            hour = dateTimePair.endDate.hourOfDay
+            minute = dateTimePair.endDate.minuteOfHour
         }
-        binding.moimScheduleStartDateDp.init(dateTimePair.first.year, dateTimePair.first.monthOfYear - 1, dateTimePair.first.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
-            viewModel.updateTime(dateTimePair.first.withDate(year, monthOfYear + 1, dayOfMonth), null)
+        binding.moimScheduleStartDateDp.init(dateTimePair.startDate.year, dateTimePair.startDate.monthOfYear - 1, dateTimePair.startDate.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
+            viewModel.updateTime(dateTimePair.startDate.withDate(year, monthOfYear + 1, dayOfMonth), null)
         }
-        binding.moimScheduleEndDateDp.init(dateTimePair.second.year, dateTimePair.second.monthOfYear - 1, dateTimePair.second.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
-            viewModel.updateTime(null, dateTimePair.second.withDate(year, monthOfYear + 1, dayOfMonth))
+        binding.moimScheduleEndDateDp.init(dateTimePair.endDate.year, dateTimePair.endDate.monthOfYear - 1, dateTimePair.endDate.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
+            viewModel.updateTime(null, dateTimePair.endDate.withDate(year, monthOfYear + 1, dayOfMonth))
         }
     }
 
     private fun initPickerClickListeners() {
         // 시작 시간
         with(binding.moimScheduleStartTimeTp) {
-            val startDateTime = viewModel.getDateTime()?.first!!
+            val startDateTime = viewModel.getDateTime()?.startDate!!
             this.hour = startDateTime.hourOfDay
             this.minute = startDateTime.minuteOfHour
             this.setOnTimeChangedListener { _, hourOfDay, minute ->
@@ -258,7 +258,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
         }
         // 종료 시간
         with(binding.moimScheduleEndTimeTp) {
-            val endDateTime = viewModel.getDateTime()?.second!!
+            val endDateTime = viewModel.getDateTime()?.endDate!!
             this.hour = endDateTime.hourOfDay
             this.minute = endDateTime.minuteOfHour
             this.setOnTimeChangedListener { _, hourOfDay, minute ->

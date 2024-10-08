@@ -1,6 +1,5 @@
 package com.mongmong.namo.presentation.ui.community.calendar
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,8 +12,12 @@ import com.mongmong.namo.domain.model.MoimScheduleDetail
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import com.mongmong.namo.domain.model.SchedulePeriod
+import com.mongmong.namo.domain.model.group.GroupMember
+import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import org.joda.time.DateTime
 import javax.inject.Inject
+import org.joda.time.LocalDateTime
 
 @HiltViewModel
 class CalendarViewModel @Inject constructor (
@@ -90,11 +93,15 @@ class CalendarViewModel @Inject constructor (
         setDailySchedule()
     }
 
-    private fun getClickedDatePeriod(): Period {
+    private fun getClickedDatePeriod(): SchedulePeriod {
         // 클릭한 날짜의 시작, 종료 시간
-        return Period(
-            (getClickedDate().withTimeAtStartOfDay().millis) / 1000, // 날짜 시작일
-            (getClickedDate().plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000, // 날짜 종료일
+        return SchedulePeriod(
+            getClickedDate().toLocalDateTime(), // 날짜 시작일
+            getClickedDate() // 날짜 종료일
+                .plusDays(1)
+                .withTimeAtStartOfDay()
+                .minusMillis(1)
+                .toLocalDateTime()
         )
     }
 

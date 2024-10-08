@@ -71,7 +71,7 @@ class DailyScheduleRVAdapter : RecyclerView.Adapter<DailyScheduleRVAdapter.ViewH
         fun bind(schedule : Schedule) {
             binding.schedule = schedule
 
-            binding.itemSchedulePreviewTimeTv.text = timeConverter.getScheduleTimeText(schedule.startLong, schedule.endLong)
+            binding.itemSchedulePreviewTimeTv.text = timeConverter.getScheduleTimeText(schedule.period)
 
             // 기록 아이콘 클릭
             binding.itemSchedulePreviewDiaryIv.setOnClickListener {
