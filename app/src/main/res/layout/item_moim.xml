@@ -24,8 +24,7 @@
             android:id="@+id/item_moim_cover_img_iv"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            app:imageUrl="@{moim.coverImg}"
-            app:placeHolder="@{@drawable/img_mongi_default}"
+            android:src="@drawable/img_mongi_default"
             tools:src="@drawable/img_mongi_default"/>
 
         <LinearLayout
