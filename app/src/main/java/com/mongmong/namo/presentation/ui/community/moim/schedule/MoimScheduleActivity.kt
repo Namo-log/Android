@@ -6,7 +6,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
@@ -37,8 +36,8 @@ import com.kakao.vectormap.label.LabelOptions
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.GROUP_MEMBER_INTENT_KEY
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
 import com.mongmong.namo.R
-import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
 import com.mongmong.namo.databinding.ActivityMoimScheduleBinding
+import com.mongmong.namo.domain.model.Participant
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.community.CommunityCalendarActivity
 import com.mongmong.namo.presentation.ui.community.moim.schedule.adapter.MoimParticipantRVAdapter
@@ -58,8 +57,6 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
 
     private var kakaoMap: KakaoMap? = null
     private lateinit var mapView: MapView
-
-    private var imageUri: Uri? = null
 
     private lateinit var getMemberResult : ActivityResultLauncher<Intent>
     private lateinit var participantAdapter: MoimParticipantRVAdapter
@@ -113,7 +110,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
         // 커버 이미지 설정
         binding.moimScheduleCoverImgIv.setOnClickListener {
             // 앨범 권한 확인 후 연결
-            openGallery()
+            getGallery()
         }
 
         // 친구 초대 버튼 클릭
@@ -331,7 +328,8 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     private fun setResultMember() {
         getMemberResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.updateMembers(result.data?.getSerializableExtra(GROUP_MEMBER_INTENT_KEY) as MoimSchduleMemberList)
+                //TODO: 선택한 친구 넣기
+//                viewModel.updateMembers(result.data?.getSerializableExtra(GROUP_MEMBER_INTENT_KEY))
             }
         }
     }
@@ -368,7 +366,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     }
 
     @SuppressLint("IntentReset")
-    private fun openGallery() {
+    private fun getGallery() {
         if (hasImagePermission(this)) {
             val galleryIntent = Intent(Intent.ACTION_PICK).apply {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -396,10 +394,11 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     ) { result ->
         if (result.resultCode == RESULT_OK) {
             result.data?.data?.let {
-                imageUri = result.data!!.data
-                if (imageUri != null) {
+                val coverImageUri = result.data!!.data
+                viewModel.updateImage(coverImageUri)
+                if (coverImageUri != null) { // 뷰에 이미지 넣기
                     Glide.with(this)
-                        .load(imageUri)
+                        .load(coverImageUri)
                         .fitCenter()
                         .apply(RequestOptions().override(500,500))
                         .into(binding.moimScheduleCoverImgIv)

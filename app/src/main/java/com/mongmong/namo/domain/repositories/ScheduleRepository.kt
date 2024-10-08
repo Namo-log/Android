@@ -31,10 +31,6 @@ interface ScheduleRepository {
     ): Boolean
 
     // 모임
-    suspend fun getMonthMoimSchedule(
-        yearMonth: String
-    ): List<GetMonthScheduleResult>
-
     suspend fun editMoimScheduleCategory(category: PatchMoimScheduleCategoryRequestBody): Boolean
 
     suspend fun editMoimScheduleAlert(alert: PatchMoimScheduleAlarmRequestBody): Boolean
@@ -54,8 +50,8 @@ interface ScheduleRepository {
     ): List<MoimCalendarSchedule>
 
     suspend fun addMoimSchedule(
-        moimSchedule: AddMoimScheduleRequestBody
-    )
+        moimSchedule: MoimScheduleDetail
+    ): Boolean
 
     suspend fun editMoimSchedule(
         moimSchedule: EditMoimScheduleRequestBody

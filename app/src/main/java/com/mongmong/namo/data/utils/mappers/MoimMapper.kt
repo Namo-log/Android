@@ -5,6 +5,9 @@ import com.mongmong.namo.data.dto.GetMoimCalendarResult
 import com.mongmong.namo.data.dto.GetMoimDetailResult
 import com.mongmong.namo.data.dto.GetMoimResult
 import com.mongmong.namo.data.dto.MoimParticipant
+import com.mongmong.namo.data.dto.MoimScheduleRequestBody
+import com.mongmong.namo.data.dto.Period
+import com.mongmong.namo.data.dto.ScheduleLocation
 import com.mongmong.namo.domain.model.Location
 import com.mongmong.namo.domain.model.MoimCalendarParticipant
 import com.mongmong.namo.domain.model.MoimCalendarSchedule
@@ -74,6 +77,24 @@ object MoimMapper {
             userId = this.userId,
             nickname = this.nickname,
             colorId = this.colorId
+        )
+    }
+
+    fun MoimScheduleDetail.toModel(): MoimScheduleRequestBody {
+        return MoimScheduleRequestBody(
+            title = this.title,
+            imageUrl = this.coverImg,
+            period = Period(
+                this.startDate,
+                this.endDate
+            ),
+            location = ScheduleLocation(
+                this.locationInfo.longitude,
+                this.locationInfo.latitude,
+                this.locationInfo.locationName,
+                this.locationInfo.kakaoLocationId
+            ),
+            participants = this.participants.map { it.userId }
         )
     }
 }

@@ -15,6 +15,8 @@ import com.mongmong.namo.data.dto.GetMoimCalendarResponse
 import com.mongmong.namo.data.dto.GetMoimDetailResponse
 import com.mongmong.namo.data.dto.GetMoimDetailResult
 import com.mongmong.namo.data.dto.GetMoimResponse
+import com.mongmong.namo.data.dto.MoimScheduleRequestBody
+import com.mongmong.namo.data.dto.PostMoimScheduleResponse
 import com.mongmong.namo.data.dto.ScheduleRequestBody
 import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
@@ -110,25 +112,6 @@ class RemoteScheduleDataSource @Inject constructor(
     }
 
     // 모임
-    suspend fun getMonthMoimSchedule(
-        yearMonth: String
-    ): List<GetMonthScheduleResult> {
-        var scheduleResponse = GetMonthScheduleResponse(
-            result = emptyList()
-        )
-        withContext(Dispatchers.IO) {
-            runCatching {
-                scheduleApiService.getMonthMoimSchedule(yearMonth)
-            }.onSuccess {
-                Log.d("RemoteScheduleDataSource", "deleteMoimActivity Success $it")
-                scheduleResponse = it
-            }.onFailure {
-                Log.d("RemoteScheduleDataSource", "deleteMoimActivity Fail")
-            }
-        }
-        return scheduleResponse.result
-    }
-
     suspend fun editMoimScheduleCategory(
         category: PatchMoimScheduleCategoryRequestBody
     ): BaseResponse {
@@ -222,10 +205,11 @@ class RemoteScheduleDataSource @Inject constructor(
         return scheduleResponse
     }
 
+    // 모임 일정 생성
     suspend fun addMoimSchedule(
-        moimSchedule: AddMoimScheduleRequestBody
-    ) {
-        var scheduleResponse = AddMoimScheduleResponse(-1)
+        moimSchedule: MoimScheduleRequestBody
+    ): PostMoimScheduleResponse {
+        var scheduleResponse = PostMoimScheduleResponse(-1)
         withContext(Dispatchers.IO) {
             runCatching {
                 moimScheduleApiService.postMoimSchedule(moimSchedule)
@@ -236,7 +220,7 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "addMoimSchedule Failure $it")
             }
         }
-//        return scheduleResponse
+        return scheduleResponse
     }
 
     suspend fun editMoimSchedule(

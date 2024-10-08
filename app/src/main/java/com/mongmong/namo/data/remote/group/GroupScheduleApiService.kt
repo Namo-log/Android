@@ -3,8 +3,8 @@ package com.mongmong.namo.data.remote.group
 import com.mongmong.namo.data.dto.GetMoimCalendarResponse
 import com.mongmong.namo.data.dto.GetMoimDetailResponse
 import com.mongmong.namo.data.dto.GetMoimResponse
-import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
-import com.mongmong.namo.domain.model.group.AddMoimScheduleResponse
+import com.mongmong.namo.data.dto.MoimScheduleRequestBody
+import com.mongmong.namo.data.dto.PostMoimScheduleResponse
 import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.http.Body
@@ -35,10 +35,10 @@ interface GroupScheduleApiService {
     ): GetMoimCalendarResponse
 
     // 모임 일정 생성
-    @POST("group/schedules")
+    @POST("schedules/meeting")
     suspend fun postMoimSchedule(
-        @Body body: AddMoimScheduleRequestBody
-    ): AddMoimScheduleResponse
+        @Body body: MoimScheduleRequestBody
+    ): PostMoimScheduleResponse
 
     // 모임 일정 수정
     @PATCH("group/schedules")

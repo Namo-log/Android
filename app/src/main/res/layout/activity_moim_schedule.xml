@@ -112,7 +112,7 @@
                         android:singleLine="true"
                         android:textColorHint="@color/dimed_light"
                         android:background="@color/transparent"
-                        android:text="@={viewModel.moimTitle}"
+                        android:text="@={viewModel.moimSchedule.title}"
                         android:layout_marginTop="25dp"
                         style="@style/header"/>
 

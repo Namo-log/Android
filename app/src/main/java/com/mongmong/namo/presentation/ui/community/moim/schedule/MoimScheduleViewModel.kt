@@ -1,6 +1,6 @@
 package com.mongmong.namo.presentation.ui.community.moim.schedule
 
-import android.util.Log
+import android.net.Uri
 import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,9 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.LatLng
 import com.mongmong.namo.domain.model.MoimScheduleDetail
-import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
-import com.mongmong.namo.domain.model.group.MoimScheduleBody
+import com.mongmong.namo.domain.model.Participant
 import com.mongmong.namo.domain.repositories.ScheduleRepository
+import com.mongmong.namo.domain.usecases.UploadImageToS3UseCase
 import com.mongmong.namo.presentation.utils.PickerConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -19,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MoimScheduleViewModel @Inject constructor(
-    private val repository: ScheduleRepository
+    private val repository: ScheduleRepository,
+    private val uploadImageToS3UseCase: UploadImageToS3UseCase
 ) : ViewModel() {
     private val _moimSchedule = MutableLiveData<MoimScheduleDetail>()
     val moimSchedule: LiveData<MoimScheduleDetail> = _moimSchedule
@@ -27,19 +28,21 @@ class MoimScheduleViewModel @Inject constructor(
     private val _prevClickedPicker = MutableLiveData<TextView?>()
     var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
 
-    val moimTitle: MutableLiveData<String> = MutableLiveData()
-
     /** 모임 일정 조회 */
     private fun getMoimSchedule(moimScheduleId: Long) {
         viewModelScope.launch {
             _moimSchedule.value = repository.getMoimScheduleDetail(moimScheduleId)
-            moimTitle.value = _moimSchedule.value!!.title
         }
     }
 
     /** 모임 일정 생성 */
     fun postMoimSchedule() {
+        //TODO: 친구 API 연동 후 삭제
+        updateMembers(listOf(Participant(userId = 4))) // 참석자 선택
 
+        viewModelScope.launch {
+            repository.addMoimSchedule(_moimSchedule.value!!)
+        }
     }
 
     /** 모임 일정 수정 */
@@ -61,15 +64,28 @@ class MoimScheduleViewModel @Inject constructor(
         getMoimSchedule(moimScheduleId) // 모임 일정 편집
     }
 
+    fun updateImage(uri: Uri?) {
+        val urlList = listOf(uri)
+        viewModelScope.launch {
+            val newImageUrls = uploadImageToS3UseCase.execute(
+                PREFIX, (urlList).map { Uri.parse(it.toString()) }
+            )
+
+            _moimSchedule.value = _moimSchedule.value?.copy(
+                coverImg = newImageUrls.first()
+            )
+        }
+    }
+
     fun updatePlace(placeName: String, x: Double, y: Double) {
         _moimSchedule.value = _moimSchedule.value?.copy(
             //
         )
     }
 
-    fun updateMembers(selectedMember: MoimSchduleMemberList) {
+    fun updateMembers(selectedMember: List<Participant>) {
         _moimSchedule.value = _moimSchedule.value!!.copy(
-//            members = selectedMember.memberList
+            participants = selectedMember
         )
     }
 
@@ -87,10 +103,7 @@ class MoimScheduleViewModel @Inject constructor(
         _prevClickedPicker.value = clicked
     }
 
-
     fun isCreateMode() = _moimSchedule.value!!.moimId == 0L
-
-//    fun getSelectedMemberId() = _moimSchedule.value!!.members.map { it.userId }
 
     fun getDateTime(): Pair<DateTime, DateTime>? {
         if (_moimSchedule.value != null) {
@@ -111,5 +124,9 @@ class MoimScheduleViewModel @Inject constructor(
 //            )
 //        }
         return null
+    }
+
+    companion object {
+        const val PREFIX = "moim"
     }
 }

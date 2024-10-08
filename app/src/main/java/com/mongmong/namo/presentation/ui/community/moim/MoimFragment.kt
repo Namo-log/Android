@@ -1,6 +1,7 @@
 package com.mongmong.namo.presentation.ui.community.moim
 
 import android.content.Intent
+import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
@@ -16,11 +17,12 @@ class MoimFragment : BaseFragment<FragmentMoimBinding>(R.layout.fragment_moim) {
 
     private val viewModel: MoimViewModel by viewModels()
 
-    private lateinit var moimAdapter: MoimRVAdapter
+    private var moimAdapter = MoimRVAdapter()
 
     override fun setup() {
         binding.viewModel = this@MoimFragment.viewModel
 
+        viewModel.getMoim()
         initClickListeners()
         initObserve()
     }
@@ -36,7 +38,6 @@ class MoimFragment : BaseFragment<FragmentMoimBinding>(R.layout.fragment_moim) {
     }
 
     private fun setAdapter() {
-        moimAdapter = MoimRVAdapter()
         binding.moimRv.apply {
             adapter = moimAdapter
             layoutManager = LinearLayoutManager(context)
@@ -58,6 +59,7 @@ class MoimFragment : BaseFragment<FragmentMoimBinding>(R.layout.fragment_moim) {
     private fun initObserve() {
         viewModel.moimPreviewList.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
+                Log.d("MoimFragment", "moimPreviewListObserve\n$it")
                 setAdapter()
                 moimAdapter.addMoim(it)
             }
