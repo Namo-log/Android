@@ -239,17 +239,21 @@ class RemoteScheduleDataSource @Inject constructor(
         return scheduleResponse
     }
 
+    // 모임 일정 삭제
     suspend fun deleteMoimSchedule(
         moimScheduleId: Long
-    ) {
+    ): BaseResponse {
+        var scheduleResponse = BaseResponse()
         withContext(Dispatchers.IO) {
             runCatching {
                 moimScheduleApiService.deleteMoimSchedule(moimScheduleId)
             }.onSuccess {
+                scheduleResponse = it
                 Log.d("RemoteScheduleDataSource", "deleteMoimSchedule Success $it")
             }.onFailure {
                 Log.d("RemoteScheduleDataSource", "deleteMoimSchedule Failure")
             }
         }
+        return scheduleResponse
     }
 }

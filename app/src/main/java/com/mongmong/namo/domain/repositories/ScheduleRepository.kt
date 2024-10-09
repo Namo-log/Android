@@ -1,13 +1,11 @@
 package com.mongmong.namo.domain.repositories
 
-import com.mongmong.namo.data.dto.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.domain.model.MoimCalendarSchedule
 import com.mongmong.namo.domain.model.MoimPreview
 import com.mongmong.namo.domain.model.MoimScheduleDetail
-import com.mongmong.namo.presentation.config.BaseResponse
 import org.joda.time.DateTime
 
 interface ScheduleRepository {
@@ -60,5 +58,5 @@ interface ScheduleRepository {
 
     suspend fun deleteMoimSchedule(
         moimScheduleId: Long
-    )
+    ): Boolean
 }

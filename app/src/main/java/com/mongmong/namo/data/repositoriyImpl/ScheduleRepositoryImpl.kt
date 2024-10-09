@@ -2,7 +2,6 @@ package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
-import com.mongmong.namo.data.dto.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
@@ -86,12 +85,14 @@ class ScheduleRepositoryImpl @Inject constructor(
         participantsToAdd: List<Long>,
         participantsToRemove: List<Long>
     ): Boolean {
-        return remoteScheduleDataSource.editMoimSchedule(moimSchedule.moimId, moimSchedule.toDTO(participantsToAdd, participantsToRemove))
-            .code == SUCCESS_CODE
+        return remoteScheduleDataSource.editMoimSchedule(
+            moimSchedule.moimId,
+            moimSchedule.toDTO(participantsToAdd, participantsToRemove)
+        ).code == SUCCESS_CODE
     }
 
-    override suspend fun deleteMoimSchedule(moimScheduleId: Long) {
-        return remoteScheduleDataSource.deleteMoimSchedule(moimScheduleId)
+    override suspend fun deleteMoimSchedule(moimScheduleId: Long): Boolean {
+        return remoteScheduleDataSource.deleteMoimSchedule(moimScheduleId).code == SUCCESS_CODE
     }
 
 }

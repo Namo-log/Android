@@ -67,7 +67,9 @@ class MoimScheduleViewModel @Inject constructor(
 
     /** 모임 일정 삭제 */
     fun deleteMoimSchedule() {
-
+        viewModelScope.launch {
+            repository.deleteMoimSchedule(_moimSchedule.value!!.moimId)
+        }
     }
 
     /** 모임 일정 정보 세팅 */

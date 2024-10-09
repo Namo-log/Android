@@ -48,8 +48,8 @@ interface GroupScheduleApiService {
     ): BaseResponse
 
     // 모임 일정 삭제
-    @DELETE("group/schedules/{moimScheduleId}")
+    @DELETE("schedules/meeting/{meetingScheduleId}/withdraw")
     suspend fun deleteMoimSchedule(
-        @Path("moimScheduleId") moimScheduleId: Long
+        @Path("meetingScheduleId") moimScheduleId: Long
     ): BaseResponse
 }
