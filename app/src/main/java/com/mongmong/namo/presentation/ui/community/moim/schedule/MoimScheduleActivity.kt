@@ -26,7 +26,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
-import com.google.gson.Gson
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.MapLifeCycleCallback
@@ -37,6 +36,7 @@ import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMoimScheduleBinding
 import com.mongmong.namo.presentation.config.BaseActivity
+import com.mongmong.namo.presentation.state.SuccessType
 import com.mongmong.namo.presentation.ui.community.CommunityCalendarActivity
 import com.mongmong.namo.presentation.ui.community.moim.schedule.adapter.MoimParticipantRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
@@ -178,8 +178,6 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     /** 모임 일정 추가 */
     private fun insertSchedule() {
         viewModel.postMoimSchedule()
-        Toast.makeText(this, "모임 일정이 등록되었습니다.", Toast.LENGTH_SHORT).show()
-        finish()
     }
 
     /** 모임 일정 수정 */
@@ -190,8 +188,6 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     /** 모임 일정 삭제 */
     private fun deleteSchedule() {
         viewModel.deleteMoimSchedule()
-        Toast.makeText(this, "모임 일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-        finish()
     }
 
     private fun initObserve() {
@@ -205,9 +201,15 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
             }
         }
 
-        viewModel.isEditSuccess.observe(this) { isSuccess ->
-            if (isSuccess) {
-                Toast.makeText(this, "모임 일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
+        viewModel.isSuccess.observe(this) { successState ->
+            if (successState.isSuccess) { // 요청이 성공한 경우
+                var message = ""
+                message = when (successState.type) {
+                    SuccessType.ADD -> "모임 일정이 등록되었습니다."
+                    SuccessType.EDIT -> "모임 일정이 수정되었습니다."
+                    SuccessType.DELETE -> "모임 일정이 삭제되었습니다."
+                }
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 finish()
             }
         }

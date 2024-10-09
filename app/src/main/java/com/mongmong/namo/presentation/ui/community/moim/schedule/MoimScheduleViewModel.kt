@@ -12,6 +12,8 @@ import com.mongmong.namo.domain.model.Participant
 import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecases.UploadImageToS3UseCase
+import com.mongmong.namo.presentation.state.SuccessState
+import com.mongmong.namo.presentation.state.SuccessType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.joda.time.LocalDateTime
@@ -33,9 +35,8 @@ class MoimScheduleViewModel @Inject constructor(
     var participantIdsToRemove = ArrayList<Long>(arrayListOf()) // 스케줄에서 삭제할 참가자 ID(participantId)
 
     // API 호출 성공 여부
-    private val _isEditSuccess = MutableLiveData<Boolean>()
-    var isEditSuccess: LiveData<Boolean> = _isEditSuccess
-
+    private val _isSuccess = MutableLiveData<SuccessState>()
+    var isSuccess: LiveData<SuccessState> = _isSuccess
 
     /** 모임 일정 조회 */
     private fun getMoimSchedule(moimScheduleId: Long) {
@@ -50,17 +51,23 @@ class MoimScheduleViewModel @Inject constructor(
         updateMembers(listOf(Participant(userId = 4))) // 참석자 선택
 
         viewModelScope.launch {
-            repository.addMoimSchedule(_moimSchedule.value!!)
+            _isSuccess.value = SuccessState(
+                SuccessType.ADD,
+                repository.addMoimSchedule(_moimSchedule.value!!)
+            )
         }
     }
 
     /** 모임 일정 수정 */
     fun editMoimSchedule() {
         viewModelScope.launch {
-            _isEditSuccess.value = repository.editMoimSchedule(
-                _moimSchedule.value!!,
-                participantIdsToAdd,
-                participantIdsToRemove
+            _isSuccess.value = SuccessState(
+                SuccessType.EDIT,
+                repository.editMoimSchedule(
+                    _moimSchedule.value!!,
+                    participantIdsToAdd,
+                    participantIdsToRemove
+                )
             )
         }
     }
@@ -68,7 +75,10 @@ class MoimScheduleViewModel @Inject constructor(
     /** 모임 일정 삭제 */
     fun deleteMoimSchedule() {
         viewModelScope.launch {
-            repository.deleteMoimSchedule(_moimSchedule.value!!.moimId)
+            _isSuccess.value = SuccessState(
+                SuccessType.DELETE,
+                repository.deleteMoimSchedule(_moimSchedule.value!!.moimId)
+            )
         }
     }
 
