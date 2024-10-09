@@ -2,9 +2,9 @@ package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
+import com.mongmong.namo.data.dto.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.data.remote.NetworkChecker
-import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.data.utils.mappers.MoimMapper.toDTO
@@ -14,9 +14,6 @@ import com.mongmong.namo.data.utils.mappers.ScheduleMapper.toModel
 import com.mongmong.namo.domain.model.MoimCalendarSchedule
 import com.mongmong.namo.domain.model.MoimPreview
 import com.mongmong.namo.domain.model.MoimScheduleDetail
-import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
-import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
-import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.presentation.config.Constants.SUCCESS_CODE
 import org.joda.time.DateTime
@@ -84,8 +81,13 @@ class ScheduleRepositoryImpl @Inject constructor(
         return remoteScheduleDataSource.addMoimSchedule(moimSchedule.toDTO()).code == SUCCESS_CODE
     }
 
-    override suspend fun editMoimSchedule(moimSchedule: EditMoimScheduleRequestBody) {
-        return remoteScheduleDataSource.editMoimSchedule(moimSchedule)
+    override suspend fun editMoimSchedule(
+        moimSchedule: MoimScheduleDetail,
+        participantsToAdd: List<Long>,
+        participantsToRemove: List<Long>
+    ): Boolean {
+        return remoteScheduleDataSource.editMoimSchedule(moimSchedule.moimId, moimSchedule.toDTO(participantsToAdd, participantsToRemove))
+            .code == SUCCESS_CODE
     }
 
     override suspend fun deleteMoimSchedule(moimScheduleId: Long) {

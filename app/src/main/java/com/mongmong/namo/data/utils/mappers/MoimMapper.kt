@@ -1,6 +1,7 @@
 package com.mongmong.namo.data.utils.mappers
 
 import com.mongmong.namo.data.dto.CalendarParticipant
+import com.mongmong.namo.data.dto.EditMoimScheduleRequestBody
 import com.mongmong.namo.data.dto.GetMoimCalendarResult
 import com.mongmong.namo.data.dto.GetMoimDetailResult
 import com.mongmong.namo.data.dto.GetMoimResult
@@ -84,6 +85,7 @@ object MoimMapper {
         )
     }
 
+    // 모임 일정 Model -> 모임 일정 생성 DTO
     fun MoimScheduleDetail.toDTO(): MoimScheduleRequestBody {
         return MoimScheduleRequestBody(
             title = this.title,
@@ -99,6 +101,26 @@ object MoimMapper {
                 this.locationInfo.kakaoLocationId
             ),
             participants = this.participants.map { it.userId }
+        )
+    }
+
+    // 모임 일정 Model -> 모임 일정 수정 DTO
+    fun MoimScheduleDetail.toDTO(participantsToAdd: List<Long>, participantsToRemove: List<Long>): EditMoimScheduleRequestBody {
+        return EditMoimScheduleRequestBody(
+            title = this.title,
+            imageUrl = this.coverImg,
+            period = Period(
+                this.period.startDate.toString(),
+                this.period.endDate.toString()
+            ),
+            location = ScheduleLocation(
+                this.locationInfo.longitude,
+                this.locationInfo.latitude,
+                this.locationInfo.locationName,
+                this.locationInfo.kakaoLocationId
+            ),
+            participantsToAdd = participantsToAdd,
+            participantsToRemove = participantsToRemove
         )
     }
 }

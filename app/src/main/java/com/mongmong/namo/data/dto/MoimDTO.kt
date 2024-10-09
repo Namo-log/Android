@@ -73,3 +73,13 @@ data class MoimScheduleRequestBody(
 data class PostMoimScheduleResponse(
     val result : Long
 ) : BaseResponse()
+
+/** 모임 일정 수정 */
+data class EditMoimScheduleRequestBody(
+    var title: String = "",
+    var imageUrl: String = "",
+    var period: Period = Period(),
+    var location: ScheduleLocation = ScheduleLocation(),
+    var participantsToAdd: List<Long> = listOf(),
+    var participantsToRemove: List<Long> = listOf()
+)

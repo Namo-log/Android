@@ -1,14 +1,13 @@
 package com.mongmong.namo.domain.repositories
 
+import com.mongmong.namo.data.dto.EditMoimScheduleRequestBody
 import com.mongmong.namo.domain.model.Schedule
-import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.domain.model.MoimCalendarSchedule
 import com.mongmong.namo.domain.model.MoimPreview
 import com.mongmong.namo.domain.model.MoimScheduleDetail
-import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
-import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
+import com.mongmong.namo.presentation.config.BaseResponse
 import org.joda.time.DateTime
 
 interface ScheduleRepository {
@@ -54,8 +53,10 @@ interface ScheduleRepository {
     ): Boolean
 
     suspend fun editMoimSchedule(
-        moimSchedule: EditMoimScheduleRequestBody
-    )
+        moimSchedule: MoimScheduleDetail,
+        participantsToAdd: List<Long>,
+        participantsToRemove: List<Long>
+    ): Boolean
 
     suspend fun deleteMoimSchedule(
         moimScheduleId: Long

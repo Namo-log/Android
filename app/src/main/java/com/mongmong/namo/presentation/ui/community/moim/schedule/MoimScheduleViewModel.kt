@@ -12,10 +12,8 @@ import com.mongmong.namo.domain.model.Participant
 import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecases.UploadImageToS3UseCase
-import com.mongmong.namo.presentation.utils.PickerConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import org.joda.time.DateTime
 import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
@@ -29,6 +27,15 @@ class MoimScheduleViewModel @Inject constructor(
 
     private val _prevClickedPicker = MutableLiveData<TextView?>()
     var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
+
+    //TODO: 참석자 수정
+    var participantIdsToAdd = ArrayList<Long>(arrayListOf()) // 스케줄에 추가할 유저 ID(userId)
+    var participantIdsToRemove = ArrayList<Long>(arrayListOf()) // 스케줄에서 삭제할 참가자 ID(participantId)
+
+    // API 호출 성공 여부
+    private val _isEditSuccess = MutableLiveData<Boolean>()
+    var isEditSuccess: LiveData<Boolean> = _isEditSuccess
+
 
     /** 모임 일정 조회 */
     private fun getMoimSchedule(moimScheduleId: Long) {
@@ -49,7 +56,13 @@ class MoimScheduleViewModel @Inject constructor(
 
     /** 모임 일정 수정 */
     fun editMoimSchedule() {
-
+        viewModelScope.launch {
+            _isEditSuccess.value = repository.editMoimSchedule(
+                _moimSchedule.value!!,
+                participantIdsToAdd,
+                participantIdsToRemove
+            )
+        }
     }
 
     /** 모임 일정 삭제 */

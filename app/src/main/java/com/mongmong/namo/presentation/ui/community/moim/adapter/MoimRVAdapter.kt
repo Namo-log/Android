@@ -52,7 +52,6 @@ class MoimRVAdapter: RecyclerView.Adapter<MoimRVAdapter.ViewHolder>(){
     override fun getItemCount(): Int = moimPreviewList.size
 
     inner class ViewHolder(val binding: ItemMoimBinding) : RecyclerView.ViewHolder(binding.root) {
-        //TODO: 실제 모임 일정 데이터로 변경
         fun bind(moimPreview: MoimPreview) {
             binding.moim = moimPreview
         }

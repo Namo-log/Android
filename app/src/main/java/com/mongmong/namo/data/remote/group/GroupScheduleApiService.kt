@@ -1,11 +1,11 @@
 package com.mongmong.namo.data.remote.group
 
+import com.mongmong.namo.data.dto.EditMoimScheduleRequestBody
 import com.mongmong.namo.data.dto.GetMoimCalendarResponse
 import com.mongmong.namo.data.dto.GetMoimDetailResponse
 import com.mongmong.namo.data.dto.GetMoimResponse
 import com.mongmong.namo.data.dto.MoimScheduleRequestBody
 import com.mongmong.namo.data.dto.PostMoimScheduleResponse
-import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.presentation.config.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -41,8 +41,9 @@ interface GroupScheduleApiService {
     ): PostMoimScheduleResponse
 
     // 모임 일정 수정
-    @PATCH("group/schedules")
+    @PATCH("schedules/meeting/{meetingScheduleId}")
     suspend fun editMoimSchedule(
+        @Path("meetingScheduleId") moimScheduleId: Long,
         @Body body: EditMoimScheduleRequestBody
     ): BaseResponse
 

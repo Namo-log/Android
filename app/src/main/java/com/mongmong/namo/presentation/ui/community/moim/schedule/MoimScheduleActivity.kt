@@ -185,8 +185,6 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     /** 모임 일정 수정 */
     private fun editSchedule() {
         viewModel.editMoimSchedule()
-        Toast.makeText(this, "모임 일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
-        finish()
     }
 
     /** 모임 일정 삭제 */
@@ -204,6 +202,13 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
             }
             if (schedule.participants.isNotEmpty()) {
                 setParticipantAdapter()
+            }
+        }
+
+        viewModel.isEditSuccess.observe(this) { isSuccess ->
+            if (isSuccess) {
+                Toast.makeText(this, "모임 일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                finish()
             }
         }
     }

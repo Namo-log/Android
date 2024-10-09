@@ -3,10 +3,9 @@ package com.mongmong.namo.data.datasource.schedule
 import android.util.Log
 import com.mongmong.namo.data.remote.group.GroupScheduleApiService
 import com.mongmong.namo.data.remote.ScheduleApiService
-import com.mongmong.namo.domain.model.group.AddMoimScheduleResponse
 import com.mongmong.namo.data.dto.DeleteScheduleResponse
+import com.mongmong.namo.data.dto.EditMoimScheduleRequestBody
 import com.mongmong.namo.data.dto.GetMonthScheduleResponse
-import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
 import com.mongmong.namo.data.dto.PostScheduleResponse
@@ -18,8 +17,6 @@ import com.mongmong.namo.data.dto.GetMoimResponse
 import com.mongmong.namo.data.dto.MoimScheduleRequestBody
 import com.mongmong.namo.data.dto.PostMoimScheduleResponse
 import com.mongmong.namo.data.dto.ScheduleRequestBody
-import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
-import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
 import com.mongmong.namo.presentation.config.BaseResponse
 import com.mongmong.namo.presentation.utils.ScheduleDateConverter
 import kotlinx.coroutines.Dispatchers
@@ -223,18 +220,23 @@ class RemoteScheduleDataSource @Inject constructor(
         return scheduleResponse
     }
 
+    // 모임 일정 수정
     suspend fun editMoimSchedule(
+        moimId: Long,
         moimSchedule: EditMoimScheduleRequestBody
-    ) {
+    ): BaseResponse {
+        var scheduleResponse = BaseResponse()
         withContext(Dispatchers.IO) {
             runCatching {
-                moimScheduleApiService.editMoimSchedule(moimSchedule)
+                moimScheduleApiService.editMoimSchedule(moimId, moimSchedule)
             }.onSuccess {
+                scheduleResponse = it
                 Log.d("RemoteScheduleDataSource", "editMoimSchedule Success $it")
             }.onFailure {
-                Log.d("RemoteScheduleDataSource", "editMoimSchedule Failure")
+                Log.d("RemoteScheduleDataSource", "editMoimSchedule Failure $it")
             }
         }
+        return scheduleResponse
     }
 
     suspend fun deleteMoimSchedule(
