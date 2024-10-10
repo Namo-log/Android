@@ -96,7 +96,7 @@
             android:exported="false"
             android:theme="@style/SlideAnimation" />
         <activity
-            android:name=".presentation.ui.group.diary.MoimDiaryDetailActivity"
+            android:name=".presentation.ui.community.diary.MoimDiaryDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity

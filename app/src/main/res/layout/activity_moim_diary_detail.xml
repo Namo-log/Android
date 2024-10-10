@@ -11,7 +11,7 @@
         <import type="android.view.View" />
         <variable
             name="viewModel"
-            type="com.mongmong.namo.presentation.ui.group.diary.MoimDiaryViewModel" />
+            type="com.mongmong.namo.presentation.ui.community.diary.MoimDiaryViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -54,17 +54,6 @@
                 app:layout_constraintBottom_toBottomOf="@id/moim_diary_back_iv"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/moim_diary_back_iv" />
-
-            <ImageView
-                android:id="@+id/moim_diary_delete_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:src="@drawable/ic_delete"
-                android:visibility="@{viewModel.diarySchedule.hasDiary ? View.VISIBLE : View.GONE}"
-                app:layout_constraintBottom_toBottomOf="@id/moim_diary_back_iv"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/moim_diary_back_iv" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -272,7 +261,7 @@
                 <me.relex.circleindicator.CircleIndicator3
                     android:id="@+id/moim_diary_indicator"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="10dp"
                     android:layout_gravity="center"
                     android:layout_marginBottom="16dp"
                     app:ci_drawable="@drawable/ic_indicator"
@@ -284,6 +273,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="30dp"
+                    android:visibility="@{viewModel.diarySchedule.hasDiary &amp;&amp; viewModel.isEditMode ? View.VISIBLE : View.GONE}"
                     android:background="@drawable/bg_basic_outline_btn"
                     android:paddingHorizontal="25dp">
 
@@ -315,6 +305,7 @@
             android:background="@{viewModel.diaryChanged ? @color/main : @color/text_unselected}"
             android:enabled="@{viewModel.diaryChanged}"
             android:text="@{viewModel.diarySchedule.hasDiary ? @string/diary_changes_save : @string/diary_add}"
+            android:visibility="@{!viewModel.diarySchedule.hasDiary ? View.VISIBLE : viewModel.isEditMode ? View.VISIBLE : View.GONE}"
             android:textAlignment="center"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent" />

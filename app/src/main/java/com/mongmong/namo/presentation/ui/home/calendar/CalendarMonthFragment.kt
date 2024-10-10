@@ -13,7 +13,7 @@ import com.mongmong.namo.databinding.FragmentCalendarMonthBinding
 import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.diary.PersonalDiaryDetailActivity
-import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryDetailActivity
+import com.mongmong.namo.presentation.ui.community.diary.MoimDiaryDetailActivity
 import com.mongmong.namo.presentation.ui.home.HomeFragment
 import com.mongmong.namo.presentation.ui.home.schedule.adapter.DailyScheduleRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity

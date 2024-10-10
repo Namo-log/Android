@@ -14,7 +14,7 @@ import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.state.FilterType
 import com.mongmong.namo.presentation.ui.diary.adapter.DiaryRVAdapter
-import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryDetailActivity
+import com.mongmong.namo.presentation.ui.community.diary.MoimDiaryDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

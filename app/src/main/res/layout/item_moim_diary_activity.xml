@@ -4,9 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="com.mongmong.namo.presentation.utils.DiaryDateConverter" />
+        <import type="android.view.View" />
         <variable
             name="activity"
             type="com.mongmong.namo.domain.model.Activity" />
+        <variable
+            name="isEdit"
+            type="Boolean" />
+        <variable
+            name="hasDiary"
+            type="Boolean" />
     </data>
 
 
@@ -25,40 +32,61 @@
             android:elevation="3dp">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
                 <EditText
                     android:id="@+id/activity_title_tv"
                     style="@style/content_bold"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_margin="20dp"
+                    android:layout_gravity="center_vertical"
                     android:background="@color/transparent"
                     android:hint="@string/moim_diary_new_activity"
                     android:text="@{activity.title}"
+                    android:enabled="@{hasDiary &amp;&amp; isEdit ? true : false}"
                     android:textColorHint="@color/text_unselected"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.appcompat.widget.AppCompatImageButton
+                <ImageView
+                    android:id="@+id/activity_edit_btn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:padding="5dp"
+                    android:backgroundTint="@color/transparent"
+                    android:src="@drawable/ic_edit"
+                    android:layout_gravity="center_vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:clickable="@{hasDiary &amp;&amp; !isEdit? true : false}"
+                    app:tint="@{hasDiary &amp;&amp; !isEdit? @color/main_text : @color/text_unselected}"/>
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="12dp"
+                    android:background="@color/text_unselected"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="2dp"/>
+                <ImageView
                     android:id="@+id/activity_delete_btn"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/bg_moim_diary_activity_delete"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="20dp"
+                    android:padding="5dp"
+                    android:backgroundTint="@color/transparent"
                     android:src="@drawable/ic_delete"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/text_placeholder" />
+                    android:clickable="@{hasDiary ? true : false}"
+                    app:tint="@{hasDiary? @color/main_text : @color/text_unselected}"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="21dp">
+                android:layout_marginTop="12dp">
                 <TextView
                     android:id="@+id/activity_start_date_title_tv"
                     style="@style/content_bold"
@@ -83,6 +111,7 @@
                         android:layout_height="wrap_content"
                         android:text="@{DiaryDateConverter.toDate(activity.startDate)}"
                         android:textAlignment="center"
+                        android:clickable="@{hasDiary &amp;&amp; isEdit ? true : false}"
                         tools:text="2022.06.29 (수)"/>
 
                     <View
@@ -98,6 +127,7 @@
                         android:layout_height="wrap_content"
                         android:text="@{DiaryDateConverter.to12HourTime(activity.startDate)}"
                         android:textAlignment="center"
+                        android:clickable="@{hasDiary &amp;&amp; isEdit ? true : false}"
                         tools:text="12:00 PM"/>
 
                 </LinearLayout>
@@ -133,6 +163,7 @@
                         android:layout_height="wrap_content"
                         android:text="@{DiaryDateConverter.toDate(activity.endDate)}"
                         android:textAlignment="center"
+                        android:clickable="@{hasDiary &amp;&amp; isEdit ? true : false}"
                         tools:text="2022.06.29 (수)"/>
 
                     <View
@@ -148,6 +179,7 @@
                         android:layout_height="wrap_content"
                         android:text="@{DiaryDateConverter.to12HourTime(activity.endDate)}"
                         android:textAlignment="center"
+                        android:clickable="@{hasDiary &amp;&amp; isEdit ? true : false}"
                         tools:text="12:00 PM"/>
 
                 </LinearLayout>
@@ -225,6 +257,7 @@
                     android:drawableEnd="@drawable/ic_arrow_right"
                     android:drawablePadding="8dp"
                     android:text="@{activity.location.locationName.empty ? @string/diary_no_place : activity.location.locationName}"
+                    android:clickable="@{hasDiary &amp;&amp; isEdit ? true : false}"
                     app:layout_constraintBottom_toBottomOf="@+id/activity_place_title_tv"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv" />
@@ -255,41 +288,13 @@
                     android:layout_height="92dp"
                     android:layout_gravity="center"
                     android:layout_marginStart="7dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:visibility="@{isEdit ? View.VISIBLE: View.GONE}"
                     android:background="@drawable/bg_gallery_dotted"
                     android:layerType="software"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_gallery" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/activity_tag_ll"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_moim_diary_activity_tab"
-                android:paddingHorizontal="20dp"
-                android:paddingVertical="16dp"
-                android:layout_marginTop="15dp"
-                app:layout_constraintTop_toBottomOf="@id/activity_image_ll">
-
-                <TextView
-                    android:id="@+id/activity_tag_title_tv"
-                    style="@style/content_bold"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/activity_tag" />
-
-                <TextView
-                    android:id="@+id/activity_tag_tv"
-                    style="@style/content_regular"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableEnd="@drawable/ic_arrow_right"
-                    android:drawablePadding="8dp"
-                    android:text="@{activity.tag.empty? @string/diary_no_place : activity.tag}"
-                    app:layout_constraintBottom_toBottomOf="@+id/activity_place_title_tv"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv" />
             </LinearLayout>
 
             <LinearLayout
@@ -299,7 +304,7 @@
                 android:background="@drawable/bg_moim_diary_activity_tab"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="16dp"
-                app:layout_constraintTop_toBottomOf="@id/activity_tag_ll">
+                android:layout_marginTop="15dp">
 
                 <TextView
                     android:id="@+id/activity_participants_title_tv"
@@ -317,9 +322,6 @@
                     android:drawableEnd="@drawable/ic_arrow_right"
                     android:drawablePadding="8dp"
                     app:participantsText="@{activity.participants}"
-                    app:layout_constraintBottom_toBottomOf="@+id/activity_place_title_tv"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/activity_place_title_tv"
                     maxCount="3"/>
             </LinearLayout>
 
@@ -329,8 +331,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_moim_diary_activity_tab"
                 android:paddingHorizontal="20dp"
-                android:paddingVertical="16dp"
-                app:layout_constraintTop_toBottomOf="@id/activity_participants_ll">
+                android:paddingVertical="16dp">
 
                 <TextView
                     android:id="@+id/activity_payment_title_tv"

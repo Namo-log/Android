@@ -30,7 +30,7 @@ import com.mongmong.namo.databinding.ActivityMapBinding
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
 import com.mongmong.namo.presentation.ui.community.moim.schedule.MoimScheduleActivity
-import com.mongmong.namo.presentation.ui.group.diary.MoimDiaryDetailActivity
+import com.mongmong.namo.presentation.ui.community.diary.MoimDiaryDetailActivity
 import com.mongmong.namo.presentation.ui.home.schedule.ScheduleActivity
 import com.mongmong.namo.presentation.ui.home.schedule.map.adapter.MapRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.map.data.KakaoAPI

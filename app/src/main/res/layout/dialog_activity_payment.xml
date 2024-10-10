@@ -4,7 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="com.mongmong.namo.presentation.ui.community.diary.MoimDiaryViewModel" />
         <variable
             name="payment"
             type="com.mongmong.namo.domain.model.ActivityPayment" />
@@ -57,6 +60,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:text="@string/dialog_save"
+                android:visibility="@{viewModel.diarySchedule.hasDiary &amp;&amp; viewModel.isEditMode ? View.VISIBLE : View.VISIBLE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -92,6 +96,7 @@
                 android:inputType="number"
                 android:maxLines="1"
                 android:padding="6dp"
+                android:enabled="@{viewModel.diarySchedule.hasDiary &amp;&amp; viewModel.isEditMode ? true : false}"
                 android:text="@{String.valueOf(payment.totalAmount)}"
                 android:textAlignment="textEnd"
                 android:textColorHint="@color/text_placeholder"
@@ -171,6 +176,7 @@
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:layout_constraintTop_toBottomOf="@+id/activity_payment_per_title_tv"
                 app:spanCount="2"
+                android:nestedScrollingEnabled="false"
                 tools:listitem="@layout/item_moim_diary_activity_participants" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

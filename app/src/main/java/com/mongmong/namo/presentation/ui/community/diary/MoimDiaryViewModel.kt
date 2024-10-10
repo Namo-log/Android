@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.group.diary
+package com.mongmong.namo.presentation.ui.community.diary
 
 import android.net.Uri
 import android.util.Log
@@ -72,6 +72,10 @@ class MoimDiaryViewModel @Inject constructor(
     private val deleteActivityIds = mutableListOf<Long>()  // 삭제할 항목 저장
 
     private val deleteImageIdsMap: MutableMap<Long, MutableList<Long>> = mutableMapOf()
+
+    private val _isEditMode = MutableLiveData<Boolean>(false)
+    val isEditMode: LiveData<Boolean> = _isEditMode
+
 
 
     /** 기록 */
@@ -326,6 +330,8 @@ class MoimDiaryViewModel @Inject constructor(
     fun toggleIsParticipantVisible() {
         isParticipantVisible.value = !isParticipantVisible.value!!
     }
+
+    fun setIsEditMode(isEdit: Boolean) { _isEditMode.value = isEdit }
 
     private fun initDiaryState() {
         initialDiaryContent = diary.value?.content ?: ""

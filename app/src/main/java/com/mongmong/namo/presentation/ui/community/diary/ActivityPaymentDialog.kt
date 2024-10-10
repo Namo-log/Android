@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.group.diary
+package com.mongmong.namo.presentation.ui.community.diary
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -15,7 +15,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.databinding.DialogActivityPaymentBinding
 import com.mongmong.namo.domain.model.ActivityPayment
-import com.mongmong.namo.presentation.ui.group.diary.adapter.ActivityPaymentsRVAdapter
+import com.mongmong.namo.presentation.ui.community.diary.adapter.ActivityPaymentsRVAdapter
 
 class ActivityPaymentDialog(private val position: Int) : DialogFragment() {
 
@@ -36,7 +36,7 @@ class ActivityPaymentDialog(private val position: Int) : DialogFragment() {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
 
-        // 초기 데이터 설정
+        binding.viewModel = viewModel
         payment = viewModel.activities.value?.get(position)?.payment ?: ActivityPayment(participants = emptyList())
         binding.payment = payment
 
@@ -46,9 +46,7 @@ class ActivityPaymentDialog(private val position: Int) : DialogFragment() {
         // EditText에 TextWatcher 설정
         binding.activityPaymentTotalEt.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
             override fun afterTextChanged(s: Editable?) {
                 totalAmount = s?.toString()?.toIntOrNull() ?: 0
                 updatePerPersonAmount()
@@ -70,7 +68,9 @@ class ActivityPaymentDialog(private val position: Int) : DialogFragment() {
         binding.activityParticipantsRv.apply {
             participantsAdapter = ActivityPaymentsRVAdapter(
                 participants = payment.participants,
-                onCheckedChanged = { updateParticipantsCount() } // 체크 상태 변경 시 호출
+                onCheckedChanged = { updateParticipantsCount() }, // 체크 상태 변경 시 호출
+                hasDiary = viewModel.diarySchedule.value?.hasDiary ?: false,
+                isEdit = viewModel.isEditMode.value ?: false
             )
             adapter = participantsAdapter
             layoutManager = GridLayoutManager(context, 2)

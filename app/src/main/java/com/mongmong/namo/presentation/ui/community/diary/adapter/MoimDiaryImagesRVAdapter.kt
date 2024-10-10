@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.group.diary.adapter
+package com.mongmong.namo.presentation.ui.community.diary.adapter
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -13,7 +13,8 @@ import com.mongmong.namo.domain.model.DiaryImage
 
 class MoimDiaryImagesRVAdapter(
     private val itemClickListener: () -> Unit,
-    private val deleteClickListener: (DiaryImage) -> Unit
+    private val deleteClickListener: (DiaryImage) -> Unit,
+    private val isEditMode: Boolean
 ) : RecyclerView.Adapter<MoimDiaryImagesRVAdapter.ViewHolder>() {
 
     private val items: MutableList<DiaryImage> = mutableListOf()
@@ -47,6 +48,8 @@ class MoimDiaryImagesRVAdapter(
     inner class ViewHolder(val binding: ItemMoimDiaryImageBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: DiaryImage) {
+            binding.isEdit = isEditMode
+
             val requestOptions = RequestOptions()
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
             Log.d("MoimDiaryImagesRVAdapter", "${item.imageUrl}")

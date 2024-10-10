@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.group.diary
+package com.mongmong.namo.presentation.ui.community.diary
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -11,7 +11,7 @@ import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.mongmong.namo.databinding.DialogActivityParticipantsBinding
-import com.mongmong.namo.presentation.ui.group.diary.adapter.ActivityParticipantsRVAdapter
+import com.mongmong.namo.presentation.ui.community.diary.adapter.ActivityParticipantsRVAdapter
 
 
 class ActivityParticipantsDialog(private val position: Int) : DialogFragment() {
@@ -28,6 +28,7 @@ class ActivityParticipantsDialog(private val position: Int) : DialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DialogActivityParticipantsBinding.inflate(inflater, container, false)
+        binding.viewModel = viewModel
 
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))  // 배경 투명하게
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)  // dialog 모서리 둥글게
@@ -40,7 +41,9 @@ class ActivityParticipantsDialog(private val position: Int) : DialogFragment() {
 
     private fun initRecyclerView() {
         participantsAdapter = ActivityParticipantsRVAdapter(
-            scheduleParticipants = viewModel.diarySchedule.value?.participantInfo ?: emptyList()
+            scheduleParticipants = viewModel.diarySchedule.value?.participantInfo ?: emptyList(),
+            hasDiary = viewModel.diarySchedule.value?.hasDiary ?: false,
+            isEdit = viewModel.isEditMode.value ?: false
         )
         binding.activityParticipantsRv.adapter = participantsAdapter.apply {
             addSelectedItems(viewModel.activities.value?.get(position)?.participants ?: emptyList())

@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.group.diary.adapter
+package com.mongmong.namo.presentation.ui.community.diary.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,9 @@ import com.mongmong.namo.databinding.ItemMoimDiaryActivityParticipantsBinding
 import com.mongmong.namo.domain.model.ParticipantInfo
 
 class ActivityParticipantsRVAdapter(
-    private val scheduleParticipants: List<ParticipantInfo>
+    private val scheduleParticipants: List<ParticipantInfo>,
+    private val hasDiary: Boolean,
+    private val isEdit: Boolean
 ) : RecyclerView.Adapter<ActivityParticipantsRVAdapter.ViewHolder>() {
 
     private val selectedParticipants = mutableListOf<ParticipantInfo>()
@@ -41,6 +43,8 @@ class ActivityParticipantsRVAdapter(
 
         fun bind(participant: ParticipantInfo) {
             binding.itemActivityParticipantsNicknameTv.text = participant.nickname
+            binding.hasDiary = hasDiary
+            binding.isEdit = isEdit
 
             // 초기화 시에 activityParticipants에 포함된 항목을 체크
             binding.itemActivityParticipantsCheckbox.isChecked = selectedParticipants.contains(participant)

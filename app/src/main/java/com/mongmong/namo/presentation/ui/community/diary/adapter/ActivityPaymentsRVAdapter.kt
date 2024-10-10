@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.group.diary.adapter
+package com.mongmong.namo.presentation.ui.community.diary.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,7 +8,9 @@ import com.mongmong.namo.domain.model.PaymentParticipant
 
 class ActivityPaymentsRVAdapter(
     private val participants: List<PaymentParticipant>,
-    private val onCheckedChanged: () -> Unit
+    private val onCheckedChanged: () -> Unit,
+    private val hasDiary: Boolean,
+    private val isEdit: Boolean
 ) : RecyclerView.Adapter<ActivityPaymentsRVAdapter.ViewHolder>() {
 
     private val updatedParticipants = participants.toMutableList()
@@ -31,6 +33,9 @@ class ActivityPaymentsRVAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(participant: PaymentParticipant) {
+            binding.hasDiary = hasDiary
+            binding.isEdit = isEdit
+
             binding.itemActivityParticipantsNicknameTv.text = participant.nickname
             binding.itemActivityParticipantsCheckbox.isChecked = participant.isPayer
 

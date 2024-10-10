@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.ui.group.diary.adapter
+package com.mongmong.namo.presentation.ui.community.diary.adapter
 
 import android.text.Editable
 import android.text.TextWatcher
@@ -23,6 +23,8 @@ class MoimDiaryVPAdapter(
 
     private val activities = mutableListOf<Activity>()
     private var diary = DiaryDetail("", 0L, emptyList(), 3)
+    private var isEditMode: Boolean = false  // 편집 모드 상태 저장
+    private var hasDiary: Boolean = false
 
     fun updateDiary(diary: DiaryDetail) {
         this.diary = diary
@@ -33,6 +35,16 @@ class MoimDiaryVPAdapter(
         activities.clear()
         activities.addAll(newActivities)
         notifyDataSetChanged()
+    }
+
+    fun setEditMode(isEditMode: Boolean) {
+        this.isEditMode = isEditMode
+        notifyDataSetChanged()
+    }
+
+    fun setHasDiary(hasDiary: Boolean) {
+        this.hasDiary = hasDiary
+        notifyItemChanged(0) // 일기장
     }
 
     override fun getItemCount(): Int = 1 + activities.size // diary 하나 + activities
@@ -69,7 +81,11 @@ class MoimDiaryVPAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(diary: DiaryDetail) {
             binding.diary = diary
+            binding.isEdit = isEditMode
+            binding.hasDiary = hasDiary
 
+            binding.diaryEditBtn.setOnClickListener { diaryEventListener.onEditModeClicked() }
+            binding.diaryDeleteBtn.setOnClickListener { diaryEventListener.onDeleteDiary() }
             // Content 변경 이벤트 처리
             binding.diaryContentEt.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
@@ -89,9 +105,8 @@ class MoimDiaryVPAdapter(
             // 이미지 리스트 어댑터 설정
             val adapter = MoimDiaryImagesRVAdapter(
                 itemClickListener = { /* 이미지 클릭 시 동작 */ },
-                deleteClickListener = { diaryImage ->
-                    diaryEventListener.onDeleteImage(diaryImage)
-                }
+                deleteClickListener = { diaryImage -> diaryEventListener.onDeleteImage(diaryImage) },
+                isEditMode
             )
             binding.diaryImagesRv.apply {
                 this.adapter = adapter
@@ -110,6 +125,13 @@ class MoimDiaryVPAdapter(
 
         fun bind(activity: Activity) {
             binding.activity = activity
+            binding.isEdit = isEditMode
+            binding.hasDiary = hasDiary
+
+            binding.activityEditBtn.setOnClickListener { activityEventListener.onEditModeClicked() }
+            binding.activityDeleteBtn.setOnClickListener {
+                activityEventListener.onDeleteActivity(bindingAdapterPosition - 1)
+            }
 
             binding.activityTitleTv.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
@@ -118,10 +140,6 @@ class MoimDiaryVPAdapter(
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             })
-
-            binding.activityDeleteBtn.setOnClickListener {
-                activityEventListener.onDeleteActivity(bindingAdapterPosition - 1)
-            }
 
             // 시작 날짜 클릭 시
             binding.activityStartDateTv.setOnClickListener {
@@ -153,7 +171,8 @@ class MoimDiaryVPAdapter(
             // 이미지 리스트 어댑터 설정
             val adapter = MoimDiaryImagesRVAdapter(
                 itemClickListener = { /* 이미지 클릭 시 동작 */ },
-                deleteClickListener = { }
+                deleteClickListener = { activityImage -> activityEventListener.onDeleteImage(activityImage) },
+                isEditMode
             )
             binding.activityImagesRv.apply {
                 this.adapter = adapter
@@ -161,10 +180,6 @@ class MoimDiaryVPAdapter(
                 itemAnimator = null
             }
             adapter.addItem(activity.images)
-
-            binding.activityTagTv.setOnClickListener {
-                activityEventListener.onTagClicked(bindingAdapterPosition - 1)
-            }
 
             binding.activityParticipantsTv.setOnClickListener {
                 activityEventListener.onParticipantsClicked(bindingAdapterPosition - 1)
@@ -328,9 +343,10 @@ class MoimDiaryVPAdapter(
         fun onStartDateSelected(position: Int, date: String)
         fun onEndDateSelected(position: Int, date: String)
         fun onLocationClicked(position: Int)
-        fun onTagClicked(position: Int)
         fun onParticipantsClicked(position: Int)
         fun onPayClicked(position: Int)
+        fun onDeleteImage(image: DiaryImage)
+        fun onEditModeClicked()
     }
 
     interface OnDiaryEventListener {
@@ -339,7 +355,7 @@ class MoimDiaryVPAdapter(
         fun onContentChanged(content: String)
         fun onEnjoyClicked(enjoyRating: Int)
         fun onDeleteImage(image: DiaryImage)
+        fun onEditModeClicked()
+        fun onDeleteDiary()
     }
 }
-
-
