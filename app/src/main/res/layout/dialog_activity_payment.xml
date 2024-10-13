@@ -76,7 +76,7 @@
 
             <TextView
                 android:id="@+id/activity_payment_total_amount_title_tv"
-                android:layout_width="130dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/activity_payment_total_amount"
                 android:textColor="@color/main_text"
@@ -95,14 +95,16 @@
                 android:hint="@string/activity_payment_input"
                 android:inputType="number"
                 android:maxLines="1"
+                android:maxLength="11"
                 android:padding="6dp"
+                android:textIsSelectable="false"
+                android:cursorVisible="false"
                 android:enabled="@{viewModel.diarySchedule.hasDiary &amp;&amp; viewModel.isEditMode ? true : false}"
                 android:text="@{String.valueOf(payment.totalAmount)}"
                 android:textAlignment="textEnd"
                 android:textColorHint="@color/text_placeholder"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="TouchTargetSizeCheck" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/activity_payment_participant_count_title_tv"

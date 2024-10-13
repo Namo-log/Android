@@ -4,6 +4,7 @@ import com.mongmong.namo.data.datasource.diary.ActivityDataSource
 import com.mongmong.namo.data.utils.mappers.ActivityMapper.toModel
 import com.mongmong.namo.domain.model.Activity
 import com.mongmong.namo.domain.model.ActivityPayment
+import com.mongmong.namo.domain.model.DiaryBaseResponse
 import com.mongmong.namo.domain.repositories.ActivityRepository
 import javax.inject.Inject
 
@@ -22,8 +23,8 @@ class ActivityRepositoryImpl @Inject constructor(
     }
 
     // 활동 추가
-    override suspend fun addActivity(scheduleId: Long, activity: Activity): Boolean {
-        return false
+    override suspend fun addActivity(scheduleId: Long, activity: Activity): DiaryBaseResponse {
+        return DiaryBaseResponse()
     }
 
     // 활동 수정
@@ -31,27 +32,31 @@ class ActivityRepositoryImpl @Inject constructor(
         activityId: Long,
         activity: Activity,
         deleteImages: List<Long>
-    ): Boolean {
-        return false
+    ): DiaryBaseResponse {
+        return DiaryBaseResponse()
     }
 
     // 활동 태그 수정
-    override suspend fun editActivityTag(activityId: Long, tag: String): Boolean {
-        return false
+    override suspend fun editActivityTag(activityId: Long, tag: String): DiaryBaseResponse {
+        return DiaryBaseResponse()
     }
 
     // 활동 참가자 수정
-    override suspend fun editActivityParticipants(activityId: Long): Boolean {
-        return false
+    override suspend fun editActivityParticipants(
+        activityId: Long,
+        participantsToAdd: List<Long>,
+        participantsToRemove: List<Long>
+    ): DiaryBaseResponse {
+        return activityDataSource.editActivityParticipants(activityId, participantsToAdd, participantsToRemove)
     }
 
     // 활동 정산 수정
-    override suspend fun editActivityPayment(activityId: Long): Boolean {
-        return false
+    override suspend fun editActivityPayment(activityId: Long, payment: ActivityPayment): DiaryBaseResponse {
+        return DiaryBaseResponse()
     }
 
     // 활동 삭제
-    override suspend fun deleteActivity(activityId: Long): Boolean {
-        return false
+    override suspend fun deleteActivity(activityId: Long): DiaryBaseResponse {
+        return DiaryBaseResponse()
     }
 }

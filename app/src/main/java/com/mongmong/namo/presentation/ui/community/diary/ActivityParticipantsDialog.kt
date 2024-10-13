@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.mongmong.namo.databinding.DialogActivityParticipantsBinding
@@ -35,6 +36,7 @@ class ActivityParticipantsDialog(private val position: Int) : DialogFragment() {
 
         initRecyclerView()
         initClickListener()
+        initObserve()
 
         return binding.root
     }
@@ -52,13 +54,40 @@ class ActivityParticipantsDialog(private val position: Int) : DialogFragment() {
 
     private fun initClickListener() {
         binding.activityPaymentSaveTv.setOnClickListener {
-            viewModel.updateActivityParticipants(position, participantsAdapter.getSelectedParticipants())
-            dismiss()
+            val activityId = viewModel.activities.value?.get(position)?.activityId
+            if(activityId == 0L) {
+                viewModel.updateActivityParticipants(position, participantsAdapter.getSelectedParticipants())
+                dismiss()
+            } else {
+                val originalParticipants = viewModel.activities.value?.get(position)?.participants ?: emptyList()
+                val selectedParticipants = participantsAdapter.getSelectedParticipants()
+
+                // 추가된 참가자
+                val participantsToAdd = selectedParticipants
+                    .filterNot { originalParticipants.contains(it) }
+                    .map { it.userId }
+
+                // 삭제된 참가자
+                val participantsToRemove = originalParticipants
+                    .filterNot { selectedParticipants.contains(it) }
+                    .map { it.userId }
+
+                viewModel.editActivityParticipants(activityId!!, participantsToAdd, participantsToRemove)
+            }
         }
 
         // 취소 버튼 클릭 시
         binding.activityPaymentBackTv.setOnClickListener {
             dismiss()
+        }
+    }
+
+    private fun initObserve() {
+        viewModel.editActivityParticipantsResult.observe(viewLifecycleOwner) { response ->
+            if(response.isSuccess) {
+                viewModel.updateActivityParticipants(position, participantsAdapter.getSelectedParticipants())
+                dismiss()
+            } else Toast.makeText(requireContext(), response.message, Toast.LENGTH_SHORT)
         }
     }
 

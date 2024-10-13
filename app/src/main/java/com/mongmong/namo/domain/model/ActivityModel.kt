@@ -1,5 +1,7 @@
 package com.mongmong.namo.domain.model
 
+import com.mongmong.namo.presentation.config.BaseResponse
+
 data class Activity(
     var endDate: String,
     val activityId: Long,
@@ -32,3 +34,7 @@ data class PaymentParticipant(
     val nickname: String = "",
     var isPayer: Boolean = false
 )
+
+data class DiaryBaseResponse(
+    val result: String = ""
+): BaseResponse()

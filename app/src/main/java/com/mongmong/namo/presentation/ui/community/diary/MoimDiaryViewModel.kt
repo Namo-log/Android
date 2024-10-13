@@ -12,8 +12,10 @@ import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.ParticipantInfo
 import com.mongmong.namo.domain.model.ActivityPayment
+import com.mongmong.namo.domain.model.DiaryBaseResponse
 import com.mongmong.namo.domain.model.PaymentParticipant
 import com.mongmong.namo.domain.model.ScheduleForDiary
+import com.mongmong.namo.domain.repositories.ActivityRepository
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.usecases.GetActivitiesUseCase
 import com.mongmong.namo.domain.usecases.UploadImageToS3UseCase
@@ -24,7 +26,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MoimDiaryViewModel @Inject constructor(
-    private val repository: DiaryRepository,
+    private val diaryRepository: DiaryRepository,
+    private val activityRepository: ActivityRepository,
     private val uploadImageToS3UseCase: UploadImageToS3UseCase,
     private val getActivitiesUseCase: GetActivitiesUseCase
 ) : ViewModel() {
@@ -48,6 +51,12 @@ class MoimDiaryViewModel @Inject constructor(
 
     private val _deleteDiaryResult = MutableLiveData<Boolean>()
     val deleteDiaryResult: LiveData<Boolean> = _deleteDiaryResult
+
+    private val _editActivityParticipantsResult = MutableLiveData<DiaryBaseResponse>()
+    val editActivityParticipantsResult: LiveData<DiaryBaseResponse> = _editActivityParticipantsResult
+
+    private val _editActivityPaymentResult = MutableLiveData<DiaryBaseResponse>()
+    val editActivityPaymentResult: LiveData<DiaryBaseResponse> = _editActivityPaymentResult
 
     private val _isActivityAdded = MutableLiveData<Boolean>(false)
     val isActivityAdded: LiveData<Boolean> = _isActivityAdded
@@ -83,14 +92,14 @@ class MoimDiaryViewModel @Inject constructor(
     fun getScheduleForDiary(scheduleId: Long) {
         this.scheduleId = scheduleId
         viewModelScope.launch {
-            _diarySchedule.value = repository.getScheduleForDiary(scheduleId)
+            _diarySchedule.value = diaryRepository.getScheduleForDiary(scheduleId)
         }
     }
 
     // 기록 개별 조회
     fun getDiaryData() {
         viewModelScope.launch {
-            val result = repository.getDiary(scheduleId)
+            val result = diaryRepository.getDiary(scheduleId)
             _diary.value = result
             Log.d("DiaryDetailViewModel getDiary", "$result")
 
@@ -119,7 +128,7 @@ class MoimDiaryViewModel @Inject constructor(
             )
 
             _addDiaryResult.value =
-                repository.addDiary(
+                diaryRepository.addDiary(
                     content = diary.value?.content ?: "",
                     enjoyRating = diary.value?.enjoyRating ?: 3,
                     images = newImageUrls,
@@ -143,7 +152,7 @@ class MoimDiaryViewModel @Inject constructor(
 
                 // 서버에 데이터 전송
                 _editDiaryResult.value =
-                    repository.editDiary(
+                    diaryRepository.editDiary(
                         content = diary.value?.content ?: "",
                         enjoyRating = diary.value?.enjoyRating ?: 3,
                         images = (
@@ -165,7 +174,7 @@ class MoimDiaryViewModel @Inject constructor(
     // 기록 삭제
     fun deleteDiary() {
         viewModelScope.launch {
-            _deleteDiaryResult.value = diary.value?.let { repository.deleteDiary(it.diaryId) }
+            _deleteDiaryResult.value = diary.value?.let { diaryRepository.deleteDiary(it.diaryId) }
         }
     }
 
@@ -277,6 +286,20 @@ class MoimDiaryViewModel @Inject constructor(
         _activities.value = _activities.value
     }
 
+
+    fun editActivityParticipants(activityId: Long, participantsToAdd: List<Long>, participantsToRemove: List<Long>) {
+        viewModelScope.launch {
+            val result = activityRepository.editActivityParticipants(activityId, participantsToAdd, participantsToRemove)
+            _editActivityParticipantsResult.value = result
+        }
+    }
+
+    fun editActivityPayment(activityId: Long, payment: ActivityPayment) {
+        viewModelScope.launch {
+            val result = activityRepository.editActivityPayment(activityId = activityId, payment = payment)
+            _editActivityPaymentResult.value = result
+        }
+    }
 
     fun deleteActivity(position: Int) {
         _activities.value?.get(position)?.let {

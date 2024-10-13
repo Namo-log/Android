@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.View
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorInt
@@ -14,6 +15,8 @@ import com.bumptech.glide.Glide
 import com.mongmong.namo.R
 import com.mongmong.namo.domain.model.ParticipantInfo
 import com.mongmong.namo.presentation.config.CategoryColor
+import java.text.NumberFormat
+import java.util.Locale
 
 object BindingAdapters {
     @JvmStatic
@@ -87,5 +90,25 @@ object BindingAdapters {
         }
     }
 
+    @JvmStatic
+    @BindingAdapter("currencyText")
+    fun setCurrencyEditText(editText: EditText, amount: Int?) {
+        if (amount == null) return
+
+        val formattedText = if (amount == 0)  ""
+        else NumberFormat.getNumberInstance(Locale.US).format(amount) + " 원"
+
+        if (editText.text.toString() != formattedText) {
+            editText.setText(formattedText)
+            editText.setSelection(formattedText.length)  // 커서를 텍스트 끝으로 이동
+        }
+    }
+
+    @BindingAdapter("currencyText")
+    fun setCurrencyText(textView: TextView, amount: Int?) {
+        if (amount == null) return
+        val formattedText = NumberFormat.getNumberInstance(Locale.US).format(amount) + " 원"
+        textView.text = formattedText
+    }
 
 }

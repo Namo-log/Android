@@ -14,6 +14,7 @@ import com.mongmong.namo.data.remote.ActivityApiService
 import com.mongmong.namo.data.utils.mappers.ActivityMapper.toDTO
 import com.mongmong.namo.domain.model.Activity
 import com.mongmong.namo.domain.model.ActivityPayment
+import com.mongmong.namo.domain.model.DiaryBaseResponse
 import com.mongmong.namo.domain.model.ParticipantInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -59,8 +60,8 @@ class ActivityDataSource @Inject constructor(
     suspend fun addActivity(
         scheduleId: Long,
         activity: Activity
-    ): DiaryResponse {
-        var response = DiaryResponse("")
+    ): DiaryBaseResponse {
+        var response = DiaryBaseResponse()
         withContext(Dispatchers.IO) {
             runCatching {
                 apiService.addActivity(scheduleId,
@@ -91,8 +92,8 @@ class ActivityDataSource @Inject constructor(
         activityId: Long,
         activity: Activity,
         deleteImages: List<Long>
-    ): DiaryResponse {
-        var response = DiaryResponse("")
+    ): DiaryBaseResponse {
+        var response = DiaryBaseResponse()
         withContext(Dispatchers.IO) {
             runCatching {
                 apiService.editActivity(
@@ -121,8 +122,8 @@ class ActivityDataSource @Inject constructor(
     suspend fun editActivityTag(
         activityId: Long,
         tag: String
-    ): DiaryResponse {
-        var response = DiaryResponse("")
+    ): DiaryBaseResponse {
+        var response = DiaryBaseResponse()
         withContext(Dispatchers.IO) {
             runCatching {
                 apiService.editActivityTag(activityId = activityId, tag = tag)
@@ -141,8 +142,8 @@ class ActivityDataSource @Inject constructor(
     suspend fun editActivityPayment(
         activityId: Long,
         payment: ActivityPayment
-    ): DiaryResponse {
-        var response = DiaryResponse("")
+    ): DiaryBaseResponse {
+        var response = DiaryBaseResponse()
 
         withContext(Dispatchers.IO) {
             runCatching {
@@ -170,8 +171,8 @@ class ActivityDataSource @Inject constructor(
         activityId: Long,
         participantsToAdd: List<Long>,
         participantToRemove: List<Long>
-    ): DiaryResponse {
-        var response = DiaryResponse("")
+    ): DiaryBaseResponse {
+        var response = DiaryBaseResponse()
         withContext(Dispatchers.IO) {
             runCatching {
                 apiService.editActivityParticipants(
@@ -185,7 +186,7 @@ class ActivityDataSource @Inject constructor(
                 Log.d("ActivityDataSource editActivityParticipants Success", "$it")
                 response = it
             }.onFailure {
-                Log.d("ActivityDataSource editActivityParticipants Success", "$it")
+                Log.d("ActivityDataSource editActivityParticipants Failure", "$it")
             }
         }
 
@@ -193,8 +194,8 @@ class ActivityDataSource @Inject constructor(
     }
 
     // 활동 삭제
-    suspend fun deleteActivity(activityId: Long): DiaryResponse {
-        var response = DiaryResponse("")
+    suspend fun deleteActivity(activityId: Long): DiaryBaseResponse {
+        var response = DiaryBaseResponse()
         withContext(Dispatchers.IO) {
             runCatching {
                 apiService.deleteActivity(activityId)
