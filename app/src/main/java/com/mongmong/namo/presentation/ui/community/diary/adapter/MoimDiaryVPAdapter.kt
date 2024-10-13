@@ -28,7 +28,7 @@ class MoimDiaryVPAdapter(
 
     fun updateDiary(diary: DiaryDetail) {
         this.diary = diary
-        notifyDataSetChanged()
+        notifyItemChanged(0)
     }
 
     fun submitActivities(newActivities: List<Activity>) {
@@ -104,7 +104,7 @@ class MoimDiaryVPAdapter(
 
             // 이미지 리스트 어댑터 설정
             val adapter = MoimDiaryImagesRVAdapter(
-                itemClickListener = { /* 이미지 클릭 시 동작 */ },
+                itemClickListener = { diaryEventListener.onImageClicked(diary.diaryImages) },
                 deleteClickListener = { diaryImage -> diaryEventListener.onDeleteImage(diaryImage) },
                 isEditMode
             )
@@ -170,8 +170,8 @@ class MoimDiaryVPAdapter(
 
             // 이미지 리스트 어댑터 설정
             val adapter = MoimDiaryImagesRVAdapter(
-                itemClickListener = { /* 이미지 클릭 시 동작 */ },
-                deleteClickListener = { activityImage -> activityEventListener.onDeleteImage(activityImage) },
+                itemClickListener = { activityEventListener.onImageClicked(activity.images) },
+                deleteClickListener = { activityImage -> activityEventListener.onDeleteImage(bindingAdapterPosition - 1, activityImage) },
                 isEditMode
             )
             binding.activityImagesRv.apply {
@@ -345,8 +345,9 @@ class MoimDiaryVPAdapter(
         fun onLocationClicked(position: Int)
         fun onParticipantsClicked(position: Int)
         fun onPayClicked(position: Int)
-        fun onDeleteImage(image: DiaryImage)
+        fun onDeleteImage(position: Int, image: DiaryImage)
         fun onEditModeClicked()
+        fun onImageClicked(images: List<DiaryImage>)
     }
 
     interface OnDiaryEventListener {

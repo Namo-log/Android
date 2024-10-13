@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mongmong.namo.domain.model.DiaryBaseResponse
 import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.ScheduleForDiary
@@ -29,14 +30,14 @@ class PersonalDiaryViewModel @Inject constructor(
     private val _diaryChanged = MutableLiveData<Boolean>(false)
     val diaryChanged: LiveData<Boolean> = _diaryChanged
 
-    private val _addDiaryResult = MutableLiveData<Boolean>()
-    val addDiaryResult: LiveData<Boolean> = _addDiaryResult
+    private val _addDiaryResult = MutableLiveData<DiaryBaseResponse>()
+    val addDiaryResult: LiveData<DiaryBaseResponse> = _addDiaryResult
 
-    private val _editDiaryResult = MutableLiveData<Boolean>()
-    val editDiaryResult: LiveData<Boolean> = _editDiaryResult
+    private val _editDiaryResult = MutableLiveData<DiaryBaseResponse>()
+    val editDiaryResult: LiveData<DiaryBaseResponse> = _editDiaryResult
 
-    private val _deleteDiaryResult = MutableLiveData<Boolean>()
-    val deleteDiaryResult: LiveData<Boolean> = _deleteDiaryResult
+    private val _deleteDiaryResult = MutableLiveData<DiaryBaseResponse>()
+    val deleteDiaryResult: LiveData<DiaryBaseResponse> = _deleteDiaryResult
 
     private var initialDiaryContent: String? = null
     private var initialImgList: List<DiaryImage> = emptyList()
@@ -64,6 +65,7 @@ class PersonalDiaryViewModel @Inject constructor(
             Log.d("DiaryDetailViewModel getPersonalDiary", "$result")
 
             initDiaryState() // 초기 상태 저장
+            deleteImageIds.clear()
         }
     }
 
@@ -95,8 +97,6 @@ class PersonalDiaryViewModel @Inject constructor(
                     images = newImageUrls,
                     scheduleId = scheduleId
                 )
-
-            deleteImageIds.clear()
         }
     }
 
@@ -127,10 +127,6 @@ class PersonalDiaryViewModel @Inject constructor(
                         diaryId = diaryId,
                         deleteImageIds = deleteImageIds
                     )
-
-
-                // 삭제할 이미지 ID 리스트 초기화
-                deleteImageIds.clear()
             }
         }
     }

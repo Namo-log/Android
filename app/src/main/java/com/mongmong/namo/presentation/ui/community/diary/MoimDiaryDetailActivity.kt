@@ -51,6 +51,8 @@ class MoimDiaryDetailActivity :
     private var positionForGallery = DIARY_POSITION
     private val viewModel: MoimDiaryViewModel by viewModels()
 
+    private var activityPosition: Int = 0
+
     override fun setup() {
         binding.apply {
             viewModel = this@MoimDiaryDetailActivity.viewModel
@@ -74,9 +76,10 @@ class MoimDiaryDetailActivity :
     private fun setCreateOrEdit() {
         if (viewModel.diarySchedule.value?.hasDiary == false) {
             viewModel.setupNewDiary()
-        } else {  // 기록 있을 때, 수정
+        } else {
             viewModel.getDiaryData()
         }
+        viewModel.getActivitiesData()
     }
 
     private fun setupParticipants() {
@@ -101,21 +104,21 @@ class MoimDiaryDetailActivity :
                             .putStringArrayListExtra("imgs", images.map { it.imageUrl } as ArrayList<String>)
                     )
                 }
+
                 override fun onContentChanged(content: String) { viewModel.updateContent(content) }
                 override fun onEnjoyClicked(enjoyRating: Int) { viewModel.updateEnjoy(enjoyRating) }
                 override fun onDeleteImage(image: DiaryImage) { viewModel.deleteDiaryImage(image) }
                 override fun onEditModeClicked() { viewModel.setIsEditMode(true) }
                 override fun onDeleteDiary() {
-
+                    showDeleteDialog(isActivity = false)
                 }
+
             },
             activityEventListener = object : MoimDiaryVPAdapter.OnActivityEventListener {
-                override fun onAddImageClicked(position: Int) {
-                    positionForGallery = position
-                    getGallery()
-                }
+                override fun onEditModeClicked() { viewModel.setIsEditMode(true) }
                 override fun onDeleteActivity(position: Int) {
-                    viewModel.deleteActivity(position)
+                    activityPosition = position
+                    showDeleteDialog(isActivity = true)
                 }
                 override fun onActivityNameChanged(name: String, position: Int) {
                     viewModel.updateActivityName(position, name)
@@ -128,12 +131,20 @@ class MoimDiaryDetailActivity :
                 }
                 override fun onLocationClicked(position: Int) { getLocationPermission(position) }
 
-                override fun onParticipantsClicked(position: Int) { showActivityParticipantsDialog(position) }
-                override fun onPayClicked(position: Int) { showActivityPaymentDialog(position) }
-                override fun onDeleteImage(image: DiaryImage) {
+                override fun onAddImageClicked(position: Int) {
+                    positionForGallery = position
+                    getGallery()
+                }
+                override fun onImageClicked(images: List<DiaryImage>) {
+                    startActivity(Intent(this@MoimDiaryDetailActivity, DiaryImageDetailActivity::class.java)
+                        .putStringArrayListExtra("imgs", images.map { it.imageUrl } as ArrayList<String>))
                 }
 
-                override fun onEditModeClicked() { viewModel.setIsEditMode(true) }
+                override fun onDeleteImage(position: Int, image: DiaryImage) {
+                    viewModel.deleteActivityImage(position, image)
+                }
+                override fun onParticipantsClicked(position: Int) { showActivityParticipantsDialog(position) }
+                override fun onPayClicked(position: Int) { showActivityPaymentDialog(position) }
             }
         )
 
@@ -164,6 +175,7 @@ class MoimDiaryDetailActivity :
         viewModel.isEditMode.observe(this) { isEditMode ->
             vpAdapter.setEditMode(isEditMode)
         }
+
         // 활동이 추가되면 마지막 페이지로 이동
         viewModel.isActivityAdded.observe(this) { isAdded ->
             if (isAdded) {
@@ -175,20 +187,32 @@ class MoimDiaryDetailActivity :
             }
         }
 
-        viewModel.patchActivitiesComplete.observe(this) { isComplete ->
-            if (isComplete) finish()
-            else Toast.makeText(this, "네트워크 오류", Toast.LENGTH_SHORT).show()
+        viewModel.addDiaryResult.observe(this) { response ->
+            if(response.isSuccess) {
+                viewModel.getDiaryData()
+                Toast.makeText(this, "기록이 저장되었습니다.", Toast.LENGTH_SHORT).show()
+            }
+            else Toast.makeText(this, "${response.message}", Toast.LENGTH_SHORT).show()
+            viewModel.setIsEditMode(false)
         }
 
-        viewModel.deleteDiaryComplete.observe(this) { isComplete ->
-            if (isComplete) {
-                if (intent.getStringExtra("from") == "moimMemo") {
-                    startActivity(
-                        Intent(this, MainActivity::class.java)
-                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                    )
-                } else finish()
-            } else Toast.makeText(this, "네트워크 오류", Toast.LENGTH_SHORT).show()
+        viewModel.editDiaryResult.observe(this) { response ->
+            if(response.isSuccess) {
+                viewModel.getDiaryData()
+                viewModel.getActivitiesData()
+                Toast.makeText(this, "변경 사항이 저장되었습니다.", Toast.LENGTH_SHORT).show()
+            }
+            else Toast.makeText(this, "${response.message}", Toast.LENGTH_SHORT).show()
+            viewModel.setIsEditMode(false)
+        }
+
+        viewModel.deleteDiaryResult.observe(this) { response ->
+            if(response.isSuccess) {
+                viewModel.setupNewDiary()
+                Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+            }
+            else Toast.makeText(this, "${response.message}", Toast.LENGTH_SHORT).show()
+            viewModel.setIsEditMode(false)
         }
     }
 
@@ -216,19 +240,22 @@ class MoimDiaryDetailActivity :
 
         // 기록 추가 or 기록 수정
         binding.moimDiarySaveBtn.setOnClickListener {
-            /*if (viewModel.activities.value?.any { it.name.isEmpty() } == false) {
-                viewModel.patchMoimActivities()
+            if (viewModel.diarySchedule.value?.hasDiary == false) {
+                viewModel.addDiary()
             } else {
                 Toast.makeText(this@MoimDiaryDetailActivity, "장소를 입력해주세요!", Toast.LENGTH_SHORT).show()
-            }*/
+            }
         }
     }
 
-    private fun showDeleteDialog() {
+    private fun showDeleteDialog(isActivity: Boolean) {
         // 삭제 확인 다이얼로그
-        val title = "모임 기록을 정말 삭제하시겠어요?"
-        val content = "삭제한 모든 모임 기록은\n개인 기록 페이지에서도 삭제됩니다."
-        val dialog = ConfirmDialog(this, title, content, "삭제", DELETE_BUTTON_ACTION)
+        val title = if (isActivity) DELETE_ACTIVITY_TITLE else DELETE_DIARY_TITLE
+        val content = if (isActivity) DELETE_ACTIVITY_CONTENT else DELETE_DIARY_CONTENT
+
+        val dialog = ConfirmDialog(this, title, content, "확인",
+            if (isActivity) DELETE_ACTIVITY_BUTTON_ACTION else DELETE_DIARY_BUTTON_ACTION
+        )
         dialog.isCancelable = false
         dialog.show(this.supportFragmentManager, "ConfirmDialog")
     }
@@ -244,8 +271,9 @@ class MoimDiaryDetailActivity :
 
     override fun onClickYesButton(id: Int) {
         when(id) {
-            PersonalDiaryDetailActivity.DELETE_BUTTON_ACTION -> viewModel.deleteDiary() // 삭제
-            PersonalDiaryDetailActivity.BACK_BUTTON_ACTION -> finish() // 뒤로가기
+            DELETE_DIARY_BUTTON_ACTION -> viewModel.deleteDiary() // 일기 삭제
+            DELETE_ACTIVITY_BUTTON_ACTION -> viewModel.deleteActivity(activityPosition) // 활동 삭제
+            BACK_BUTTON_ACTION -> finish() // 뒤로가기
         }
     }
 
@@ -370,8 +398,13 @@ class MoimDiaryDetailActivity :
 
     companion object {
         const val DIARY_POSITION = -1
-        const val DELETE_BUTTON_ACTION = 1
-        const val BACK_BUTTON_ACTION = 2
+        const val DELETE_DIARY_BUTTON_ACTION = 1
+        const val DELETE_ACTIVITY_BUTTON_ACTION = 2
+        const val BACK_BUTTON_ACTION = 3
+        const val DELETE_DIARY_TITLE = "일기를 삭제하시겠어요?"
+        const val DELETE_DIARY_CONTENT = "삭제한 일기는 내 기록에서 삭제됩니다."
+        const val DELETE_ACTIVITY_TITLE = "활동을 삭제하시겠어요?"
+        const val DELETE_ACTIVITY_CONTENT = "삭제한 모임 활동은\n모든 참석자의 기록에서 삭제됩니다."
     }
 }
 

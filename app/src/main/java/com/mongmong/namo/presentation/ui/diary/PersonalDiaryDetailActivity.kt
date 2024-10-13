@@ -125,30 +125,30 @@ class PersonalDiaryDetailActivity
             galleryAdapter.addImages(diary.diaryImages)
         }
 
-        viewModel.addDiaryResult.observe(this) { isSuccess ->
-            if (isSuccess) {
+        viewModel.addDiaryResult.observe(this) { response ->
+            if (response.isSuccess) {
                 Toast.makeText(this, "변경사항이 적용되었습니다", Toast.LENGTH_SHORT).show()
                 viewModel.getDiaryData()
             } else {
-                Toast.makeText(this, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "${response.message}", Toast.LENGTH_SHORT).show()
             }
         }
 
-        viewModel.editDiaryResult.observe(this) { isSuccess ->
-            if (isSuccess) {
+        viewModel.editDiaryResult.observe(this) { response ->
+            if (response.isSuccess) {
                 Toast.makeText(this, "변경사항이 적용되었습니다", Toast.LENGTH_SHORT).show()
                 viewModel.getDiaryData()
             } else {
-                Toast.makeText(this, "error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "e${response.message}rror", Toast.LENGTH_SHORT).show()
             }
         }
 
-        viewModel.deleteDiaryResult.observe(this) { isSuccess ->
-            if (isSuccess) {
+        viewModel.deleteDiaryResult.observe(this) { response ->
+            if (response.isSuccess) {
                 Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
                 finish()
             } else {
-                Toast.makeText(this, "error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "${response.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }

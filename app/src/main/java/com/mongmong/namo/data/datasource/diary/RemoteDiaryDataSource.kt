@@ -23,6 +23,7 @@ import com.mongmong.namo.data.remote.DiaryApiService
 import com.mongmong.namo.data.remote.group.GroupDiaryApiService
 import com.mongmong.namo.data.utils.RequestConverter.convertTextRequest
 import com.mongmong.namo.data.utils.RequestConverter.imageToMultipart
+import com.mongmong.namo.domain.model.DiaryBaseResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
@@ -70,8 +71,8 @@ class RemoteDiaryDataSource @Inject constructor(
         enjoyRating: Int,
         images: List<String>,
         scheduleId: Long
-    ): DiaryResponse {
-        var response = DiaryResponse("")
+    ): DiaryBaseResponse {
+        var response = DiaryBaseResponse("")
         withContext(Dispatchers.IO) {
             runCatching {
                 diaryApiService.addDiary(
@@ -99,8 +100,8 @@ class RemoteDiaryDataSource @Inject constructor(
         enjoyRating: Int,
         images: List<String>,
         deleteImageIds: List<Long>
-    ): DiaryResponse {
-        var response = DiaryResponse("")
+    ): DiaryBaseResponse {
+        var response = DiaryBaseResponse("")
         withContext(Dispatchers.IO) {
             runCatching {
                 diaryApiService.editDiary(
@@ -123,8 +124,8 @@ class RemoteDiaryDataSource @Inject constructor(
     }
 
     // 기록 삭제
-    suspend fun deletePersonalDiary(scheduleServerId: Long): DiaryResponse {
-        var diaryResponse = DiaryResponse("")
+    suspend fun deletePersonalDiary(scheduleServerId: Long): DiaryBaseResponse {
+        var diaryResponse = DiaryBaseResponse()
         withContext(Dispatchers.IO) {
             runCatching {
                 diaryApiService.deleteDiary(scheduleServerId)
