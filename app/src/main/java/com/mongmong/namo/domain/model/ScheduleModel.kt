@@ -1,5 +1,6 @@
 package com.mongmong.namo.domain.model
 
+import com.mongmong.namo.presentation.utils.PickerConverter.getDefaultDate
 import org.joda.time.LocalDateTime
 import java.io.Serializable
 
@@ -15,8 +16,8 @@ data class Schedule(
 )
 
 data class SchedulePeriod(
-    var startDate: LocalDateTime = LocalDateTime.now(),
-    var endDate: LocalDateTime = LocalDateTime.now(),
+    var startDate: LocalDateTime = getDefaultDate(LocalDateTime.now(), true),
+    var endDate: LocalDateTime = getDefaultDate(LocalDateTime.now(), false),
 ): Serializable
 
 data class Location(
