@@ -83,3 +83,9 @@ data class EditMoimScheduleRequestBody(
     var participantsToAdd: List<Long> = listOf(),
     var participantsToRemove: List<Long> = listOf()
 )
+
+/** 모임 일정 프로필 변경 */
+data class EditMoimScheduleProfileRequestBody(
+    var title: String = "",
+    var imageUrl: String = ""
+)

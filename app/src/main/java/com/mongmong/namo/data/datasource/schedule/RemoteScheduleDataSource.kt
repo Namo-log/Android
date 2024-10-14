@@ -4,6 +4,7 @@ import android.util.Log
 import com.mongmong.namo.data.remote.group.GroupScheduleApiService
 import com.mongmong.namo.data.remote.ScheduleApiService
 import com.mongmong.namo.data.dto.DeleteScheduleResponse
+import com.mongmong.namo.data.dto.EditMoimScheduleProfileRequestBody
 import com.mongmong.namo.data.dto.EditMoimScheduleRequestBody
 import com.mongmong.namo.data.dto.GetMonthScheduleResponse
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
@@ -252,6 +253,25 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "deleteMoimSchedule Success $it")
             }.onFailure {
                 Log.d("RemoteScheduleDataSource", "deleteMoimSchedule Failure")
+            }
+        }
+        return scheduleResponse
+    }
+
+    // 모임 일정 프로필 변경
+    suspend fun editMoimScheduleProfile(
+        moimScheduleId: Long,
+        request: EditMoimScheduleProfileRequestBody
+    ): BaseResponse {
+        var scheduleResponse = BaseResponse()
+        withContext(Dispatchers.IO) {
+            runCatching {
+                moimScheduleApiService.editMoimScheduleProfile(moimScheduleId, request)
+            }.onSuccess {
+                scheduleResponse = it
+                Log.d("RemoteScheduleDataSource", "editMoimScheduleProfile Success $it")
+            }.onFailure {
+                Log.d("RemoteScheduleDataSource", "editMoimScheduleProfile Failure $it")
             }
         }
         return scheduleResponse

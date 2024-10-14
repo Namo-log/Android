@@ -59,4 +59,10 @@ interface ScheduleRepository {
     suspend fun deleteMoimSchedule(
         moimScheduleId: Long
     ): Boolean
+
+    suspend fun editMoimScheduleProfile(
+        moimScheduleId: Long,
+        title: String,
+        imageUrl: String
+    ): Boolean
 }

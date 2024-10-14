@@ -1,5 +1,6 @@
 package com.mongmong.namo.data.remote.group
 
+import com.mongmong.namo.data.dto.EditMoimScheduleProfileRequestBody
 import com.mongmong.namo.data.dto.EditMoimScheduleRequestBody
 import com.mongmong.namo.data.dto.GetMoimCalendarResponse
 import com.mongmong.namo.data.dto.GetMoimDetailResponse
@@ -51,5 +52,12 @@ interface GroupScheduleApiService {
     @DELETE("schedules/meeting/{meetingScheduleId}/withdraw")
     suspend fun deleteMoimSchedule(
         @Path("meetingScheduleId") moimScheduleId: Long
+    ): BaseResponse
+
+    // 모임 일정 프로필 수정
+    @PATCH("schedules/meeting/{meetingScheduleId}/profile")
+    suspend fun editMoimScheduleProfile(
+        @Path("meetingScheduleId") moimScheduleId: Long,
+        @Body body: EditMoimScheduleProfileRequestBody
     ): BaseResponse
 }

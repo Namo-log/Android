@@ -59,6 +59,7 @@ class MoimScheduleViewModel @Inject constructor(
     }
 
     /** 모임 일정 수정 */
+    //TODO: 방장만 편집 가능
     fun editMoimSchedule() {
         viewModelScope.launch {
             _successState.value = SuccessState(
@@ -82,7 +83,18 @@ class MoimScheduleViewModel @Inject constructor(
         }
     }
 
-    /** 모임 일정 정보 세팅 */
+    /** 모임 일정 프로필 변경 */
+    //TODO: userId를 통해 사용자의 방장 여부를 판별 후 연동 필요
+    fun editMoimScheduleProfile() {
+        viewModelScope.launch {
+            repository.editMoimScheduleProfile(
+                _moimSchedule.value!!.moimId,
+                _moimSchedule.value!!.title,
+                _moimSchedule.value!!.coverImg)
+        }
+    }
+
+    // 모임 일정 기본 정보 세팅
     fun setMoimSchedule(moimScheduleId: Long) {
         if (moimScheduleId == 0L) { // 모임 일정 생성
             _moimSchedule.value = MoimScheduleDetail()
