@@ -1,156 +1,165 @@
 package com.mongmong.namo.presentation.ui.community.moim.schedule
 
-import android.util.Log
+import android.net.Uri
 import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.LatLng
-import com.mongmong.namo.domain.model.Moim
+import com.mongmong.namo.domain.model.MoimScheduleDetail
+import com.mongmong.namo.domain.model.Participant
 import com.mongmong.namo.domain.model.SchedulePeriod
-import com.mongmong.namo.domain.model.group.GroupMember
-import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
-import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.domain.repositories.ScheduleRepository
-import com.mongmong.namo.presentation.utils.PickerConverter
+import com.mongmong.namo.domain.usecases.UploadImageToS3UseCase
+import com.mongmong.namo.presentation.state.SuccessState
+import com.mongmong.namo.presentation.state.SuccessType
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.joda.time.DateTime
+import kotlinx.coroutines.launch
 import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class MoimScheduleViewModel @Inject constructor(
-    private val repository: ScheduleRepository
+    private val repository: ScheduleRepository,
+    private val uploadImageToS3UseCase: UploadImageToS3UseCase
 ) : ViewModel() {
-    private val _moimSchedule = MutableLiveData<Moim>()
-    val moimSchedule: LiveData<Moim> = _moimSchedule
+    private val _moimSchedule = MutableLiveData<MoimScheduleDetail>()
+    val moimSchedule: LiveData<MoimScheduleDetail> = _moimSchedule
 
     private val _prevClickedPicker = MutableLiveData<TextView?>()
     var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
 
-    private val _monthDayList = MutableLiveData<List<DateTime>>()
+    var guestInvitationLink: String = "https://~"
 
-    val moimTitle: MutableLiveData<String> = MutableLiveData()
+    var isCoverImageEdit: Boolean = false
 
-    //TODO: 임시 데이터
-    private val _participantList = MutableLiveData<List<GroupMember>>()
-    val participantList: LiveData<List<GroupMember>> = _participantList
+    //TODO: 참석자 수정
+    var participantIdsToAdd = ArrayList<Long>(arrayListOf()) // 스케줄에 추가할 유저 ID(userId)
+    var participantIdsToRemove = ArrayList<Long>(arrayListOf()) // 스케줄에서 삭제할 참가자 ID(participantId)
 
-    // 클릭한 날짜 처리
-    private lateinit var _dailyScheduleList: List<MoimScheduleBody>
+    // API 호출 성공 여부
+    private val _successState = MutableLiveData<SuccessState>()
+    var successState: LiveData<SuccessState> = _successState
 
-    private val _isShow = MutableLiveData(false)
-    var isShow: LiveData<Boolean> = _isShow
-
-    private var _prevIndex = -1 // 클릭한 날짜의 index
-    private var _nowIndex = 0 // 클릭한 날짜의 index
-
-    private lateinit var _clickedDatePair: Pair<Long, Long> // 클릭한 날짜의 시작, 종료 시간
-
-    private val _isDailyScheduleEmptyPair = MutableLiveData<Pair<Boolean, Boolean>>()
-    var isDailyScheduleEmptyPair: LiveData<Pair<Boolean, Boolean>> = _isDailyScheduleEmptyPair
-
-    init {
-        _participantList.value = listOf(
-            GroupMember(0, "코코아", 1),
-            GroupMember(0, "짱구", 4),
-            GroupMember(0, "뚜뚜", 8),
-        )
+    /** 모임 일정 조회 */
+    private fun getMoimSchedule(moimScheduleId: Long) {
+        viewModelScope.launch {
+            _moimSchedule.value = repository.getMoimScheduleDetail(moimScheduleId)
+            getGuestInvitationLink()
+        }
     }
 
     /** 모임 일정 생성 */
     fun postMoimSchedule() {
+        //TODO: 친구 API 연동 후 삭제
+        updateMembers(listOf(Participant(userId = 4))) // 참석자 선택
+        viewModelScope.launch {
+            uploadImageToServer(_moimSchedule.value?.coverImg)
 
+            _successState.value = SuccessState(
+                SuccessType.ADD,
+                repository.addMoimSchedule(_moimSchedule.value!!)
+            )
+        }
     }
 
     /** 모임 일정 수정 */
+    //TODO: 방장만 편집 가능
     fun editMoimSchedule() {
+        viewModelScope.launch {
+            uploadImageToServer(_moimSchedule.value?.coverImg)
 
+            _successState.value = SuccessState(
+                SuccessType.EDIT,
+                repository.editMoimSchedule(
+                    _moimSchedule.value!!,
+                    participantIdsToAdd,
+                    participantIdsToRemove
+                )
+            )
+        }
     }
 
     /** 모임 일정 삭제 */
     fun deleteMoimSchedule() {
-
-    }
-
-    /** 모임 일정 정보 세팅 */
-    fun setMoimSchedule(moim: Moim) {
-        _moimSchedule.value = moim
-        moimTitle.value = moim.title
-        if (moim.placeName.isBlank()) {
-            _moimSchedule.value?.placeName = "없음"
+        viewModelScope.launch {
+            _successState.value = SuccessState(
+                SuccessType.DELETE,
+                repository.deleteMoimSchedule(_moimSchedule.value!!.moimId)
+            )
         }
     }
 
-    private fun setDailySchedule() {
-        // 선택 날짜에 해당되는 일정 필터링
-//        _dailyScheduleList = _groupScheduleList.value!!.filter { schedule ->
-//            schedule.startLong <= _clickedDatePair.second &&
-//                    schedule.endLong >= _clickedDatePair.first
-//        }
-//        _isDailyScheduleEmptyPair.value = Pair(
-//            isDailyScheduleEmpty(false), // 개인 일정
-//            isDailyScheduleEmpty(true) // 모임 일정
-//        )
+    /** 모임 일정 프로필 변경 */
+    //TODO: userId를 통해 사용자의 방장 여부를 판별 후 연동 필요
+    fun editMoimScheduleProfile() {
+        viewModelScope.launch {
+            repository.editMoimScheduleProfile(
+                _moimSchedule.value!!.moimId,
+                _moimSchedule.value!!.title,
+                _moimSchedule.value!!.coverImg)
+        }
     }
 
-    // 캘린더의 날짜 클릭
-    fun clickDate(index: Int) {
-        _nowIndex = index
-        // 클릭한 날짜의 시작, 종료 시간 저장
-        _clickedDatePair = Pair(
-            (getClickedDate().withTimeAtStartOfDay().millis) / 1000, // 날짜 시작일
-            (getClickedDate().plusDays(1).withTimeAtStartOfDay().millis - 1) / 1000, // 날짜 종료일
+    private fun getGuestInvitationLink() {
+        viewModelScope.launch {
+            guestInvitationLink = repository.getGuestInvitaionLink(_moimSchedule.value!!.moimId)
+        }
+    }
+
+    private suspend fun uploadImageToServer(imageUri: String?) {
+        if (imageUri.isNullOrEmpty() || !isCoverImageEdit) return
+        val urlList = listOf(imageUri)
+
+        // suspend 함수이므로 호출 시점에서 대기
+        val newImageUrls = uploadImageToS3UseCase.execute(
+            PREFIX, (urlList).map { Uri.parse(it) }
         )
-        setDailySchedule()
+
+        // 이미지 URL 업데이트
+        _moimSchedule.value = _moimSchedule.value?.copy(
+            coverImg = newImageUrls.first()
+        )
     }
 
-    fun updateIsShow() {
-        _isShow.value = !_isShow.value!!
-        _prevIndex = _nowIndex
+    // 모임 일정 기본 정보 세팅
+    fun setMoimSchedule(moimScheduleId: Long) {
+        if (moimScheduleId == 0L) { // 모임 일정 생성
+            _moimSchedule.value = MoimScheduleDetail()
+            return
+        }
+        getMoimSchedule(moimScheduleId) // 모임 일정 편집
     }
 
-    // 일정 상세 바텀 시트 닫기 - 동일한 날짜를 다시 클릭했을 경우
-    fun isCloseScheduleDetailBottomSheet() = _isShow.value == true && (_prevIndex == _nowIndex)
-
-    // 캘린더에 들어갈 한달 날짜 리스트
-    fun setMonthDayList(monthDayList: List<DateTime>) {
-        _monthDayList.value = monthDayList
-    }
-
-    fun filterMonthSchedule() {
-        val monthStart = _monthDayList.value!![0].withTimeAtStartOfDay().millis / 1000
-        val monthEnd = _monthDayList.value!![41].plusDays(1).withTimeAtStartOfDay().millis / 1000
-//        _monthScheduleList.value = _groupScheduleList.value?.filter { schedule ->
-//            schedule.startLong <= monthEnd && schedule.endLong >= monthStart
-//        }
-    }
-
-    fun setIsShow(bool: Boolean) {
-        _isShow.value = bool
+    fun updateImage(uri: Uri?) {
+        isCoverImageEdit = true
+        _moimSchedule.value = _moimSchedule.value?.copy(
+            coverImg = uri.toString()
+        )
     }
 
     fun updatePlace(placeName: String, x: Double, y: Double) {
         _moimSchedule.value = _moimSchedule.value?.copy(
-            placeName = placeName,
-//            placeX = x,
-//            placeY = y
+            //
         )
     }
 
-    fun updateMembers(selectedMember: MoimSchduleMemberList) {
+    fun updateMembers(selectedMember: List<Participant>) {
         _moimSchedule.value = _moimSchedule.value!!.copy(
-            members = selectedMember.memberList
+            participants = selectedMember
         )
     }
 
     // 시간 변경
     fun updateTime(startDateTime: LocalDateTime?, endDateTime: LocalDateTime?) {
         _moimSchedule.value = _moimSchedule.value?.copy(
-            startDate = startDateTime
-                ?: _moimSchedule.value!!.startDate,
-//            endDate = endDateTime
-//                ?: _moimSchedule.value!!.endDate,
+            period = SchedulePeriod(
+                startDate = startDateTime
+                    ?: _moimSchedule.value!!.period.startDate,
+                endDate = endDateTime
+                    ?: _moimSchedule.value!!.period.endDate
+            ),
         )
     }
 
@@ -158,31 +167,11 @@ class MoimScheduleViewModel @Inject constructor(
         _prevClickedPicker.value = clicked
     }
 
-
     fun isCreateMode() = _moimSchedule.value!!.moimId == 0L
-
-    private fun isDailyScheduleEmpty(isMoim: Boolean): Boolean {
-        Log.d("ScheduleViewModel", "isDailyScheduleEmpty($isMoim): ${getDailySchedules(isMoim)}")
-        return getDailySchedules(isMoim).isEmpty()
-    }
-
-    // 선택한 날짜
-    fun getClickedDate() = _monthDayList.value!![_nowIndex]
-
-    fun getDailySchedules(isMoim: Boolean): ArrayList<MoimScheduleBody> {
-        return _dailyScheduleList.filter { schedule ->
-            schedule.curMoimSchedule == isMoim
-        } as ArrayList<MoimScheduleBody>
-    }
-
-    fun getSelectedMemberId() = _moimSchedule.value!!.members.map { it.userId }
 
     fun getDateTime(): SchedulePeriod? {
         if (_moimSchedule.value != null) {
-            return SchedulePeriod(
-                moimSchedule.value!!.startDate,
-                moimSchedule.value!!.startDate,
-            )
+            return _moimSchedule.value!!.period
         }
         return null
     }
@@ -196,5 +185,9 @@ class MoimScheduleViewModel @Inject constructor(
 //            )
 //        }
         return null
+    }
+
+    companion object {
+        const val PREFIX = "cover"
     }
 }

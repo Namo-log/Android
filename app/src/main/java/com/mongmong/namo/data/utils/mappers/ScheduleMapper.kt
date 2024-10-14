@@ -1,7 +1,5 @@
 package com.mongmong.namo.data.utils.mappers
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.data.dto.Period
 import com.mongmong.namo.data.dto.ScheduleLocation
@@ -11,11 +9,11 @@ import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.domain.model.ScheduleCategoryInfo
 import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.presentation.utils.ScheduleDateConverter
+import com.mongmong.namo.domain.model.ScheduleType
 
 object ScheduleMapper {
     // DTO -> Model
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun GetMonthScheduleResult.toDTO(): Schedule {
+    fun GetMonthScheduleResult.toModel(): Schedule {
         return Schedule(
             scheduleId = this.scheduleId,
             title = this.title,
@@ -36,7 +34,7 @@ object ScheduleMapper {
             ),
             alarmList = this.alarmDate,
             hasDiary = this.hasDiary,
-            isMeetingSchedule = this.isMeetingSchedule
+            isMeetingSchedule = (this.scheduleType == ScheduleType.MOIM.value)
         )
     }
 

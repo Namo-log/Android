@@ -6,7 +6,7 @@
         <import type="com.mongmong.namo.presentation.utils.ScheduleDateConverter"/>
         <variable
             name="moim"
-            type="com.mongmong.namo.domain.model.Moim"/>
+            type="com.mongmong.namo.domain.model.MoimPreview"/>
     </data>
 
     <LinearLayout
@@ -64,7 +64,7 @@
                     android:id="@+id/item_moim_total_member_num_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{String.valueOf(moim.members.size())}"
+                    android:text="@{String.valueOf(moim.participantCount)}"
                     tools:text="10"
                     android:textColor="@color/main_text"
                     android:textSize="12sp"
@@ -75,7 +75,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="@{moim.getMemberNames()}"
+                    android:text="@{moim.participantNicknames}"
                     tools:text="코코아, 짱구"
                     style="@style/subtext_12" />
 

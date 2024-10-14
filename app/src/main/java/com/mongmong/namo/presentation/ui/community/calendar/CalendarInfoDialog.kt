@@ -41,7 +41,7 @@ class CalendarInfoDialog : DialogFragment() {
 
     private fun setAdapter() {
         // 친구 캘린더라면 친구의 카테고리 정보, 모임 캘린더라면 참석자의 색상 정보
-        val calendarColorInfo = if (viewModel.isFriendCalendar) viewModel.friendCategoryList.map { it.getCategoryColorInfo() } else viewModel.moim.getParticipantsColoInfo()
+        val calendarColorInfo = if (viewModel.isFriendCalendar) viewModel.friendCategoryList.map { it.getCategoryColorInfo() } else viewModel.moimSchedule.getParticipantsColoInfo()
         val calendarScheduleColorInfoRVAdapter = CalendarScheduleColorInfoRVAdapter(calendarColorInfo)
         binding.calendarInfoColorRv.apply {
             layoutManager = GridLayoutManager(requireContext(), 2)

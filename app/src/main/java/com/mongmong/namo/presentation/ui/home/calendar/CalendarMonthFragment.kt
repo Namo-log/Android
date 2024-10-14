@@ -99,7 +99,7 @@ class CalendarMonthFragment : BaseFragment<FragmentCalendarMonthBinding>(R.layou
                         viewModel.updateIsShow()
                     }
 
-                binding.calendarMonthView.invalidate()
+                    binding.calendarMonthView.invalidate()
                 }
             }
     }

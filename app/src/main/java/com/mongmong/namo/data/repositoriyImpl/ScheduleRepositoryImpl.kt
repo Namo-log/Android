@@ -2,15 +2,18 @@ package com.mongmong.namo.data.repositoriyImpl
 
 import android.util.Log
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
+import com.mongmong.namo.data.dto.EditMoimScheduleProfileRequestBody
 import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.data.remote.NetworkChecker
-import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
+import com.mongmong.namo.data.utils.mappers.MoimMapper.toDTO
+import com.mongmong.namo.data.utils.mappers.MoimMapper.toModel
 import com.mongmong.namo.data.utils.mappers.ScheduleMapper.toDTO
-import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
-import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
-import com.mongmong.namo.domain.model.group.MoimScheduleBody
+import com.mongmong.namo.data.utils.mappers.ScheduleMapper.toModel
+import com.mongmong.namo.domain.model.MoimCalendarSchedule
+import com.mongmong.namo.domain.model.MoimPreview
+import com.mongmong.namo.domain.model.MoimScheduleDetail
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.presentation.config.Constants.SUCCESS_CODE
 import org.joda.time.DateTime
@@ -24,7 +27,7 @@ class ScheduleRepositoryImpl @Inject constructor(
     /** 개인 */
     override suspend fun getMonthSchedules(startDate: DateTime, endDate: DateTime): List<Schedule> {
         return remoteScheduleDataSource.getMonthSchedules(startDate, endDate).result.map { scheduleData ->
-            scheduleData.toDTO() // DTO를 도메인 모델로 변환
+            scheduleData.toModel() // DTO를 도메인 모델로 변환
         }
     }
 
@@ -45,10 +48,6 @@ class ScheduleRepositoryImpl @Inject constructor(
     }
 
     // 모임
-    override suspend fun getMonthMoimSchedule(yearMonth: String): List<GetMonthScheduleResult> {
-        return remoteScheduleDataSource.getMonthMoimSchedule(yearMonth)
-    }
-
     override suspend fun editMoimScheduleCategory(category: PatchMoimScheduleCategoryRequestBody): Boolean {
         return remoteScheduleDataSource.editMoimScheduleCategory(category).code == SUCCESS_CODE
     }
@@ -57,21 +56,58 @@ class ScheduleRepositoryImpl @Inject constructor(
         return remoteScheduleDataSource.editMoimScheduleAlert(alert).code == SUCCESS_CODE
     }
 
-    /** 그룹 */
-    override suspend fun getGroupAllSchedules(groupId: Long): List<MoimScheduleBody> {
-        return remoteScheduleDataSource.getGroupAllSchedules(groupId)
+    /** 모임 */
+    override suspend fun getMoimSchedules(): List<MoimPreview> {
+        return remoteScheduleDataSource.getMoimSchedules().result.map { moimData ->
+            moimData.toModel() // DTO를 도메인 모델로 변환
+        }
     }
 
-    override suspend fun addMoimSchedule(moimSchedule: AddMoimScheduleRequestBody) {
-        return remoteScheduleDataSource.addMoimSchedule(moimSchedule)
+    override suspend fun getMoimScheduleDetail(moimScheduleId: Long): MoimScheduleDetail {
+        return remoteScheduleDataSource.getMoimSchedueDetail(moimScheduleId).result.toModel()
     }
 
-    override suspend fun editMoimSchedule(moimSchedule: EditMoimScheduleRequestBody) {
-        return remoteScheduleDataSource.editMoimSchedule(moimSchedule)
+    override suspend fun getMoimCalendarSchedules(
+        moimScheduleId: Long,
+        startDate: DateTime,
+        endDate: DateTime
+    ): List<MoimCalendarSchedule> {
+        return remoteScheduleDataSource.getMoimCalendarSchedules(moimScheduleId, startDate, endDate).result.map { scheduleData ->
+            scheduleData.toModel()
+        }
     }
 
-    override suspend fun deleteMoimSchedule(moimScheduleId: Long) {
-        return remoteScheduleDataSource.deleteMoimSchedule(moimScheduleId)
+    override suspend fun addMoimSchedule(moimSchedule: MoimScheduleDetail): Boolean {
+        return remoteScheduleDataSource.addMoimSchedule(moimSchedule.toDTO()).code == SUCCESS_CODE
     }
 
+    override suspend fun editMoimSchedule(
+        moimSchedule: MoimScheduleDetail,
+        participantsToAdd: List<Long>,
+        participantsToRemove: List<Long>
+    ): Boolean {
+        return remoteScheduleDataSource.editMoimSchedule(
+            moimSchedule.moimId,
+            moimSchedule.toDTO(participantsToAdd, participantsToRemove)
+        ).code == SUCCESS_CODE
+    }
+
+    override suspend fun deleteMoimSchedule(moimScheduleId: Long): Boolean {
+        return remoteScheduleDataSource.deleteMoimSchedule(moimScheduleId).code == SUCCESS_CODE
+    }
+
+    override suspend fun editMoimScheduleProfile(
+        moimScheduleId: Long,
+        title: String,
+        imageUrl: String
+    ): Boolean {
+        return remoteScheduleDataSource.editMoimScheduleProfile(
+            moimScheduleId,
+            EditMoimScheduleProfileRequestBody(title, imageUrl)
+        ).isSuccess
+    }
+
+    override suspend fun getGuestInvitaionLink(moimScheduleId: Long): String {
+        return remoteScheduleDataSource.getGuestInvitationLink(moimScheduleId).result
+    }
 }

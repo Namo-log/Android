@@ -3,10 +3,11 @@ package com.mongmong.namo.presentation.ui.community
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import com.google.gson.Gson
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityCommunityCalendarBinding
 import com.mongmong.namo.domain.model.Friend
-import com.mongmong.namo.domain.model.Moim
+import com.mongmong.namo.domain.model.MoimScheduleDetail
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.community.calendar.adapter.CommunityCalendarAdapter
 import com.mongmong.namo.presentation.ui.community.calendar.CalendarInfoDialog
@@ -39,8 +40,8 @@ class CommunityCalendarActivity : BaseActivity<ActivityCommunityCalendarBinding>
             viewModel.friend = intent.getSerializableExtra("friend") as Friend
             setCalendarTitleInfo(viewModel.friend.nickname)
         } else { // 모임 정보 세팅
-            viewModel.moim = intent.getSerializableExtra("moim") as Moim
-            setCalendarTitleInfo(viewModel.moim.title)
+            viewModel.moimSchedule = intent.getSerializableExtra("moim") as MoimScheduleDetail
+            setCalendarTitleInfo(viewModel.moimSchedule.title)
         }
 
         calendarAdapter = CommunityCalendarAdapter(this)

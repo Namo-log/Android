@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.domain.model.group.MoimScheduleBody
 import com.mongmong.namo.databinding.ItemSchedulePreviewMoimBinding
+import com.mongmong.namo.domain.model.MoimCalendarSchedule
 import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.presentation.utils.ScheduleTimeConverter
 import org.joda.time.DateTime
@@ -13,7 +13,7 @@ import org.joda.time.LocalDateTime
 
 class ParticipantDailyScheduleRVAdapter : RecyclerView.Adapter<ParticipantDailyScheduleRVAdapter.ViewHolder>() {
 
-    private val personal = ArrayList<MoimScheduleBody>()
+    private val personal = ArrayList<MoimCalendarSchedule>()
     private lateinit var timeConverter: ScheduleTimeConverter
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType : Int) : ViewHolder {
@@ -30,7 +30,7 @@ class ParticipantDailyScheduleRVAdapter : RecyclerView.Adapter<ParticipantDailyS
     override fun getItemCount(): Int = personal.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addPersonal(personal : ArrayList<MoimScheduleBody>) {
+    fun addPersonal(personal : ArrayList<MoimCalendarSchedule>) {
         this.personal.clear()
         this.personal.addAll(personal)
         notifyDataSetChanged()
@@ -47,8 +47,7 @@ class ParticipantDailyScheduleRVAdapter : RecyclerView.Adapter<ParticipantDailyS
 
     inner class ViewHolder(val binding : ItemSchedulePreviewMoimBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        @SuppressLint("ResourceType")
-        fun bind(personalSchedule: MoimScheduleBody) {
+        fun bind(personalSchedule: MoimCalendarSchedule) {
             binding.schedule = personalSchedule
 
             binding.itemCalendarEventTime.text = timeConverter.getScheduleTimeText(

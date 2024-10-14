@@ -6,7 +6,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
@@ -33,14 +32,14 @@ import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
-import com.mongmong.namo.presentation.ui.MainActivity.Companion.GROUP_MEMBER_INTENT_KEY
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
 import com.mongmong.namo.R
-import com.mongmong.namo.domain.model.group.MoimSchduleMemberList
 import com.mongmong.namo.databinding.ActivityMoimScheduleBinding
-import com.mongmong.namo.domain.model.Moim
 import com.mongmong.namo.presentation.config.BaseActivity
+import com.mongmong.namo.presentation.state.SuccessType
+import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.presentation.ui.community.CommunityCalendarActivity
+import com.mongmong.namo.presentation.ui.community.moim.MoimFragment.Companion.MOIM_EDIT_KEY
 import com.mongmong.namo.presentation.ui.community.moim.schedule.adapter.MoimParticipantRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
@@ -59,8 +58,6 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     private var kakaoMap: KakaoMap? = null
     private lateinit var mapView: MapView
 
-    private var imageUri: Uri? = null
-
     private lateinit var getMemberResult : ActivityResultLauncher<Intent>
     private lateinit var participantAdapter: MoimParticipantRVAdapter
 
@@ -69,8 +66,8 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     override fun setup() {
         binding.viewModel = viewModel
 
-        initMapView()
         initViews()
+        initMapView()
         setResultLocation()
         setResultMember()
         initClickListeners()
@@ -93,7 +90,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     }
 
     private fun initViews() {
-        viewModel.setMoimSchedule(intent.getSerializableExtra("moim") as Moim)
+        viewModel.setMoimSchedule(intent.getLongExtra("moimScheduleId", 0L))
 
         val slideAnimation = AnimationUtils.loadAnimation(this, R.anim.slide_in_up)
         binding.moimScheduleContainerLayout.startAnimation(slideAnimation)
@@ -113,7 +110,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
         // 커버 이미지 설정
         binding.moimScheduleCoverImgIv.setOnClickListener {
             // 앨범 권한 확인 후 연결
-            openGallery()
+            getGallery()
         }
 
         // 친구 초대 버튼 클릭
@@ -127,8 +124,6 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
             // 게스트 초대 다이얼로그
             GuestInviteDialog().show(this.supportFragmentManager, "GuestInviteDialog")
         }
-
-        initPickerClickListeners()
 
         // 장소 클릭
         binding.moimSchedulePlaceLayout.setOnClickListener {
@@ -151,7 +146,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
             startActivity(
                 Intent(this, CommunityCalendarActivity::class.java).apply {
                     putExtra("isFriendCalendar", false)
-                    putExtra("moim", viewModel.moimSchedule.value)
+                    putExtra("moim", viewModel.moimSchedule.value!!)
                 }
             )
         }
@@ -185,32 +180,43 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     /** 모임 일정 추가 */
     private fun insertSchedule() {
         viewModel.postMoimSchedule()
-        Toast.makeText(this, "모임 일정이 등록되었습니다.", Toast.LENGTH_SHORT).show()
-        finish()
     }
 
     /** 모임 일정 수정 */
     private fun editSchedule() {
         viewModel.editMoimSchedule()
-        Toast.makeText(this, "모임 일정이 수정되었습니다.", Toast.LENGTH_SHORT).show()
-        finish()
     }
 
     /** 모임 일정 삭제 */
     private fun deleteSchedule() {
         viewModel.deleteMoimSchedule()
-        Toast.makeText(this, "모임 일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-        finish()
     }
 
     private fun initObserve() {
         viewModel.moimSchedule.observe(this) { schedule ->
-            setContent()
+            if (schedule != null) {
+                initPickerClickListeners()
+                setContent()
+            }
+            if (schedule.participants.isNotEmpty()) {
+                setParticipantAdapter()
+            }
         }
 
-        viewModel.participantList.observe(this) { participant ->
-            if (participant.isNotEmpty()) {
-                setParticipantAdapter()
+        viewModel.successState.observe(this) { successState ->
+            if (successState.isSuccess) { // 요청이 성공한 경우
+                var message = ""
+                message = when (successState.type) {
+                    SuccessType.ADD -> "모임 일정이 등록되었습니다."
+                    SuccessType.EDIT -> "모임 일정이 수정되었습니다."
+                    SuccessType.DELETE -> "모임 일정이 삭제되었습니다."
+                }
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MainActivity::class.java).apply {
+                    putExtra(MOIM_EDIT_KEY, successState.isSuccess)
+                }
+                setResult(Activity.RESULT_OK, intent)
+                finish()
             }
         }
     }
@@ -233,20 +239,20 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     }
 
     private fun initPicker() {
-        val dateTimePair = viewModel.getDateTime() ?: return
+        val period = viewModel.getDateTime() ?: return
         binding.moimScheduleStartTimeTp.apply { // 시작 시간
-            hour = dateTimePair.startDate.hourOfDay
-            minute = dateTimePair.startDate.minuteOfHour
+            hour = period.startDate.hourOfDay
+            minute = period.startDate.minuteOfHour
         }
         binding.moimScheduleEndTimeTp.apply { // 종료 시간
-            hour = dateTimePair.endDate.hourOfDay
-            minute = dateTimePair.endDate.minuteOfHour
+            hour = period.endDate.hourOfDay
+            minute = period.endDate.minuteOfHour
         }
-        binding.moimScheduleStartDateDp.init(dateTimePair.startDate.year, dateTimePair.startDate.monthOfYear - 1, dateTimePair.startDate.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
-            viewModel.updateTime(dateTimePair.startDate.withDate(year, monthOfYear + 1, dayOfMonth), null)
+        binding.moimScheduleStartDateDp.init(period.startDate.year, period.startDate.monthOfYear - 1, period.startDate.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
+            viewModel.updateTime(period.startDate.withDate(year, monthOfYear + 1, dayOfMonth), null)
         }
-        binding.moimScheduleEndDateDp.init(dateTimePair.endDate.year, dateTimePair.endDate.monthOfYear - 1, dateTimePair.endDate.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
-            viewModel.updateTime(null, dateTimePair.endDate.withDate(year, monthOfYear + 1, dayOfMonth))
+        binding.moimScheduleEndDateDp.init(period.endDate.year, period.endDate.monthOfYear - 1, period.endDate.dayOfMonth) { _, year, monthOfYear, dayOfMonth ->
+            viewModel.updateTime(null, period.endDate.withDate(year, monthOfYear + 1, dayOfMonth))
         }
     }
 
@@ -332,13 +338,14 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     private fun setResultMember() {
         getMemberResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.updateMembers(result.data?.getSerializableExtra(GROUP_MEMBER_INTENT_KEY) as MoimSchduleMemberList)
+                //TODO: 선택한 친구 넣기
+//                viewModel.updateMembers(result.data?.getSerializableExtra(GROUP_MEMBER_INTENT_KEY))
             }
         }
     }
 
     private fun setParticipantAdapter() {
-        participantAdapter = MoimParticipantRVAdapter(viewModel.participantList.value!!)
+        participantAdapter = MoimParticipantRVAdapter(viewModel.moimSchedule.value!!.participants)
         binding.moimScheduleParticipantRv.apply {
             adapter = participantAdapter
             layoutManager = FlexboxLayoutManager(context).apply {
@@ -369,7 +376,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
     }
 
     @SuppressLint("IntentReset")
-    private fun openGallery() {
+    private fun getGallery() {
         if (hasImagePermission(this)) {
             val galleryIntent = Intent(Intent.ACTION_PICK).apply {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
@@ -396,15 +403,9 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK) {
-            result.data?.data?.let {
-                imageUri = result.data!!.data
-                if (imageUri != null) {
-                    Glide.with(this)
-                        .load(imageUri)
-                        .fitCenter()
-                        .apply(RequestOptions().override(500,500))
-                        .into(binding.moimScheduleCoverImgIv)
-                }
+            result.data?.data?.let { uri ->
+                // 서버에 이미지를 업로드
+                viewModel.updateImage(uri)
             }
         }
     }

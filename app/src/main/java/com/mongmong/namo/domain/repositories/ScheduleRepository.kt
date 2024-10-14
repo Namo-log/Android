@@ -1,12 +1,11 @@
 package com.mongmong.namo.domain.repositories
 
 import com.mongmong.namo.domain.model.Schedule
-import com.mongmong.namo.data.dto.GetMonthScheduleResult
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
 import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
-import com.mongmong.namo.domain.model.group.AddMoimScheduleRequestBody
-import com.mongmong.namo.domain.model.group.EditMoimScheduleRequestBody
-import com.mongmong.namo.domain.model.group.MoimScheduleBody
+import com.mongmong.namo.domain.model.MoimCalendarSchedule
+import com.mongmong.namo.domain.model.MoimPreview
+import com.mongmong.namo.domain.model.MoimScheduleDetail
 import org.joda.time.DateTime
 
 interface ScheduleRepository {
@@ -29,29 +28,45 @@ interface ScheduleRepository {
     ): Boolean
 
     // 모임
-    suspend fun getMonthMoimSchedule(
-        yearMonth: String
-    ): List<GetMonthScheduleResult>
-
     suspend fun editMoimScheduleCategory(category: PatchMoimScheduleCategoryRequestBody): Boolean
 
     suspend fun editMoimScheduleAlert(alert: PatchMoimScheduleAlarmRequestBody): Boolean
 
 
-    /** 그룹 */
-    suspend fun getGroupAllSchedules(
-        groupId: Long
-    ): List<MoimScheduleBody>
+    /** 모임 */
+    suspend fun getMoimSchedules(): List<MoimPreview>
+
+    suspend fun getMoimScheduleDetail(
+        moimScheduleId: Long
+    ): MoimScheduleDetail
+
+    suspend fun getMoimCalendarSchedules(
+        moimScheduleId: Long,
+        startDate: DateTime,
+        endDate: DateTime
+    ): List<MoimCalendarSchedule>
 
     suspend fun addMoimSchedule(
-        moimSchedule: AddMoimScheduleRequestBody
-    )
+        moimSchedule: MoimScheduleDetail
+    ): Boolean
 
     suspend fun editMoimSchedule(
-        moimSchedule: EditMoimScheduleRequestBody
-    )
+        moimSchedule: MoimScheduleDetail,
+        participantsToAdd: List<Long>,
+        participantsToRemove: List<Long>
+    ): Boolean
 
     suspend fun deleteMoimSchedule(
         moimScheduleId: Long
-    )
+    ): Boolean
+
+    suspend fun editMoimScheduleProfile(
+        moimScheduleId: Long,
+        title: String,
+        imageUrl: String
+    ): Boolean
+
+    suspend fun getGuestInvitaionLink(
+        moimScheduleId: Long
+    ): String
 }

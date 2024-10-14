@@ -6,7 +6,9 @@ import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentCommunityBinding
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.community.alert.CommunityAlertActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CommunityFragment : BaseFragment<FragmentCommunityBinding>(R.layout.fragment_community) {
 
     private val information = arrayListOf("모임 일정", "친구 리스트")
