@@ -17,6 +17,10 @@ class MoimViewModel @Inject constructor(
     private val _moimPreviewList = MutableLiveData<List<MoimPreview>>(emptyList())
     val moimPreviewList: LiveData<List<MoimPreview>> = _moimPreviewList
 
+    init {
+        getMoim()
+    }
+
     /** 모임 일정 목록 조회 */
     fun getMoim() {
         viewModelScope.launch {

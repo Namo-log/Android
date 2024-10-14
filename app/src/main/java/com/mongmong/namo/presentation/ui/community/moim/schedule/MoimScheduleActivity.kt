@@ -37,7 +37,9 @@ import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMoimScheduleBinding
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.state.SuccessType
+import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.presentation.ui.community.CommunityCalendarActivity
+import com.mongmong.namo.presentation.ui.community.moim.MoimFragment.Companion.MOIM_EDIT_KEY
 import com.mongmong.namo.presentation.ui.community.moim.schedule.adapter.MoimParticipantRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
 import com.mongmong.namo.presentation.utils.ConfirmDialog
@@ -201,7 +203,7 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
             }
         }
 
-        viewModel.isSuccess.observe(this) { successState ->
+        viewModel.successState.observe(this) { successState ->
             if (successState.isSuccess) { // 요청이 성공한 경우
                 var message = ""
                 message = when (successState.type) {
@@ -210,6 +212,10 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
                     SuccessType.DELETE -> "모임 일정이 삭제되었습니다."
                 }
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MainActivity::class.java).apply {
+                    putExtra(MOIM_EDIT_KEY, successState.isSuccess)
+                }
+                setResult(Activity.RESULT_OK, intent)
                 finish()
             }
         }
