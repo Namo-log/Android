@@ -15,6 +15,7 @@ import com.mongmong.namo.data.dto.GetMoimCalendarResponse
 import com.mongmong.namo.data.dto.GetMoimDetailResponse
 import com.mongmong.namo.data.dto.GetMoimDetailResult
 import com.mongmong.namo.data.dto.GetMoimResponse
+import com.mongmong.namo.data.dto.MoimBaseResponse
 import com.mongmong.namo.data.dto.MoimScheduleRequestBody
 import com.mongmong.namo.data.dto.PostMoimScheduleResponse
 import com.mongmong.namo.data.dto.ScheduleRequestBody
@@ -272,6 +273,24 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleProfile Success $it")
             }.onFailure {
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleProfile Failure $it")
+            }
+        }
+        return scheduleResponse
+    }
+
+    // 게스트 초대용 링크 조회
+    suspend fun getGuestInvitationLink(
+        moimScheduleId: Long
+    ): MoimBaseResponse {
+        var scheduleResponse = MoimBaseResponse()
+        withContext(Dispatchers.IO) {
+            runCatching {
+                moimScheduleApiService.getGuestInvitationLink(moimScheduleId)
+            }.onSuccess {
+                scheduleResponse = it
+                Log.d("RemoteScheduleDataSource", "getGuestInvitationLink Success $it")
+            }.onFailure {
+                Log.d("RemoteScheduleDataSource", "getGuestInvitationLink Failure $it")
             }
         }
         return scheduleResponse

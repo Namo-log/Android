@@ -5,6 +5,7 @@ import com.mongmong.namo.data.dto.EditMoimScheduleRequestBody
 import com.mongmong.namo.data.dto.GetMoimCalendarResponse
 import com.mongmong.namo.data.dto.GetMoimDetailResponse
 import com.mongmong.namo.data.dto.GetMoimResponse
+import com.mongmong.namo.data.dto.MoimBaseResponse
 import com.mongmong.namo.data.dto.MoimScheduleRequestBody
 import com.mongmong.namo.data.dto.PostMoimScheduleResponse
 import com.mongmong.namo.presentation.config.BaseResponse
@@ -41,14 +42,14 @@ interface GroupScheduleApiService {
         @Body body: MoimScheduleRequestBody
     ): PostMoimScheduleResponse
 
-    // 모임 일정 수정
+    // 모임 일정 수정 (방장 only)
     @PATCH("schedules/meeting/{meetingScheduleId}")
     suspend fun editMoimSchedule(
         @Path("meetingScheduleId") moimScheduleId: Long,
         @Body body: EditMoimScheduleRequestBody
     ): BaseResponse
 
-    // 모임 일정 삭제
+    // 모임 일정 삭제 (나가기)
     @DELETE("schedules/meeting/{meetingScheduleId}/withdraw")
     suspend fun deleteMoimSchedule(
         @Path("meetingScheduleId") moimScheduleId: Long
@@ -60,4 +61,10 @@ interface GroupScheduleApiService {
         @Path("meetingScheduleId") moimScheduleId: Long,
         @Body body: EditMoimScheduleProfileRequestBody
     ): BaseResponse
+
+    // 게스트 초대용 링크 조회
+    @GET("schedules/meeting/{meetingScheduleId}/invitations")
+    suspend fun getGuestInvitationLink(
+        @Path("meetingScheduleId") moimScheduleId: Long,
+    ): MoimBaseResponse
 }

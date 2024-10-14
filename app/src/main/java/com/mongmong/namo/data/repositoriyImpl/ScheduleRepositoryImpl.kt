@@ -106,4 +106,8 @@ class ScheduleRepositoryImpl @Inject constructor(
             EditMoimScheduleProfileRequestBody(title, imageUrl)
         ).isSuccess
     }
+
+    override suspend fun getGuestInvitaionLink(moimScheduleId: Long): String {
+        return remoteScheduleDataSource.getGuestInvitationLink(moimScheduleId).result
+    }
 }

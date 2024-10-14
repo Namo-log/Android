@@ -2,6 +2,10 @@ package com.mongmong.namo.data.dto
 
 import com.mongmong.namo.presentation.config.BaseResponse
 
+data class MoimBaseResponse(
+    val result: String = ""
+): BaseResponse()
+
 /** 모임 일정 목록 조회 */
 data class GetMoimResponse(
     val result: List<GetMoimResult>

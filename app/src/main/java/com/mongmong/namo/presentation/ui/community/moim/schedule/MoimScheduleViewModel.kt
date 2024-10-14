@@ -30,6 +30,8 @@ class MoimScheduleViewModel @Inject constructor(
     private val _prevClickedPicker = MutableLiveData<TextView?>()
     var prevClickedPicker: LiveData<TextView?> = _prevClickedPicker
 
+    var guestInvitationLink: String = "https://~"
+
     //TODO: 참석자 수정
     var participantIdsToAdd = ArrayList<Long>(arrayListOf()) // 스케줄에 추가할 유저 ID(userId)
     var participantIdsToRemove = ArrayList<Long>(arrayListOf()) // 스케줄에서 삭제할 참가자 ID(participantId)
@@ -42,6 +44,7 @@ class MoimScheduleViewModel @Inject constructor(
     private fun getMoimSchedule(moimScheduleId: Long) {
         viewModelScope.launch {
             _moimSchedule.value = repository.getMoimScheduleDetail(moimScheduleId)
+            getGuestInvitationLink()
         }
     }
 
@@ -91,6 +94,12 @@ class MoimScheduleViewModel @Inject constructor(
                 _moimSchedule.value!!.moimId,
                 _moimSchedule.value!!.title,
                 _moimSchedule.value!!.coverImg)
+        }
+    }
+
+    private fun getGuestInvitationLink() {
+        viewModelScope.launch {
+            guestInvitationLink = repository.getGuestInvitaionLink(_moimSchedule.value!!.moimId)
         }
     }
 

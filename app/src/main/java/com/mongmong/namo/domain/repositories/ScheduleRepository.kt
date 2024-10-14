@@ -65,4 +65,8 @@ interface ScheduleRepository {
         title: String,
         imageUrl: String
     ): Boolean
+
+    suspend fun getGuestInvitaionLink(
+        moimScheduleId: Long
+    ): String
 }
