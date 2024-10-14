@@ -403,16 +403,9 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK) {
-            result.data?.data?.let {
-                val coverImageUri = result.data!!.data
-                viewModel.updateImage(coverImageUri)
-                if (coverImageUri != null) { // 뷰에 이미지 넣기
-                    Glide.with(this)
-                        .load(coverImageUri)
-                        .fitCenter()
-                        .apply(RequestOptions().override(500,500))
-                        .into(binding.moimScheduleCoverImgIv)
-                }
+            result.data?.data?.let { uri ->
+                // 서버에 이미지를 업로드
+                viewModel.updateImage(uri)
             }
         }
     }

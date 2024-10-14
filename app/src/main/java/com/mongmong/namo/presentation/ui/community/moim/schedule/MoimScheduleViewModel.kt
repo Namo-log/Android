@@ -32,6 +32,8 @@ class MoimScheduleViewModel @Inject constructor(
 
     var guestInvitationLink: String = "https://~"
 
+    var isCoverImageEdit: Boolean = false
+
     //TODO: 참석자 수정
     var participantIdsToAdd = ArrayList<Long>(arrayListOf()) // 스케줄에 추가할 유저 ID(userId)
     var participantIdsToRemove = ArrayList<Long>(arrayListOf()) // 스케줄에서 삭제할 참가자 ID(participantId)
@@ -52,8 +54,9 @@ class MoimScheduleViewModel @Inject constructor(
     fun postMoimSchedule() {
         //TODO: 친구 API 연동 후 삭제
         updateMembers(listOf(Participant(userId = 4))) // 참석자 선택
-
         viewModelScope.launch {
+            uploadImageToServer(_moimSchedule.value?.coverImg)
+
             _successState.value = SuccessState(
                 SuccessType.ADD,
                 repository.addMoimSchedule(_moimSchedule.value!!)
@@ -65,6 +68,8 @@ class MoimScheduleViewModel @Inject constructor(
     //TODO: 방장만 편집 가능
     fun editMoimSchedule() {
         viewModelScope.launch {
+            uploadImageToServer(_moimSchedule.value?.coverImg)
+
             _successState.value = SuccessState(
                 SuccessType.EDIT,
                 repository.editMoimSchedule(
@@ -103,6 +108,21 @@ class MoimScheduleViewModel @Inject constructor(
         }
     }
 
+    private suspend fun uploadImageToServer(imageUri: String?) {
+        if (imageUri.isNullOrEmpty() || !isCoverImageEdit) return
+        val urlList = listOf(imageUri)
+
+        // suspend 함수이므로 호출 시점에서 대기
+        val newImageUrls = uploadImageToS3UseCase.execute(
+            PREFIX, (urlList).map { Uri.parse(it) }
+        )
+
+        // 이미지 URL 업데이트
+        _moimSchedule.value = _moimSchedule.value?.copy(
+            coverImg = newImageUrls.first()
+        )
+    }
+
     // 모임 일정 기본 정보 세팅
     fun setMoimSchedule(moimScheduleId: Long) {
         if (moimScheduleId == 0L) { // 모임 일정 생성
@@ -113,16 +133,10 @@ class MoimScheduleViewModel @Inject constructor(
     }
 
     fun updateImage(uri: Uri?) {
-        val urlList = listOf(uri)
-        viewModelScope.launch {
-            val newImageUrls = uploadImageToS3UseCase.execute(
-                PREFIX, (urlList).map { Uri.parse(it.toString()) }
-            )
-
-            _moimSchedule.value = _moimSchedule.value?.copy(
-                coverImg = newImageUrls.first()
-            )
-        }
+        isCoverImageEdit = true
+        _moimSchedule.value = _moimSchedule.value?.copy(
+            coverImg = uri.toString()
+        )
     }
 
     fun updatePlace(placeName: String, x: Double, y: Double) {
