@@ -35,8 +35,8 @@ class MoimScheduleViewModel @Inject constructor(
     var participantIdsToRemove = ArrayList<Long>(arrayListOf()) // 스케줄에서 삭제할 참가자 ID(participantId)
 
     // API 호출 성공 여부
-    private val _isSuccess = MutableLiveData<SuccessState>()
-    var isSuccess: LiveData<SuccessState> = _isSuccess
+    private val _successState = MutableLiveData<SuccessState>()
+    var successState: LiveData<SuccessState> = _successState
 
     /** 모임 일정 조회 */
     private fun getMoimSchedule(moimScheduleId: Long) {
@@ -51,7 +51,7 @@ class MoimScheduleViewModel @Inject constructor(
         updateMembers(listOf(Participant(userId = 4))) // 참석자 선택
 
         viewModelScope.launch {
-            _isSuccess.value = SuccessState(
+            _successState.value = SuccessState(
                 SuccessType.ADD,
                 repository.addMoimSchedule(_moimSchedule.value!!)
             )
@@ -61,7 +61,7 @@ class MoimScheduleViewModel @Inject constructor(
     /** 모임 일정 수정 */
     fun editMoimSchedule() {
         viewModelScope.launch {
-            _isSuccess.value = SuccessState(
+            _successState.value = SuccessState(
                 SuccessType.EDIT,
                 repository.editMoimSchedule(
                     _moimSchedule.value!!,
@@ -75,7 +75,7 @@ class MoimScheduleViewModel @Inject constructor(
     /** 모임 일정 삭제 */
     fun deleteMoimSchedule() {
         viewModelScope.launch {
-            _isSuccess.value = SuccessState(
+            _successState.value = SuccessState(
                 SuccessType.DELETE,
                 repository.deleteMoimSchedule(_moimSchedule.value!!.moimId)
             )
@@ -153,6 +153,6 @@ class MoimScheduleViewModel @Inject constructor(
     }
 
     companion object {
-        const val PREFIX = "moim"
+        const val PREFIX = "cover"
     }
 }
