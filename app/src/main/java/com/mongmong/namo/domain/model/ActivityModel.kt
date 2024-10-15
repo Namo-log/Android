@@ -36,5 +36,8 @@ data class PaymentParticipant(
 )
 
 data class DiaryBaseResponse(
-    val result: String = ""
-): BaseResponse()
+    val result: String = "",
+    val code: Int = 0,
+    val message: String = "",
+    val isSuccess: Boolean = false
+)

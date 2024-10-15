@@ -20,7 +20,6 @@ import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.usecases.AddMoimDiaryUseCase
 import com.mongmong.namo.domain.usecases.EditMoimDiaryUseCase
 import com.mongmong.namo.domain.usecases.GetActivitiesUseCase
-import com.mongmong.namo.domain.usecases.UploadImageToS3UseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,7 +28,6 @@ import javax.inject.Inject
 class MoimDiaryViewModel @Inject constructor(
     private val diaryRepository: DiaryRepository,
     private val activityRepository: ActivityRepository,
-    private val uploadImageToS3UseCase: UploadImageToS3UseCase,
     private val getActivitiesUseCase: GetActivitiesUseCase,
     private val addMoimDiaryUseCase: AddMoimDiaryUseCase,
     private val editMoimDiaryUseCase: EditMoimDiaryUseCase
@@ -64,9 +62,8 @@ class MoimDiaryViewModel @Inject constructor(
     private val _isActivityAdded = MutableLiveData<Boolean>(false)
     val isActivityAdded: LiveData<Boolean> = _isActivityAdded
 
-    private var initialDiaryContent: String? = null
-    private var initialImgList: List<DiaryImage> = emptyList()
-    private var initialEnjoy: Int = 0
+    private var initialDiary: DiaryDetail = DiaryDetail()
+    private var initialActivities: List<Activity> = emptyList()
 
     private var isInitialLoadComplete = false
 
@@ -75,7 +72,7 @@ class MoimDiaryViewModel @Inject constructor(
     val isParticipantVisible = MutableLiveData<Boolean>(true)
 
     private var deleteDiaryImageIds = mutableListOf<Long>()
-    private val deleteActivityImageIdsMap: MutableMap<Long, MutableList<Long>> = mutableMapOf()
+    private val deleteActivityImageIds: MutableMap<Long, MutableList<Long>> = mutableMapOf()
 
     private val _isEditMode = MutableLiveData<Boolean>(false)
     val isEditMode: LiveData<Boolean> = _isEditMode
@@ -99,21 +96,16 @@ class MoimDiaryViewModel @Inject constructor(
 
             initDiaryState() // 초기 상태 저장
             deleteDiaryImageIds.clear()
-            deleteActivityImageIdsMap.clear()
+            deleteActivityImageIds.clear()
         }
     }
 
     // 빈 기록 설정
     fun setupNewDiary() {
-        _diary.value = DiaryDetail(
-            diaryId = 0,
-            content =  "",
-            diaryImages = emptyList(),
-            enjoyRating = 0
-        )
+        _diary.value = DiaryDetail()
         initDiaryState()
         deleteDiaryImageIds.clear()
-        deleteActivityImageIdsMap.clear()
+        deleteActivityImageIds.clear()
     }
 
     // 기록 추가
@@ -127,10 +119,19 @@ class MoimDiaryViewModel @Inject constructor(
     // 기록 수정
     fun editDiary() {
         viewModelScope.launch {
-            diary.value?.let { diary ->
-                activities.value?.let { activities ->
-                editMoimDiaryUseCase.execute(diary, activities, deleteActivityImageIdsMap)
-            } }
+            val updatedDiary = createUpdatedDiary()
+            val updatedActivities = createUpdatedActivities()
+            Log.d("MoimDiaryViewModel", "updateDiary: ${updatedDiary}\nupdatedActivities: ${updatedActivities}")
+            if (updatedDiary != null || updatedActivities.isNotEmpty()) {
+                // 변경된 diary나 activities가 있다면 수정 요청
+                _editDiaryResult.value = editMoimDiaryUseCase.execute(
+                    scheduleId= diarySchedule.value?.scheduleId!!,
+                    diary = updatedDiary,
+                    activities = updatedActivities,
+                    deleteDiaryImageIds = deleteDiaryImageIds,
+                    deleteActivityImageIds = deleteActivityImageIds
+                )
+            }
         }
     }
 
@@ -183,6 +184,8 @@ class MoimDiaryViewModel @Inject constructor(
         viewModelScope.launch {
             val result = getActivitiesUseCase.execute(scheduleId)
             _activities.value = result
+
+            initActivitiesState()
         }
     }
 
@@ -205,6 +208,7 @@ class MoimDiaryViewModel @Inject constructor(
         )
 
         _isActivityAdded.value = true
+        checkForChanges()
     }
 
     fun activityAddedHandled() { _isActivityAdded.value = false }
@@ -212,28 +216,33 @@ class MoimDiaryViewModel @Inject constructor(
     // 활동 이름 변경 (ui)
     fun updateActivityName(position: Int, title: String) {
         _activities.value?.get(position)?.title = title
+        checkForChanges()
     }
 
     // 활동 시작 시간 변경 (ui)
     fun updateActivityStartDate(position: Int, date: String) {
         _activities.value?.get(position)?.startDate = date
+        checkForChanges()
     }
 
     // 활동 종료 시간 변경 (ui)
     fun updateActivityEndDate(position: Int, date: String) {
         _activities.value?.get(position)?.endDate = date
+        checkForChanges()
     }
 
     // 활동 장소 변경 (ui)
     fun updateActivityLocation(position: Int, id: String, name: String, x: Double, y: Double) {
         _activities.value?.get(position)?.location = ActivityLocation(kakaoLocationId = id, locationName = name, longitude = x, latitude = y)
         _activities.value = _activities.value
+        checkForChanges()
     }
 
     // 활동 태그 변경 (ui)
     fun updateActivityTag(position: Int, tag: String) {
         _activities.value?.get(position)?.tag = tag
         _activities.value = _activities.value
+        checkForChanges()
     }
 
     // 활동 참가자 변경 (ui)
@@ -278,7 +287,6 @@ class MoimDiaryViewModel @Inject constructor(
                 }
             }
         }
-
     }
 
     // 활동 이미지 추가
@@ -298,7 +306,7 @@ class MoimDiaryViewModel @Inject constructor(
     fun deleteActivityImage(position: Int, image: DiaryImage) {
         _activities.value?.get(position)?.let { activity ->
             if (image.diaryImageId != 0L) {
-                deleteActivityImageIdsMap.getOrPut(activity.activityId) { mutableListOf() }.add(image.diaryImageId)
+                deleteActivityImageIds.getOrPut(activity.activityId) { mutableListOf() }.add(image.diaryImageId)
             }
             val updatedImages = activity.images.toMutableList().apply { remove(image) }
             activity.images = updatedImages
@@ -313,23 +321,103 @@ class MoimDiaryViewModel @Inject constructor(
     fun setIsEditMode(isEdit: Boolean) { _isEditMode.value = isEdit }
 
     private fun initDiaryState() {
-        initialDiaryContent = diary.value?.content ?: ""
-        initialImgList = diary.value?.diaryImages ?: emptyList()
-        initialEnjoy = diary.value?.enjoyRating ?: 0
+        // 일기장 초기 상태 저장
+        initialDiary = _diary.value?.copy(
+            diaryImages = _diary.value?.diaryImages?.map { it.copy() } ?: emptyList()
+        ) ?: DiaryDetail()
+    }
 
-        Log.d("initDiaryState", "$initialDiaryContent, $initialImgList, $initialEnjoy")
-        isInitialLoadComplete = true
+    private fun initActivitiesState() {
+        // 활동 초기 상태 저장
+        initialActivities = _activities.value?.map { activity ->
+            activity.copy(
+                participants = activity.participants.map { it.copy() },
+                images = activity.images.map { it.copy() },
+                location = activity.location.copy(),
+                payment = activity.payment.copy(participants = activity.payment.participants.map { it.copy() })
+            )
+        } ?: emptyList()
+    }
+
+    // 변경된 항목이 있으면 diary, 없으면 null
+    private fun createUpdatedDiary(): DiaryDetail? {
+        val currentDiary = _diary.value ?: return null
+
+        // 변경된 필드를 가진 diary만 반환
+        return if (checkDiaryChanged()) {
+            currentDiary.copy(
+                diaryImages = currentDiary.diaryImages?.filter { it.diaryImageId == 0L } ?: emptyList()
+            )
+        } else null
+
+    }
+
+    // 변경된 항목만 가진 활동 리스트를 반환
+    private fun createUpdatedActivities(): List<Activity> {
+        val currentActivities = _activities.value ?: return emptyList()
+
+        return currentActivities.filter { currentActivity ->
+            val initialActivity = initialActivities.find { it.activityId == currentActivity.activityId }
+
+            currentActivity.activityId == 0L || initialActivity == null || isActivityChanged(currentActivity, initialActivity)
+        }
     }
 
     private fun checkForChanges() {
-        if (!isInitialLoadComplete) return
-        _diaryChanged.value = (
-                diary.value?.content != initialDiaryContent ||
-                        diary.value?.diaryImages != initialImgList ||
-                        diary.value?.enjoyRating != initialEnjoy
-                )
-        Log.d("initDiaryState", "${_diaryChanged.value}")
+        val diaryChanged = checkDiaryChanged()
+        val activitiesChanged = checkActivitiesChanged()
+
+        // 변경 사항이 하나라도 있으면 true로 설정
+        _diaryChanged.value = diaryChanged || activitiesChanged
     }
+
+    private fun checkDiaryChanged(): Boolean {
+        val currentDiary = _diary.value ?: return false
+
+        // 내용 변경 체크
+        if (currentDiary.content != initialDiary.content) return true
+        // 재미도 변경 체크
+        if (currentDiary.enjoyRating != initialDiary.enjoyRating) return true
+        // 이미지 변경 체크
+        if (currentDiary.diaryImages.size != initialDiary.diaryImages.size ||
+            currentDiary.diaryImages.any { it.imageUrl != initialDiary.diaryImages.find { img -> img.imageUrl == it.imageUrl }?.imageUrl }
+        ) return true
+
+        return false
+    }
+
+    private fun checkActivitiesChanged(): Boolean {
+        val currentActivities = _activities.value ?: return false
+        // 추가된 활동 존재 여부 체크
+        if (currentActivities.any { it.activityId == 0L }) return true
+
+        // 각각의 활동에 대한 변경 사항 체크
+        return currentActivities.any { currentActivity ->
+            val initialActivity = initialActivities.find { it.activityId == currentActivity.activityId }
+            initialActivity == null || isActivityChanged(currentActivity, initialActivity)
+        }
+    }
+
+    private fun isActivityChanged(currentActivity: Activity, initialActivity: Activity): Boolean {
+        // 제목 변경 체크
+        Log.d("isActivityChanged", "${currentActivity.title}")
+        if (currentActivity.title.isNotEmpty() && currentActivity.title != initialActivity.title) return true
+        // 시작일 변경 체크
+        if (currentActivity.startDate != initialActivity.startDate) return true
+        // 종료일 변경 체크
+        if (currentActivity.endDate != initialActivity.endDate) return true
+        // 장소 변경 체크
+        if (currentActivity.location != initialActivity.location) return true
+        // 이미지 변경 체크
+        if (currentActivity.images.size != initialActivity.images.size ||
+            currentActivity.images.any { it.imageUrl != initialActivity.images.find { img -> img.imageUrl == it.imageUrl }?.imageUrl }
+        ) return true
+
+        return false
+    }
+
+
+
 
     companion object {
         const val PREFIX = "diary"

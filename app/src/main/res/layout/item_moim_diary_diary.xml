@@ -39,7 +39,7 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/appCompatImageButton"
+                android:id="@+id/diary_private_guide_btn"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginStart="8dp"

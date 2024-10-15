@@ -94,6 +94,10 @@ class MoimDiaryDetailActivity :
     private fun setupViewPager() {
         vpAdapter = MoimDiaryVPAdapter(
             diaryEventListener = object : MoimDiaryVPAdapter.OnDiaryEventListener{
+                override fun onGuideClicked() {
+                    Toast.makeText(this@MoimDiaryDetailActivity, "일기장은 본인만 확인할 수 있습니다.", Toast.LENGTH_SHORT).show()
+                }
+
                 override fun onAddImageClicked() {
                     positionForGallery = DIARY_POSITION
                     getGallery()
@@ -104,7 +108,6 @@ class MoimDiaryDetailActivity :
                             .putStringArrayListExtra("imgs", images.map { it.imageUrl } as ArrayList<String>)
                     )
                 }
-
                 override fun onContentChanged(content: String) { viewModel.updateContent(content) }
                 override fun onEnjoyClicked(enjoyRating: Int) { viewModel.updateEnjoy(enjoyRating) }
                 override fun onDeleteImage(image: DiaryImage) { viewModel.deleteDiaryImage(image) }
@@ -191,9 +194,10 @@ class MoimDiaryDetailActivity :
             if(response.isSuccess) {
                 viewModel.getDiaryData()
                 Toast.makeText(this, "기록이 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                viewModel.setIsEditMode(false)
             }
             else Toast.makeText(this, "${response.message}", Toast.LENGTH_SHORT).show()
-            viewModel.setIsEditMode(false)
+            binding.moimDiarySaveBtn.isEnabled = true
         }
 
         viewModel.editDiaryResult.observe(this) { response ->
@@ -201,18 +205,20 @@ class MoimDiaryDetailActivity :
                 viewModel.getDiaryData()
                 viewModel.getActivitiesData()
                 Toast.makeText(this, "변경 사항이 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                viewModel.setIsEditMode(false)
             }
             else Toast.makeText(this, "${response.message}", Toast.LENGTH_SHORT).show()
-            viewModel.setIsEditMode(false)
+            binding.moimDiarySaveBtn.isEnabled = true
         }
 
         viewModel.deleteDiaryResult.observe(this) { response ->
             if(response.isSuccess) {
                 viewModel.setupNewDiary()
                 Toast.makeText(this, "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                viewModel.setIsEditMode(false)
             }
             else Toast.makeText(this, "${response.message}", Toast.LENGTH_SHORT).show()
-            viewModel.setIsEditMode(false)
+            binding.moimDiarySaveBtn.isEnabled = true
         }
     }
 
@@ -243,8 +249,10 @@ class MoimDiaryDetailActivity :
             if (viewModel.diarySchedule.value?.hasDiary == false) {
                 viewModel.addDiary()
             } else {
-                Toast.makeText(this@MoimDiaryDetailActivity, "장소를 입력해주세요!", Toast.LENGTH_SHORT).show()
+                Log.d("MoimDiaryDetailActivity", "editDiary")
+                viewModel.editDiary()
             }
+            binding.moimDiarySaveBtn.isEnabled = false
         }
     }
 

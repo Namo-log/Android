@@ -114,8 +114,6 @@ class MoimDiaryVPAdapter(
                 itemAnimator = null
             }
             adapter.addItem(diary.diaryImages)
-
-
         }
     }
 
@@ -351,6 +349,7 @@ class MoimDiaryVPAdapter(
     }
 
     interface OnDiaryEventListener {
+        fun onGuideClicked()
         fun onAddImageClicked()
         fun onImageClicked(images: List<DiaryImage>)
         fun onContentChanged(content: String)

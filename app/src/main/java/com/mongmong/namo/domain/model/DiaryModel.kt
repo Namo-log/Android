@@ -131,10 +131,10 @@ data class DiaryImage(
 )
 
 class DiaryDetail(
-    content: String,
-    val diaryId: Long,
-    diaryImages: List<DiaryImage>,
-    enjoyRating: Int
+    content: String = "",
+    val diaryId: Long = 0,
+    diaryImages: List<DiaryImage> = emptyList(),
+    enjoyRating: Int = 0
 ) : BaseObservable() {
 
     @get:Bindable
@@ -157,6 +157,19 @@ class DiaryDetail(
             field = value
             notifyPropertyChanged(BR.enjoyRating)
         }
+
+    fun copy(
+        content: String = this.content,
+        diaryImages: List<DiaryImage> = this.diaryImages,
+        enjoyRating: Int = this.enjoyRating
+    ): DiaryDetail {
+        return DiaryDetail(
+            content = content,
+            diaryId = this.diaryId,
+            diaryImages = diaryImages,
+            enjoyRating = enjoyRating
+        )
+    }
 }
 
 data class ScheduleForDiary(

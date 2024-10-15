@@ -24,7 +24,7 @@ class ActivityRepositoryImpl @Inject constructor(
 
     // 활동 추가
     override suspend fun addActivity(scheduleId: Long, activity: Activity): DiaryBaseResponse {
-        return DiaryBaseResponse()
+        return activityDataSource.addActivity(scheduleId, activity)
     }
 
     // 활동 수정
@@ -33,12 +33,12 @@ class ActivityRepositoryImpl @Inject constructor(
         activity: Activity,
         deleteImages: List<Long>
     ): DiaryBaseResponse {
-        return DiaryBaseResponse()
+        return activityDataSource.editActivity(activityId, activity, deleteImages)
     }
 
     // 활동 태그 수정
     override suspend fun editActivityTag(activityId: Long, tag: String): DiaryBaseResponse {
-        return DiaryBaseResponse()
+        return activityDataSource.editActivityTag(activityId, tag)
     }
 
     // 활동 참가자 수정
@@ -52,11 +52,11 @@ class ActivityRepositoryImpl @Inject constructor(
 
     // 활동 정산 수정
     override suspend fun editActivityPayment(activityId: Long, payment: ActivityPayment): DiaryBaseResponse {
-        return DiaryBaseResponse()
+        return activityDataSource.editActivityPayment(activityId, payment)
     }
 
     // 활동 삭제
     override suspend fun deleteActivity(activityId: Long): DiaryBaseResponse {
-        return DiaryBaseResponse()
+        return activityDataSource.deleteActivity(activityId)
     }
 }
