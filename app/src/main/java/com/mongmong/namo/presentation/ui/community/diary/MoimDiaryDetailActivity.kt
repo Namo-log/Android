@@ -97,6 +97,8 @@ class MoimDiaryDetailActivity :
                 override fun onGuideClicked() {
                     Toast.makeText(this@MoimDiaryDetailActivity, "일기장은 본인만 확인할 수 있습니다.", Toast.LENGTH_SHORT).show()
                 }
+                override fun onEditModeClicked() { viewModel.setIsEditMode(true) }
+                override fun onViewModeClicked() { showBackDialog(isModeChange = true) }
 
                 override fun onAddImageClicked() {
                     positionForGallery = DIARY_POSITION
@@ -111,7 +113,6 @@ class MoimDiaryDetailActivity :
                 override fun onContentChanged(content: String) { viewModel.updateContent(content) }
                 override fun onEnjoyClicked(enjoyRating: Int) { viewModel.updateEnjoy(enjoyRating) }
                 override fun onDeleteImage(image: DiaryImage) { viewModel.deleteDiaryImage(image) }
-                override fun onEditModeClicked() { viewModel.setIsEditMode(true) }
                 override fun onDeleteDiary() {
                     showDeleteDialog(isActivity = false)
                 }
@@ -119,6 +120,7 @@ class MoimDiaryDetailActivity :
             },
             activityEventListener = object : MoimDiaryVPAdapter.OnActivityEventListener {
                 override fun onEditModeClicked() { viewModel.setIsEditMode(true) }
+                override fun onViewModeClicked() { showBackDialog(isModeChange = true) }
                 override fun onDeleteActivity(position: Int) {
                     activityPosition = position
                     showDeleteDialog(isActivity = true)
@@ -227,13 +229,13 @@ class MoimDiaryDetailActivity :
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (viewModel.diaryChanged.value == true) {
-                    showBackDialog()
+                    showBackDialog(false)
                 } else finish()
             }
         })
         binding.moimDiaryBackIv.setOnClickListener {
             if (viewModel.diaryChanged.value == true) {
-                showBackDialog()
+                showBackDialog(false)
             } else finish()
         }
 
@@ -257,7 +259,6 @@ class MoimDiaryDetailActivity :
     }
 
     private fun showDeleteDialog(isActivity: Boolean) {
-        // 삭제 확인 다이얼로그
         val title = if (isActivity) DELETE_ACTIVITY_TITLE else DELETE_DIARY_TITLE
         val content = if (isActivity) DELETE_ACTIVITY_CONTENT else DELETE_DIARY_CONTENT
 
@@ -268,11 +269,13 @@ class MoimDiaryDetailActivity :
         dialog.show(this.supportFragmentManager, "ConfirmDialog")
     }
 
-    private fun showBackDialog() {
-        val title = "편집한 내용이 저장되지 않습니다."
-        val content = "정말 나가시겠어요?"
+    private fun showBackDialog(isModeChange: Boolean) {
+        val title = BACK_TITLE
+        val content = if(isModeChange) VIEW_CONTENT else BACK_CONTENT
 
-        val dialog = ConfirmDialog(this, title, content, "확인", BACK_BUTTON_ACTION)
+        val dialog = ConfirmDialog(
+            this, title, content, "확인",
+            if(isModeChange) VIEW_BUTTON_ACTION else BACK_BUTTON_ACTION)
         dialog.isCancelable = false
         dialog.show(supportFragmentManager, "")
     }
@@ -281,6 +284,11 @@ class MoimDiaryDetailActivity :
         when(id) {
             DELETE_DIARY_BUTTON_ACTION -> viewModel.deleteDiary() // 일기 삭제
             DELETE_ACTIVITY_BUTTON_ACTION -> viewModel.deleteActivity(activityPosition) // 활동 삭제
+            VIEW_BUTTON_ACTION -> {
+                viewModel.getDiaryData()
+                viewModel.getActivitiesData()
+                viewModel.setIsEditMode(false)
+            }
             BACK_BUTTON_ACTION -> finish() // 뒤로가기
         }
     }
@@ -409,10 +417,14 @@ class MoimDiaryDetailActivity :
         const val DELETE_DIARY_BUTTON_ACTION = 1
         const val DELETE_ACTIVITY_BUTTON_ACTION = 2
         const val BACK_BUTTON_ACTION = 3
+        const val VIEW_BUTTON_ACTION = 4
         const val DELETE_DIARY_TITLE = "일기를 삭제하시겠어요?"
         const val DELETE_DIARY_CONTENT = "삭제한 일기는 내 기록에서 삭제됩니다."
         const val DELETE_ACTIVITY_TITLE = "활동을 삭제하시겠어요?"
         const val DELETE_ACTIVITY_CONTENT = "삭제한 모임 활동은\n모든 참석자의 기록에서 삭제됩니다."
+        const val BACK_TITLE = "편집한 내용이 저장되지 않습니다."
+        const val BACK_CONTENT = "정말 나가시겠어요?"
+        const val VIEW_CONTENT = "정말 조회 모드로 돌아가시겠어요?"
     }
 }
 

@@ -401,7 +401,7 @@ class MoimDiaryViewModel @Inject constructor(
     private fun isActivityChanged(currentActivity: Activity, initialActivity: Activity): Boolean {
         // 제목 변경 체크
         Log.d("isActivityChanged", "${currentActivity.title}")
-        if (currentActivity.title.isNotEmpty() && currentActivity.title != initialActivity.title) return true
+        if (currentActivity.title != initialActivity.title) return true
         // 시작일 변경 체크
         if (currentActivity.startDate != initialActivity.startDate) return true
         // 종료일 변경 체크
@@ -414,12 +414,5 @@ class MoimDiaryViewModel @Inject constructor(
         ) return true
 
         return false
-    }
-
-
-
-
-    companion object {
-        const val PREFIX = "diary"
     }
 }

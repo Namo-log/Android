@@ -84,7 +84,9 @@ class MoimDiaryVPAdapter(
             binding.isEdit = isEditMode
             binding.hasDiary = hasDiary
 
+            binding.diaryPrivateGuideBtn.setOnClickListener{ diaryEventListener.onGuideClicked() }
             binding.diaryEditBtn.setOnClickListener { diaryEventListener.onEditModeClicked() }
+            binding.diaryViewBtn.setOnClickListener { diaryEventListener.onViewModeClicked() }
             binding.diaryDeleteBtn.setOnClickListener { diaryEventListener.onDeleteDiary() }
             // Content 변경 이벤트 처리
             binding.diaryContentEt.addTextChangedListener(object : TextWatcher {
@@ -127,6 +129,8 @@ class MoimDiaryVPAdapter(
             binding.hasDiary = hasDiary
 
             binding.activityEditBtn.setOnClickListener { activityEventListener.onEditModeClicked() }
+            binding.activityViewBtn.setOnClickListener { activityEventListener.onViewModeClicked() }
+
             binding.activityDeleteBtn.setOnClickListener {
                 activityEventListener.onDeleteActivity(bindingAdapterPosition - 1)
             }
@@ -345,6 +349,7 @@ class MoimDiaryVPAdapter(
         fun onPayClicked(position: Int)
         fun onDeleteImage(position: Int, image: DiaryImage)
         fun onEditModeClicked()
+        fun onViewModeClicked()
         fun onImageClicked(images: List<DiaryImage>)
     }
 
@@ -356,6 +361,7 @@ class MoimDiaryVPAdapter(
         fun onEnjoyClicked(enjoyRating: Int)
         fun onDeleteImage(image: DiaryImage)
         fun onEditModeClicked()
+        fun onViewModeClicked()
         fun onDeleteDiary()
     }
 }
