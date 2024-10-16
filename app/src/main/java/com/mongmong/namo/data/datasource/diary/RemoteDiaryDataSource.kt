@@ -15,6 +15,8 @@ import com.mongmong.namo.data.dto.GetCalendarDiaryResult
 import com.mongmong.namo.data.dto.GetDiaryByDateResponse
 import com.mongmong.namo.data.dto.GetDiaryResponse
 import com.mongmong.namo.data.dto.GetDiaryResult
+import com.mongmong.namo.data.dto.GetMoimPaymentResponse
+import com.mongmong.namo.data.dto.GetMoimPaymentResult
 import com.mongmong.namo.data.dto.GetScheduleForDiaryResponse
 import com.mongmong.namo.data.dto.GetScheduleForDiaryResult
 import com.mongmong.namo.data.dto.LocationInfo
@@ -168,6 +170,22 @@ class RemoteDiaryDataSource @Inject constructor(
                 Log.d("RemoteDiaryDataSource getDiaryByDate Fail", "$it")
             }
         }
+        return response
+    }
+
+    suspend fun getMoimPayment(scheduleId: Long): GetMoimPaymentResponse {
+        var response = GetMoimPaymentResponse(GetMoimPaymentResult())
+        withContext(Dispatchers.IO) {
+            runCatching {
+                diaryApiService.getMoimPayment(scheduleId)
+            }.onSuccess {
+                Log.d("RemoteDiaryDataSource getMoimPayment Success", "$it")
+                response = it
+            }.onFailure {
+                Log.d("RemoteDiaryDataSource getMoimPayment Fail", "$it")
+            }
+        }
+
         return response
     }
 }

@@ -41,3 +41,17 @@ data class EditDiaryRequest(
     val enjoyRating: Int,
     val deleteImages: List<Long>
 )
+
+data class GetMoimPaymentResponse(
+    val result: GetMoimPaymentResult
+): BaseResponse()
+
+data class GetMoimPaymentResult(
+    val settlementUserList: List<MoimPaymentParticipant> = emptyList(),
+    val totalAmount: Int = 0
+)
+
+data class MoimPaymentParticipant(
+    val amount: Int,
+    val nickname: String
+)

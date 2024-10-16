@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -40,6 +41,7 @@ class ActivityPaymentDialog(private val position: Int) : DialogFragment() {
         } ?: run {
             tempPayment = ActivityPayment(participants = emptyList())  // 기본값
         }
+        binding.viewModel = viewModel
         binding.payment = tempPayment
 
         // TextWatcher 설정
@@ -64,19 +66,22 @@ class ActivityPaymentDialog(private val position: Int) : DialogFragment() {
                         val formatted = formatAmount(parsed)
                         currentText = formatted
 
+                        // 텍스트 변경 리스너를 일시적으로 제거하고 설정해야 함
                         binding.activityPaymentTotalEt.removeTextChangedListener(this)
                         binding.activityPaymentTotalEt.setText(formatted)
-                        binding.activityPaymentTotalEt.setSelection(formatted.indexOf(" 원"))
+                        binding.activityPaymentTotalEt.setSelection(formatted.length - 2)
                         binding.activityPaymentTotalEt.addTextChangedListener(this)
 
-                        tempPayment?.totalAmount = parsed.toInt() // totalAmount 대신 tempPayment에 저장
+                        tempPayment?.totalAmount = parsed.toInt()
                         updatePerPersonAmount()
                     }
                 }
             }
         })
 
+
         initRecyclerView()
+        initObserve()
 
         binding.activityPaymentBackTv.setOnClickListener { dismiss() }
         binding.activityPaymentSaveTv.setOnClickListener { savePaymentData() }
@@ -99,6 +104,13 @@ class ActivityPaymentDialog(private val position: Int) : DialogFragment() {
         }
     }
 
+    private fun initObserve() {
+        viewModel.editActivityPaymentResult.observe(viewLifecycleOwner) { response ->
+            if(response.isSuccess) {
+                tempPayment?.let { viewModel.updateActivityPayment(position, it) }
+            } else Toast.makeText(requireActivity(), "${response.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
     // 참가자 수 업데이트
     private fun updateParticipantsCount() {
         tempPayment?.divisionCount = participantsAdapter.getSelectedParticipantsCount()
@@ -132,12 +144,11 @@ class ActivityPaymentDialog(private val position: Int) : DialogFragment() {
 
             val activityId = viewModel.activities.value?.get(position)?.activityId
 
-            if (activityId == 0L) {
-                viewModel.updateActivityPayment(position, it)
-            } else {
-                viewModel.editActivityPayment(activityId!!, it)
-            }
+            if (activityId == 0L) viewModel.updateActivityPayment(position, it)
+            else viewModel.editActivityPayment(activityId!!, it)
+
         }
+        viewModel.calculateMoimPayment()
         dismiss()
     }
 

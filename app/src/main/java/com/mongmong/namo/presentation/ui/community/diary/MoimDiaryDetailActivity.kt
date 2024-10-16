@@ -21,10 +21,8 @@ import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMoimDiaryDetailBinding
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.presentation.config.BaseActivity
-import com.mongmong.namo.presentation.ui.MainActivity
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
 import com.mongmong.namo.presentation.ui.diary.DiaryImageDetailActivity
-import com.mongmong.namo.presentation.ui.diary.PersonalDiaryDetailActivity
 import com.mongmong.namo.presentation.ui.community.diary.adapter.MoimDiaryVPAdapter
 import com.mongmong.namo.presentation.ui.community.diary.adapter.MoimDiaryParticipantsRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.map.MapActivity
@@ -63,23 +61,20 @@ class MoimDiaryDetailActivity :
 
         setupParticipants()
         setupViewPager()
-        setupScheduleData()
+        setupViewData()
         initClickListener()
         initObserve()
     }
 
-    private fun setupScheduleData() {
+    private fun setupViewData() {
         viewModel.getScheduleForDiary(intent.getLongExtra("scheduleId", 0))
-        setCreateOrEdit()
-    }
-
-    private fun setCreateOrEdit() {
         if (viewModel.diarySchedule.value?.hasDiary == false) {
             viewModel.setupNewDiary()
         } else {
             viewModel.getDiaryData()
         }
         viewModel.getActivitiesData()
+        viewModel.getTotalMoimPayment()
     }
 
     private fun setupParticipants() {
@@ -206,6 +201,7 @@ class MoimDiaryDetailActivity :
             if(response.isSuccess) {
                 viewModel.getDiaryData()
                 viewModel.getActivitiesData()
+                viewModel.getTotalMoimPayment()
                 Toast.makeText(this, "변경 사항이 저장되었습니다.", Toast.LENGTH_SHORT).show()
                 viewModel.setIsEditMode(false)
             }
@@ -237,6 +233,11 @@ class MoimDiaryDetailActivity :
             if (viewModel.diaryChanged.value == true) {
                 showBackDialog(false)
             } else finish()
+        }
+
+        // 전체 정산
+        binding.moimPaymentTv.setOnClickListener {
+            if(viewModel.moimPayment.value?.totalAmount != 0) showMoimPaymentDialog()
         }
 
         //  활동 추가 버튼 클릭리스너
@@ -287,10 +288,17 @@ class MoimDiaryDetailActivity :
             VIEW_BUTTON_ACTION -> {
                 viewModel.getDiaryData()
                 viewModel.getActivitiesData()
+                viewModel.getTotalMoimPayment()
                 viewModel.setIsEditMode(false)
             }
             BACK_BUTTON_ACTION -> finish() // 뒤로가기
         }
+    }
+
+    private fun showMoimPaymentDialog() {
+        val dialog = MoimPaymentDialog()
+        dialog.isCancelable = false
+        dialog.show(supportFragmentManager, "")
     }
 
     private fun showActivityParticipantsDialog(position: Int) {

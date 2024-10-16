@@ -30,13 +30,11 @@
             app:layout_constraintStart_toStartOf="parent"/>
 
         <TextView
+            style="@style/content_regular"
             android:id="@+id/item_activity_participants_nickname_tv"
             android:layout_width="wrap_content"
-            android:layout_height="25dp"
+            android:layout_height="wrap_content"
             android:text="앨리"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            android:gravity="center_vertical"
             android:layout_marginStart="7dp"
             android:paddingEnd="10dp"
             app:layout_constraintTop_toTopOf="@id/item_activity_participants_checkbox"

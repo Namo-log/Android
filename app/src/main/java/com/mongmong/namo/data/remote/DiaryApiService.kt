@@ -8,6 +8,7 @@ import com.mongmong.namo.data.dto.GetCalendarDiaryResponse
 import com.mongmong.namo.data.dto.GetDiaryByDateResponse
 import com.mongmong.namo.data.dto.GetDiaryCollectionResponse
 import com.mongmong.namo.data.dto.GetDiaryResponse
+import com.mongmong.namo.data.dto.GetMoimPaymentResponse
 import com.mongmong.namo.data.dto.GetScheduleForDiaryResponse
 import com.mongmong.namo.data.dto.PostDiaryRequest
 import com.mongmong.namo.domain.model.DiaryBaseResponse
@@ -65,5 +66,10 @@ interface DiaryApiService {
     suspend fun getDiaryByDate(
         @Path("date") date: String
     ): GetDiaryByDateResponse
+
+    @GET("schedules/meeting/{scheduleId}/settlement")
+    suspend fun getMoimPayment(
+        @Path("scheduleId") scheduleId: Long
+    ): GetMoimPaymentResponse
 }
 

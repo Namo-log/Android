@@ -60,7 +60,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:text="@string/dialog_save"
-                android:visibility="@{viewModel.diarySchedule.hasDiary &amp;&amp; viewModel.isEditMode ? View.VISIBLE : View.VISIBLE}"
+                android:visibility="@{viewModel.diarySchedule.hasDiary &amp;&amp; viewModel.isEditMode ? View.VISIBLE : View.GONE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -75,12 +75,11 @@
             app:layout_constraintTop_toBottomOf="@+id/activity_payment_header_layout">
 
             <TextView
+                style="@style/content_bold"
                 android:id="@+id/activity_payment_total_amount_title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/activity_payment_total_amount"
-                android:textColor="@color/main_text"
-                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/activity_payment_total_et"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/activity_payment_total_et" />

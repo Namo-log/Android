@@ -14,6 +14,7 @@ import com.mongmong.namo.data.utils.mappers.DiaryMapper.toModel
 import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryBaseResponse
 import com.mongmong.namo.domain.model.DiaryDetail
+import com.mongmong.namo.domain.model.MoimPayment
 import com.mongmong.namo.domain.model.ScheduleForDiary
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import kotlinx.coroutines.flow.Flow
@@ -94,6 +95,11 @@ class DiaryRepositoryImpl @Inject constructor(
     override suspend fun getDiaryByDate(date: String): List<Diary> {
         return remoteDiaryDataSource.getDiaryByDate(date).result.map { it.toModel() }
     }
+
+    override suspend fun getMoimPayment(scheduleId: Long): MoimPayment {
+        return remoteDiaryDataSource.getMoimPayment(scheduleId).result.toModel()
+    }
+
 
     companion object {
         const val PAGE_SIZE = 5

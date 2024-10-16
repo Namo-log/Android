@@ -104,10 +104,19 @@ object BindingAdapters {
         }
     }
 
+    @JvmStatic
     @BindingAdapter("currencyText")
     fun setCurrencyText(textView: TextView, amount: Int?) {
         if (amount == null) return
         val formattedText = NumberFormat.getNumberInstance(Locale.US).format(amount) + " 원"
+        textView.text = formattedText
+    }
+
+    @JvmStatic
+    @BindingAdapter("totalCurrencyText")
+    fun setTotalCurrencyText(textView: TextView, amount: Int?) {
+        if (amount == null) return
+        val formattedText = "총 " + NumberFormat.getNumberInstance(Locale.US).format(amount) + " 원"
         textView.text = formattedText
     }
 

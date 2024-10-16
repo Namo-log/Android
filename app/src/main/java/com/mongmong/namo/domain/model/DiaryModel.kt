@@ -240,3 +240,14 @@ data class CalendarDiaryDate(
     val month: Int,
     val year: Int
 )
+
+
+data class MoimPayment(
+    val moimPaymentParticipants: List<MoimPaymentParticipant>,
+    val totalAmount: Int
+)
+
+data class MoimPaymentParticipant(
+    val amount: Int,
+    val nickname: String
+)

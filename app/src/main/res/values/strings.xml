@@ -127,6 +127,8 @@
     <string name="moim_diary_end_date">종료</string>
     <string name="moim_diary_new_activity">새 활동</string>
     <string name="moim_diary_none">없음</string>
+    <string name="moim_payment">전체 정산</string>
+    <string name="moim_payment_total">모든 활동 합계</string>
     <!-- activity 관련 String -->
     <string name="activity_tag">활동 태그</string>
     <string name="activity_participants">활동 참석자</string>

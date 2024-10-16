@@ -13,6 +13,8 @@ import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.domain.model.ParticipantInfo
 import com.mongmong.namo.domain.model.ActivityPayment
 import com.mongmong.namo.domain.model.DiaryBaseResponse
+import com.mongmong.namo.domain.model.MoimPayment
+import com.mongmong.namo.domain.model.MoimPaymentParticipant
 import com.mongmong.namo.domain.model.PaymentParticipant
 import com.mongmong.namo.domain.model.ScheduleForDiary
 import com.mongmong.namo.domain.repositories.ActivityRepository
@@ -44,6 +46,9 @@ class MoimDiaryViewModel @Inject constructor(
     private val _activities = MutableLiveData<List<Activity>>(mutableListOf())
     val activities: LiveData<List<Activity>> = _activities
 
+    private val _moimPayment = MutableLiveData<MoimPayment>()
+    val moimPayment: LiveData<MoimPayment> = _moimPayment
+
     private val _addDiaryResult = MutableLiveData<DiaryBaseResponse>()
     val addDiaryResult: LiveData<DiaryBaseResponse> = _addDiaryResult
 
@@ -64,8 +69,6 @@ class MoimDiaryViewModel @Inject constructor(
 
     private var initialDiary: DiaryDetail = DiaryDetail()
     private var initialActivities: List<Activity> = emptyList()
-
-    private var isInitialLoadComplete = false
 
     var scheduleId: Long = 0
 
@@ -108,11 +111,17 @@ class MoimDiaryViewModel @Inject constructor(
         deleteActivityImageIds.clear()
     }
 
+    fun getTotalMoimPayment() {
+        viewModelScope.launch {
+            _moimPayment.value = diaryRepository.getMoimPayment(scheduleId)
+        }
+    }
+
     // 기록 추가
     fun addDiary() {
         viewModelScope.launch {
             Log.d("MoimDiaryViewModel addDiary", "$_diary")
-            _addDiaryResult.value = diary.value?.let { addMoimDiaryUseCase.execute(it, diarySchedule.value?.scheduleId!!) }
+            _addDiaryResult.value = diary.value?.let { addMoimDiaryUseCase.execute(it, scheduleId) }
         }
     }
 
@@ -125,7 +134,7 @@ class MoimDiaryViewModel @Inject constructor(
             if (updatedDiary != null || updatedActivities.isNotEmpty()) {
                 // 변경된 diary나 activities가 있다면 수정 요청
                 _editDiaryResult.value = editMoimDiaryUseCase.execute(
-                    scheduleId= diarySchedule.value?.scheduleId!!,
+                    scheduleId= scheduleId,
                     diary = updatedDiary,
                     activities = updatedActivities,
                     deleteDiaryImageIds = deleteDiaryImageIds,
@@ -287,6 +296,7 @@ class MoimDiaryViewModel @Inject constructor(
                 }
             }
         }
+        checkForChanges()
     }
 
     // 활동 이미지 추가
@@ -415,4 +425,39 @@ class MoimDiaryViewModel @Inject constructor(
 
         return false
     }
+
+    // MoimPayment 계산
+    fun calculateMoimPayment() {
+        viewModelScope.launch {
+            val currentActivities = _activities.value ?: return@launch
+
+            val paymentMap = mutableMapOf<String, Int>() // 참가자별 금액을 저장할 맵
+            var totalAmount = 0 // 총액
+
+            // 각 활동의 payment를 기반으로 참가자별 금액을 모으는 로직
+            currentActivities.forEach { activity ->
+                activity.payment?.let { payment ->
+                    totalAmount += payment.totalAmount
+
+                    payment.participants.forEach { participant ->
+                        val existingAmount = paymentMap[participant.nickname] ?: 0
+
+                        paymentMap[participant.nickname] = existingAmount + payment.amountPerPerson
+                    }
+                }
+            }
+
+            // 참가자별 금액을 MoimPaymentParticipant로 변환
+            val moimPaymentParticipants = paymentMap.map { (nickname, amount) ->
+                MoimPaymentParticipant(amount = amount, nickname = nickname)
+            }
+
+            // MoimPayment 객체 생성 및 LiveData 업데이트
+            _moimPayment.value = MoimPayment(
+                moimPaymentParticipants = moimPaymentParticipants,
+                totalAmount = totalAmount
+            )
+        }
+    }
+
 }

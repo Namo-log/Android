@@ -5,6 +5,7 @@ import com.mongmong.namo.domain.model.CalendarDiaryDate
 import com.mongmong.namo.domain.model.Diary
 import com.mongmong.namo.domain.model.DiaryBaseResponse
 import com.mongmong.namo.domain.model.DiaryDetail
+import com.mongmong.namo.domain.model.MoimPayment
 import com.mongmong.namo.domain.model.ScheduleForDiary
 import kotlinx.coroutines.flow.Flow
 
@@ -48,4 +49,6 @@ interface DiaryRepository {
 
     // 날짜별 기록 조회 (기록 캘린더)
     suspend fun getDiaryByDate(date: String): List<Diary>
+
+    suspend fun getMoimPayment(scheduleId: Long): MoimPayment
 }

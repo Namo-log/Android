@@ -218,7 +218,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/moim_diary_schedule_btn"
                         app:layout_constraintTop_toTopOf="@+id/moim_diary_schedule_btn"
-                        tools:listitem="@layout/item_moim_diary_participants" />
+                        tools:listitem="@layout/item_moim_diary_participant" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -242,6 +242,7 @@
                         android:text="@string/moim_diary_whole_money" />
 
                     <TextView
+                        android:id="@+id/moim_payment_tv"
                         style="@style/content_regular"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -250,8 +251,8 @@
                         android:drawableEnd="@drawable/ic_arrow_right"
                         android:drawablePadding="8dp"
                         android:drawableTint="@color/text_unselected"
-                        android:text="@string/moim_diary_none_activity"
-                        android:textColor="@color/text_unselected" />
+                        android:text='@{viewModel.moimPayment.totalAmount == 0 ? @string/moim_diary_none_activity : "총 " +viewModel.moimPayment.totalAmount + "원"}'
+                        android:textColor="@{viewModel.moimPayment.totalAmount == 0 ? @color/text_unselected : @color/main_text}" />
                 </LinearLayout>
 
                 <androidx.viewpager2.widget.ViewPager2
