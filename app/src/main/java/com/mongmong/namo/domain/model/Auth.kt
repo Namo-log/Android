@@ -15,10 +15,12 @@ data class LoginResponse(
 ) : BaseResponse()
 
 data class LoginResult(
-    val accessToken: String,
-    val refreshToken: String,
-    val newUser: Boolean,
-    val terms: List<TermsResult>
+    val accessToken: String = "",
+    val refreshToken: String = "",
+    val userId: Long = 0L,
+    val newUser: Boolean = false,
+    val signUpComplete: Boolean = true,
+    val terms: List<TermsResult> = emptyList()
 )
 
 data class TermsResult(

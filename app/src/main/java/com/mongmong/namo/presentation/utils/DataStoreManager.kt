@@ -2,6 +2,7 @@ package com.mongmong.namo.presentation.utils
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +14,7 @@ class DataStoreManager(private val context: Context) {
 
     private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
     private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
+    private val USER_ID_KEY = longPreferencesKey("userId")
     private val PLATFORM_KEY = stringPreferencesKey("platform")
 
     suspend fun saveAccessToken(accessToken: String) {
@@ -43,6 +45,18 @@ class DataStoreManager(private val context: Context) {
         context.dataStore.edit { preferences ->
             preferences.remove(ACCESS_TOKEN_KEY)
             preferences.remove(REFRESH_TOKEN_KEY)
+        }
+    }
+
+    suspend fun saveUserId(userId: Long) {
+        context.dataStore.edit { preferences ->
+            preferences[USER_ID_KEY] = userId
+        }
+    }
+
+    fun getUserId(): Flow<Long?> {
+        return context.dataStore.data.map { preferences ->
+            preferences[USER_ID_KEY]
         }
     }
 

@@ -46,6 +46,8 @@ class AuthViewModel @Inject constructor(
             saveLoginPlatform(platform)
             // 토큰 저장
             saveToken(response.result)
+            // userId 저장
+            saveUserId(response.result.userId)
 
             _loginResult.value = response.result
         }
@@ -109,6 +111,11 @@ class AuthViewModel @Inject constructor(
     private suspend fun saveToken(tokenResult: LoginResult) {
         dsManager.saveAccessToken(tokenResult.accessToken)
         dsManager.saveRefreshToken(tokenResult.refreshToken)
+    }
+
+    // userId 앱 내에 저장
+    private suspend fun saveUserId(userId: Long) {
+        dsManager.saveUserId(userId)
     }
 
     // 앱 내에 저장된 토큰 정보 삭제
