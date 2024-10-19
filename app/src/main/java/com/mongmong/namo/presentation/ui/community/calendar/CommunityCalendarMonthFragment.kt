@@ -79,7 +79,7 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
                         CommunityCalendarActivity.currentFragment = null
                         CommunityCalendarActivity.currentSelectedPos = null
                         CommunityCalendarActivity.currentSelectedDate = null
-                    } else if (viewModel.isShow.value == false) { // 바텀시트 닫기
+                    } else if (!viewModel.isShowDailyBottomSheet) { // 바텀시트 닫기
                         binding.communityCalendarMotionLayout.transitionToEnd()
                     }
                     viewModel.updateIsShow()

@@ -21,7 +21,7 @@ class CalendarViewModel @Inject constructor (
     private val repository: ScheduleRepository
 ): ViewModel() {
     // 달력에 들어가는 한달치 날짜
-    private val _monthDateList = MutableLiveData<List<DateTime>>()
+    private var _monthDateList: List<DateTime> = emptyList()
 
     // 모임 캘린더 일정
     private val _moimScheduleList = MutableLiveData<List<MoimCalendarSchedule>>()
@@ -55,11 +55,10 @@ class CalendarViewModel @Inject constructor (
         )
     }
 
-    private val _isShow = MutableLiveData(false)
-    var isShow: LiveData<Boolean> = _isShow
+    var isShowDailyBottomSheet: Boolean = false
 
-    private var _prevIndex = -1 // 클릭한 날짜의 index
-    private var _nowIndex = 0 // 클릭한 날짜의 index
+    private var _prevIndex = -1 // 이전에 클릭한 날짜의 index
+    private var _nowIndex = 0 // 현재 클릭한 날짜의 index
 
     /** 모임 캘린더 일정 조회 */
     fun getMoimCalendarSchedules() {
@@ -67,8 +66,8 @@ class CalendarViewModel @Inject constructor (
             // 범위로 일정 목록 조회
             _moimScheduleList.value = repository.getMoimCalendarSchedules(
                 moimScheduleId = moimSchedule.moimId,
-                startDate = _monthDateList.value!!.first(), // 캘린더에 표시되는 첫번쨰 날짜
-                endDate = _monthDateList.value!!.last() // 캘린더에 표시되는 마지막 날짜
+                startDate = _monthDateList.first(), // 캘린더에 표시되는 첫번쨰 날짜
+                endDate = _monthDateList.last() // 캘린더에 표시되는 마지막 날짜
             )
         }
     }
@@ -103,17 +102,17 @@ class CalendarViewModel @Inject constructor (
     }
 
     fun updateIsShow() {
-        _isShow.value = !_isShow.value!!
+        isShowDailyBottomSheet = !isShowDailyBottomSheet
         _prevIndex = _nowIndex
     }
 
     // 일정 상세 바텀 시트 닫기 - 동일한 날짜를 다시 클릭했을 경우
-    fun isCloseScheduleDetailBottomSheet() = _isShow.value == true && (_prevIndex == _nowIndex)
+    fun isCloseScheduleDetailBottomSheet() = isShowDailyBottomSheet && (_prevIndex == _nowIndex)
 
     // 캘린더에 들어갈 한달 날짜 리스트
     fun setMonthDayList(monthDayList: List<DateTime>) {
         Log.e("CalendarViewModel", "setMonthDayList\n${monthDayList.first()}\n${monthDayList.last()}")
-        _monthDateList.value = monthDayList
+        _monthDateList = monthDayList
     }
 
     private fun isDailyScheduleEmpty(isMoim: Boolean): Boolean {
@@ -128,5 +127,5 @@ class CalendarViewModel @Inject constructor (
     }
 
     // 선택한 날짜
-    fun getClickedDate() = _monthDateList.value!![_nowIndex]
+    fun getClickedDate() = _monthDateList[_nowIndex]
 }
