@@ -1,16 +1,18 @@
 package com.mongmong.namo.presentation.ui.community.calendar
 
 import android.os.Bundle
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentCommunityCalendarMonthBinding
-import com.mongmong.namo.domain.model.group.MoimScheduleBody
+import com.mongmong.namo.domain.model.MoimCalendarSchedule
+import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.community.CommunityCalendarActivity
 import com.mongmong.namo.presentation.ui.community.calendar.adapter.ParticipantDailyScheduleRVAdapter
 import com.mongmong.namo.presentation.ui.home.schedule.adapter.DailyScheduleRVAdapter
 import com.mongmong.namo.presentation.utils.CustomCalendarView
+import com.mongmong.namo.presentation.utils.ScheduleTimeConverter
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 
@@ -21,7 +23,7 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
     private val dailyFriendScheduleAdapter = DailyScheduleRVAdapter() // 친구의 일정
     private val dailyParticipantScheduleAdapter = ParticipantDailyScheduleRVAdapter() // 모임 참석자들의 일정
 
-    private val viewModel : CalendarViewModel by viewModels()
+    private val viewModel : CalendarViewModel by activityViewModels()
 
     override fun setup() {
         arguments?.let {
@@ -38,24 +40,13 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
 
     override fun onResume() {
         super.onResume()
-        setAdapter()
-    }
 
-    override fun onPause() {
-        super.onPause()
-        val listener = object : CustomCalendarView.OnDateClickListener {
-            override fun onDateClick(date: DateTime?, pos : Int?) {
-                binding.communityCalendarMonthView.selectedDate = null
-                binding.communityCalendarMotionLayout.transitionToStart()
-                binding.communityCalendarMotionLayout.invalidate()
-            }
-        }
-        listener.onDateClick(null, null)
+        setMonthCalendarSchedule()
+        setAdapter()
     }
 
     private fun initViews() {
         binding.communityCalendarMonthView.setDays(millis)
-        viewModel.setMonthDayList(binding.communityCalendarMonthView.days)
     }
 
     private fun initClickListeners() {
@@ -88,7 +79,7 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
                         CommunityCalendarActivity.currentFragment = null
                         CommunityCalendarActivity.currentSelectedPos = null
                         CommunityCalendarActivity.currentSelectedDate = null
-                    } else if (!viewModel.isShow) { // 바텀시트 닫기
+                    } else if (!viewModel.isShowDailyBottomSheet) { // 바텀시트 닫기
                         binding.communityCalendarMotionLayout.transitionToEnd()
                     }
                     viewModel.updateIsShow()
@@ -116,22 +107,40 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
         }
     }
 
+    // 캘린더에 표시할 월별 일정 조회
+    private fun setMonthCalendarSchedule() {
+        viewModel.setMonthDayList(binding.communityCalendarMonthView.days)
+        viewModel.getMoimCalendarSchedules() // 모임 캘린더 일정 조회 API 호출
+    }
+
+    // 일정 상세보기
     private fun setDailySchedule() {
         binding.communityCalendarDailyScrollSv.scrollTo(0,0)
         // 일정 아이템 표시
-        //TODO: 뷰모델의 데이터 넣기
-        //TODO: 캘린더 모드에 따라 데이터 및 어댑터 분리
-        dailyFriendScheduleAdapter.addSchedules(arrayListOf())
-        dailyParticipantScheduleAdapter.addPersonal(arrayListOf())
+        if (viewModel.isMoimScheduleExist.value == true) {
+            setMoimSchedule(viewModel.getDailySchedules(true).first()) // 해당 모임 일정
+        }
+        dailyFriendScheduleAdapter.addSchedules(arrayListOf()) // 친구 일정
+        dailyParticipantScheduleAdapter.addPersonal(viewModel.getDailySchedules(false)) // 모임 참석자 일정
     }
 
     private fun initObserve() {
-        // TODO: 뷰모델의 일정을 관측해서 어댑터와 연결
+        viewModel.moimScheduleList.observe(viewLifecycleOwner) {
+            if (it != null) {
+                // 달력의 일정 표시
+                drawMonthCalendar(it)
+            }
+        }
     }
 
-    private fun drawMonthCalendar(scheduleList: ArrayList<MoimScheduleBody>) {
+    private fun setMoimSchedule(dailySchedule: MoimCalendarSchedule) {
+        binding.communityCalendarDailyMoimScheduleTitleTv.text = dailySchedule.title
+        binding.communityCalendarDailyMoimScheduleTimeTv.text = ScheduleTimeConverter(viewModel.getClickedDate())
+            .getScheduleTimeText(SchedulePeriod(dailySchedule.startDate, dailySchedule.endDate))
+    }
+
+    private fun drawMonthCalendar(scheduleList: List<MoimCalendarSchedule>) {
         binding.communityCalendarMonthView.setScheduleList(scheduleList)
-        binding.communityCalendarMonthView.invalidate()
 
         if (CommunityCalendarActivity.currentFragment == null) {
             return

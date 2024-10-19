@@ -7,11 +7,8 @@
         <import type="com.mongmong.namo.presentation.config.CategoryColor"/>
         <import type="android.view.View"/>
         <variable
-            name="isChief"
-            type="Boolean" />
-        <variable
             name="participant"
-            type="com.mongmong.namo.domain.model.group.GroupMember" />
+            type="com.mongmong.namo.domain.model.Participant" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -43,7 +40,7 @@
                     android:id="@+id/item_moim_participant_bg"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:tintColor="@{participant.color}"
+                    app:tintColor="@{participant.colorId}"
                     android:background="@drawable/bg_circle_outline"/>
 
                 <ImageView
@@ -51,7 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:visibility="@{isChief ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{participant.isOwner ? View.VISIBLE : View.GONE}"
                     android:src="@drawable/ic_crown"/>
 
             </androidx.cardview.widget.CardView>
@@ -60,7 +57,7 @@
                 android:id="@+id/item_moim_participant_nickname_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{participant.userName}"
+                android:text="@{participant.nickname}"
                 tools:text="코코아"
                 android:layout_marginStart="8dp"
                 android:textColor="@color/main_text"
@@ -71,7 +68,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:src="@drawable/ic_close"/>
+                android:src="@drawable/ic_close"
+                android:visibility="@{participant.isOwner ? View.GONE : View.VISIBLE }"/>
 
         </LinearLayout>
 

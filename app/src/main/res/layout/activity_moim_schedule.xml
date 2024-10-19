@@ -112,7 +112,7 @@
                         android:singleLine="true"
                         android:textColorHint="@color/dimed_light"
                         android:background="@color/transparent"
-                        android:text="@={viewModel.moimTitle}"
+                        android:text="@={viewModel.moimSchedule.title}"
                         android:layout_marginTop="25dp"
                         style="@style/header"/>
 
@@ -149,8 +149,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:scaleType="centerCrop"
-                                android:background="@drawable/ic_group_coverimg_placeholder"
-                                app:placeHolder="@{@color/transparent}"
+                                android:background="@{viewModel.moimSchedule.moimId == 0L ? @drawable/ic_group_coverimg_placeholder : @drawable/bg_transparent}"
+                                app:placeHolder="@{viewModel.moimSchedule.moimId == 0L ? @drawable/bg_transparent : @drawable/img_mongi_default}"
                                 app:imageUrl="@{viewModel.moimSchedule.coverImg}"/>
                         </androidx.cardview.widget.CardView>
 
@@ -181,7 +181,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:minWidth="110dp"
-                                android:text="@{PickerConverter.getDateText(viewModel.moimSchedule.startDate)}"
+                                android:text="@{PickerConverter.getDateText(viewModel.moimSchedule.period.startDate)}"
                                 android:textAlignment="center"
                                 tools:text="2022.06.29 (수)"
                                 style="@style/content_regular"/>
@@ -198,7 +198,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:minWidth="80dp"
-                                android:text="@{PickerConverter.getTimeText(viewModel.moimSchedule.startDate)}"
+                                android:text="@{PickerConverter.getTimeText(viewModel.moimSchedule.period.startDate)}"
                                 android:textAlignment="center"
                                 tools:text="12:00 PM"
                                 style="@style/content_regular"/>
@@ -232,7 +232,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:minWidth="110dp"
-                                android:text="@{PickerConverter.getDateText(viewModel.moimSchedule.startDate)}"
+                                android:text="@{PickerConverter.getDateText(viewModel.moimSchedule.period.endDate)}"
                                 android:textAlignment="center"
                                 tools:text="2022.06.29 (수)"
                                 style="@style/content_regular"/>
@@ -249,7 +249,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:minWidth="80dp"
-                                android:text="@{PickerConverter.getTimeText(viewModel.moimSchedule.startDate)}"
+                                android:text="@{PickerConverter.getTimeText(viewModel.moimSchedule.period.endDate)}"
                                 android:textAlignment="center"
                                 tools:text="12:00 PM"
                                 style="@style/content_regular"/>
@@ -327,7 +327,7 @@
                             android:layout_height="wrap_content"
                             android:drawablePadding="8dp"
                             android:drawableEnd="@drawable/ic_arrow_right"
-                            android:text="@{viewModel.moimSchedule.placeName}"
+                            android:text="@{viewModel.moimSchedule.locationInfo.locationName}"
                             tools:text="없음"
                             style="@style/content_regular"/>
 

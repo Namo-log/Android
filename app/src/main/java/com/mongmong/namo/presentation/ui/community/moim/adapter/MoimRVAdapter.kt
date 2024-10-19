@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemMoimBinding
-import com.mongmong.namo.domain.model.Moim
+import com.mongmong.namo.domain.model.MoimPreview
 
 class MoimRVAdapter: RecyclerView.Adapter<MoimRVAdapter.ViewHolder>(){
 
-    private var moimList = emptyList<Moim>()
+    private var moimPreviewList = emptyList<MoimPreview>()
     private lateinit var mItemClickListener: MyItemClickListener
 
     fun setItemClickListener(itemClickListener: MyItemClickListener) {
@@ -17,8 +17,8 @@ class MoimRVAdapter: RecyclerView.Adapter<MoimRVAdapter.ViewHolder>(){
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addMoim(moimList: List<Moim>) {
-        this.moimList = moimList
+    fun addMoim(moimPreviewList: List<MoimPreview>) {
+        this.moimPreviewList = moimPreviewList
         notifyDataSetChanged()
     }
 
@@ -36,7 +36,7 @@ class MoimRVAdapter: RecyclerView.Adapter<MoimRVAdapter.ViewHolder>(){
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(moimList[position])
+        holder.bind(moimPreviewList[position])
         holder.apply {
             // 아이템 전체 클릭
             itemView.setOnClickListener {
@@ -49,12 +49,11 @@ class MoimRVAdapter: RecyclerView.Adapter<MoimRVAdapter.ViewHolder>(){
         }
     }
 
-    override fun getItemCount(): Int = moimList.size
+    override fun getItemCount(): Int = moimPreviewList.size
 
     inner class ViewHolder(val binding: ItemMoimBinding) : RecyclerView.ViewHolder(binding.root) {
-        //TODO: 실제 모임 일정 데이터로 변경
-        fun bind(moim: Moim) {
-            binding.moim = moim
+        fun bind(moimPreview: MoimPreview) {
+            binding.moim = moimPreview
         }
     }
 }

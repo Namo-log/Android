@@ -7,7 +7,6 @@
     <data>
         <import type="com.mongmong.namo.presentation.utils.ScheduleDateConverter"/>
         <import type="android.view.View"/>
-        <import type="kotlin.Pair"/>
         <variable
             name="viewModel"
             type="com.mongmong.namo.presentation.ui.community.calendar.CalendarViewModel" />
@@ -74,6 +73,35 @@
                     android:orientation="vertical"
                     android:paddingBottom="70dp">
 
+                    <!-- 모임 일정 표시 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="32dp"
+                        android:background="@drawable/bg_basic_btn"
+                        android:paddingVertical="11dp"
+                        android:paddingHorizontal="20dp"
+                        android:visibility="@{viewModel.isMoimScheduleExist ? View.VISIBLE : View.GONE}">
+
+                        <TextView
+                            android:id="@+id/community_calendar_daily_moim_schedule_title_tv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textColor="@color/white"
+                            style="@style/content_bold"/>
+
+                        <TextView
+                            android:id="@+id/community_calendar_daily_moim_schedule_time_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:textColor="@color/white"
+                            style="@style/subtext_12"/>
+
+                    </LinearLayout>
+
+                    <!-- 타인 일정 표시 -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -82,6 +110,13 @@
                         android:textColor="@color/main_text"
                         android:textSize="15sp"
                         android:textStyle="bold" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/community_calendar_daily_empty_tv"
+                        android:layout_marginBottom="45dp"
+                        android:text="@string/schedule_empty"
+                        android:visibility="@{viewModel.isParticipantScheduleEmpty ? View.VISIBLE : View.GONE}"
+                        style="@style/schedule_empty_text"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/community_calendar_friend_daily_schedule_rv"
@@ -96,13 +131,6 @@
                         android:layout_height="wrap_content"
                         android:nestedScrollingEnabled="false"
                         tools:listitem="@layout/item_schedule_preview_moim"/>
-
-<!--                    <androidx.appcompat.widget.AppCompatTextView-->
-<!--                        android:id="@+id/community_calendar_daily_empty_tv"-->
-<!--                        android:layout_marginBottom="45dp"-->
-<!--                        android:text="@string/schedule_personal_empty"-->
-<!--                        android:visibility="@{viewModel.isDailyScheduleEmptyPair.first ? View.VISIBLE : View.GONE}"-->
-<!--                        style="@style/schedule_empty_text"/>-->
 
                 </LinearLayout>
 

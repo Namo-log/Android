@@ -53,13 +53,18 @@
 
             <TextView
                 android:id="@+id/community_calendar_title_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:gravity="center"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAlignment="textEnd"
+                app:layout_constraintStart_toEndOf="@id/community_calendar_year_month_tv"
                 app:layout_constraintBottom_toBottomOf="@id/community_calendar_year_month_tv"
                 app:layout_constraintEnd_toStartOf="@id/community_calendar_info_iv"
                 app:layout_constraintTop_toTopOf="@id/community_calendar_year_month_tv"
+                app:layout_constraintHorizontal_bias="1"
                 tools:text="모임 일정명"
                 style="@style/header"/>
 

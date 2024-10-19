@@ -5,9 +5,10 @@
 
     <data>
         <import type="com.mongmong.namo.presentation.config.CategoryColor"/>
+        <import type="com.mongmong.namo.presentation.utils.ScheduleTimeConverter"/>
         <variable
             name="schedule"
-            type="com.mongmong.namo.domain.model.group.MoimScheduleBody" />
+            type="com.mongmong.namo.domain.model.MoimCalendarSchedule" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -20,7 +21,7 @@
             android:layout_width="30dp"
             android:layout_height="0dp"
             android:background="@drawable/bg_schedule_catory_color_view"
-            android:backgroundTint="@{CategoryColor.convertPaletteIdToColorStateList(schedule.members[0].color)}"
+            app:tintColor="@{schedule.participants[0].colorId}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -43,26 +44,24 @@
                 android:id="@+id/item_calendar_event_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/main_text"
-                android:textSize="12sp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="11:00 - 13:00"/>
+                tools:text="11:00 - 13:00"
+                style="@style/subtext_12"/>
 
             <TextView
                 android:id="@+id/item_calendar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{schedule.name}"
+                android:text="@{schedule.title}"
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:singleLine="true"
-                android:textStyle="bold"
                 android:textColor="@color/black"
-                android:textSize="15sp"
                 app:layout_constraintTop_toBottomOf="@id/item_calendar_event_time"
                 app:layout_constraintStart_toStartOf="@id/item_calendar_event_time"
-                tools:text="일정 이름"/>
+                tools:text="일정 이름"
+                style="@style/content_bold"/>
 
             <TextView
                 android:id="@+id/item_calendar_user_name"
@@ -70,16 +69,15 @@
                 android:layout_height="35dp"
                 android:background="@drawable/bg_person_tv"
                 android:text="@{schedule.getScheduleOwnerText}"
-                android:textSize="11sp"
+                android:textSize="10sp"
                 android:textColor="@color/text_placeholder"
-                android:textStyle="bold"
+                android:fontFamily="@font/pretendard_bold"
                 android:textAlignment="center"
                 android:gravity="center"
                 app:layout_constraintTop_toTopOf="@id/item_calendar_event_base_layout"
                 app:layout_constraintBottom_toBottomOf="@id/item_calendar_event_base_layout"
                 app:layout_constraintEnd_toEndOf="@id/item_calendar_event_base_layout"
                 tools:text="이름"/>
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

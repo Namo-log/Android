@@ -3,26 +3,28 @@ package com.mongmong.namo.presentation.ui.community.moim
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mongmong.namo.domain.model.Moim
-import com.mongmong.namo.domain.model.group.GroupMember
-import org.joda.time.LocalDateTime
+import androidx.lifecycle.viewModelScope
+import com.mongmong.namo.domain.model.MoimPreview
+import com.mongmong.namo.domain.repositories.ScheduleRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MoimViewModel: ViewModel() {
-    private val _moimList = MutableLiveData<List<Moim>>(emptyList())
-    val moimList: LiveData<List<Moim>> = _moimList
-
-    // 임시 데이터
-    var moim = Moim(1, LocalDateTime.now(), "https://img.freepik.com/free-photo/beautiful-floral-composition_23-2150968962.jpg", "나모 모임 일정", "강남역",
-        listOf(
-            GroupMember(3, "코코아", 4),
-            GroupMember(2, "짱구", 6),
-        )
-    )
-
+@HiltViewModel
+class MoimViewModel @Inject constructor(
+    private val repository: ScheduleRepository
+): ViewModel() {
+    private val _moimPreviewList = MutableLiveData<List<MoimPreview>>(emptyList())
+    val moimPreviewList: LiveData<List<MoimPreview>> = _moimPreviewList
 
     init {
-        _moimList.value = listOf(
-            moim
-        )
+        getMoim()
+    }
+
+    /** 모임 일정 목록 조회 */
+    fun getMoim() {
+        viewModelScope.launch {
+            _moimPreviewList.value = repository.getMoimSchedules()
+        }
     }
 }
