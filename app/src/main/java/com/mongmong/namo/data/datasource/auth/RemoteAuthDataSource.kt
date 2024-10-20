@@ -23,12 +23,7 @@ class RemoteAuthDataSource @Inject constructor(
         tokenBody: LoginBody
     ): LoginResponse {
         var loginResponse = LoginResponse(
-            result = LoginResult(
-                accessToken = "",
-                refreshToken = "",
-                newUser = false,
-                terms = listOf()
-            )
+            result = LoginResult()
         )
         withContext(Dispatchers.IO) {
             runCatching {
