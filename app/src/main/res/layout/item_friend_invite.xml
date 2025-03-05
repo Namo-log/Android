@@ -71,15 +71,6 @@
 
             </LinearLayout>
 
-<!--            <TextView-->
-<!--                android:id="@+id/item_friend_introduction_tv"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="6dp"-->
-<!--                android:text="@{friend.introduction}"-->
-<!--                tools:text="친구가 직접 작성한 한 줄 소개"-->
-<!--                style="@style/subtext_12" />-->
-
         </LinearLayout>
 
         <CheckBox
