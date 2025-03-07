@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.text.Html
 import android.util.Log
-import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
@@ -166,21 +166,23 @@ class FriendInviteActivity : BaseActivity<ActivityFriendInviteBinding>(R.layout.
         }
 
         // API 호출 성공 여부
-        viewModel.isSuccess.observe(this) { isSuccess ->
-            if (isSuccess) {
-                // 생성 및 편집 모드에서의 화면 진입 경로 구분
-                val mainIntent = Intent(this, MainActivity::class.java).apply {
-                    putExtra(MOIM_EDIT_KEY, isSuccess)
-                }
-                val scheduleIntent = Intent(this, MoimScheduleActivity::class.java).apply {
-                    putExtra(MOIM_EDIT_KEY, isSuccess)
-                }
-                val intents = arrayOf(mainIntent, scheduleIntent)
-                intents.forEach {
-                    setResult(Activity.RESULT_OK, it)
-                }
-                finish()
+        viewModel.friendInviteResult.observe(this) { response ->
+            if (!response.isSuccess) {
+                Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show()
+                return@observe
             }
+
+            /* 생성 및 편집 모드에서의 화면 진입 경로 구분 */
+            val mainIntent = Intent(this, MainActivity::class.java) // 생성 시
+                .putExtra(MOIM_EDIT_KEY, response.isSuccess)
+            val scheduleIntent = Intent(this, MoimScheduleActivity::class.java) // 편집 시
+                .putExtra(MOIM_EDIT_KEY, response.isSuccess)
+            val intents = arrayOf(mainIntent, scheduleIntent)
+            // 결과 전달
+            intents.forEach {
+                setResult(Activity.RESULT_OK, it)
+            }
+            finish()
         }
     }
 

@@ -20,6 +20,7 @@ import com.mongmong.namo.data.dto.MoimBaseResponse
 import com.mongmong.namo.data.dto.MoimScheduleRequestBody
 import com.mongmong.namo.data.dto.PostMoimScheduleResponse
 import com.mongmong.namo.data.dto.ScheduleRequestBody
+import com.mongmong.namo.data.utils.common.ErrorHandler.handleError
 import com.mongmong.namo.domain.model.BaseResponse
 import com.mongmong.namo.presentation.utils.converter.ScheduleDateConverter
 import kotlinx.coroutines.Dispatchers
@@ -291,8 +292,9 @@ class RemoteScheduleDataSource @Inject constructor(
             }.onSuccess {
                 scheduleResponse = it
                 Log.d("RemoteScheduleDataSource", "inviteMoimParticipant Success $it")
-            }.onFailure {
-                Log.d("RemoteScheduleDataSource", "inviteMoimParticipant Failure $it")
+            }.onFailure { exception ->
+                scheduleResponse = exception.handleError()
+                Log.d("RemoteScheduleDataSource", "inviteMoimParticipant Failure ${exception.handleError()}")
             }
         }
         return scheduleResponse

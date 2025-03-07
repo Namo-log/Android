@@ -12,6 +12,7 @@ import com.mongmong.namo.data.utils.mappers.MoimMapper.toDTO
 import com.mongmong.namo.data.utils.mappers.MoimMapper.toModel
 import com.mongmong.namo.data.utils.mappers.ScheduleMapper.toDTO
 import com.mongmong.namo.data.utils.mappers.ScheduleMapper.toModel
+import com.mongmong.namo.domain.model.BaseResponse
 import com.mongmong.namo.domain.model.MoimCalendarSchedule
 import com.mongmong.namo.domain.model.MoimPreview
 import com.mongmong.namo.domain.model.MoimScheduleDetail
@@ -111,11 +112,11 @@ class ScheduleRepositoryImpl @Inject constructor(
     override suspend fun inviteMoimParticipant(
         moimScheduleId: Long,
         memberIdsToInvite: List<Long>
-    ): Boolean {
+    ): BaseResponse {
         return remoteScheduleDataSource.inviteMoimParticipant(
             moimScheduleId,
             InviteMoimParticipantRequestBody(memberIdsToInvite)
-        ).isSuccess
+        )
     }
 
     override suspend fun getGuestInvitationLink(moimScheduleId: Long): String {

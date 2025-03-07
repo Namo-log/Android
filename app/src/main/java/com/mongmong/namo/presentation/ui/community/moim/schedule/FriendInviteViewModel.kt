@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mongmong.namo.domain.model.BaseResponse
 import com.mongmong.namo.domain.model.Friend
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecases.friend.GetFriendsUseCase
@@ -37,8 +38,8 @@ class FriendInviteViewModel @Inject constructor(
     val friendToInviteList: LiveData<ArrayList<Friend>> = _friendToInviteList
 
     // API 호출 성공 여부
-    private val _isSuccess = MutableLiveData<Boolean>()
-    var isSuccess: LiveData<Boolean> = _isSuccess
+    private val _friendInviteResult = MutableLiveData<BaseResponse>()
+    var friendInviteResult: LiveData<BaseResponse> = _friendInviteResult
 
     val isInvitedFriendVisible = MutableLiveData<Boolean>(true)
 
@@ -58,7 +59,7 @@ class FriendInviteViewModel @Inject constructor(
         Log.d("FriendInviteVM", "moimScheduleId: $moimScheduleId")
         if (moimScheduleId == 0L) return
         viewModelScope.launch {
-            _isSuccess.value = repository.inviteMoimParticipant(moimScheduleId, _friendToInviteList.value!!.map { friend -> friend.userId })
+            _friendInviteResult.value = repository.inviteMoimParticipant(moimScheduleId, _friendToInviteList.value!!.map { friend -> friend.userId })
         }
     }
 
