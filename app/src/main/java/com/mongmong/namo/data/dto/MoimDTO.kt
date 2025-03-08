@@ -93,3 +93,8 @@ data class EditMoimScheduleProfileRequestBody(
     var title: String = "",
     var imageUrl: String = ""
 )
+
+/** 모임 일정 참석자 초대 */
+data class InviteMoimParticipantRequestBody(
+    var memberIds: List<Long>
+)

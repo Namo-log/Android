@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.LatLng
 import com.mongmong.namo.domain.model.MoimScheduleDetail
-import com.mongmong.namo.domain.model.Participant
 import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecases.image.UploadImageToS3UseCase
@@ -28,6 +27,8 @@ class MoimScheduleViewModel @Inject constructor(
     private val repository: ScheduleRepository,
     private val uploadImageToS3UseCase: UploadImageToS3UseCase
 ) : ViewModel() {
+    var moimScheduleId: Long = -1
+
     private val _moimSchedule = MutableLiveData<MoimScheduleDetail>()
     val moimSchedule: LiveData<MoimScheduleDetail> = _moimSchedule
 
@@ -41,16 +42,17 @@ class MoimScheduleViewModel @Inject constructor(
 
     var isCoverImageEdit: Boolean = false
 
-    //TODO: 참석자 수정
     var participantIdsToAdd = ArrayList<Long>(arrayListOf()) // 스케줄에 추가할 유저 ID(userId)
     var participantIdsToRemove = ArrayList<Long>(arrayListOf()) // 스케줄에서 삭제할 참가자 ID(participantId)
+
+    var createdMoimId: Long = -1
 
     // API 호출 성공 여부
     private val _successState = MutableLiveData<SuccessState>()
     var successState: LiveData<SuccessState> = _successState
 
     /** 모임 일정 상세 조회 */
-    private fun getMoimSchedule(moimScheduleId: Long) {
+    fun getMoimScheduleDetailInfo() {
         viewModelScope.launch {
             _moimSchedule.value = repository.getMoimScheduleDetail(moimScheduleId)
             getGuestInvitationLink()
@@ -60,14 +62,13 @@ class MoimScheduleViewModel @Inject constructor(
 
     /** 모임 일정 생성 */
     fun postMoimSchedule() {
-        //TODO: 친구 API 연동 후 삭제
-        updateMembers(listOf(Participant(userId = 4))) // 참석자 선택
         viewModelScope.launch {
             uploadImageToServer(_moimSchedule.value?.coverImg)
+            createdMoimId = repository.addMoimSchedule(_moimSchedule.value!!)
 
             _successState.value = SuccessState(
                 SuccessType.ADD,
-                repository.addMoimSchedule(_moimSchedule.value!!)
+                createdMoimId >= 0
             )
         }
     }
@@ -115,7 +116,7 @@ class MoimScheduleViewModel @Inject constructor(
 
     private fun getGuestInvitationLink() {
         viewModelScope.launch {
-            guestInvitationLink = repository.getGuestInvitaionLink(_moimSchedule.value!!.moimId)
+            guestInvitationLink = repository.getGuestInvitationLink(_moimSchedule.value!!.moimId)
         }
     }
 
@@ -141,12 +142,12 @@ class MoimScheduleViewModel @Inject constructor(
     }
 
     // 모임 일정 기본 정보 세팅
-    fun setMoimSchedule(moimScheduleId: Long) {
+    fun setMoimSchedule() {
         if (moimScheduleId == 0L) { // 모임 일정 생성
             _moimSchedule.value = MoimScheduleDetail()
             return
         }
-        getMoimSchedule(moimScheduleId) // 모임 일정 편집
+        getMoimScheduleDetailInfo() // 모임 일정 편집
     }
 
     fun updateImage(uri: Uri?) {
@@ -159,12 +160,6 @@ class MoimScheduleViewModel @Inject constructor(
     fun updatePlace(placeName: String, x: Double, y: Double) {
         _moimSchedule.value = _moimSchedule.value?.copy(
             //
-        )
-    }
-
-    fun updateMembers(selectedMember: List<Participant>) {
-        _moimSchedule.value = _moimSchedule.value!!.copy(
-            participants = selectedMember
         )
     }
 
@@ -215,6 +210,13 @@ class MoimScheduleViewModel @Inject constructor(
     // 저장된 userId 가져오기
     private fun getMyUserId(): Long = runBlocking {
         dsManager.getUserId().first() ?: 0L
+    }
+
+    // 모임 참석자들의 userId
+    fun getParticipantUserIdList(): List<Long> {
+        return _moimSchedule.value!!.participants.filter {
+            it.userId != getMyUserId() // 내 id 제외
+        }.map { it.userId }
     }
 
     companion object {

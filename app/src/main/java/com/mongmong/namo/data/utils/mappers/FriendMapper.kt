@@ -14,7 +14,7 @@ import com.mongmong.namo.presentation.utils.converter.ScheduleDateConverter
 object FriendMapper {
     fun FriendDTO.toModel(): Friend {
         return Friend(
-            userid = this.memberId,
+            userId = this.memberId,
             profileUrl = this.profileImage,
             nickname = this.nickname,
             name = this.nickname,

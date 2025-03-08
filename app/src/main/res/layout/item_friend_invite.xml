@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
+        <variable
+            name="canEdit"
+            type="Boolean" />
         <variable
             name="friend"
             type="com.mongmong.namo.domain.model.Friend"/>
@@ -16,7 +20,7 @@
         android:backgroundTint="@color/item_background"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="16dp"
         android:paddingVertical="12dp"
         android:paddingHorizontal="16dp">
         
@@ -67,23 +71,15 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/item_friend_introduction_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="@{friend.introduction}"
-                tools:text="친구가 직접 작성한 한 줄 소개"
-                style="@style/subtext_12" />
-
         </LinearLayout>
 
         <CheckBox
             android:id="@+id/item_friend_invite_btn"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:checked="true"
+            android:checked="false"
             android:button="@null"
+            android:visibility="@{canEdit ? View.VISIBLE : View.GONE}"
             android:background="@drawable/selector_invite"/>
 
     </LinearLayout>

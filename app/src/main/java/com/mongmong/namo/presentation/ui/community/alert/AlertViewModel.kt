@@ -5,14 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mongmong.namo.domain.model.FriendRequest
-import com.mongmong.namo.domain.model.Moim
-import com.mongmong.namo.domain.model.Participant
 import com.mongmong.namo.domain.repositories.FriendRepository
 import com.mongmong.namo.domain.usecases.friend.AcceptFriendRequestUseCase
 import com.mongmong.namo.domain.usecases.friend.DenyFriendRequestUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,8 +18,6 @@ class AlertViewModel @Inject constructor(
     private val acceptFriendRequestUseCase: AcceptFriendRequestUseCase,
     private val denyFriendRequestUseCase: DenyFriendRequestUseCase
 ): ViewModel() {
-    private val _moimRequestList = MutableLiveData<List<Moim>>(emptyList())
-    val moimRequestList: LiveData<List<Moim>> = _moimRequestList
 
     private val _friendRequestList = MutableLiveData<List<FriendRequest>>(emptyList())
     val friendRequestList: LiveData<List<FriendRequest>> = _friendRequestList
@@ -31,13 +26,6 @@ class AlertViewModel @Inject constructor(
     val isComplete: LiveData<Boolean> = _isComplete
 
     init {
-        _moimRequestList.value = listOf(
-            Moim(
-                1, LocalDateTime.now(), "", "나모 모임 일정", "강남역",
-                listOf(
-                    Participant(participantId = 3, nickname = "코코아", colorId = 4)
-            ))
-        )
         getFriendRequests()
     }
 

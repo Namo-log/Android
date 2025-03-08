@@ -7,11 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.mongmong.namo.R
 import com.mongmong.namo.databinding.DialogConfirmBinding
 
 class ConfirmDialog(
     confirmDialogInterface: ConfirmDialogInterface,
-    title: String, content: String?, buttonText: String, id: Int
+    title: String, content: String?, buttonText: String?, id: Int
 ) : DialogFragment() {
 
     interface ConfirmDialogInterface {
@@ -57,7 +58,9 @@ class ConfirmDialog(
             binding.dialogDescTv.text = content
         }
         // 확인 버튼 텍스트
-        binding.dialogYesBtn.text = buttonText
+        if (buttonText != null) {
+            binding.dialogYesBtn.text = buttonText
+        }
 
         // 취소 버튼이 없는 다이얼로그는 id를 -1로 넘겨줌
         if (id == -1) {

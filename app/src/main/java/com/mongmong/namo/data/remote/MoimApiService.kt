@@ -5,6 +5,7 @@ import com.mongmong.namo.data.dto.EditMoimScheduleRequestBody
 import com.mongmong.namo.data.dto.GetMoimCalendarResponse
 import com.mongmong.namo.data.dto.GetMoimDetailResponse
 import com.mongmong.namo.data.dto.GetMoimResponse
+import com.mongmong.namo.data.dto.InviteMoimParticipantRequestBody
 import com.mongmong.namo.data.dto.MoimBaseResponse
 import com.mongmong.namo.data.dto.MoimScheduleRequestBody
 import com.mongmong.namo.data.dto.PostMoimScheduleResponse
@@ -60,6 +61,13 @@ interface MoimApiService {
     suspend fun editMoimScheduleProfile(
         @Path("meetingScheduleId") moimScheduleId: Long,
         @Body body: EditMoimScheduleProfileRequestBody
+    ): BaseResponse
+
+    // 모임 일정 참석자 초대
+    @POST("schedules/meeting/{meetingScheduleId}/invitations")
+    suspend fun inviteMoimParticipants(
+        @Path("meetingScheduleId") moimScheduleId: Long,
+        @Body body: InviteMoimParticipantRequestBody
     ): BaseResponse
 
     // 게스트 초대용 링크 조회

@@ -6,6 +6,9 @@
     <data>
         <import type="android.view.View"/>
         <variable
+            name="isInvitedFriendExist"
+            type="Boolean" />
+        <variable
             name="viewModel"
             type="com.mongmong.namo.presentation.ui.community.moim.schedule.FriendInviteViewModel" />
     </data>
@@ -53,6 +56,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="32dp"
             android:layout_marginTop="16dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@id/friend_invite_search_btn"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/friend_invite_top_cl"
@@ -64,47 +68,204 @@
             android:layout_height="30dp"
             android:layout_marginEnd="30dp"
             android:text="@string/diary_filter_search"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/friend_invite_search_et"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/friend_invite_search_et"
             style="@style/search_btn"/>
 
+        <!-- 친구 리스트가 없을 때 표시할 empty view -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/friend_invite_empty_ll"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/friend_invite_search_btn">
+            android:layout_gravity="center"
+            android:visibility="@{viewModel.allFriendList.empty ? View.VISIBLE : View.GONE}"
+            app:layout_constraintTop_toBottomOf="@id/friend_invite_search_btn"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.4">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="25dp"
-                android:text="@string/moim_schedule_invite_friend"
-                android:drawableEnd="@drawable/ic_arrow_up"
-                style="@style/content_bold"/>
+            <ImageView
+                android:layout_width="300dp"
+                android:layout_height="200dp"
+                android:src="@drawable/img_group_empty"/>
 
             <TextView
                 android:id="@+id/friend_invite_empty_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="40dp"
                 android:layout_gravity="center_horizontal"
+                android:textAlignment="center"
                 android:text="@string/moim_schedule_invite_friend_empty"
                 style="@style/content_regular"/>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/friend_invite_list_rv"
+        </LinearLayout>
+
+        <!-- 친구가 있을 때 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="25dp"
+            android:visibility="@{viewModel.allFriendList.empty ? View.GONE : View.VISIBLE}"
+            app:layout_constraintTop_toBottomOf="@id/friend_invite_search_btn">
+
+            <!-- 초대할 친구 -->
+            <LinearLayout
+                android:id="@+id/friend_invite_preparatory_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="20dp"
-                android:layout_marginTop="24dp"
-                android:visibility="@{viewModel.friendList.empty ? View.GONE : View.VISIBLE}"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_friend_invite"
-                app:layout_constraintTop_toBottomOf="@id/friend_search_et"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"/>
+                android:layout_marginTop="20dp"
+                android:visibility="@{viewModel.friendToInviteList.empty ? View.GONE : View.VISIBLE}"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/moim_schedule_invite_friend"
+                    style="@style/content_bold"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/friend_invite_preparatory_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:orientation="horizontal"
+                    tools:listitem="@layout/item_friend_to_invite"/>
+
+            </LinearLayout>
+
+            <!-- 초대 정보 -->
+            <LinearLayout
+                android:id="@+id/friend_invite_reset_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:visibility="@{viewModel.friendToInviteList.empty ? View.GONE : View.VISIBLE}">
+
+                <TextView
+                    android:id="@+id/friend_invite_reset_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="3dp"
+                    android:text="@string/moim_schedule_invite_friend_reset"
+                    android:textColor="@color/main_text"
+                    style="@style/subtext_14"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/friend_invite_selected_num_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_placeholder"
+                    tools:text="3 / 7"
+                    style="@style/button_label"/>
+
+                <TextView
+                    android:id="@+id/friend_invite_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="4dp"
+                    android:background="@drawable/bg_basic_btn"
+                    android:textColor="@color/white"
+                    android:text="@string/moim_schedule_do_invite"
+                    style="@style/button_label"/>
+
+            </LinearLayout>
+
+            <!-- 초대된 친구 -->
+            <LinearLayout
+                android:id="@+id/friend_invite_invited_friend_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/moim_schedule_invited_friend"
+                        style="@style/content_bold"/>
+
+                    <ImageView
+                        android:id="@+id/moim_diary_participant_hide_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{() -> viewModel.toggleInvitedFriendVisibility()}"
+                        android:padding="5dp"
+                        android:rotation="@{viewModel.isInvitedFriendVisible ? 180 : 0}"
+                        android:src="@drawable/ic_arrow_down_bold"
+                        android:visibility="visible"/>
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/friend_invite_invited_list_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:visibility="@{!isInvitedFriendExist ? View.GONE : viewModel.isInvitedFriendVisible ? View.VISIBLE : View.GONE}"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_friend_invite"
+                    tools:itemCount="2"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:visibility="@{isInvitedFriendExist ? View.GONE : viewModel.isInvitedFriendVisible ? View.VISIBLE : View.GONE}"
+                    android:text="@string/moim_schedule_invited_friend_not_yet"
+                    android:layout_gravity="center"
+                    style="@style/content_regular"/>
+
+            </LinearLayout>
+
+            <!-- 모든 친구 -->
+            <LinearLayout
+                android:id="@+id/friend_invite_all_friend_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/moim_schedule_all_friend"
+                    style="@style/content_bold"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/friend_invite_list_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:visibility="@{viewModel.allFriendList.empty ? View.GONE : View.VISIBLE}"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_friend_invite"
+                    app:layout_constraintTop_toBottomOf="@id/friend_search_et"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

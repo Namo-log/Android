@@ -4,7 +4,7 @@ import org.joda.time.LocalDateTime
 import java.io.Serializable
 
 data class Friend(
-    val userid: Long,
+    val userId: Long,
     val profileUrl: String?,
     val nickname: String,
     val tag: String,

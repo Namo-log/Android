@@ -88,3 +88,8 @@ data class Moim(
         }
     }
 }
+
+data class MoimCreateInfo(
+    val moimId: Long = 0L,
+    val title: String = ""
+): Serializable

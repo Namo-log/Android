@@ -3,6 +3,7 @@ package com.mongmong.namo.data.repositoriyImpl
 import android.util.Log
 import com.mongmong.namo.data.datasource.schedule.RemoteScheduleDataSource
 import com.mongmong.namo.data.dto.EditMoimScheduleProfileRequestBody
+import com.mongmong.namo.data.dto.InviteMoimParticipantRequestBody
 import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
@@ -11,6 +12,7 @@ import com.mongmong.namo.data.utils.mappers.MoimMapper.toDTO
 import com.mongmong.namo.data.utils.mappers.MoimMapper.toModel
 import com.mongmong.namo.data.utils.mappers.ScheduleMapper.toDTO
 import com.mongmong.namo.data.utils.mappers.ScheduleMapper.toModel
+import com.mongmong.namo.domain.model.BaseResponse
 import com.mongmong.namo.domain.model.MoimCalendarSchedule
 import com.mongmong.namo.domain.model.MoimPreview
 import com.mongmong.namo.domain.model.MoimScheduleDetail
@@ -77,8 +79,8 @@ class ScheduleRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addMoimSchedule(moimSchedule: MoimScheduleDetail): Boolean {
-        return remoteScheduleDataSource.addMoimSchedule(moimSchedule.toDTO()).code == SUCCESS_CODE
+    override suspend fun addMoimSchedule(moimSchedule: MoimScheduleDetail): Long {
+        return remoteScheduleDataSource.addMoimSchedule(moimSchedule.toDTO()).result
     }
 
     override suspend fun editMoimSchedule(
@@ -107,7 +109,17 @@ class ScheduleRepositoryImpl @Inject constructor(
         ).isSuccess
     }
 
-    override suspend fun getGuestInvitaionLink(moimScheduleId: Long): String {
+    override suspend fun inviteMoimParticipant(
+        moimScheduleId: Long,
+        memberIdsToInvite: List<Long>
+    ): BaseResponse {
+        return remoteScheduleDataSource.inviteMoimParticipant(
+            moimScheduleId,
+            InviteMoimParticipantRequestBody(memberIdsToInvite)
+        )
+    }
+
+    override suspend fun getGuestInvitationLink(moimScheduleId: Long): String {
         return remoteScheduleDataSource.getGuestInvitationLink(moimScheduleId).result
     }
 }

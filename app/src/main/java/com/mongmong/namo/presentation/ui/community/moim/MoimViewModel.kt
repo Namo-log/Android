@@ -17,6 +17,8 @@ class MoimViewModel @Inject constructor(
     private val _moimPreviewList = MutableLiveData<List<MoimPreview>>(emptyList())
     val moimPreviewList: LiveData<List<MoimPreview>> = _moimPreviewList
 
+    var createdMoimId: Long = -1
+
     init {
         getMoim()
     }

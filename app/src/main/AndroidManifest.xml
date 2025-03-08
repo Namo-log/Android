@@ -101,7 +101,7 @@
             android:name=".presentation.ui.home.diary.PersonalDiaryDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".presentation.ui.community.alert.CommunityAlertActivity"/>
+        <activity android:name=".presentation.ui.community.alert.FriendAlertActivity"/>
         <activity android:name=".presentation.ui.community.moim.schedule.FriendInviteActivity"/>
         <activity android:name=".presentation.ui.setting.profile.ProfileEditActivity"/>
 

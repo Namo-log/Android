@@ -5,7 +5,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentCommunityBinding
 import com.mongmong.namo.presentation.config.BaseFragment
-import com.mongmong.namo.presentation.ui.community.alert.CommunityAlertActivity
+import com.mongmong.namo.presentation.ui.community.alert.FriendAlertActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,7 +20,7 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding>(R.layout.fragme
 
     private fun initClickListeners() {
         binding.communityAlertIv.setOnClickListener {
-            startActivity(Intent(requireActivity(), CommunityAlertActivity::class.java))
+            startActivity(Intent(requireActivity(), FriendAlertActivity::class.java))
         }
     }
 

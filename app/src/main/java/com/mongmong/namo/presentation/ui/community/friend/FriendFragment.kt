@@ -1,6 +1,5 @@
 package com.mongmong.namo.presentation.ui.community.friend
 
-import android.util.Log
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
@@ -48,7 +47,7 @@ class FriendFragment : BaseFragment<FragmentFriendBinding>(R.layout.fragment_fri
         friendAdapter.setItemClickListener(object : FriendRVAdapter.MyItemClickListener {
             override fun onFavoriteButtonClick(position: Int) {
                 // 즐겨찾기 상태 변경
-                viewModel.toggleFriendFavoriteState(viewModel.friendList.value!![position].userid)
+                viewModel.toggleFriendFavoriteState(viewModel.friendList.value!![position].userId)
             }
 
             override fun onItemClick(position: Int) {

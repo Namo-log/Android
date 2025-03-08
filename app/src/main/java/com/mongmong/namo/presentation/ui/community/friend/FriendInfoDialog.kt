@@ -62,7 +62,7 @@ class FriendInfoDialog(
 
         // 즐겨찾기 버튼 클릭
         binding.friendInfoFavoriteIv.setOnClickListener {
-            viewModel.toggleFriendFavoriteState(friendInfo!!.userid)
+            viewModel.toggleFriendFavoriteState(friendInfo!!.userId)
             binding.isFavorite = !binding.isFavorite!! // 즐겨찾기 여부 전환
         }
 
@@ -77,7 +77,7 @@ class FriendInfoDialog(
 
         // 친구 리스트 - 삭제 버튼 클릭
         binding.friendInfoDeleteBtn.setOnClickListener {
-            viewModel.deleteFriend(friendInfo!!.userid)
+            viewModel.deleteFriend(friendInfo!!.userId)
         }
 
         // 친구 요청 - 수락 버튼 클릭

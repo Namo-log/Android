@@ -354,6 +354,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="25dp"
                         android:paddingVertical="3dp"
+                        android:visibility="@{viewModel.moimSchedule.moimId == 0L ? View.GONE : View.VISIBLE }"
                         android:clickable="@{viewModel.isCurrentUserOwner ? true : false}"
                         android:textColor="@{viewModel.isCurrentUserOwner ? @color/main_text : @color/text_unselected}"
                         android:text="@string/moim_schedule_do_friend_invite"
@@ -366,6 +367,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
+                        android:visibility="@{viewModel.moimSchedule.moimId == 0L ? View.GONE : View.VISIBLE }"
                         app:spanCount="3"
                         app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
                         tools:itemCount="4"
@@ -399,6 +401,7 @@
                         android:drawableStart="@drawable/ic_calendar"
                         android:background="@drawable/bg_basic_outline_btn"
                         android:textColor="@color/black"
+                        android:visibility="@{viewModel.moimSchedule.moimId == 0L ? View.GONE : View.VISIBLE }"
                         style="@style/content_regular"/>
 
                     <androidx.appcompat.widget.AppCompatTextView

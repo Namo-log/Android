@@ -7,9 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemFriendInviteBinding
 import com.mongmong.namo.domain.model.Friend
 
-class FriendInviteRVAdapter: RecyclerView.Adapter<FriendInviteRVAdapter.ViewHolder>(){
+class FriendInviteRVAdapter(
+    val canEdit: Boolean? = true
+): RecyclerView.Adapter<FriendInviteRVAdapter.ViewHolder>(){
 
     private var friendList = emptyList<Friend>()
+    private var isFriendSelectedList = mutableListOf<Boolean>()
     private lateinit var mItemClickListener: MyItemClickListener
 
     fun setItemClickListener(itemClickListener: MyItemClickListener) {
@@ -19,11 +22,27 @@ class FriendInviteRVAdapter: RecyclerView.Adapter<FriendInviteRVAdapter.ViewHold
     @SuppressLint("NotifyDataSetChanged")
     fun addFriend(friendList: List<Friend>) {
         this.friendList = friendList
+        this.isFriendSelectedList = MutableList(friendList.size) { false } // 친구 선택 여부 초기화
+        notifyDataSetChanged()
+    }
+
+    // 초대 해제
+    fun uninvitedFriend(friend: Friend) {
+        val position = friendList.indexOf(friend)
+        if (position != -1) {
+            isFriendSelectedList[position] = false
+            notifyItemChanged(position)
+        }
+    }
+
+    // 전체 선택 취소
+    fun resetAllSelectedFriend() {
+        this.isFriendSelectedList = MutableList(friendList.size) { false }
         notifyDataSetChanged()
     }
 
     interface MyItemClickListener {
-        fun onInviteButtonClick(position: Int)
+        fun onInviteButtonClick(isSelected: Boolean, position: Int)
         fun onItemClick(position: Int)
     }
 
@@ -38,13 +57,17 @@ class FriendInviteRVAdapter: RecyclerView.Adapter<FriendInviteRVAdapter.ViewHold
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(friendList[position])
         holder.apply {
+            binding.itemFriendInviteBtn.isChecked = isFriendSelectedList[position]
+
             // 아이템 전체 클릭
             itemView.setOnClickListener {
                 mItemClickListener.onItemClick(position)
             }
-            // 초대 버튼 클릭
+
+            // 초대 버튼 클릭 (초대할 친구에 추가 or 해제)
             binding.itemFriendInviteBtn.setOnClickListener {
-                mItemClickListener.onInviteButtonClick(position)
+                isFriendSelectedList[position] = binding.itemFriendInviteBtn.isChecked
+                mItemClickListener.onInviteButtonClick(isFriendSelectedList[position], position)
             }
         }
     }
@@ -52,9 +75,9 @@ class FriendInviteRVAdapter: RecyclerView.Adapter<FriendInviteRVAdapter.ViewHold
     override fun getItemCount(): Int = friendList.size
 
     inner class ViewHolder(val binding: ItemFriendInviteBinding) : RecyclerView.ViewHolder(binding.root) {
-        //TODO: 실제 친구 데이터로 변경
         fun bind(friend: Friend) {
             binding.friend = friend
+            binding.canEdit = canEdit
         }
     }
 }

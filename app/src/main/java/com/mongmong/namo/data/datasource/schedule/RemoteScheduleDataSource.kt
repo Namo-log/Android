@@ -15,10 +15,12 @@ import com.mongmong.namo.data.dto.GetMoimCalendarResponse
 import com.mongmong.namo.data.dto.GetMoimDetailResponse
 import com.mongmong.namo.data.dto.GetMoimDetailResult
 import com.mongmong.namo.data.dto.GetMoimResponse
+import com.mongmong.namo.data.dto.InviteMoimParticipantRequestBody
 import com.mongmong.namo.data.dto.MoimBaseResponse
 import com.mongmong.namo.data.dto.MoimScheduleRequestBody
 import com.mongmong.namo.data.dto.PostMoimScheduleResponse
 import com.mongmong.namo.data.dto.ScheduleRequestBody
+import com.mongmong.namo.data.utils.common.ErrorHandler.handleError
 import com.mongmong.namo.domain.model.BaseResponse
 import com.mongmong.namo.presentation.utils.converter.ScheduleDateConverter
 import kotlinx.coroutines.Dispatchers
@@ -273,6 +275,26 @@ class RemoteScheduleDataSource @Inject constructor(
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleProfile Success $it")
             }.onFailure {
                 Log.d("RemoteScheduleDataSource", "editMoimScheduleProfile Failure $it")
+            }
+        }
+        return scheduleResponse
+    }
+
+    // 모임 일정 참석자 초대
+    suspend fun inviteMoimParticipant(
+        moimScheduleId: Long,
+        request: InviteMoimParticipantRequestBody
+    ): BaseResponse {
+        var scheduleResponse = BaseResponse()
+        withContext(Dispatchers.IO) {
+            runCatching {
+                moimApiService.inviteMoimParticipants(moimScheduleId, request)
+            }.onSuccess {
+                scheduleResponse = it
+                Log.d("RemoteScheduleDataSource", "inviteMoimParticipant Success $it")
+            }.onFailure { exception ->
+                scheduleResponse = exception.handleError()
+                Log.d("RemoteScheduleDataSource", "inviteMoimParticipant Failure ${exception.handleError()}")
             }
         }
         return scheduleResponse

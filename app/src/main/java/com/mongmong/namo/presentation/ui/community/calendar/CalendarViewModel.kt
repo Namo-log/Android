@@ -77,7 +77,7 @@ class CalendarViewModel @Inject constructor (
         viewModelScope.launch {
             // 범위로 일정 목록 조회
             _friendScheduleList.value = friendRepository.getFriendCalendar(
-                userId = friend.userid,
+                userId = friend.userId,
                 startDate = _monthDateList.first(), // 캘린더에 표시되는 첫번쨰 날짜
                 endDate = _monthDateList.last() // 캘린더에 표시되는 마지막 날짜
             )
@@ -87,7 +87,7 @@ class CalendarViewModel @Inject constructor (
     /** 친구 카테고리 조회 */
     fun getFriendCategories() {
         viewModelScope.launch {
-            friendCategoryList = friendRepository.getFriendCategoryList(friend.userid)
+            friendCategoryList = friendRepository.getFriendCategoryList(friend.userId)
         }
     }
 
