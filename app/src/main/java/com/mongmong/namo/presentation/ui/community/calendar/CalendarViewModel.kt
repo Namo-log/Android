@@ -62,6 +62,7 @@ class CalendarViewModel @Inject constructor (
 
     /** 모임 캘린더 일정 조회 */
     fun getMoimCalendarSchedules() {
+        Log.d("CommunityCalVM", "getMoimCalendarSchedules()")
         viewModelScope.launch {
             // 범위로 일정 목록 조회
             _moimScheduleList.value = moimRepository.getMoimCalendarSchedules(
@@ -82,6 +83,11 @@ class CalendarViewModel @Inject constructor (
                 endDate = _monthDateList.last() // 캘린더에 표시되는 마지막 날짜
             )
         }
+    }
+
+    fun resetSchedule() {
+        _moimScheduleList.value = emptyList()
+        _friendScheduleList.value = emptyList()
     }
 
     /** 친구 카테고리 조회 */

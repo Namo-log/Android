@@ -1,6 +1,7 @@
 package com.mongmong.namo.presentation.ui.community.calendar
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
@@ -42,9 +43,15 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
 
     override fun onResume() {
         super.onResume()
-
+        Log.d("CommunityCalFrag", "onResume()")
         setMonthCalendarSchedule()
         setAdapter()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("CommunityCalFrag", "onPause()")
+        viewModel.resetSchedule()
     }
 
     private fun initViews() {
@@ -86,7 +93,8 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
                     }
                     viewModel.updateIsShow()
                 }
-
+                // 일정 데이터를 갱신하고 뷰를 다시 그리기
+                setMonthCalendarSchedule()
                 binding.communityCalendarMonthView.invalidate()
             }
         }
@@ -111,6 +119,7 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
 
     // 캘린더에 표시할 월별 일정 조회
     private fun setMonthCalendarSchedule() {
+        Log.e("CommunityCalFrag", "setMonthCalendarSchedule - ${binding.communityCalendarMonthView.days[10]}")
         viewModel.setMonthDayList(binding.communityCalendarMonthView.days)
         if (viewModel.isFriendCalendar) {
             viewModel.getFriendCalendarSchedules() // 친구 캘린더 일정 조회 API 호출
@@ -134,13 +143,15 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
     private fun initObserve() {
         viewModel.moimScheduleList.observe(viewLifecycleOwner) { scheduleList ->
             if (scheduleList != null) {
-                drawMonthCalendar(scheduleList.map { it.convertToCommunityModel() }) // 달력의 일정 표시
+                drawMonthCalendar(scheduleList.map { it.convertToCommunityModel() })
+                binding.communityCalendarMonthView.invalidate() // 뷰를 다시 그리기
             }
         }
 
         viewModel.friendScheduleList.observe(viewLifecycleOwner) { scheduleList ->
             if (scheduleList != null) {
-                drawMonthCalendar(scheduleList.map { it.convertToCommunityModel() }) // 달력의 일정 표시
+                drawMonthCalendar(scheduleList.map { it.convertToCommunityModel() })
+                binding.communityCalendarMonthView.invalidate() // 뷰를 다시 그리기
             }
         }
     }
@@ -152,6 +163,7 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
     }
 
     private fun drawMonthCalendar(scheduleList: List<CommunityCommonSchedule>) {
+        Log.e("CommunityCalFrag", "drawMonthCalendar()")
         binding.communityCalendarMonthView.setCalendarType(viewModel.isFriendCalendar)
         binding.communityCalendarMonthView.setScheduleList(scheduleList)
 
