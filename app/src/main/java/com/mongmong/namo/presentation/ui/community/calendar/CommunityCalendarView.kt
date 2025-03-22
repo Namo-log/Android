@@ -32,6 +32,8 @@ class CommunityCalendarView(context: Context, attrs: AttributeSet) :
             val startIdx = days.indexOf(parseLocalDateTimeToDateTime(scheduleList[i].startDate).withTimeAtStartOfDay())
             val endIdx = days.indexOf(parseLocalDateTimeToDateTime(scheduleList[i].endDate).withTimeAtStartOfDay())
 
+            if (startIdx == -1 || endIdx == -1) continue // 해당 달에 속하지 않는 일정은 무시
+
             for (splitSchedule in splitWeek(startIdx, endIdx)) {
                 val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
                 setOrder(order, splitSchedule.startIdx, splitSchedule.endIdx)
@@ -50,6 +52,8 @@ class CommunityCalendarView(context: Context, attrs: AttributeSet) :
         for (i in scheduleList.indices) {
             val startIdx = days.indexOf(parseLocalDateTimeToDateTime(scheduleList[i].startDate).withTimeAtStartOfDay())
             val endIdx = days.indexOf(parseLocalDateTimeToDateTime(scheduleList[i].endDate).withTimeAtStartOfDay())
+
+            if (startIdx == -1 || endIdx == -1) continue // 해당 달에 속하지 않는 일정은 무시
 
             for (splitSchedule in splitWeek(startIdx, endIdx)) {
                 val order = findMaxOrderInSchedule(splitSchedule.startIdx, splitSchedule.endIdx)
