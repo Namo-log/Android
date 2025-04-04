@@ -6,12 +6,13 @@ import com.mongmong.namo.data.datasource.s3.ImageDataSource
 import com.mongmong.namo.data.utils.common.RequestConverter
 import com.mongmong.namo.data.utils.common.RequestConverter.getFileNameFromUri
 import com.mongmong.namo.domain.repositories.ImageRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class ImageRepositoryImpl @Inject constructor(
     private val awsS3DataSource: ImageDataSource,
-    private val context: Context
-) :ImageRepository {
+    @ApplicationContext private val context: Context
+) : ImageRepository {
 
     override suspend fun getPreSignedUrl(
         prefix: String,
