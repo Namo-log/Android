@@ -8,7 +8,7 @@ import com.mongmong.namo.BuildConfig
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.vectormap.KakaoMapSdk
 import com.mongmong.namo.R
-import com.mongmong.namo.presentation.di.NetworkModule
+import com.mongmong.namo.di.NetworkModule
 import com.mongmong.namo.presentation.utils.DataStoreManager
 import com.navercorp.nid.NaverIdLoginSDK
 import dagger.hilt.android.HiltAndroidApp

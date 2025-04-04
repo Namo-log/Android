@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.di
+package com.mongmong.namo.di
 
 import android.content.Context
 import android.util.Log
