@@ -4,9 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemMoimParticipantBinding
-import com.mongmong.namo.domain.model.Participant
+import com.gradu.domain.model.Participant
 
-class MoimParticipantRVAdapter(private val participantList : List<Participant>) : RecyclerView.Adapter<MoimParticipantRVAdapter.ViewHolder>() {
+class MoimParticipantRVAdapter(private val participantList : List<com.gradu.domain.model.Participant>) : RecyclerView.Adapter<MoimParticipantRVAdapter.ViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -23,7 +23,7 @@ class MoimParticipantRVAdapter(private val participantList : List<Participant>) 
     override fun getItemCount(): Int = participantList.size
 
     inner class ViewHolder(val binding: ItemMoimParticipantBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(participant : Participant) {
+        fun bind(participant : com.gradu.domain.model.Participant) {
             binding.participant = participant
         }
     }

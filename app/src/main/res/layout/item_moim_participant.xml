@@ -8,7 +8,7 @@
         <import type="android.view.View"/>
         <variable
             name="participant"
-            type="com.mongmong.namo.domain.model.Participant" />
+            type="com.gradu.domain.model.Participant" />
     </data>
 
     <androidx.cardview.widget.CardView

@@ -20,3 +20,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Namo"
 include ':app'
+include ':presentation'
+include ':core'
+include ':data'
+include ':domain'

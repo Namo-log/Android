@@ -39,7 +39,7 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindActivityRepository(
         impl: ActivityRepositoryImpl
-    ): ActivityRepository
+    ): com.gradu.domain.repositories.ActivityRepository
 
     /** 친구 */
     @Binds
@@ -50,7 +50,7 @@ abstract class RepositoryModule {
     /** 카테고리 */
     @Binds
     abstract fun bindCategoryRepository(
-        impl: CategoryRepositoryImpl
+        impl: com.gradu.data.repositoriyImpl.CategoryRepositoryImpl
     ): CategoryRepository
 
     /** 프로필 */

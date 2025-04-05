@@ -9,8 +9,8 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentMoimBinding
-import com.mongmong.namo.domain.model.Moim
-import com.mongmong.namo.domain.model.MoimCreateInfo
+import com.gradu.domain.model.Moim
+import com.gradu.domain.model.MoimCreateInfo
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.ui.common.ConfirmDialog
 import com.mongmong.namo.presentation.ui.common.ConfirmDialog.ConfirmDialogInterface
@@ -45,7 +45,7 @@ class MoimFragment : BaseFragment<FragmentMoimBinding>(R.layout.fragment_moim),
         binding.moimCreateFloatingBtn.setOnClickListener {
             // 모임 일정 생성 화면으로 이동
             val intent = Intent(context, MoimScheduleActivity::class.java)
-                .putExtra("moim", Moim())
+                .putExtra("moim", com.gradu.domain.model.Moim())
             getMoimResultData.launch(intent)
         }
     }
@@ -63,7 +63,7 @@ class MoimFragment : BaseFragment<FragmentMoimBinding>(R.layout.fragment_moim),
 
             // 생성 모드인지 확인
             try {
-                val createdMoimInfo = result.data?.getSerializableExtra(MOIM_CREATE_KEY) as MoimCreateInfo
+                val createdMoimInfo = result.data?.getSerializableExtra(MOIM_CREATE_KEY) as com.gradu.domain.model.MoimCreateInfo
                 Log.d("MoimFragment", "createdMoimInfo: $createdMoimInfo")
                 viewModel.createdMoimId = createdMoimInfo.moimId
                 showFriendInviteDialog(createdMoimInfo) // 친구 초대 다이얼로그 띄우기
@@ -95,7 +95,7 @@ class MoimFragment : BaseFragment<FragmentMoimBinding>(R.layout.fragment_moim),
         })
     }
 
-    private fun showFriendInviteDialog(createdMoimInfo: MoimCreateInfo) {
+    private fun showFriendInviteDialog(createdMoimInfo: com.gradu.domain.model.MoimCreateInfo) {
         val dialog = ConfirmDialog(
             this,
             getString(R.string.dialog_moim_friend_invite_title, createdMoimInfo.title),

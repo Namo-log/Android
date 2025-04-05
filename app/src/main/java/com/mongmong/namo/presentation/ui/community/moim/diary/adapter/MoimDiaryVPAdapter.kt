@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ItemMoimDiaryActivityBinding
 import com.mongmong.namo.databinding.ItemMoimDiaryDiaryBinding
-import com.mongmong.namo.domain.model.Activity
+import com.gradu.domain.model.Activity
 import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiaryImage
 import com.mongmong.namo.presentation.utils.converter.DiaryDateConverter
@@ -23,7 +23,7 @@ class MoimDiaryVPAdapter(
     private val activityEventListener: OnActivityEventListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val activities = mutableListOf<Activity>()
+    private val activities = mutableListOf<com.gradu.domain.model.Activity>()
     private var diary = DiaryDetail("", 0L, emptyList(), 3)
     private var isEditMode: Boolean = false  // 편집 모드 상태 저장
     private var hasDiary: Boolean = false
@@ -40,7 +40,7 @@ class MoimDiaryVPAdapter(
         this.scheduleEndDate = endDate
     }
 
-    fun submitActivities(newActivities: List<Activity>) {
+    fun submitActivities(newActivities: List<com.gradu.domain.model.Activity>) {
         activities.clear()
         activities.addAll(newActivities)
         notifyDataSetChanged()
@@ -133,7 +133,7 @@ class MoimDiaryVPAdapter(
         private val binding: ItemMoimDiaryActivityBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(activity: Activity) {
+        fun bind(activity: com.gradu.domain.model.Activity) {
             binding.activity = activity
             binding.isEdit = isEditMode
             binding.hasDiary = hasDiary
@@ -206,7 +206,7 @@ class MoimDiaryVPAdapter(
             }
         }
 
-        private fun initPickerListeners(activity: Activity) {
+        private fun initPickerListeners(activity: com.gradu.domain.model.Activity) {
             var selectedStartDate = activity.startDate
             var selectedEndDate = activity.endDate
 

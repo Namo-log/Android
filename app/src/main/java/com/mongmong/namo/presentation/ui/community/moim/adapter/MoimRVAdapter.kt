@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemMoimBinding
-import com.mongmong.namo.domain.model.MoimPreview
+import com.gradu.domain.model.MoimPreview
 
 class MoimRVAdapter: RecyclerView.Adapter<MoimRVAdapter.ViewHolder>(){
 
-    private var moimPreviewList = emptyList<MoimPreview>()
+    private var moimPreviewList = emptyList<com.gradu.domain.model.MoimPreview>()
     private lateinit var mItemClickListener: MyItemClickListener
 
     fun setItemClickListener(itemClickListener: MyItemClickListener) {
@@ -17,7 +17,7 @@ class MoimRVAdapter: RecyclerView.Adapter<MoimRVAdapter.ViewHolder>(){
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun addMoim(moimPreviewList: List<MoimPreview>) {
+    fun addMoim(moimPreviewList: List<com.gradu.domain.model.MoimPreview>) {
         this.moimPreviewList = moimPreviewList
         notifyDataSetChanged()
     }
@@ -52,7 +52,7 @@ class MoimRVAdapter: RecyclerView.Adapter<MoimRVAdapter.ViewHolder>(){
     override fun getItemCount(): Int = moimPreviewList.size
 
     inner class ViewHolder(val binding: ItemMoimBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(moimPreview: MoimPreview) {
+        fun bind(moimPreview: com.gradu.domain.model.MoimPreview) {
             binding.moim = moimPreview
         }
     }

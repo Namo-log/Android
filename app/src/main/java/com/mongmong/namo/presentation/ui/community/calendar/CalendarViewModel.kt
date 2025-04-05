@@ -9,8 +9,8 @@ import com.mongmong.namo.domain.model.CalendarColorInfo
 import com.mongmong.namo.domain.model.CommunityCommonSchedule
 import com.mongmong.namo.domain.model.Friend
 import com.mongmong.namo.domain.model.FriendSchedule
-import com.mongmong.namo.domain.model.MoimCalendarSchedule
-import com.mongmong.namo.domain.model.MoimScheduleDetail
+import com.gradu.domain.model.MoimCalendarSchedule
+import com.gradu.domain.model.MoimScheduleDetail
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -32,8 +32,8 @@ class CalendarViewModel @Inject constructor (
     private var _monthDateList: List<DateTime> = emptyList()
 
     // 모임 캘린더 일정
-    private val _moimScheduleList = MutableLiveData<List<MoimCalendarSchedule>>()
-    val moimScheduleList: LiveData<List<MoimCalendarSchedule>> = _moimScheduleList
+    private val _moimScheduleList = MutableLiveData<List<com.gradu.domain.model.MoimCalendarSchedule>>()
+    val moimScheduleList: LiveData<List<com.gradu.domain.model.MoimCalendarSchedule>> = _moimScheduleList
 
     // 친구 캘린더 일정
     private val _friendScheduleList = MutableLiveData<List<FriendSchedule>>()
@@ -51,7 +51,7 @@ class CalendarViewModel @Inject constructor (
     private val _isParticipantScheduleEmpty = MutableLiveData<Boolean>() // 친구/참석자 일정이 있을 경우
     var isParticipantScheduleEmpty: LiveData<Boolean> = _isParticipantScheduleEmpty
 
-    var moimSchedule = MoimScheduleDetail()
+    var moimSchedule = com.gradu.domain.model.MoimScheduleDetail()
     lateinit var friend: Friend
     var friendCategoryList: List<CalendarColorInfo> = emptyList()
 

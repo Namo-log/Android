@@ -17,7 +17,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mongmong.namo.databinding.DialogActivityPaymentBinding
-import com.mongmong.namo.domain.model.ActivityPayment
+import com.gradu.domain.model.ActivityPayment
 import com.mongmong.namo.presentation.ui.community.moim.diary.adapter.ActivityPaymentsRVAdapter
 import kotlinx.coroutines.flow.filter
 import java.math.BigDecimal
@@ -29,7 +29,7 @@ class ActivityPaymentDialog(private val position: Int) : DialogFragment() {
     private val viewModel: MoimDiaryViewModel by activityViewModels()
 
     // 편집 중인 데이터를 저장할 복사본
-    private var tempPayment: ActivityPayment? = null
+    private var tempPayment: com.gradu.domain.model.ActivityPayment? = null
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -43,7 +43,7 @@ class ActivityPaymentDialog(private val position: Int) : DialogFragment() {
         viewModel.activities.value?.get(position)?.let { activity ->
             tempPayment = activity.payment.copy(participants = activity.payment.participants.map { it.copy() })
         } ?: run {
-            tempPayment = ActivityPayment(participants = emptyList())  // 기본값
+            tempPayment = com.gradu.domain.model.ActivityPayment(participants = emptyList())  // 기본값
         }
         binding.viewModel = viewModel
         binding.payment = tempPayment

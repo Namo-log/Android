@@ -10,7 +10,7 @@
             type="com.mongmong.namo.presentation.ui.community.moim.diary.MoimDiaryViewModel" />
         <variable
             name="payment"
-            type="com.mongmong.namo.domain.model.ActivityPayment" />
+            type="com.gradu.domain.model.ActivityPayment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

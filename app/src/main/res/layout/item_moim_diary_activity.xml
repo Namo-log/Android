@@ -8,7 +8,7 @@
         <import type="android.view.View" />
         <variable
             name="activity"
-            type="com.mongmong.namo.domain.model.Activity" />
+            type="com.gradu.domain.model.Activity" />
         <variable
             name="isEdit"
             type="Boolean" />

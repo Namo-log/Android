@@ -14,10 +14,10 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.mongmong.namo.databinding.DialogActivityParticipantsBinding
-import com.mongmong.namo.domain.model.Activity
-import com.mongmong.namo.domain.model.ActivityParticipant
-import com.mongmong.namo.domain.model.ActivityPayment
-import com.mongmong.namo.domain.model.PaymentParticipant
+import com.gradu.domain.model.Activity
+import com.gradu.domain.model.ActivityParticipant
+import com.gradu.domain.model.ActivityPayment
+import com.gradu.domain.model.PaymentParticipant
 import com.mongmong.namo.presentation.ui.community.moim.diary.adapter.ActivityParticipantsRVAdapter
 
 
@@ -27,7 +27,7 @@ class ActivityParticipantsDialog(private val position: Int) : DialogFragment() {
     private lateinit var participantsAdapter: ActivityParticipantsRVAdapter
 
     private val viewModel: MoimDiaryViewModel by activityViewModels()
-    private lateinit var activity: Activity
+    private lateinit var activity: com.gradu.domain.model.Activity
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -54,7 +54,7 @@ class ActivityParticipantsDialog(private val position: Int) : DialogFragment() {
         participantsAdapter = ActivityParticipantsRVAdapter(
             scheduleParticipants =
             viewModel.diarySchedule.value?.participantInfo?.map {
-                ActivityParticipant(
+                com.gradu.domain.model.ActivityParticipant(
                     participantId = it.participantId,
                     activityParticipantId = 0L,
                     nickname = it.nickname
@@ -96,9 +96,10 @@ class ActivityParticipantsDialog(private val position: Int) : DialogFragment() {
 
                 // 추가된 참가자를 활동 정산에 추가
                 val newPaymentParticipants = participantsToAdd.map { participantId ->
-                    PaymentParticipant(
+                    com.gradu.domain.model.PaymentParticipant(
                         id = participantId,
-                        nickname = selectedParticipants.find { it.participantId == participantId }?.nickname ?: "",
+                        nickname = selectedParticipants.find { it.participantId == participantId }?.nickname
+                            ?: "",
                         isPayer = false
                     )
                 }

@@ -15,7 +15,7 @@ import com.mongmong.namo.domain.model.Location
 import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecases.category.FindCategoryUseCase
-import com.mongmong.namo.domain.usecases.category.GetCategoriesUseCase
+import com.gradu.domain.usecases.category.GetCategoriesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import org.joda.time.DateTime
@@ -25,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PersonalScheduleViewModel @Inject constructor(
     private val repository: ScheduleRepository,
-    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val getCategoriesUseCase: com.gradu.domain.usecases.category.GetCategoriesUseCase,
     private val findCategoryUseCase: FindCategoryUseCase
 ) : ViewModel() {
     private val _schedule = MutableLiveData<Schedule?>()

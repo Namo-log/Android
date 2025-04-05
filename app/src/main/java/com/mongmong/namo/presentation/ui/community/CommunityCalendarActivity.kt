@@ -6,7 +6,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityCommunityCalendarBinding
 import com.mongmong.namo.domain.model.Friend
-import com.mongmong.namo.domain.model.MoimScheduleDetail
+import com.gradu.domain.model.MoimScheduleDetail
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.ui.community.calendar.adapter.CommunityCalendarAdapter
 import com.mongmong.namo.presentation.ui.community.calendar.CalendarInfoDialog
@@ -39,7 +39,7 @@ class CommunityCalendarActivity : BaseActivity<ActivityCommunityCalendarBinding>
             viewModel.friend = intent.getSerializableExtra("friend") as Friend
             setCalendarTitleInfo(viewModel.friend.nickname)
         } else { // 모임 정보 세팅
-            viewModel.moimSchedule = intent.getSerializableExtra("moim") as MoimScheduleDetail
+            viewModel.moimSchedule = intent.getSerializableExtra("moim") as com.gradu.domain.model.MoimScheduleDetail
             setCalendarTitleInfo(viewModel.moimSchedule.title)
         }
 

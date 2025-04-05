@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemMoimDiaryActivityParticipantsBinding
-import com.mongmong.namo.domain.model.PaymentParticipant
+import com.gradu.domain.model.PaymentParticipant
 
 class ActivityPaymentsRVAdapter(
-    private var participants: List<PaymentParticipant>,
+    private var participants: List<com.gradu.domain.model.PaymentParticipant>,
     private val onCheckedChanged: () -> Unit,
     private val hasDiary: Boolean,
     private val isEdit: Boolean
@@ -16,7 +16,7 @@ class ActivityPaymentsRVAdapter(
     private val updatedParticipants = participants.toMutableList()
 
     // 새로운 리스트로 참가자 데이터를 업데이트하는 메서드
-    fun updateParticipants(participants: List<PaymentParticipant>) {
+    fun updateParticipants(participants: List<com.gradu.domain.model.PaymentParticipant>) {
         updatedParticipants.clear()
         updatedParticipants.addAll(participants)
         notifyDataSetChanged()  // 어댑터 갱신
@@ -39,7 +39,7 @@ class ActivityPaymentsRVAdapter(
     inner class ViewHolder(val binding: ItemMoimDiaryActivityParticipantsBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(participant: PaymentParticipant) {
+        fun bind(participant: com.gradu.domain.model.PaymentParticipant) {
             binding.hasDiary = hasDiary
             binding.isEdit = isEdit
 
@@ -57,7 +57,7 @@ class ActivityPaymentsRVAdapter(
         return updatedParticipants.count { it.isPayer }
     }
 
-    fun getUpdatedParticipants(): List<PaymentParticipant> {
+    fun getUpdatedParticipants(): List<com.gradu.domain.model.PaymentParticipant> {
         return updatedParticipants.toList() // 업데이트된 참가자 리스트 반환
     }
 }

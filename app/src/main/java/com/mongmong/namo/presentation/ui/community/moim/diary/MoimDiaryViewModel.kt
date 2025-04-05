@@ -6,17 +6,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mongmong.namo.domain.model.Activity
-import com.mongmong.namo.domain.model.ActivityLocation
-import com.mongmong.namo.domain.model.ActivityParticipant
+import com.gradu.domain.model.Activity
+import com.gradu.domain.model.ActivityLocation
+import com.gradu.domain.model.ActivityParticipant
 import com.mongmong.namo.domain.model.DiaryDetail
 import com.mongmong.namo.domain.model.DiaryImage
-import com.mongmong.namo.domain.model.ActivityPayment
+import com.gradu.domain.model.ActivityPayment
 import com.mongmong.namo.domain.model.BaseResponse
 import com.mongmong.namo.domain.model.MoimPayment
 import com.mongmong.namo.domain.model.MoimPaymentParticipant
 import com.mongmong.namo.domain.model.ScheduleForDiary
-import com.mongmong.namo.domain.repositories.ActivityRepository
+import com.gradu.domain.repositories.ActivityRepository
 import com.mongmong.namo.domain.repositories.DiaryRepository
 import com.mongmong.namo.domain.usecases.diary.AddMoimDiaryUseCase
 import com.mongmong.namo.domain.usecases.diary.EditMoimDiaryUseCase
@@ -31,7 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MoimDiaryViewModel @Inject constructor(
     private val diaryRepository: DiaryRepository,
-    private val activityRepository: ActivityRepository,
+    private val activityRepository: com.gradu.domain.repositories.ActivityRepository,
     private val getActivitiesUseCase: GetActivitiesUseCase,
     private val addMoimDiaryUseCase: AddMoimDiaryUseCase,
     private val editMoimDiaryUseCase: EditMoimDiaryUseCase
@@ -45,8 +45,8 @@ class MoimDiaryViewModel @Inject constructor(
     private val _diaryChanged = MutableLiveData<Boolean>(false)
     val diaryChanged: LiveData<Boolean> = _diaryChanged
 
-    private val _activities = MutableLiveData<List<Activity>>(mutableListOf())
-    val activities: LiveData<List<Activity>> = _activities
+    private val _activities = MutableLiveData<List<com.gradu.domain.model.Activity>>(mutableListOf())
+    val activities: LiveData<List<com.gradu.domain.model.Activity>> = _activities
 
     private val _moimPayment = MutableLiveData<MoimPayment>()
     val moimPayment: LiveData<MoimPayment> = _moimPayment
@@ -70,7 +70,7 @@ class MoimDiaryViewModel @Inject constructor(
     val isActivityAdded: LiveData<Boolean> = _isActivityAdded
 
     private var initialDiary: DiaryDetail = DiaryDetail()
-    private var initialActivities: List<Activity> = emptyList()
+    private var initialActivities: List<com.gradu.domain.model.Activity> = emptyList()
 
     var scheduleId: Long = 0
 
@@ -210,15 +210,15 @@ class MoimDiaryViewModel @Inject constructor(
     // 빈 활동 추가
     fun addEmptyActivity() {
         _activities.value = _activities.value?.plus(
-            Activity(
+            com.gradu.domain.model.Activity(
                 endDate = diarySchedule.value?.startDate ?: "",
                 activityId = 0L,
-                location = ActivityLocation(),
+                location = com.gradu.domain.model.ActivityLocation(),
                 participants = emptyList(),
                 startDate = diarySchedule.value?.startDate ?: "",
                 title = "",
                 tag = "",
-                payment = ActivityPayment(participants = emptyList()),
+                payment = com.gradu.domain.model.ActivityPayment(participants = emptyList()),
                 images = emptyList()
             )
         )
@@ -249,7 +249,12 @@ class MoimDiaryViewModel @Inject constructor(
 
     // 활동 장소 변경 (ui)
     fun updateActivityLocation(position: Int, id: String, name: String, x: Double, y: Double) {
-        _activities.value?.get(position)?.location = ActivityLocation(kakaoLocationId = id, locationName = name, longitude = x, latitude = y)
+        _activities.value?.get(position)?.location = com.gradu.domain.model.ActivityLocation(
+            kakaoLocationId = id,
+            locationName = name,
+            longitude = x,
+            latitude = y
+        )
         _activities.value = _activities.value
         checkForChanges()
     }
@@ -262,7 +267,7 @@ class MoimDiaryViewModel @Inject constructor(
     }
 
     // 활동 참가자 변경 (ui)
-    fun updateActivityParticipants(position: Int, members: List<ActivityParticipant>) {
+    fun updateActivityParticipants(position: Int, members: List<com.gradu.domain.model.ActivityParticipant>) {
         _activities.value?.get(position)?.apply {
             participants = members
         }
@@ -270,7 +275,7 @@ class MoimDiaryViewModel @Inject constructor(
     }
 
     // 활동 정산 변경 (ui)
-    fun updateActivityPayment(position: Int, payment: ActivityPayment) {
+    fun updateActivityPayment(position: Int, payment: com.gradu.domain.model.ActivityPayment) {
         _activities.value?.get(position)?.payment = payment
         Log.d("updateActivityPayment", "${_activities.value?.get(position)?.payment}")
         _activities.value = _activities.value
@@ -292,7 +297,7 @@ class MoimDiaryViewModel @Inject constructor(
     }
 
     // 활동 정산 수정
-    fun editActivityPayment(activityId: Long, payment: ActivityPayment) {
+    fun editActivityPayment(activityId: Long, payment: com.gradu.domain.model.ActivityPayment) {
         viewModelScope.launch {
             val result = activityRepository.editActivityPayment(activityId = activityId, payment = payment)
             _editActivityPaymentResult.emit(result)
@@ -379,7 +384,7 @@ class MoimDiaryViewModel @Inject constructor(
     }
 
     // 변경된 항목만 가진 활동 리스트를 반환
-    private fun createUpdatedActivities(): List<Activity> {
+    private fun createUpdatedActivities(): List<com.gradu.domain.model.Activity> {
         val currentActivities = _activities.value ?: return emptyList()
 
         return currentActivities.filter { currentActivity ->
@@ -424,7 +429,7 @@ class MoimDiaryViewModel @Inject constructor(
         }
     }
 
-    private fun isActivityChanged(currentActivity: Activity, initialActivity: Activity): Boolean {
+    private fun isActivityChanged(currentActivity: com.gradu.domain.model.Activity, initialActivity: com.gradu.domain.model.Activity): Boolean {
         // 제목 변경 체크
         Log.d("isActivityChanged", "${currentActivity.title}")
         if (currentActivity.title != initialActivity.title) return true

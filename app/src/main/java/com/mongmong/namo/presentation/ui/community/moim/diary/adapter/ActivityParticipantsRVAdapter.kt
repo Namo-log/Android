@@ -4,18 +4,18 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mongmong.namo.databinding.ItemMoimDiaryActivityParticipantsBinding
-import com.mongmong.namo.domain.model.ActivityParticipant
+import com.gradu.domain.model.ActivityParticipant
 import com.mongmong.namo.domain.model.ParticipantInfo
 
 class ActivityParticipantsRVAdapter(
-    private val scheduleParticipants: List<ActivityParticipant>,
+    private val scheduleParticipants: List<com.gradu.domain.model.ActivityParticipant>,
     private val hasDiary: Boolean,
     private val isEdit: Boolean
 ) : RecyclerView.Adapter<ActivityParticipantsRVAdapter.ViewHolder>() {
 
-    private val selectedParticipants = mutableListOf<ActivityParticipant>()
+    private val selectedParticipants = mutableListOf<com.gradu.domain.model.ActivityParticipant>()
 
-    fun addSelectedItems(participants: List<ActivityParticipant>) {
+    fun addSelectedItems(participants: List<com.gradu.domain.model.ActivityParticipant>) {
         selectedParticipants.clear()
         selectedParticipants.addAll(participants)
         notifyDataSetChanged()
@@ -36,14 +36,14 @@ class ActivityParticipantsRVAdapter(
     override fun getItemCount(): Int = scheduleParticipants.size
 
     // 선택된 참가자 리스트 반환
-    fun getSelectedParticipants(): List<ActivityParticipant> {
+    fun getSelectedParticipants(): List<com.gradu.domain.model.ActivityParticipant> {
         return selectedParticipants
     }
 
     inner class ViewHolder(val binding: ItemMoimDiaryActivityParticipantsBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(participant: ActivityParticipant) {
+        fun bind(participant: com.gradu.domain.model.ActivityParticipant) {
             binding.itemActivityParticipantsNicknameTv.text = participant.nickname
             binding.hasDiary = hasDiary
             binding.isEdit = isEdit

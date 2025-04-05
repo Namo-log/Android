@@ -1,6 +1,6 @@
 package com.mongmong.namo.di
 
-import com.mongmong.namo.domain.repositories.ActivityRepository
+import com.gradu.domain.repositories.ActivityRepository
 import com.mongmong.namo.domain.repositories.AuthRepository
 import com.mongmong.namo.domain.repositories.CategoryRepository
 import com.mongmong.namo.domain.repositories.DiaryRepository
@@ -11,7 +11,7 @@ import com.mongmong.namo.domain.usecases.friend.AcceptFriendRequestUseCase
 import com.mongmong.namo.domain.usecases.diary.AddMoimDiaryUseCase
 import com.mongmong.namo.domain.usecases.friend.DenyFriendRequestUseCase
 import com.mongmong.namo.domain.usecases.category.FindCategoryUseCase
-import com.mongmong.namo.domain.usecases.category.GetCategoriesUseCase
+import com.gradu.domain.usecases.category.GetCategoriesUseCase
 import com.mongmong.namo.domain.usecases.activity.GetActivitiesUseCase
 import com.mongmong.namo.domain.usecases.auth.RequestRegisterUseCase
 import com.mongmong.namo.domain.usecases.friend.GetFriendsUseCase
@@ -33,8 +33,8 @@ object UseCaseModule {
         RequestRegisterUseCase(authRepository, uploadImageToS3UseCase)
 
     @Provides
-    fun provideGetCategoriesUseCase(categoryRepository: CategoryRepository): GetCategoriesUseCase =
-        GetCategoriesUseCase(categoryRepository)
+    fun provideGetCategoriesUseCase(categoryRepository: CategoryRepository): com.gradu.domain.usecases.category.GetCategoriesUseCase =
+        com.gradu.domain.usecases.category.GetCategoriesUseCase(categoryRepository)
 
     @Provides
     fun provideFindCategoryUseCase(categoryRepository: CategoryRepository): FindCategoryUseCase =
@@ -51,7 +51,7 @@ object UseCaseModule {
     ) = AddMoimDiaryUseCase(diaryRepository, uploadImageToS3UseCase)
 
     @Provides
-    fun provideGetActivitiesUseCase(activityRepository: ActivityRepository): GetActivitiesUseCase =
+    fun provideGetActivitiesUseCase(activityRepository: com.gradu.domain.repositories.ActivityRepository): GetActivitiesUseCase =
         GetActivitiesUseCase(activityRepository)
 
     @Provides

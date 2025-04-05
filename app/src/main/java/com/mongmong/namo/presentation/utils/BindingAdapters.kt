@@ -19,7 +19,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.mongmong.namo.R
-import com.mongmong.namo.domain.model.ActivityParticipant
+import com.gradu.domain.model.ActivityParticipant
 import com.mongmong.namo.presentation.enums.CategoryColor
 import java.math.BigDecimal
 import java.text.NumberFormat
@@ -98,7 +98,7 @@ object BindingAdapters {
 
     @JvmStatic
     @BindingAdapter(value = ["participantsText", "maxCount"], requireAll = false)
-    fun setParticipantsText(textView: TextView, participants: List<ActivityParticipant>?, maxCount: Int?) {
+    fun setParticipantsText(textView: TextView, participants: List<com.gradu.domain.model.ActivityParticipant>?, maxCount: Int?) {
         val maxCount = maxCount ?: 3
 
         participants?.let {

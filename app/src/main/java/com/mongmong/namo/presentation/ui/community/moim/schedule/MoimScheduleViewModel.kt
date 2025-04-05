@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kakao.vectormap.LatLng
-import com.mongmong.namo.domain.model.MoimScheduleDetail
+import com.gradu.domain.model.MoimScheduleDetail
 import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.domain.repositories.ScheduleRepository
 import com.mongmong.namo.domain.usecases.image.UploadImageToS3UseCase
@@ -29,8 +29,8 @@ class MoimScheduleViewModel @Inject constructor(
 ) : ViewModel() {
     var moimScheduleId: Long = -1
 
-    private val _moimSchedule = MutableLiveData<MoimScheduleDetail>()
-    val moimSchedule: LiveData<MoimScheduleDetail> = _moimSchedule
+    private val _moimSchedule = MutableLiveData<com.gradu.domain.model.MoimScheduleDetail>()
+    val moimSchedule: LiveData<com.gradu.domain.model.MoimScheduleDetail> = _moimSchedule
 
     private val _isCurrentUserOwner = MutableLiveData<Boolean>(false) // 로그인 한 유저가 모임의 방장인지
     val isCurrentUserOwner: LiveData<Boolean> = _isCurrentUserOwner
@@ -144,7 +144,7 @@ class MoimScheduleViewModel @Inject constructor(
     // 모임 일정 기본 정보 세팅
     fun setMoimSchedule() {
         if (moimScheduleId == 0L) { // 모임 일정 생성
-            _moimSchedule.value = MoimScheduleDetail()
+            _moimSchedule.value = com.gradu.domain.model.MoimScheduleDetail()
             return
         }
         getMoimScheduleDetailInfo() // 모임 일정 편집

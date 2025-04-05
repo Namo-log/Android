@@ -33,7 +33,7 @@ import com.kakao.vectormap.label.LabelOptions
 import com.mongmong.namo.presentation.ui.MainActivity.Companion.ORIGIN_ACTIVITY_INTENT_KEY
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityMoimScheduleBinding
-import com.mongmong.namo.domain.model.MoimCreateInfo
+import com.gradu.domain.model.MoimCreateInfo
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.enums.SuccessType
 import com.mongmong.namo.presentation.ui.MainActivity
@@ -240,10 +240,12 @@ class MoimScheduleActivity : BaseActivity<ActivityMoimScheduleBinding>(R.layout.
                 // 편집여부 전달 (업데이트)
                 val intent = Intent(this, MainActivity::class.java).apply {
                     putExtra(MOIM_EDIT_KEY, successState.isSuccess) // 편집 여부
-                    if (successState.type == SuccessType.ADD) putExtra(MOIM_CREATE_KEY, MoimCreateInfo(
-                        moimId = viewModel.createdMoimId,
-                        title = viewModel.moimSchedule.value?.title.toString()
-                    )) // 친구 초대 팝업 표시용
+                    if (successState.type == SuccessType.ADD) putExtra(MOIM_CREATE_KEY,
+                        com.gradu.domain.model.MoimCreateInfo(
+                            moimId = viewModel.createdMoimId,
+                            title = viewModel.moimSchedule.value?.title.toString()
+                        )
+                    ) // 친구 초대 팝업 표시용
                 }
                 setResult(Activity.RESULT_OK, intent)
                 finish()

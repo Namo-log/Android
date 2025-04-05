@@ -6,7 +6,7 @@
         <import type="com.mongmong.namo.presentation.utils.converter.ScheduleDateConverter"/>
         <variable
             name="moim"
-            type="com.mongmong.namo.domain.model.Moim"/>
+            type="com.gradu.domain.model.Moim"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
