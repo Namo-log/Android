@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.di
+package com.mongmong.namo.di
 
 import com.mongmong.namo.domain.repositories.ActivityRepository
 import com.mongmong.namo.domain.repositories.AuthRepository

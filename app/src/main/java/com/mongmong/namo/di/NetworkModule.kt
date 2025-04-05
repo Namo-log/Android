@@ -1,8 +1,7 @@
-package com.mongmong.namo.presentation.di
+package com.mongmong.namo.di
 
 import android.content.Context
 import android.util.Log
-import com.mongmong.namo.BuildConfig
 import com.mongmong.namo.data.remote.AnonymousApiService
 import com.mongmong.namo.data.remote.AuthApiService
 import com.mongmong.namo.data.remote.NetworkChecker
@@ -78,7 +77,8 @@ object NetworkModule {
     @Singleton
     @BasicRetrofit
     fun provideBasicTokenInterceptor(
-        apiService: ReissuanceApiService /** 추후 AnonymousRetrofit으로 변경 예정 */
+        apiService: ReissuanceApiService
+        /** 추후 AnonymousRetrofit으로 변경 예정 */
     ): XAccessTokenInterceptor {
         return XAccessTokenInterceptor(apiService)
     }
@@ -105,7 +105,7 @@ object NetworkModule {
     @Singleton
     @AnonymousRetrofit
     fun provideAnonymousOkHttpClient(
-       interceptor: HttpLoggingInterceptor,
+        interceptor: HttpLoggingInterceptor,
     ): OkHttpClient =
         OkHttpClient.Builder()
             .readTimeout(5000, TimeUnit.MILLISECONDS)
@@ -128,6 +128,7 @@ object NetworkModule {
             .addInterceptor(interceptor)
             .addInterceptor(authInterceptor)
             .build()
+
     @Provides
     @Singleton
     @ReissuanceRetrofit
@@ -144,6 +145,7 @@ object NetworkModule {
             .addConverterFactory(gsonConverterFactory)
             .build()
     }
+
     @Provides
     @Singleton
     @ReissuanceRetrofit
@@ -164,7 +166,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNetworkChecker(@ApplicationContext context: Context): NetworkChecker = NetworkCheckerImpl(context)
+    fun provideNetworkChecker(@ApplicationContext context: Context): NetworkChecker =
+        NetworkCheckerImpl(context)
 
 
     @Provides

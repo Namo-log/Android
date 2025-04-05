@@ -1,4 +1,4 @@
-package com.mongmong.namo.presentation.di
+package com.mongmong.namo.di
 
 import com.mongmong.namo.data.datasource.category.RemoteCategoryDataSource
 import com.mongmong.namo.data.datasource.diary.RemoteActivityDataSource
