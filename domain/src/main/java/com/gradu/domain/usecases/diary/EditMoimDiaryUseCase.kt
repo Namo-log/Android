@@ -1,14 +1,11 @@
 package com.gradu.domain.usecases.diary
 
-import android.net.Uri
-import android.util.Log
-import com.gradu.domain.model.Activity
-import com.mongmong.namo.domain.model.BaseResponse
-import com.mongmong.namo.domain.model.DiaryDetail
-import com.mongmong.namo.domain.model.DiaryImage
-import com.gradu.domain.repositories.ActivityRepository
-import com.mongmong.namo.domain.repositories.DiaryRepository
-import com.mongmong.namo.domain.usecases.image.UploadImageToS3UseCase
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.model.DiaryDetail
+import com.gradu.domain.model.DiaryImage
+import com.gradu.domain.repositories.DiaryRepository
+import com.gradu.domain.usecases.image.UploadImageToS3UseCase
+import com.sun.jndi.toolkit.url.Uri
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -92,10 +89,8 @@ class EditMoimDiaryUseCase @Inject constructor(
         val allActivitiesSuccess = activityResponses.all { it.isSuccess }
 
         return if (allActivitiesSuccess && diaryResponse.isSuccess) {
-            Log.d("EditMoimDiaryUseCase", "수정 완료")
             diaryResponse
         } else {
-            Log.d("EditMoimDiaryUseCase", "수정 실패")
             BaseResponse(message = "Failed to update all activities or diary")
         }
     }

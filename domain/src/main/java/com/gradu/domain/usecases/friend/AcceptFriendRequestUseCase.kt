@@ -1,7 +1,7 @@
 package com.gradu.domain.usecases.friend
 
-import com.mongmong.namo.data.dto.FriendBaseResponse
-import com.mongmong.namo.domain.repositories.FriendRepository
+import com.gradu.domain.model.FriendBaseResponse
+import com.gradu.domain.repositories.FriendRepository
 import javax.inject.Inject
 
 class AcceptFriendRequestUseCase @Inject constructor(private val friendRepository: FriendRepository) {

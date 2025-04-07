@@ -1,10 +1,10 @@
 package com.gradu.domain.repositories
 
-import com.mongmong.namo.domain.model.BaseResponse
-import com.mongmong.namo.domain.model.LoginBody
-import com.mongmong.namo.domain.model.LoginResponse
-import com.mongmong.namo.domain.model.RefreshResponse
-import com.mongmong.namo.domain.model.RegisterInfo
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.model.LoginBody
+import com.gradu.domain.model.LoginResponse
+import com.gradu.domain.model.RefreshResponse
+import com.gradu.domain.model.RegisterInfo
 
 interface AuthRepository {
     /** 로그인 */

@@ -1,7 +1,7 @@
 package com.gradu.domain.model
 
-import org.joda.time.LocalDateTime
 import java.io.Serializable
+import java.time.LocalDateTime
 
 data class Friend(
     val userId: Long,
@@ -27,11 +27,15 @@ data class Friend(
     }
 }
 
+data class FriendBaseResponse(
+    val result: String = ""
+): BaseResponse()
+
 data class FriendSchedule(
     val scheduleId: Long = 0L,
     val title: String = "",
-    val startDate: LocalDateTime = LocalDateTime.now(),
-    val endDate: LocalDateTime = LocalDateTime.now(),
+    val startDate: LocalDateTime,
+    val endDate: LocalDateTime,
     val categoryInfo: ScheduleCategoryInfo
 ) {
     fun convertToCommunityModel(): CommunityCommonSchedule {

@@ -1,19 +1,19 @@
 package com.gradu.domain.repositories
 
-import com.mongmong.namo.data.dto.FriendBaseResponse
-import com.mongmong.namo.domain.model.CalendarColorInfo
-import com.mongmong.namo.domain.model.Friend
-import com.mongmong.namo.domain.model.FriendRequest
-import com.mongmong.namo.domain.model.FriendSchedule
-import com.mongmong.namo.domain.model.BaseResponse
-import org.joda.time.DateTime
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.model.CalendarColorInfo
+import com.gradu.domain.model.Friend
+import com.gradu.domain.model.FriendBaseResponse
+import com.gradu.domain.model.FriendRequest
+import com.gradu.domain.model.FriendSchedule
+import kotlinx.datetime.LocalDateTime
 
 interface FriendRepository {
     suspend fun getFiendList(): List<Friend>
 
     suspend fun getFriendCalendar(
-        startDate: DateTime,
-        endDate: DateTime,
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
         userId: Long
     ): List<FriendSchedule>
 

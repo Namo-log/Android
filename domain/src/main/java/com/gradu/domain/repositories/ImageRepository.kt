@@ -1,7 +1,6 @@
 package com.gradu.domain.repositories
 
-import android.net.Uri
-
+import com.sun.jndi.toolkit.url.Uri
 
 interface ImageRepository {
 

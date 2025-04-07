@@ -2,11 +2,8 @@ package com.mongmong.namo.di
 
 import android.content.Context
 import android.util.Log
-import com.mongmong.namo.data.remote.AnonymousApiService
-import com.mongmong.namo.data.remote.AuthApiService
 import com.mongmong.namo.data.remote.NetworkChecker
 import com.mongmong.namo.data.remote.ReissuanceApiService
-import com.mongmong.namo.presentation.config.ApplicationClass
 import com.mongmong.namo.presentation.config.ReissuanceTokenInterceptor
 import com.mongmong.namo.presentation.config.RemoteConfigWrapper
 import com.mongmong.namo.presentation.config.XAccessTokenInterceptor
@@ -21,7 +18,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-import javax.inject.Provider
 import javax.inject.Qualifier
 import javax.inject.Singleton
 

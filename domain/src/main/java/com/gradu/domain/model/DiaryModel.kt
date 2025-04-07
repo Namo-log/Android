@@ -1,11 +1,8 @@
 package com.gradu.domain.model
 
-import android.annotation.SuppressLint
-import androidx.databinding.BaseObservable
-import androidx.databinding.Bindable
-import com.mongmong.namo.BR
 import java.math.BigDecimal
 import java.util.Calendar
+import javax.swing.text.html.HTML.Tag.BR
 
 /** v2 Model (ui 레이어에서 비즈니스 로직에서 사용)*/
 data class Diary(
@@ -48,7 +45,6 @@ class DiaryDetail(
     diaryImages: List<DiaryImage> = emptyList(),
     enjoyRating: Int = 0
 ) : BaseObservable() {
-
     @get:Bindable
     var content: String = content
         set(value) {
@@ -126,7 +122,6 @@ data class CalendarDay(
         return calendarDayDate.after(today)
     }
 
-    @SuppressLint("DefaultLocale")
     fun toDateString(): String {
         val monthString = String.format("%02d", month + 1)
         val dayString = String.format("%02d", date)

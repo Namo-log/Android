@@ -1,12 +1,10 @@
 package com.gradu.domain.usecases.profile
 
-import android.net.Uri
-import android.util.Log
-import com.mongmong.namo.data.dto.PatchProfileRequest
-import com.mongmong.namo.domain.model.BaseResponse
-import com.mongmong.namo.domain.model.RegisterInfo
-import com.mongmong.namo.domain.repositories.ProfileRepository
-import com.mongmong.namo.domain.usecases.image.UploadImageToS3UseCase
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.model.PatchProfileRequest
+import com.gradu.domain.repositories.ProfileRepository
+import com.gradu.domain.usecases.image.UploadImageToS3UseCase
+import com.sun.jndi.toolkit.url.Uri
 import javax.inject.Inject
 
 class EditProfileUseCase @Inject constructor(
@@ -23,7 +21,6 @@ class EditProfileUseCase @Inject constructor(
         isNamePublic: Boolean
     ): BaseResponse {
         val newImageUrl = uploadImageToS3UseCase.execute(PREFIX, listOf<Uri>(Uri.parse(profileImage)))
-        Log.d("EditProfileUseCase", "birthDay: $birthday")
         return profileRepository.editProfile(
             PatchProfileRequest(
                 nickname = nickname,

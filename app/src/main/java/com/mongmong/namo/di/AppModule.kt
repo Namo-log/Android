@@ -1,7 +1,7 @@
 package com.mongmong.namo.di
 
 import android.content.Context
-import com.mongmong.namo.presentation.config.ApplicationClass
+import com.mongmong.namo.ApplicationClass
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

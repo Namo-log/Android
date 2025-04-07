@@ -5,13 +5,13 @@ import java.math.BigDecimal
 data class Activity(
     var endDate: String,
     val activityId: Long,
-    var location: com.gradu.domain.model.ActivityLocation,
-    var participants: List<com.gradu.domain.model.ActivityParticipant>,
+    var location: ActivityLocation,
+    var participants: List<ActivityParticipant>,
     var startDate: String,
     var title: String,
     var tag: String,
-    var payment: com.gradu.domain.model.ActivityPayment,
-    var images: List<com.gradu.domain.model.DiaryImage>
+    var payment: ActivityPayment,
+    var images: List<DiaryImage>
 )
 
 
@@ -32,7 +32,7 @@ data class ActivityPayment(
     var totalAmount: BigDecimal = BigDecimal.ZERO,
     var divisionCount: Int = 0,
     var amountPerPerson: BigDecimal = BigDecimal.ZERO,
-    var participants: List<com.gradu.domain.model.PaymentParticipant>
+    var participants: List<PaymentParticipant>
 )
 
 data class PaymentParticipant(

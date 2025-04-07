@@ -1,7 +1,7 @@
 package com.gradu.data.dto
 
-import com.mongmong.namo.domain.model.BaseResponse
 import com.google.gson.annotations.SerializedName
+import com.gradu.domain.model.BaseResponse
 
 // 개인
 /** 일정 월별 조회 */

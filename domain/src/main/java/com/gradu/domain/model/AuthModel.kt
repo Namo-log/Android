@@ -1,7 +1,5 @@
 package com.gradu.domain.model
 
-import android.net.Uri
-
 data class AuthResponse(
     val result: String
 ) : BaseResponse() // 기본 string

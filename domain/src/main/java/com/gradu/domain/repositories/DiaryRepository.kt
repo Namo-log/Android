@@ -1,13 +1,13 @@
 package com.gradu.domain.repositories
 
-import androidx.paging.PagingData
-import com.mongmong.namo.domain.model.CalendarDiaryDate
-import com.mongmong.namo.domain.model.Diary
-import com.mongmong.namo.domain.model.BaseResponse
-import com.mongmong.namo.domain.model.DiaryDetail
-import com.mongmong.namo.domain.model.MoimPayment
-import com.mongmong.namo.domain.model.ScheduleForDiary
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.model.CalendarDiaryDate
+import com.gradu.domain.model.Diary
+import com.gradu.domain.model.DiaryDetail
+import com.gradu.domain.model.MoimPayment
+import com.gradu.domain.model.ScheduleForDiary
 import kotlinx.coroutines.flow.Flow
+
 
 
 interface DiaryRepository {
@@ -16,7 +16,7 @@ interface DiaryRepository {
     fun getDiaryArchivePagingSource(
         filterType: String?,
         keyword: String?,
-    ): Flow<PagingData<Diary>>
+    ): Flow<List<Diary>>
 
     // 기록 일정 정보 조회
     suspend fun getScheduleForDiary(scheduleId: Long): ScheduleForDiary

@@ -1,10 +1,10 @@
 package com.gradu.domain.usecases.diary
 
-import android.net.Uri
-import com.mongmong.namo.domain.model.BaseResponse
-import com.mongmong.namo.domain.model.DiaryDetail
-import com.mongmong.namo.domain.repositories.DiaryRepository
-import com.mongmong.namo.domain.usecases.image.UploadImageToS3UseCase
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.model.DiaryDetail
+import com.gradu.domain.repositories.DiaryRepository
+import com.gradu.domain.usecases.image.UploadImageToS3UseCase
+import com.sun.jndi.toolkit.url.Uri
 import javax.inject.Inject
 
 class AddMoimDiaryUseCase @Inject constructor(

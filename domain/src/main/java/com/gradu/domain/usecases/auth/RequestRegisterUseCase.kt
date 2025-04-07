@@ -1,11 +1,10 @@
 package com.gradu.domain.usecases.auth
 
-
-import android.net.Uri
-import com.mongmong.namo.domain.model.BaseResponse
-import com.mongmong.namo.domain.model.RegisterInfo
-import com.mongmong.namo.domain.repositories.AuthRepository
-import com.mongmong.namo.domain.usecases.image.UploadImageToS3UseCase
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.model.RegisterInfo
+import com.gradu.domain.repositories.AuthRepository
+import com.gradu.domain.usecases.image.UploadImageToS3UseCase
+import com.sun.jndi.toolkit.url.Uri
 import javax.inject.Inject
 
 class RequestRegisterUseCase @Inject constructor(

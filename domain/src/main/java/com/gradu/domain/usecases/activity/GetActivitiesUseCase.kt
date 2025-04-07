@@ -1,7 +1,5 @@
 package com.gradu.domain.usecases.activity
 
-import com.gradu.domain.model.Activity
-import com.gradu.domain.repositories.ActivityRepository
 import javax.inject.Inject
 
 class GetActivitiesUseCase @Inject constructor(private val activityRepository: com.gradu.domain.repositories.ActivityRepository) {

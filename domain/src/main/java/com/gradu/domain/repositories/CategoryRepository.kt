@@ -1,6 +1,6 @@
 package com.gradu.domain.repositories
 
-import com.mongmong.namo.domain.model.CategoryModel
+import com.gradu.domain.model.CategoryModel
 
 interface CategoryRepository {
     suspend fun getCategories(): List<CategoryModel>

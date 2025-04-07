@@ -2,7 +2,9 @@ package com.gradu.domain.usecases.image
 
 import android.net.Uri
 import android.util.Log
+import com.gradu.domain.repositories.ImageRepository
 import com.mongmong.namo.domain.repositories.ImageRepository
+import com.sun.jndi.toolkit.url.Uri
 import javax.inject.Inject
 
 class UploadImageToS3UseCase @Inject constructor(private val repository: ImageRepository) {
@@ -20,7 +22,6 @@ class UploadImageToS3UseCase @Inject constructor(private val repository: ImageRe
                 }
             }
         }
-        Log.d("UploadImageToS3UseCase", "$uploadResults")
         return uploadResults
     }
 }

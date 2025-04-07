@@ -13,7 +13,7 @@ import com.mongmong.namo.data.remote.MoimApiService
 import com.mongmong.namo.data.remote.ProfileApiService
 import com.mongmong.namo.data.remote.ScheduleApiService
 import com.mongmong.namo.data.remote.TermApiService
-import com.mongmong.namo.presentation.ui.home.schedule.map.data.KakaoAPI
+import com.gradu.presentation.ui.home.schedule.map.data.KakaoAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,6 +1,7 @@
 package com.gradu.domain.repositories
 
-import com.mongmong.namo.data.dto.TermBody
+import com.gradu.domain.model.TermBody
+
 
 interface TermRepository {
     suspend fun postTerms(

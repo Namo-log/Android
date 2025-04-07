@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt' // Hilt에 반드시 필요
 }
 
 android {
@@ -9,7 +10,6 @@ android {
 
     defaultConfig {
         minSdk 26
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
@@ -20,24 +20,36 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = '11'
     }
 }
 
 dependencies {
+    // 프로젝트 모듈 의존성
     implementation(project(":data"))
     implementation(project(":domain"))
     implementation(project(":core"))
 
-
+    // Android 기본 라이브러리
     implementation 'androidx.core:core-ktx:1.15.0'
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.12.0'
+
+    // Hilt DI
+    implementation "com.google.dagger:hilt-android:2.48"
+    kapt "com.google.dagger:hilt-compiler:2.48"
+
+    // Hilt ViewModel + Navigation 지원 (필요한 경우)
+    implementation "androidx.hilt:hilt-navigation-fragment:1.1.0"
+
+    // 테스트
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'

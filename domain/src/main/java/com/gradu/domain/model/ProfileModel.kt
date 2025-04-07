@@ -1,6 +1,5 @@
 package com.gradu.domain.model
 
-import com.mongmong.namo.presentation.enums.CategoryColor
 import java.io.Serializable
 
 data class ProfileModel(
@@ -14,3 +13,13 @@ data class ProfileModel(
     val isNamePublic: Boolean,
     val isBirthPublic: Boolean
 ): Serializable
+
+data class PatchProfileRequest(
+    val nickname: String = "",
+    val birthday: String = "",
+    val bio: String = "",
+    val profileImage: String? = null,
+    val favoriteColorId: Int = 0,
+    val nameVisible: Boolean = true,
+    val birthdayVisible: Boolean = true
+)

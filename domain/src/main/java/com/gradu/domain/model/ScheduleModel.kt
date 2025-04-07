@@ -1,13 +1,12 @@
 package com.gradu.domain.model
 
-import com.mongmong.namo.presentation.utils.converter.PickerConverter.getDefaultDate
-import org.joda.time.LocalDateTime
 import java.io.Serializable
+import java.time.LocalDateTime
 
 data class Schedule(
     var scheduleId: Long = 0L,
     var title: String = "",
-    var period: SchedulePeriod = SchedulePeriod(),
+    var period: SchedulePeriod,
     var locationInfo: Location = Location(),
     var categoryInfo: ScheduleCategoryInfo = ScheduleCategoryInfo(),
     var alarmList: List<Int>? = listOf(),
@@ -16,8 +15,8 @@ data class Schedule(
 )
 
 data class SchedulePeriod(
-    var startDate: LocalDateTime = getDefaultDate(LocalDateTime.now(), true),
-    var endDate: LocalDateTime = getDefaultDate(LocalDateTime.now(), false),
+    var startDate: LocalDateTime,
+    var endDate: LocalDateTime,
 ): Serializable
 
 data class Location(
@@ -46,9 +45,9 @@ data class CalendarColorInfo(
 data class CommunityCommonSchedule(
     val scheduleId: Long = 0L,
     val title: String = "",
-    val startDate: LocalDateTime = LocalDateTime.now(),
-    val endDate: LocalDateTime = LocalDateTime.now(),
-    val participants: List<com.gradu.domain.model.MoimCalendarParticipant>? = emptyList(),
+    val startDate: LocalDateTime,
+    val endDate: LocalDateTime,
+    val participants: List<MoimCalendarParticipant>? = emptyList(),
     val categoryInfo: ScheduleCategoryInfo?,
     val type: ScheduleType
 ) {
@@ -75,3 +74,16 @@ enum class ScheduleType(val value: Int) {
     MOIM(1),
     BIRTHDAY(2)
 }
+
+// 모임
+/** 모임 일정 카테고리 수정 */
+data class PatchMoimScheduleCategoryRequestBody(
+    val moimScheduleId: Long,
+    val categoryId : Long
+)
+
+/** 모임 일정 알림 리스트 수정 */
+data class PatchMoimScheduleAlarmRequestBody(
+    val moimScheduleId: Long,
+    val alarmDates : List<Int>
+)

@@ -21,7 +21,7 @@
         tools:node="remove" />
 
     <application
-        android:name=".presentation.config.ApplicationClass"
+        android:name=".ApplicationClass"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -36,21 +36,21 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.ui.home.diary.DiaryImageDetailActivity"
+            android:name="com.gradu.presentation.ui.home.diary.DiaryImageDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.onBoarding.OnBoardingActivity"
+            android:name="com.gradu.presentation.ui.onBoarding.OnBoardingActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.auth.RegisterActivity"
+            android:name="com.gradu.presentation.ui.auth.RegisterActivity"
             android:exported="true" >
         </activity>
         <activity
-            android:name=".presentation.ui.MainActivity"
+            android:name="com.gradu.presentation.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".presentation.ui.SplashActivity"
+            android:name=".SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.App.Starting">
             <intent-filter>
@@ -76,34 +76,34 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.ui.home.schedule.map.MapActivity"
+            android:name="com.gradu.presentation.ui.home.schedule.map.MapActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".presentation.ui.home.schedule.ScheduleActivity"
+            android:name="com.gradu.presentation.ui.home.schedule.ScheduleActivity"
             android:exported="false"
             android:theme="@style/SlideAnimation" />
         <activity
-            android:name=".presentation.ui.home.diary.DiaryActivity"
+            android:name="com.gradu.presentation.ui.home.diary.DiaryActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.community.CommunityCalendarActivity"
+            android:name="com.gradu.presentation.ui.community.CommunityCalendarActivity"
             android:exported="false" />
         <activity
-            android:name=".presentation.ui.community.moim.schedule.MoimScheduleActivity"
+            android:name="com.gradu.presentation.ui.community.moim.schedule.MoimScheduleActivity"
             android:exported="false"
             android:theme="@style/SlideAnimation" />
         <activity
-            android:name=".presentation.ui.community.moim.diary.MoimDiaryDetailActivity"
+            android:name="com.gradu.presentation.ui.community.moim.diary.MoimDiaryDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".presentation.ui.home.diary.PersonalDiaryDetailActivity"
+            android:name="com.gradu.presentation.ui.home.diary.PersonalDiaryDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".presentation.ui.community.alert.FriendAlertActivity"/>
-        <activity android:name=".presentation.ui.community.moim.schedule.FriendInviteActivity"/>
-        <activity android:name=".presentation.ui.setting.profile.ProfileEditActivity"/>
+        <activity android:name="com.gradu.presentation.ui.community.alert.FriendAlertActivity"/>
+        <activity android:name="com.gradu.presentation.ui.community.moim.schedule.FriendInviteActivity"/>
+        <activity android:name="com.gradu.presentation.ui.setting.profile.ProfileEditActivity"/>
 
         <meta-data
             android:name="google_analytics_adid_collection_enabled"
@@ -113,7 +113,7 @@
             android:value="${KAKAO_API_KEY}" />
 
         <receiver
-            android:name=".presentation.ui.home.notify.PushNotificationReceiver"
+            android:name="com.gradu.presentation.ui.home.notify.PushNotificationReceiver"
             android:exported="true" />
 
         <provider

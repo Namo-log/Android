@@ -2,21 +2,21 @@ package com.gradu.domain.repositories
 
 import com.gradu.domain.model.Activity
 import com.gradu.domain.model.ActivityPayment
-import com.mongmong.namo.domain.model.BaseResponse
+import com.gradu.domain.model.BaseResponse
 
 interface ActivityRepository {
     /** 활동*/
     // 모임 기록 활동 리스트 조회
-    suspend fun getActivities(scheduleId: Long): List<com.gradu.domain.model.Activity>
+    suspend fun getActivities(scheduleId: Long): List<Activity>
 
     // 활동 정산 조회
-    suspend fun getActivityPayment(activityId: Long): com.gradu.domain.model.ActivityPayment
+    suspend fun getActivityPayment(activityId: Long): ActivityPayment
 
     // 활동 추가
-    suspend fun addActivity(scheduleId: Long, activity: com.gradu.domain.model.Activity): BaseResponse
+    suspend fun addActivity(scheduleId: Long, activity: Activity): BaseResponse
 
     // 활동 수정
-    suspend fun editActivity(activityId: Long, activity: com.gradu.domain.model.Activity, deleteImages: List<Long>): BaseResponse
+    suspend fun editActivity(activityId: Long, activity: Activity, deleteImages: List<Long>): BaseResponse
 
     // 활동 태그 수정
     suspend fun editActivityTag(activityId: Long, tag: String): BaseResponse
@@ -31,7 +31,7 @@ interface ActivityRepository {
     // 활동 정산 수정
     suspend fun editActivityPayment(
         activityId: Long,
-        payment: com.gradu.domain.model.ActivityPayment
+        payment: ActivityPayment
     ): BaseResponse
 
     // 활동 삭제

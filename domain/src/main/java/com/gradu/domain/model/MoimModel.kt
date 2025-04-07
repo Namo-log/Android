@@ -1,11 +1,11 @@
 package com.gradu.domain.model
 
-import org.joda.time.LocalDateTime
 import java.io.Serializable
+import java.time.LocalDateTime
 
 data class MoimPreview(
     val moimId: Long = 0L,
-    var startDate: LocalDateTime = LocalDateTime.now(),
+    var startDate: LocalDateTime,
     var coverImg: String = "",
     var title: String = "",
     var participantCount: Int = 0,
@@ -42,20 +42,20 @@ data class Participant(
 data class MoimCalendarSchedule(
     val scheduleId: Long = 0L,
     val title: String = "",
-    val startDate: LocalDateTime = LocalDateTime.now(),
-    val endDate: LocalDateTime = LocalDateTime.now(),
-    val participants: List<com.gradu.domain.model.MoimCalendarParticipant> = emptyList(),
+    val startDate: LocalDateTime,
+    val endDate: LocalDateTime,
+    val participants: List<MoimCalendarParticipant> = emptyList(),
     val isCurMoim: Boolean = false
 ) {
-    fun convertToCommunityModel(): com.gradu.domain.model.CommunityCommonSchedule {
-        return com.gradu.domain.model.CommunityCommonSchedule(
+    fun convertToCommunityModel(): CommunityCommonSchedule {
+        return CommunityCommonSchedule(
             scheduleId = this.scheduleId,
             title = this.title,
             startDate = this.startDate,
             endDate = this.endDate,
             participants = this.participants,
             categoryInfo = null,
-            type = if (isCurMoim) com.gradu.domain.model.ScheduleType.MOIM else com.gradu.domain.model.ScheduleType.PERSONAL
+            type = if (isCurMoim) ScheduleType.MOIM else ScheduleType.PERSONAL
         )
     }
 }
@@ -69,19 +69,19 @@ data class MoimCalendarParticipant(
 
 data class Moim(
     val moimId: Long = 0L,
-    var startDate: LocalDateTime = LocalDateTime.now(),
+    var startDate: LocalDateTime,
     var coverImg: String = "",
     var title: String = "",
     var placeName: String = "",
-    val members: List<com.gradu.domain.model.Participant> = emptyList()
+    val members: List<Participant> = emptyList()
 ): Serializable {
     fun getMemberNames(): String {
         return members.joinToString { it.nickname }
     }
 
-    fun getParticipantsColoInfo(): List<com.gradu.domain.model.CalendarColorInfo> {
+    fun getParticipantsColoInfo(): List<CalendarColorInfo> {
         return members.map { participant ->
-            com.gradu.domain.model.CalendarColorInfo(
+            CalendarColorInfo(
                 colorId = participant.colorId,
                 name = participant.nickname
             )

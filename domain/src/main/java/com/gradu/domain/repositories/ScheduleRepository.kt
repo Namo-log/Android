@@ -1,12 +1,10 @@
 package com.gradu.domain.repositories
 
-import com.mongmong.namo.domain.model.Schedule
-import com.mongmong.namo.data.dto.PatchMoimScheduleAlarmRequestBody
-import com.mongmong.namo.data.dto.PatchMoimScheduleCategoryRequestBody
-import com.mongmong.namo.domain.model.BaseResponse
-import com.gradu.domain.model.MoimCalendarSchedule
-import com.gradu.domain.model.MoimPreview
-import com.gradu.domain.model.MoimScheduleDetail
+
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.model.PatchMoimScheduleAlarmRequestBody
+import com.gradu.domain.model.PatchMoimScheduleCategoryRequestBody
+import com.gradu.domain.model.Schedule
 import org.joda.time.DateTime
 
 interface ScheduleRepository {
