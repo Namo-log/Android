@@ -3,6 +3,7 @@ package com.mongmong.namo.presentation.config
 import android.app.Application
 import android.content.SharedPreferences
 import android.provider.ContactsContract.Data
+import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.FirebaseApp
 import com.mongmong.namo.BuildConfig
 import com.kakao.sdk.common.KakaoSdk
@@ -61,5 +62,6 @@ class ApplicationClass: Application() {
         KakaoSdk.init(this, BuildConfig.KAKAO_API_KEY)
         KakaoMapSdk.init(this, BuildConfig.KAKAO_API_KEY)
         NaverIdLoginSDK.initialize(this, BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, getString(R.string.app_name))
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 }
