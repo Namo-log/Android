@@ -16,12 +16,12 @@
         android:enabled="true"
         app:showAsAction="ifRoom"/>
 
-    <item
-        android:id="@+id/shopFragment"
-        android:icon="@drawable/selector_nav_shop"
-        android:title="@string/nav_shop"
-        android:enabled="true"
-        app:showAsAction="ifRoom"/>
+<!--    <item-->
+<!--        android:id="@+id/shopFragment"-->
+<!--        android:icon="@drawable/selector_nav_shop"-->
+<!--        android:title="@string/nav_shop"-->
+<!--        android:enabled="true"-->
+<!--        app:showAsAction="ifRoom"/>-->
 
     <item
         android:id="@+id/settingFragment"
