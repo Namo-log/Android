@@ -1,17 +1,15 @@
 package com.gradu.data.datasource.auth
 
 import android.util.Log
-import com.mongmong.namo.data.dto.SignupCompleteRequest
-import com.mongmong.namo.data.remote.AnonymousApiService
-import com.mongmong.namo.data.remote.AuthApiService
-import com.mongmong.namo.data.remote.ReissuanceApiService
-import com.mongmong.namo.data.utils.common.ErrorHandler.handleError
-import com.mongmong.namo.domain.model.BaseResponse
-import com.mongmong.namo.domain.model.LoginBody
-import com.mongmong.namo.domain.model.LoginResponse
-import com.mongmong.namo.domain.model.LoginResult
-import com.mongmong.namo.domain.model.RefreshResponse
-import com.mongmong.namo.domain.model.RefreshResult
+import com.gradu.data.dto.SignupCompleteRequest
+import com.gradu.data.remote.AnonymousApiService
+import com.gradu.data.remote.AuthApiService
+import com.gradu.data.remote.ReissuanceApiService
+import com.gradu.data.utils.common.ErrorHandler.handleError
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.model.LoginBody
+import com.gradu.domain.model.LoginResponse
+import com.gradu.domain.model.LoginResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

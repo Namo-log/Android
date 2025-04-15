@@ -1,9 +1,10 @@
-package com.gradu.presentation.ui.community.moim.diary.adapter
+package com.gradu.presentation.community.moim.diary.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.databinding.ItemMoimDiaryActivityParticipantsBinding
+import com.gradu.presentation.databinding.ItemMoimDiaryActivityParticipantsBinding
 
 class ActivityPaymentsRVAdapter(
     private var participants: List<com.gradu.domain.model.PaymentParticipant>,
@@ -15,6 +16,7 @@ class ActivityPaymentsRVAdapter(
     private val updatedParticipants = participants.toMutableList()
 
     // 새로운 리스트로 참가자 데이터를 업데이트하는 메서드
+    @SuppressLint("NotifyDataSetChanged")
     fun updateParticipants(participants: List<com.gradu.domain.model.PaymentParticipant>) {
         updatedParticipants.clear()
         updatedParticipants.addAll(participants)

@@ -1,13 +1,14 @@
-package com.gradu.presentation.ui.auth
+package com.gradu.presentation.auth
 
 import android.net.Uri
 import androidx.lifecycle.*
-import com.mongmong.namo.domain.model.BaseResponse
-import com.mongmong.namo.domain.usecases.auth.RequestRegisterUseCase
-import com.mongmong.namo.presentation.enums.CategoryColor
+import com.gradu.core.enums.CategoryColor
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.usecases.auth.RequestRegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import androidx.lifecycle.Transformations
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(

@@ -1,4 +1,4 @@
-package com.gradu.presentation.ui.auth
+package com.gradu.presentation.auth
 
 import android.app.AlarmManager
 import android.app.NotificationManager
@@ -11,20 +11,19 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.gradu.core.config.BaseFragment
+import com.gradu.core.enums.LoginPlatform
 import com.gradu.presentation.MainActivity
-import com.gradu.presentation.auth.AuthViewModel
-import com.mongmong.namo.R
-import com.mongmong.namo.databinding.FragmentLoginBinding
+import com.gradu.presentation.R
+import com.gradu.presentation.databinding.FragmentLoginBinding
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
-import com.mongmong.namo.presentation.config.BaseFragment
-import com.mongmong.namo.presentation.enums.LoginPlatform
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
-import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
 import dagger.hilt.android.AndroidEntryPoint
+import com.navercorp.nid.oauth.OAuthLoginCallback as OAuthLoginCallback1
 
 @AndroidEntryPoint
 class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login) {
@@ -97,7 +96,7 @@ class LoginFragment: BaseFragment<FragmentLoginBinding>(R.layout.fragment_login)
     }
 
     private fun startNaverLogin() {
-        val oauthLoginCallback = object : OAuthLoginCallback {
+        val oauthLoginCallback = object : OAuthLoginCallback1 {
             override fun onSuccess() {
                 NidOAuthLogin().callProfileApi(object : NidProfileCallback<NidProfileResponse> {
                     override fun onSuccess(response: NidProfileResponse) {

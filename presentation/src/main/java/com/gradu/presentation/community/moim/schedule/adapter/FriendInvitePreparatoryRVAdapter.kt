@@ -1,11 +1,11 @@
-package com.gradu.presentation.ui.community.moim.schedule.adapter
+package com.gradu.presentation.community.moim.schedule.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.databinding.ItemFriendToInviteBinding
-import com.mongmong.namo.domain.model.Friend
+import com.gradu.domain.model.Friend
+import com.gradu.presentation.databinding.ItemFriendToInviteBinding
 
 class FriendInvitePreparatoryRVAdapter: RecyclerView.Adapter<FriendInvitePreparatoryRVAdapter.ViewHolder>(){
 

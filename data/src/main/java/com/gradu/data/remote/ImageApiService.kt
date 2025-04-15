@@ -1,6 +1,6 @@
 package com.gradu.data.remote
 
-import com.mongmong.namo.data.dto.GetPreSignedUrlResponse
+import com.gradu.data.dto.GetPreSignedUrlResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

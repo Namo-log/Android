@@ -1,4 +1,4 @@
-package com.gradu.presentation.ui.community.moim.diary
+package com.gradu.presentation.community.moim.diary
 
 import android.net.Uri
 import android.util.Log
@@ -6,16 +6,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mongmong.namo.domain.model.DiaryDetail
-import com.mongmong.namo.domain.model.DiaryImage
-import com.mongmong.namo.domain.model.BaseResponse
-import com.mongmong.namo.domain.model.MoimPayment
-import com.mongmong.namo.domain.model.MoimPaymentParticipant
-import com.mongmong.namo.domain.model.ScheduleForDiary
-import com.mongmong.namo.domain.repositories.DiaryRepository
-import com.mongmong.namo.domain.usecases.diary.AddMoimDiaryUseCase
-import com.mongmong.namo.domain.usecases.diary.EditMoimDiaryUseCase
-import com.mongmong.namo.domain.usecases.activity.GetActivitiesUseCase
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.model.DiaryDetail
+import com.gradu.domain.model.DiaryImage
+import com.gradu.domain.model.MoimPayment
+import com.gradu.domain.model.MoimPaymentParticipant
+import com.gradu.domain.model.ScheduleForDiary
+import com.gradu.domain.repositories.DiaryRepository
+import com.gradu.domain.usecases.activity.GetActivitiesUseCase
+import com.gradu.domain.usecases.diary.AddMoimDiaryUseCase
+import com.gradu.domain.usecases.diary.EditMoimDiaryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow

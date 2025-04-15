@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="java.math.BigDecimal"/>
-        <import type="com.mongmong.namo.presentation.utils.converter.DiaryDateConverter" />
+        <import type="com.gradu.core.utils.converter.DiaryDateConverter" />
         <import type="android.view.View" />
         <variable
             name="activity"

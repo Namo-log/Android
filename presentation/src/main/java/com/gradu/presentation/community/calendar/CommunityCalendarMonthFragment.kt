@@ -1,23 +1,23 @@
-package com.gradu.presentation.ui.community.calendar
+package com.gradu.presentation.community.calendar
 
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mongmong.namo.R
-import com.mongmong.namo.databinding.FragmentCommunityCalendarMonthBinding
-import com.mongmong.namo.domain.model.CommunityCommonSchedule
-import com.mongmong.namo.domain.model.Schedule
-import com.mongmong.namo.domain.model.SchedulePeriod
-import com.mongmong.namo.domain.model.ScheduleType
-import com.mongmong.namo.presentation.config.BaseFragment
+import com.gradu.core.config.BaseFragment
+import com.gradu.core.utils.converter.ScheduleTimeConverter
+import com.gradu.domain.model.CommunityCommonSchedule
+import com.gradu.domain.model.Schedule
+import com.gradu.domain.model.SchedulePeriod
+import com.gradu.domain.model.ScheduleType
+import com.gradu.presentation.R
+import com.gradu.presentation.common.CustomCalendarView
+import com.gradu.presentation.databinding.FragmentCommunityCalendarMonthBinding
 import com.gradu.presentation.ui.community.CommunityCalendarActivity
-import com.gradu.presentation.ui.community.calendar.adapter.ParticipantDailyScheduleRVAdapter
+import com.gradu.presentation.community.calendar.adapter.ParticipantDailyScheduleRVAdapter
 import com.gradu.presentation.ui.home.schedule.adapter.DailyScheduleRVAdapter
-import com.gradu.presentation.ui.common.CustomCalendarView
-import com.mongmong.namo.presentation.utils.converter.ScheduleTimeConverter
 import dagger.hilt.android.AndroidEntryPoint
-import org.joda.time.DateTime
+import kotlinx.datetime.LocalDateTime
 
 @AndroidEntryPoint
 class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMonthBinding>(R.layout.fragment_community_calendar_month) {
@@ -61,7 +61,7 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
     private fun initClickListeners() {
         // 캘린더 날짜 클릭
         binding.communityCalendarMonthView.onDateClickListener = object : CustomCalendarView.OnDateClickListener {
-            override fun onDateClick(date: DateTime?, pos: Int?) {
+            override fun onDateClick(date: LocalDateTime?, pos: Int?) {
                 val prevFragment = CommunityCalendarActivity.currentFragment as CommunityCalendarMonthFragment?
                 if (prevFragment != null && prevFragment != this@CommunityCalendarMonthFragment) {
                     prevFragment.binding.communityCalendarMonthView.selectedDate = null
@@ -131,12 +131,16 @@ class CommunityCalendarMonthFragment : BaseFragment<FragmentCommunityCalendarMon
 
     // 일정 상세보기
     private fun setDailySchedule() {
-        binding.communityCalendarDailyScrollSv.scrollTo(0,0)
+        binding.communityCalendarDailyScrollSv.scrollTo(0, 0)
         // 일정 아이템 표시
         if (viewModel.isMoimScheduleExist.value == true) {
             setMoimSchedule(viewModel.getDailySchedules(ScheduleType.MOIM).first()) // 해당 모임 일정
         }
-        dailyFriendScheduleAdapter.addSchedules(viewModel.getDailySchedules(ScheduleType.PERSONAL).map { it.convertToSchedule() } as ArrayList<Schedule>) // 친구 일정
+        dailyFriendScheduleAdapter.addSchedules(
+            viewModel.getDailySchedules(ScheduleType.PERSONAL)
+                .map { it.convertToSchedule() }
+                .toCollection(ArrayList())
+        )
         dailyParticipantScheduleAdapter.addPersonal(viewModel.getDailySchedules(ScheduleType.MOIM)) // 모임 참석자 일정
     }
 

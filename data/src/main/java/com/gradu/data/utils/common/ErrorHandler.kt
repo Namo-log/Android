@@ -1,6 +1,6 @@
 package com.gradu.data.utils.common
 
-import com.mongmong.namo.domain.model.BaseResponse
+import com.gradu.domain.model.BaseResponse
 import org.json.JSONObject
 import retrofit2.HttpException
 

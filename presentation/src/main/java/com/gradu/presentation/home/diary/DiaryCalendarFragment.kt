@@ -26,7 +26,7 @@ import com.mongmong.namo.presentation.config.Constants.START_YEAR
 import com.gradu.presentation.ui.community.moim.diary.MoimDiaryDetailActivity
 import com.gradu.presentation.ui.home.diary.adapter.MoimDiaryRVAdapter
 import com.gradu.presentation.ui.home.diary.adapter.PersonalDiaryRVAdapter
-import com.gradu.core.utils.CalendarUtils.Companion.dpToPx
+import com.gradu.presentation.utils.CalendarUtils.Companion.dpToPx
 import com.mongmong.namo.presentation.utils.converter.DiaryDateConverter.toYearMonth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

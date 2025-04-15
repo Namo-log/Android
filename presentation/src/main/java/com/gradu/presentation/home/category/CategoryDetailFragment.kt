@@ -11,7 +11,7 @@ import com.mongmong.namo.domain.model.CategoryModel
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.enums.CategoryColor
 import com.mongmong.namo.presentation.enums.SuccessType
-import com.gradu.presentation.ui.common.ConfirmDialog
+import com.gradu.presentation.common.ConfirmDialog
 import com.gradu.presentation.ui.home.category.adapter.CategoryPaletteRVAdapter
 import dagger.hilt.android.AndroidEntryPoint
 

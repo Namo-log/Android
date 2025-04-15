@@ -8,7 +8,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentHomeBinding
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.gradu.presentation.ui.home.diary.DiaryActivity
-import com.gradu.presentation.ui.common.SetMonthDialog
+import com.gradu.presentation.common.SetMonthDialog
 import com.gradu.presentation.ui.home.calendar.CalendarAdapter
 import org.joda.time.DateTime
 

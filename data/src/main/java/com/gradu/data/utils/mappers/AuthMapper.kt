@@ -1,7 +1,7 @@
 package com.gradu.data.utils.mappers
 
-import com.mongmong.namo.data.dto.SignupCompleteRequest
-import com.mongmong.namo.domain.model.RegisterInfo
+import com.gradu.data.dto.SignupCompleteRequest
+import com.gradu.domain.model.RegisterInfo
 
 object AuthMapper {
     fun RegisterInfo.toDTO(): SignupCompleteRequest {

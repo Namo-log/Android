@@ -16,8 +16,8 @@ import com.mongmong.namo.databinding.ActivityScheduleBinding
 import com.mongmong.namo.domain.model.SchedulePeriod
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.gradu.presentation.ui.home.notify.PushNotificationReceiver
-import com.gradu.presentation.ui.common.ConfirmDialog
-import com.gradu.presentation.ui.common.ConfirmDialog.ConfirmDialogInterface
+import com.gradu.presentation.common.ConfirmDialog
+import com.gradu.presentation.common.ConfirmDialog.ConfirmDialogInterface
 import com.mongmong.namo.presentation.utils.LocalDateTimeAdapter
 import com.mongmong.namo.presentation.utils.converter.PickerConverter
 import dagger.hilt.android.AndroidEntryPoint

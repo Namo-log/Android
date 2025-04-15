@@ -16,8 +16,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import com.gradu.presentation.community.moim.diary.MoimDiaryViewModel
 import com.mongmong.namo.databinding.DialogActivityPaymentBinding
-import com.gradu.presentation.ui.community.moim.diary.adapter.ActivityPaymentsRVAdapter
+import com.gradu.presentation.community.moim.diary.adapter.ActivityPaymentsRVAdapter
 import java.math.BigDecimal
 import java.text.NumberFormat
 

@@ -1,7 +1,7 @@
 package com.gradu.data.dto
 
 import com.google.gson.annotations.SerializedName
-import com.mongmong.namo.domain.model.BaseResponse
+import com.gradu.domain.model.BaseResponse
 
 data class CategoryRequestBody(
     val categoryName : String,

@@ -1,13 +1,16 @@
-package com.gradu.presentation.ui.community.calendar
+package com.gradu.presentation.community.calendar
 
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import com.gradu.presentation.ui.home.calendar.data.StartEnd
-import com.gradu.core.utils.CalendarUtils.Companion.DAYS_PER_WEEK
+import com.gradu.core.enums.CategoryColor
 import com.gradu.core.utils.converter.ScheduleDateConverter.parseLocalDateTimeToDateTime
-import com.gradu.presentation.ui.common.CustomCalendarView
-import org.joda.time.Days
+import com.gradu.domain.model.CommunityCommonSchedule
+import com.gradu.presentation.common.CustomCalendarView
+import com.gradu.presentation.home.calendar.data.StartEnd
+import com.gradu.presentation.utils.CalendarUtils.Companion.DAYS_PER_WEEK
+import com.gradu.presentation.utils.CalendarUtils.Companion.getDateDifferenceInDays
+import androidx.core.graphics.toColorInt
 
 class CommunityCalendarView(context: Context, attrs: AttributeSet) :
     CustomCalendarView(context, attrs) {
@@ -140,10 +143,11 @@ class CommunityCalendarView(context: Context, attrs: AttributeSet) :
 
     fun setScheduleList(events: List<CommunityCommonSchedule>) {
         val sortedEvents = events.sortedWith(compareByDescending<CommunityCommonSchedule> {
-            Days.daysBetween(it.startDate, it.endDate)
+            getDateDifferenceInDays(it.startDate, it.endDate)
         }.thenBy {
             it.startDate
         })
+
 
         scheduleList.clear()
         scheduleList.addAll(sortedEvents)
@@ -154,6 +158,6 @@ class CommunityCalendarView(context: Context, attrs: AttributeSet) :
     private fun setBgPaintColor(schedule: CommunityCommonSchedule) {
         val colorId = if (isFriendCalendar) schedule.categoryInfo!!.colorId else schedule.participants?.get(0)!!.colorId
         val hexColor = CategoryColor.convertColorIdToHexColor(colorId)
-        bgPaint.color = Color.parseColor(hexColor)
+        bgPaint.color = hexColor.toColorInt()
     }
 }

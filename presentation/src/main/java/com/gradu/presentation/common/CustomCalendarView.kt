@@ -1,4 +1,4 @@
-package com.gradu.presentation.ui.common
+package com.gradu.presentation.common
 
 import android.content.Context
 import android.graphics.*
@@ -8,22 +8,27 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.withStyledAttributes
-import com.mongmong.namo.R
-import com.gradu.presentation.ui.home.calendar.data.StartEnd
-import com.gradu.core.utils.CalendarUtils.Companion.DAYS_PER_WEEK
-import com.gradu.core.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
-import com.gradu.core.utils.CalendarUtils.Companion.dpToPx
-import com.gradu.core.utils.CalendarUtils.Companion.getMonthList
-import org.joda.time.DateTime
+import com.gradu.presentation.utils.CalendarUtils.Companion.DAYS_PER_WEEK
+import com.gradu.presentation.utils.CalendarUtils.Companion.WEEKS_PER_MONTH
+import com.gradu.presentation.utils.CalendarUtils.Companion.dpToPx
+import com.gradu.presentation.utils.CalendarUtils.Companion.getMonthList
+import com.gradu.domain.model.CategoryModel
+import com.gradu.presentation.R
+import com.gradu.presentation.home.calendar.data.StartEnd
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlin.math.abs
 
 abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     interface OnDateClickListener {
-        fun onDateClick(date: DateTime?, pos: Int?)
+        fun onDateClick(date: LocalDateTime?, pos: Int?)
     }
 
     var onDateClickListener: OnDateClickListener? = null
-    var selectedDate: DateTime? = null
+    var selectedDate: LocalDateTime? = null
     var millis: Long = 0
     var startX = 0f
     var startY = 0f
@@ -34,9 +39,9 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
     var cellWidth = 0f
     var cellHeight = 0f
     val bounds = Rect()
-    private val today = DateTime.now().withTimeAtStartOfDay().millis
+    private val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
-    val days = mutableListOf<DateTime>()
+    val days = mutableListOf<LocalDateTime>()
     val categoryList = mutableListOf<CategoryModel>()
     private val orderList = mutableListOf<Int>()
     val moreList = mutableListOf<Int>()
@@ -260,15 +265,20 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
         return (((startIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding + _eventHeight) * order) + ((endIdx / DAYS_PER_WEEK) * cellHeight + eventTop + (_eventBetweenPadding * order) + (_eventHeight * (order + 1)))) / 2 + eventBounds.height() / 2
     }
 
-    private fun isSameMonth(date: DateTime): Boolean {
-        return date.monthOfYear == DateTime(millis).monthOfYear
+    private fun isSameMonth(date: LocalDateTime): Boolean {
+        val baseDateTime = epochMillisToLocalDateTime(millis)
+        return date.year == baseDateTime.year && date.monthNumber == baseDateTime.monthNumber
     }
 
     open fun setDays(millis: Long) {
         this.millis = millis
         days.clear()
-        days.addAll(getMonthList(DateTime(millis)))
+        days.addAll(getMonthList(epochMillisToLocalDateTime(millis))) // 수정: LocalDate로 변환된 날짜 리스트
         invalidate()
+    }
+
+    private fun epochMillisToLocalDateTime(millis: Long): LocalDateTime { // 수정: LocalDate -> LocalDateTime
+        return Instant.fromEpochMilliseconds(millis).toLocalDateTime(TimeZone.currentSystemDefault())
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -288,7 +298,7 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
             val y = (day / DAYS_PER_WEEK) * cellHeight
 
             val dayString = days[day].dayOfMonth.toString()
-            if (days[day].isEqual(today)) {
+            if (days[day].date == today.date) {
                 todayPaint.getTextBounds(dayString, 0, dayString.length, bounds)
                 val textWidth = todayPaint.measureText(dayString)
                 val textHeight = bounds.height()
@@ -324,7 +334,7 @@ abstract class CustomCalendarView(context: Context, attrs: AttributeSet) : View(
             val selectedDay = selectedDate!!.dayOfMonth
 
             for (i in days.indices) {
-                if (days[i] == selectedDate && !days[i].isEqual(today)) {
+                if (days[i] == selectedDate && days[i] != today) {
                     val x = (i % DAYS_PER_WEEK) * cellWidth + padding  // X 좌표를 오른쪽으로 5dp 이동
                     val y = (i / DAYS_PER_WEEK) * cellHeight
 

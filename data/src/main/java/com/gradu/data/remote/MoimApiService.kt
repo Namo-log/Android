@@ -1,15 +1,15 @@
 package com.gradu.data.remote
 
-import com.mongmong.namo.data.dto.EditMoimScheduleProfileRequestBody
-import com.mongmong.namo.data.dto.EditMoimScheduleRequestBody
-import com.mongmong.namo.data.dto.GetMoimCalendarResponse
-import com.mongmong.namo.data.dto.GetMoimDetailResponse
-import com.mongmong.namo.data.dto.GetMoimResponse
-import com.mongmong.namo.data.dto.InviteMoimParticipantRequestBody
-import com.mongmong.namo.data.dto.MoimBaseResponse
-import com.mongmong.namo.data.dto.MoimScheduleRequestBody
-import com.mongmong.namo.data.dto.PostMoimScheduleResponse
-import com.mongmong.namo.domain.model.BaseResponse
+import com.gradu.data.dto.EditMoimScheduleProfileRequestBody
+import com.gradu.data.dto.EditMoimScheduleRequestBody
+import com.gradu.data.dto.GetMoimCalendarResponse
+import com.gradu.data.dto.GetMoimDetailResponse
+import com.gradu.data.dto.GetMoimResponse
+import com.gradu.data.dto.InviteMoimParticipantRequestBody
+import com.gradu.data.dto.MoimBaseResponse
+import com.gradu.data.dto.MoimScheduleRequestBody
+import com.gradu.data.dto.PostMoimScheduleResponse
+import com.gradu.domain.model.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

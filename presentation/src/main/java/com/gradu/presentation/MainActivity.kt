@@ -20,15 +20,17 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.gradu.core.config.BaseActivity
-import com.mongmong.namo.ApplicationClass.Companion.dsManager
-import com.mongmong.namo.databinding.ActivityMainBinding
+import com.gradu.core.utils.DataStoreManager
+import com.gradu.presentation.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
+class MainActivity @Inject constructor(private val dsManager: DataStoreManager) :
+    BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     override fun setup() {
         initNavigation()

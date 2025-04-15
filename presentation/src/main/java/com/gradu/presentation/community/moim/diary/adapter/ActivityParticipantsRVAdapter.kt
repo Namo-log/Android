@@ -1,9 +1,10 @@
-package com.gradu.presentation.ui.community.moim.diary.adapter
+package com.gradu.presentation.community.moim.diary.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.databinding.ItemMoimDiaryActivityParticipantsBinding
+import com.gradu.presentation.databinding.ItemMoimDiaryActivityParticipantsBinding
 
 class ActivityParticipantsRVAdapter(
     private val scheduleParticipants: List<com.gradu.domain.model.ActivityParticipant>,
@@ -13,6 +14,7 @@ class ActivityParticipantsRVAdapter(
 
     private val selectedParticipants = mutableListOf<com.gradu.domain.model.ActivityParticipant>()
 
+    @SuppressLint("NotifyDataSetChanged")
     fun addSelectedItems(participants: List<com.gradu.domain.model.ActivityParticipant>) {
         selectedParticipants.clear()
         selectedParticipants.addAll(participants)

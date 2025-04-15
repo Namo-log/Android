@@ -13,8 +13,8 @@ import com.mongmong.namo.ApplicationClass
 import com.mongmong.namo.ApplicationClass.Companion.dsManager
 import com.mongmong.namo.presentation.config.BaseFragment
 import com.mongmong.namo.presentation.config.Constants
-import com.gradu.presentation.ui.common.ConfirmDialog
-import com.gradu.presentation.ui.common.ConfirmDialog.ConfirmDialogInterface
+import com.gradu.presentation.common.ConfirmDialog
+import com.gradu.presentation.common.ConfirmDialog.ConfirmDialogInterface
 import com.gradu.presentation.ui.onBoarding.OnBoardingActivity
 import com.gradu.presentation.ui.setting.profile.ProfileEditActivity
 import com.gradu.presentation.ui.setting.profile.ProfileEditActivity.Companion.PROFILE_KEY

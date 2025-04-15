@@ -42,7 +42,7 @@
             android:name="com.gradu.presentation.ui.onBoarding.OnBoardingActivity"
             android:exported="false" />
         <activity
-            android:name="com.gradu.presentation.ui.auth.RegisterActivity"
+            android:name="com.gradu.presentation.auth.RegisterActivity"
             android:exported="true" >
         </activity>
         <activity
@@ -101,8 +101,8 @@
             android:name="com.gradu.presentation.ui.home.diary.PersonalDiaryDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name="com.gradu.presentation.ui.community.alert.FriendAlertActivity"/>
-        <activity android:name="com.gradu.presentation.ui.community.moim.schedule.FriendInviteActivity"/>
+        <activity android:name="com.gradu.presentation.community.alert.FriendAlertActivity"/>
+        <activity android:name="com.gradu.presentation.community.moim.schedule.FriendInviteActivity"/>
         <activity android:name="com.gradu.presentation.ui.setting.profile.ProfileEditActivity"/>
 
         <meta-data

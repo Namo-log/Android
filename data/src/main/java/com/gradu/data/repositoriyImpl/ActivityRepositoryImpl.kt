@@ -1,11 +1,10 @@
 package com.gradu.data.repositoriyImpl
 
-import com.mongmong.namo.data.datasource.diary.RemoteActivityDataSource
-import com.mongmong.namo.data.utils.mappers.ActivityMapper.toModel
-import com.mongmong.namo.domain.model.Activity
-import com.mongmong.namo.domain.model.ActivityPayment
-import com.mongmong.namo.domain.model.BaseResponse
-import com.mongmong.namo.domain.repositories.ActivityRepository
+import com.gradu.data.datasource.diary.RemoteActivityDataSource
+import com.gradu.domain.model.Activity
+import com.gradu.domain.model.ActivityPayment
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.repositories.ActivityRepository
 import javax.inject.Inject
 
 class ActivityRepositoryImpl @Inject constructor(

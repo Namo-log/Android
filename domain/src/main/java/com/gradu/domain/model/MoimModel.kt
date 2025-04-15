@@ -1,7 +1,8 @@
 package com.gradu.domain.model
 
+import org.threeten.bp.LocalDateTime
 import java.io.Serializable
-import java.time.LocalDateTime
+
 
 data class MoimPreview(
     val moimId: Long = 0L,
@@ -16,13 +17,13 @@ data class MoimScheduleDetail(
     val moimId: Long = 0L,
     var title: String = "",
     var coverImg: String = "",
-    var period: com.gradu.domain.model.SchedulePeriod = com.gradu.domain.model.SchedulePeriod(),
-    var locationInfo: com.gradu.domain.model.Location = com.gradu.domain.model.Location(),
-    val participants: List<com.gradu.domain.model.Participant> = emptyList()
+    var period: SchedulePeriod = SchedulePeriod(),
+    var locationInfo: Location = Location(),
+    val participants: List<Participant> = emptyList()
 ): Serializable {
-    fun getParticipantsColoInfo(): List<com.gradu.domain.model.CalendarColorInfo> {
+    fun getParticipantsColoInfo(): List<CalendarColorInfo> {
         return participants.map { participant ->
-            com.gradu.domain.model.CalendarColorInfo(
+            CalendarColorInfo(
                 colorId = participant.colorId,
                 name = participant.nickname
             )

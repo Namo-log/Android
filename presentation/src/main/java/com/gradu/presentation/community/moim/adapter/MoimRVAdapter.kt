@@ -1,10 +1,10 @@
-package com.gradu.presentation.ui.community.moim.adapter
+package com.gradu.presentation.community.moim.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.databinding.ItemMoimBinding
+import com.gradu.presentation.databinding.ItemMoimBinding
 
 class MoimRVAdapter: RecyclerView.Adapter<MoimRVAdapter.ViewHolder>(){
 

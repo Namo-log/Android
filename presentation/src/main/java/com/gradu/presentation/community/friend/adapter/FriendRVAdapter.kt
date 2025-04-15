@@ -1,11 +1,11 @@
-package com.gradu.presentation.ui.community.friend.adapter
+package com.gradu.presentation.community.friend.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.databinding.ItemFriendBinding
-import com.mongmong.namo.domain.model.Friend
+import com.gradu.domain.model.Friend
+import com.gradu.presentation.databinding.ItemFriendBinding
 
 class FriendRVAdapter: RecyclerView.Adapter<FriendRVAdapter.ViewHolder>(){
 

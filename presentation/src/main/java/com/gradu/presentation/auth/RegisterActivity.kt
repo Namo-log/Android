@@ -1,4 +1,4 @@
-package com.gradu.presentation.ui.auth
+package com.gradu.presentation.auth
 
 import android.content.Intent
 import android.net.Uri
@@ -6,11 +6,11 @@ import android.view.MotionEvent
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import com.mongmong.namo.R
-import com.mongmong.namo.databinding.ActivityRegisterBinding
-import com.mongmong.namo.presentation.config.BaseActivity
+import com.gradu.core.config.BaseActivity
+import com.gradu.core.utils.hideKeyboardOnTouchOutside
 import com.gradu.presentation.MainActivity
-import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
+import com.gradu.presentation.R
+import com.gradu.presentation.databinding.ActivityRegisterBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

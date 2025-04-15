@@ -6,7 +6,7 @@
     <data>
         <variable
             name="participant"
-            type="com.mongmong.namo.domain.model.MoimPaymentParticipant" />
+            type="com.gradu.domain.model.MoimPaymentParticipant" />
     </data>
     
     <androidx.constraintlayout.widget.ConstraintLayout 

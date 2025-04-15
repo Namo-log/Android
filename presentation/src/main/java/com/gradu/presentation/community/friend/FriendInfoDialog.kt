@@ -1,18 +1,18 @@
-package com.gradu.presentation.ui.community.friend
+package com.gradu.presentation.community.friend
 
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import com.mongmong.namo.databinding.DialogFriendInfoBinding
-import com.mongmong.namo.domain.model.Friend
-import com.mongmong.namo.domain.model.FriendRequest
+import com.gradu.domain.model.Friend
+import com.gradu.domain.model.FriendRequest
+import com.gradu.presentation.databinding.DialogFriendInfoBinding
 import com.gradu.presentation.ui.community.CommunityCalendarActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,7 +38,7 @@ class FriendInfoDialog(
     ): View {
         binding = DialogFriendInfoBinding.inflate(inflater, container, false)
 
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))  // 배경 투명하게
+        dialog?.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())  // 배경 투명하게
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)  // dialog 모서리 둥글게
 
         val info = friendInfo?.convertToFriendInfo() ?: friendRequestInfo!!.convertToFriendInfo()

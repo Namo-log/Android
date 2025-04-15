@@ -1,13 +1,13 @@
-package com.gradu.presentation.ui.community.alert
+package com.gradu.presentation.community.alert
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mongmong.namo.domain.model.FriendRequest
-import com.mongmong.namo.domain.repositories.FriendRepository
-import com.mongmong.namo.domain.usecases.friend.AcceptFriendRequestUseCase
-import com.mongmong.namo.domain.usecases.friend.DenyFriendRequestUseCase
+import com.gradu.domain.model.FriendRequest
+import com.gradu.domain.repositories.FriendRepository
+import com.gradu.domain.usecases.friend.AcceptFriendRequestUseCase
+import com.gradu.domain.usecases.friend.DenyFriendRequestUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

@@ -5,7 +5,7 @@
     <data>
         <variable
             name="friend"
-            type="com.mongmong.namo.domain.model.FriendRequest"/>
+            type="com.gradu.domain.model.FriendRequest"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

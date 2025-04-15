@@ -5,12 +5,12 @@ import com.gradu.domain.model.BaseResponse
 import com.gradu.domain.model.PatchMoimScheduleAlarmRequestBody
 import com.gradu.domain.model.PatchMoimScheduleCategoryRequestBody
 import com.gradu.domain.model.Schedule
-import org.joda.time.DateTime
+import org.threeten.bp.LocalDateTime
 
 interface ScheduleRepository {
     /** 개인 */
     suspend fun getMonthSchedules(
-        startDate: DateTime, endDate: DateTime
+        startDate: LocalDateTime, endDate: LocalDateTime
     ): List<Schedule>
 
     suspend fun addSchedule(
@@ -40,8 +40,8 @@ interface ScheduleRepository {
 
     suspend fun getMoimCalendarSchedules(
         moimScheduleId: Long,
-        startDate: DateTime,
-        endDate: DateTime
+        startDate: LocalDateTime,
+        endDate: LocalDateTime
     ): List<com.gradu.domain.model.MoimCalendarSchedule>
 
     suspend fun addMoimSchedule(

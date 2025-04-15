@@ -1,19 +1,14 @@
 package com.gradu.data.remote
 
-import com.mongmong.namo.data.dto.GetActivitiesResponse
-import com.mongmong.namo.data.dto.GetActivityPaymentResponse
-import com.mongmong.namo.data.dto.PatchActivityParticipantsRequest
-import com.mongmong.namo.data.dto.PatchActivityPaymentRequest
-import com.mongmong.namo.data.dto.PatchActivityRequest
-import com.mongmong.namo.data.dto.PostActivityRequest
-import com.mongmong.namo.domain.model.BaseResponse
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
+import com.gradu.data.dto.GetActivitiesResponse
+import com.gradu.data.dto.GetActivityPaymentResponse
+import com.gradu.data.dto.PatchActivityParticipantsRequest
+import com.gradu.data.dto.PatchActivityPaymentRequest
+import com.gradu.data.dto.PatchActivityRequest
+import com.gradu.data.dto.PostActivityRequest
+import com.gradu.domain.model.BaseResponse
+import retrofit2.http.*
+
 
 interface ActivityApiService {
     /** 활동 */

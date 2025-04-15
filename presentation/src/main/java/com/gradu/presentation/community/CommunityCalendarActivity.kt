@@ -7,10 +7,10 @@ import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityCommunityCalendarBinding
 import com.mongmong.namo.domain.model.Friend
 import com.mongmong.namo.presentation.config.BaseActivity
-import com.gradu.presentation.ui.community.calendar.adapter.CommunityCalendarAdapter
-import com.gradu.presentation.ui.community.calendar.CalendarInfoDialog
-import com.gradu.presentation.ui.community.calendar.CalendarViewModel
-import com.gradu.presentation.ui.common.SetMonthDialog
+import com.gradu.presentation.community.calendar.adapter.CommunityCalendarAdapter
+import com.gradu.presentation.community.calendar.CalendarInfoDialog
+import com.gradu.presentation.community.calendar.CalendarViewModel
+import com.gradu.presentation.common.SetMonthDialog
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime
 

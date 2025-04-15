@@ -1,9 +1,7 @@
 package com.gradu.data.remote
 
-import com.mongmong.namo.domain.model.LoginBody
-import com.mongmong.namo.domain.model.LoginResponse
-import com.mongmong.namo.domain.model.RefreshResponse
-import com.mongmong.namo.domain.model.TokenBody
+import com.gradu.domain.model.LoginBody
+import com.gradu.domain.model.LoginResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Path

@@ -1,15 +1,15 @@
 package com.gradu.data.utils.mappers
 
-import com.mongmong.namo.data.dto.GetMonthScheduleResult
-import com.mongmong.namo.data.dto.Period
-import com.mongmong.namo.data.dto.ScheduleLocation
-import com.mongmong.namo.data.dto.ScheduleRequestBody
-import com.mongmong.namo.domain.model.Location
-import com.mongmong.namo.domain.model.Schedule
-import com.mongmong.namo.domain.model.ScheduleCategoryInfo
-import com.mongmong.namo.domain.model.SchedulePeriod
-import com.mongmong.namo.presentation.utils.converter.ScheduleDateConverter
-import com.mongmong.namo.domain.model.ScheduleType
+import com.gradu.core.utils.converter.ScheduleDateConverter
+import com.gradu.data.dto.GetMonthScheduleResult
+import com.gradu.data.dto.Period
+import com.gradu.data.dto.ScheduleLocation
+import com.gradu.data.dto.ScheduleRequestBody
+import com.gradu.domain.model.Location
+import com.gradu.domain.model.Schedule
+import com.gradu.domain.model.ScheduleCategoryInfo
+import com.gradu.domain.model.SchedulePeriod
+import com.gradu.domain.model.ScheduleType
 
 object ScheduleMapper {
     // DTO -> Model

@@ -16,8 +16,8 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.databinding.ActivityPersonalDiaryDetailBinding
 import com.gradu.presentation.ui.home.diary.adapter.PersonalDiaryImagesRVAdapter
-import com.gradu.presentation.ui.common.ConfirmDialog
-import com.gradu.presentation.ui.common.ConfirmDialog.ConfirmDialogInterface
+import com.gradu.presentation.common.ConfirmDialog
+import com.gradu.presentation.common.ConfirmDialog.ConfirmDialogInterface
 import com.mongmong.namo.R
 import com.mongmong.namo.presentation.config.BaseActivity
 import com.mongmong.namo.presentation.utils.PermissionChecker.hasImagePermission

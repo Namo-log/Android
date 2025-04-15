@@ -4,7 +4,6 @@ import com.gradu.domain.model.BaseResponse
 import com.gradu.domain.model.RegisterInfo
 import com.gradu.domain.repositories.AuthRepository
 import com.gradu.domain.usecases.image.UploadImageToS3UseCase
-import com.sun.jndi.toolkit.url.Uri
 import javax.inject.Inject
 
 class RequestRegisterUseCase @Inject constructor(

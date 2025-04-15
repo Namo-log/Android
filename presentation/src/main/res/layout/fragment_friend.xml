@@ -7,7 +7,7 @@
         <import type="android.view.View"/>
         <variable
             name="viewModel"
-            type="com.mongmong.namo.presentation.ui.community.friend.FriendViewModel" />
+            type="com.gradu.presentation.community.friend.FriendViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

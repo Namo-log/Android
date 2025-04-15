@@ -1,7 +1,7 @@
 package com.gradu.domain.model
 
+import org.threeten.bp.LocalDateTime
 import java.io.Serializable
-import java.time.LocalDateTime
 
 data class Friend(
     val userId: Long,

@@ -1,11 +1,11 @@
-package com.gradu.presentation.ui.community.alert.adapter
+package com.gradu.presentation.community.alert.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.databinding.ItemFriendAlertBinding
-import com.mongmong.namo.domain.model.FriendRequest
+import com.gradu.domain.model.FriendRequest
+import com.gradu.presentation.databinding.ItemFriendAlertBinding
 
 class FriendAlertRVAdapter: RecyclerView.Adapter<FriendAlertRVAdapter.ViewHolder>(){
 

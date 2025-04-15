@@ -1,13 +1,13 @@
 package com.gradu.data.repositoriyImpl
 
-import com.mongmong.namo.data.datasource.auth.RemoteAuthDataSource
-import com.mongmong.namo.data.utils.mappers.AuthMapper.toDTO
-import com.mongmong.namo.domain.model.BaseResponse
-import com.mongmong.namo.domain.model.LoginBody
-import com.mongmong.namo.domain.model.LoginResponse
-import com.mongmong.namo.domain.model.RefreshResponse
-import com.mongmong.namo.domain.model.RegisterInfo
-import com.mongmong.namo.domain.repositories.AuthRepository
+import com.gradu.data.datasource.auth.RemoteAuthDataSource
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.model.LoginBody
+import com.gradu.domain.model.LoginResponse
+import com.gradu.domain.model.RefreshResponse
+import com.gradu.domain.model.RegisterInfo
+import com.gradu.domain.repositories.AuthRepository
+import com.gradu.data.utils.mappers.AuthMapper.toDTO
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(

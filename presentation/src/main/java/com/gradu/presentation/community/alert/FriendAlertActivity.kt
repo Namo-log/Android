@@ -1,13 +1,13 @@
-package com.gradu.presentation.ui.community.alert
+package com.gradu.presentation.community.alert
 
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mongmong.namo.R
-import com.mongmong.namo.databinding.FragmentFriendAlertBinding
-import com.mongmong.namo.presentation.config.BaseActivity
-import com.gradu.presentation.ui.community.alert.adapter.FriendAlertRVAdapter
-import com.gradu.presentation.ui.community.friend.FriendInfoDialog
-import com.gradu.presentation.ui.community.friend.OnFriendInfoChangedListener
+import com.gradu.core.config.BaseActivity
+import com.gradu.presentation.R
+import com.gradu.presentation.community.alert.adapter.FriendAlertRVAdapter
+import com.gradu.presentation.databinding.FragmentFriendAlertBinding
+import com.gradu.presentation.community.friend.FriendInfoDialog
+import com.gradu.presentation.community.friend.OnFriendInfoChangedListener
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

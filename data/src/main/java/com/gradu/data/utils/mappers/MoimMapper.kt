@@ -1,22 +1,22 @@
 package com.gradu.data.utils.mappers
 
-import com.mongmong.namo.data.dto.CalendarParticipant
-import com.mongmong.namo.data.dto.EditMoimScheduleRequestBody
-import com.mongmong.namo.data.dto.GetMoimCalendarResult
-import com.mongmong.namo.data.dto.GetMoimDetailResult
-import com.mongmong.namo.data.dto.GetMoimResult
-import com.mongmong.namo.data.dto.MoimParticipant
-import com.mongmong.namo.data.dto.MoimScheduleRequestBody
-import com.mongmong.namo.data.dto.Period
-import com.mongmong.namo.data.dto.ScheduleLocation
-import com.mongmong.namo.domain.model.Location
-import com.mongmong.namo.domain.model.MoimCalendarParticipant
-import com.mongmong.namo.domain.model.MoimCalendarSchedule
-import com.mongmong.namo.domain.model.MoimPreview
-import com.mongmong.namo.domain.model.MoimScheduleDetail
-import com.mongmong.namo.domain.model.Participant
-import com.mongmong.namo.domain.model.SchedulePeriod
-import com.mongmong.namo.presentation.utils.converter.ScheduleDateConverter
+import com.gradu.core.utils.converter.ScheduleDateConverter
+import com.gradu.data.dto.CalendarParticipant
+import com.gradu.data.dto.EditMoimScheduleRequestBody
+import com.gradu.data.dto.GetMoimCalendarResult
+import com.gradu.data.dto.GetMoimDetailResult
+import com.gradu.data.dto.GetMoimResult
+import com.gradu.data.dto.MoimParticipant
+import com.gradu.data.dto.MoimScheduleRequestBody
+import com.gradu.data.dto.Period
+import com.gradu.data.dto.ScheduleLocation
+import com.gradu.domain.model.Location
+import com.gradu.domain.model.MoimCalendarParticipant
+import com.gradu.domain.model.MoimCalendarSchedule
+import com.gradu.domain.model.MoimPreview
+import com.gradu.domain.model.MoimScheduleDetail
+import com.gradu.domain.model.Participant
+import com.gradu.domain.model.SchedulePeriod
 
 object MoimMapper {
     // DTO -> Model

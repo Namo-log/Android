@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentMoimBinding
 import com.mongmong.namo.presentation.config.BaseFragment
-import com.gradu.presentation.ui.common.ConfirmDialog
-import com.gradu.presentation.ui.common.ConfirmDialog.ConfirmDialogInterface
-import com.gradu.presentation.ui.community.moim.adapter.MoimRVAdapter
+import com.gradu.presentation.common.ConfirmDialog
+import com.gradu.presentation.common.ConfirmDialog.ConfirmDialogInterface
+import com.gradu.presentation.community.moim.adapter.MoimRVAdapter
 import com.gradu.presentation.ui.community.moim.diary.MoimDiaryDetailActivity
-import com.gradu.presentation.ui.community.moim.schedule.FriendInviteActivity
-import com.gradu.presentation.ui.community.moim.schedule.FriendInviteActivity.Companion.MOIM_INVITE_KEY
+import com.gradu.presentation.community.moim.schedule.FriendInviteActivity
+import com.gradu.presentation.community.moim.schedule.FriendInviteActivity.Companion.MOIM_INVITE_KEY
 import com.gradu.presentation.ui.community.moim.schedule.MoimScheduleActivity
 import com.gradu.presentation.ui.community.moim.schedule.MoimScheduleActivity.Companion.MOIM_ID_KEY
 import dagger.hilt.android.AndroidEntryPoint

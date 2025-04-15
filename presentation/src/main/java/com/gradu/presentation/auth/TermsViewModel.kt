@@ -1,11 +1,11 @@
-package com.gradu.presentation.ui.auth
+package com.gradu.presentation.auth
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mongmong.namo.data.dto.TermBody
-import com.mongmong.namo.domain.repositories.TermRepository
+import com.gradu.domain.model.TermBody
+import com.gradu.domain.repositories.TermRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

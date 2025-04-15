@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.SharedPreferences
 import com.google.firebase.FirebaseApp
 import com.gradu.core.utils.DataStoreManager
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.vectormap.KakaoMapSdk
 import com.mongmong.namo.di.NetworkModule
@@ -58,5 +59,6 @@ class ApplicationClass: Application() {
         KakaoSdk.init(this, BuildConfig.KAKAO_API_KEY)
         KakaoMapSdk.init(this, BuildConfig.KAKAO_API_KEY)
         NaverIdLoginSDK.initialize(this, BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, getString(R.string.app_name))
+        AndroidThreeTen.init(this)
     }
 }

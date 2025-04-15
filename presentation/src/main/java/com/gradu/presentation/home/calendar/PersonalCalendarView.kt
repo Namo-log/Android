@@ -6,9 +6,9 @@ import android.util.AttributeSet
 import com.mongmong.namo.domain.model.CategoryModel
 import com.mongmong.namo.domain.model.Schedule
 import com.mongmong.namo.presentation.enums.CategoryColor
-import com.gradu.presentation.ui.home.calendar.data.StartEnd
-import com.gradu.core.utils.CalendarUtils.Companion.DAYS_PER_WEEK
-import com.gradu.presentation.ui.common.CustomCalendarView
+import com.gradu.presentation.home.calendar.data.StartEnd
+import com.gradu.presentation.utils.CalendarUtils.Companion.DAYS_PER_WEEK
+import com.gradu.presentation.common.CustomCalendarView
 import com.mongmong.namo.presentation.utils.converter.ScheduleDateConverter
 import org.joda.time.Days
 

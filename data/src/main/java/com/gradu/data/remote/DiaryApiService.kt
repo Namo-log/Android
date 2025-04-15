@@ -1,15 +1,21 @@
 package com.gradu.data.remote
 
-import com.mongmong.namo.data.dto.EditDiaryRequest
-import com.mongmong.namo.data.dto.GetCalendarDiaryResponse
-import com.mongmong.namo.data.dto.GetDiaryByDateResponse
-import com.mongmong.namo.data.dto.GetDiaryArchiveResponse
-import com.mongmong.namo.data.dto.GetDiaryResponse
-import com.mongmong.namo.data.dto.GetMoimPaymentResponse
-import com.mongmong.namo.data.dto.GetScheduleForDiaryResponse
-import com.mongmong.namo.data.dto.PostDiaryRequest
-import com.mongmong.namo.domain.model.BaseResponse
-import retrofit2.http.*
+import com.gradu.data.dto.EditDiaryRequest
+import com.gradu.data.dto.GetCalendarDiaryResponse
+import com.gradu.data.dto.GetDiaryArchiveResponse
+import com.gradu.data.dto.GetDiaryByDateResponse
+import com.gradu.data.dto.GetDiaryResponse
+import com.gradu.data.dto.GetMoimPaymentResponse
+import com.gradu.data.dto.GetScheduleForDiaryResponse
+import com.gradu.data.dto.PostDiaryRequest
+import com.gradu.domain.model.BaseResponse
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface DiaryApiService {
     /** 기록 */

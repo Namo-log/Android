@@ -10,7 +10,7 @@
             type="Boolean" />
         <variable
             name="friendInfo"
-            type="com.mongmong.namo.domain.model.FriendInfo" />
+            type="com.gradu.domain.model.FriendInfo" />
         <variable
             name="isFavorite"
             type="Boolean" />
@@ -292,7 +292,7 @@
                 android:visibility="@{isFriendRequestMode ? View.GONE : View.VISIBLE}"
                 app:layout_constraintTop_toBottomOf="@id/setting_profile_info_favorite_color_ll">
 
-                <com.mongmong.namo.presentation.ui.common.CustomDrawableTextView
+                <com.gradu.presentation.common.CustomDrawableTextView
                     android:id="@+id/friend_info_schedule_btn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -311,7 +311,7 @@
                     android:layout_width="16dp"
                     android:layout_height="match_parent"/>
 
-                <com.mongmong.namo.presentation.ui.common.CustomDrawableTextView
+                <com.gradu.presentation.common.CustomDrawableTextView
                     android:id="@+id/friend_info_delete_btn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

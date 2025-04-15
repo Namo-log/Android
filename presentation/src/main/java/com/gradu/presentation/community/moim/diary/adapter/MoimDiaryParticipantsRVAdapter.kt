@@ -1,11 +1,11 @@
-package com.gradu.presentation.ui.community.moim.diary.adapter
+package com.gradu.presentation.community.moim.diary.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.databinding.ItemMoimDiaryParticipantBinding
-import com.mongmong.namo.domain.model.ParticipantInfo
+import com.gradu.domain.model.ParticipantInfo
+import com.gradu.presentation.databinding.ItemMoimDiaryParticipantBinding
 
 class MoimDiaryParticipantsRVAdapter() : RecyclerView.Adapter<MoimDiaryParticipantsRVAdapter.ViewHolder>() {
     private val members = mutableListOf<ParticipantInfo>()

@@ -9,7 +9,7 @@
             type="Boolean" />
         <variable
             name="friend"
-            type="com.mongmong.namo.domain.model.Friend"/>
+            type="com.gradu.domain.model.Friend"/>
     </data>
 
     <LinearLayout

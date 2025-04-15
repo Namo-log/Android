@@ -1,7 +1,7 @@
 package com.gradu.domain.model
 
+import org.threeten.bp.LocalDateTime
 import java.io.Serializable
-import java.time.LocalDateTime
 
 data class Schedule(
     var scheduleId: Long = 0L,
@@ -15,8 +15,8 @@ data class Schedule(
 )
 
 data class SchedulePeriod(
-    var startDate: LocalDateTime,
-    var endDate: LocalDateTime,
+    var startDate: LocalDateTime = LocalDateTime.now(),
+    var endDate: LocalDateTime = LocalDateTime.now(),
 ): Serializable
 
 data class Location(

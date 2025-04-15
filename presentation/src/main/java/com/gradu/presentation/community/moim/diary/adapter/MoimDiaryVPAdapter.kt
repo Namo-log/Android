@@ -1,5 +1,6 @@
-package com.gradu.presentation.ui.community.moim.diary.adapter
+package com.gradu.presentation.community.moim.diary.adapter
 
+import android.annotation.SuppressLint
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -8,12 +9,12 @@ import android.widget.TextView
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.R
-import com.mongmong.namo.databinding.ItemMoimDiaryActivityBinding
-import com.mongmong.namo.databinding.ItemMoimDiaryDiaryBinding
-import com.mongmong.namo.domain.model.DiaryDetail
-import com.mongmong.namo.domain.model.DiaryImage
-import com.mongmong.namo.presentation.utils.converter.DiaryDateConverter
+import com.gradu.core.utils.converter.DiaryDateConverter
+import com.gradu.domain.model.DiaryDetail
+import com.gradu.domain.model.DiaryImage
+import com.gradu.presentation.R
+import com.gradu.presentation.databinding.ItemMoimDiaryActivityBinding
+import com.gradu.presentation.databinding.ItemMoimDiaryDiaryBinding
 import java.util.Calendar
 import java.util.Date
 
@@ -39,12 +40,14 @@ class MoimDiaryVPAdapter(
         this.scheduleEndDate = endDate
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun submitActivities(newActivities: List<com.gradu.domain.model.Activity>) {
         activities.clear()
         activities.addAll(newActivities)
         notifyDataSetChanged()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setEditMode(isEditMode: Boolean) {
         this.isEditMode = isEditMode
         notifyDataSetChanged()

@@ -1,17 +1,15 @@
 package com.gradu.data.utils.mappers
 
-import com.mongmong.namo.data.dto.ActivityLocationDTO
-import com.mongmong.namo.data.dto.PatchActivityPaymentRequest
-import com.mongmong.namo.data.dto.GetActivitiesResult
-import com.mongmong.namo.data.dto.GetActivityPaymentResult
-import com.mongmong.namo.data.dto.Payment
-import com.mongmong.namo.domain.model.Activity
-import com.mongmong.namo.domain.model.ActivityLocation
-import com.mongmong.namo.domain.model.ActivityParticipant
-import com.mongmong.namo.domain.model.DiaryImage
-import com.mongmong.namo.domain.model.ParticipantInfo
-import com.mongmong.namo.domain.model.ActivityPayment
-import com.mongmong.namo.domain.model.PaymentParticipant
+import com.gradu.data.dto.ActivityLocationDTO
+import com.gradu.data.dto.GetActivitiesResult
+import com.gradu.data.dto.GetActivityPaymentResult
+import com.gradu.data.dto.Payment
+import com.gradu.domain.model.Activity
+import com.gradu.domain.model.ActivityLocation
+import com.gradu.domain.model.ActivityParticipant
+import com.gradu.domain.model.ActivityPayment
+import com.gradu.domain.model.DiaryImage
+import com.gradu.domain.model.PaymentParticipant
 
 object ActivityMapper {
     fun GetActivitiesResult.toModel(): Activity {

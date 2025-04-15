@@ -1,10 +1,11 @@
-package com.gradu.presentation.ui.common
+package com.gradu.presentation.common
 
 import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import com.mongmong.namo.R
+import com.gradu.presentation.R
+import androidx.core.content.withStyledAttributes
 
 class CustomDrawableTextView @JvmOverloads constructor(
     context: Context,
@@ -37,16 +38,16 @@ class CustomDrawableTextView @JvmOverloads constructor(
         }
 
     init {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.CustomDrawableTextView)
-        drawableStartSize = typedArray.getDimensionPixelSize(
-            R.styleable.CustomDrawableTextView_drawableStartSize,
-            NO_DRAWABLE_SIZE
-        )
-        drawableEndSize = typedArray.getDimensionPixelSize(
-            R.styleable.CustomDrawableTextView_drawableEndSize,
-            NO_DRAWABLE_SIZE
-        )
-        typedArray.recycle()
+        context.withStyledAttributes(attrs, R.styleable.CustomDrawableTextView) {
+            drawableStartSize = getDimensionPixelSize(
+                R.styleable.CustomDrawableTextView_drawableStartSize,
+                NO_DRAWABLE_SIZE
+            )
+            drawableEndSize = getDimensionPixelSize(
+                R.styleable.CustomDrawableTextView_drawableEndSize,
+                NO_DRAWABLE_SIZE
+            )
+        }
 
         setCompoundDrawablesIfNeeded()
     }

@@ -1,9 +1,9 @@
 package com.gradu.data.remote
 
-import com.mongmong.namo.data.dto.CategoryBaseResponse
-import com.mongmong.namo.data.dto.CategoryRequestBody
-import com.mongmong.namo.data.dto.DeleteCategoryResponse
-import com.mongmong.namo.data.dto.GetCategoryResponse
+import com.gradu.data.dto.CategoryBaseResponse
+import com.gradu.data.dto.CategoryRequestBody
+import com.gradu.data.dto.DeleteCategoryResponse
+import com.gradu.data.dto.GetCategoryResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

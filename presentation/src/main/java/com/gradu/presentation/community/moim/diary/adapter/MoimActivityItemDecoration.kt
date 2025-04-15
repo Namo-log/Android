@@ -1,4 +1,4 @@
-package com.gradu.presentation.ui.community.moim.diary.adapter
+package com.gradu.presentation.community.moim.diary.adapter
 
 import android.graphics.Rect
 import android.view.View

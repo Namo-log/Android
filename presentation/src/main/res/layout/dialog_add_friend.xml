@@ -98,7 +98,7 @@
 
             </LinearLayout>
 
-            <com.mongmong.namo.presentation.ui.common.CustomDrawableTextView
+            <com.gradu.presentation.common.CustomDrawableTextView
                 android:id="@+id/add_friend_request_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

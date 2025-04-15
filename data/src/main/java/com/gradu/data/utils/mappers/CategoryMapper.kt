@@ -1,8 +1,8 @@
 package com.gradu.data.utils.mappers
 
-import com.mongmong.namo.data.dto.CategoryDTO
-import com.mongmong.namo.data.dto.CategoryRequestBody
-import com.mongmong.namo.domain.model.CategoryModel
+import com.gradu.data.dto.CategoryDTO
+import com.gradu.data.dto.CategoryRequestBody
+import com.gradu.domain.model.CategoryModel
 
 object CategoryMapper {
     fun CategoryModel.toDTO(): CategoryRequestBody {

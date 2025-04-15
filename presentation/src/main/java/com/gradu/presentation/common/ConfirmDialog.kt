@@ -1,4 +1,4 @@
-package com.gradu.presentation.ui.common
+package com.gradu.presentation.common
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.mongmong.namo.databinding.DialogConfirmBinding
+import com.gradu.presentation.databinding.DialogConfirmBinding
 
 class ConfirmDialog(
     confirmDialogInterface: ConfirmDialogInterface,

@@ -1,15 +1,14 @@
-package com.gradu.presentation.ui.community.calendar.adapter
+package com.gradu.presentation.community.calendar.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.databinding.ItemSchedulePreviewMoimBinding
-import com.mongmong.namo.domain.model.CommunityCommonSchedule
-import com.mongmong.namo.domain.model.SchedulePeriod
-import com.mongmong.namo.presentation.utils.converter.ScheduleTimeConverter
-import org.joda.time.DateTime
-import org.joda.time.LocalDateTime
+import com.gradu.core.utils.converter.ScheduleTimeConverter
+import com.gradu.domain.model.CommunityCommonSchedule
+import com.gradu.domain.model.SchedulePeriod
+import com.gradu.presentation.databinding.ItemSchedulePreviewMoimBinding
+import org.threeten.bp.LocalDateTime
 
 class ParticipantDailyScheduleRVAdapter : RecyclerView.Adapter<ParticipantDailyScheduleRVAdapter.ViewHolder>() {
 
@@ -37,10 +36,10 @@ class ParticipantDailyScheduleRVAdapter : RecyclerView.Adapter<ParticipantDailyS
     }
 
     fun initScheduleTimeConverter() {
-        timeConverter = ScheduleTimeConverter(DateTime.now())
+        timeConverter = ScheduleTimeConverter(LocalDateTime.now())
     }
 
-    fun setClickedDate(date: DateTime) {
+    fun setClickedDate(date: LocalDateTime) {
         // converter에서 선택한 날짜 업데이트
         timeConverter.updateClickedDate(date)
     }
@@ -49,9 +48,8 @@ class ParticipantDailyScheduleRVAdapter : RecyclerView.Adapter<ParticipantDailyS
 
         fun bind(personalSchedule: CommunityCommonSchedule) {
             binding.schedule = personalSchedule
-
             binding.itemCalendarEventTime.text = timeConverter.getScheduleTimeText(
-                SchedulePeriod(LocalDateTime.now(), LocalDateTime.now()) //TODO: 추후 변경 필요
+                SchedulePeriod(LocalDateTime.now(), LocalDateTime.now())
             )
         }
     }

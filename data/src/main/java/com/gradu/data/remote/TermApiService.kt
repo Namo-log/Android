@@ -1,7 +1,7 @@
 package com.gradu.data.remote
 
-import com.mongmong.namo.data.dto.TermBody
-import com.mongmong.namo.domain.model.BaseResponse
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.model.TermBody
 import retrofit2.http.Body
 import retrofit2.http.POST
 

@@ -1,13 +1,13 @@
 package com.gradu.data.repositoriyImpl
 
 import android.util.Log
-import com.mongmong.namo.data.datasource.category.RemoteCategoryDataSource
-import com.mongmong.namo.domain.model.CategoryModel
-import com.mongmong.namo.data.remote.NetworkChecker
-import com.mongmong.namo.data.utils.mappers.CategoryMapper.toDTO
-import com.mongmong.namo.data.utils.mappers.CategoryMapper.toModel
-import com.mongmong.namo.domain.repositories.CategoryRepository
-import com.mongmong.namo.presentation.config.Constants.SUCCESS_CODE
+import com.gradu.core.config.Constants.SUCCESS_CODE
+import com.gradu.data.datasource.category.RemoteCategoryDataSource
+import com.gradu.data.remote.NetworkChecker
+import com.gradu.domain.model.CategoryModel
+import com.gradu.domain.repositories.CategoryRepository
+import com.gradu.data.utils.mappers.CategoryMapper.toDTO
+import com.gradu.data.utils.mappers.CategoryMapper.toModel
 import javax.inject.Inject
 
 class CategoryRepositoryImpl @Inject constructor(

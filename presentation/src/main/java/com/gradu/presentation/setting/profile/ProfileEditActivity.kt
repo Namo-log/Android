@@ -9,7 +9,7 @@ import com.mongmong.namo.R
 import com.mongmong.namo.databinding.ActivityProfileEditBinding
 import com.mongmong.namo.domain.model.ProfileModel
 import com.mongmong.namo.presentation.config.BaseActivity
-import com.gradu.presentation.ui.common.ConfirmDialog
+import com.gradu.presentation.common.ConfirmDialog
 import com.gradu.presentation.ui.community.moim.diary.MoimDiaryDetailActivity.Companion.BACK_BUTTON_ACTION
 import com.mongmong.namo.presentation.utils.hideKeyboardOnTouchOutside
 import dagger.hilt.android.AndroidEntryPoint

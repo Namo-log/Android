@@ -1,9 +1,8 @@
 package com.gradu.data.remote
 
-import com.mongmong.namo.data.dto.SignupCompleteRequest
-import com.mongmong.namo.data.dto.SignupCompleteResponse
-import com.mongmong.namo.domain.model.AuthResponse
-import com.mongmong.namo.domain.model.BaseResponse
+import com.gradu.data.dto.SignupCompleteRequest
+import com.gradu.data.dto.SignupCompleteResponse
+import com.gradu.domain.model.AuthResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Path

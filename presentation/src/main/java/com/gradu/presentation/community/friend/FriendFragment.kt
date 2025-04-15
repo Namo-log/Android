@@ -1,11 +1,11 @@
-package com.gradu.presentation.ui.community.friend
+package com.gradu.presentation.community.friend
 
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mongmong.namo.R
-import com.mongmong.namo.databinding.FragmentFriendBinding
-import com.mongmong.namo.presentation.config.BaseFragment
-import com.gradu.presentation.ui.community.friend.adapter.FriendRVAdapter
+import com.gradu.core.config.BaseFragment
+import com.gradu.presentation.R
+import com.gradu.presentation.community.friend.adapter.FriendRVAdapter
+import com.gradu.presentation.databinding.FragmentFriendBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

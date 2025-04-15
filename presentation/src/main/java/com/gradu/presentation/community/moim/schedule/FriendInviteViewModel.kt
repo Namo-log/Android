@@ -1,14 +1,14 @@
-package com.gradu.presentation.ui.community.moim.schedule
+package com.gradu.presentation.community.moim.schedule
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mongmong.namo.domain.model.BaseResponse
-import com.mongmong.namo.domain.model.Friend
-import com.mongmong.namo.domain.repositories.ScheduleRepository
-import com.mongmong.namo.domain.usecases.friend.GetFriendsUseCase
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.model.Friend
+import com.gradu.domain.repositories.ScheduleRepository
+import com.gradu.domain.usecases.friend.GetFriendsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

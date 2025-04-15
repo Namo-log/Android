@@ -1,15 +1,14 @@
 package com.gradu.data.repositoriyImpl
 
-import com.mongmong.namo.data.datasource.friend.RemoteFriendDataSource
-import com.mongmong.namo.data.dto.FriendBaseResponse
-import com.mongmong.namo.data.utils.mappers.FriendMapper.toModel
-import com.mongmong.namo.domain.model.CalendarColorInfo
-import com.mongmong.namo.domain.model.Friend
-import com.mongmong.namo.domain.model.FriendRequest
-import com.mongmong.namo.domain.model.FriendSchedule
-import com.mongmong.namo.domain.repositories.FriendRepository
-import com.mongmong.namo.domain.model.BaseResponse
-import org.joda.time.DateTime
+import com.gradu.data.datasource.friend.RemoteFriendDataSource
+import com.gradu.domain.model.BaseResponse
+import com.gradu.domain.model.CalendarColorInfo
+import com.gradu.domain.model.Friend
+import com.gradu.domain.model.FriendBaseResponse
+import com.gradu.domain.model.FriendRequest
+import com.gradu.domain.model.FriendSchedule
+import com.gradu.domain.repositories.FriendRepository
+import org.threeten.bp.LocalDateTime
 import javax.inject.Inject
 
 class FriendRepositoryImpl @Inject constructor(
@@ -22,8 +21,8 @@ class FriendRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getFriendCalendar(
-        startDate: DateTime,
-        endDate: DateTime,
+        startDate: LocalDateTime,
+        endDate: LocalDateTime,
         userId: Long
     ): List<FriendSchedule> {
         return remoteFriendDataSource.getFriendMonthSchedules(startDate, endDate, userId).result.map { schedule ->

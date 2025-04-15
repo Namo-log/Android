@@ -8,8 +8,6 @@ import com.gradu.domain.model.MoimPayment
 import com.gradu.domain.model.ScheduleForDiary
 import kotlinx.coroutines.flow.Flow
 
-
-
 interface DiaryRepository {
     /** 기록 */
     // 기록 보관함 조회

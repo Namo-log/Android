@@ -1,8 +1,8 @@
 package com.gradu.data.utils.mappers
 
-import com.mongmong.namo.data.dto.GetProfileResult
-import com.mongmong.namo.domain.model.ProfileModel
-import com.mongmong.namo.presentation.enums.CategoryColor
+import com.gradu.core.enums.CategoryColor
+import com.gradu.data.dto.GetProfileResult
+import com.gradu.domain.model.ProfileModel
 
 object ProfileMapper {
     fun GetProfileResult.toModel(): ProfileModel {

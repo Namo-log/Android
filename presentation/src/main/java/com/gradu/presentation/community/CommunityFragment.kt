@@ -5,7 +5,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.mongmong.namo.R
 import com.mongmong.namo.databinding.FragmentCommunityBinding
 import com.mongmong.namo.presentation.config.BaseFragment
-import com.gradu.presentation.ui.community.alert.FriendAlertActivity
+import com.gradu.presentation.community.alert.FriendAlertActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

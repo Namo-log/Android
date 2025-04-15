@@ -18,5 +18,5 @@ dependencies {
     implementation "com.google.dagger:dagger:2.48"
     implementation "com.google.code.gson:gson:2.10.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
-    implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.5.0"
+    implementation "org.threeten:threetenbp:1.6.8:no-tzdb"
 }

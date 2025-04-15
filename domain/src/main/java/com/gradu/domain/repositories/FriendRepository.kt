@@ -6,7 +6,7 @@ import com.gradu.domain.model.Friend
 import com.gradu.domain.model.FriendBaseResponse
 import com.gradu.domain.model.FriendRequest
 import com.gradu.domain.model.FriendSchedule
-import kotlinx.datetime.LocalDateTime
+import org.threeten.bp.LocalDateTime
 
 interface FriendRepository {
     suspend fun getFiendList(): List<Friend>

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import com.gradu.presentation.community.moim.diary.MoimDiaryViewModel
 import com.mongmong.namo.databinding.DialogActivityTagBinding
 
 class ActivityTagDialog(private val position: Int) : DialogFragment() {

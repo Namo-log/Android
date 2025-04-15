@@ -1,4 +1,4 @@
-package com.gradu.presentation.ui.community.moim.schedule
+package com.gradu.presentation.community.moim.schedule
 
 import android.app.Activity
 import android.content.Intent
@@ -7,14 +7,15 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mongmong.namo.R
-import com.mongmong.namo.databinding.ActivityFriendInviteBinding
-import com.mongmong.namo.presentation.config.BaseActivity
+import com.gradu.core.config.BaseActivity
 import com.gradu.presentation.MainActivity
-import com.gradu.presentation.ui.common.ConfirmDialog
+import com.gradu.presentation.R
+import com.gradu.presentation.common.ConfirmDialog
 import com.gradu.presentation.ui.community.moim.MoimFragment.Companion.MOIM_EDIT_KEY
-import com.gradu.presentation.ui.community.moim.schedule.adapter.FriendInvitePreparatoryRVAdapter
-import com.gradu.presentation.ui.community.moim.schedule.adapter.FriendInviteRVAdapter
+import com.gradu.presentation.community.moim.schedule.adapter.FriendInvitePreparatoryRVAdapter
+import com.gradu.presentation.community.moim.schedule.adapter.FriendInviteRVAdapter
+import com.gradu.presentation.databinding.ActivityFriendInviteBinding
+import com.gradu.presentation.ui.community.moim.schedule.MoimScheduleActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

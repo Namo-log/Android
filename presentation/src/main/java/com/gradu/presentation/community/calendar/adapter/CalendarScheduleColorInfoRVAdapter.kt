@@ -1,11 +1,11 @@
-package com.gradu.presentation.ui.community.calendar.adapter
+package com.gradu.presentation.community.calendar.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.databinding.ItemScheduleColorInfoBinding
-import com.mongmong.namo.domain.model.CalendarColorInfo
+import com.gradu.domain.model.CalendarColorInfo
+import com.gradu.presentation.databinding.ItemScheduleColorInfoBinding
 
 class CalendarScheduleColorInfoRVAdapter(
     private val colorInfoList : List<CalendarColorInfo>

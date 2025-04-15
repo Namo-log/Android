@@ -1,9 +1,9 @@
-package com.gradu.presentation.ui.community.moim.schedule.adapter
+package com.gradu.presentation.community.moim.schedule.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.databinding.ItemMoimParticipantBinding
+import com.gradu.presentation.databinding.ItemMoimParticipantBinding
 
 class MoimParticipantRVAdapter(private val participantList : List<com.gradu.domain.model.Participant>) : RecyclerView.Adapter<MoimParticipantRVAdapter.ViewHolder>() {
     override fun onCreateViewHolder(

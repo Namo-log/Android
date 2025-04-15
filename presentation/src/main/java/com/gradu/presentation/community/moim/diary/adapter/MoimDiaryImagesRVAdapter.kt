@@ -1,4 +1,4 @@
-package com.gradu.presentation.ui.community.moim.diary.adapter
+package com.gradu.presentation.community.moim.diary.adapter
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.mongmong.namo.databinding.ItemMoimDiaryImageBinding
-import com.mongmong.namo.domain.model.DiaryImage
+import com.gradu.domain.model.DiaryImage
+import com.gradu.presentation.databinding.ItemMoimDiaryImageBinding
 
 class MoimDiaryImagesRVAdapter(
     private val itemClickListener: () -> Unit,

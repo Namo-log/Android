@@ -6,10 +6,10 @@
     <data>
 
         <import type="android.view.View" />
-        <import type="com.mongmong.namo.presentation.enums.CategoryColor"/>
+        <import type="com.gradu.core.enums.CategoryColor"/>
         <variable
             name="viewModel"
-            type="com.mongmong.namo.presentation.ui.auth.RegisterViewModel" />
+            type="com.gradu.presentation.auth.RegisterViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

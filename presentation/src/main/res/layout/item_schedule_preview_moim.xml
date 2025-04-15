@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.mongmong.namo.presentation.enums.CategoryColor"/>
-        <import type="com.mongmong.namo.presentation.utils.converter.ScheduleTimeConverter"/>
+        <import type="com.gradu.core.enums.CategoryColor"/>
+        <import type="com.gradu.core.utils.converter.ScheduleTimeConverter"/>
         <variable
             name="schedule"
-            type="com.mongmong.namo.domain.model.CommunityCommonSchedule" />
+            type="com.gradu.domain.model.CommunityCommonSchedule" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

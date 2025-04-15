@@ -17,7 +17,7 @@ import com.gradu.presentation.ui.home.HomeFragment
 import com.gradu.presentation.ui.home.schedule.adapter.DailyScheduleRVAdapter
 import com.gradu.presentation.ui.home.schedule.ScheduleActivity
 import com.gradu.presentation.ui.home.schedule.PersonalScheduleViewModel
-import com.gradu.presentation.ui.common.CustomCalendarView
+import com.gradu.presentation.common.CustomCalendarView
 import com.mongmong.namo.presentation.utils.LocalDateTimeAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import org.joda.time.DateTime

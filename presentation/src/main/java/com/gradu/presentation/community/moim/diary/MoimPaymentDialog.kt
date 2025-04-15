@@ -1,8 +1,7 @@
-package com.gradu.presentation.ui.community.moim.diary
+package com.gradu.presentation.community.moim.diary
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,8 +11,9 @@ import android.view.Window
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mongmong.namo.databinding.DialogMoimPaymentBinding
-import com.gradu.presentation.ui.community.moim.diary.adapter.MoimPaymentParticipantsRVAdapter
+import com.gradu.presentation.databinding.DialogMoimPaymentBinding
+import com.gradu.presentation.community.moim.diary.adapter.MoimPaymentParticipantsRVAdapter
+import androidx.core.graphics.drawable.toDrawable
 
 
 class MoimPaymentDialog() : DialogFragment() {
@@ -32,7 +32,7 @@ class MoimPaymentDialog() : DialogFragment() {
         binding = DialogMoimPaymentBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
 
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))  // 배경 투명하게
+        dialog?.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())  // 배경 투명하게
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)  // dialog 모서리 둥글게
 
         initRecyclerView()

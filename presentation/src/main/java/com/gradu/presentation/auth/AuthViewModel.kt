@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gradu.core.config.Constants.SUCCESS_CODE
 import com.gradu.core.enums.LoginPlatform
+import com.gradu.core.utils.DataStoreManager
 import com.gradu.domain.model.LoginBody
 import com.gradu.domain.model.LoginResult
 import com.gradu.domain.model.RefreshResponse
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
+    private val dsManager: DataStoreManager
 ) : ViewModel() {
     private val _loginResult = MutableLiveData<LoginResult?>()
     val loginResult: LiveData<LoginResult?> = _loginResult

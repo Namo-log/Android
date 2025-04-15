@@ -1,4 +1,4 @@
-package com.gradu.presentation.ui.community.moim.diary
+package com.gradu.presentation.community.moim.diary
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -13,9 +13,10 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import com.mongmong.namo.databinding.DialogActivityParticipantsBinding
 import com.gradu.domain.model.ActivityParticipant
-import com.gradu.presentation.ui.community.moim.diary.adapter.ActivityParticipantsRVAdapter
+import com.gradu.presentation.community.moim.diary.adapter.ActivityParticipantsRVAdapter
+import com.gradu.presentation.databinding.DialogActivityParticipantsBinding
+import androidx.core.graphics.drawable.toDrawable
 
 
 class ActivityParticipantsDialog(private val position: Int) : DialogFragment() {
@@ -37,7 +38,7 @@ class ActivityParticipantsDialog(private val position: Int) : DialogFragment() {
         activity = viewModel.activities.value?.get(position)!!
 
 
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))  // 배경 투명하게
+        dialog?.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())  // 배경 투명하게
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)  // dialog 모서리 둥글게
 
         initRecyclerView()

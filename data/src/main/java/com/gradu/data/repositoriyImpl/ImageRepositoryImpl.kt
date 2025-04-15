@@ -2,10 +2,12 @@ package com.gradu.data.repositoriyImpl
 
 import android.content.Context
 import android.net.Uri
-import com.mongmong.namo.data.datasource.s3.ImageDataSource
+import com.gradu.data.datasource.s3.ImageDataSource
+import com.gradu.data.utils.common.RequestConverter
+import com.gradu.data.utils.common.RequestConverter.getFileNameFromUri
+import com.gradu.domain.repositories.ImageRepository
 import com.mongmong.namo.data.utils.common.RequestConverter
 import com.mongmong.namo.data.utils.common.RequestConverter.getFileNameFromUri
-import com.mongmong.namo.domain.repositories.ImageRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

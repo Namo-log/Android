@@ -1,15 +1,15 @@
 package com.gradu.data.utils.mappers
 
-import com.mongmong.namo.data.dto.FriendCategoryDTO
-import com.mongmong.namo.data.dto.FriendDTO
-import com.mongmong.namo.data.dto.FriendRequestDTO
-import com.mongmong.namo.data.dto.GetFriendScheduleResult
-import com.mongmong.namo.domain.model.CalendarColorInfo
-import com.mongmong.namo.domain.model.Friend
-import com.mongmong.namo.domain.model.FriendRequest
-import com.mongmong.namo.domain.model.FriendSchedule
-import com.mongmong.namo.domain.model.ScheduleCategoryInfo
-import com.mongmong.namo.presentation.utils.converter.ScheduleDateConverter
+import com.gradu.core.utils.converter.ScheduleDateConverter
+import com.gradu.data.dto.FriendCategoryDTO
+import com.gradu.data.dto.FriendDTO
+import com.gradu.data.dto.FriendRequestDTO
+import com.gradu.data.dto.GetFriendScheduleResult
+import com.gradu.domain.model.CalendarColorInfo
+import com.gradu.domain.model.Friend
+import com.gradu.domain.model.FriendRequest
+import com.gradu.domain.model.FriendSchedule
+import com.gradu.domain.model.ScheduleCategoryInfo
 
 object FriendMapper {
     fun FriendDTO.toModel(): Friend {

@@ -10,7 +10,7 @@
             type="Boolean" />
         <variable
             name="viewModel"
-            type="com.mongmong.namo.presentation.ui.community.moim.schedule.FriendInviteViewModel" />
+            type="com.gradu.presentation.community.moim.schedule.FriendInviteViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

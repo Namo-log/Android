@@ -1,4 +1,4 @@
-package com.gradu.presentation.ui.auth
+package com.gradu.presentation.auth
 
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -6,11 +6,11 @@ import android.graphics.Color
 import android.net.Uri
 import android.widget.CompoundButton
 import androidx.fragment.app.viewModels
-import com.mongmong.namo.R
-import com.mongmong.namo.databinding.FragmentTermsBinding
-import com.mongmong.namo.data.dto.TermBody
-import com.mongmong.namo.presentation.config.BaseFragment
-import com.mongmong.namo.presentation.config.Constants
+import com.gradu.core.config.BaseFragment
+import com.gradu.core.config.Constants
+import com.gradu.domain.model.TermBody
+import com.gradu.presentation.R
+import com.gradu.presentation.databinding.FragmentTermsBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -29,6 +29,11 @@ android {
     kotlinOptions {
         jvmTarget = '11'
     }
+
+    buildFeatures {
+        viewBinding true
+        dataBinding true
+    }
 }
 
 dependencies {
@@ -37,20 +42,95 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":core"))
 
-    // Android 기본 라이브러리
-    implementation 'androidx.core:core-ktx:1.15.0'
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    // Hilt DI
-    implementation "com.google.dagger:hilt-android:2.48"
-    kapt "com.google.dagger:hilt-compiler:2.48"
+    //navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
+    implementation 'com.google.firebase:protolite-well-known-types:18.0.0'
 
-    // Hilt ViewModel + Navigation 지원 (필요한 경우)
-    implementation "androidx.hilt:hilt-navigation-fragment:1.1.0"
+    //naver Login
+    implementation 'com.navercorp.nid:oauth-jdk8:5.1.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
-    // 테스트
+    //kakao Login
+    implementation 'com.kakao.sdk:v2-user:2.12.1'
+
+    //kakaoMap API
+    implementation 'com.kakao.maps.open:android:2.9.7'
+
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    //dot indicator
+    implementation "com.tbuonomo:dotsindicator:4.3"
+
+    //indicator
+    implementation 'me.relex:circleindicator:2.1.6'
+
+    //lottie - animation
+    implementation 'com.airbnb.android:lottie:3.5.0'
+
+    //circle imageview
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //joda
+    implementation "com.jakewharton.threetenabp:threetenabp:1.4.5"
+
+    //splashscreen api
+    implementation 'androidx.core:core-splashscreen:1.0.0-rc01'
+
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+    kapt 'com.github.bumptech.glide:compiler:4.12.0'
+
+    //roomDB
+    implementation "androidx.room:room-runtime:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
+
+    // LocalDateTime
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.3.0'
+
+    //retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    // okhttp
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.10.0"))
+    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:logging-interceptor")
+
+    //gson
+    implementation 'com.google.code.gson:gson:2.9.0'
+
+    // swipe
+    implementation 'it.xabaras.android:recyclerview-swipedecorator:1.4'
+
+    // paging
+    implementation "androidx.paging:paging-runtime-ktx:3.3.1"
+
+    // hilt
+    implementation 'com.google.dagger:hilt-android:2.38.1'
+    kapt 'com.google.dagger:hilt-compiler:2.38.1'
+
+    // inApp update
+    implementation 'com.google.android.play:app-update:2.1.0'
+
+    // firebase
+    implementation platform('com.google.firebase:firebase-bom:32.1.0')
+    implementation 'com.google.firebase:firebase-config'
+
+    // DataStore
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    // FlexBox
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.2"
 }

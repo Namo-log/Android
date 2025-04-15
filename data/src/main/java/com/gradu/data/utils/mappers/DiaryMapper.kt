@@ -1,25 +1,25 @@
 package com.gradu.data.utils.mappers
 
-import com.mongmong.namo.data.dto.GetCalendarDiaryResult
-import com.mongmong.namo.data.dto.GetDiaryByDateResult
-import com.mongmong.namo.data.dto.GetDiaryArchiveResult
-import com.mongmong.namo.data.dto.GetDiaryResult
-import com.mongmong.namo.data.dto.GetMoimPaymentResult
-import com.mongmong.namo.data.dto.GetScheduleForDiaryResult
-import com.mongmong.namo.domain.model.CalendarDate
-import com.mongmong.namo.domain.model.CalendarDiaryDate
-import com.mongmong.namo.domain.model.CategoryInfo
-import com.mongmong.namo.domain.model.ScheduleType
-import com.mongmong.namo.domain.model.Diary
-import com.mongmong.namo.domain.model.DiaryDetail
-import com.mongmong.namo.domain.model.DiaryImage
-import com.mongmong.namo.domain.model.DiarySummary
-import com.mongmong.namo.domain.model.MoimPayment
-import com.mongmong.namo.domain.model.MoimPaymentParticipant
-import com.mongmong.namo.domain.model.ParticipantInfo
-import com.mongmong.namo.domain.model.ParticipantSummary
-import com.mongmong.namo.domain.model.ScheduleForDiary
-import com.mongmong.namo.domain.model.ScheduleForDiaryLocation
+import com.gradu.data.dto.GetCalendarDiaryResult
+import com.gradu.data.dto.GetDiaryArchiveResult
+import com.gradu.data.dto.GetDiaryByDateResult
+import com.gradu.data.dto.GetDiaryResult
+import com.gradu.data.dto.GetMoimPaymentResult
+import com.gradu.data.dto.GetScheduleForDiaryResult
+import com.gradu.domain.model.CalendarDate
+import com.gradu.domain.model.CalendarDiaryDate
+import com.gradu.domain.model.CategoryInfo
+import com.gradu.domain.model.Diary
+import com.gradu.domain.model.DiaryDetail
+import com.gradu.domain.model.DiaryImage
+import com.gradu.domain.model.DiarySummary
+import com.gradu.domain.model.MoimPayment
+import com.gradu.domain.model.MoimPaymentParticipant
+import com.gradu.domain.model.ParticipantInfo
+import com.gradu.domain.model.ParticipantSummary
+import com.gradu.domain.model.ScheduleForDiary
+import com.gradu.domain.model.ScheduleForDiaryLocation
+import com.gradu.domain.model.ScheduleType
 
 object DiaryMapper {
     // 매퍼 함수 (DTO -> 도메인 모델 변환)

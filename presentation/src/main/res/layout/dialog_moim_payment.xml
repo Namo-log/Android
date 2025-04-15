@@ -7,7 +7,7 @@
         <import type="android.view.View"/>
         <variable
             name="viewModel"
-            type="com.mongmong.namo.presentation.ui.community.moim.diary.MoimDiaryViewModel" />
+            type="com.gradu.presentation.community.moim.diary.MoimDiaryViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -1,15 +1,15 @@
-package com.gradu.presentation.ui.auth
+package com.gradu.presentation.auth
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.mongmong.namo.databinding.DialogRegisterColorBinding
-import com.mongmong.namo.presentation.enums.CategoryColor
-import com.gradu.presentation.ui.home.category.adapter.CategoryPaletteRVAdapter
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.gradu.core.enums.CategoryColor
+import com.gradu.presentation.databinding.DialogRegisterColorBinding
+import com.gradu.presentation.ui.home.category.adapter.CategoryPaletteRVAdapter
 
 
 class RegisterColorDialog() : BottomSheetDialogFragment() {

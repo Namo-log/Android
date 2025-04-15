@@ -5,11 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.mongmong.namo.presentation.utils.converter.ScheduleDateConverter"/>
+        <import type="com.gradu.core.utils.converter.ScheduleDateConverter"/>
         <import type="android.view.View"/>
         <variable
             name="viewModel"
-            type="com.mongmong.namo.presentation.ui.community.calendar.CalendarViewModel" />
+            type="com.gradu.presentation.community.calendar.CalendarViewModel" />
     </data>
 
     <androidx.constraintlayout.motion.widget.MotionLayout
@@ -20,7 +20,7 @@
         app:layoutDescription="@xml/fragment_community_calendar_bottom_sheet_scene">
 
         <!-- 캘린더 -->
-        <com.mongmong.namo.presentation.ui.community.calendar.CommunityCalendarView
+        <com.gradu.presentation.community.calendar.CommunityCalendarView
             android:id="@+id/community_calendar_month_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"

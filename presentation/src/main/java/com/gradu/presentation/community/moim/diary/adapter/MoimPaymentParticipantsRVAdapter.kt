@@ -1,10 +1,10 @@
-package com.gradu.presentation.ui.community.moim.diary.adapter
+package com.gradu.presentation.community.moim.diary.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mongmong.namo.databinding.ItemMoimPaymentParticipantBinding
-import com.mongmong.namo.domain.model.MoimPaymentParticipant
+import com.gradu.domain.model.MoimPaymentParticipant
+import com.gradu.presentation.databinding.ItemMoimPaymentParticipantBinding
 
 class MoimPaymentParticipantsRVAdapter(
     private val participants: List<MoimPaymentParticipant>
